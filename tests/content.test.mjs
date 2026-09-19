@@ -103,6 +103,24 @@ test('published game references cover 2D and 3D with stable YouTube videos', asy
   );
 });
 
+test('learning sources cover design, animation, accessibility, and implementation', () => {
+  const sources = source.mechanics[0].meta.sources;
+  assert.equal(sources.length, 7);
+  assert.deepEqual(
+    new Set(sources.map((item) => new URL(item.url).hostname)),
+    new Set([
+      'www.gamedeveloper.com',
+      'www.gdcvault.com',
+      'learn.microsoft.com',
+      'docs.godotengine.org',
+    ]),
+  );
+  const titles = sources.map((item) => item.title).join(' ');
+  assert.match(titles, /GDC talk/);
+  assert.match(titles, /Accessibility guideline/);
+  assert.match(titles, /Technical guide/);
+});
+
 test('long boss references open at the exact mechanic instead of unrelated gameplay', async () => {
   const data = structuredClone(source);
   for (const lesson of Object.values(data.mechanics[0].translations))

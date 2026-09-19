@@ -8,7 +8,7 @@
   "playbook": "Core checks",
   "design": "Tuning",
   "examples": "Game references",
-  "sources": "Further reading",
+  "sources": "Learn more",
   "edit": "Improve this page",
   "license": "Text and illustrations: CC BY 4.0. Code: MIT.",
   "reviewNote": "Community translations welcome. Initial translations are awaiting native-speaker review.",
@@ -35,7 +35,7 @@
   "storyTitle": "Arena",
   "adaptTitle": "Player upgrades",
   "relatedTitle": "Do not confuse this with",
-  "sourceNote": "The diagram is an original teaching example. These articles provide broader design context.",
+  "sourceNote": "The diagram is an original teaching example. These talks, articles, guidelines, and technical references cover boss structure, attack phases, cues, accessibility, and collision implementation.",
   "back": "Back to mechanics",
   "notFound": "Page not found",
   "notFoundText": "Choose a language to return to the atlas."

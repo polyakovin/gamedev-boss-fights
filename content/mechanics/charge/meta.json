@@ -8,12 +8,32 @@
   "related": [],
   "sources": [
     {
-      "title": "Mike Stout — Boss Battle Design and Structure",
+      "title": "Article · Mike Stout — Boss Battle Design and Structure",
       "url": "https://www.gamedeveloper.com/design/boss-battle-design-and-structure"
     },
     {
-      "title": "Mike Stout — Enemy Attacks and Telegraphing",
+      "title": "Article · Mike Stout — Enemy Attacks and Telegraphing",
       "url": "https://www.gamedeveloper.com/design/enemy-attacks-and-telegraphing"
+    },
+    {
+      "title": "GDC talk · Itay Keren — Boss Up: Boss Battle Design Fundamentals and Retrospective",
+      "url": "https://www.gdcvault.com/play/1024921/Boss-Up-"
+    },
+    {
+      "title": "Attack analysis · Jerry Zhang — Anatomy of an Enemy Attack in Dark Souls 3",
+      "url": "https://www.gamedeveloper.com/game-platforms/anatomy-of-an-enemy-attack-in-dark-souls-3"
+    },
+    {
+      "title": "Book excerpt · Jonathan Cooper — The 12 Principles of Animation in Video Games",
+      "url": "https://www.gamedeveloper.com/production/the-12-principles-of-animation-in-video-games"
+    },
+    {
+      "title": "Accessibility guideline · Xbox — Additional Channels for Visual and Audio Cues",
+      "url": "https://learn.microsoft.com/en-us/xbox/accessibility/xbox-accessibility-guidelines/103"
+    },
+    {
+      "title": "Technical guide · Godot Engine — Physics Introduction",
+      "url": "https://docs.godotengine.org/en/stable/tutorials/physics/physics_introduction.html"
     }
   ]
 }

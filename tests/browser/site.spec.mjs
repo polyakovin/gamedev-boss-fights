@@ -20,6 +20,7 @@ for (const locale of registry) {
     );
     await expect(page.locator('[data-charge-motion-note]')).toBeVisible();
     await expect(page.locator('.game-example')).toHaveCount(6);
+    await expect(page.locator('.sources li a')).toHaveCount(7);
     await expect(page.locator('#quiz, .quiz, [data-quiz]')).toHaveCount(0);
     await expect(page.locator('.game-example a[href*="youtube.com/watch"]')).toHaveCount(6);
     const videos = await page

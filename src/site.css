@@ -479,12 +479,15 @@ section[id] {
 .sources ul {
   list-style: none;
   padding: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px 28px;
   margin-top: 17px;
 }
 .sources li a {
+  display: block;
+  padding: 7px 0;
+  line-height: 1.55;
   color: var(--ink);
   border-bottom: 1px solid var(--line);
 }
@@ -938,6 +941,9 @@ section[id] {
   .game-example {
     min-height: 0;
     padding: 19px;
+  }
+  .sources ul {
+    grid-template-columns: 1fr;
   }
   .site-footer {
     margin: 0 18px;

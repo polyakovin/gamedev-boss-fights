@@ -73,7 +73,7 @@ Provide catalog artwork through the adapter’s `thumbnail` function. It should 
 
 `meta.json` contains a unique `id` matching its folder, a unique positive `number`, `published`, `sourceLocale: "en"`, a positive `contentVersion`, `animation`, `related`, and `sources`. Related IDs must refer to other existing mechanics. Each source has a descriptive `title` and an HTTPS `url`.
 
-Explain the role of a source in the PR: a documented example, research supporting a claim, or wider design context. Prefer a developer’s own description or another primary source for claims about a specific game. Verify the link and the relevant claim. The current original teaching example is not a reconstruction of a particular game; its linked design articles provide context rather than evidence for a universal rule.
+Explain the role of a source in the PR: a documented example, research supporting a claim, or wider design context. Prefer a developer’s own description or another primary source for claims about a specific game. Verify the link and the relevant claim. When useful, combine complementary formats such as a design talk, attack analysis, animation reference, accessibility guideline, and engine documentation instead of listing several sources that repeat the same advice. The current original teaching example is not a reconstruction of a particular game; its linked materials provide context rather than evidence for a universal rule.
 
 Create original illustrations. Do not copy game screenshots, sprites, logos, or article artwork into the atlas. Keep third-party links as references and respect their original licenses. Our [content license](../LICENSE-CONTENT.md) applies to our contributions, not to linked material.
 

@@ -8,7 +8,7 @@
   "playbook": "核心检查",
   "design": "调整",
   "examples": "游戏参考",
-  "sources": "延伸阅读",
+  "sources": "深入了解",
   "edit": "完善本页",
   "license": "文字与插图：CC BY 4.0。代码：MIT。",
   "reviewNote": "欢迎社区参与翻译。初版译文尚待母语使用者审校。",
@@ -35,7 +35,7 @@
   "storyTitle": "场地",
   "adaptTitle": "玩家升级",
   "relatedTitle": "不要与这些概念混淆",
-  "sourceNote": "本示意图是原创教学示例。以下文章提供更广泛的设计背景。",
+  "sourceNote": "本示意图是原创教学示例。以下讲座、文章、指南和技术资料涵盖首领战结构、攻击阶段、提示、无障碍设计和碰撞实现。",
   "back": "返回机制目录",
   "notFound": "未找到页面",
   "notFoundText": "请选择一种语言，返回图鉴。"
