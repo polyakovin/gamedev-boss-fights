@@ -111,7 +111,7 @@ test('catalog and language gateway point to real pages', async ({ page, request 
     expect(await response.text()).toContain(`${locale.code}/mechanics/charge/`);
   }
   await page.goto('ru/');
-  await expect(page.locator('.catalog-purpose h2')).toHaveText('Зачем нужен атлас');
+  await expect(page.locator('.catalog-hero h1')).toHaveText('Как устроены бои с боссами');
   await expect(page.locator('.atlas-map__link')).toHaveCount(6);
   expect(
     await page.locator('.atlas-map__link').evaluateAll((links) => links.map((a) => a.href)),
@@ -127,4 +127,37 @@ test('catalog and language gateway point to real pages', async ({ page, request 
   await expect(page.locator('.card-diagram [data-charge-art="monster"]')).toHaveCount(1);
   await page.setViewportSize({ width: 375, height: 812 });
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+});
+
+test('homepages fit their core content on a laptop and reflow on mobile', async ({ page }) => {
+  for (const locale of registry) {
+    await page.setViewportSize({ width: 1280, height: 720 });
+    await page.goto(`${locale.code}/`);
+    await expect(page.locator('html')).toHaveAttribute('dir', locale.dir);
+    for (const selector of ['.catalog-hero', '.mechanic-card', '.atlas-map']) {
+      const box = await page.locator(selector).boundingBox();
+      expect(box.y, `${locale.code}: ${selector} starts on screen`).toBeGreaterThanOrEqual(0);
+      expect(
+        box.y + box.height,
+        `${locale.code}: ${selector} fits the first screen`,
+      ).toBeLessThanOrEqual(720);
+    }
+    expect(await page.locator('.atlas-map__count').allTextContents()).toEqual([
+      '1',
+      '1',
+      '6',
+      '6',
+      '7',
+      '+',
+    ]);
+    await page.setViewportSize({ width: 375, height: 812 });
+    expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(
+      true,
+    );
+    const card = await page.locator('.mechanic-card').boundingBox();
+    const navigation = await page.locator('.atlas-map').boundingBox();
+    expect(navigation.y).toBeGreaterThan(card.y + card.height);
+    await expect(page.locator('.card-learning')).toBeVisible();
+    await expect(page.locator('.atlas-map__link')).toHaveCount(6);
+  }
 });

@@ -64,7 +64,7 @@ function shell(locale, title, description, body, { id, assets = [], catalog = fa
           .map((a) => `<script type="module" src="${link('assets/' + a)}"></script>`)
           .join('')}
       </head>
-      <body>
+      <body${catalog ? ' class="catalog-page"' : ''}>
         <a class="skip-link" href="#main">${e(t.skip)}</a>
         <header class="site-header">
           <div class="header-inner">
@@ -134,38 +134,45 @@ function exampleGroup(dimension, label, items, t) {
 for (const locale of locales) {
   const t = ui[locale.code];
   const featured = published[0];
+  const featuredContent = featured?.translations[locale.code];
   const lessonPath = featured ? `${locale.code}/mechanics/${featured.meta.id}/` : `${locale.code}/`;
   const atlasLinks = [
     {
       title: t.catalog,
       text: t.mechanicsNavText,
       href: '#mechanics',
+      count: published.length,
     },
     {
       title: t.simulationNavTitle,
       text: t.simulationNavText,
       href: link(`${lessonPath}#simulation`),
+      count: featured ? 1 : 0,
     },
     {
       title: t.concepts,
       text: t.conceptsNavText,
       href: link(`${lessonPath}#concepts`),
+      count: featuredContent?.concepts.length ?? 0,
     },
     {
       title: t.examples,
       text: t.examplesNavText,
       href: link(`${lessonPath}#examples`),
+      count: featuredContent?.examples.length ?? 0,
     },
     {
       title: t.sources,
       text: t.sourcesNavText,
       href: link(`${lessonPath}#sources`),
+      count: featured?.meta.sources.length ?? 0,
     },
     {
       title: t.contribute,
       text: t.contributeNavText,
       href: `${REPOSITORY}/blob/main/CONTRIBUTING.md`,
       external: true,
+      count: '+',
     },
   ];
   const cards = published
@@ -181,8 +188,9 @@ for (const locale of locales) {
         </div>
         <div class="card-copy">
           <span class="eyebrow">${e(c.category)}</span>
-          <h2>${e(c.title)} <span aria-hidden="true">↗</span></h2>
-          <p>${e(c.subtitle)}</p>
+          <h3>${e(c.title)} <span aria-hidden="true">↗</span></h3>
+          <p>${e(c.summary)}</p>
+          <p class="card-learning"><strong>${e(t.learnLabel)}.</strong> ${e(c.learning)}</p>
           <span class="text-link">${e(t.readLesson)} <span aria-hidden="true">→</span></span>
         </div></a
       >`;
@@ -190,66 +198,48 @@ for (const locale of locales) {
     .join('');
   const body = /* HTML */ `<main id="main" class="catalog-main">
     <section class="catalog-hero">
-      <div class="catalog-hero__statement">
+      <div class="catalog-topline">
         <span class="eyebrow">${e(t.indexEyebrow)}</span>
-        <h1>${e(t.indexTitle)}</h1>
-        <p class="lead">${e(t.indexSubtitle)}</p>
         <div class="catalog-meta">
-          <span class="small-dot"></span>${e(t.allLanguages)}<span class="meta-divider">/</span>CC
-          BY 4.0
+          <span class="small-dot" aria-hidden="true"></span>${e(t.allLanguages)}
         </div>
       </div>
-      <aside class="catalog-purpose">
-        <h2>${e(t.purposeTitle)}</h2>
-        <p>${e(t.purposeText)}</p>
-      </aside>
+      <h1>${e(t.indexTitle)}</h1>
+      <p class="lead">${e(t.indexSubtitle)}</p>
     </section>
-    <nav class="atlas-map" aria-labelledby="atlas-map-title">
-      <div class="section-heading atlas-map__heading">
-        <div>
+    <div class="catalog-overview">
+      <section id="mechanics" aria-labelledby="mechanics-title">
+        <div class="section-heading">
+          <h2 id="mechanics-title">${e(t.available)}</h2>
+          <span class="count">${published.length}</span>
+        </div>
+        <div class="catalog-grid">${cards}</div>
+      </section>
+      <nav class="atlas-map" aria-labelledby="atlas-map-title">
+        <div class="section-heading atlas-map__heading">
           <h2 id="atlas-map-title">${e(t.siteMapTitle)}</h2>
-          <p>${e(t.siteMapIntro)}</p>
         </div>
-        <span class="count">${String(atlasLinks.length).padStart(2, '0')}</span>
-      </div>
-      <div class="atlas-map__grid">
-        ${atlasLinks
-          .map(
-            (item, index) =>
-              /* HTML */ `<a class="atlas-map__link" href="${e(item.href)}">
-                <span class="atlas-map__number" aria-hidden="true"
-                  >${String(index + 1).padStart(2, '0')}</span
-                >
-                <span>
-                  <strong>${e(item.title)}</strong>
-                  <small>${e(item.text)}</small>
-                </span>
-                <span class="atlas-map__arrow" aria-hidden="true"
-                  >${item.external ? '↗' : '→'}</span
-                >
-              </a>`,
-          )
-          .join('')}
-      </div>
-    </nav>
-    <section id="mechanics" aria-label="${e(t.available)}">
-      <div class="section-heading">
-        <h2>${e(t.available)}</h2>
-        <span class="count">${String(published.length).padStart(2, '0')}</span>
-      </div>
-      <div class="catalog-grid">
-        ${cards}
-        <aside class="contribution-card">
-          <span class="big-plus" aria-hidden="true">+</span>
-          <h2>${e(t.openSource)}</h2>
-          <p>${e(t.soon)}</p>
-          <p>${e(t.contributeText)}</p>
-          <a class="text-link" href="${REPOSITORY}/blob/main/CONTRIBUTING.md"
-            >${e(t.contribute)} ↗</a
-          >
-        </aside>
-      </div>
-    </section>
+        ${featuredContent ? `<p class="atlas-map__intro">${e(t.siteMapIntro)}: <a href="${link(lessonPath)}">${e(featuredContent.title)}</a></p>` : ''}
+        <div class="atlas-map__grid">
+          ${atlasLinks
+            .map(
+              (item) =>
+                /* HTML */ `<a class="atlas-map__link" href="${e(item.href)}">
+                  <span>
+                    <strong
+                      >${e(item.title)} <span class="atlas-map__count">${item.count}</span></strong
+                    >
+                    <small>${e(item.text)}</small>
+                  </span>
+                  <span class="atlas-map__arrow" aria-hidden="true"
+                    >${item.external ? '↗' : '→'}</span
+                  >
+                </a>`,
+            )
+            .join('')}
+        </div>
+      </nav>
+    </div>
   </main>`;
   await write(
     locale.code + '/',

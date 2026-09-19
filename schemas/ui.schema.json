@@ -19,8 +19,6 @@
     "indexTitle",
     "indexSubtitle",
     "indexEyebrow",
-    "purposeTitle",
-    "purposeText",
     "siteMapTitle",
     "siteMapIntro",
     "mechanicsNavText",
@@ -32,9 +30,6 @@
     "contributeNavText",
     "available",
     "readLesson",
-    "soon",
-    "contributeText",
-    "openSource",
     "allLanguages",
     "mechanicLabel",
     "variantLabel",
@@ -126,14 +121,6 @@
       "type": "string",
       "minLength": 1
     },
-    "purposeTitle": {
-      "type": "string",
-      "minLength": 1
-    },
-    "purposeText": {
-      "type": "string",
-      "minLength": 1
-    },
     "siteMapTitle": {
       "type": "string",
       "minLength": 1
@@ -175,18 +162,6 @@
       "minLength": 1
     },
     "readLesson": {
-      "type": "string",
-      "minLength": 1
-    },
-    "soon": {
-      "type": "string",
-      "minLength": 1
-    },
-    "contributeText": {
-      "type": "string",
-      "minLength": 1
-    },
-    "openSource": {
       "type": "string",
       "minLength": 1
     },
