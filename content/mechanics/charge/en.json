@@ -1,14 +1,14 @@
 {
   "title": "Charge",
-  "subtitle": "A dangerous line. A deliberate sidestep. An opening to strike.",
+  "subtitle": "Move sideways. Let the boss miss. Counterattack.",
   "variant": "Locked-direction charge",
-  "summary": "The boss commits to a fast movement and uses its body as the weapon. In this variant, it can aim before locking on, but cannot turn once the direction is fixed.",
-  "learning": "Read the commitment, move fully out of the lane, and use the recovery window.",
+  "summary": "The boss aims, locks its direction, and charges forward. It cannot turn after the lock.",
+  "learning": "Wait for the lock, move out of the lane, then counterattack.",
   "category": "Movement & space",
-  "readTime": "4 min · interactive lesson",
+  "readTime": "3 min · interactive lesson",
   "demo": {
-    "title": "Watch the commitment",
-    "intro": "Compare two responses to the same attack. Scrub the timeline to inspect each phase.",
+    "title": "See how Charge works",
+    "intro": "Compare moving sideways with running straight away.",
     "play": "Play",
     "pause": "Pause",
     "restart": "Restart",
@@ -20,71 +20,71 @@
     "retreat": "Retreat in a straight line",
     "phaseNames": ["Aim", "Lock", "Charge", "Recover"],
     "phaseDescriptions": [
-      "The boss can still adjust its aim. An early sidestep may be tracked.",
-      "Direction is now fixed. Move sideways until your whole body clears the lane.",
-      "The boss rushes along the fixed line. Distance alone will not protect you.",
-      "The boss has stopped and is recovering. This is the opening for a counterattack."
+      "The boss can still turn toward the player.",
+      "The direction is fixed. Move sideways out of the lane.",
+      "The boss moves along the fixed line.",
+      "The boss stops. Counterattack now."
     ],
-    "boss": "Boss · armored defender",
-    "player": "Player · creature",
+    "boss": "Boss",
+    "player": "Player",
     "danger": "Danger lane",
     "path": "Movement",
     "locked": "Direction locked",
     "safe": "Outside the lane",
     "hit": "Still in the lane",
     "reducedMotion": "Animation starts paused. Use the phase buttons or timeline to explore without playback.",
-    "diagramDescription": "Top-down diagram of an armored boss charging toward a creature. A sideways dodge clears the lane; running along the lane leads to a hit.",
+    "diagramDescription": "The boss charges toward the player. Moving sideways avoids the attack; running straight away leads to a hit.",
     "overlayNote": "The colored lane explains the mechanic. A real game may telegraph it through pose, sound, or effects."
   },
   "steps": [
     {
       "title": "Wait for the commitment",
-      "body": "Look for the pose, sound, or aiming cue that says the direction is fixed. Until then, the boss may still turn toward you."
+      "body": "Wait for the cue that says the direction is fixed. Before that, the boss can still turn."
     },
     {
       "title": "Move across the line",
-      "body": "Move perpendicular to the charge. Your whole collision shape must leave the danger lane; a small sideways shift may not be enough."
+      "body": "Move sideways until the whole player is outside the danger lane."
     },
     {
       "title": "Punish the miss",
-      "body": "After the boss stops, move into range and attack. Finish your response before the next action begins."
+      "body": "Attack after the boss stops, before its next action begins."
     }
   ],
   "mistakes": [
     {
       "title": "Running along the lane",
-      "body": "You gain distance but remain in the path of the attack. A faster boss can still catch you."
+      "body": "You stay inside the danger lane, so the boss can still hit you."
     },
     {
       "title": "Dodging too early",
-      "body": "Before commitment, the boss may adjust its aim and follow your movement."
+      "body": "Before the lock, the boss can turn and follow you."
     }
   ],
   "designNotes": [
     {
       "title": "Make commitment visible",
-      "body": "Separate tracking from commitment with a readable cue. The player needs to know when the rule changes."
+      "body": "Show a clear cue when the boss stops tracking the player."
     },
     {
       "title": "Leave a reachable escape",
-      "body": "Allow enough time for ordinary movement to clear the lane from intended starting positions. This example requires no dash, jump, or invulnerability."
+      "body": "Give enough time to escape with normal movement."
     },
     {
       "title": "Give recovery a purpose",
-      "body": "The opening must cover travel back into attack range as well as the counterattack itself. Extra damage should still make progress faster."
+      "body": "Keep the boss still long enough for the player to counterattack."
     }
   ],
   "story": {
-    "title": "A defender at the floodgate",
-    "body": "For example, a human gatekeeper drives an armored ram at a canal crossing. Their job is to keep the creature away from the settlement beyond the gate. A narrow crossing, a heavy vehicle, and a costly turn make the charge belong to this place."
+    "title": "Use a clear arena",
+    "body": "A long, open lane makes the attack easy to read. Avoid obstacles that hide the boss or the escape route."
   },
   "adaptation": {
-    "title": "Protection with a readable condition",
-    "body": "The front plow could block frontal projectiles while it is lowered during the charge, then lift during recovery. Show the block with a distinct impact effect; keep side or recovery hits useful. Tune the lane and recovery against the movement and range available at this point in progression. Do not silently erase upgrades or invent an immunity when a hit lands."
+    "title": "Respect player upgrades",
+    "body": "Test the attack against the abilities already available to the player. If the boss blocks an attack, show it clearly and keep another response useful."
   },
   "distinction": {
     "title": "Charge ≠ dash ≠ lunge",
-    "body": "A charge threatens a lane through committed body movement. A dash can simply reposition the boss. A lunge is usually a short closing strike. This page covers one charge variant, not a universal rule for every game."
+    "body": "A charge threatens a full lane. A dash changes position. A lunge is a short attack. This page shows one kind of charge."
   },
   "quiz": {
     "question": "The direction is fixed. What is the reliable escape in this example?",
@@ -94,8 +94,8 @@
       "Stand still and wait for recovery."
     ],
     "correctIndex": 1,
-    "explanation": "Move across the line. After the direction locks, the boss cannot follow that sideways movement. Distance along the same line does not remove the collision risk."
+    "explanation": "Move sideways. After the lock, the boss cannot follow. Running along the same line keeps the player in danger."
   },
   "reviewStatus": "needs-review",
-  "sourceVersion": 1
+  "sourceVersion": 2
 }

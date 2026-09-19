@@ -4,7 +4,7 @@ An open, interactive encyclopedia of boss mechanics for game designers and curio
 
 [Explore the atlas](https://polyakovin.github.io/gamedev-boss-fights/) · [Read in Russian](README.ru.md) · [Contribute](CONTRIBUTING.md)
 
-The first lesson is **Charge**: a human defender drives an armored ram against a player-controlled creature. Compare a sidestep with a straight retreat, pause the animation, inspect each phase, and check your understanding. This lesson teaches a specific variant that fixes its direction after aiming; it does not claim that every charge in every game behaves this way.
+The first lesson is **Charge**. Compare moving sideways with running straight away, pause the animation, and inspect each phase. In this variant, the boss cannot turn after its direction is fixed.
 
 Available in English, Russian, Simplified Chinese, Hindi, Bengali, Spanish, Arabic, and Japanese. Initial translations await independent fluent-speaker review; corrections and reviews are welcome. [Open «Таран» in Russian](https://polyakovin.github.io/gamedev-boss-fights/ru/mechanics/charge/).
 

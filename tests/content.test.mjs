@@ -69,6 +69,13 @@ test('the registry cannot duplicate a language', async () => {
 
 test('published translations cannot lag behind the current source version', async () => {
   const data = structuredClone(source);
-  data.mechanics[0].meta.contentVersion = 2;
+  data.mechanics[0].meta.contentVersion += 1;
   await assert.rejects(validateContent(data), /sourceVersion is stale/);
+});
+
+test('published diagrams use only generic boss and player labels', () => {
+  for (const lesson of Object.values(source.mechanics[0].translations)) {
+    assert.ok(!lesson.demo.boss.includes('·'));
+    assert.ok(!lesson.demo.player.includes('·'));
+  }
 });

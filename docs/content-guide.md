@@ -26,7 +26,7 @@ Use `content/mechanics/charge/en.json` as a structural example and `schemas/less
 | `steps`                       | Give the player exactly three actionable decisions in order                |
 | `mistakes`                    | Explain tempting responses and why they fail                               |
 | `designNotes`                 | Connect player decisions to timing, geometry, and readable signals         |
-| `story`                       | Explain the boss’s purpose and how the attack fits its body and location   |
+| `story`                       | Explain which simple arena layout makes the attack readable                |
 | `adaptation`                  | Explain how the encounter respects available movement, reach, and upgrades |
 | `distinction`                 | Separate neighboring mechanics without asserting universal terminology     |
 | `quiz`                        | Test the stated rule with three options and one zero-based `correctIndex`  |
@@ -41,8 +41,8 @@ For the initial Charge lesson, preserve these facts:
 - The boss can aim before commitment; direction is frozen after commitment and throughout the charge.
 - The player must move the entire collision shape out of the danger lane. Distance gained along that same lane is insufficient in this example.
 - Ordinary sideways movement provides a reachable escape. Recovery allows time to approach and counterattack.
-- The human defender operates an armored machine to keep the player-controlled creature away from a settlement.
-- The proposed front plow blocks frontal projectiles only under a visible condition. Side and recovery attacks remain useful; upgrades are not silently nullified.
+- Use only “boss” and “player.” Keep the example independent of any game, character, or setting.
+- If the boss blocks an attack, show it clearly. Keep another response useful and never silently cancel player upgrades.
 
 ## Connect an animation
 

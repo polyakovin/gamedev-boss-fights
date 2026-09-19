@@ -32,7 +32,7 @@ If the source contains an ambiguity, raise it in the PR instead of inventing a n
 
 The initial Charge variant can follow the player while aiming, then fixes its direction. It cannot keep steering during the charge. The escape is ordinary sideways movement until the whole collision shape leaves the lane; neither a special dodge ability nor invulnerability is required.
 
-Keep the roles clear: a human defender operates the armored machine, and the player controls the creature. The front plow is a proposed protection with a visible condition, not unexplained immunity or suppression of the player’s upgrades. The example illustrates one design choice; it does not define how every game must work.
+Use only “boss” and “player.” Keep the example free of setting-specific roles and objects. If the boss blocks an attack, make the condition clear and leave another player response useful.
 
 ## Preview and validate
 

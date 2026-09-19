@@ -25,15 +25,15 @@
       "El jefe avanza a toda velocidad por la línea fijada. La distancia por sí sola no te protegerá.",
       "El jefe se ha detenido y se está recuperando. Es tu oportunidad para contraatacar."
     ],
-    "boss": "Jefe · defensor blindado",
-    "player": "Jugador · criatura",
+    "boss": "Jefe",
+    "player": "Jugador",
     "danger": "Franja de peligro",
     "path": "Movimiento",
     "locked": "Dirección fijada",
     "safe": "Fuera de la franja",
     "hit": "Aún en la franja",
     "reducedMotion": "La animación comienza en pausa. Usa los botones de las fases o la línea de tiempo para explorar sin reproducirla.",
-    "diagramDescription": "Diagrama visto desde arriba de un jefe blindado que embiste hacia una criatura. Esquivar de lado permite salir de la franja de peligro; correr a lo largo de ella acaba en un impacto.",
+    "diagramDescription": "El jefe embiste al jugador. Moverse de lado evita el ataque; correr en línea recta acaba en un impacto.",
     "overlayNote": "La franja de color explica la mecánica. Un juego puede anunciar el ataque mediante una postura, un sonido o efectos."
   },
   "steps": [
@@ -75,12 +75,12 @@
     }
   ],
   "story": {
-    "title": "Un defensor ante la compuerta",
-    "body": "Por ejemplo, un guardián humano conduce un ariete blindado en un cruce sobre un canal. Su tarea es impedir que la criatura llegue al asentamiento al otro lado de la compuerta. Un paso estrecho, un vehículo pesado y la dificultad para girar hacen que la embestida encaje en este lugar."
+    "title": "Usa una arena clara",
+    "body": "Una franja larga y abierta hace que el ataque sea fácil de leer. Evita obstáculos que oculten al jefe o la salida."
   },
   "adaptation": {
-    "title": "Protección con una condición clara",
-    "body": "La pala frontal podría bloquear los proyectiles que llegan de frente mientras está bajada durante la embestida, y elevarse durante la recuperación. Muestra el bloqueo con un efecto de impacto distintivo; mantén la utilidad de los golpes laterales o durante la recuperación. Ajusta la franja de peligro y la recuperación al movimiento y al alcance disponibles en ese punto de la progresión. No anules mejoras sin indicarlo ni inventes una inmunidad en el momento en que llega un golpe."
+    "title": "Respeta las mejoras del jugador",
+    "body": "Prueba el ataque con las habilidades que el jugador ya tiene. Si el jefe bloquea un ataque, muéstralo con claridad y deja otra respuesta útil."
   },
   "distinction": {
     "title": "Embestida ≠ impulso rápido ≠ acometida",
@@ -97,5 +97,5 @@
     "explanation": "Muévete perpendicularmente a la trayectoria. Una vez fijada la dirección, el jefe no puede seguir ese movimiento lateral. Ganar distancia sobre la misma línea no elimina el riesgo de colisión."
   },
   "reviewStatus": "needs-review",
-  "sourceVersion": 1
+  "sourceVersion": 2
 }
