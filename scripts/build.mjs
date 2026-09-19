@@ -138,11 +138,20 @@ function shell(locale, title, description, body, { id, assets = [], catalog = fa
       </body>
     </html>`;
 }
-function tiles(items, cls = '') {
+function checklistItems(items) {
   return items
     .map(
-      (item, i) =>
-        `<article class="note ${cls}">${cls === 'step' ? `<span class="step-number" aria-hidden="true">0${i + 1}</span>` : ''}<h3>${e(item.title)}</h3><p>${e(item.body)}</p></article>`,
+      (item) =>
+        /* HTML */ `<li>
+          <details class="checklist-item">
+            <summary>
+              <span class="checklist-mark" aria-hidden="true"></span>
+              <span>${e(item.title)}</span>
+              <span class="checklist-toggle" aria-hidden="true">+</span>
+            </summary>
+            <p>${e(item.body)}</p>
+          </details>
+        </li>`,
     )
     .join('');
 }
@@ -294,45 +303,52 @@ for (const locale of locales) {
             <p class="hero-subtitle">${e(c.subtitle)}</p>
             <span class="variant">${e(c.variant)}</span>
             <p class="summary">${e(c.summary)}</p>
-            <aside class="learning">
-              <span class="eyebrow">${e(t.learnLabel)}</span>
-              <p>${e(c.learning)}</p>
-            </aside>
+            <section
+              class="implementation-checklist"
+              aria-labelledby="implementation-checklist-title"
+            >
+              <div class="implementation-checklist__intro">
+                <h2 id="implementation-checklist-title">${e(t.implementationChecklist)}</h2>
+                <p>${e(c.learning)}</p>
+              </div>
+              <div class="implementation-checklist__groups">
+                <section class="checklist-group" aria-labelledby="core-checks-title">
+                  <span class="eyebrow">${e(t.playbook)}</span>
+                  <h3 id="core-checks-title">${e(t.stepsTitle)}</h3>
+                  <ul class="checklist-items">
+                    ${checklistItems(c.steps)}
+                  </ul>
+                  <h4>${e(t.mistakesTitle)}</h4>
+                  <ul class="checklist-items checklist-items--mistakes">
+                    ${checklistItems(c.mistakes)}
+                  </ul>
+                </section>
+                <section class="checklist-group" aria-labelledby="tuning-title">
+                  <span class="eyebrow">${e(t.design)}</span>
+                  <h3 id="tuning-title">${e(t.designerTitle)}</h3>
+                  <ul class="checklist-items">
+                    ${checklistItems(c.designNotes)}
+                  </ul>
+                  <h4>${e(t.storyTitle)}</h4>
+                  <ul class="checklist-items">
+                    ${checklistItems([c.story])}
+                  </ul>
+                  <h4>${e(t.adaptTitle)}</h4>
+                  <ul class="checklist-items">
+                    ${checklistItems([c.adaptation])}
+                  </ul>
+                  <h4>${e(t.relatedTitle)}</h4>
+                  <ul class="checklist-items">
+                    ${checklistItems([c.distinction])}
+                  </ul>
+                </section>
+              </div>
+            </section>
           </section>
           <div id="simulation" class="simulation-section">${a.render(c.demo)}</div>
         </div>
-        <section id="playbook" class="content-section">
-          <span class="eyebrow">01 / ${e(t.playbook)}</span>
-          <h2>${e(t.stepsTitle)}</h2>
-          <div class="steps-grid">${tiles(c.steps, 'step')}</div>
-          <div class="mistakes">
-            <h3>${e(t.mistakesTitle)}</h3>
-            <div>${tiles(c.mistakes)}</div>
-          </div>
-        </section>
-        <section id="design" class="content-section">
-          <span class="eyebrow">02 / ${e(t.design)}</span>
-          <h2>${e(t.designerTitle)}</h2>
-          <div class="design-grid">${tiles(c.designNotes)}</div>
-          <div class="context-grid">
-            <article class="context story">
-              <span class="eyebrow">${e(t.storyTitle)}</span>
-              <h3>${e(c.story.title)}</h3>
-              <p>${e(c.story.body)}</p>
-            </article>
-            <article class="context adaptation">
-              <span class="eyebrow">${e(t.adaptTitle)}</span>
-              <h3>${e(c.adaptation.title)}</h3>
-              <p>${e(c.adaptation.body)}</p>
-            </article>
-          </div>
-          <aside class="distinction">
-            <h3>${e(c.distinction.title)}</h3>
-            <p>${e(c.distinction.body)}</p>
-          </aside>
-        </section>
         <section id="concepts" class="content-section concepts-section">
-          <span class="eyebrow">03 / ${e(t.concepts)}</span>
+          <span class="eyebrow">01 / ${e(t.concepts)}</span>
           <h2>${e(t.conceptsTitle)}</h2>
           <p class="concepts-intro">${e(t.conceptsIntro)}</p>
           <div class="concept-grid">
@@ -348,7 +364,7 @@ for (const locale of locales) {
           </div>
         </section>
         <section id="examples" class="content-section examples-section">
-          <span class="eyebrow">04 / ${e(t.examples)}</span>
+          <span class="eyebrow">02 / ${e(t.examples)}</span>
           <h2>${e(t.examplesTitle)}</h2>
           <p class="examples-intro">${e(t.examplesIntro)}</p>
           <div class="example-groups">
@@ -357,7 +373,7 @@ for (const locale of locales) {
           </div>
         </section>
         <section id="sources" class="content-section sources">
-          <span class="eyebrow">05 / ${e(t.sources)}</span>
+          <span class="eyebrow">03 / ${e(t.sources)}</span>
           <h2>${e(t.sources)}</h2>
           <p>${e(t.sourceNote)}</p>
           <ul>

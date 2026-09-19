@@ -33,6 +33,7 @@
   "mechanicLabel": "メカニクス",
   "variantLabel": "扱う型",
   "learnLabel": "デザイン目標",
+  "implementationChecklist": "実装チェックリスト",
   "stepsTitle": "メカニクスへの3つの質問",
   "mistakesTitle": "デザイン上の問題",
   "designerTitle": "攻撃を調整する",

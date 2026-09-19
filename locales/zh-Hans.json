@@ -33,6 +33,7 @@
   "mechanicLabel": "机制",
   "variantLabel": "变体",
   "learnLabel": "设计目标",
+  "implementationChecklist": "实施检查清单",
   "stepsTitle": "关于机制的三个问题",
   "mistakesTitle": "设计错误",
   "designerTitle": "调整攻击",

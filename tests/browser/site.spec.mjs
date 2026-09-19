@@ -10,6 +10,7 @@ for (const locale of registry) {
     page.on('response', (r) => {
       if (r.status() >= 400) errors.push(`${r.status()} ${r.url()}`);
     });
+    await page.setViewportSize({ width: 1440, height: 1000 });
     await page.goto(`${locale.code}/mechanics/charge/`);
     await expect(page.locator('html')).toHaveAttribute('lang', locale.code);
     await expect(page.locator('html')).toHaveAttribute('dir', locale.dir);
@@ -31,6 +32,15 @@ for (const locale of registry) {
     await expect(page.locator('.game-example')).toHaveCount(6);
     await expect(page.locator('.sources li a')).toHaveCount(7);
     await expect(page.locator('.review-note')).toBeVisible();
+    await expect(page.locator('.implementation-checklist')).toBeVisible();
+    await expect(page.locator('.checklist-group')).toHaveCount(2);
+    await expect(page.locator('.checklist-item')).toHaveCount(11);
+    await expect(page.locator('#playbook, #design')).toHaveCount(0);
+    const checklistBox = await page.locator('.implementation-checklist').boundingBox();
+    expect(
+      checklistBox.y + checklistBox.height,
+      `${locale.code}: checklist fits first screen`,
+    ).toBeLessThanOrEqual(1000);
     await expect(page.locator('#quiz, .quiz, [data-quiz]')).toHaveCount(0);
     await expect(page.locator('.game-example a[href*="youtube.com/watch"]')).toHaveCount(6);
     const videos = await page
@@ -73,6 +83,12 @@ test('controls work by keyboard; play advances; seeking pauses', async ({ page }
   ).toHaveCount(0);
   await expect(page.locator('.lesson-hero h1')).toHaveText('Таран');
   await expect(page.locator('.lesson-category')).toHaveText('Движение и пространство');
+  await expect(page.locator('.implementation-checklist > div > h2')).toHaveText(
+    'Чеклист внедрения',
+  );
+  await expect(page.locator('.checklist-item summary').first()).toContainText(
+    'Когда прекращается слежение?',
+  );
   await expect(page.locator('.lesson-hero')).not.toContainText('3 мин · урок по дизайну');
   await expect(page.locator('.lesson-hero')).not.toContainText('МЕХАНИКА 01');
   await expect(
@@ -98,6 +114,10 @@ test('controls work by keyboard; play advances; seeking pauses', async ({ page }
   expect(Math.abs(simulationBox.y - heroBox.y)).toBeLessThan(2);
   expect(Math.max(heroBox.y + heroBox.height, simulationBox.y + simulationBox.height)).toBeLessThan(
     1000,
+  );
+  await page.locator('.checklist-item summary').first().click();
+  await expect(page.locator('.checklist-item').first().locator('p')).toHaveText(
+    'Выберите точный момент. Обозначьте его позой, звуком или эффектом.',
   );
   const demo = page.locator('[data-charge-demo]');
   await page.locator('[data-charge-play]').click();

@@ -33,6 +33,7 @@
   "mechanicLabel": "MECHANIC",
   "variantLabel": "Variant",
   "learnLabel": "Design goal",
+  "implementationChecklist": "Implementation checklist",
   "stepsTitle": "Three questions for the mechanic",
   "mistakesTitle": "Design mistakes",
   "designerTitle": "Tune the attack",
