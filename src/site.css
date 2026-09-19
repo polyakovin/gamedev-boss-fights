@@ -318,9 +318,14 @@ section[id] {
 }
 .lesson-overview-grid {
   display: grid;
-  grid-template-columns: minmax(340px, 0.74fr) minmax(0, 1.26fr);
+  grid-template-columns: minmax(440px, 1fr) minmax(340px, 400px);
   align-items: start;
   gap: clamp(30px, 4vw, 64px);
+}
+.simulation-section {
+  width: 100%;
+  max-width: 400px;
+  justify-self: end;
 }
 .lesson-topline {
   display: flex;
@@ -932,7 +937,7 @@ section[id] {
 }
 @media (min-width: 1600px) {
   .lesson-overview-grid {
-    grid-template-columns: minmax(360px, 0.7fr) minmax(0, 1.3fr);
+    grid-template-columns: minmax(480px, 1fr) 400px;
   }
 }
 @media (max-width: 1150px) {
@@ -962,6 +967,9 @@ section[id] {
   }
   .lesson-hero {
     max-width: 720px;
+  }
+  .simulation-section {
+    justify-self: center;
   }
   .catalog-overview {
     grid-template-columns: 1fr;

@@ -65,10 +65,13 @@ test('controls work by keyboard; play advances; seeking pauses', async ({ page }
   ).toHaveCount(0);
   const heroBox = await page.locator('.lesson-hero').boundingBox();
   const simulationBox = await page.locator('.simulation-section').boundingBox();
+  const diagramBox = await page.locator('[data-charge-svg]').boundingBox();
   expect(simulationBox.x).toBeGreaterThan(heroBox.x + heroBox.width);
+  expect(simulationBox.width).toBeLessThanOrEqual(400);
+  expect(diagramBox.height).toBeGreaterThan(diagramBox.width);
   expect(Math.abs(simulationBox.y - heroBox.y)).toBeLessThan(2);
   expect(Math.max(heroBox.y + heroBox.height, simulationBox.y + simulationBox.height)).toBeLessThan(
-    900,
+    1000,
   );
   const demo = page.locator('[data-charge-demo]');
   await page.locator('[data-charge-play]').click();

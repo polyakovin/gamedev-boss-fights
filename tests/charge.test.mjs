@@ -14,6 +14,7 @@ import {
 import { CHARGE_ART, renderCharge, renderChargeThumbnail } from '../lib/charge-view.mjs';
 
 test('aim follows movement, then the target and direction stay frozen while the player sidesteps', () => {
+  assert.deepEqual(DEFAULT_PLAN.heading, { x: 0, y: -1 });
   const aim = chargeFrame(1.2);
   assert.notEqual(aim.heading.y, 0);
   assert.deepEqual(aim.target, aim.player);

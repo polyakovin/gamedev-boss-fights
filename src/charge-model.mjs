@@ -16,9 +16,9 @@ const point = (x, y) => Object.freeze({ x, y });
 
 /** Snapshot the target when aiming ends. Later player movement cannot steer it. */
 export function createChargePlan({
-  origin = { x: 180, y: 240 },
-  target = { x: 610, y: 240 },
-  distance = 640,
+  origin = { x: 280, y: 560 },
+  target = { x: 280, y: 260 },
+  distance = 430,
 } = {}) {
   const dx = target.x - origin.x;
   const dy = target.y - origin.y;
@@ -73,7 +73,7 @@ export function playerPosition(time, scenario = 'sidestep', plan = DEFAULT_PLAN)
   const offset =
     scenario === 'sidestep'
       ? { x: plan.heading.y * 126, y: -plan.heading.x * 126 }
-      : { x: plan.heading.x * 170, y: plan.heading.y * 170 };
+      : { x: plan.heading.x * 120, y: plan.heading.y * 120 };
   return { x: plan.target.x + offset.x * progress, y: plan.target.y + offset.y * progress };
 }
 

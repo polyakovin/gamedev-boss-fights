@@ -60,12 +60,16 @@ export function initializeCharge(widget) {
     path.setAttribute(
       'd',
       scenario === 'sidestep'
-        ? 'M 610 218 V 154 M 602 165 L 610 154 L 618 165'
-        : 'M 645 240 H 733 M 721 232 L 733 240 L 721 248',
+        ? 'M 258 260 H 166 M 177 252 L 166 260 L 177 268'
+        : 'M 280 225 V 105 M 272 116 L 280 105 L 288 116',
     );
-    path.setAttribute('stroke', scenario === 'sidestep' ? '#27786d' : '#ac5646');
+    path.setAttribute(
+      'stroke',
+      scenario === 'sidestep' ? 'var(--diagram-player-label)' : '#ac5646',
+    );
     path.setAttribute('opacity', frame.phase === 1 ? '1' : frame.phase === 2 ? '.5' : '0');
     bossLabel.setAttribute('x', frame.boss.x);
+    bossLabel.setAttribute('y', frame.boss.y + 72);
     playerLabel.setAttribute('x', frame.player.x);
     playerLabel.setAttribute('y', frame.player.y - 47);
     impact.setAttribute('visibility', frame.hit ? 'visible' : 'hidden');
