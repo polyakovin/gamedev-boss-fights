@@ -82,6 +82,13 @@ test('the published lesson teaches design decisions rather than player execution
   assert.ok(ru.steps.every((step) => step.title.endsWith('?')));
 });
 
+test('community review explicitly includes facts, concepts, examples, and translations', () => {
+  assert.match(source.ui.en.reviewNote, /facts.*concepts.*examples.*translations/i);
+  assert.match(source.ui.ru.reviewNote, /факты.*концепции.*примеры.*переводы/i);
+  assert.match(source.ui.en.contributeText, /fact or design concept/i);
+  assert.match(source.ui.ru.contributeText, /факт или концепцию/i);
+});
+
 test('published game references cover 2D and 3D with stable YouTube videos', async () => {
   const examples = source.mechanics[0].translations.en.examples;
   assert.equal(examples.length, 6);

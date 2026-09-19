@@ -40,7 +40,7 @@ body:
     id: suggestion
     attributes:
       label: Suggested wording and explanation
-      description: Explain the issue and your preferred translation. Preserve the mechanic’s meaning and correct quiz answer.
+      description: Explain the issue and your preferred translation. Preserve the mechanic’s meaning, factual claims, and distinction between documented and illustrative examples.
   - type: textarea
     id: review
     attributes:

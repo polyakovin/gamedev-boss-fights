@@ -36,6 +36,8 @@ The current template requires exactly three steps, matching the localized “Thr
 
 Address the game designer, not a player looking for a walkthrough. Prefer concrete design variables and checks: what becomes fixed, what can still change, which signal communicates the change, and how much space the player must be able to clear. Distinguish an attack’s visual telegraph from a teaching overlay. Test optional dashes, jumps, and invulnerability states without making them silently mandatory for a basic escape.
 
+Content review is as valuable as translation review. Check factual claims, design concepts, terminology, examples, source relevance, and whether the animation actually demonstrates the written rule. When correcting a claim, link evidence and state whether it documents a particular game, supports a general principle, or is only an illustrative design choice.
+
 ### Add game references
 
 Every published lesson must include at least one 2D and one 3D boss that uses the mechanic. Name the game and boss, explain one useful design observation, and link directly to a YouTube demonstration of that behavior. Verify that the link works before submitting the PR.

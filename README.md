@@ -6,11 +6,11 @@ An open, interactive encyclopedia of boss mechanics for game designers. Each les
 
 The first lesson is **Charge**. Compare two test paths, pause the animation, and inspect how tracking, commitment, collision, and recovery work together. Six boss references from 2D and 3D games show how the same mechanic changes across real encounters, with a video of each fight.
 
-Available in English, Russian, Simplified Chinese, Hindi, Bengali, Spanish, Arabic, and Japanese. Initial translations await independent fluent-speaker review; corrections and reviews are welcome. [Open «Таран» in Russian](https://polyakovin.github.io/gamedev-boss-fights/ru/mechanics/charge/).
+Available in English, Russian, Simplified Chinese, Hindi, Bengali, Spanish, Arabic, and Japanese. Facts, design concepts, examples, and translations all welcome independent review. [Open «Таран» in Russian](https://polyakovin.github.io/gamedev-boss-fights/ru/mechanics/charge/).
 
 ## Make your first contribution
 
-A single wording correction or translation improvement is a useful PR. Open a lesson’s **Improve this page** link, edit its JSON on GitHub, and propose the change from your fork. Keep the keys and array order intact. You do not need to add a whole mechanic or translate all eight languages to contribute.
+A single wording correction, factual check, concept review, or translation improvement is a useful PR. Open a lesson’s **Improve this page** link, edit its JSON on GitHub, and propose the change from your fork. Keep the keys and array order intact. You do not need to add a whole mechanic or translate all eight languages to contribute.
 
 - [Contribution guide](CONTRIBUTING.md): small PRs, checks, and review.
 - [Content guide](docs/content-guide.md): new mechanics, examples, animations, and sources.

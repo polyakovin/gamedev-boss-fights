@@ -13,6 +13,8 @@ body:
       label: What would you like to improve?
       options:
         - Explanation or factual correction
+        - Concept or design claim review
+        - Example or source review
         - Animation or interaction
         - New mechanic
         - Accessibility or layout
@@ -30,7 +32,7 @@ body:
     id: problem
     attributes:
       label: What should change, and why?
-      description: For a new mechanic, describe the variant and the decision it teaches. For a bug, include steps to reproduce it.
+      description: For a correction, distinguish facts, design concepts, examples, and interpretation. For a new mechanic, describe the variant and the decision it teaches. For a bug, include steps to reproduce it.
     validations:
       required: true
   - type: textarea

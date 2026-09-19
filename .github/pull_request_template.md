@@ -6,9 +6,9 @@ Describe the problem and the resulting behavior or wording. Name affected mechan
 
 List commands you ran and their results. For UI changes, include the pages, screen sizes, keyboard/RTL/reduced-motion checks, and screenshots where useful. If you used only the GitHub editor or could not run a check, say so.
 
-## Content and translation review
+## Content, facts, concepts, and translation review
 
-For meaning changes, describe the updated rule, the `contentVersion` bump, and translation synchronization with matching `sourceVersion` values. For a review-status change, identify the independent fluent reviewer, locale, reviewed content version, and scope. Leave this section as “Not applicable” for unrelated code changes.
+For a factual or conceptual correction, cite supporting evidence and explain whether the claim is documented, inferred, or illustrative. For meaning changes, describe the updated rule, the `contentVersion` bump, and translation synchronization with matching `sourceVersion` values. For a review-status change, identify the independent fluent reviewer, locale, reviewed content version, and scope. Leave this section as “Not applicable” for unrelated code changes.
 
 ## Checklist
 
