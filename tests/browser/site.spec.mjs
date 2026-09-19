@@ -69,6 +69,13 @@ test('controls work by keyboard; play advances; seeking pauses', async ({ page }
   await page.goto('ru/mechanics/charge/');
   await expect(page.locator('.lesson-sidebar')).toHaveCount(0);
   await expect(
+    page.locator('.lesson-toolbar, .back-link, .lesson-edit, .lesson-topline, .title-index'),
+  ).toHaveCount(0);
+  await expect(page.locator('.lesson-hero h1')).toHaveText('Таран');
+  await expect(page.locator('.lesson-category')).toHaveText('Движение и пространство');
+  await expect(page.locator('.lesson-hero')).not.toContainText('3 мин · урок по дизайну');
+  await expect(page.locator('.lesson-hero')).not.toContainText('МЕХАНИКА 01');
+  await expect(
     page.locator(
       '.charge-demo__heading, .charge-demo__legend, .charge-demo__note, [data-charge-speed]',
     ),
@@ -190,6 +197,7 @@ test('catalog and language gateway point to real pages', async ({ page, request 
   ]);
   await expect(page.locator('.card-diagram [data-charge-art="tank"]')).toHaveCount(1);
   await expect(page.locator('.card-diagram [data-charge-art="monster"]')).toHaveCount(1);
+  await expect(page.locator('.card-number')).toHaveCount(0);
   await page.setViewportSize({ width: 375, height: 812 });
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
 });

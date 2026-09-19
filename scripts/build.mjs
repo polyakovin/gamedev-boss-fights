@@ -221,9 +221,7 @@ for (const locale of locales) {
         class="mechanic-card"
         href="${link(`${locale.code}/mechanics/${m.meta.id}/`)}"
         ><div class="card-diagram" aria-hidden="true">
-          ${animations[m.meta.animation].thumbnail(m.meta.id)}<span class="card-number"
-            >${String(m.meta.number).padStart(2, '0')}</span
-          >
+          ${animations[m.meta.animation].thumbnail(m.meta.id)}
         </div>
         <div class="card-copy">
           <span class="eyebrow">${e(c.category)}</span>
@@ -289,26 +287,10 @@ for (const locale of locales) {
       a = animations[m.meta.animation];
     const body = /* HTML */ `<div class="lesson-layout">
       <main id="main" class="lesson-main">
-        <div class="lesson-toolbar">
-          <a class="back-link" href="${link(locale.code + '/')}">← ${e(t.catalog)}</a>
-          <a
-            class="lesson-edit"
-            href="${REPOSITORY}/edit/main/content/mechanics/${m.meta.id}/${locale.code}.json"
-            >${e(t.edit)} ↗</a
-          >
-        </div>
         <div class="lesson-overview-grid">
           <section id="overview" class="lesson-hero">
-            <div class="lesson-topline">
-              <span class="eyebrow"
-                >${e(t.mechanicLabel)} ${String(m.meta.number).padStart(2, '0')}</span
-              ><span>${e(c.category)}</span><span>${e(c.readTime)}</span>
-            </div>
-            <h1>
-              ${e(c.title)}<span class="title-index" aria-hidden="true"
-                >${String(m.meta.number).padStart(2, '0')}</span
-              >
-            </h1>
+            <span class="eyebrow lesson-category">${e(c.category)}</span>
+            <h1>${e(c.title)}</h1>
             <p class="hero-subtitle">${e(c.subtitle)}</p>
             <span class="variant">${e(c.variant)}</span>
             <p class="summary">${e(c.summary)}</p>
