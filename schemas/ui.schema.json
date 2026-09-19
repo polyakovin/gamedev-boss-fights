@@ -1,0 +1,225 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "siteName",
+    "tagline",
+    "skip",
+    "catalog",
+    "contribute",
+    "language",
+    "onThisPage",
+    "overview",
+    "simulation",
+    "playbook",
+    "design",
+    "quiz",
+    "sources",
+    "edit",
+    "license",
+    "reviewNote",
+    "indexTitle",
+    "indexSubtitle",
+    "indexEyebrow",
+    "available",
+    "readLesson",
+    "soon",
+    "contributeText",
+    "openSource",
+    "allLanguages",
+    "mechanicLabel",
+    "variantLabel",
+    "learnLabel",
+    "stepsTitle",
+    "mistakesTitle",
+    "designerTitle",
+    "storyTitle",
+    "adaptTitle",
+    "relatedTitle",
+    "answerButton",
+    "chooseAnswer",
+    "correct",
+    "incorrect",
+    "questionLabel",
+    "sourceNote",
+    "back",
+    "notFound",
+    "notFoundText"
+  ],
+  "properties": {
+    "siteName": {
+      "type": "string",
+      "minLength": 1
+    },
+    "tagline": {
+      "type": "string",
+      "minLength": 1
+    },
+    "skip": {
+      "type": "string",
+      "minLength": 1
+    },
+    "catalog": {
+      "type": "string",
+      "minLength": 1
+    },
+    "contribute": {
+      "type": "string",
+      "minLength": 1
+    },
+    "language": {
+      "type": "string",
+      "minLength": 1
+    },
+    "onThisPage": {
+      "type": "string",
+      "minLength": 1
+    },
+    "overview": {
+      "type": "string",
+      "minLength": 1
+    },
+    "simulation": {
+      "type": "string",
+      "minLength": 1
+    },
+    "playbook": {
+      "type": "string",
+      "minLength": 1
+    },
+    "design": {
+      "type": "string",
+      "minLength": 1
+    },
+    "quiz": {
+      "type": "string",
+      "minLength": 1
+    },
+    "sources": {
+      "type": "string",
+      "minLength": 1
+    },
+    "edit": {
+      "type": "string",
+      "minLength": 1
+    },
+    "license": {
+      "type": "string",
+      "minLength": 1
+    },
+    "reviewNote": {
+      "type": "string",
+      "minLength": 1
+    },
+    "indexTitle": {
+      "type": "string",
+      "minLength": 1
+    },
+    "indexSubtitle": {
+      "type": "string",
+      "minLength": 1
+    },
+    "indexEyebrow": {
+      "type": "string",
+      "minLength": 1
+    },
+    "available": {
+      "type": "string",
+      "minLength": 1
+    },
+    "readLesson": {
+      "type": "string",
+      "minLength": 1
+    },
+    "soon": {
+      "type": "string",
+      "minLength": 1
+    },
+    "contributeText": {
+      "type": "string",
+      "minLength": 1
+    },
+    "openSource": {
+      "type": "string",
+      "minLength": 1
+    },
+    "allLanguages": {
+      "type": "string",
+      "minLength": 1
+    },
+    "mechanicLabel": {
+      "type": "string",
+      "minLength": 1
+    },
+    "variantLabel": {
+      "type": "string",
+      "minLength": 1
+    },
+    "learnLabel": {
+      "type": "string",
+      "minLength": 1
+    },
+    "stepsTitle": {
+      "type": "string",
+      "minLength": 1
+    },
+    "mistakesTitle": {
+      "type": "string",
+      "minLength": 1
+    },
+    "designerTitle": {
+      "type": "string",
+      "minLength": 1
+    },
+    "storyTitle": {
+      "type": "string",
+      "minLength": 1
+    },
+    "adaptTitle": {
+      "type": "string",
+      "minLength": 1
+    },
+    "relatedTitle": {
+      "type": "string",
+      "minLength": 1
+    },
+    "answerButton": {
+      "type": "string",
+      "minLength": 1
+    },
+    "chooseAnswer": {
+      "type": "string",
+      "minLength": 1
+    },
+    "correct": {
+      "type": "string",
+      "minLength": 1
+    },
+    "incorrect": {
+      "type": "string",
+      "minLength": 1
+    },
+    "questionLabel": {
+      "type": "string",
+      "minLength": 1
+    },
+    "sourceNote": {
+      "type": "string",
+      "minLength": 1
+    },
+    "back": {
+      "type": "string",
+      "minLength": 1
+    },
+    "notFound": {
+      "type": "string",
+      "minLength": 1
+    },
+    "notFoundText": {
+      "type": "string",
+      "minLength": 1
+    }
+  },
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Interface translation"
+}

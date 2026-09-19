@@ -1,0 +1,53 @@
+name: Translation correction or review
+description: Improve one phrase, flag unclear terminology, or offer an independent language review.
+title: '[Translation] '
+body:
+  - type: markdown
+    attributes:
+      value: |
+        One phrase is enough for a useful contribution. Review status remains needs-review until an independent fluent reviewer has checked the complete lesson.
+        See docs/translation-guide.md for the review process.
+  - type: dropdown
+    id: locale
+    attributes:
+      label: Language
+      options:
+        - English (en)
+        - Русский (ru)
+        - 简体中文 (zh-Hans)
+        - हिन्दी (hi)
+        - বাংলা (bn)
+        - Español (es)
+        - العربية (ar)
+        - 日本語 (ja)
+    validations:
+      required: true
+  - type: input
+    id: page
+    attributes:
+      label: Page or file
+      description: Paste a lesson URL or a path such as locales/ru.json.
+    validations:
+      required: true
+  - type: textarea
+    id: current
+    attributes:
+      label: Current wording or review scope
+      description: Quote the phrase you want to improve, or name the complete lesson you would like to review.
+    validations:
+      required: true
+  - type: textarea
+    id: suggestion
+    attributes:
+      label: Suggested wording and explanation
+      description: Explain the issue and your preferred translation. Preserve the mechanic’s meaning and correct quiz answer.
+  - type: textarea
+    id: review
+    attributes:
+      label: Language review information
+      description: If offering a review, state your proficiency, whether you authored the translation, and whether you checked the source and rendered page. Personal identity details are not needed.
+  - type: textarea
+    id: display
+    attributes:
+      label: Display or writing-direction problems
+      description: If relevant, describe clipping, line breaks, Arabic RTL behavior, or screen-reader pronunciation and give the browser and screen size.

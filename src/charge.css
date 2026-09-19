@@ -1,0 +1,390 @@
+.charge-demo {
+  --charge-ink: #333e37;
+  --charge-muted: #6a7367;
+  --charge-border: #dcd7c9;
+  --charge-teal: #276d62;
+  overflow: hidden;
+  margin-block: 2rem;
+  color: var(--charge-ink);
+  background: #fffdf7;
+  border: 1px solid var(--charge-border);
+  border-radius: 18px;
+}
+.charge-demo *,
+.charge-demo *::before,
+.charge-demo *::after {
+  box-sizing: border-box;
+}
+.charge-demo__heading {
+  padding: 1.5rem 1.75rem 0;
+}
+.charge-demo__eyebrow {
+  color: var(--charge-teal);
+  font:
+    600 0.7rem/1.4 ui-monospace,
+    monospace;
+  letter-spacing: 0.1em;
+}
+.charge-demo__heading h2 {
+  margin: 0.45rem 0 0.5rem;
+  font-size: clamp(1.2rem, 2.5vw, 1.55rem);
+  line-height: 1.25;
+}
+.charge-demo__heading p {
+  margin: 0;
+  color: var(--charge-muted);
+  font-size: 0.94rem;
+  line-height: 1.65;
+  max-width: 70ch;
+}
+.charge-demo__canvas {
+  padding: 0.8rem 0.55rem 0.4rem;
+}
+.charge-demo__svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  direction: ltr;
+}
+.charge-demo__svg text {
+  font-family: inherit;
+}
+.charge-demo__entity-label {
+  fill: #746249;
+  font-size: 16px;
+  font-weight: 600;
+}
+.charge-demo__entity-label--player {
+  fill: #286b5e;
+}
+.charge-demo__status-label {
+  fill: #704f3e;
+  font-size: 15px;
+  font-weight: 600;
+}
+.charge-demo__legend {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 0.45rem 1.4rem;
+  margin: 0.2rem 0.75rem 0.7rem;
+  font-size: 0.73rem;
+  line-height: 1.5;
+  color: var(--charge-muted);
+}
+.charge-demo__legend span {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+.charge-demo__key {
+  display: inline-block;
+  width: 0.6rem;
+  height: 0.6rem;
+  flex: 0 0 0.6rem;
+  border-radius: 2px;
+}
+.charge-demo__key--boss {
+  background: #c88e51;
+}
+.charge-demo__key--player {
+  background: #438c7b;
+}
+.charge-demo__key--danger {
+  background: #cd9685;
+  background-image: repeating-linear-gradient(
+    45deg,
+    transparent 0,
+    transparent 2px,
+    #b36650 2px,
+    #b36650 3px
+  );
+}
+.charge-demo__interaction {
+  padding: 1.25rem 1.75rem 1.3rem;
+  border-top: 1px solid #e9e4d8;
+}
+.charge-demo button,
+.charge-demo input {
+  font: inherit;
+}
+.charge-demo button {
+  min-height: 44px;
+  cursor: pointer;
+  touch-action: manipulation;
+}
+.charge-demo button:focus-visible,
+.charge-demo input:focus-visible {
+  outline: 3px solid #398776;
+  outline-offset: 4px;
+}
+.charge-demo__scenarios {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin: 0 0 1.1rem;
+  padding: 0;
+  border: 0;
+  min-width: 0;
+}
+.charge-demo__scenarios legend {
+  padding: 0;
+  margin-bottom: 0.55rem;
+  color: var(--charge-muted);
+  font-size: 0.74rem;
+  font-weight: 600;
+}
+.charge-demo__scenarios label {
+  position: relative;
+  display: flex;
+  align-items: center;
+  min-height: 44px;
+  cursor: pointer;
+  flex: 1 1 13rem;
+}
+.charge-demo__scenarios input {
+  position: absolute;
+  inset-inline-start: 0.8rem;
+  accent-color: var(--charge-teal);
+  width: 1rem;
+  height: 1rem;
+  margin: 0;
+}
+.charge-demo__scenarios span {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  min-height: 44px;
+  padding: 0.55rem 0.75rem;
+  padding-inline-start: 2.25rem;
+  border: 1px solid var(--charge-border);
+  border-radius: 7px;
+  color: var(--charge-muted);
+  font-size: 0.8rem;
+  line-height: 1.4;
+}
+.charge-demo__scenarios input:checked + span {
+  background: #edf2e9;
+  border-color: #7c9986;
+  color: #335d4d;
+}
+.charge-demo__scenarios input:focus-visible {
+  outline: none;
+}
+.charge-demo__scenarios input:focus-visible + span {
+  outline: 3px solid #398776;
+  outline-offset: 3px;
+}
+.charge-demo__phase-buttons {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.4rem;
+}
+.charge-demo__phase-buttons button {
+  padding: 0.65rem 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 0.3rem 0.5rem;
+  color: #636a5c;
+  background: #f7f4ec;
+  border: 1px solid #e3dfd1;
+  border-radius: 7px;
+  font-size: 0.77rem;
+  line-height: 1.35;
+  font-weight: 600;
+}
+.charge-demo__phase-buttons button > span {
+  font:
+    500 0.68rem/1.4 ui-monospace,
+    monospace;
+  opacity: 0.75;
+}
+.charge-demo__phase-buttons button[aria-pressed='true'] {
+  color: #fffdf4;
+  background: var(--charge-teal);
+  border-color: var(--charge-teal);
+}
+.charge-demo__phase-buttons button:hover {
+  border-color: #6a9180;
+}
+.charge-demo__description {
+  min-height: 3.8em;
+  margin: 0.9rem 0 1.1rem;
+  font-size: 0.86rem;
+  line-height: 1.75;
+  color: var(--charge-muted);
+}
+.charge-demo__description strong {
+  color: var(--charge-ink);
+}
+.charge-demo__transport {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.5rem 0.75rem;
+}
+.charge-demo__play,
+.charge-demo__restart {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  border-radius: 7px;
+  padding: 0.55rem 0.9rem;
+  line-height: 1.35;
+  font-size: 0.8rem !important;
+}
+.charge-demo__play {
+  border: 1px solid var(--charge-teal);
+  background: var(--charge-teal);
+  color: #fffdf4;
+  min-width: 7.5rem;
+}
+.charge-demo__play:hover {
+  background: #1e584e;
+}
+.charge-demo__play svg {
+  width: 1rem;
+  height: 1rem;
+  fill: currentColor;
+}
+.charge-demo__restart {
+  border: 1px solid var(--charge-border);
+  color: #5c6659;
+  background: transparent;
+}
+.charge-demo__restart:hover {
+  background: #f1efe4;
+}
+.charge-demo__restart svg {
+  width: 1rem;
+  height: 1rem;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.charge-demo__speed {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin-inline-start: auto;
+  font-size: 0.75rem;
+  color: var(--charge-muted);
+}
+.charge-demo input[type='range'] {
+  accent-color: var(--charge-teal);
+  height: 44px;
+  cursor: pointer;
+  margin: 0;
+}
+.charge-demo__speed input {
+  width: 5rem;
+  min-width: 0;
+}
+.charge-demo__speed output {
+  min-width: 2.7rem;
+  font-variant-numeric: tabular-nums;
+}
+.charge-demo__timeline {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 0.8rem;
+  margin-block: 0.7rem 0.2rem;
+  color: var(--charge-muted);
+  font-size: 0.72rem;
+}
+.charge-demo__timeline input {
+  width: 100%;
+}
+.charge-demo__timeline output {
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.charge-demo__note,
+.charge-demo__motion-note {
+  margin: 0.65rem 0 0;
+  color: var(--charge-muted);
+  font-size: 0.73rem;
+  line-height: 1.65;
+}
+.charge-demo__motion-note {
+  padding: 0.6rem 0.8rem;
+  background: #edf2e9;
+  border-radius: 5px;
+}
+@media (max-width: 600px) {
+  .charge-demo {
+    border-radius: 12px;
+  }
+  .charge-demo__heading {
+    padding: 1.15rem 1rem 0;
+  }
+  .charge-demo__heading p {
+    font-size: 0.86rem;
+  }
+  .charge-demo__interaction {
+    padding: 1rem;
+  }
+  .charge-demo__canvas {
+    padding-inline: 0;
+  }
+  .charge-demo__entity-label,
+  .charge-demo__status-label {
+    font-size: 19px;
+  }
+  .charge-demo__scenarios label {
+    flex-basis: 100%;
+  }
+  .charge-demo__phase-buttons {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .charge-demo__phase-buttons button {
+    justify-content: flex-start;
+    padding-inline: 0.75rem;
+  }
+  .charge-demo__description {
+    min-height: 5.2em;
+  }
+  .charge-demo__transport {
+    column-gap: 0.5rem;
+  }
+  .charge-demo__speed {
+    flex-basis: 100%;
+    margin-inline-start: 0;
+  }
+  .charge-demo__speed input {
+    flex: 1;
+    width: auto;
+  }
+  .charge-demo__timeline {
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 0 0.5rem;
+  }
+  .charge-demo__timeline > span {
+    grid-column: 1 / -1;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .charge-demo *,
+  .charge-demo *::before,
+  .charge-demo *::after {
+    scroll-behavior: auto;
+    animation: none;
+    transition: none;
+  }
+}
+
+.charge-demo:not([data-charge-ready])
+  :is(
+    .charge-demo__scenarios,
+    .charge-demo__phase-buttons,
+    .charge-demo__transport,
+    .charge-demo__timeline
+  ) {
+  display: none;
+}

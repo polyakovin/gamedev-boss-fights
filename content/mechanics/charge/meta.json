@@ -1,0 +1,19 @@
+{
+  "id": "charge",
+  "number": 1,
+  "published": true,
+  "sourceLocale": "en",
+  "contentVersion": 1,
+  "animation": "charge",
+  "related": [],
+  "sources": [
+    {
+      "title": "Mike Stout — Boss Battle Design and Structure",
+      "url": "https://www.gamedeveloper.com/design/boss-battle-design-and-structure"
+    },
+    {
+      "title": "Mike Stout — Enemy Attacks and Telegraphing",
+      "url": "https://www.gamedeveloper.com/design/enemy-attacks-and-telegraphing"
+    }
+  ]
+}

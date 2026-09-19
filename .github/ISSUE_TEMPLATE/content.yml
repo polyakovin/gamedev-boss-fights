@@ -1,0 +1,50 @@
+name: Content correction or new mechanic
+description: Improve an explanation, report a diagram problem, or propose the next lesson.
+title: '[Content] '
+body:
+  - type: markdown
+    attributes:
+      value: |
+        A small correction is welcome. You may also open a PR directly; an issue is optional.
+        Please describe one mechanic or problem so the discussion stays focused.
+  - type: dropdown
+    id: kind
+    attributes:
+      label: What would you like to improve?
+      options:
+        - Explanation or factual correction
+        - Animation or interaction
+        - New mechanic
+        - Accessibility or layout
+    validations:
+      required: true
+  - type: input
+    id: page
+    attributes:
+      label: Lesson or page
+      description: Paste a page URL or name the proposed mechanic.
+      placeholder: 'https://polyakovin.github.io/gamedev-boss-fights/en/mechanics/charge/'
+    validations:
+      required: true
+  - type: textarea
+    id: problem
+    attributes:
+      label: What should change, and why?
+      description: For a new mechanic, describe the variant and the decision it teaches. For a bug, include steps to reproduce it.
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Suggested wording or behavior
+      description: Explain the cue, player response, and expected outcome if relevant. A rough idea is enough.
+  - type: textarea
+    id: sources
+    attributes:
+      label: References or supporting evidence
+      description: Link relevant sources and explain what they support. Keep game screenshots and third-party art out of proposed site assets.
+  - type: textarea
+    id: environment
+    attributes:
+      label: Browser or accessibility context
+      description: For interaction problems, include browser, viewport, input method, language, and reduced-motion setting when relevant.

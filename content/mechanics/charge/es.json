@@ -1,0 +1,101 @@
+{
+  "title": "Embestida",
+  "subtitle": "Una línea peligrosa. Un paso lateral a tiempo. Una oportunidad para atacar.",
+  "variant": "Embestida con dirección fija",
+  "summary": "El jefe se lanza a gran velocidad y utiliza su cuerpo como arma. En esta variante puede apuntar antes de fijar la dirección, pero ya no puede girar una vez fijada.",
+  "learning": "Identifica cuándo se fija la dirección, sal por completo de la franja de peligro y aprovecha la recuperación.",
+  "category": "Movimiento y espacio",
+  "readTime": "4 min · lección interactiva",
+  "demo": {
+    "title": "Observa cuándo se fija la dirección",
+    "intro": "Compara dos respuestas al mismo ataque. Desplázate por la línea de tiempo para examinar cada fase.",
+    "play": "Reproducir",
+    "pause": "Pausar",
+    "restart": "Reiniciar",
+    "timeline": "Línea de tiempo del ataque",
+    "speed": "Velocidad de reproducción",
+    "step": "Fases del ataque",
+    "scenario": "Respuesta del jugador",
+    "sidestep": "Paso lateral",
+    "retreat": "Retroceder en línea recta",
+    "phaseNames": ["Apuntar", "Fijar", "Embestir", "Recuperarse"],
+    "phaseDescriptions": [
+      "El jefe aún puede ajustar la dirección del ataque. Si te apartas demasiado pronto, puede seguir tu movimiento.",
+      "La dirección ya está fijada. Muévete de lado hasta que todo tu cuerpo salga de la franja de peligro.",
+      "El jefe avanza a toda velocidad por la línea fijada. La distancia por sí sola no te protegerá.",
+      "El jefe se ha detenido y se está recuperando. Es tu oportunidad para contraatacar."
+    ],
+    "boss": "Jefe · defensor blindado",
+    "player": "Jugador · criatura",
+    "danger": "Franja de peligro",
+    "path": "Movimiento",
+    "locked": "Dirección fijada",
+    "safe": "Fuera de la franja",
+    "hit": "Aún en la franja",
+    "reducedMotion": "La animación comienza en pausa. Usa los botones de las fases o la línea de tiempo para explorar sin reproducirla.",
+    "diagramDescription": "Diagrama visto desde arriba de un jefe blindado que embiste hacia una criatura. Esquivar de lado permite salir de la franja de peligro; correr a lo largo de ella acaba en un impacto.",
+    "overlayNote": "La franja de color explica la mecánica. Un juego puede anunciar el ataque mediante una postura, un sonido o efectos."
+  },
+  "steps": [
+    {
+      "title": "Espera a que se fije la dirección",
+      "body": "Busca la postura, el sonido o la señal de apuntado que indique que la dirección ya está fijada. Hasta entonces, el jefe aún puede girar hacia ti."
+    },
+    {
+      "title": "Cruza la trayectoria del ataque",
+      "body": "Muévete perpendicularmente a la embestida. Toda la zona de colisión de tu personaje debe salir de la franja de peligro; un pequeño desplazamiento lateral puede no bastar."
+    },
+    {
+      "title": "Aprovecha el fallo para contraatacar",
+      "body": "Cuando el jefe se detenga, acércate hasta quedar a distancia de ataque y golpea. Termina tu respuesta antes de que empiece su siguiente acción."
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "Correr a lo largo de la franja",
+      "body": "Ganas distancia, pero sigues en la trayectoria del ataque. Un jefe más rápido puede alcanzarte igualmente."
+    },
+    {
+      "title": "Esquivar demasiado pronto",
+      "body": "Antes de fijar la dirección, el jefe puede ajustar su puntería y seguir tu movimiento."
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "Haz visible el momento en que se fija la dirección",
+      "body": "Marca con una señal clara el paso de seguir al jugador a fijar la dirección. El jugador necesita saber cuándo cambia la regla."
+    },
+    {
+      "title": "Deja una salida alcanzable",
+      "body": "Da tiempo suficiente para salir de la franja con el movimiento normal desde las posiciones iniciales previstas. Este ejemplo no requiere un impulso rápido, un salto ni invulnerabilidad."
+    },
+    {
+      "title": "Da un propósito a la recuperación",
+      "body": "La oportunidad debe durar lo suficiente para volver a entrar en alcance y realizar el contraataque. Un daño mayor debe seguir permitiendo avanzar más rápido."
+    }
+  ],
+  "story": {
+    "title": "Un defensor ante la compuerta",
+    "body": "Por ejemplo, un guardián humano conduce un ariete blindado en un cruce sobre un canal. Su tarea es impedir que la criatura llegue al asentamiento al otro lado de la compuerta. Un paso estrecho, un vehículo pesado y la dificultad para girar hacen que la embestida encaje en este lugar."
+  },
+  "adaptation": {
+    "title": "Protección con una condición clara",
+    "body": "La pala frontal podría bloquear los proyectiles que llegan de frente mientras está bajada durante la embestida, y elevarse durante la recuperación. Muestra el bloqueo con un efecto de impacto distintivo; mantén la utilidad de los golpes laterales o durante la recuperación. Ajusta la franja de peligro y la recuperación al movimiento y al alcance disponibles en ese punto de la progresión. No anules mejoras sin indicarlo ni inventes una inmunidad en el momento en que llega un golpe."
+  },
+  "distinction": {
+    "title": "Embestida ≠ impulso rápido ≠ acometida",
+    "body": "Una embestida amenaza una franja mediante el movimiento del cuerpo en una dirección ya fijada. Un impulso rápido puede limitarse a cambiar al jefe de posición. Una acometida suele ser un golpe corto para cerrar distancias. Esta página trata una variante de la embestida, no una regla universal para todos los juegos."
+  },
+  "quiz": {
+    "question": "La dirección está fijada. ¿Cuál es la forma fiable de escapar en este ejemplo?",
+    "options": [
+      "Correr en línea recta alejándote del jefe.",
+      "Moverte de lado hasta que todo tu cuerpo salga de la franja.",
+      "Quedarte quieto y esperar la recuperación."
+    ],
+    "correctIndex": 1,
+    "explanation": "Muévete perpendicularmente a la trayectoria. Una vez fijada la dirección, el jefe no puede seguir ese movimiento lateral. Ganar distancia sobre la misma línea no elimina el riesgo de colisión."
+  },
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

@@ -1,0 +1,329 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "title",
+    "subtitle",
+    "variant",
+    "summary",
+    "learning",
+    "category",
+    "readTime",
+    "demo",
+    "steps",
+    "mistakes",
+    "designNotes",
+    "story",
+    "adaptation",
+    "distinction",
+    "quiz",
+    "reviewStatus",
+    "sourceVersion"
+  ],
+  "properties": {
+    "title": {
+      "type": "string",
+      "minLength": 1
+    },
+    "subtitle": {
+      "type": "string",
+      "minLength": 1
+    },
+    "variant": {
+      "type": "string",
+      "minLength": 1
+    },
+    "summary": {
+      "type": "string",
+      "minLength": 1
+    },
+    "learning": {
+      "type": "string",
+      "minLength": 1
+    },
+    "category": {
+      "type": "string",
+      "minLength": 1
+    },
+    "readTime": {
+      "type": "string",
+      "minLength": 1
+    },
+    "demo": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "title",
+        "intro",
+        "play",
+        "pause",
+        "restart",
+        "timeline",
+        "speed",
+        "step",
+        "scenario",
+        "sidestep",
+        "retreat",
+        "phaseNames",
+        "phaseDescriptions",
+        "boss",
+        "player",
+        "danger",
+        "path",
+        "locked",
+        "safe",
+        "hit",
+        "reducedMotion",
+        "diagramDescription",
+        "overlayNote"
+      ],
+      "properties": {
+        "title": {
+          "type": "string",
+          "minLength": 1
+        },
+        "intro": {
+          "type": "string",
+          "minLength": 1
+        },
+        "play": {
+          "type": "string",
+          "minLength": 1
+        },
+        "pause": {
+          "type": "string",
+          "minLength": 1
+        },
+        "restart": {
+          "type": "string",
+          "minLength": 1
+        },
+        "timeline": {
+          "type": "string",
+          "minLength": 1
+        },
+        "speed": {
+          "type": "string",
+          "minLength": 1
+        },
+        "step": {
+          "type": "string",
+          "minLength": 1
+        },
+        "scenario": {
+          "type": "string",
+          "minLength": 1
+        },
+        "sidestep": {
+          "type": "string",
+          "minLength": 1
+        },
+        "retreat": {
+          "type": "string",
+          "minLength": 1
+        },
+        "phaseNames": {
+          "type": "array",
+          "minItems": 4,
+          "maxItems": 4,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "phaseDescriptions": {
+          "type": "array",
+          "minItems": 4,
+          "maxItems": 4,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "boss": {
+          "type": "string",
+          "minLength": 1
+        },
+        "player": {
+          "type": "string",
+          "minLength": 1
+        },
+        "danger": {
+          "type": "string",
+          "minLength": 1
+        },
+        "path": {
+          "type": "string",
+          "minLength": 1
+        },
+        "locked": {
+          "type": "string",
+          "minLength": 1
+        },
+        "safe": {
+          "type": "string",
+          "minLength": 1
+        },
+        "hit": {
+          "type": "string",
+          "minLength": 1
+        },
+        "reducedMotion": {
+          "type": "string",
+          "minLength": 1
+        },
+        "diagramDescription": {
+          "type": "string",
+          "minLength": 1
+        },
+        "overlayNote": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "steps": {
+      "type": "array",
+      "minItems": 3,
+      "maxItems": 3,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["title", "body"],
+        "properties": {
+          "title": {
+            "type": "string",
+            "minLength": 1
+          },
+          "body": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    },
+    "mistakes": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 5,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["title", "body"],
+        "properties": {
+          "title": {
+            "type": "string",
+            "minLength": 1
+          },
+          "body": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    },
+    "designNotes": {
+      "type": "array",
+      "minItems": 2,
+      "maxItems": 6,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["title", "body"],
+        "properties": {
+          "title": {
+            "type": "string",
+            "minLength": 1
+          },
+          "body": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    },
+    "story": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["title", "body"],
+      "properties": {
+        "title": {
+          "type": "string",
+          "minLength": 1
+        },
+        "body": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "adaptation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["title", "body"],
+      "properties": {
+        "title": {
+          "type": "string",
+          "minLength": 1
+        },
+        "body": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "distinction": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["title", "body"],
+      "properties": {
+        "title": {
+          "type": "string",
+          "minLength": 1
+        },
+        "body": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "quiz": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["question", "options", "correctIndex", "explanation"],
+      "properties": {
+        "question": {
+          "type": "string",
+          "minLength": 1
+        },
+        "options": {
+          "type": "array",
+          "minItems": 3,
+          "maxItems": 3,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "correctIndex": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 2
+        },
+        "explanation": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "reviewStatus": {
+      "enum": ["needs-review", "reviewed"]
+    },
+    "sourceVersion": {
+      "type": "integer",
+      "minimum": 1
+    }
+  },
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Mechanic lesson translation"
+}
