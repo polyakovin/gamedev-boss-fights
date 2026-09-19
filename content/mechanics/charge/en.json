@@ -79,35 +79,29 @@
     "title": "Charge ≠ dash ≠ lunge",
     "body": "A charge threatens a full lane. A dash changes position. A lunge is a short attack. This page shows one kind of charge."
   },
-  "concepts": [
+  "lensNotes": [
     {
       "id": "telegraphing",
-      "title": "Telegraphing",
       "body": "A pose, sound, or effect announces both the charge and the exact moment tracking stops. The cue and the rule must agree."
     },
     {
       "id": "commitment",
-      "title": "Commitment",
       "body": "After lock, the boss gives up steering in exchange for speed and reach. This commitment makes prediction possible."
     },
     {
       "id": "threat-geometry",
-      "title": "Threat geometry",
       "body": "The attack creates a lane, not a point. Test its width against the player's full collision shape, arena space, and camera."
     },
     {
       "id": "counterplay",
-      "title": "Counterplay",
       "body": "At least one response must be reachable with the movement the player already owns. Extra skills may add options without becoming silently required."
     },
     {
       "id": "risk-reward",
-      "title": "Risk and reward",
       "body": "A stronger, longer charge earns a clearer tell and a useful recovery window. Threat and opportunity are tuned together."
     },
     {
       "id": "mastery-check",
-      "title": "Mastery check",
       "body": "The boss tests movement and cue-reading taught before the encounter. Upgrades should change the solution space without erasing the mechanic."
     }
   ],

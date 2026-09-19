@@ -5,6 +5,14 @@
   "sourceLocale": "en",
   "contentVersion": 7,
   "animation": "charge",
+  "lenses": [
+    "telegraphing",
+    "commitment",
+    "threat-geometry",
+    "counterplay",
+    "risk-reward",
+    "mastery-check"
+  ],
   "related": [],
   "sources": [
     {

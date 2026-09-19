@@ -29,7 +29,7 @@ Use `content/mechanics/charge/en.json` as a structural example and `schemas/less
 | `story`                       | Explain which simple arena layout makes the attack readable                |
 | `adaptation`                  | Explain how the encounter respects available movement, reach, and upgrades |
 | `distinction`                 | Separate neighboring mechanics without asserting universal terminology     |
-| `concepts`                    | Name reusable design lenses and show how each applies to the mechanic      |
+| `lensNotes`                   | Explain how each lens from `meta.lenses` applies to this mechanic          |
 | `examples`                    | Compare concrete 2D and 3D bosses and link to a video of each fight        |
 | `reviewStatus`                | Record `needs-review` until independent fluent review is complete          |
 
@@ -41,9 +41,15 @@ Content review is as valuable as translation review. Check factual claims, desig
 
 ### Add design lenses
 
-Use `concepts` to connect the mechanic to reusable ways of thinking, such as telegraphing, commitment, threat geometry, counterplay, risk and reward, or a mastery check. Each card should name one lens and explain exactly how it appears in this mechanic. Treat the list as a practical analytical tool, not a universal taxonomy.
+Design lenses are independent materials under `content/lenses/<id>/`. Each lens has `meta.json` plus one translation file per locale, its own URL, and a catalog entry. Start a draft with:
 
-Every concept has a stable kebab-case `id`. Keep the same IDs and order across translations so a concept can be linked and compared independently of language. Translate `title` and `body`. When adding or removing a lens, update all published translations, the content version, and the structural tests.
+```sh
+npm run new:lens -- your-lens
+```
+
+Keep `published: false` while the lens is incomplete. The localized file contains a short `title` and `summary`; explain what the lens reveals and what a designer should inspect. Treat lenses as practical analytical tools, not a universal taxonomy.
+
+A mechanic connects to published lenses through the stable kebab-case IDs in `meta.lenses`. Each lesson translation has a matching `lensNotes` array in the same order; its short, mechanic-specific explanation becomes the tooltip. The chip label and destination come from the independent lens material, whose `summary` defines the reusable lens without assuming a particular mechanic. When changing a published lens’s meaning, increment its own `contentVersion`, update all published translations and their `sourceVersion`, and reset their `reviewStatus`.
 
 ### Add game references
 
@@ -80,7 +86,7 @@ Provide catalog artwork through the adapter’s `thumbnail` function. Reuse the 
 
 ## Metadata and references
 
-`meta.json` contains a unique `id` matching its folder, a unique positive `number`, `published`, `sourceLocale: "en"`, a positive `contentVersion`, `animation`, `related`, and `sources`. Related IDs must refer to other existing mechanics. Each source has a descriptive `title` and an HTTPS `url`.
+Mechanic `meta.json` contains a unique `id` matching its folder, a unique positive `number`, `published`, `sourceLocale: "en"`, a positive `contentVersion`, `animation`, `lenses`, `related`, and `sources`. Lens IDs must refer to published entries under `content/lenses/`; related mechanic IDs must refer to other existing mechanics. Lens metadata follows the same publication/version pattern without an animation. Each source has a descriptive `title` and an HTTPS `url`.
 
 Explain the role of a source in the PR: a documented example, research supporting a claim, or wider design context. Prefer a developer’s own description or another primary source for claims about a specific game. Verify the link and the relevant claim. When useful, combine complementary formats such as a design talk, attack analysis, animation reference, accessibility guideline, and engine documentation instead of listing several sources that repeat the same advice. The current original teaching example is not a reconstruction of a particular game; its linked materials provide context rather than evidence for a universal rule.
 

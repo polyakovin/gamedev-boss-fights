@@ -16,7 +16,7 @@
     "story",
     "adaptation",
     "distinction",
-    "concepts",
+    "lensNotes",
     "examples",
     "reviewStatus",
     "sourceVersion"
@@ -253,22 +253,18 @@
         }
       }
     },
-    "concepts": {
+    "lensNotes": {
       "type": "array",
-      "minItems": 4,
+      "minItems": 0,
       "maxItems": 8,
       "items": {
         "type": "object",
         "additionalProperties": false,
-        "required": ["id", "title", "body"],
+        "required": ["id", "body"],
         "properties": {
           "id": {
             "type": "string",
             "pattern": "^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$"
-          },
-          "title": {
-            "type": "string",
-            "minLength": 1
           },
           "body": {
             "type": "string",

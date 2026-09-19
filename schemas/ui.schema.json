@@ -13,6 +13,9 @@
     "playbook",
     "design",
     "concepts",
+    "lensLabel",
+    "mechanicLenses",
+    "lensMechanicsTitle",
     "examples",
     "sources",
     "edit",
@@ -97,6 +100,18 @@
       "minLength": 1
     },
     "concepts": {
+      "type": "string",
+      "minLength": 1
+    },
+    "lensLabel": {
+      "type": "string",
+      "minLength": 1
+    },
+    "mechanicLenses": {
+      "type": "string",
+      "minLength": 1
+    },
+    "lensMechanicsTitle": {
       "type": "string",
       "minLength": 1
     },

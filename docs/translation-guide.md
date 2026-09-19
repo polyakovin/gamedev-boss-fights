@@ -8,6 +8,7 @@ A correction to one locale is enough for a useful PR. You can work through GitHu
 | -------------------------------------------------- | -------------------------------------- |
 | Shared navigation, headings, buttons, and feedback | `locales/<locale>.json`                |
 | Lesson text, simulation labels, and descriptions   | `content/mechanics/<id>/<locale>.json` |
+| Design-lens title and explanation                  | `content/lenses/<id>/<locale>.json`    |
 | Language names, flags, and writing direction       | `locales/registry.json`                |
 | Shared lesson metadata and source links            | `content/mechanics/<id>/meta.json`     |
 
@@ -22,7 +23,8 @@ Translate displayed strings naturally, including SVG descriptions, control label
 - Preserve keys, object structure, array lengths, and array order relative to the English source.
 - Keep `sourceVersion` as an integer identifying the `meta.contentVersion` reflected by the text. Every published locale, including English, must match that version; update the number only after updating the translation’s meaning.
 - Keep machine values such as `reviewStatus` in their defined English form. Do not translate IDs, locale codes, filenames, or URL paths.
-- In `concepts`, preserve each stable `id` and the array order. Translate `title` and `body` as the local wording of the same analytical lens.
+- For a lens, translate `title` and the reusable `summary` while preserving its folder ID and metadata. The summary introduces the lens page and must not assume one specific mechanic.
+- In a mechanic’s `lensNotes`, preserve the IDs and order from `meta.lenses`. Translate each `body` as the short explanation shown in that mechanic’s tooltip.
 - In `examples`, preserve `dimension`, `game`, `boss`, `video`, and `videoDurationSeconds` exactly as in English. Translate only `body`.
 - Do not add HTML, Markdown formatting, invisible direction overrides, or English filler to a text field.
 - Use consistent terms for the mechanic, its phases, commitment, danger lane, and recovery. Prefer a natural explanation over an unclear borrowed term.
@@ -33,7 +35,7 @@ If the source contains an ambiguity, raise it in the PR instead of inventing a n
 
 Keep the reader in the role of a game designer. Translate design questions, tuning checks, and implementation mistakes; do not turn them into instructions for beating the boss.
 
-Design lenses explain why the mechanic works and what the designer should inspect. Keep them concrete and tied to the mechanic. Do not present the list as the only valid classification of game design concepts.
+Design-lens pages define reusable ways to inspect a design; mechanic `lensNotes` explain how each lens appears in one mechanic. Keep both concrete and do not present the catalog as the only valid classification of game design concepts.
 
 Game references should explain a design choice visible in the linked fight. Keep the focus on signals, commitment, danger geometry, the arena, or recovery instead of writing a walkthrough.
 
@@ -43,7 +45,7 @@ Use only “boss” and “player.” Keep the example free of setting-specific 
 
 ## Preview and validate
 
-Run `npm run check` for structural validation and a fresh build. Use `npm run dev` to view the page; after subsequent edits, rebuild and refresh. Check the language’s catalog, lesson, and animation controls at desktop and mobile widths. Long translations should wrap naturally without hiding controls or clipping letters.
+Run `npm run check` for structural validation and a fresh build. Use `npm run dev` to view the page; after subsequent edits, rebuild and refresh. Check the language’s mechanic catalog, lens catalog, affected lesson, lens page, and animation controls at desktop and mobile widths. Long translations should wrap naturally without hiding controls or clipping letters.
 
 For Arabic, inspect the right-to-left page order, punctuation around numbers and the English brand, focus movement, and control labels. The Charge diagram deliberately keeps its spatial coordinates unchanged; surrounding text and controls follow the page direction. For Hindi and Bengali, check vowel signs and line height. For Chinese and Japanese, check line breaks and compact labels.
 
@@ -53,9 +55,9 @@ Try keyboard operation and reduced-motion mode when labels or shared UI change. 
 
 `reviewStatus: "needs-review"` means an independent fluent review is still needed. Machine-generated or assisted text starts in this state. Initial translations in this repository also start here.
 
-Set a lesson to `reviewed` only after a person other than its author who is fluent in the target language has checked the complete lesson against the current English meaning and the rendered page. Record the reviewer, reviewed locale, current `meta.contentVersion`, and review scope in the PR. The reviewer should explicitly state their language proficiency; do not infer it from their name, location, or automated tools. A native-speaker review claim additionally requires the reviewer to identify themselves as a native speaker.
+Set a lesson or lens translation to `reviewed` only after a person other than its author who is fluent in the target language has checked the complete material against the current English meaning and the rendered page. Record the reviewer, reviewed locale, current `meta.contentVersion`, and review scope in the PR. The reviewer should explicitly state their language proficiency; do not infer it from their name, location, or automated tools. A native-speaker review claim additionally requires the reviewer to identify themselves as a native speaker.
 
-Review includes the animation text alternatives, controls, and terminology consistency. A maintainer can then confirm the status change. The interface files do not have a separate review-status field; document their review scope in the PR instead.
+Lesson review includes the animation text alternatives, controls, and terminology consistency; lens review includes the chip, tooltip, catalog card, and detail page. A maintainer can then confirm the status change. The interface files do not have a separate review-status field; document their review scope in the PR instead.
 
 If you edit a previously reviewed translation, return it to `needs-review` unless the new wording has also received independent review. When source meaning changes, the content editor increments `meta.contentVersion`, updates published translations and their `sourceVersion`, and resets every locale to `needs-review`. A mismatched `sourceVersion` blocks publication; a matching number records source alignment, not language review. Typo-only source edits do not require a semantic version bump.
 

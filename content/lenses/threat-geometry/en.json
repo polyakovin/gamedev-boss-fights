@@ -1,0 +1,6 @@
+{
+  "title": "Threat geometry",
+  "summary": "The shape, size, and movement of danger determine which space remains usable. Compare the visible area with collision, the arena, the camera, and the player’s full body.",
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

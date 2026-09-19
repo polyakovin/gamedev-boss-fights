@@ -5,8 +5,10 @@ import { ROOT, loadContent, validateContent } from '../lib/content.mjs';
 import { animations } from '../lib/animations.mjs';
 import { escape as e } from '../lib/html.mjs';
 import { link, canonical, REPOSITORY } from '../lib/config.mjs';
-const { locales, ui, mechanics } = await validateContent(await loadContent());
+const { locales, ui, mechanics, lenses } = await validateContent(await loadContent());
 const published = mechanics.filter((m) => m.meta.published);
+const publishedLenses = lenses.filter((lens) => lens.meta.published);
+const lensById = new Map(publishedLenses.map((lens) => [lens.meta.id, lens]));
 for (const m of published)
   if (!animations[m.meta.animation]) throw new Error(`Unknown animation: ${m.meta.animation}`);
 const out = path.join(ROOT, 'dist');
@@ -32,7 +34,7 @@ async function write(route, html) {
   await fs.writeFile(dest, html);
   urls.push(canonical(route));
 }
-function languages(active, id) {
+function languages(active, localizedPath = '') {
   const current = locales.find((locale) => locale.code === active);
   return /* HTML */ `<details class="language-menu">
     <summary>
@@ -40,7 +42,7 @@ function languages(active, id) {
       <span>${e(current.name)}</span>
     </summary>
     <nav aria-label="${e(ui[active].language)}">
-      ${locales.map((l) => `<a href="${link(l.code + '/' + (id ? `mechanics/${id}/` : ''))}" lang="${l.code}" hreflang="${l.code}" dir="${l.dir}"${l.code === active ? ' aria-current="page"' : ''}><span class="language-flag" aria-hidden="true">${e(l.flag)}</span><span>${e(l.name)}</span>${l.code === active ? '<span class="language-check" aria-hidden="true">✓</span>' : ''}</a>`).join('')}
+      ${locales.map((l) => `<a href="${link(`${l.code}/${localizedPath}`)}" lang="${l.code}" hreflang="${l.code}" dir="${l.dir}"${l.code === active ? ' aria-current="page"' : ''}><span class="language-flag" aria-hidden="true">${e(l.flag)}</span><span>${e(l.name)}</span>${l.code === active ? '<span class="language-check" aria-hidden="true">✓</span>' : ''}</a>`).join('')}
     </nav>
   </details>`;
 }
@@ -68,9 +70,15 @@ const themeHead = /* HTML */ `<meta name="color-scheme" content="light dark" />
       } catch {}
     })();
   </script>`;
-function shell(locale, title, description, body, { id, assets = [], catalog = false } = {}) {
+function shell(
+  locale,
+  title,
+  description,
+  body,
+  { route: localizedPath = '', assets = [], catalog = false, pageClass = '' } = {},
+) {
   const t = ui[locale.code];
-  const route = locale.code + '/' + (id ? `mechanics/${id}/` : '');
+  const route = `${locale.code}/${localizedPath}`;
   return /* HTML */ `<!doctype html>
     <html lang="${locale.code}" dir="${locale.dir}">
       <head>
@@ -80,11 +88,11 @@ function shell(locale, title, description, body, { id, assets = [], catalog = fa
         <title>${e(title)} · Boss Fight Atlas</title>
         <meta name="description" content="${e(description)}" />
         <link rel="canonical" href="${canonical(route)}" />
-        ${locales.map((l) => `<link rel="alternate" hreflang="${l.code}" href="${canonical(l.code + '/' + (id ? `mechanics/${id}/` : ''))}">`).join('')}
+        ${locales.map((l) => `<link rel="alternate" hreflang="${l.code}" href="${canonical(`${l.code}/${localizedPath}`)}">`).join('')}
         <link
           rel="alternate"
           hreflang="x-default"
-          href="${canonical('en/' + (id ? `mechanics/${id}/` : ''))}"
+          href="${canonical(`en/${localizedPath}`)}"
         />
         <meta property="og:title" content="${e(title)} · Boss Fight Atlas" />
         <meta property="og:description" content="${e(description)}" />
@@ -102,7 +110,7 @@ function shell(locale, title, description, body, { id, assets = [], catalog = fa
           .map((a) => `<script type="module" src="${asset(a)}"></script>`)
           .join('')}
       </head>
-      <body${catalog ? ' class="catalog-page"' : ''}>
+      <body${catalog || pageClass ? ` class="${[catalog ? 'catalog-page' : '', pageClass].filter(Boolean).join(' ')}"` : ''}>
         <a class="skip-link" href="#main">${e(t.skip)}</a>
         <header class="site-header">
           <div class="header-inner">
@@ -121,7 +129,7 @@ function shell(locale, title, description, body, { id, assets = [], catalog = fa
               >
             </nav>
             ${themeButton(t.themeDark, t.themeLight)}
-            ${languages(locale.code, id)}
+            ${languages(locale.code, localizedPath)}
           </div>
         </header>
         ${body}
@@ -154,6 +162,29 @@ function checklistItems(items) {
         </li>`,
     )
     .join('');
+}
+function lensChips(localeCode, ids, notes) {
+  const t = ui[localeCode];
+  const notesById = new Map(notes.map((note) => [note.id, note.body]));
+  return /* HTML */ `<nav class="lens-chips" aria-label="${e(t.mechanicLenses)}">
+    ${ids
+      .map((id) => {
+        const lens = lensById.get(id);
+        if (!lens) throw new Error(`Unknown published lens: ${id}`);
+        const content = lens.translations[localeCode];
+        const note = notesById.get(id);
+        if (!note) throw new Error(`Missing ${localeCode} lens note: ${id}`);
+        const tooltipId = `lens-tooltip-${id}`;
+        return /* HTML */ `<a
+          class="lens-chip"
+          href="${link(`${localeCode}/lenses/${id}/`)}"
+          aria-describedby="${tooltipId}"
+          ><span>${e(content.title)}</span
+          ><span id="${tooltipId}" class="lens-chip__tooltip" role="tooltip">${e(note)}</span></a
+        >`;
+      })
+      .join('')}
+  </nav>`;
 }
 function exampleGroup(dimension, label, items, t) {
   const cards = items
@@ -200,8 +231,8 @@ for (const locale of locales) {
     {
       title: t.concepts,
       text: t.conceptsNavText,
-      href: link(`${lessonPath}#concepts`),
-      count: featuredContent?.concepts.length ?? 0,
+      href: link(`${locale.code}/lenses/`),
+      count: publishedLenses.length,
     },
     {
       title: t.examples,
@@ -299,7 +330,10 @@ for (const locale of locales) {
         <div class="lesson-overview-grid">
           <section id="overview" class="lesson-hero">
             <span class="eyebrow lesson-category">${e(c.category)}</span>
-            <h1>${e(c.title)}</h1>
+            <div class="lesson-title-line">
+              <h1>${e(c.title)}</h1>
+              ${lensChips(locale.code, m.meta.lenses, c.lensNotes)}
+            </div>
             <p class="hero-subtitle">${e(c.subtitle)}</p>
             <span class="variant">${e(c.variant)}</span>
             <p class="summary">${e(c.summary)}</p>
@@ -347,24 +381,8 @@ for (const locale of locales) {
           </section>
           <div id="simulation" class="simulation-section">${a.render(c.demo)}</div>
         </div>
-        <section id="concepts" class="content-section concepts-section">
-          <span class="eyebrow">01 / ${e(t.concepts)}</span>
-          <h2>${e(t.conceptsTitle)}</h2>
-          <p class="concepts-intro">${e(t.conceptsIntro)}</p>
-          <div class="concept-grid">
-            ${c.concepts
-              .map(
-                (concept) =>
-                  /* HTML */ `<article id="concept-${e(concept.id)}" class="concept-card">
-                    <h3>${e(concept.title)}</h3>
-                    <p>${e(concept.body)}</p>
-                  </article>`,
-              )
-              .join('')}
-          </div>
-        </section>
         <section id="examples" class="content-section examples-section">
-          <span class="eyebrow">02 / ${e(t.examples)}</span>
+          <span class="eyebrow">01 / ${e(t.examples)}</span>
           <h2>${e(t.examplesTitle)}</h2>
           <p class="examples-intro">${e(t.examplesIntro)}</p>
           <div class="example-groups">
@@ -373,7 +391,7 @@ for (const locale of locales) {
           </div>
         </section>
         <section id="sources" class="content-section sources">
-          <span class="eyebrow">03 / ${e(t.sources)}</span>
+          <span class="eyebrow">02 / ${e(t.sources)}</span>
           <h2>${e(t.sources)}</h2>
           <p>${e(t.sourceNote)}</p>
           <ul>
@@ -396,8 +414,101 @@ for (const locale of locales) {
     await write(
       `${locale.code}/mechanics/${m.meta.id}/`,
       shell(locale, c.title, c.summary, body, {
-        id: m.meta.id,
+        route: `mechanics/${m.meta.id}/`,
         assets: [...a.styles, ...a.scripts],
+      }),
+    );
+  }
+  const lensCards = publishedLenses
+    .map((lens) => {
+      const content = lens.translations[locale.code];
+      const mechanicCount = published.filter((mechanic) =>
+        mechanic.meta.lenses.includes(lens.meta.id),
+      ).length;
+      return /* HTML */ `<a
+        class="lens-card"
+        href="${link(`${locale.code}/lenses/${lens.meta.id}/`)}"
+      >
+        <span class="eyebrow">${e(t.lensLabel)}</span>
+        <h2>${e(content.title)} <span aria-hidden="true">→</span></h2>
+        <p>${e(content.summary)}</p>
+        <span class="lens-card__count">${e(t.lensMechanicsTitle)} · ${mechanicCount}</span>
+      </a>`;
+    })
+    .join('');
+  const lensCatalogBody = /* HTML */ `<main id="main" class="lens-catalog-main">
+    <header class="lens-catalog-hero">
+      <span class="eyebrow">${e(t.concepts)}</span>
+      <h1>${e(t.conceptsTitle)}</h1>
+      <p>${e(t.conceptsIntro)}</p>
+    </header>
+    <div class="lens-catalog-grid">${lensCards}</div>
+  </main>`;
+  await write(
+    `${locale.code}/lenses/`,
+    shell(locale, t.conceptsTitle, t.conceptsIntro, lensCatalogBody, {
+      route: 'lenses/',
+      pageClass: 'lens-catalog-page',
+    }),
+  );
+  for (const lens of publishedLenses) {
+    const content = lens.translations[locale.code];
+    const usedBy = published.filter((mechanic) => mechanic.meta.lenses.includes(lens.meta.id));
+    const mechanicLinks = usedBy
+      .map((mechanic) => {
+        const mechanicContent = mechanic.translations[locale.code];
+        return /* HTML */ `<a
+          class="lens-mechanic-card"
+          href="${link(`${locale.code}/mechanics/${mechanic.meta.id}/`)}"
+        >
+          <span class="eyebrow">${e(mechanicContent.category)}</span>
+          <h2>${e(mechanicContent.title)} <span aria-hidden="true">→</span></h2>
+          <p>${e(mechanicContent.summary)}</p>
+        </a>`;
+      })
+      .join('');
+    const relatedLinks = lens.meta.related
+      .map((id) => {
+        const related = lensById.get(id);
+        const relatedContent = related?.translations[locale.code];
+        if (!relatedContent) return '';
+        return `<a class="lens-chip" href="${link(`${locale.code}/lenses/${id}/`)}"><span>${e(relatedContent.title)}</span></a>`;
+      })
+      .join('');
+    const body = /* HTML */ `<main id="main" class="lens-main">
+      <article class="lens-page">
+        <header class="lens-page__hero">
+          <span class="eyebrow">${e(t.lensLabel)}</span>
+          <h1>${e(content.title)}</h1>
+          <p>${e(content.summary)}</p>
+        </header>
+        <section class="lens-page__mechanics" aria-labelledby="lens-mechanics-title">
+          <span class="eyebrow">${e(t.catalog)}</span>
+          <h2 id="lens-mechanics-title">${e(t.lensMechanicsTitle)}</h2>
+          <div>${mechanicLinks}</div>
+        </section>
+        ${
+          relatedLinks
+            ? `<nav class="lens-page__related" aria-label="${e(t.relatedTitle)}"><span class="eyebrow">${e(t.relatedTitle)}</span><div class="lens-chips">${relatedLinks}</div></nav>`
+            : ''
+        }
+        ${
+          lens.meta.sources.length
+            ? `<section class="sources lens-page__sources"><span class="eyebrow">${e(t.sources)}</span><h2>${e(t.sources)}</h2><ul>${lens.meta.sources.map((source) => `<li><a href="${e(source.url)}">${e(source.title)} <span aria-hidden="true">↗</span></a></li>`).join('')}</ul></section>`
+            : ''
+        }
+        ${
+          content.reviewStatus === 'needs-review'
+            ? `<p class="review-note lens-page__review">${e(t.reviewNote)} <a href="${REPOSITORY}/edit/main/content/lenses/${lens.meta.id}/${locale.code}.json">${e(t.edit)} ↗</a></p>`
+            : ''
+        }
+      </article>
+    </main>`;
+    await write(
+      `${locale.code}/lenses/${lens.meta.id}/`,
+      shell(locale, content.title, content.summary, body, {
+        route: `lenses/${lens.meta.id}/`,
+        pageClass: 'lens-page-body',
       }),
     );
   }

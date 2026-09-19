@@ -25,15 +25,12 @@ const meta = {
   sourceLocale: 'en',
   contentVersion: 1,
   animation: null,
+  lenses: [],
   related: [],
   sources: [],
 };
 const lesson = placeholders(source);
-lesson.concepts = source.concepts.map(({ id }, index) => ({
-  id,
-  title: `TODO: concepts[${index}].title`,
-  body: `TODO: concepts[${index}].body`,
-}));
+lesson.lensNotes = [];
 lesson.examples = [
   {
     dimension: '2D',

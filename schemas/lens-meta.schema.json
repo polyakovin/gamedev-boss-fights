@@ -1,0 +1,27 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Design lens metadata",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["id", "number", "published", "sourceLocale", "contentVersion", "related", "sources"],
+  "properties": {
+    "id": { "type": "string", "pattern": "^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$" },
+    "number": { "type": "integer", "minimum": 1 },
+    "published": { "type": "boolean" },
+    "sourceLocale": { "const": "en" },
+    "contentVersion": { "type": "integer", "minimum": 1 },
+    "related": { "type": "array", "uniqueItems": true, "items": { "type": "string" } },
+    "sources": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["title", "url"],
+        "properties": {
+          "title": { "type": "string", "minLength": 1 },
+          "url": { "type": "string", "format": "https-url" }
+        }
+      }
+    }
+  }
+}

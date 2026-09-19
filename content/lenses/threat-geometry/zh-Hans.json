@@ -1,0 +1,6 @@
+{
+  "title": "威胁几何",
+  "summary": "危险区域的形状、大小和移动方式决定哪些空间仍可使用。要把可见区域与碰撞范围、场地、镜头和玩家完整体积进行比较。",
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

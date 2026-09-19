@@ -28,7 +28,8 @@ for (const locale of registry) {
         ),
     ).toBe(locale.dir === 'rtl' ? 'to left' : 'to right');
     await expect(page.locator('[data-charge-motion-note]')).toBeVisible();
-    await expect(page.locator('.concept-card')).toHaveCount(6);
+    await expect(page.locator('.lesson-title-line .lens-chip')).toHaveCount(6);
+    await expect(page.locator('.lesson-title-line [role="tooltip"]')).toHaveCount(6);
     await expect(page.locator('.game-example')).toHaveCount(6);
     await expect(page.locator('.sources li a')).toHaveCount(7);
     await expect(page.locator('.review-note')).toBeVisible();
@@ -156,6 +157,53 @@ test('the lesson and language navigation work with JavaScript disabled', async (
   await context.close();
 });
 
+test('lens chips show explanations and open localized lens pages', async ({ page, request }) => {
+  await page.goto('ru/mechanics/charge/');
+  const chips = page.locator('.lesson-title-line .lens-chip');
+  await expect(chips).toHaveText([
+    'ТелеграфированиеПоза, звук или эффект сообщают и о будущем таране, и о точном моменте остановки слежения. Сигнал должен совпадать с правилом.',
+    'Фиксация решенияПосле фиксации босс отказывается от поворота в обмен на скорость и дальность. Это обязательство делает атаку предсказуемой.',
+    'Геометрия угрозыАтака создаёт опасную полосу, а не точку. Сопоставьте её ширину с полным коллайдером игрока, ареной и камерой.',
+    'КонтриграХотя бы один ответ должен быть доступен с уже имеющимся движением. Дополнительные навыки расширяют выбор, но не становятся скрытым требованием.',
+    'Риск и наградаЧем сильнее и длиннее таран, тем яснее нужен сигнал и тем полезнее окно восстановления. Угроза и возможность настраиваются вместе.',
+    'Проверка освоенных навыковБосс проверяет движение и чтение сигналов, которым игра уже обучила. Улучшения меняют пространство решений, но не отменяют механику.',
+  ]);
+  const firstTooltip = chips.first().locator('[role="tooltip"]');
+  await expect(firstTooltip).toBeHidden();
+  await chips.first().focus();
+  await expect(firstTooltip).toBeVisible();
+  await page.setViewportSize({ width: 375, height: 812 });
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+  await expect(firstTooltip).toBeVisible();
+  await page.setViewportSize({ width: 1280, height: 720 });
+  await chips.first().click();
+  await expect(page).toHaveURL(/\/ru\/lenses\/telegraphing\/$/);
+  await expect(page.locator('.lens-page__hero h1')).toHaveText('Телеграфирование');
+  await expect(page.locator('.lens-page__hero p')).toHaveText(
+    'Визуальный или звуковой сигнал сообщает, что собирается сделать босс и когда меняется правило. Сигнал, тайминг и фактическое поведение должны совпадать.',
+  );
+  await expect(page.locator('.lens-page__hero')).not.toContainText('таран');
+  await expect(page.locator('.lens-mechanic-card')).toHaveCount(1);
+  await expect(page.locator('.lens-mechanic-card h2')).toContainText('Таран');
+  await page.locator('.language-menu summary').click();
+  const languageLinks = await page
+    .locator('.language-menu nav a')
+    .evaluateAll((links) => links.map((link) => link.getAttribute('href')));
+  expect(languageLinks.every((href) => href.endsWith('/lenses/telegraphing/'))).toBe(true);
+  await page.setViewportSize({ width: 375, height: 812 });
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+  await page.goto('ru/lenses/');
+  await expect(page.locator('.lens-card')).toHaveCount(6);
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+  const firstCard = await page.locator('.lens-card').first().boundingBox();
+  const secondCard = await page.locator('.lens-card').nth(1).boundingBox();
+  expect(secondCard.y).toBeGreaterThan(firstCard.y + firstCard.height);
+  for (const locale of registry) {
+    expect((await request.get(`${locale.code}/lenses/`)).status()).toBe(200);
+    expect((await request.get(`${locale.code}/lenses/telegraphing/`)).status()).toBe(200);
+  }
+});
+
 test('theme follows the system and a saved choice persists across pages', async ({ browser }) => {
   const context = await browser.newContext({ colorScheme: 'dark' });
   const page = await context.newPage();
@@ -210,7 +258,7 @@ test('catalog and language gateway point to real pages', async ({ page, request 
   ).toEqual([
     'http://127.0.0.1:4173/gamedev-boss-fights/ru/#mechanics',
     'http://127.0.0.1:4173/gamedev-boss-fights/ru/mechanics/charge/#simulation',
-    'http://127.0.0.1:4173/gamedev-boss-fights/ru/mechanics/charge/#concepts',
+    'http://127.0.0.1:4173/gamedev-boss-fights/ru/lenses/',
     'http://127.0.0.1:4173/gamedev-boss-fights/ru/mechanics/charge/#examples',
     'http://127.0.0.1:4173/gamedev-boss-fights/ru/mechanics/charge/#sources',
     'https://github.com/polyakovin/gamedev-boss-fights/blob/main/CONTRIBUTING.md',

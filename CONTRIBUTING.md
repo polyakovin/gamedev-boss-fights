@@ -4,7 +4,7 @@ You can improve one sentence, verify a fact or design concept, review an example
 
 ## A small edit in your browser
 
-1. Open a lesson and follow **Improve this page**, or find its file under `content/mechanics/<id>/<locale>.json`.
+1. Open a lesson or design-lens page and follow **Improve this page**, or find its file under `content/mechanics/<id>/<locale>.json` or `content/lenses/<id>/<locale>.json`.
 2. Use GitHub’s edit button to create the change in your fork. For navigation, buttons, and shared labels, edit `locales/<locale>.json` instead.
 3. Change the text while preserving JSON keys and array order. Do not paste HTML into a text field.
 4. Open a PR describing the problem and your correction. Link supporting evidence for factual or conceptual changes. For translation work, name the language and whether independent fluent review has actually happened.
@@ -46,11 +46,12 @@ Commit only your source changes, push your branch to your fork, and open a PR ag
 - **Content review:** check factual claims, design concepts, terminology, examples, source relevance, and whether the animation matches the explanation. Cite evidence and distinguish a documented rule from an illustrative design choice.
 - **Meaning or mechanic change:** increment `meta.contentVersion`, update the source and published translations, set their `sourceVersion` to the version they now reflect, and reset each lesson’s `reviewStatus` to `needs-review`. Published lessons with a stale version are rejected. Explain the rule change in the PR.
 - **New mechanic:** use `npm run new:mechanic -- your-mechanic` and follow the [content guide](docs/content-guide.md). A partial draft with `published: false` can merge before translations and animation are complete.
+- **New design lens:** use `npm run new:lens -- your-lens`. Keep the explanation reusable across mechanics, then connect mechanics through their `meta.lenses` IDs.
 - **Layout or interaction:** include screenshots or a short recording when useful, describe keyboard and mobile behavior, and add relevant regression coverage.
 
 ## Review the experience
 
-For changes that affect rendering or interaction, check the affected lesson at a narrow mobile width and on desktop. Navigate with the keyboard, inspect focus visibility, try the language switcher, and play/pause and scrub the demo. Check Arabic right-to-left layout and reduced-motion mode when shared UI changes. Confirm that essential teaching content remains readable without JavaScript.
+For changes that affect rendering or interaction, check the affected lesson at a narrow mobile width and on desktop. Navigate with the keyboard, inspect focus visibility, try the language switcher, and play/pause and scrub the demo. For lens changes, check the title chip, keyboard tooltip, lens catalog, and lens page. Check Arabic right-to-left layout and reduced-motion mode when shared UI changes. Confirm that essential teaching content remains readable without JavaScript.
 
 Keep labels and explanations available in text; color or animation alone must not carry a rule. A test pass does not establish factual accuracy, validate a design concept, establish translation fluency, or prove that an animation teaches the right mechanic.
 

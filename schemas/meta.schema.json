@@ -10,6 +10,7 @@
     "sourceLocale",
     "contentVersion",
     "animation",
+    "lenses",
     "related",
     "sources"
   ],
@@ -20,6 +21,11 @@
     "sourceLocale": { "const": "en" },
     "contentVersion": { "type": "integer", "minimum": 1 },
     "animation": { "type": ["string", "null"] },
+    "lenses": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": { "type": "string", "pattern": "^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$" }
+    },
     "related": { "type": "array", "uniqueItems": true, "items": { "type": "string" } },
     "sources": {
       "type": "array",

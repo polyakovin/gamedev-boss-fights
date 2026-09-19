@@ -6,6 +6,8 @@ const source = await loadContent();
 test('all eight published lessons have complete valid content', async () => {
   await validateContent(source);
   assert.equal(Object.keys(source.mechanics[0].translations).length, 8);
+  assert.equal(source.lenses.length, 6);
+  assert.ok(source.lenses.every((lens) => Object.keys(lens.translations).length === 8));
   assert.ok(Object.values(source.mechanics[0].translations).every((lesson) => !('quiz' in lesson)));
 });
 test('a missing published translation is rejected instead of silently showing English', async () => {
@@ -38,9 +40,11 @@ test('drafts may land before translations and animation are ready', async () => 
     number: 2,
     published: false,
     animation: null,
+    lenses: [],
   };
   draft.translations = { en: draft.translations.en };
   draft.translations.en.title = 'TODO: title';
+  draft.translations.en.lensNotes = [];
   data.mechanics.push(draft);
   await validateContent(data);
 });
@@ -99,21 +103,64 @@ test('design lenses stay complete and linkable across translations', async () =>
     'risk-reward',
     'mastery-check',
   ];
+  assert.deepEqual(source.mechanics[0].meta.lenses, expected);
+  assert.deepEqual(
+    source.lenses.map((lens) => lens.meta.id),
+    expected,
+  );
   for (const lesson of Object.values(source.mechanics[0].translations))
     assert.deepEqual(
-      lesson.concepts.map((concept) => concept.id),
+      lesson.lensNotes.map((note) => note.id),
       expected,
     );
+  assert.ok(
+    source.lenses.every((lens) =>
+      Object.values(lens.translations).every(
+        (translation) => translation.title.length > 0 && translation.summary.length > 0,
+      ),
+    ),
+  );
+  assert.doesNotMatch(
+    source.lenses.map((lens) => lens.translations.en.summary).join(' '),
+    /charge/i,
+  );
+  assert.doesNotMatch(
+    source.lenses.map((lens) => lens.translations.ru.summary).join(' '),
+    /таран/i,
+  );
 
   const data = structuredClone(source);
-  data.mechanics[0].translations.ja.concepts.pop();
-  data.mechanics[0].translations.ru.concepts[0].id = 'changed-id';
+  delete data.lenses[0].translations.ja;
+  data.mechanics[0].meta.lenses[0] = 'missing-lens';
   await assert.rejects(
     validateContent(data),
     (error) =>
-      error.message.includes('concepts length differs from source') &&
-      error.message.includes('concept 1 id differs from source'),
+      error.message.includes('missing published translation ja') &&
+      error.message.includes('invalid or unpublished lens missing-lens') &&
+      error.message.includes('lens note 1 does not match mechanic lenses'),
   );
+});
+
+test('draft lenses may land before translations are ready', async () => {
+  const data = structuredClone(source);
+  const draft = structuredClone(data.lenses[0]);
+  draft.folder = 'draft-lens';
+  draft.meta = {
+    ...draft.meta,
+    id: 'draft-lens',
+    number: 7,
+    published: false,
+    related: [],
+  };
+  draft.translations = {
+    en: {
+      ...draft.translations.en,
+      title: 'TODO: title',
+      sourceVersion: 1,
+    },
+  };
+  data.lenses.push(draft);
+  await validateContent(data);
 });
 
 test('community review explicitly includes facts, concepts, examples, and translations', () => {
