@@ -43,8 +43,12 @@ for (const locale of registry) {
       'rel',
       'noopener noreferrer',
     );
+    await expect(page.locator('.language-menu summary .language-flag')).toHaveText(locale.flag);
     await page.locator('.language-menu summary').click();
     await expect(page.locator('.language-menu nav a')).toHaveCount(8);
+    await expect(page.locator('.language-menu nav .language-flag')).toHaveText(
+      registry.map((entry) => entry.flag),
+    );
     const links = await page
       .locator('.language-menu nav a')
       .evaluateAll((as) => as.map((a) => a.getAttribute('href')));
@@ -163,6 +167,9 @@ test('theme follows the system and a saved choice persists across pages', async 
 test('catalog and language gateway point to real pages', async ({ page, request }) => {
   await page.goto('./');
   await expect(page.locator('.language-choices a')).toHaveCount(8);
+  await expect(page.locator('.language-choice .language-flag')).toHaveText(
+    registry.map((locale) => locale.flag),
+  );
   for (const locale of registry) {
     const response = await request.get(`${locale.code}/`);
     expect(response.status()).toBe(200);

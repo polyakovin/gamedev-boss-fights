@@ -62,6 +62,14 @@ test('the registry cannot duplicate a language', async () => {
   await assert.rejects(validateContent(data), /exactly once/);
 });
 
+test('every registered language has a distinct regional flag', async () => {
+  assert.equal(new Set(source.locales.map((locale) => locale.flag)).size, source.locales.length);
+  assert.ok(source.locales.every((locale) => /^\p{Regional_Indicator}{2}$/u.test(locale.flag)));
+  const data = structuredClone(source);
+  data.locales[0].flag = '';
+  await assert.rejects(validateContent(data), /invalid or duplicate flag/);
+});
+
 test('published translations cannot lag behind the current source version', async () => {
   const data = structuredClone(source);
   data.mechanics[0].meta.contentVersion += 1;

@@ -245,6 +245,15 @@ section[id] {
   font-size: 13px;
   min-width: 100px;
 }
+.language-flag {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Apple Color Emoji', 'Segoe UI Emoji', 'Noto Color Emoji', sans-serif;
+  font-size: 1.1rem;
+  line-height: 1;
+}
 .language-menu summary {
   cursor: pointer;
   list-style: none;
@@ -274,9 +283,14 @@ section[id] {
   padding: 8px;
 }
 .language-menu nav a {
-  display: block;
+  display: flex;
+  align-items: center;
+  gap: 10px;
   padding: 9px 12px;
   border-radius: 4px;
+}
+.language-menu .language-check {
+  margin-inline-start: auto;
 }
 .language-menu nav a:hover,
 .language-menu nav [aria-current] {
@@ -889,6 +903,14 @@ section[id] {
   align-items: center;
   background: var(--surface);
   font-size: 15px;
+}
+.language-choice__label {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.language-choice .language-flag {
+  font-size: 1.25rem;
 }
 .language-choice:hover {
   border-color: var(--green);

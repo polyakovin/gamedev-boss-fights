@@ -33,12 +33,14 @@ async function write(route, html) {
   urls.push(canonical(route));
 }
 function languages(active, id) {
+  const current = locales.find((locale) => locale.code === active);
   return /* HTML */ `<details class="language-menu">
     <summary>
-      <span aria-hidden="true">◎</span> ${e(locales.find((l) => l.code === active).name)}
+      <span class="language-flag" aria-hidden="true">${e(current.flag)}</span>
+      <span>${e(current.name)}</span>
     </summary>
     <nav aria-label="${e(ui[active].language)}">
-      ${locales.map((l) => `<a href="${link(l.code + '/' + (id ? `mechanics/${id}/` : ''))}" lang="${l.code}" hreflang="${l.code}" dir="${l.dir}"${l.code === active ? ' aria-current="page"' : ''}>${e(l.name)}${l.code === active ? '<span aria-hidden="true"> ✓</span>' : ''}</a>`).join('')}
+      ${locales.map((l) => `<a href="${link(l.code + '/' + (id ? `mechanics/${id}/` : ''))}" lang="${l.code}" hreflang="${l.code}" dir="${l.dir}"${l.code === active ? ' aria-current="page"' : ''}><span class="language-flag" aria-hidden="true">${e(l.flag)}</span><span>${e(l.name)}</span>${l.code === active ? '<span class="language-check" aria-hidden="true">✓</span>' : ''}</a>`).join('')}
     </nav>
   </details>`;
 }
@@ -405,7 +407,7 @@ for (const locale of locales) {
 const languageLinks = locales
   .map(
     (l) =>
-      `<a class="language-choice" href="${link(l.code + '/')}" lang="${l.code}" dir="${l.dir}"><span>${e(l.name)}</span><span aria-hidden="true">↗</span></a>`,
+      `<a class="language-choice" href="${link(l.code + '/')}" lang="${l.code}" dir="${l.dir}"><span class="language-choice__label"><span class="language-flag" aria-hidden="true">${e(l.flag)}</span><span>${e(l.name)}</span></span><span aria-hidden="true">↗</span></a>`,
   )
   .join('');
 const rootHtml = /* HTML */ `<!doctype html>

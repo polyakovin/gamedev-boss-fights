@@ -2,41 +2,49 @@
   {
     "code": "en",
     "name": "English",
+    "flag": "🇬🇧",
     "dir": "ltr"
   },
   {
     "code": "ru",
     "name": "Русский",
+    "flag": "🇷🇺",
     "dir": "ltr"
   },
   {
     "code": "zh-Hans",
     "name": "简体中文",
+    "flag": "🇨🇳",
     "dir": "ltr"
   },
   {
     "code": "hi",
     "name": "हिन्दी",
+    "flag": "🇮🇳",
     "dir": "ltr"
   },
   {
     "code": "bn",
     "name": "বাংলা",
+    "flag": "🇧🇩",
     "dir": "ltr"
   },
   {
     "code": "es",
     "name": "Español",
+    "flag": "🇪🇸",
     "dir": "ltr"
   },
   {
     "code": "ar",
     "name": "العربية",
+    "flag": "🇸🇦",
     "dir": "rtl"
   },
   {
     "code": "ja",
     "name": "日本語",
+    "flag": "🇯🇵",
     "dir": "ltr"
   }
 ]
