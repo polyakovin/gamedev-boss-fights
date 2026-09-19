@@ -20,6 +20,7 @@
 - Read `docs/content-guide.md` and `docs/translation-guide.md` when editing lessons. `npm run new:mechanic -- slug` creates an unpublished draft; partial drafts can merge.
 - Publishing requires complete lessons in `en`, `ru`, `zh-Hans`, `hi`, `bn`, `es`, `ar`, and `ja`, each with `sourceVersion === meta.contentVersion`, a registered animation, and no unresolved placeholders.
 - Meaning changes increment `meta.contentVersion`, synchronize published translations and their `sourceVersion` values, and reset all lesson `reviewStatus` values to `needs-review`. Never claim native or fluent review without an actual independent reviewer.
+- Address game designers. Lessons explain how to build, tune, and test mechanics; they must not read like instructions for beating a boss.
 - Keep examples setting-neutral: use only “boss” and “player.” Preserve Charge’s fixed direction after aiming, sideways escape, full-body lane clearance, and useful recovery. If the boss blocks an attack, show it clearly and leave another response useful.
 - Text, translations, and original SVG artwork use CC BY 4.0; implementation code uses MIT. Do not import game screenshots or ripped assets. Cite sources accurately and distinguish illustrative examples from universal claims.
 - Keep operational instructions concise; put editorial rationale and review guidance in `docs/`.

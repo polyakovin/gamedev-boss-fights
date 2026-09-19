@@ -30,7 +30,9 @@ If the source contains an ambiguity, raise it in the PR instead of inventing a n
 
 ## Preserve the teaching
 
-The initial Charge variant can follow the player while aiming, then fixes its direction. It cannot keep steering during the charge. The escape is ordinary sideways movement until the whole collision shape leaves the lane; neither a special dodge ability nor invulnerability is required.
+Keep the reader in the role of a game designer. Translate design questions, tuning checks, and implementation mistakes; do not turn them into instructions for beating the boss.
+
+The initial Charge variant can follow the player while aiming, then fixes its direction. It cannot keep steering during the charge. The designer checks that ordinary sideways movement can move the whole collision shape out of the lane; neither a special dodge ability nor invulnerability is required.
 
 Use only “boss” and “player.” Keep the example free of setting-specific roles and objects. If the boss blocks an attack, make the condition clear and leave another player response useful.
 

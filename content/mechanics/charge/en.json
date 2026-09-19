@@ -1,29 +1,29 @@
 {
   "title": "Charge",
-  "subtitle": "Move sideways. Let the boss miss. Counterattack.",
+  "subtitle": "Design a clear commitment, a reachable escape, and a useful recovery.",
   "variant": "Locked-direction charge",
   "summary": "The boss aims, locks its direction, and charges forward. It cannot turn after the lock.",
-  "learning": "Wait for the lock, move out of the lane, then counterattack.",
+  "learning": "Tune tracking, the lock cue, the danger lane, and recovery.",
   "category": "Movement & space",
-  "readTime": "3 min · interactive lesson",
+  "readTime": "3 min · design lesson",
   "demo": {
-    "title": "See how Charge works",
-    "intro": "Compare moving sideways with running straight away.",
+    "title": "Test the attack",
+    "intro": "Compare two player paths and inspect every phase.",
     "play": "Play",
     "pause": "Pause",
     "restart": "Restart",
     "timeline": "Attack timeline",
     "speed": "Playback speed",
     "step": "Attack phases",
-    "scenario": "Player response",
-    "sidestep": "Sidestep",
-    "retreat": "Retreat in a straight line",
+    "scenario": "Test path",
+    "sidestep": "Side path",
+    "retreat": "Straight path",
     "phaseNames": ["Aim", "Lock", "Charge", "Recover"],
     "phaseDescriptions": [
-      "The boss can still turn toward the player.",
-      "The direction is fixed. Move sideways out of the lane.",
-      "The boss moves along the fixed line.",
-      "The boss stops. Counterattack now."
+      "Set how long the boss tracks the player. Make this phase visible.",
+      "Show the exact moment tracking stops with a clear cue.",
+      "Keep the hitbox inside the shown lane. Test it against normal movement.",
+      "Leave enough time for the player to return to range and attack."
     ],
     "boss": "Boss",
     "player": "Player",
@@ -33,45 +33,45 @@
     "safe": "Outside the lane",
     "hit": "Still in the lane",
     "reducedMotion": "Animation starts paused. Use the phase buttons or timeline to explore without playback.",
-    "diagramDescription": "The boss charges toward the player. Moving sideways avoids the attack; running straight away leads to a hit.",
+    "diagramDescription": "A test diagram for a charge attack. The side path clears the danger lane; the straight path stays inside it.",
     "overlayNote": "The colored lane explains the mechanic. A real game may telegraph it through pose, sound, or effects."
   },
   "steps": [
     {
-      "title": "Wait for the commitment",
-      "body": "Wait for the cue that says the direction is fixed. Before that, the boss can still turn."
+      "title": "When does tracking stop?",
+      "body": "Choose a fixed moment. Mark it with a pose, sound, or effect."
     },
     {
-      "title": "Move across the line",
-      "body": "Move sideways until the whole player is outside the danger lane."
+      "title": "Can the lane be cleared?",
+      "body": "Compare lane width, player speed, and the time between lock and impact."
     },
     {
-      "title": "Punish the miss",
-      "body": "Attack after the boss stops, before its next action begins."
+      "title": "Is recovery useful?",
+      "body": "Include the time needed to return to range and complete an attack."
     }
   ],
   "mistakes": [
     {
-      "title": "Running along the lane",
-      "body": "You stay inside the danger lane, so the boss can still hit you."
+      "title": "Unclear lock",
+      "body": "If tracking and lock look the same, hits feel arbitrary."
     },
     {
-      "title": "Dodging too early",
-      "body": "Before the lock, the boss can turn and follow you."
+      "title": "Fake opening",
+      "body": "If recovery ends before the player can reach the boss, the promised opening is not real."
     }
   ],
   "designNotes": [
     {
-      "title": "Make commitment visible",
-      "body": "Show a clear cue when the boss stops tracking the player."
+      "title": "Start with normal movement",
+      "body": "Make the basic escape work without a special ability unless that ability is the lesson."
     },
     {
-      "title": "Leave a reachable escape",
-      "body": "Give enough time to escape with normal movement."
+      "title": "Match collision and visuals",
+      "body": "The visible danger lane must match the real hitbox."
     },
     {
-      "title": "Give recovery a purpose",
-      "body": "Keep the boss still long enough for the player to counterattack."
+      "title": "Retest after upgrades",
+      "body": "Movement, range, damage, and invulnerability can change how the attack works."
     }
   ],
   "story": {
@@ -87,15 +87,15 @@
     "body": "A charge threatens a full lane. A dash changes position. A lunge is a short attack. This page shows one kind of charge."
   },
   "quiz": {
-    "question": "The direction is fixed. What is the reliable escape in this example?",
+    "question": "Normal movement cannot clear the lane after lock. What should the designer check first?",
     "options": [
-      "Run straight away from the boss.",
-      "Move sideways until your whole body leaves the lane.",
-      "Stand still and wait for recovery."
+      "Reduce the time between lock and impact.",
+      "Compare lane width, player speed, and lock timing.",
+      "Hide the danger lane."
     ],
     "correctIndex": 1,
-    "explanation": "Move sideways. After the lock, the boss cannot follow. Running along the same line keeps the player in danger."
+    "explanation": "These three values determine whether the intended escape is possible. Test them from every expected starting position."
   },
   "reviewStatus": "needs-review",
-  "sourceVersion": 2
+  "sourceVersion": 3
 }

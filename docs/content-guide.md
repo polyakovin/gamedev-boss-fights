@@ -1,6 +1,6 @@
 # Writing and adding a mechanic
 
-A lesson should teach a decision the player can make and explain why that decision works. Keep its scope specific enough for the animation, prose, and quiz to agree.
+A lesson should teach a designer how to build, tune, and test one mechanic. Keep its scope specific enough for the animation, prose, and quiz to agree.
 
 ## Start with a draft
 
@@ -18,29 +18,29 @@ A draft PR can contain just the proposed explanation and open questions. It does
 
 Use `content/mechanics/charge/en.json` as a structural example and `schemas/lesson.schema.json` as the contract. JSON text is plain text, not Markdown or HTML.
 
-| Field                         | What it should teach                                                       |
-| ----------------------------- | -------------------------------------------------------------------------- |
-| `title`, `variant`, `summary` | Name the mechanic and define the exact behavior covered                    |
-| `learning`                    | State the skill the reader should leave with                               |
-| `demo`                        | Explain controls, phases, entities, outcomes, and the diagram in text      |
-| `steps`                       | Give the player exactly three actionable decisions in order                |
-| `mistakes`                    | Explain tempting responses and why they fail                               |
-| `designNotes`                 | Connect player decisions to timing, geometry, and readable signals         |
-| `story`                       | Explain which simple arena layout makes the attack readable                |
-| `adaptation`                  | Explain how the encounter respects available movement, reach, and upgrades |
-| `distinction`                 | Separate neighboring mechanics without asserting universal terminology     |
-| `quiz`                        | Test the stated rule with three options and one zero-based `correctIndex`  |
-| `reviewStatus`                | Record `needs-review` until independent fluent review is complete          |
+| Field                         | What it should teach                                                        |
+| ----------------------------- | --------------------------------------------------------------------------- |
+| `title`, `variant`, `summary` | Name the mechanic and define the exact behavior covered                     |
+| `learning`                    | State the design skill the reader should leave with                         |
+| `demo`                        | Turn the animation into a test bench for phases, geometry, and outcomes     |
+| `steps`                       | Ask exactly three design questions in a useful order                        |
+| `mistakes`                    | Explain common implementation mistakes and their effect on the encounter    |
+| `designNotes`                 | Give concrete checks for timing, geometry, readability, and upgrades        |
+| `story`                       | Explain which simple arena layout makes the attack readable                 |
+| `adaptation`                  | Explain how the encounter respects available movement, reach, and upgrades  |
+| `distinction`                 | Separate neighboring mechanics without asserting universal terminology      |
+| `quiz`                        | Test a design judgment with three options and one zero-based `correctIndex` |
+| `reviewStatus`                | Record `needs-review` until independent fluent review is complete           |
 
-The current template requires exactly three steps, matching the localized “Three decisions” heading. Its demo contract has four phase names and four descriptions. Do not force a mechanic into misleading phases to fit it. If another mechanic needs a different structure, update the schema, renderer, translations, and tests together. Shared headings and feedback live in `locales/*.json`; check that they still fit when extending the lesson structure.
+The current template requires exactly three steps, matching the localized “Three questions” heading. Its demo contract has four phase names and four descriptions. Do not force a mechanic into misleading phases to fit it. If another mechanic needs a different structure, update the schema, renderer, translations, and tests together. Shared headings and feedback live in `locales/*.json`; check that they still fit when extending the lesson structure.
 
-Prefer concrete signals and actions: what becomes fixed, what can still change, when the player can move, and how much space must be cleared. Distinguish an attack’s visual telegraph from a teaching overlay. Avoid making an optional dash, jump, or invulnerability state sound necessary when ordinary movement is the intended answer.
+Address the game designer, not a player looking for a walkthrough. Prefer concrete design variables and checks: what becomes fixed, what can still change, which signal communicates the change, and how much space the player must be able to clear. Distinguish an attack’s visual telegraph from a teaching overlay. Test optional dashes, jumps, and invulnerability states without making them silently mandatory for a basic escape.
 
 For the initial Charge lesson, preserve these facts:
 
 - The boss can aim before commitment; direction is frozen after commitment and throughout the charge.
-- The player must move the entire collision shape out of the danger lane. Distance gained along that same lane is insufficient in this example.
-- Ordinary sideways movement provides a reachable escape. Recovery allows time to approach and counterattack.
+- The intended escape moves the player’s entire collision shape out of the danger lane. Distance gained along that same lane is insufficient in this example.
+- Ordinary sideways movement must provide a reachable escape. Recovery must include time to approach and complete a counterattack.
 - Use only “boss” and “player.” Keep the example independent of any game, character, or setting.
 - If the boss blocks an attack, show it clearly. Keep another response useful and never silently cancel player upgrades.
 

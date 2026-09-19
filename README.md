@@ -1,10 +1,10 @@
 # Boss Fight Atlas
 
-An open, interactive encyclopedia of boss mechanics for game designers and curious players. Each lesson connects what the player sees, the decision they make, and the design choices that make the encounter work.
+An open, interactive encyclopedia of boss mechanics for game designers. Each lesson explains how to shape, communicate, tune, and test one part of a boss encounter.
 
 [Explore the atlas](https://polyakovin.github.io/gamedev-boss-fights/) · [Read in Russian](README.ru.md) · [Contribute](CONTRIBUTING.md)
 
-The first lesson is **Charge**. Compare moving sideways with running straight away, pause the animation, and inspect each phase. In this variant, the boss cannot turn after its direction is fixed.
+The first lesson is **Charge**. Compare two test paths, pause the animation, and inspect how tracking, commitment, collision, and recovery work together. In this variant, the boss cannot turn after its direction is fixed.
 
 Available in English, Russian, Simplified Chinese, Hindi, Bengali, Spanish, Arabic, and Japanese. Initial translations await independent fluent-speaker review; corrections and reviews are welcome. [Open «Таран» in Russian](https://polyakovin.github.io/gamedev-boss-fights/ru/mechanics/charge/).
 

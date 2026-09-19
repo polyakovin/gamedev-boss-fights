@@ -79,3 +79,11 @@ test('published diagrams use only generic boss and player labels', () => {
     assert.ok(!lesson.demo.player.includes('·'));
   }
 });
+
+test('the published lesson teaches design decisions rather than player execution', () => {
+  const { en, ru } = source.mechanics[0].translations;
+  assert.match(en.learning, /tune/i);
+  assert.match(en.quiz.question, /designer/i);
+  assert.match(ru.learning, /настройте/i);
+  assert.ok(ru.steps.every((step) => step.title.endsWith('?')));
+});
