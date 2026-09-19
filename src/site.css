@@ -30,12 +30,8 @@
   --diagram-grid: #dfd9cb;
   --diagram-border: #d8d0c2;
   --diagram-corners: #c6beae;
-  --diagram-status: #f2e2d7;
-  --diagram-status-safe: #dcebe1;
   --diagram-boss-label: #746249;
   --diagram-player-label: #286b5e;
-  --diagram-status-label: #704f3e;
-  --diagram-status-safe-label: #286b5e;
   --diagram-preview-grid: #dbe3dd;
   --radius: 14px;
   color-scheme: light;
@@ -85,12 +81,8 @@
   --diagram-grid: #314139;
   --diagram-border: #42544b;
   --diagram-corners: #51665c;
-  --diagram-status: #3a2924;
-  --diagram-status-safe: #203a31;
   --diagram-boss-label: #d9bd93;
   --diagram-player-label: #86d7c0;
-  --diagram-status-label: #f0b49d;
-  --diagram-status-safe-label: #8cdbc4;
   --diagram-preview-grid: #34443d;
   color-scheme: dark;
 }

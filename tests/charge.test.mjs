@@ -130,5 +130,10 @@ test('the charge diagram and catalog preview reuse the same tank and monster ass
   assert.match(thumbnail, /data-charge-preview-player/);
   assert.doesNotMatch(markup, /charge-demo__heading|charge-demo__legend|data-charge-speed/);
   assert.doesNotMatch(markup, /data-charge-scenario|charge-demo__scenarios/);
+  assert.match(
+    markup,
+    /charge-demo__canvas">\s*<div class="charge-demo__scene-timeline">[\s\S]*data-charge-timeline/,
+  );
+  assert.doesNotMatch(markup, /data-charge-status transform|charge-demo__status-label/);
   assert.equal(markup.match(/data-charge-dodge/g)?.length, 1);
 });

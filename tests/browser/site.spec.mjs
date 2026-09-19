@@ -19,6 +19,13 @@ for (const locale of registry) {
       'data-charge-playing',
       'false',
     );
+    expect(
+      await page
+        .locator('[data-charge-demo]')
+        .evaluate((element) =>
+          getComputedStyle(element).getPropertyValue('--charge-progress-direction').trim(),
+        ),
+    ).toBe(locale.dir === 'rtl' ? 'to left' : 'to right');
     await expect(page.locator('[data-charge-motion-note]')).toBeVisible();
     await expect(page.locator('.concept-card')).toHaveCount(6);
     await expect(page.locator('.game-example')).toHaveCount(6);
@@ -65,9 +72,18 @@ test('controls work by keyboard; play advances; seeking pauses', async ({ page }
   const heroBox = await page.locator('.lesson-hero').boundingBox();
   const simulationBox = await page.locator('.simulation-section').boundingBox();
   const diagramBox = await page.locator('[data-charge-svg]').boundingBox();
+  const sceneTimelineBox = await page.locator('.charge-demo__scene-timeline').boundingBox();
   expect(simulationBox.x).toBeGreaterThan(heroBox.x + heroBox.width);
   expect(simulationBox.width).toBeLessThanOrEqual(400);
   expect(diagramBox.height).toBeGreaterThan(diagramBox.width);
+  expect(sceneTimelineBox.y).toBeGreaterThanOrEqual(diagramBox.y);
+  expect(sceneTimelineBox.y + sceneTimelineBox.height).toBeLessThan(
+    diagramBox.y + diagramBox.height,
+  );
+  await expect(page.locator('.charge-demo__interaction .charge-demo__phase-buttons')).toHaveCount(
+    0,
+  );
+  await expect(page.locator('.charge-demo__interaction .charge-demo__timeline')).toHaveCount(0);
   expect(Math.abs(simulationBox.y - heroBox.y)).toBeLessThan(2);
   expect(Math.max(heroBox.y + heroBox.height, simulationBox.y + simulationBox.height)).toBeLessThan(
     1000,
@@ -88,6 +104,9 @@ test('controls work by keyboard; play advances; seeking pauses', async ({ page }
   await page.keyboard.press('End');
   await expect(demo).toHaveAttribute('data-charge-playing', 'false');
   await expect(demo).toHaveAttribute('data-charge-phase', '3');
+  expect(
+    await demo.evaluate((element) => element.style.getPropertyValue('--charge-progress')),
+  ).toBe('100%');
   await page.setViewportSize({ width: 375, height: 812 });
   const mobileHeroBox = await page.locator('.lesson-hero').boundingBox();
   const mobileSimulationBox = await page.locator('.simulation-section').boundingBox();

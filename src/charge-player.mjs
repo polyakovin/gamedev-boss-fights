@@ -17,8 +17,7 @@ export function initializeCharge(widget) {
   const lane = find('[data-charge-lane]');
   const target = find('[data-charge-target]');
   const path = find('[data-charge-dodge]');
-  const status = find('[data-charge-status] text');
-  const statusBackground = find('[data-charge-status] rect');
+  const status = find('[data-charge-status]');
   const description = find('[data-charge-description]');
   const bossLabel = find('[data-charge-boss-label]');
   const playerLabel = find('[data-charge-player-label]');
@@ -55,29 +54,20 @@ export function initializeCharge(widget) {
     playerLabel.setAttribute('x', frame.player.x);
     playerLabel.setAttribute('y', frame.player.y - 47);
     recovery.setAttribute('visibility', frame.phase === 3 ? 'visible' : 'hidden');
-    status.textContent =
-      frame.phase === 0
-        ? text.danger
-        : frame.phase === 1
-          ? text.locked
-          : frame.clear
-            ? text.safe
-            : text.path;
-    const safeStatus = frame.phase >= 2 && frame.clear;
-    statusBackground.setAttribute(
-      'fill',
-      safeStatus ? 'var(--diagram-status-safe)' : 'var(--diagram-status)',
-    );
-    status.setAttribute(
-      'fill',
-      safeStatus ? 'var(--diagram-status-safe-label)' : 'var(--diagram-status-label)',
-    );
     for (const button of phaseButtons)
       button.setAttribute(
         'aria-pressed',
         String(Number(button.dataset.chargePhase) === frame.phase),
       );
     if (frame.phase !== announcedPhase) {
+      status.textContent =
+        frame.phase === 0
+          ? text.danger
+          : frame.phase === 1
+            ? text.locked
+            : frame.clear
+              ? text.safe
+              : text.path;
       const heading = document.createElement('strong');
       heading.textContent = `${text.phaseNames[frame.phase]}.`;
       description.replaceChildren(
@@ -87,6 +77,7 @@ export function initializeCharge(widget) {
       announcedPhase = frame.phase;
     }
     timeline.value = String(Math.round(time * 1000));
+    widget.style.setProperty('--charge-progress', `${(time / DURATION) * 100}%`);
     timeline.setAttribute(
       'aria-valuetext',
       `${text.phaseNames[frame.phase]} · ${number.format(time)} / ${number.format(DURATION)}`,
