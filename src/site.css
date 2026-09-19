@@ -404,12 +404,35 @@ section[id] {
   margin: 10px 0 0;
   line-height: 1.8;
 }
+.concepts-intro,
 .examples-intro {
   max-width: 760px;
   color: var(--muted);
   font-size: 14px;
   line-height: 1.8;
   margin: -10px 0 28px;
+}
+.concept-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+}
+.concept-card {
+  min-width: 0;
+  padding: 20px;
+  border-top: 2px solid var(--green);
+  border-radius: var(--radius);
+  background: #f2f3ea;
+}
+.concept-card h3 {
+  font-size: 17px;
+  line-height: 1.35;
+}
+.concept-card p {
+  margin: 10px 0 0;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.75;
 }
 .example-groups {
   display: grid;
@@ -807,6 +830,7 @@ section[id] {
   .catalog-main {
     padding-top: 37px;
   }
+  .concept-grid,
   .example-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
@@ -928,6 +952,7 @@ section[id] {
   .context {
     padding: 21px;
   }
+  .concepts-intro,
   .examples-intro {
     font-size: 13px;
     margin-bottom: 22px;
@@ -935,6 +960,7 @@ section[id] {
   .example-groups {
     gap: 25px;
   }
+  .concept-grid,
   .example-grid {
     grid-template-columns: 1fr;
   }

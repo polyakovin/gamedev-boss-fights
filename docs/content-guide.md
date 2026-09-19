@@ -29,6 +29,7 @@ Use `content/mechanics/charge/en.json` as a structural example and `schemas/less
 | `story`                       | Explain which simple arena layout makes the attack readable                |
 | `adaptation`                  | Explain how the encounter respects available movement, reach, and upgrades |
 | `distinction`                 | Separate neighboring mechanics without asserting universal terminology     |
+| `concepts`                    | Name reusable design lenses and show how each applies to the mechanic      |
 | `examples`                    | Compare concrete 2D and 3D bosses and link to a video of each fight        |
 | `reviewStatus`                | Record `needs-review` until independent fluent review is complete          |
 
@@ -37,6 +38,12 @@ The current template requires exactly three steps, matching the localized “Thr
 Address the game designer, not a player looking for a walkthrough. Prefer concrete design variables and checks: what becomes fixed, what can still change, which signal communicates the change, and how much space the player must be able to clear. Distinguish an attack’s visual telegraph from a teaching overlay. Test optional dashes, jumps, and invulnerability states without making them silently mandatory for a basic escape.
 
 Content review is as valuable as translation review. Check factual claims, design concepts, terminology, examples, source relevance, and whether the animation actually demonstrates the written rule. When correcting a claim, link evidence and state whether it documents a particular game, supports a general principle, or is only an illustrative design choice.
+
+### Add design lenses
+
+Use `concepts` to connect the mechanic to reusable ways of thinking, such as telegraphing, commitment, threat geometry, counterplay, risk and reward, or a mastery check. Each card should name one lens and explain exactly how it appears in this mechanic. Treat the list as a practical analytical tool, not a universal taxonomy.
+
+Every concept has a stable kebab-case `id`. Keep the same IDs and order across translations so a concept can be linked and compared independently of language. Translate `title` and `body`. When adding or removing a lens, update all published translations, the content version, and the structural tests.
 
 ### Add game references
 

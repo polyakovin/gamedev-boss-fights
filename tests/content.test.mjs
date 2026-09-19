@@ -82,6 +82,32 @@ test('the published lesson teaches design decisions rather than player execution
   assert.ok(ru.steps.every((step) => step.title.endsWith('?')));
 });
 
+test('design lenses stay complete and linkable across translations', async () => {
+  const expected = [
+    'telegraphing',
+    'commitment',
+    'threat-geometry',
+    'counterplay',
+    'risk-reward',
+    'mastery-check',
+  ];
+  for (const lesson of Object.values(source.mechanics[0].translations))
+    assert.deepEqual(
+      lesson.concepts.map((concept) => concept.id),
+      expected,
+    );
+
+  const data = structuredClone(source);
+  data.mechanics[0].translations.ja.concepts.pop();
+  data.mechanics[0].translations.ru.concepts[0].id = 'changed-id';
+  await assert.rejects(
+    validateContent(data),
+    (error) =>
+      error.message.includes('concepts length differs from source') &&
+      error.message.includes('concept 1 id differs from source'),
+  );
+});
+
 test('community review explicitly includes facts, concepts, examples, and translations', () => {
   assert.match(source.ui.en.reviewNote, /facts.*concepts.*examples.*translations/i);
   assert.match(source.ui.ru.reviewNote, /факты.*концепции.*примеры.*переводы/i);

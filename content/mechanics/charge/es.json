@@ -83,6 +83,38 @@
     "title": "Embestida ≠ impulso rápido ≠ acometida",
     "body": "Una embestida amenaza una franja mediante el movimiento del cuerpo en una dirección ya fijada. Un impulso rápido puede limitarse a cambiar al jefe de posición. Una acometida suele ser un golpe corto para cerrar distancias. Esta página trata una variante de la embestida, no una regla universal para todos los juegos."
   },
+  "concepts": [
+    {
+      "id": "telegraphing",
+      "title": "Anticipación",
+      "body": "Una postura, un sonido o un efecto anuncian la embestida y el momento exacto en que deja de seguir al jugador. La señal y la regla deben coincidir."
+    },
+    {
+      "id": "commitment",
+      "title": "Compromiso",
+      "body": "Tras fijar la dirección, el jefe renuncia a girar a cambio de velocidad y alcance. Este compromiso permite predecir el ataque."
+    },
+    {
+      "id": "threat-geometry",
+      "title": "Geometría de la amenaza",
+      "body": "El ataque crea una franja, no un punto. Comprueba su ancho con el volumen completo de colisión del jugador, el espacio de la arena y la cámara."
+    },
+    {
+      "id": "counterplay",
+      "title": "Contrajuego",
+      "body": "Debe haber al menos una respuesta posible con el movimiento que el jugador ya posee. Las habilidades extra pueden añadir opciones sin convertirse en un requisito oculto."
+    },
+    {
+      "id": "risk-reward",
+      "title": "Riesgo y recompensa",
+      "body": "Una embestida más fuerte y larga necesita una señal más clara y una recuperación útil. La amenaza y la oportunidad se ajustan juntas."
+    },
+    {
+      "id": "mastery-check",
+      "title": "Prueba de dominio",
+      "body": "El jefe comprueba el movimiento y la lectura de señales enseñados antes del encuentro. Las mejoras deben cambiar las soluciones sin borrar la mecánica."
+    }
+  ],
   "examples": [
     {
       "dimension": "2D",
@@ -134,5 +166,5 @@
     }
   ],
   "reviewStatus": "needs-review",
-  "sourceVersion": 5
+  "sourceVersion": 6
 }

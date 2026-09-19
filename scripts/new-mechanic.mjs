@@ -29,6 +29,11 @@ const meta = {
   sources: [],
 };
 const lesson = placeholders(source);
+lesson.concepts = source.concepts.map(({ id }, index) => ({
+  id,
+  title: `TODO: concepts[${index}].title`,
+  body: `TODO: concepts[${index}].body`,
+}));
 lesson.examples = [
   {
     dimension: '2D',

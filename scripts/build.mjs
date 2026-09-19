@@ -251,8 +251,24 @@ for (const locale of locales) {
             <p>${e(c.distinction.body)}</p>
           </aside>
         </section>
+        <section id="concepts" class="content-section concepts-section">
+          <span class="eyebrow">03 / ${e(t.concepts)}</span>
+          <h2>${e(t.conceptsTitle)}</h2>
+          <p class="concepts-intro">${e(t.conceptsIntro)}</p>
+          <div class="concept-grid">
+            ${c.concepts
+              .map(
+                (concept) =>
+                  /* HTML */ `<article id="concept-${e(concept.id)}" class="concept-card">
+                    <h3>${e(concept.title)}</h3>
+                    <p>${e(concept.body)}</p>
+                  </article>`,
+              )
+              .join('')}
+          </div>
+        </section>
         <section id="examples" class="content-section examples-section">
-          <span class="eyebrow">03 / ${e(t.examples)}</span>
+          <span class="eyebrow">04 / ${e(t.examples)}</span>
           <h2>${e(t.examplesTitle)}</h2>
           <p class="examples-intro">${e(t.examplesIntro)}</p>
           <div class="example-groups">
@@ -261,7 +277,7 @@ for (const locale of locales) {
           </div>
         </section>
         <section id="sources" class="content-section sources">
-          <span class="eyebrow">04 / ${e(t.sources)}</span>
+          <span class="eyebrow">05 / ${e(t.sources)}</span>
           <h2>${e(t.sources)}</h2>
           <p>${e(t.sourceNote)}</p>
           <ul>

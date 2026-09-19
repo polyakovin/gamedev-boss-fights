@@ -16,6 +16,7 @@
     "story",
     "adaptation",
     "distinction",
+    "concepts",
     "examples",
     "reviewStatus",
     "sourceVersion"
@@ -269,6 +270,30 @@
         "body": {
           "type": "string",
           "minLength": 1
+        }
+      }
+    },
+    "concepts": {
+      "type": "array",
+      "minItems": 4,
+      "maxItems": 8,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "title", "body"],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$"
+          },
+          "title": {
+            "type": "string",
+            "minLength": 1
+          },
+          "body": {
+            "type": "string",
+            "minLength": 1
+          }
         }
       }
     },

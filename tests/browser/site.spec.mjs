@@ -19,6 +19,7 @@ for (const locale of registry) {
       'false',
     );
     await expect(page.locator('[data-charge-motion-note]')).toBeVisible();
+    await expect(page.locator('.concept-card')).toHaveCount(6);
     await expect(page.locator('.game-example')).toHaveCount(6);
     await expect(page.locator('.sources li a')).toHaveCount(7);
     await expect(page.locator('.review-note')).toBeVisible();

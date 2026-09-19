@@ -20,6 +20,7 @@
 - Read `docs/content-guide.md` and `docs/translation-guide.md` when editing lessons. `npm run new:mechanic -- slug` creates an unpublished draft; partial drafts can merge.
 - Publishing requires complete lessons in `en`, `ru`, `zh-Hans`, `hi`, `bn`, `es`, `ar`, and `ja`, each with `sourceVersion === meta.contentVersion`, a registered animation, and no unresolved placeholders.
 - Published lessons require concrete examples from both 2D and 3D games, each with a verified YouTube behavior clip and a design observation. Prefer clips no longer than three minutes; longer videos require an exact `t=<seconds>s` timestamp at the mechanic. Preserve game names, boss names, dimensions, URLs, and `videoDurationSeconds` across translations.
+- Published lessons require a separate design-lens section that connects the mechanic to reusable concepts without claiming a universal taxonomy. Preserve each `concepts[].id` and its order across translations.
 - Meaning changes increment `meta.contentVersion`, synchronize published translations and their `sourceVersion` values, and reset all lesson `reviewStatus` values to `needs-review`. Never claim native or fluent review without an actual independent reviewer.
 - Address game designers. Lessons explain how to build, tune, and test mechanics; they must not read like instructions for beating a boss.
 - Treat review of facts, design concepts, terminology, examples, sources, and animation accuracy as first-class content work alongside translation review. Automated validation does not establish subject-matter correctness.

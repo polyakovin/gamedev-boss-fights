@@ -22,6 +22,7 @@ Translate displayed strings naturally, including SVG descriptions, control label
 - Preserve keys, object structure, array lengths, and array order relative to the English source.
 - Keep `sourceVersion` as an integer identifying the `meta.contentVersion` reflected by the text. Every published locale, including English, must match that version; update the number only after updating the translation’s meaning.
 - Keep machine values such as `reviewStatus` in their defined English form. Do not translate IDs, locale codes, filenames, or URL paths.
+- In `concepts`, preserve each stable `id` and the array order. Translate `title` and `body` as the local wording of the same analytical lens.
 - In `examples`, preserve `dimension`, `game`, `boss`, `video`, and `videoDurationSeconds` exactly as in English. Translate only `body`.
 - Do not add HTML, Markdown formatting, invisible direction overrides, or English filler to a text field.
 - Use consistent terms for the mechanic, its phases, commitment, danger lane, and recovery. Prefer a natural explanation over an unclear borrowed term.
@@ -31,6 +32,8 @@ If the source contains an ambiguity, raise it in the PR instead of inventing a n
 ## Preserve the teaching
 
 Keep the reader in the role of a game designer. Translate design questions, tuning checks, and implementation mistakes; do not turn them into instructions for beating the boss.
+
+Design lenses explain why the mechanic works and what the designer should inspect. Keep them concrete and tied to the mechanic. Do not present the list as the only valid classification of game design concepts.
 
 Game references should explain a design choice visible in the linked fight. Keep the focus on signals, commitment, danger geometry, the arena, or recovery instead of writing a walkthrough.
 

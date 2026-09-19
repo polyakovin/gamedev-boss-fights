@@ -10,6 +10,7 @@
     "language",
     "playbook",
     "design",
+    "concepts",
     "examples",
     "sources",
     "edit",
@@ -30,6 +31,8 @@
     "stepsTitle",
     "mistakesTitle",
     "designerTitle",
+    "conceptsTitle",
+    "conceptsIntro",
     "examplesTitle",
     "examplesIntro",
     "games2D",
@@ -73,6 +76,10 @@
       "minLength": 1
     },
     "design": {
+      "type": "string",
+      "minLength": 1
+    },
+    "concepts": {
       "type": "string",
       "minLength": 1
     },
@@ -153,6 +160,14 @@
       "minLength": 1
     },
     "designerTitle": {
+      "type": "string",
+      "minLength": 1
+    },
+    "conceptsTitle": {
+      "type": "string",
+      "minLength": 1
+    },
+    "conceptsIntro": {
       "type": "string",
       "minLength": 1
     },
