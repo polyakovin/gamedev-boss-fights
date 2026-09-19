@@ -110,4 +110,7 @@ test('catalog and language gateway point to real pages', async ({ page, request 
     expect(response.status()).toBe(200);
     expect(await response.text()).toContain(`${locale.code}/mechanics/charge/`);
   }
+  await page.goto('ru/');
+  await expect(page.locator('.card-diagram [data-charge-art="tank"]')).toHaveCount(1);
+  await expect(page.locator('.card-diagram [data-charge-art="monster"]')).toHaveCount(1);
 });

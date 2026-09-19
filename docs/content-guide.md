@@ -76,7 +76,7 @@ Keep prose and control labels in the locale JSON. Escape text inserted into mark
 
 Use logical CSS properties for surrounding UI and test Arabic `dir="rtl"`. A spatial diagram may keep a stable coordinate direction, as Charge does, while labels and controls follow the page language. Preserve accessible names, keyboard operation, visible focus, and understandable static output with JavaScript disabled.
 
-Provide catalog artwork through the adapter’s `thumbnail` function. It should depict this mechanic accurately; reusing the charge diagram for a different attack could teach the wrong shape.
+Provide catalog artwork through the adapter’s `thumbnail` function. Reuse the same character and object SVG assets as the full lesson animation so the preview remains recognizable when the main art changes. The preview may simplify the surrounding arena and overlays, but it should depict this mechanic accurately; reusing the charge diagram for a different attack could teach the wrong shape.
 
 ## Metadata and references
 

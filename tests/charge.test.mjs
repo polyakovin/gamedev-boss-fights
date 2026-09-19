@@ -11,7 +11,7 @@ import {
   PLAYER_RADIUS,
   PREVIEW_TIME,
 } from '../src/charge-model.mjs';
-import { renderCharge } from '../lib/charge-view.mjs';
+import { CHARGE_ART, renderCharge, renderChargeThumbnail } from '../lib/charge-view.mjs';
 
 test('aim follows movement, then the target and direction stay frozen while the player sidesteps', () => {
   const aim = chargeFrame(1.2);
@@ -114,7 +114,7 @@ test('localized markup escapes HTML and script closers while preserving JSON con
   assert.ok(markup.includes('direction="ltr"'));
 });
 
-test('the charge diagram keeps the tank and monster illustrations', () => {
+test('the charge diagram and catalog preview reuse the same tank and monster assets', () => {
   const demo = {
     title: 'Charge',
     play: 'Play',
@@ -138,7 +138,12 @@ test('the charge diagram keeps the tank and monster illustrations', () => {
     phaseDescriptions: ['Aim', 'Lock', 'Charge', 'Recover'],
   };
   const markup = renderCharge(demo);
-  assert.match(markup, /data-charge-boss data-charge-art="tank"/);
-  assert.match(markup, /data-charge-player data-charge-art="monster"/);
+  const thumbnail = renderChargeThumbnail('charge');
+  assert.ok(markup.includes(CHARGE_ART.tank));
+  assert.ok(markup.includes(CHARGE_ART.monster));
+  assert.ok(thumbnail.includes(CHARGE_ART.tank));
+  assert.ok(thumbnail.includes(CHARGE_ART.monster));
+  assert.match(thumbnail, /data-charge-preview-boss/);
+  assert.match(thumbnail, /data-charge-preview-player/);
   assert.doesNotMatch(markup, /charge-demo__heading|charge-demo__legend|data-charge-speed/);
 });
