@@ -39,9 +39,11 @@ Address the game designer, not a player looking for a walkthrough. Prefer concre
 
 ### Add game references
 
-Every published lesson must include at least one 2D and one 3D boss that uses the mechanic. Name the game and boss, explain one useful design observation, and link directly to a YouTube video of that boss fight. Verify that the link works before submitting the PR.
+Every published lesson must include at least one 2D and one 3D boss that uses the mechanic. Name the game and boss, explain one useful design observation, and link directly to a YouTube demonstration of that behavior. Verify that the link works before submitting the PR.
 
-Use the examples to compare signals, commitment, danger geometry, arena constraints, and recovery. Describe how the implementation changes the design problem; do not give the reader instructions for defeating the boss. A reference is evidence that a design pattern has different forms, not a recipe to copy. Keep proper game and boss names and video URLs identical across translations while localizing the observation.
+Prefer a focused clip no longer than three minutes. It should show the boss behavior without travel, builds, commentary, or unrelated play; a speedrun is not a useful substitute merely because it is short. Record the full clip length in `videoDurationSeconds`. When the only useful source is longer, add `&t=<seconds>s` so the link opens immediately before the mechanic becomes visible. A chapter or the start of the whole fight is too broad. CI rejects long references without this exact timestamp.
+
+Use the examples to compare signals, commitment, danger geometry, arena constraints, and recovery. Describe how the implementation changes the design problem; do not give the reader instructions for defeating the boss. A reference is evidence that a design pattern has different forms, not a recipe to copy. Keep proper game and boss names, video URLs, and `videoDurationSeconds` identical across translations while localizing the observation.
 
 For the initial Charge lesson, preserve these facts:
 

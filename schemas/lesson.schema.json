@@ -280,7 +280,7 @@
       "items": {
         "type": "object",
         "additionalProperties": false,
-        "required": ["dimension", "game", "boss", "body", "video"],
+        "required": ["dimension", "game", "boss", "body", "video", "videoDurationSeconds"],
         "properties": {
           "dimension": {
             "enum": ["2D", "3D"]
@@ -300,6 +300,10 @@
           "video": {
             "type": "string",
             "format": "https-url"
+          },
+          "videoDurationSeconds": {
+            "type": "integer",
+            "minimum": 1
           }
         }
       }

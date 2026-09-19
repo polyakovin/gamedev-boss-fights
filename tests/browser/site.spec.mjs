@@ -21,6 +21,12 @@ for (const locale of registry) {
     await expect(page.locator('[data-charge-motion-note]')).toBeVisible();
     await expect(page.locator('.game-example')).toHaveCount(6);
     await expect(page.locator('.game-example a[href*="youtube.com/watch"]')).toHaveCount(6);
+    const videos = await page
+      .locator('.game-example a')
+      .evaluateAll((links) => links.map((link) => link.href));
+    expect(videos[1]).toBe('https://www.youtube.com/watch?v=VaYY2fauQNo');
+    expect(videos[4]).toBe('https://www.youtube.com/watch?v=NwFX9I69uss&t=265s');
+    expect(videos[5]).toBe('https://www.youtube.com/watch?v=gzwO84ERsb8');
     await expect(page.locator('.game-example a').first()).toHaveAttribute(
       'rel',
       'noopener noreferrer',

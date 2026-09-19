@@ -93,6 +93,9 @@ test('published game references cover 2D and 3D with stable YouTube videos', asy
   assert.equal(examples.length, 6);
   assert.deepEqual(new Set(examples.map((example) => example.dimension)), new Set(['2D', '3D']));
   assert.ok(examples.every((example) => new URL(example.video).hostname === 'www.youtube.com'));
+  assert.ok(examples.every((example) => example.videoDurationSeconds > 0));
+  assert.equal(examples.filter((example) => example.videoDurationSeconds <= 180).length, 5);
+  assert.equal(new URL(examples[4].video).searchParams.get('t'), '265s');
 
   const data = structuredClone(source);
   data.mechanics[0].translations.ru.examples[0].video = 'https://vimeo.com/123456';
@@ -103,5 +106,15 @@ test('published game references cover 2D and 3D with stable YouTube videos', asy
       error.message.includes('example 1 differs from source') &&
       error.message.includes('needs a YouTube video') &&
       error.message.includes('examples length differs from source'),
+  );
+});
+
+test('long boss references open at the exact mechanic instead of unrelated gameplay', async () => {
+  const data = structuredClone(source);
+  for (const lesson of Object.values(data.mechanics[0].translations))
+    lesson.examples[4].video = 'https://www.youtube.com/watch?v=NwFX9I69uss';
+  await assert.rejects(
+    validateContent(data),
+    /example 5 longer than 3 minutes needs an exact YouTube timestamp/,
   );
 });

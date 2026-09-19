@@ -89,42 +89,48 @@
       "game": "The Binding of Isaac: Rebirth",
       "boss": "Chub",
       "body": "ছোট একটি সংকেতের পরে সোজা ধেয়ে আসে এবং বাধায় থামে। বাধা ও পথের প্রস্থ আক্রমণটির গঠন ঠিক করে।",
-      "video": "https://www.youtube.com/watch?v=7pVgc-VBuPk"
+      "video": "https://www.youtube.com/watch?v=7pVgc-VBuPk",
+      "videoDurationSeconds": 94
     },
     {
       "dimension": "2D",
       "game": "Terraria",
       "boss": "Eye of Cthulhu",
       "body": "দ্বিতীয় ধাপে বিভিন্ন কোণ থেকে দ্রুত ধেয়ে আসা একের পর এক ঘটে। ছোট বিরতি একটি স্পষ্ট চালকে টানা চাপে বদলে দেয়।",
-      "video": "https://www.youtube.com/watch?v=Q1XN-qcLJPw"
+      "video": "https://www.youtube.com/watch?v=VaYY2fauQNo",
+      "videoDurationSeconds": 109
     },
     {
       "dimension": "2D",
       "game": "Hollow Knight",
       "boss": "Traitor Lord",
       "body": "শরীর সামান্য পেছনে নেওয়া অনুভূমিক ধাওয়ার সংকেত দেয়। ছোট অঙ্গন ও বেশি ক্ষতির জন্য সংকেতটি খুব স্পষ্ট হতে হয়।",
-      "video": "https://www.youtube.com/watch?v=f62A5eOtLzI"
+      "video": "https://www.youtube.com/watch?v=f62A5eOtLzI",
+      "videoDurationSeconds": 87
     },
     {
       "dimension": "3D",
       "game": "Sekiro: Shadows Die Twice",
       "boss": "Blazing Bull",
       "body": "লম্বা দৌড়, চওড়া মোড় ও দেয়াল গতি ও জড়তাকে লড়াইয়ের অংশ করে। পথ বাঁকলেও ধাওয়াটি বোঝা যায়।",
-      "video": "https://www.youtube.com/watch?v=KXeOFXIpOC0"
+      "video": "https://www.youtube.com/watch?v=KXeOFXIpOC0",
+      "videoDurationSeconds": 177
     },
     {
       "dimension": "3D",
       "game": "Monster Hunter: World",
       "boss": "Diablos",
       "body": "নামানো মাথা লম্বা ধাওয়ার সংকেত দেয়। শরীরের আকার ও খোলা অঙ্গন দূরত্ব এবং পাশের বেরোনোর পথ বোঝায়।",
-      "video": "https://www.youtube.com/watch?v=NwFX9I69uss"
+      "video": "https://www.youtube.com/watch?v=NwFX9I69uss&t=265s",
+      "videoDurationSeconds": 1358
     },
     {
       "dimension": "3D",
       "game": "Elden Ring",
       "boss": "Fallingstar Beast",
       "body": "অল্প অনুসরণের পরে পুরো অঙ্গন পেরিয়ে ধেয়ে আসে। গোল ঘর ও 3D ক্যামেরা নিরাপদ দিক বিচার করা কঠিন করে।",
-      "video": "https://www.youtube.com/watch?v=UQ9VaD_O1lI"
+      "video": "https://www.youtube.com/watch?v=gzwO84ERsb8",
+      "videoDurationSeconds": 20
     }
   ],
   "quiz": {

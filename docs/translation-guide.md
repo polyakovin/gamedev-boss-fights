@@ -23,7 +23,7 @@ Translate displayed strings naturally, including SVG descriptions, control label
 - Keep `quiz.correctIndex` unchanged. It is a zero-based index; translating or reordering only the answer text must not change which answer is correct.
 - Keep `sourceVersion` as an integer identifying the `meta.contentVersion` reflected by the text. Every published locale, including English, must match that version; update the number only after updating the translation’s meaning.
 - Keep machine values such as `reviewStatus` in their defined English form. Do not translate IDs, locale codes, filenames, or URL paths.
-- In `examples`, preserve `dimension`, `game`, `boss`, and `video` exactly as in English. Translate only `body`.
+- In `examples`, preserve `dimension`, `game`, `boss`, `video`, and `videoDurationSeconds` exactly as in English. Translate only `body`.
 - Do not add HTML, Markdown formatting, invisible direction overrides, or English filler to a text field.
 - Use consistent terms for the mechanic, its phases, commitment, danger lane, and recovery. Prefer a natural explanation over an unclear borrowed term.
 

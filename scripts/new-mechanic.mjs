@@ -36,6 +36,7 @@ lesson.examples = [
     boss: 'TODO: boss',
     body: 'TODO: design observation',
     video: 'https://www.youtube.com/watch?v=TODO-video-2d',
+    videoDurationSeconds: 180,
   },
   {
     dimension: '3D',
@@ -43,6 +44,7 @@ lesson.examples = [
     boss: 'TODO: boss',
     body: 'TODO: design observation',
     video: 'https://www.youtube.com/watch?v=TODO-video-3d',
+    videoDurationSeconds: 180,
   },
 ];
 await fs.writeFile(path.join(directory, 'meta.json'), JSON.stringify(meta, null, 2) + '\n');
