@@ -49,9 +49,8 @@ for (const locale of registry) {
     );
     await page.locator('[data-charge-phase="3"]').click();
     await expect(page.locator('[data-charge-demo]')).toHaveAttribute('data-charge-outcome', 'safe');
-    await page.locator('[data-charge-scenario][value="retreat"]').check();
-    await page.locator('[data-charge-phase="3"]').click();
-    await expect(page.locator('[data-charge-demo]')).toHaveAttribute('data-charge-outcome', 'hit');
+    await expect(page.locator('[data-charge-scenario], .charge-demo__scenarios')).toHaveCount(0);
+    await expect(page.locator('[data-charge-dodge]')).toHaveCount(1);
     expect(errors).toEqual([]);
   });
 }

@@ -13,9 +13,6 @@
     "restart": "Restart",
     "timeline": "Attack timeline",
     "step": "Attack phases",
-    "scenario": "Test path",
-    "sidestep": "Side path",
-    "retreat": "Straight path",
     "phaseNames": ["Aim", "Lock", "Charge", "Recover"],
     "phaseDescriptions": [
       "Set how long the boss tracks the player. Make this phase visible.",
@@ -29,9 +26,8 @@
     "path": "Movement",
     "locked": "Direction locked",
     "safe": "Outside the lane",
-    "hit": "Still in the lane",
     "reducedMotion": "Animation starts paused. Use the phase buttons or timeline to explore without playback.",
-    "diagramDescription": "A test diagram for a charge attack. The side path clears the danger lane; the straight path stays inside it."
+    "diagramDescription": "A charge attack diagram. After direction lock, the player moves sideways and clears the danger lane."
   },
   "steps": [
     {
@@ -166,5 +162,5 @@
     }
   ],
   "reviewStatus": "needs-review",
-  "sourceVersion": 6
+  "sourceVersion": 7
 }

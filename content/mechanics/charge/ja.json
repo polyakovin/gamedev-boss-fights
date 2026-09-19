@@ -13,9 +13,6 @@
     "restart": "最初から",
     "timeline": "攻撃の時間軸",
     "step": "攻撃の段階",
-    "scenario": "テスト経路",
-    "sidestep": "横の経路",
-    "retreat": "直線の経路",
     "phaseNames": ["狙う", "方向固定", "突進", "硬直"],
     "phaseDescriptions": [
       "ボスがプレイヤーを追尾する時間を決め、この段階を見える形で示します。",
@@ -29,9 +26,8 @@
     "path": "移動経路",
     "locked": "方向固定済み",
     "safe": "進路の外",
-    "hit": "まだ進路上",
     "reducedMotion": "アニメーションは一時停止した状態で始まります。段階ボタンや時間軸を使えば、再生せずに動きを確かめられます。",
-    "diagramDescription": "突進攻撃の検証図。横の経路は危険な帯を外れ、直線の経路は帯の中に残ります。"
+    "diagramDescription": "突進攻撃の図。方向が固定された後、プレイヤーは横へ移動して危険な帯を外れます。"
   },
   "steps": [
     {
@@ -166,5 +162,5 @@
     }
   ],
   "reviewStatus": "needs-review",
-  "sourceVersion": 6
+  "sourceVersion": 7
 }

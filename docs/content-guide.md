@@ -69,7 +69,7 @@ Use `lib/charge-view.mjs`, `src/charge-model.mjs`, `src/charge-player.mjs`, and 
 
 1. A pure model computes the current phase, positions, and outcome without the DOM or wall-clock state.
 2. The view emits an original SVG, text alternatives, labeled native controls, and escaped localized data.
-3. A small browser module handles playback, seeking, scenarios, and status updates.
+3. A small browser module handles playback, seeking, and status updates.
 4. Tests check the rule itself as well as the visible controls.
 
 Keep prose and control labels in the locale JSON. Escape text inserted into markup, and safely encode JSON embedded in HTML. Pause on initial load and when the page becomes hidden. Provide phase selection and a timeline so readers can learn without continuous motion. Do not rely on color alone to distinguish danger and safety.

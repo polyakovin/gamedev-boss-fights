@@ -1,6 +1,5 @@
 import { chargeFrame, DEFAULT_PLAN, DURATION, PHASE_TIMES, PREVIEW_TIME } from './charge-model.mjs';
 
-let instance = 0;
 for (const widget of document.querySelectorAll('[data-charge-demo]')) initializeCharge(widget);
 
 export function initializeCharge(widget) {
@@ -13,7 +12,6 @@ export function initializeCharge(widget) {
   const restartButton = find('[data-charge-restart]');
   const timeline = find('[data-charge-timeline]');
   const phaseButtons = [...widget.querySelectorAll('[data-charge-phase]')];
-  const scenarioInputs = [...widget.querySelectorAll('[data-charge-scenario]')];
   const boss = find('[data-charge-boss]');
   const player = find('[data-charge-player]');
   const lane = find('[data-charge-lane]');
@@ -24,7 +22,6 @@ export function initializeCharge(widget) {
   const description = find('[data-charge-description]');
   const bossLabel = find('[data-charge-boss-label]');
   const playerLabel = find('[data-charge-player-label]');
-  const impact = find('[data-charge-impact]');
   const recovery = find('[data-charge-recovery]');
   const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
   const number = new Intl.NumberFormat(document.documentElement.lang || undefined, {
@@ -32,22 +29,17 @@ export function initializeCharge(widget) {
     maximumFractionDigits: 1,
   });
   let time = PREVIEW_TIME;
-  let scenario = 'sidestep';
   let running = false;
   let playFromStart = true;
   let animationId = 0;
   let lastTimestamp;
   let announcedPhase = 1;
 
-  // Radios within this widget share a name, without affecting a second lesson.
-  const radioGroup = `charge-scenario-${++instance}`;
-  for (const input of scenarioInputs) input.name = radioGroup;
-
   function render() {
-    const frame = chargeFrame(time, scenario);
+    const frame = chargeFrame(time);
     const angle = (Math.atan2(frame.heading.y, frame.heading.x) * 180) / Math.PI;
     widget.dataset.chargePhase = String(frame.phase);
-    widget.dataset.chargeOutcome = frame.hit ? 'hit' : frame.clear ? 'safe' : 'pending';
+    widget.dataset.chargeOutcome = frame.clear ? 'safe' : 'pending';
     boss.setAttribute('transform', `translate(${frame.boss.x} ${frame.boss.y}) rotate(${angle})`);
     player.setAttribute('transform', `translate(${frame.player.x} ${frame.player.y})`);
     lane.setAttribute(
@@ -57,33 +49,20 @@ export function initializeCharge(widget) {
     lane.setAttribute('opacity', frame.phase === 3 ? '.22' : frame.phase === 0 ? '.5' : '1');
     target.setAttribute('transform', `translate(${frame.target.x} ${frame.target.y})`);
     target.setAttribute('opacity', frame.phase === 3 ? '.2' : '.8');
-    path.setAttribute(
-      'd',
-      scenario === 'sidestep'
-        ? 'M 258 260 H 166 M 177 252 L 166 260 L 177 268'
-        : 'M 280 225 V 105 M 272 116 L 280 105 L 288 116',
-    );
-    path.setAttribute(
-      'stroke',
-      scenario === 'sidestep' ? 'var(--diagram-player-label)' : '#ac5646',
-    );
     path.setAttribute('opacity', frame.phase === 1 ? '1' : frame.phase === 2 ? '.5' : '0');
     bossLabel.setAttribute('x', frame.boss.x);
     bossLabel.setAttribute('y', frame.boss.y + 72);
     playerLabel.setAttribute('x', frame.player.x);
     playerLabel.setAttribute('y', frame.player.y - 47);
-    impact.setAttribute('visibility', frame.hit ? 'visible' : 'hidden');
     recovery.setAttribute('visibility', frame.phase === 3 ? 'visible' : 'hidden');
     status.textContent =
       frame.phase === 0
         ? text.danger
         : frame.phase === 1
           ? text.locked
-          : frame.hit
-            ? text.hit
-            : frame.clear
-              ? text.safe
-              : text.path;
+          : frame.clear
+            ? text.safe
+            : text.path;
     const safeStatus = frame.phase >= 2 && frame.clear;
     statusBackground.setAttribute(
       'fill',
@@ -164,15 +143,6 @@ export function initializeCharge(widget) {
       setRunning(false);
       playFromStart = false;
       time = PHASE_TIMES[Number(button.dataset.chargePhase)];
-      render();
-    });
-  for (const input of scenarioInputs)
-    input.addEventListener('change', () => {
-      if (!input.checked) return;
-      setRunning(false);
-      scenario = input.value;
-      playFromStart = true;
-      time = PREVIEW_TIME;
       render();
     });
   function showMotionPreference() {

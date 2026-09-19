@@ -36,28 +36,18 @@ test('a captured plan owns its coordinates and preserves a diagonal heading', ()
   assert.deepEqual(plan.target, { x: 300, y: 400 });
   assert.deepEqual(plan.end, { x: 600, y: 800 });
   assert.ok(Object.isFrozen(plan.heading));
-  for (const scenario of ['sidestep', 'retreat']) {
-    assert.deepEqual(chargeFrame(5, scenario, plan).heading, { x: 0.6, y: 0.8 });
-  }
+  assert.deepEqual(chargeFrame(5, plan).heading, { x: 0.6, y: 0.8 });
 });
 
-test('sidestep clears the entire body before charge and remains safe throughout the sweep', () => {
-  const locked = chargeFrame(PREVIEW_TIME, 'sidestep');
+test('the sideways dodge clears the entire body before charge and remains clear', () => {
+  const locked = chargeFrame(PREVIEW_TIME);
   assert.ok(
     distanceToSegment(locked.player, DEFAULT_PLAN.origin, DEFAULT_PLAN.end) >
       LANE_HALF_WIDTH + PLAYER_RADIUS,
   );
   assert.equal(locked.clear, true);
   for (let time = PHASE_ENDS[1]; time <= DURATION; time += 0.025)
-    assert.equal(chargeFrame(time, 'sidestep').hit, false);
-  assert.equal(chargeFrame(DURATION, 'sidestep').hit, false);
-});
-
-test('retreat along the lane is caught, including a seek that skips the impact frame', () => {
-  assert.equal(chargeFrame(PREVIEW_TIME, 'retreat').clear, false);
-  assert.equal(chargeFrame(PHASE_ENDS[1], 'retreat').hit, false);
-  assert.equal(chargeFrame(4.95, 'retreat').hit, true);
-  assert.equal(chargeFrame(DURATION, 'retreat').hit, true);
+    assert.equal(chargeFrame(time).clear, true);
 });
 
 test('boss stops at its endpoint and remains still during recovery', () => {
@@ -88,16 +78,12 @@ test('localized markup escapes HTML and script closers while preserving JSON con
       'restart',
       'timeline',
       'step',
-      'scenario',
-      'sidestep',
-      'retreat',
       'boss',
       'player',
       'danger',
       'path',
       'locked',
       'safe',
-      'hit',
       'reducedMotion',
       'diagramDescription',
     ].map((key) => [key, 'ساحة <b> & </script>']),
@@ -123,16 +109,12 @@ test('the charge diagram and catalog preview reuse the same tank and monster ass
     restart: 'Restart',
     timeline: 'Timeline',
     step: 'Phases',
-    scenario: 'Path',
-    sidestep: 'Side',
-    retreat: 'Straight',
     boss: 'Boss',
     player: 'Player',
     danger: 'Danger',
     path: 'Path',
     locked: 'Locked',
     safe: 'Safe',
-    hit: 'Hit',
     reducedMotion: 'Paused',
     diagramDescription: 'Diagram',
     phaseNames: ['Aim', 'Lock', 'Charge', 'Recover'],
@@ -147,4 +129,6 @@ test('the charge diagram and catalog preview reuse the same tank and monster ass
   assert.match(thumbnail, /data-charge-preview-boss/);
   assert.match(thumbnail, /data-charge-preview-player/);
   assert.doesNotMatch(markup, /charge-demo__heading|charge-demo__legend|data-charge-speed/);
+  assert.doesNotMatch(markup, /data-charge-scenario|charge-demo__scenarios/);
+  assert.equal(markup.match(/data-charge-dodge/g)?.length, 1);
 });

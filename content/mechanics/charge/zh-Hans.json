@@ -13,9 +13,6 @@
     "restart": "重新开始",
     "timeline": "攻击时间轴",
     "step": "攻击阶段",
-    "scenario": "测试路线",
-    "sidestep": "侧向路线",
-    "retreat": "直线路线",
     "phaseNames": ["瞄准", "锁定", "冲锋", "收招"],
     "phaseDescriptions": [
       "设定首领追踪玩家的时长，并让这个阶段清晰可见。",
@@ -29,9 +26,8 @@
     "path": "移动路线",
     "locked": "方向已锁定",
     "safe": "已离开危险通道",
-    "hit": "仍在危险通道内",
     "reducedMotion": "动画初始为暂停状态。可以通过阶段按钮或时间轴查看内容，无需播放动画。",
-    "diagramDescription": "冲锋攻击的测试示意图。侧向路线离开危险通道，直线路线仍在其中。"
+    "diagramDescription": "冲锋攻击示意图。方向锁定后，玩家向侧面移动并离开危险通道。"
   },
   "steps": [
     {
@@ -166,5 +162,5 @@
     }
   ],
   "reviewStatus": "needs-review",
-  "sourceVersion": 6
+  "sourceVersion": 7
 }

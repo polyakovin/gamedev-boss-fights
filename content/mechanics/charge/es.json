@@ -13,9 +13,6 @@
     "restart": "Reiniciar",
     "timeline": "Línea de tiempo del ataque",
     "step": "Fases del ataque",
-    "scenario": "Trayectoria de prueba",
-    "sidestep": "Trayectoria lateral",
-    "retreat": "Trayectoria recta",
     "phaseNames": ["Apuntar", "Fijar", "Embestir", "Recuperarse"],
     "phaseDescriptions": [
       "Define cuánto tiempo sigue el jefe al jugador. Haz visible esta fase.",
@@ -29,9 +26,8 @@
     "path": "Movimiento",
     "locked": "Dirección fijada",
     "safe": "Fuera de la franja",
-    "hit": "Aún en la franja",
     "reducedMotion": "La animación comienza en pausa. Usa los botones de las fases o la línea de tiempo para explorar sin reproducirla.",
-    "diagramDescription": "Diagrama de prueba de una embestida. La trayectoria lateral sale de la franja; la recta permanece dentro."
+    "diagramDescription": "Diagrama de una embestida. Tras fijarse la dirección, el jugador se desplaza de lado y sale de la franja de peligro."
   },
   "steps": [
     {
@@ -166,5 +162,5 @@
     }
   ],
   "reviewStatus": "needs-review",
-  "sourceVersion": 6
+  "sourceVersion": 7
 }

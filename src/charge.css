@@ -71,56 +71,6 @@
   outline: 3px solid var(--green);
   outline-offset: 3px;
 }
-.charge-demo__scenarios {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 0.35rem;
-  margin: 0;
-  padding: 0;
-  border: 0;
-  min-width: 0;
-}
-.charge-demo__scenarios label {
-  position: relative;
-  display: flex;
-  align-items: center;
-  min-width: 0;
-  cursor: pointer;
-}
-.charge-demo__scenarios input {
-  position: absolute;
-  inset: 0;
-  z-index: 1;
-  width: 100%;
-  height: 100%;
-  margin: 0;
-  opacity: 0;
-  cursor: pointer;
-}
-.charge-demo__scenarios span {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  min-height: 44px;
-  padding: 0.45rem 0.55rem;
-  border: 1px solid var(--charge-border);
-  border-radius: 7px;
-  color: var(--charge-muted);
-  font-size: 0.74rem;
-  line-height: 1.25;
-  text-align: center;
-}
-.charge-demo__scenarios input:checked + span {
-  background: var(--pale);
-  border-color: var(--hover-line);
-  color: var(--green);
-  font-weight: 650;
-}
-.charge-demo__scenarios input:focus-visible + span {
-  outline: 3px solid var(--green);
-  outline-offset: 3px;
-}
 .charge-demo__phase-buttons {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -277,11 +227,6 @@
   }
 }
 .charge-demo:not([data-charge-ready])
-  :is(
-    .charge-demo__scenarios,
-    .charge-demo__phase-buttons,
-    .charge-demo__transport,
-    .charge-demo__timeline
-  ) {
+  :is(.charge-demo__phase-buttons, .charge-demo__transport, .charge-demo__timeline) {
   display: none;
 }

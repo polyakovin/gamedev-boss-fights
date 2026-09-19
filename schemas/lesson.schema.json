@@ -60,9 +60,6 @@
         "restart",
         "timeline",
         "step",
-        "scenario",
-        "sidestep",
-        "retreat",
         "phaseNames",
         "phaseDescriptions",
         "boss",
@@ -71,7 +68,6 @@
         "path",
         "locked",
         "safe",
-        "hit",
         "reducedMotion",
         "diagramDescription"
       ],
@@ -97,18 +93,6 @@
           "minLength": 1
         },
         "step": {
-          "type": "string",
-          "minLength": 1
-        },
-        "scenario": {
-          "type": "string",
-          "minLength": 1
-        },
-        "sidestep": {
-          "type": "string",
-          "minLength": 1
-        },
-        "retreat": {
           "type": "string",
           "minLength": 1
         },
@@ -151,10 +135,6 @@
           "minLength": 1
         },
         "safe": {
-          "type": "string",
-          "minLength": 1
-        },
-        "hit": {
           "type": "string",
           "minLength": 1
         },
