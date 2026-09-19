@@ -111,6 +111,20 @@ test('catalog and language gateway point to real pages', async ({ page, request 
     expect(await response.text()).toContain(`${locale.code}/mechanics/charge/`);
   }
   await page.goto('ru/');
+  await expect(page.locator('.catalog-purpose h2')).toHaveText('Зачем нужен атлас');
+  await expect(page.locator('.atlas-map__link')).toHaveCount(6);
+  expect(
+    await page.locator('.atlas-map__link').evaluateAll((links) => links.map((a) => a.href)),
+  ).toEqual([
+    'http://127.0.0.1:4173/gamedev-boss-fights/ru/#mechanics',
+    'http://127.0.0.1:4173/gamedev-boss-fights/ru/mechanics/charge/#simulation',
+    'http://127.0.0.1:4173/gamedev-boss-fights/ru/mechanics/charge/#concepts',
+    'http://127.0.0.1:4173/gamedev-boss-fights/ru/mechanics/charge/#examples',
+    'http://127.0.0.1:4173/gamedev-boss-fights/ru/mechanics/charge/#sources',
+    'https://github.com/polyakovin/gamedev-boss-fights/blob/main/CONTRIBUTING.md',
+  ]);
   await expect(page.locator('.card-diagram [data-charge-art="tank"]')).toHaveCount(1);
   await expect(page.locator('.card-diagram [data-charge-art="monster"]')).toHaveCount(1);
+  await page.setViewportSize({ width: 375, height: 812 });
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
 });

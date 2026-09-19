@@ -19,6 +19,17 @@
     "indexTitle",
     "indexSubtitle",
     "indexEyebrow",
+    "purposeTitle",
+    "purposeText",
+    "siteMapTitle",
+    "siteMapIntro",
+    "mechanicsNavText",
+    "simulationNavTitle",
+    "simulationNavText",
+    "conceptsNavText",
+    "examplesNavText",
+    "sourcesNavText",
+    "contributeNavText",
     "available",
     "readLesson",
     "soon",
@@ -112,6 +123,50 @@
       "minLength": 1
     },
     "indexEyebrow": {
+      "type": "string",
+      "minLength": 1
+    },
+    "purposeTitle": {
+      "type": "string",
+      "minLength": 1
+    },
+    "purposeText": {
+      "type": "string",
+      "minLength": 1
+    },
+    "siteMapTitle": {
+      "type": "string",
+      "minLength": 1
+    },
+    "siteMapIntro": {
+      "type": "string",
+      "minLength": 1
+    },
+    "mechanicsNavText": {
+      "type": "string",
+      "minLength": 1
+    },
+    "simulationNavTitle": {
+      "type": "string",
+      "minLength": 1
+    },
+    "simulationNavText": {
+      "type": "string",
+      "minLength": 1
+    },
+    "conceptsNavText": {
+      "type": "string",
+      "minLength": 1
+    },
+    "examplesNavText": {
+      "type": "string",
+      "minLength": 1
+    },
+    "sourcesNavText": {
+      "type": "string",
+      "minLength": 1
+    },
+    "contributeNavText": {
       "type": "string",
       "minLength": 1
     },

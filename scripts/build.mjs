@@ -133,6 +133,41 @@ function exampleGroup(dimension, label, items, t) {
 }
 for (const locale of locales) {
   const t = ui[locale.code];
+  const featured = published[0];
+  const lessonPath = featured ? `${locale.code}/mechanics/${featured.meta.id}/` : `${locale.code}/`;
+  const atlasLinks = [
+    {
+      title: t.catalog,
+      text: t.mechanicsNavText,
+      href: '#mechanics',
+    },
+    {
+      title: t.simulationNavTitle,
+      text: t.simulationNavText,
+      href: link(`${lessonPath}#simulation`),
+    },
+    {
+      title: t.concepts,
+      text: t.conceptsNavText,
+      href: link(`${lessonPath}#concepts`),
+    },
+    {
+      title: t.examples,
+      text: t.examplesNavText,
+      href: link(`${lessonPath}#examples`),
+    },
+    {
+      title: t.sources,
+      text: t.sourcesNavText,
+      href: link(`${lessonPath}#sources`),
+    },
+    {
+      title: t.contribute,
+      text: t.contributeNavText,
+      href: `${REPOSITORY}/blob/main/CONTRIBUTING.md`,
+      external: true,
+    },
+  ];
   const cards = published
     .map((m) => {
       const c = m.translations[locale.code];
@@ -155,15 +190,49 @@ for (const locale of locales) {
     .join('');
   const body = /* HTML */ `<main id="main" class="catalog-main">
     <section class="catalog-hero">
-      <span class="eyebrow">${e(t.indexEyebrow)}</span>
-      <h1>${e(t.indexTitle)}</h1>
-      <p class="lead">${e(t.indexSubtitle)}</p>
-      <div class="catalog-meta">
-        <span class="small-dot"></span>${e(t.allLanguages)}<span class="meta-divider">/</span>CC BY
-        4.0
+      <div class="catalog-hero__statement">
+        <span class="eyebrow">${e(t.indexEyebrow)}</span>
+        <h1>${e(t.indexTitle)}</h1>
+        <p class="lead">${e(t.indexSubtitle)}</p>
+        <div class="catalog-meta">
+          <span class="small-dot"></span>${e(t.allLanguages)}<span class="meta-divider">/</span>CC
+          BY 4.0
+        </div>
       </div>
+      <aside class="catalog-purpose">
+        <h2>${e(t.purposeTitle)}</h2>
+        <p>${e(t.purposeText)}</p>
+      </aside>
     </section>
-    <section aria-label="${e(t.available)}">
+    <nav class="atlas-map" aria-labelledby="atlas-map-title">
+      <div class="section-heading atlas-map__heading">
+        <div>
+          <h2 id="atlas-map-title">${e(t.siteMapTitle)}</h2>
+          <p>${e(t.siteMapIntro)}</p>
+        </div>
+        <span class="count">${String(atlasLinks.length).padStart(2, '0')}</span>
+      </div>
+      <div class="atlas-map__grid">
+        ${atlasLinks
+          .map(
+            (item, index) =>
+              /* HTML */ `<a class="atlas-map__link" href="${e(item.href)}">
+                <span class="atlas-map__number" aria-hidden="true"
+                  >${String(index + 1).padStart(2, '0')}</span
+                >
+                <span>
+                  <strong>${e(item.title)}</strong>
+                  <small>${e(item.text)}</small>
+                </span>
+                <span class="atlas-map__arrow" aria-hidden="true"
+                  >${item.external ? '↗' : '→'}</span
+                >
+              </a>`,
+          )
+          .join('')}
+      </div>
+    </nav>
+    <section id="mechanics" aria-label="${e(t.available)}">
       <div class="section-heading">
         <h2>${e(t.available)}</h2>
         <span class="count">${String(published.length).padStart(2, '0')}</span>
