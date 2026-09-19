@@ -6,7 +6,7 @@ You can improve one sentence, review a translation, report a misleading animatio
 
 1. Open a lesson and follow **Improve this page**, or find its file under `content/mechanics/<id>/<locale>.json`.
 2. Use GitHub’s edit button to create the change in your fork. For navigation, buttons, and shared labels, edit `locales/<locale>.json` instead.
-3. Change the text while preserving JSON keys, array order, and `quiz.correctIndex`. Do not paste HTML into a text field.
+3. Change the text while preserving JSON keys and array order. Do not paste HTML into a text field.
 4. Open a PR describing the wording problem and your correction. For translation work, name the language and whether independent fluent review has actually happened.
 
 You do not need to run a local development environment for a wording-only PR. State that local checks were not run; the PR checks provide automated validation. A maintainer still reviews meaning and presentation.
@@ -49,7 +49,7 @@ Commit only your source changes, push your branch to your fork, and open a PR ag
 
 ## Review the experience
 
-For changes that affect rendering or interaction, check the affected lesson at a narrow mobile width and on desktop. Navigate with the keyboard, inspect focus visibility, try the language switcher, play/pause and scrub the demo, and submit the quiz. Check Arabic right-to-left layout and reduced-motion mode when shared UI changes. Confirm that essential teaching content remains readable without JavaScript.
+For changes that affect rendering or interaction, check the affected lesson at a narrow mobile width and on desktop. Navigate with the keyboard, inspect focus visibility, try the language switcher, and play/pause and scrub the demo. Check Arabic right-to-left layout and reduced-motion mode when shared UI changes. Confirm that essential teaching content remains readable without JavaScript.
 
 Keep labels and explanations available in text; color or animation alone must not carry a rule. A test pass does not establish translation fluency or prove that an animation teaches the right mechanic.
 

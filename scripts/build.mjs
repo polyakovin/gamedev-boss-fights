@@ -2,7 +2,7 @@ import fs from 'node:fs/promises';
 import path from 'node:path';
 import { ROOT, loadContent, validateContent } from '../lib/content.mjs';
 import { animations } from '../lib/animations.mjs';
-import { escape as e, jsonForHtml } from '../lib/html.mjs';
+import { escape as e } from '../lib/html.mjs';
 import { link, canonical, REPOSITORY } from '../lib/config.mjs';
 const { locales, ui, mechanics } = await validateContent(await loadContent());
 const published = mechanics.filter((m) => m.meta.published);
@@ -259,29 +259,6 @@ for (const locale of locales) {
             ${exampleGroup('2D', t.games2D, c.examples, t)}
             ${exampleGroup('3D', t.games3D, c.examples, t)}
           </div>
-        </section>
-        <section id="quiz" class="content-section quiz-section">
-          <div>
-            <span class="eyebrow">${e(t.questionLabel)}</span>
-            <h2>${e(t.quiz)}</h2>
-          </div>
-          <form class="quiz" data-quiz>
-            <fieldset>
-              <legend>${e(c.quiz.question)}</legend>
-              ${c.quiz.options.map((option, i) => `<label class="quiz-option"><input type="radio" name="answer" value="${i}"><span>${e(option)}</span></label>`).join('')}
-            </fieldset>
-            <button type="submit">${e(t.answerButton)} <span aria-hidden="true">→</span></button>
-            <p class="quiz-feedback" role="status" aria-live="polite"></p>
-            <script type="application/json" class="quiz-data">
-              ${jsonForHtml({ correctIndex: c.quiz.correctIndex, correct: t.correct, incorrect: t.incorrect, choose: t.chooseAnswer, explanation: c.quiz.explanation })}
-            </script>
-            <noscript
-              ><details>
-                <summary>${e(t.answerButton)}</summary>
-                <p>${e(c.quiz.explanation)}</p>
-              </details></noscript
-            >
-          </form>
         </section>
         <section id="sources" class="content-section sources">
           <span class="eyebrow">04 / ${e(t.sources)}</span>

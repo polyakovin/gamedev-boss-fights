@@ -133,16 +133,6 @@
       "videoDurationSeconds": 20
     }
   ],
-  "quiz": {
-    "question": "Normal movement cannot clear the lane after lock. What should the designer check first?",
-    "options": [
-      "Reduce the time between lock and impact.",
-      "Compare lane width, player speed, and lock timing.",
-      "Hide the danger lane."
-    ],
-    "correctIndex": 1,
-    "explanation": "These three values determine whether the intended escape is possible. Test them from every expected starting position."
-  },
   "reviewStatus": "needs-review",
-  "sourceVersion": 4
+  "sourceVersion": 5
 }

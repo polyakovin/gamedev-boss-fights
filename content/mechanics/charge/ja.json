@@ -133,16 +133,6 @@
       "videoDurationSeconds": 20
     }
   ],
-  "quiz": {
-    "question": "方向固定後、通常移動では帯を抜けられません。設計者が最初に確認するものは？",
-    "options": [
-      "方向固定から接触までの時間を短くする。",
-      "帯の幅、プレイヤー速度、方向固定のタイミングを比べる。",
-      "危険な帯を隠す。"
-    ],
-    "correctIndex": 1,
-    "explanation": "この3つが、想定した回避が可能かを決めます。想定するすべての開始位置から検証します。"
-  },
   "reviewStatus": "needs-review",
-  "sourceVersion": 4
+  "sourceVersion": 5
 }

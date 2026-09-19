@@ -17,7 +17,6 @@
     "adaptation",
     "distinction",
     "examples",
-    "quiz",
     "reviewStatus",
     "sourceVersion"
   ],
@@ -305,35 +304,6 @@
             "type": "integer",
             "minimum": 1
           }
-        }
-      }
-    },
-    "quiz": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": ["question", "options", "correctIndex", "explanation"],
-      "properties": {
-        "question": {
-          "type": "string",
-          "minLength": 1
-        },
-        "options": {
-          "type": "array",
-          "minItems": 3,
-          "maxItems": 3,
-          "items": {
-            "type": "string",
-            "minLength": 1
-          }
-        },
-        "correctIndex": {
-          "type": "integer",
-          "minimum": 0,
-          "maximum": 2
-        },
-        "explanation": {
-          "type": "string",
-          "minLength": 1
         }
       }
     },

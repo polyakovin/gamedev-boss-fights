@@ -20,6 +20,7 @@ for (const locale of registry) {
     );
     await expect(page.locator('[data-charge-motion-note]')).toBeVisible();
     await expect(page.locator('.game-example')).toHaveCount(6);
+    await expect(page.locator('#quiz, .quiz, [data-quiz]')).toHaveCount(0);
     await expect(page.locator('.game-example a[href*="youtube.com/watch"]')).toHaveCount(6);
     const videos = await page
       .locator('.game-example a')
@@ -50,9 +51,7 @@ for (const locale of registry) {
     expect(errors).toEqual([]);
   });
 }
-test('controls work by keyboard; play advances; seeking pauses; quiz explains feedback', async ({
-  page,
-}) => {
+test('controls work by keyboard; play advances; seeking pauses', async ({ page }) => {
   await page.goto('ru/mechanics/charge/');
   await expect(page.locator('.lesson-sidebar')).toHaveCount(0);
   await expect(
@@ -83,14 +82,6 @@ test('controls work by keyboard; play advances; seeking pauses; quiz explains fe
   await page.keyboard.press('End');
   await expect(demo).toHaveAttribute('data-charge-playing', 'false');
   await expect(demo).toHaveAttribute('data-charge-phase', '3');
-  await page.locator('.quiz button').click();
-  await expect(page.locator('.quiz-feedback')).not.toBeEmpty();
-  await page.locator('.quiz input[value="0"]').check();
-  await page.locator('.quiz button').click();
-  await expect(page.locator('.quiz-feedback')).toHaveAttribute('data-correct', 'false');
-  await page.locator('.quiz input[value="1"]').check();
-  await page.locator('.quiz button').click();
-  await expect(page.locator('.quiz-feedback')).toHaveAttribute('data-correct', 'true');
   await page.setViewportSize({ width: 375, height: 812 });
   const mobileHeroBox = await page.locator('.lesson-hero').boundingBox();
   const mobileSimulationBox = await page.locator('.simulation-section').boundingBox();
@@ -102,8 +93,7 @@ test('the lesson and language navigation work with JavaScript disabled', async (
   await page.goto('http://127.0.0.1:4173/gamedev-boss-fights/ar/mechanics/charge/');
   await expect(page.locator('h1')).toBeVisible();
   await expect(page.locator('[data-charge-svg]')).toBeVisible();
-  await page.locator('.quiz noscript details summary').click();
-  await expect(page.locator('.quiz noscript details p')).toBeVisible();
+  await expect(page.locator('#quiz, .quiz, [data-quiz]')).toHaveCount(0);
   await page.locator('.language-menu summary').click();
   await page.locator('.language-menu a[lang="ja"]').click();
   await expect(page.locator('html')).toHaveAttribute('lang', 'ja');

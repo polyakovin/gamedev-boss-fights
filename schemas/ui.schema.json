@@ -11,7 +11,6 @@
     "playbook",
     "design",
     "examples",
-    "quiz",
     "sources",
     "edit",
     "license",
@@ -39,11 +38,6 @@
     "storyTitle",
     "adaptTitle",
     "relatedTitle",
-    "answerButton",
-    "chooseAnswer",
-    "correct",
-    "incorrect",
-    "questionLabel",
     "sourceNote",
     "back",
     "notFound",
@@ -83,10 +77,6 @@
       "minLength": 1
     },
     "examples": {
-      "type": "string",
-      "minLength": 1
-    },
-    "quiz": {
       "type": "string",
       "minLength": 1
     },
@@ -195,26 +185,6 @@
       "minLength": 1
     },
     "relatedTitle": {
-      "type": "string",
-      "minLength": 1
-    },
-    "answerButton": {
-      "type": "string",
-      "minLength": 1
-    },
-    "chooseAnswer": {
-      "type": "string",
-      "minLength": 1
-    },
-    "correct": {
-      "type": "string",
-      "minLength": 1
-    },
-    "incorrect": {
-      "type": "string",
-      "minLength": 1
-    },
-    "questionLabel": {
       "type": "string",
       "minLength": 1
     },

@@ -6,22 +6,17 @@ const source = await loadContent();
 test('all eight published lessons have complete valid content', async () => {
   await validateContent(source);
   assert.equal(Object.keys(source.mechanics[0].translations).length, 8);
+  assert.ok(Object.values(source.mechanics[0].translations).every((lesson) => !('quiz' in lesson)));
 });
 test('a missing published translation is rejected instead of silently showing English', async () => {
   const data = structuredClone(source);
   delete data.mechanics[0].translations.bn;
   await assert.rejects(validateContent(data), /missing published translation bn/);
 });
-test('a mistranslated quiz answer and unfinished placeholder cannot publish', async () => {
+test('an unfinished placeholder cannot publish', async () => {
   const data = structuredClone(source);
-  data.mechanics[0].translations.ar.quiz.correctIndex = 0;
   data.mechanics[0].translations.ar.summary = 'TODO: summary';
-  await assert.rejects(
-    validateContent(data),
-    (error) =>
-      error.message.includes('quiz answer differs') &&
-      error.message.includes('unresolved placeholder'),
-  );
+  await assert.rejects(validateContent(data), /unresolved placeholder/);
 });
 test('unknown lesson keys and unsafe source URLs fail validation', async () => {
   const data = structuredClone(source);
@@ -83,7 +78,6 @@ test('published diagrams use only generic boss and player labels', () => {
 test('the published lesson teaches design decisions rather than player execution', () => {
   const { en, ru } = source.mechanics[0].translations;
   assert.match(en.learning, /tune/i);
-  assert.match(en.quiz.question, /designer/i);
   assert.match(ru.learning, /настройте/i);
   assert.ok(ru.steps.every((step) => step.title.endsWith('?')));
 });

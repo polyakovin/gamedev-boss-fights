@@ -8,7 +8,7 @@ The complete terms are at [CC BY 4.0 legal code](https://creativecommons.org/lic
 
 ## What this covers
 
-- Lesson prose, labels, explanations, and quizzes in `content/mechanics/`.
+- Lesson prose, labels, and explanations in `content/mechanics/`.
 - User-facing text and translations in `locales/`.
 - Original prose in the README files, contribution guides, and other project documentation.
 - Original SVG artwork, including the Charge diagram emitted by `lib/charge-view.mjs`, catalog thumbnails supplied by registered animation adapters, and `src/favicon.svg`.

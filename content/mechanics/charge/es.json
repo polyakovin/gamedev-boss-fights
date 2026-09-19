@@ -133,16 +133,6 @@
       "videoDurationSeconds": 20
     }
   ],
-  "quiz": {
-    "question": "El movimiento normal no permite salir tras la fijación. ¿Qué debe revisar primero el diseñador?",
-    "options": [
-      "Reducir el tiempo entre la fijación y el impacto.",
-      "Comparar el ancho, la velocidad del jugador y el momento de fijación.",
-      "Ocultar la franja de peligro."
-    ],
-    "correctIndex": 1,
-    "explanation": "Estos tres valores determinan si la salida prevista es posible. Pruébalos desde todas las posiciones iniciales previstas."
-  },
   "reviewStatus": "needs-review",
-  "sourceVersion": 4
+  "sourceVersion": 5
 }

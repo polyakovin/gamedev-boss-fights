@@ -467,64 +467,6 @@ section[id] {
 .game-example a span:last-child {
   margin-inline-start: auto;
 }
-.quiz-section {
-  display: grid;
-  grid-template-columns: 1fr 1.8fr;
-  gap: 35px;
-}
-.quiz-section h2 {
-  margin-top: 12px;
-  font-size: 25px;
-}
-.quiz fieldset {
-  margin: 0;
-  border: 0;
-  padding: 0;
-}
-.quiz legend {
-  font-size: 16px;
-  font-weight: 600;
-  margin-bottom: 17px;
-}
-.quiz-option {
-  display: flex;
-  align-items: start;
-  gap: 11px;
-  border: 1px solid var(--line);
-  border-radius: 8px;
-  padding: 12px 14px;
-  margin-bottom: 8px;
-  background: var(--surface);
-  font-size: 13px;
-  cursor: pointer;
-}
-.quiz-option:has(input:checked) {
-  border-color: var(--green);
-  background: #eaf0e7;
-}
-.quiz-option input {
-  margin: 4px 0 0;
-  accent-color: var(--green);
-  flex-shrink: 0;
-}
-.quiz button {
-  border: 0;
-  border-radius: 7px;
-  background: var(--ink);
-  color: #fffef9;
-  padding: 11px 18px;
-  font-size: 12px;
-  margin-top: 12px;
-}
-.quiz-feedback {
-  font-size: 13px;
-  line-height: 1.8;
-  margin: 17px 0 0;
-  color: #975332;
-}
-.quiz-feedback[data-correct='true'] {
-  color: var(--green);
-}
 .sources > h2 {
   font-size: 24px;
   margin-bottom: 14px;
@@ -862,9 +804,6 @@ section[id] {
   .catalog-main {
     padding-top: 37px;
   }
-  .quiz-section {
-    grid-template-columns: 1fr 1.9fr;
-  }
   .example-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
@@ -1000,16 +939,6 @@ section[id] {
     min-height: 0;
     padding: 19px;
   }
-  .quiz-section {
-    grid-template-columns: 1fr;
-    gap: 22px;
-  }
-  .quiz-section h2 {
-    font-size: 25px;
-  }
-  .quiz-option {
-    font-size: 13px;
-  }
   .site-footer {
     margin: 0 18px;
     align-items: start;
@@ -1101,8 +1030,5 @@ section[id] {
   }
   a {
     color: inherit;
-  }
-  .quiz button {
-    display: none;
   }
 }

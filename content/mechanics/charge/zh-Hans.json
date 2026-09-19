@@ -133,12 +133,6 @@
       "videoDurationSeconds": 20
     }
   ],
-  "quiz": {
-    "question": "锁定后，普通移动无法离开危险通道。设计师首先应检查什么？",
-    "options": ["缩短锁定到命中的时间。", "比较通道宽度、玩家速度和锁定时机。", "隐藏危险通道。"],
-    "correctIndex": 1,
-    "explanation": "这三个数值决定预期的退路是否可行。请从所有预期起点测试。"
-  },
   "reviewStatus": "needs-review",
-  "sourceVersion": 4
+  "sourceVersion": 5
 }

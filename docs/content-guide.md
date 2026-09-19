@@ -1,6 +1,6 @@
 # Writing and adding a mechanic
 
-A lesson should teach a designer how to build, tune, and test one mechanic. Keep its scope specific enough for the animation, prose, and quiz to agree.
+A lesson should teach a designer how to build, tune, and test one mechanic. Keep its scope specific enough for the animation and prose to agree.
 
 ## Start with a draft
 
@@ -18,22 +18,21 @@ A draft PR can contain just the proposed explanation and open questions. It does
 
 Use `content/mechanics/charge/en.json` as a structural example and `schemas/lesson.schema.json` as the contract. JSON text is plain text, not Markdown or HTML.
 
-| Field                         | What it should teach                                                        |
-| ----------------------------- | --------------------------------------------------------------------------- |
-| `title`, `variant`, `summary` | Name the mechanic and define the exact behavior covered                     |
-| `learning`                    | State the design skill the reader should leave with                         |
-| `demo`                        | Turn the animation into a test bench for phases, geometry, and outcomes     |
-| `steps`                       | Ask exactly three design questions in a useful order                        |
-| `mistakes`                    | Explain common implementation mistakes and their effect on the encounter    |
-| `designNotes`                 | Give concrete checks for timing, geometry, readability, and upgrades        |
-| `story`                       | Explain which simple arena layout makes the attack readable                 |
-| `adaptation`                  | Explain how the encounter respects available movement, reach, and upgrades  |
-| `distinction`                 | Separate neighboring mechanics without asserting universal terminology      |
-| `examples`                    | Compare concrete 2D and 3D bosses and link to a video of each fight         |
-| `quiz`                        | Test a design judgment with three options and one zero-based `correctIndex` |
-| `reviewStatus`                | Record `needs-review` until independent fluent review is complete           |
+| Field                         | What it should teach                                                       |
+| ----------------------------- | -------------------------------------------------------------------------- |
+| `title`, `variant`, `summary` | Name the mechanic and define the exact behavior covered                    |
+| `learning`                    | State the design skill the reader should leave with                        |
+| `demo`                        | Turn the animation into a test bench for phases, geometry, and outcomes    |
+| `steps`                       | Ask exactly three design questions in a useful order                       |
+| `mistakes`                    | Explain common implementation mistakes and their effect on the encounter   |
+| `designNotes`                 | Give concrete checks for timing, geometry, readability, and upgrades       |
+| `story`                       | Explain which simple arena layout makes the attack readable                |
+| `adaptation`                  | Explain how the encounter respects available movement, reach, and upgrades |
+| `distinction`                 | Separate neighboring mechanics without asserting universal terminology     |
+| `examples`                    | Compare concrete 2D and 3D bosses and link to a video of each fight        |
+| `reviewStatus`                | Record `needs-review` until independent fluent review is complete          |
 
-The current template requires exactly three steps, matching the localized “Three questions” heading. Its demo contract has four phase names and four descriptions. Do not force a mechanic into misleading phases to fit it. If another mechanic needs a different structure, update the schema, renderer, translations, and tests together. Shared headings and feedback live in `locales/*.json`; check that they still fit when extending the lesson structure.
+The current template requires exactly three steps, matching the localized “Three questions” heading. Its demo contract has four phase names and four descriptions. Do not force a mechanic into misleading phases to fit it. If another mechanic needs a different structure, update the schema, renderer, translations, and tests together. Shared headings live in `locales/*.json`; check that they still fit when extending the lesson structure.
 
 Address the game designer, not a player looking for a walkthrough. Prefer concrete design variables and checks: what becomes fixed, what can still change, which signal communicates the change, and how much space the player must be able to clear. Distinguish an attack’s visual telegraph from a teaching overlay. Test optional dashes, jumps, and invulnerability states without making them silently mandatory for a basic escape.
 
