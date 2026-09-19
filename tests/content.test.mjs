@@ -87,3 +87,21 @@ test('the published lesson teaches design decisions rather than player execution
   assert.match(ru.learning, /настройте/i);
   assert.ok(ru.steps.every((step) => step.title.endsWith('?')));
 });
+
+test('published game references cover 2D and 3D with stable YouTube videos', async () => {
+  const examples = source.mechanics[0].translations.en.examples;
+  assert.equal(examples.length, 6);
+  assert.deepEqual(new Set(examples.map((example) => example.dimension)), new Set(['2D', '3D']));
+  assert.ok(examples.every((example) => new URL(example.video).hostname === 'www.youtube.com'));
+
+  const data = structuredClone(source);
+  data.mechanics[0].translations.ru.examples[0].video = 'https://vimeo.com/123456';
+  data.mechanics[0].translations.bn.examples.pop();
+  await assert.rejects(
+    validateContent(data),
+    (error) =>
+      error.message.includes('example 1 differs from source') &&
+      error.message.includes('needs a YouTube video') &&
+      error.message.includes('examples length differs from source'),
+  );
+});

@@ -23,6 +23,7 @@ Translate displayed strings naturally, including SVG descriptions, control label
 - Keep `quiz.correctIndex` unchanged. It is a zero-based index; translating or reordering only the answer text must not change which answer is correct.
 - Keep `sourceVersion` as an integer identifying the `meta.contentVersion` reflected by the text. Every published locale, including English, must match that version; update the number only after updating the translation’s meaning.
 - Keep machine values such as `reviewStatus` in their defined English form. Do not translate IDs, locale codes, filenames, or URL paths.
+- In `examples`, preserve `dimension`, `game`, `boss`, and `video` exactly as in English. Translate only `body`.
 - Do not add HTML, Markdown formatting, invisible direction overrides, or English filler to a text field.
 - Use consistent terms for the mechanic, its phases, commitment, danger lane, and recovery. Prefer a natural explanation over an unclear borrowed term.
 
@@ -31,6 +32,8 @@ If the source contains an ambiguity, raise it in the PR instead of inventing a n
 ## Preserve the teaching
 
 Keep the reader in the role of a game designer. Translate design questions, tuning checks, and implementation mistakes; do not turn them into instructions for beating the boss.
+
+Game references should explain a design choice visible in the linked fight. Keep the focus on signals, commitment, danger geometry, the arena, or recovery instead of writing a walkthrough.
 
 The initial Charge variant can follow the player while aiming, then fixes its direction. It cannot keep steering during the charge. The designer checks that ordinary sideways movement can move the whole collision shape out of the lane; neither a special dodge ability nor invulnerability is required.
 

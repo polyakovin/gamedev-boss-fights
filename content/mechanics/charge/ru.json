@@ -86,6 +86,50 @@
     "title": "Таран ≠ рывок ≠ выпад",
     "body": "Таран угрожает целой полосе. Рывок меняет позицию. Выпад — короткая атака. Здесь показан один вариант тарана."
   },
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "The Binding of Isaac: Rebirth",
+      "boss": "Chub",
+      "body": "Короткая подготовка переходит в прямой таран, который останавливается об препятствие. Геометрия комнаты и ширина полосы задают атаку.",
+      "video": "https://www.youtube.com/watch?v=7pVgc-VBuPk"
+    },
+    {
+      "dimension": "2D",
+      "game": "Terraria",
+      "boss": "Eye of Cthulhu",
+      "body": "Во второй фазе быстрые тараны идут серией с разных направлений. Короткие паузы превращают один понятный приём в постоянное давление.",
+      "video": "https://www.youtube.com/watch?v=Q1XN-qcLJPw"
+    },
+    {
+      "dimension": "2D",
+      "game": "Hollow Knight",
+      "boss": "Traitor Lord",
+      "body": "Короткий замах корпусом назад обозначает горизонтальный рывок. Маленькая арена и высокий урон требуют особенно ясного сигнала.",
+      "video": "https://www.youtube.com/watch?v=f62A5eOtLzI"
+    },
+    {
+      "dimension": "3D",
+      "game": "Sekiro: Shadows Die Twice",
+      "boss": "Blazing Bull",
+      "body": "Длинные разгоны, широкие развороты и стены делают инерцию частью боя. Атака читается, хотя траектория может изгибаться.",
+      "video": "https://www.youtube.com/watch?v=KXeOFXIpOC0"
+    },
+    {
+      "dimension": "3D",
+      "game": "Monster Hunter: World",
+      "boss": "Diablos",
+      "body": "Опущенная голова предупреждает о длинном разгоне. Размер тела и открытая площадка помогают оценить дистанцию и боковой выход.",
+      "video": "https://www.youtube.com/watch?v=NwFX9I69uss"
+    },
+    {
+      "dimension": "3D",
+      "game": "Elden Ring",
+      "boss": "Fallingstar Beast",
+      "body": "Короткое слежение переходит в таран через всю арену. Круглая площадка и 3D-камера усложняют оценку безопасной стороны.",
+      "video": "https://www.youtube.com/watch?v=UQ9VaD_O1lI"
+    }
+  ],
   "quiz": {
     "question": "После фиксации обычного движения не хватает для выхода из полосы. Что гейм-дизайнеру проверить первым?",
     "options": [
@@ -97,5 +141,5 @@
     "explanation": "Эти три значения определяют, возможен ли задуманный выход. Проверьте их из всех ожидаемых начальных позиций."
   },
   "reviewStatus": "needs-review",
-  "sourceVersion": 3
+  "sourceVersion": 4
 }

@@ -86,6 +86,50 @@
     "title": "Embestida ≠ impulso rápido ≠ acometida",
     "body": "Una embestida amenaza una franja mediante el movimiento del cuerpo en una dirección ya fijada. Un impulso rápido puede limitarse a cambiar al jefe de posición. Una acometida suele ser un golpe corto para cerrar distancias. Esta página trata una variante de la embestida, no una regla universal para todos los juegos."
   },
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "The Binding of Isaac: Rebirth",
+      "boss": "Chub",
+      "body": "Una preparación breve conduce a una embestida recta que se detiene contra el escenario. Los obstáculos y el ancho de la franja definen el ataque.",
+      "video": "https://www.youtube.com/watch?v=7pVgc-VBuPk"
+    },
+    {
+      "dimension": "2D",
+      "game": "Terraria",
+      "boss": "Eye of Cthulhu",
+      "body": "En la segunda fase encadena embestidas rápidas desde distintos ángulos. Las pausas breves convierten un movimiento legible en presión continua.",
+      "video": "https://www.youtube.com/watch?v=Q1XN-qcLJPw"
+    },
+    {
+      "dimension": "2D",
+      "game": "Hollow Knight",
+      "boss": "Traitor Lord",
+      "body": "Una breve inclinación hacia atrás anuncia un avance horizontal. La arena pequeña y el daño alto exigen una señal muy clara.",
+      "video": "https://www.youtube.com/watch?v=f62A5eOtLzI"
+    },
+    {
+      "dimension": "3D",
+      "game": "Sekiro: Shadows Die Twice",
+      "boss": "Blazing Bull",
+      "body": "Las carreras largas, los giros amplios y los muros convierten la inercia en parte del encuentro. La carga se entiende aunque la trayectoria se curve.",
+      "video": "https://www.youtube.com/watch?v=KXeOFXIpOC0"
+    },
+    {
+      "dimension": "3D",
+      "game": "Monster Hunter: World",
+      "boss": "Diablos",
+      "body": "La cabeza baja anuncia una carrera larga. El tamaño del cuerpo y la arena abierta facilitan leer la distancia y la salida lateral.",
+      "video": "https://www.youtube.com/watch?v=NwFX9I69uss"
+    },
+    {
+      "dimension": "3D",
+      "game": "Elden Ring",
+      "boss": "Fallingstar Beast",
+      "body": "Un seguimiento breve conduce a una carga que cruza la arena. La sala circular y la cámara 3D dificultan juzgar el lado seguro.",
+      "video": "https://www.youtube.com/watch?v=UQ9VaD_O1lI"
+    }
+  ],
   "quiz": {
     "question": "El movimiento normal no permite salir tras la fijación. ¿Qué debe revisar primero el diseñador?",
     "options": [
@@ -97,5 +141,5 @@
     "explanation": "Estos tres valores determinan si la salida prevista es posible. Pruébalos desde todas las posiciones iniciales previstas."
   },
   "reviewStatus": "needs-review",
-  "sourceVersion": 3
+  "sourceVersion": 4
 }

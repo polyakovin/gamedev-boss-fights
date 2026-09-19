@@ -13,6 +13,7 @@
     "simulation",
     "playbook",
     "design",
+    "examples",
     "quiz",
     "sources",
     "edit",
@@ -33,6 +34,11 @@
     "stepsTitle",
     "mistakesTitle",
     "designerTitle",
+    "examplesTitle",
+    "examplesIntro",
+    "games2D",
+    "games3D",
+    "watchVideo",
     "storyTitle",
     "adaptTitle",
     "relatedTitle",
@@ -88,6 +94,10 @@
       "minLength": 1
     },
     "design": {
+      "type": "string",
+      "minLength": 1
+    },
+    "examples": {
       "type": "string",
       "minLength": 1
     },
@@ -168,6 +178,26 @@
       "minLength": 1
     },
     "designerTitle": {
+      "type": "string",
+      "minLength": 1
+    },
+    "examplesTitle": {
+      "type": "string",
+      "minLength": 1
+    },
+    "examplesIntro": {
+      "type": "string",
+      "minLength": 1
+    },
+    "games2D": {
+      "type": "string",
+      "minLength": 1
+    },
+    "games3D": {
+      "type": "string",
+      "minLength": 1
+    },
+    "watchVideo": {
       "type": "string",
       "minLength": 1
     },

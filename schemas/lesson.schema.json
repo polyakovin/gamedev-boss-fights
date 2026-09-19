@@ -16,6 +16,7 @@
     "story",
     "adaptation",
     "distinction",
+    "examples",
     "quiz",
     "reviewStatus",
     "sourceVersion"
@@ -284,6 +285,37 @@
         "body": {
           "type": "string",
           "minLength": 1
+        }
+      }
+    },
+    "examples": {
+      "type": "array",
+      "minItems": 2,
+      "maxItems": 12,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["dimension", "game", "boss", "body", "video"],
+        "properties": {
+          "dimension": {
+            "enum": ["2D", "3D"]
+          },
+          "game": {
+            "type": "string",
+            "minLength": 1
+          },
+          "boss": {
+            "type": "string",
+            "minLength": 1
+          },
+          "body": {
+            "type": "string",
+            "minLength": 1
+          },
+          "video": {
+            "type": "string",
+            "format": "https-url"
+          }
         }
       }
     },

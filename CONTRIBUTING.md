@@ -63,4 +63,6 @@ The public site uses `/gamedev-boss-fights/` as its URL prefix. Keep generated l
 
 Write original explanations and use original SVG illustrations. Do not add game screenshots, ripped sprites, or copied article passages. Cite useful references in the mechanic’s `meta.sources` and distinguish documented claims from illustrative examples. Broader design articles are context, not proof that every game follows the same rule.
 
+Published mechanics also include concrete 2D and 3D boss examples. Link directly to a working YouTube video of each fight and explain what the example demonstrates for a designer. Do not upload video frames or thumbnails to the repository, and do not turn the explanation into a walkthrough.
+
 By submitting work, you agree to contribute the text, translations, and original artwork under [CC BY 4.0](LICENSE-CONTENT.md), and source code under [MIT](LICENSE-CODE). Only submit material you are entitled to contribute. Existing third-party material retains its own license.

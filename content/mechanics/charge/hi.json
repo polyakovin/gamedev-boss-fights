@@ -86,6 +86,50 @@
     "title": "धावा ≠ तेज़ स्थानांतरण ≠ झपटकर वार",
     "body": "धावे में शरीर एक तय दिशा में बढ़कर पूरी पट्टी को खतरे में डालता है। तेज़ स्थानांतरण का मकसद केवल बॉस की जगह बदलना भी हो सकता है। झपटकर वार आम तौर पर थोड़ी दूरी घटाकर किया गया हमला होता है। यह पृष्ठ धावे के एक रूप के बारे में है, हर गेम पर लागू होने वाला सार्वभौमिक नियम नहीं।"
   },
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "The Binding of Isaac: Rebirth",
+      "boss": "Chub",
+      "body": "छोटा संकेत एक सीधे धावे में बदलता है, जो बाधा से टकराकर रुकता है। बाधाएँ और पट्टी की चौड़ाई हमले को तय करती हैं।",
+      "video": "https://www.youtube.com/watch?v=7pVgc-VBuPk"
+    },
+    {
+      "dimension": "2D",
+      "game": "Terraria",
+      "boss": "Eye of Cthulhu",
+      "body": "दूसरे चरण में अलग-अलग कोणों से तेज़ धावे लगातार आते हैं। छोटी रुकावटें एक साफ़ चाल को लगातार दबाव में बदल देती हैं।",
+      "video": "https://www.youtube.com/watch?v=Q1XN-qcLJPw"
+    },
+    {
+      "dimension": "2D",
+      "game": "Hollow Knight",
+      "boss": "Traitor Lord",
+      "body": "शरीर का छोटा पीछे झुकना क्षैतिज धावे का संकेत है। छोटा अखाड़ा और अधिक नुकसान बहुत साफ़ संकेत माँगते हैं।",
+      "video": "https://www.youtube.com/watch?v=f62A5eOtLzI"
+    },
+    {
+      "dimension": "3D",
+      "game": "Sekiro: Shadows Die Twice",
+      "boss": "Blazing Bull",
+      "body": "लंबी दौड़, चौड़े मोड़ और दीवारें गति को लड़ाई का हिस्सा बनाते हैं। रास्ता मुड़ने पर भी धावा पढ़ा जा सकता है।",
+      "video": "https://www.youtube.com/watch?v=KXeOFXIpOC0"
+    },
+    {
+      "dimension": "3D",
+      "game": "Monster Hunter: World",
+      "boss": "Diablos",
+      "body": "झुका सिर लंबे धावे का संकेत देता है। शरीर का आकार और खुला अखाड़ा दूरी और बगल के निकास को स्पष्ट बनाते हैं।",
+      "video": "https://www.youtube.com/watch?v=NwFX9I69uss"
+    },
+    {
+      "dimension": "3D",
+      "game": "Elden Ring",
+      "boss": "Fallingstar Beast",
+      "body": "थोड़ा पीछा करने के बाद वह पूरे अखाड़े को पार करता है। गोल कमरा और 3D कैमरा सुरक्षित दिशा का अनुमान कठिन बनाते हैं।",
+      "video": "https://www.youtube.com/watch?v=UQ9VaD_O1lI"
+    }
+  ],
   "quiz": {
     "question": "दिशा तय होने के बाद सामान्य चाल से पट्टी खाली नहीं होती। डिज़ाइनर को पहले क्या जाँचना चाहिए?",
     "options": [
@@ -97,5 +141,5 @@
     "explanation": "ये तीन मान तय करते हैं कि बनाया गया बचाव संभव है या नहीं। सभी अपेक्षित शुरुआती स्थानों से जाँचें।"
   },
   "reviewStatus": "needs-review",
-  "sourceVersion": 3
+  "sourceVersion": 4
 }

@@ -28,11 +28,25 @@ const meta = {
   related: [],
   sources: [],
 };
+const lesson = placeholders(source);
+lesson.examples = [
+  {
+    dimension: '2D',
+    game: 'TODO: game',
+    boss: 'TODO: boss',
+    body: 'TODO: design observation',
+    video: 'https://www.youtube.com/watch?v=TODO-video-2d',
+  },
+  {
+    dimension: '3D',
+    game: 'TODO: game',
+    boss: 'TODO: boss',
+    body: 'TODO: design observation',
+    video: 'https://www.youtube.com/watch?v=TODO-video-3d',
+  },
+];
 await fs.writeFile(path.join(directory, 'meta.json'), JSON.stringify(meta, null, 2) + '\n');
-await fs.writeFile(
-  path.join(directory, 'en.json'),
-  JSON.stringify(placeholders(source), null, 2) + '\n',
-);
+await fs.writeFile(path.join(directory, 'en.json'), JSON.stringify(lesson, null, 2) + '\n');
 console.log(
   `Created draft: content/mechanics/${id}/\nFill the English lesson, add translations and an animation, then set published: true. See docs/content-guide.md.`,
 );

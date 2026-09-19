@@ -107,6 +107,30 @@ function tiles(items, cls = '') {
     )
     .join('');
 }
+function exampleGroup(dimension, label, items, t) {
+  const cards = items
+    .filter((item) => item.dimension === dimension)
+    .map(
+      (item) =>
+        /* HTML */ `<article class="game-example">
+          <span class="game-example__game">${e(item.game)}</span>
+          <h4>${e(item.boss)}</h4>
+          <p>${e(item.body)}</p>
+          <a
+            href="${e(item.video)}"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="${e(`${t.watchVideo}: ${item.boss}, ${item.game}`)}"
+            ><span aria-hidden="true">▶</span>${e(t.watchVideo)}<span aria-hidden="true">↗</span></a
+          >
+        </article>`,
+    )
+    .join('');
+  return /* HTML */ `<section class="example-group" aria-labelledby="examples-${dimension}">
+    <h3 id="examples-${dimension}">${e(label)}</h3>
+    <div class="example-grid">${cards}</div>
+  </section>`;
+}
 for (const locale of locales) {
   const t = ui[locale.code];
   const cards = published
@@ -170,6 +194,7 @@ for (const locale of locales) {
       ['simulation', t.simulation],
       ['playbook', t.playbook],
       ['design', t.design],
+      ['examples', t.examples],
       ['quiz', t.quiz],
       ['sources', t.sources],
     ];
@@ -241,6 +266,15 @@ for (const locale of locales) {
             <p>${e(c.distinction.body)}</p>
           </aside>
         </section>
+        <section id="examples" class="content-section examples-section">
+          <span class="eyebrow">03 / ${e(t.examples)}</span>
+          <h2>${e(t.examplesTitle)}</h2>
+          <p class="examples-intro">${e(t.examplesIntro)}</p>
+          <div class="example-groups">
+            ${exampleGroup('2D', t.games2D, c.examples, t)}
+            ${exampleGroup('3D', t.games3D, c.examples, t)}
+          </div>
+        </section>
         <section id="quiz" class="content-section quiz-section">
           <div>
             <span class="eyebrow">${e(t.questionLabel)}</span>
@@ -265,7 +299,7 @@ for (const locale of locales) {
           </form>
         </section>
         <section id="sources" class="content-section sources">
-          <span class="eyebrow">03 / ${e(t.sources)}</span>
+          <span class="eyebrow">04 / ${e(t.sources)}</span>
           <h2>${e(t.sources)}</h2>
           <p>${e(t.sourceNote)}</p>
           <ul>
@@ -319,7 +353,7 @@ const rootHtml = /* HTML */ `<!doctype html>
         <span class="brand-mark" aria-hidden="true">✳</span>
         <p class="eyebrow">THE INTERACTIVE FIELD GUIDE</p>
         <h1>Boss Fight<br /><em>Atlas.</em></h1>
-        <p class="lead">Understand the fight. One mechanic at a time.</p>
+        <p class="lead">Design the fight. One mechanic at a time.</p>
         <nav class="language-choices" aria-label="Choose a language">${languageLinks}</nav>
         <p class="legal">
           Open educational materials · CC BY 4.0 · <a href="${REPOSITORY}">GitHub ↗</a>
@@ -332,7 +366,7 @@ await fs.writeFile(
   path.join(out, '404.html'),
   rootHtml
     .replace(
-      'Understand the fight. One mechanic at a time.',
+      'Design the fight. One mechanic at a time.',
       'Page not found. Choose a language to return to the atlas.',
     )
     .replace(

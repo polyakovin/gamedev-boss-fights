@@ -86,6 +86,50 @@
     "title": "Charge ≠ dash ≠ lunge",
     "body": "A charge threatens a full lane. A dash changes position. A lunge is a short attack. This page shows one kind of charge."
   },
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "The Binding of Isaac: Rebirth",
+      "boss": "Chub",
+      "body": "A short tell leads into a straight charge that stops at terrain. Obstacles and lane width define the attack.",
+      "video": "https://www.youtube.com/watch?v=7pVgc-VBuPk"
+    },
+    {
+      "dimension": "2D",
+      "game": "Terraria",
+      "boss": "Eye of Cthulhu",
+      "body": "Its second phase chains fast charges from different angles. Shorter gaps turn one readable move into sustained pressure.",
+      "video": "https://www.youtube.com/watch?v=Q1XN-qcLJPw"
+    },
+    {
+      "dimension": "2D",
+      "game": "Hollow Knight",
+      "boss": "Traitor Lord",
+      "body": "A brief lean-back signals a horizontal dash. The small arena and high damage demand a very clear cue.",
+      "video": "https://www.youtube.com/watch?v=f62A5eOtLzI"
+    },
+    {
+      "dimension": "3D",
+      "game": "Sekiro: Shadows Die Twice",
+      "boss": "Blazing Bull",
+      "body": "Long runs, wide turns, and walls make momentum part of the encounter. The charge stays readable even when its path curves.",
+      "video": "https://www.youtube.com/watch?v=KXeOFXIpOC0"
+    },
+    {
+      "dimension": "3D",
+      "game": "Monster Hunter: World",
+      "boss": "Diablos",
+      "body": "The lowered head announces a long rush. Body size and the open arena make distance and lateral clearance easy to read.",
+      "video": "https://www.youtube.com/watch?v=NwFX9I69uss"
+    },
+    {
+      "dimension": "3D",
+      "game": "Elden Ring",
+      "boss": "Fallingstar Beast",
+      "body": "Brief tracking leads into a long arena-crossing charge. A circular room and 3D camera make the safe side harder to judge.",
+      "video": "https://www.youtube.com/watch?v=UQ9VaD_O1lI"
+    }
+  ],
   "quiz": {
     "question": "Normal movement cannot clear the lane after lock. What should the designer check first?",
     "options": [
@@ -97,5 +141,5 @@
     "explanation": "These three values determine whether the intended escape is possible. Test them from every expected starting position."
   },
   "reviewStatus": "needs-review",
-  "sourceVersion": 3
+  "sourceVersion": 4
 }

@@ -4,7 +4,7 @@ An open, interactive encyclopedia of boss mechanics for game designers. Each les
 
 [Explore the atlas](https://polyakovin.github.io/gamedev-boss-fights/) · [Read in Russian](README.ru.md) · [Contribute](CONTRIBUTING.md)
 
-The first lesson is **Charge**. Compare two test paths, pause the animation, and inspect how tracking, commitment, collision, and recovery work together. In this variant, the boss cannot turn after its direction is fixed.
+The first lesson is **Charge**. Compare two test paths, pause the animation, and inspect how tracking, commitment, collision, and recovery work together. Six boss references from 2D and 3D games show how the same mechanic changes across real encounters, with a video of each fight.
 
 Available in English, Russian, Simplified Chinese, Hindi, Bengali, Spanish, Arabic, and Japanese. Initial translations await independent fluent-speaker review; corrections and reviews are welcome. [Open «Таран» in Russian](https://polyakovin.github.io/gamedev-boss-fights/ru/mechanics/charge/).
 

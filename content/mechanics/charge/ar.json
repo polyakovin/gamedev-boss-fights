@@ -86,6 +86,50 @@
     "title": "الاندفاع الهجومي ≠ اندفاعة التنقّل ≠ الانقضاض القصير",
     "body": "يهدّد الاندفاع الهجومي نطاقًا ممتدًا بتحريك الجسم في اتجاه محدّد لا يتغيّر. وقد تقتصر اندفاعة التنقّل على تغيير موضع الزعيم. أما الانقضاض القصير فعادةً ما يكون ضربة قصيرة تقلّص المسافة. تتناول هذه الصفحة نوعًا واحدًا من هجوم الاندفاع، لا قاعدة عامة تنطبق على جميع الألعاب."
   },
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "The Binding of Isaac: Rebirth",
+      "boss": "Chub",
+      "body": "تمهيد قصير يسبق اندفاعًا مستقيمًا يتوقف عند العوائق. تحدد العوائق وعرض المسار شكل الهجوم.",
+      "video": "https://www.youtube.com/watch?v=7pVgc-VBuPk"
+    },
+    {
+      "dimension": "2D",
+      "game": "Terraria",
+      "boss": "Eye of Cthulhu",
+      "body": "تربط المرحلة الثانية اندفاعات سريعة من زوايا مختلفة. تحوّل الفواصل القصيرة حركة واضحة إلى ضغط مستمر.",
+      "video": "https://www.youtube.com/watch?v=Q1XN-qcLJPw"
+    },
+    {
+      "dimension": "2D",
+      "game": "Hollow Knight",
+      "boss": "Traitor Lord",
+      "body": "ميل قصير إلى الخلف يعلن اندفاعًا أفقيًا. تفرض الساحة الصغيرة والضرر العالي إشارة شديدة الوضوح.",
+      "video": "https://www.youtube.com/watch?v=f62A5eOtLzI"
+    },
+    {
+      "dimension": "3D",
+      "game": "Sekiro: Shadows Die Twice",
+      "boss": "Blazing Bull",
+      "body": "الجري الطويل والمنعطفات الواسعة والجدران تجعل الزخم جزءًا من المواجهة. يظل الاندفاع مقروءًا حتى عندما ينحني مساره.",
+      "video": "https://www.youtube.com/watch?v=KXeOFXIpOC0"
+    },
+    {
+      "dimension": "3D",
+      "game": "Monster Hunter: World",
+      "boss": "Diablos",
+      "body": "خفض الرأس يعلن اندفاعًا طويلًا. يساعد حجم الجسم والساحة المفتوحة على قراءة المسافة والخروج الجانبي.",
+      "video": "https://www.youtube.com/watch?v=NwFX9I69uss"
+    },
+    {
+      "dimension": "3D",
+      "game": "Elden Ring",
+      "boss": "Fallingstar Beast",
+      "body": "يتحول تتبّع قصير إلى اندفاع يعبر الساحة. تجعل الغرفة الدائرية وكاميرا 3D تقدير الجانب الآمن أصعب.",
+      "video": "https://www.youtube.com/watch?v=UQ9VaD_O1lI"
+    }
+  ],
   "quiz": {
     "question": "لا تكفي الحركة العادية لمغادرة النطاق بعد التثبيت. ما أول ما يجب على المصمم فحصه؟",
     "options": [
@@ -97,5 +141,5 @@
     "explanation": "تحدد هذه القيم الثلاث ما إذا كان المخرج المقصود ممكنًا. اختبرها من كل مواضع البداية المتوقعة."
   },
   "reviewStatus": "needs-review",
-  "sourceVersion": 3
+  "sourceVersion": 4
 }

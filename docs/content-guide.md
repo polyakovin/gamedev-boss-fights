@@ -29,12 +29,19 @@ Use `content/mechanics/charge/en.json` as a structural example and `schemas/less
 | `story`                       | Explain which simple arena layout makes the attack readable                 |
 | `adaptation`                  | Explain how the encounter respects available movement, reach, and upgrades  |
 | `distinction`                 | Separate neighboring mechanics without asserting universal terminology      |
+| `examples`                    | Compare concrete 2D and 3D bosses and link to a video of each fight         |
 | `quiz`                        | Test a design judgment with three options and one zero-based `correctIndex` |
 | `reviewStatus`                | Record `needs-review` until independent fluent review is complete           |
 
 The current template requires exactly three steps, matching the localized “Three questions” heading. Its demo contract has four phase names and four descriptions. Do not force a mechanic into misleading phases to fit it. If another mechanic needs a different structure, update the schema, renderer, translations, and tests together. Shared headings and feedback live in `locales/*.json`; check that they still fit when extending the lesson structure.
 
 Address the game designer, not a player looking for a walkthrough. Prefer concrete design variables and checks: what becomes fixed, what can still change, which signal communicates the change, and how much space the player must be able to clear. Distinguish an attack’s visual telegraph from a teaching overlay. Test optional dashes, jumps, and invulnerability states without making them silently mandatory for a basic escape.
+
+### Add game references
+
+Every published lesson must include at least one 2D and one 3D boss that uses the mechanic. Name the game and boss, explain one useful design observation, and link directly to a YouTube video of that boss fight. Verify that the link works before submitting the PR.
+
+Use the examples to compare signals, commitment, danger geometry, arena constraints, and recovery. Describe how the implementation changes the design problem; do not give the reader instructions for defeating the boss. A reference is evidence that a design pattern has different forms, not a recipe to copy. Keep proper game and boss names and video URLs identical across translations while localizing the observation.
 
 For the initial Charge lesson, preserve these facts:
 
@@ -68,6 +75,8 @@ Provide catalog artwork through the adapter’s `thumbnail` function. It should 
 Explain the role of a source in the PR: a documented example, research supporting a claim, or wider design context. Prefer a developer’s own description or another primary source for claims about a specific game. Verify the link and the relevant claim. The current original teaching example is not a reconstruction of a particular game; its linked design articles provide context rather than evidence for a universal rule.
 
 Create original illustrations. Do not copy game screenshots, sprites, logos, or article artwork into the atlas. Keep third-party links as references and respect their original licenses. Our [content license](../LICENSE-CONTENT.md) applies to our contributions, not to linked material.
+
+YouTube links remain external references. Do not download or publish video frames, thumbnails, subtitles, or other assets from them. Linking to a video does not imply that its creator endorses the atlas.
 
 ## Publish or change a published lesson
 

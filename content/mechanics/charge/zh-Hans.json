@@ -86,6 +86,50 @@
     "title": "冲锋 ≠ 疾冲 ≠ 踏步攻击",
     "body": "冲锋以方向确定的身体移动威胁一条通道。疾冲可能只是让首领快速换位。踏步攻击通常是短距离接近目标后的一击。本页介绍的是冲锋的一种变体，并非适用于所有游戏的通则。"
   },
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "The Binding of Isaac: Rebirth",
+      "boss": "Chub",
+      "body": "短暂前摇后沿直线冲锋，碰到地形才停下。障碍物和通道宽度共同定义攻击。",
+      "video": "https://www.youtube.com/watch?v=7pVgc-VBuPk"
+    },
+    {
+      "dimension": "2D",
+      "game": "Terraria",
+      "boss": "Eye of Cthulhu",
+      "body": "第二阶段从不同角度连续高速冲锋。更短的间隔把一次清晰攻击变成持续压力。",
+      "video": "https://www.youtube.com/watch?v=Q1XN-qcLJPw"
+    },
+    {
+      "dimension": "2D",
+      "game": "Hollow Knight",
+      "boss": "Traitor Lord",
+      "body": "短暂后仰预告水平冲刺。狭小场地和高伤害要求提示格外清楚。",
+      "video": "https://www.youtube.com/watch?v=f62A5eOtLzI"
+    },
+    {
+      "dimension": "3D",
+      "game": "Sekiro: Shadows Die Twice",
+      "boss": "Blazing Bull",
+      "body": "长距离奔跑、大幅转向和墙壁让惯性成为战斗的一部分。即使路线弯曲，冲锋仍保持可读性。",
+      "video": "https://www.youtube.com/watch?v=KXeOFXIpOC0"
+    },
+    {
+      "dimension": "3D",
+      "game": "Monster Hunter: World",
+      "boss": "Diablos",
+      "body": "低头动作预告长距离冲锋。巨大的身体和开阔场地让距离与侧向出口更容易判断。",
+      "video": "https://www.youtube.com/watch?v=NwFX9I69uss"
+    },
+    {
+      "dimension": "3D",
+      "game": "Elden Ring",
+      "boss": "Fallingstar Beast",
+      "body": "短暂追踪后发动横跨场地的冲锋。圆形房间和 3D 镜头让安全方向更难判断。",
+      "video": "https://www.youtube.com/watch?v=UQ9VaD_O1lI"
+    }
+  ],
   "quiz": {
     "question": "锁定后，普通移动无法离开危险通道。设计师首先应检查什么？",
     "options": ["缩短锁定到命中的时间。", "比较通道宽度、玩家速度和锁定时机。", "隐藏危险通道。"],
@@ -93,5 +137,5 @@
     "explanation": "这三个数值决定预期的退路是否可行。请从所有预期起点测试。"
   },
   "reviewStatus": "needs-review",
-  "sourceVersion": 3
+  "sourceVersion": 4
 }
