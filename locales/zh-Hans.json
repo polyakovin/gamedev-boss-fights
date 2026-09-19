@@ -5,6 +5,8 @@
   "catalog": "机制目录",
   "contribute": "参与共建",
   "language": "语言",
+  "themeDark": "切换到深色主题",
+  "themeLight": "切换到浅色主题",
   "playbook": "核心检查",
   "design": "调整",
   "concepts": "设计视角",

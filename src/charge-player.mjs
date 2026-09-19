@@ -80,7 +80,15 @@ export function initializeCharge(widget) {
             : frame.clear
               ? text.safe
               : text.path;
-    statusBackground.setAttribute('fill', frame.phase >= 2 && frame.clear ? '#dcebe1' : '#f2e2d7');
+    const safeStatus = frame.phase >= 2 && frame.clear;
+    statusBackground.setAttribute(
+      'fill',
+      safeStatus ? 'var(--diagram-status-safe)' : 'var(--diagram-status)',
+    );
+    status.setAttribute(
+      'fill',
+      safeStatus ? 'var(--diagram-status-safe-label)' : 'var(--diagram-status-label)',
+    );
     for (const button of phaseButtons)
       button.setAttribute(
         'aria-pressed',

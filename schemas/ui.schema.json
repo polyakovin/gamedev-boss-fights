@@ -8,6 +8,8 @@
     "catalog",
     "contribute",
     "language",
+    "themeDark",
+    "themeLight",
     "playbook",
     "design",
     "concepts",
@@ -74,6 +76,14 @@
       "minLength": 1
     },
     "language": {
+      "type": "string",
+      "minLength": 1
+    },
+    "themeDark": {
+      "type": "string",
+      "minLength": 1
+    },
+    "themeLight": {
       "type": "string",
       "minLength": 1
     },

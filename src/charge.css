@@ -1,11 +1,11 @@
 .charge-demo {
-  --charge-ink: #333e37;
-  --charge-muted: #6a7367;
-  --charge-border: #dcd7c9;
-  --charge-teal: #276d62;
+  --charge-ink: var(--ink);
+  --charge-muted: var(--muted);
+  --charge-border: var(--line);
+  --charge-teal: var(--green);
   overflow: hidden;
   color: var(--charge-ink);
-  background: #fffdf7;
+  background: var(--surface);
   border: 1px solid var(--charge-border);
   border-radius: 18px;
 }
@@ -38,15 +38,15 @@
   font-family: inherit;
 }
 .charge-demo__entity-label {
-  fill: #746249;
+  fill: var(--diagram-boss-label);
   font-size: 16px;
   font-weight: 600;
 }
 .charge-demo__entity-label--player {
-  fill: #286b5e;
+  fill: var(--diagram-player-label);
 }
 .charge-demo__status-label {
-  fill: #704f3e;
+  fill: var(--diagram-status-label);
   font-size: 15px;
   font-weight: 600;
 }
@@ -55,7 +55,7 @@
   grid-template-columns: minmax(12rem, 0.72fr) minmax(0, 1.28fr);
   gap: 0.65rem;
   padding: 0.85rem;
-  border-top: 1px solid #e9e4d8;
+  border-top: 1px solid var(--line);
 }
 .charge-demo button,
 .charge-demo input {
@@ -68,7 +68,7 @@
 }
 .charge-demo button:focus-visible,
 .charge-demo input:focus-visible {
-  outline: 3px solid #398776;
+  outline: 3px solid var(--green);
   outline-offset: 3px;
 }
 .charge-demo__scenarios {
@@ -112,13 +112,13 @@
   text-align: center;
 }
 .charge-demo__scenarios input:checked + span {
-  background: #edf2e9;
-  border-color: #7c9986;
-  color: #335d4d;
+  background: var(--pale);
+  border-color: var(--hover-line);
+  color: var(--green);
   font-weight: 650;
 }
 .charge-demo__scenarios input:focus-visible + span {
-  outline: 3px solid #398776;
+  outline: 3px solid var(--green);
   outline-offset: 3px;
 }
 .charge-demo__phase-buttons {
@@ -128,21 +128,21 @@
 }
 .charge-demo__phase-buttons button {
   padding: 0.45rem 0.35rem;
-  color: #636a5c;
-  background: #f7f4ec;
-  border: 1px solid #e3dfd1;
+  color: var(--muted);
+  background: var(--paper);
+  border: 1px solid var(--line);
   border-radius: 7px;
   font-size: 0.7rem;
   line-height: 1.25;
   font-weight: 650;
 }
 .charge-demo__phase-buttons button[aria-pressed='true'] {
-  color: #fffdf4;
+  color: var(--paper);
   background: var(--charge-teal);
   border-color: var(--charge-teal);
 }
 .charge-demo__phase-buttons button:hover {
-  border-color: #6a9180;
+  border-color: var(--green);
 }
 .charge-demo__description {
   grid-column: 1 / -1;
@@ -177,10 +177,10 @@
   padding: 0.5rem 0.75rem;
   border: 1px solid var(--charge-teal);
   background: var(--charge-teal);
-  color: #fffdf4;
+  color: var(--paper);
 }
 .charge-demo__play:hover {
-  background: #1e584e;
+  background: color-mix(in srgb, var(--green) 78%, black);
 }
 .charge-demo__play svg {
   width: 1rem;
@@ -191,11 +191,11 @@
   width: 44px;
   padding: 0;
   border: 1px solid var(--charge-border);
-  color: #5c6659;
+  color: var(--muted);
   background: transparent;
 }
 .charge-demo__restart:hover {
-  background: #f1efe4;
+  background: var(--pale);
 }
 .charge-demo__restart svg {
   width: 1rem;
@@ -232,7 +232,7 @@
   margin: 0;
   padding: 0.55rem 0.7rem;
   color: var(--charge-muted);
-  background: #edf2e9;
+  background: var(--pale);
   border-radius: 5px;
   font-size: 0.7rem;
   line-height: 1.45;

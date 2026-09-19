@@ -13,6 +13,7 @@ for (const locale of registry) {
     await page.goto(`${locale.code}/mechanics/charge/`);
     await expect(page.locator('html')).toHaveAttribute('lang', locale.code);
     await expect(page.locator('html')).toHaveAttribute('dir', locale.dir);
+    await expect(page.locator('[data-theme-toggle]')).toHaveCount(1);
     await expect(page.locator('[data-charge-demo]')).toHaveAttribute('data-charge-ready', 'true');
     await expect(page.locator('[data-charge-demo]')).toHaveAttribute(
       'data-charge-playing',
@@ -100,6 +101,38 @@ test('the lesson and language navigation work with JavaScript disabled', async (
   await page.locator('.language-menu summary').click();
   await page.locator('.language-menu a[lang="ja"]').click();
   await expect(page.locator('html')).toHaveAttribute('lang', 'ja');
+  await context.close();
+});
+
+test('theme follows the system and a saved choice persists across pages', async ({ browser }) => {
+  const context = await browser.newContext({ colorScheme: 'dark' });
+  const page = await context.newPage();
+  const base = 'http://127.0.0.1:4173/gamedev-boss-fights/';
+  await page.goto(`${base}ru/`);
+  await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
+  await expect(page.locator('[data-theme-toggle]')).toHaveAttribute(
+    'aria-label',
+    'Включить светлую тему',
+  );
+  const darkBackground = await page.evaluate(() => getComputedStyle(document.body).backgroundColor);
+  await page.locator('[data-theme-toggle]').click();
+  await expect(page.locator('html')).toHaveAttribute('data-theme', 'light');
+  await expect(page.locator('[data-theme-toggle]')).toHaveAttribute(
+    'aria-label',
+    'Включить тёмную тему',
+  );
+  const lightBackground = await page.evaluate(
+    () => getComputedStyle(document.body).backgroundColor,
+  );
+  expect(lightBackground).not.toBe(darkBackground);
+  await page.goto(base);
+  await expect(page.locator('html')).toHaveAttribute('data-theme', 'light');
+  await expect(page.locator('[data-theme-toggle]')).toHaveAttribute(
+    'aria-label',
+    'Switch to dark theme',
+  );
+  await page.reload();
+  await expect(page.locator('html')).toHaveAttribute('data-theme', 'light');
   await context.close();
 });
 test('catalog and language gateway point to real pages', async ({ page, request }) => {

@@ -30,6 +30,30 @@ function languages(active, id) {
     </nav>
   </details>`;
 }
+function themeButton(darkLabel, lightLabel) {
+  return /* HTML */ `<button
+    class="theme-toggle"
+    type="button"
+    data-theme-toggle
+    data-label-dark="${e(darkLabel)}"
+    data-label-light="${e(lightLabel)}"
+    aria-label="${e(darkLabel)}"
+    title="${e(darkLabel)}"
+  >
+    <span aria-hidden="true"></span>
+  </button>`;
+}
+const themeHead = /* HTML */ `<meta name="color-scheme" content="light dark" />
+  <script>
+    (() => {
+      try {
+        const saved = localStorage.getItem('boss-fight-atlas-theme');
+        const theme =
+          saved || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+        document.documentElement.dataset.theme = theme;
+      } catch {}
+    })();
+  </script>`;
 function shell(locale, title, description, body, { id, assets = [], catalog = false } = {}) {
   const t = ui[locale.code];
   const route = locale.code + '/' + (id ? `mechanics/${id}/` : '');
@@ -38,7 +62,7 @@ function shell(locale, title, description, body, { id, assets = [], catalog = fa
       <head>
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width,initial-scale=1" />
-        <meta name="color-scheme" content="light" />
+        ${themeHead}
         <title>${e(title)} · Boss Fight Atlas</title>
         <meta name="description" content="${e(description)}" />
         <link rel="canonical" href="${canonical(route)}" />
@@ -82,6 +106,7 @@ function shell(locale, title, description, body, { id, assets = [], catalog = fa
                 >${e(t.contribute)} <span aria-hidden="true">↗</span></a
               >
             </nav>
+            ${themeButton(t.themeDark, t.themeLight)}
             ${languages(locale.code, id)}
           </div>
         </header>
@@ -376,6 +401,7 @@ const rootHtml = /* HTML */ `<!doctype html>
     <head>
       <meta charset="utf-8" />
       <meta name="viewport" content="width=device-width,initial-scale=1" />
+      ${themeHead}
       <title>Boss Fight Atlas — Interactive boss mechanics</title>
       <meta
         name="description"
@@ -384,8 +410,10 @@ const rootHtml = /* HTML */ `<!doctype html>
       <link rel="canonical" href="${canonical()}" />
       <link rel="stylesheet" href="${link('assets/site.css')}" />
       <link rel="icon" href="${link('assets/favicon.svg')}" type="image/svg+xml" />
+      <script type="module" src="${link('assets/site.mjs')}"></script>
     </head>
     <body class="language-home">
+      ${themeButton('Switch to dark theme', 'Switch to light theme')}
       <main id="main">
         <span class="brand-mark" aria-hidden="true">✳</span>
         <p class="eyebrow">THE INTERACTIVE FIELD GUIDE</p>

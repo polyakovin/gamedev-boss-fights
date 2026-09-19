@@ -5,6 +5,8 @@
   "catalog": "メカニクス一覧",
   "contribute": "編集に参加",
   "language": "言語",
+  "themeDark": "ダークテーマに切り替える",
+  "themeLight": "ライトテーマに切り替える",
   "playbook": "基本チェック",
   "design": "調整",
   "concepts": "デザインの視点",

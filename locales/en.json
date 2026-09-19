@@ -5,6 +5,8 @@
   "catalog": "Mechanics",
   "contribute": "Contribute",
   "language": "Language",
+  "themeDark": "Switch to dark theme",
+  "themeLight": "Switch to light theme",
   "playbook": "Core checks",
   "design": "Tuning",
   "concepts": "Design lenses",
