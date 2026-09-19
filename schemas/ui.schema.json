@@ -8,9 +8,6 @@
     "catalog",
     "contribute",
     "language",
-    "onThisPage",
-    "overview",
-    "simulation",
     "playbook",
     "design",
     "examples",
@@ -74,18 +71,6 @@
       "minLength": 1
     },
     "language": {
-      "type": "string",
-      "minLength": 1
-    },
-    "onThisPage": {
-      "type": "string",
-      "minLength": 1
-    },
-    "overview": {
-      "type": "string",
-      "minLength": 1
-    },
-    "simulation": {
       "type": "string",
       "minLength": 1
     },

@@ -48,6 +48,19 @@ test('controls work by keyboard; play advances; seeking pauses; quiz explains fe
   page,
 }) => {
   await page.goto('ru/mechanics/charge/');
+  await expect(page.locator('.lesson-sidebar')).toHaveCount(0);
+  await expect(
+    page.locator(
+      '.charge-demo__heading, .charge-demo__legend, .charge-demo__note, [data-charge-speed]',
+    ),
+  ).toHaveCount(0);
+  const heroBox = await page.locator('.lesson-hero').boundingBox();
+  const simulationBox = await page.locator('.simulation-section').boundingBox();
+  expect(simulationBox.x).toBeGreaterThan(heroBox.x + heroBox.width);
+  expect(Math.abs(simulationBox.y - heroBox.y)).toBeLessThan(2);
+  expect(Math.max(heroBox.y + heroBox.height, simulationBox.y + simulationBox.height)).toBeLessThan(
+    900,
+  );
   const demo = page.locator('[data-charge-demo]');
   await page.locator('[data-charge-play]').click();
   await expect
@@ -72,6 +85,10 @@ test('controls work by keyboard; play advances; seeking pauses; quiz explains fe
   await page.locator('.quiz input[value="1"]').check();
   await page.locator('.quiz button').click();
   await expect(page.locator('.quiz-feedback')).toHaveAttribute('data-correct', 'true');
+  await page.setViewportSize({ width: 375, height: 812 });
+  const mobileHeroBox = await page.locator('.lesson-hero').boundingBox();
+  const mobileSimulationBox = await page.locator('.simulation-section').boundingBox();
+  expect(mobileSimulationBox.y).toBeGreaterThan(mobileHeroBox.y + mobileHeroBox.height);
 });
 test('the lesson and language navigation work with JavaScript disabled', async ({ browser }) => {
   const context = await browser.newContext({ javaScriptEnabled: false });

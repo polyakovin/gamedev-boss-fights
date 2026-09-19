@@ -189,53 +189,38 @@ for (const locale of locales) {
   for (const m of published) {
     const c = m.translations[locale.code],
       a = animations[m.meta.animation];
-    const nav = [
-      ['overview', t.overview],
-      ['simulation', t.simulation],
-      ['playbook', t.playbook],
-      ['design', t.design],
-      ['examples', t.examples],
-      ['quiz', t.quiz],
-      ['sources', t.sources],
-    ];
     const body = /* HTML */ `<div class="lesson-layout">
-      <aside class="lesson-sidebar">
-        <a class="back-link" href="${link(locale.code + '/')}">← ${e(t.catalog)}</a
-        ><span class="eyebrow sidebar-caption">${e(t.onThisPage)}</span>
-        <nav aria-label="${e(t.onThisPage)}">
-          ${nav.map(([anchor, label], i) => `<a href="#${anchor}"><span aria-hidden="true">0${i + 1}</span>${e(label)}</a>`).join('')}
-        </nav>
-        <a
-          class="sidebar-edit"
-          href="${REPOSITORY}/edit/main/content/mechanics/${m.meta.id}/${locale.code}.json"
-          >${e(t.edit)} ↗</a
-        >
-      </aside>
       <main id="main" class="lesson-main">
-        <section id="overview" class="lesson-hero">
-          <div class="lesson-topline">
-            <span class="eyebrow"
-              >${e(t.mechanicLabel)} ${String(m.meta.number).padStart(2, '0')}</span
-            ><span>${e(c.category)}</span><span>${e(c.readTime)}</span>
-          </div>
-          <h1>
-            ${e(c.title)}<span class="title-index" aria-hidden="true"
-              >${String(m.meta.number).padStart(2, '0')}</span
-            >
-          </h1>
-          <p class="hero-subtitle">${e(c.subtitle)}</p>
-          <div class="intro-grid">
-            <div>
-              <span class="variant">${e(c.variant)}</span>
-              <p class="summary">${e(c.summary)}</p>
+        <div class="lesson-toolbar">
+          <a class="back-link" href="${link(locale.code + '/')}">← ${e(t.catalog)}</a>
+          <a
+            class="lesson-edit"
+            href="${REPOSITORY}/edit/main/content/mechanics/${m.meta.id}/${locale.code}.json"
+            >${e(t.edit)} ↗</a
+          >
+        </div>
+        <div class="lesson-overview-grid">
+          <section id="overview" class="lesson-hero">
+            <div class="lesson-topline">
+              <span class="eyebrow"
+                >${e(t.mechanicLabel)} ${String(m.meta.number).padStart(2, '0')}</span
+              ><span>${e(c.category)}</span><span>${e(c.readTime)}</span>
             </div>
+            <h1>
+              ${e(c.title)}<span class="title-index" aria-hidden="true"
+                >${String(m.meta.number).padStart(2, '0')}</span
+              >
+            </h1>
+            <p class="hero-subtitle">${e(c.subtitle)}</p>
+            <span class="variant">${e(c.variant)}</span>
+            <p class="summary">${e(c.summary)}</p>
             <aside class="learning">
               <span class="eyebrow">${e(t.learnLabel)}</span>
               <p>${e(c.learning)}</p>
             </aside>
-          </div>
-        </section>
-        <section id="simulation" class="simulation-section">${a.render(c.demo)}</section>
+          </section>
+          <div id="simulation" class="simulation-section">${a.render(c.demo)}</div>
+        </div>
         <section id="playbook" class="content-section">
           <span class="eyebrow">01 / ${e(t.playbook)}</span>
           <h2>${e(t.stepsTitle)}</h2>

@@ -197,57 +197,33 @@ section[id] {
 .lesson-layout {
   max-width: 1440px;
   margin: auto;
-  display: grid;
-  grid-template-columns: 214px minmax(0, 1fr);
-  gap: 44px;
   padding: 0 44px;
-}
-.lesson-sidebar {
-  position: sticky;
-  top: 112px;
-  align-self: start;
-  padding-block: 0 40px;
-  margin-top: 36px;
 }
 .back-link {
   font-size: 12px;
   color: var(--muted);
-  display: inline-block;
-  margin-bottom: 38px;
-}
-.sidebar-caption {
-  margin-bottom: 16px;
-  font-size: 10px;
-}
-.lesson-sidebar nav {
-  display: flex;
-  flex-direction: column;
-  gap: 3px;
-}
-.lesson-sidebar nav a {
-  font-size: 12px;
-  padding: 10px 0;
-  display: flex;
-  gap: 10px;
-  align-items: baseline;
-}
-.lesson-sidebar nav a span {
-  font-size: 10px;
-  color: #9ba398;
-  font-variant-numeric: tabular-nums;
-}
-.sidebar-edit {
-  font-size: 11px;
-  display: block;
-  color: var(--muted);
-  margin-top: 35px;
-  border-top: 1px solid var(--line);
-  padding-top: 20px;
 }
 .lesson-main {
   min-width: 0;
-  padding-top: 39px;
+  padding-top: 24px;
   padding-bottom: 55px;
+}
+.lesson-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  margin-bottom: 22px;
+}
+.lesson-edit {
+  color: var(--muted);
+  font-size: 11px;
+}
+.lesson-overview-grid {
+  display: grid;
+  grid-template-columns: minmax(340px, 0.74fr) minmax(0, 1.26fr);
+  align-items: start;
+  gap: clamp(30px, 4vw, 64px);
 }
 .lesson-topline {
   display: flex;
@@ -265,7 +241,7 @@ section[id] {
   padding-inline-start: 17px;
 }
 .lesson-hero h1 {
-  font-size: clamp(64px, 6.5vw, 100px);
+  font-size: clamp(58px, 5.5vw, 80px);
   letter-spacing: -0.065em;
   margin: 21px 0 14px;
   display: flex;
@@ -282,18 +258,11 @@ section[id] {
   font-weight: 500;
 }
 .hero-subtitle {
-  font-size: 22px;
+  font-size: 20px;
   line-height: 1.5;
   max-width: 720px;
   color: #5e6e62;
-  margin-bottom: 27px;
-}
-.intro-grid {
-  display: grid;
-  grid-template-columns: 1.5fr 1fr;
-  gap: 42px;
-  align-items: start;
-  padding-bottom: 33px;
+  margin-bottom: 24px;
 }
 .variant {
   font-size: 11px;
@@ -310,12 +279,12 @@ section[id] {
   font-size: 14px;
   line-height: 1.8;
   margin: 0;
-  max-width: 650px;
+  max-width: 54ch;
 }
 .learning {
   border-inline-start: 2px solid #a9bb8c;
   padding-inline-start: 20px;
-  margin-top: 3px;
+  margin-top: 28px;
 }
 .learning p {
   font-size: 16px;
@@ -827,8 +796,8 @@ section[id] {
   letter-spacing: 0;
 }
 @media (min-width: 1600px) {
-  .lesson-layout {
-    gap: 64px;
+  .lesson-overview-grid {
+    grid-template-columns: minmax(360px, 0.7fr) minmax(0, 1.3fr);
   }
 }
 @media (max-width: 1150px) {
@@ -836,16 +805,10 @@ section[id] {
     padding: 0 28px;
   }
   .lesson-layout {
-    grid-template-columns: 170px minmax(0, 1fr);
-    gap: 28px;
     padding: 0 28px;
   }
-  .intro-grid {
-    gap: 25px;
-    grid-template-columns: 1.4fr 1fr;
-  }
-  .lesson-sidebar nav a {
-    font-size: 11px;
+  .lesson-overview-grid {
+    gap: 28px;
   }
   .site-footer {
     margin: 0 28px;
@@ -858,13 +821,17 @@ section[id] {
     font-size: 20px;
   }
 }
+@media (max-width: 960px) {
+  .lesson-overview-grid {
+    grid-template-columns: 1fr;
+  }
+  .lesson-hero {
+    max-width: 720px;
+  }
+}
 @media (max-width: 850px) {
   .lesson-layout {
-    display: block;
     padding: 0 24px;
-  }
-  .lesson-sidebar {
-    display: none;
   }
   .lesson-main {
     padding-top: 27px;
@@ -961,11 +928,6 @@ section[id] {
   .hero-subtitle {
     font-size: 18px;
     margin-bottom: 24px;
-  }
-  .intro-grid {
-    grid-template-columns: 1fr;
-    gap: 20px;
-    padding-bottom: 26px;
   }
   .summary {
     font-size: 13px;
@@ -1118,7 +1080,6 @@ section[id] {
 }
 @media print {
   .site-header,
-  .lesson-sidebar,
   .site-footer,
   .charge-demo button,
   .charge-demo input,

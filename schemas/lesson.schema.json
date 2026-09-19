@@ -55,12 +55,10 @@
       "additionalProperties": false,
       "required": [
         "title",
-        "intro",
         "play",
         "pause",
         "restart",
         "timeline",
-        "speed",
         "step",
         "scenario",
         "sidestep",
@@ -75,15 +73,10 @@
         "safe",
         "hit",
         "reducedMotion",
-        "diagramDescription",
-        "overlayNote"
+        "diagramDescription"
       ],
       "properties": {
         "title": {
-          "type": "string",
-          "minLength": 1
-        },
-        "intro": {
           "type": "string",
           "minLength": 1
         },
@@ -100,10 +93,6 @@
           "minLength": 1
         },
         "timeline": {
-          "type": "string",
-          "minLength": 1
-        },
-        "speed": {
           "type": "string",
           "minLength": 1
         },
@@ -174,10 +163,6 @@
           "minLength": 1
         },
         "diagramDescription": {
-          "type": "string",
-          "minLength": 1
-        },
-        "overlayNote": {
           "type": "string",
           "minLength": 1
         }

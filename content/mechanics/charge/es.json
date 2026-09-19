@@ -8,12 +8,10 @@
   "readTime": "3 min · lección de diseño",
   "demo": {
     "title": "Prueba el ataque",
-    "intro": "Compara dos trayectorias del jugador y examina cada fase.",
     "play": "Reproducir",
     "pause": "Pausar",
     "restart": "Reiniciar",
     "timeline": "Línea de tiempo del ataque",
-    "speed": "Velocidad de reproducción",
     "step": "Fases del ataque",
     "scenario": "Trayectoria de prueba",
     "sidestep": "Trayectoria lateral",
@@ -33,8 +31,7 @@
     "safe": "Fuera de la franja",
     "hit": "Aún en la franja",
     "reducedMotion": "La animación comienza en pausa. Usa los botones de las fases o la línea de tiempo para explorar sin reproducirla.",
-    "diagramDescription": "Diagrama de prueba de una embestida. La trayectoria lateral sale de la franja; la recta permanece dentro.",
-    "overlayNote": "La franja de color explica la mecánica. Un juego puede anunciar el ataque mediante una postura, un sonido o efectos."
+    "diagramDescription": "Diagrama de prueba de una embestida. La trayectoria lateral sale de la franja; la recta permanece dentro."
   },
   "steps": [
     {

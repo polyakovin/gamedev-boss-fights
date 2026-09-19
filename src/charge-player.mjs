@@ -12,7 +12,6 @@ export function initializeCharge(widget) {
   const playButton = find('[data-charge-play]');
   const restartButton = find('[data-charge-restart]');
   const timeline = find('[data-charge-timeline]');
-  const speedInput = find('[data-charge-speed]');
   const phaseButtons = [...widget.querySelectorAll('[data-charge-phase]')];
   const scenarioInputs = [...widget.querySelectorAll('[data-charge-scenario]')];
   const boss = find('[data-charge-boss]');
@@ -32,11 +31,7 @@ export function initializeCharge(widget) {
     minimumFractionDigits: 1,
     maximumFractionDigits: 1,
   });
-  const rateNumber = new Intl.NumberFormat(document.documentElement.lang || undefined, {
-    maximumFractionDigits: 2,
-  });
   let time = PREVIEW_TIME;
-  let speed = 1;
   let scenario = 'sidestep';
   let running = false;
   let playFromStart = true;
@@ -127,7 +122,7 @@ export function initializeCharge(widget) {
   function tick(timestamp) {
     if (!running) return;
     if (lastTimestamp !== undefined)
-      time = Math.min(DURATION, time + ((timestamp - lastTimestamp) * speed) / 1000);
+      time = Math.min(DURATION, time + (timestamp - lastTimestamp) / 1000);
     lastTimestamp = timestamp;
     render();
     if (time >= DURATION) setRunning(false);
@@ -151,11 +146,6 @@ export function initializeCharge(widget) {
     playFromStart = false;
     time = Number(timeline.value) / 1000;
     render();
-  });
-  speedInput.addEventListener('input', () => {
-    speed = Number(speedInput.value);
-    find('[data-charge-speed-value]').textContent = `${rateNumber.format(speed)}×`;
-    speedInput.setAttribute('aria-valuetext', `${rateNumber.format(speed)}×`);
   });
   for (const button of phaseButtons)
     button.addEventListener('click', () => {

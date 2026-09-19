@@ -82,12 +82,10 @@ test('localized markup escapes HTML and script closers while preserving JSON con
   const words = Object.fromEntries(
     [
       'title',
-      'intro',
       'play',
       'pause',
       'restart',
       'timeline',
-      'speed',
       'step',
       'scenario',
       'sidestep',
@@ -101,7 +99,6 @@ test('localized markup escapes HTML and script closers while preserving JSON con
       'hit',
       'reducedMotion',
       'diagramDescription',
-      'overlayNote',
     ].map((key) => [key, 'ساحة <b> & </script>']),
   );
   words.phaseNames = ['أ', 'ب', 'ج', 'د'];
@@ -120,12 +117,10 @@ test('localized markup escapes HTML and script closers while preserving JSON con
 test('the charge diagram keeps the tank and monster illustrations', () => {
   const demo = {
     title: 'Charge',
-    intro: 'Test',
     play: 'Play',
     pause: 'Pause',
     restart: 'Restart',
     timeline: 'Timeline',
-    speed: 'Speed',
     step: 'Phases',
     scenario: 'Path',
     sidestep: 'Side',
@@ -139,11 +134,11 @@ test('the charge diagram keeps the tank and monster illustrations', () => {
     hit: 'Hit',
     reducedMotion: 'Paused',
     diagramDescription: 'Diagram',
-    overlayNote: 'Overlay',
     phaseNames: ['Aim', 'Lock', 'Charge', 'Recover'],
     phaseDescriptions: ['Aim', 'Lock', 'Charge', 'Recover'],
   };
   const markup = renderCharge(demo);
   assert.match(markup, /data-charge-boss data-charge-art="tank"/);
   assert.match(markup, /data-charge-player data-charge-art="monster"/);
+  assert.doesNotMatch(markup, /charge-demo__heading|charge-demo__legend|data-charge-speed/);
 });
