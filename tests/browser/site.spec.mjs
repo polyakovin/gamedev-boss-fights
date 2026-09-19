@@ -109,6 +109,10 @@ test('theme follows the system and a saved choice persists across pages', async 
   const page = await context.newPage();
   const base = 'http://127.0.0.1:4173/gamedev-boss-fights/';
   await page.goto(`${base}ru/`);
+  await expect(page.locator('link[href*="site.css"]')).toHaveAttribute(
+    'href',
+    /assets\/site\.css\?v=[0-9a-f]{10}$/,
+  );
   await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
   await expect(page.locator('[data-theme-toggle]')).toHaveAttribute(
     'aria-label',

@@ -1,5 +1,6 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
+import { createHash } from 'node:crypto';
 import { ROOT, loadContent, validateContent } from '../lib/content.mjs';
 import { animations } from '../lib/animations.mjs';
 import { escape as e } from '../lib/html.mjs';
@@ -13,6 +14,17 @@ await fs.rm(out, { recursive: true, force: true });
 await fs.mkdir(path.join(out, 'assets'), { recursive: true });
 await fs.cp(path.join(ROOT, 'src'), path.join(out, 'assets'), { recursive: true });
 await fs.writeFile(path.join(out, '.nojekyll'), '');
+const assetVersions = new Map();
+for (const entry of await fs.readdir(path.join(ROOT, 'src'), { withFileTypes: true })) {
+  if (!entry.isFile()) continue;
+  const source = await fs.readFile(path.join(ROOT, 'src', entry.name));
+  assetVersions.set(entry.name, createHash('sha256').update(source).digest('hex').slice(0, 10));
+}
+function asset(name) {
+  const version = assetVersions.get(name);
+  if (!version) throw new Error(`Unknown asset: ${name}`);
+  return `${link(`assets/${name}`)}?v=${version}`;
+}
 const urls = [];
 async function write(route, html) {
   const dest = path.join(out, route, 'index.html');
@@ -76,16 +88,16 @@ function shell(locale, title, description, body, { id, assets = [], catalog = fa
         <meta property="og:description" content="${e(description)}" />
         <meta property="og:type" content="article" />
         <meta property="og:url" content="${canonical(route)}" />
-        <link rel="icon" href="${link('assets/favicon.svg')}" type="image/svg+xml" />
-        <link rel="stylesheet" href="${link('assets/site.css')}" />
+        <link rel="icon" href="${asset('favicon.svg')}" type="image/svg+xml" />
+        <link rel="stylesheet" href="${asset('site.css')}" />
         ${assets
           .filter((a) => a.endsWith('.css'))
-          .map((a) => `<link rel="stylesheet" href="${link('assets/' + a)}">`)
+          .map((a) => `<link rel="stylesheet" href="${asset(a)}">`)
           .join('')}
-        <script type="module" src="${link('assets/site.mjs')}"></script>
+        <script type="module" src="${asset('site.mjs')}"></script>
         ${assets
           .filter((a) => a.endsWith('.mjs'))
-          .map((a) => `<script type="module" src="${link('assets/' + a)}"></script>`)
+          .map((a) => `<script type="module" src="${asset(a)}"></script>`)
           .join('')}
       </head>
       <body${catalog ? ' class="catalog-page"' : ''}>
@@ -408,9 +420,9 @@ const rootHtml = /* HTML */ `<!doctype html>
         content="An open encyclopedia of boss mechanics, with interactive animations in eight languages."
       />
       <link rel="canonical" href="${canonical()}" />
-      <link rel="stylesheet" href="${link('assets/site.css')}" />
-      <link rel="icon" href="${link('assets/favicon.svg')}" type="image/svg+xml" />
-      <script type="module" src="${link('assets/site.mjs')}"></script>
+      <link rel="stylesheet" href="${asset('site.css')}" />
+      <link rel="icon" href="${asset('favicon.svg')}" type="image/svg+xml" />
+      <script type="module" src="${asset('site.mjs')}"></script>
     </head>
     <body class="language-home">
       ${themeButton('Switch to dark theme', 'Switch to light theme')}
