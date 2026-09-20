@@ -35,6 +35,12 @@ for (const locale of registry) {
     expect(
       await page.locator('body').evaluate((element) => getComputedStyle(element).fontFamily),
     ).toContain('Inter');
+    await page.locator('.site-header .brand').hover();
+    expect(
+      await page
+        .locator('.site-header .brand')
+        .evaluate((element) => getComputedStyle(element).textDecorationLine),
+    ).toBe('none');
     expect(
       await page
         .locator('.lesson-hero h1')

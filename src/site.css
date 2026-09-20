@@ -197,6 +197,9 @@ section[id] {
   letter-spacing: -0.045em;
   white-space: nowrap;
 }
+.brand:hover {
+  text-decoration: none;
+}
 .brand b {
   font-weight: 700;
 }
