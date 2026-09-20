@@ -41,6 +41,8 @@ Keep the world anchor upright. Translate the actor through the arena; use the sh
 
 Use motion effects sparingly. Dust follows movement, trails follow the path, and impact marks follow contact. They must not obscure the player, extend the apparent damaging region, imply invulnerability, or conceal a discontinuity. Avoid gratuitous screen shake and flashing. Fix the movement before decorating it.
 
+Make the source of an attack visible. A weapon strike needs a recognizable weapon, attached grips, and a cutting edge that leads its trail. Keep equipment present through anticipation, action, and recovery; do not hide a reset by fading it out. Rotate held equipment independently of sprite mirroring, and reuse its artwork in the preview. An attack arc alone does not explain what the boss is striking with.
+
 ## Make the visible rule true
 
 - Compute safety from the player's complete relevant extent and the active threat, not from the player's center alone or a phase number. A success label must agree with the scene throughout the active interval.

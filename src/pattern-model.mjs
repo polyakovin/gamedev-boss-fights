@@ -1,3 +1,5 @@
+import { sweepWeaponPose, SWEEP_OUTER_RADIUS, SWEEP_PLAYER_RADIUS } from './sweep-weapon-model.mjs';
+
 export const PATTERN_DURATION = 6;
 export const PATTERN_PHASE_ENDS = Object.freeze([1.6, 4.25, PATTERN_DURATION]);
 export const BOSS_LABEL_OFFSET_Y = -104;
@@ -49,7 +51,7 @@ export function patternFrame(kind, time) {
   const playerStart = kind === 'sweep' ? { x: 412, y: 525 } : { x: 390, y: 700 };
   const playerTarget =
     kind === 'sweep'
-      ? { x: 300, y: 405 }
+      ? { x: 440, y: 650 }
       : kind === 'ground-slam'
         ? { x: 280, y: 785 }
         : kind === 'summon'
@@ -120,10 +122,18 @@ export function patternFrame(kind, time) {
     returnTime > 0
       ? turn(angleTo(playerTarget, playerStart), readyFacing, smooth((returnTime - 0.8) / 0.2))
       : turn(outgoingFacing, readyFacing, smooth((responseTime - 0.8) / 0.4));
-  const bossFacing =
-    kind === 'sweep'
-      ? 90 + (phase === 0 ? -18 * windup : mix(-18, 18, action) * (1 - recover))
-      : 90;
+  const bossFacing = 90;
+  // The blade leads the annular trail. Recovery finishes the turn to the ready
+  // orientation instead of snapping a persistent weapon back at the loop seam.
+  const sweepAngle =
+    phase === 0
+      ? mix(-14, -44, prepare)
+      : phase === 1
+        ? mix(-44, 218, action)
+        : mix(218, 346, smooth((t - 4.55) / 1.45));
+  const sweepWeapon = kind === 'sweep' ? sweepWeaponPose(sweepAngle, bossMotion) : null;
+  const sweepClear =
+    Math.hypot(player.x - boss.x, player.y - boss.y) - SWEEP_PLAYER_RADIUS > SWEEP_OUTER_RADIUS;
   // Preserve the label contract; rig lift and compression now own vertical articulation.
   const bossRock = 0;
 
@@ -143,14 +153,22 @@ export function patternFrame(kind, time) {
     playerFacing,
     bossMotion,
     playerMotion,
-    sweepRotation: mix(-72, 190, action),
-    sweepOpacity: kind === 'sweep' ? visibility : 0,
+    sweepWeapon,
+    sweepRotation: sweepAngle - 28,
+    sweepOpacity:
+      kind === 'sweep'
+        ? phase === 0
+          ? prepare * 0.3
+          : phase === 1
+            ? 1
+            : 1 - smooth((t - 4.25) / 0.22)
+        : 0,
     slamRadius: mix(58, 390, clamp((actionTime - 0.16) / 2.49)),
     slamOpacity: kind === 'ground-slam' ? visibility : 0,
     summonProgress: kind === 'summon' ? action : 0,
     summonOpacity: kind === 'summon' ? visibility : 0,
     volleyY: mix(0, 560, action),
     volleyOpacity: kind === 'gap-volley' ? visibility : 0,
-    clear: phase > 0,
+    clear: phase > 0 && (kind !== 'sweep' || phase === 2 || sweepClear),
   });
 }

@@ -1,6 +1,7 @@
 import { patternFrame, PATTERN_DURATION } from './pattern-model.mjs';
 import { createCharacterAnimator } from './character-motion.mjs';
 import { createEncounterEffects } from './encounter-effects.mjs';
+import { createSweepWeaponAnimator } from './sweep-weapon-player.mjs';
 
 for (const widget of document.querySelectorAll('[data-pattern-demo]')) initializePattern(widget);
 
@@ -16,6 +17,7 @@ export function initializePattern(widget) {
   const boss = find('[data-pattern-boss]');
   const player = find('[data-pattern-player]');
   const animateBoss = createCharacterAnimator(boss, 'kern');
+  const animateWeapon = createSweepWeaponAnimator(boss);
   const animatePlayer = createCharacterAnimator(player, 'tavi');
   const animateEffects = createEncounterEffects(widget, (time) => patternFrame(kind, time));
   const bossLabel = find('[data-pattern-boss-label]');
@@ -47,6 +49,7 @@ export function initializePattern(widget) {
     boss.setAttribute('transform', `translate(${frame.boss.x} ${frame.boss.y})`);
     player.setAttribute('transform', `translate(${frame.player.x} ${frame.player.y})`);
     animateBoss(frame.bossMotion, frame.bossFacing);
+    animateWeapon(frame.sweepWeapon);
     animatePlayer(frame.playerMotion, frame.playerFacing);
     animateEffects(time, frame);
     bossLabel.setAttribute('x', frame.bossLabel.x);
@@ -54,7 +57,7 @@ export function initializePattern(widget) {
     playerLabel.setAttribute('x', frame.player.x);
     playerLabel.setAttribute('y', frame.player.y - 62);
     sweep.setAttribute('opacity', String(frame.sweepOpacity));
-    sweep.setAttribute('transform', `rotate(${frame.sweepRotation} 280 275)`);
+    sweep.setAttribute('transform', `translate(280 275) rotate(${frame.sweepRotation})`);
     slam.setAttribute('opacity', String(frame.slamOpacity));
     slamRing.setAttribute('r', frame.slamRadius);
     slamEdge.setAttribute('r', frame.slamRadius);
