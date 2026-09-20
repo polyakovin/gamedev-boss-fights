@@ -118,6 +118,8 @@ function shell(
 ) {
   const t = ui[locale.code];
   const route = `${locale.code}/${localizedPath}`;
+  const authorName = locale.code === 'ru' ? 'Игорь Поляков' : 'Igor Polyakov';
+  const socialTitle = `${title} · Boss Fight Atlas — ${authorName}`;
   return /* HTML */ `<!doctype html>
     <html lang="${locale.code}" dir="${locale.dir}">
       <head>
@@ -126,6 +128,7 @@ function shell(
         ${themeHead}
         <title>${e(title)} · Boss Fight Atlas</title>
         <meta name="description" content="${e(description)}" />
+        <meta name="author" content="${authorName}" />
         <link rel="canonical" href="${canonical(route)}" />
         ${locales.map((l) => `<link rel="alternate" hreflang="${l.code}" href="${canonical(`${l.code}/${localizedPath}`)}">`).join('')}
         <link
@@ -133,10 +136,12 @@ function shell(
           hreflang="x-default"
           href="${canonical(`en/${localizedPath}`)}"
         />
-        <meta property="og:title" content="${e(title)} · Boss Fight Atlas" />
+        <meta property="og:site_name" content="${authorName}" />
+        <meta property="og:title" content="${e(socialTitle)}" />
         <meta property="og:description" content="${e(description)}" />
         <meta property="og:type" content="article" />
         <meta property="og:url" content="${canonical(route)}" />
+        <meta name="twitter:title" content="${e(socialTitle)}" />
         ${fontHead(locale.code)}
         <link rel="icon" href="${asset('favicon.svg')}" type="image/svg+xml" />
         <link rel="stylesheet" href="${asset('site.css')}" />
@@ -843,6 +848,16 @@ const rootHtml = /* HTML */ `<!doctype html>
       <meta
         name="description"
         content="An open encyclopedia of boss mechanics, with interactive animations in eight languages."
+      />
+      <meta name="author" content="Igor Polyakov" />
+      <meta property="og:site_name" content="Igor Polyakov" />
+      <meta
+        property="og:title"
+        content="Boss Fight Atlas — Interactive boss mechanics — Igor Polyakov"
+      />
+      <meta
+        name="twitter:title"
+        content="Boss Fight Atlas — Interactive boss mechanics — Igor Polyakov"
       />
       <link rel="canonical" href="${canonical()}" />
       <link rel="stylesheet" href="${asset('site.css')}" />

@@ -28,6 +28,20 @@ for (const locale of registry) {
     await page.goto(`${locale.code}/mechanics/charge/`);
     await expect(page.locator('html')).toHaveAttribute('lang', locale.code);
     await expect(page.locator('html')).toHaveAttribute('dir', locale.dir);
+    const authorName = locale.code === 'ru' ? 'Игорь Поляков' : 'Igor Polyakov';
+    await expect(page.locator('meta[name="author"]')).toHaveAttribute('content', authorName);
+    await expect(page.locator('meta[property="og:site_name"]')).toHaveAttribute(
+      'content',
+      authorName,
+    );
+    await expect(page.locator('meta[property="og:title"]')).toHaveAttribute(
+      'content',
+      new RegExp(`${authorName}$`),
+    );
+    await expect(page.locator('meta[name="twitter:title"]')).toHaveAttribute(
+      'content',
+      new RegExp(`${authorName}$`),
+    );
     const fontStylesheet = page.locator('link[rel="stylesheet"][href*="fonts.googleapis.com"]');
     await expect(fontStylesheet).toHaveCount(1);
     if (scriptFontFamilies[locale.code])
@@ -751,6 +765,11 @@ test('theme follows the system and a saved choice persists across pages', async 
 });
 test('catalog and language gateway point to real pages', async ({ page, request }) => {
   await page.goto('./');
+  await expect(page.locator('meta[name="author"]')).toHaveAttribute('content', 'Igor Polyakov');
+  await expect(page.locator('meta[property="og:site_name"]')).toHaveAttribute(
+    'content',
+    'Igor Polyakov',
+  );
   expect(
     await page
       .locator('.language-home h1')
