@@ -738,6 +738,7 @@ test('catalog and language gateway point to real pages', async ({ page, request 
   }
   await page.goto('ru/');
   await expect(page.locator('.catalog-hero h1')).toHaveText('Тави и Керн приветствуют вас');
+  await expect(page.locator('.catalog-meta, .small-dot')).toHaveCount(0);
   await expect(page.locator('.catalog-hero__art img')).toHaveAttribute(
     'src',
     /\/gamedev-boss-fights\/assets\/welcome-boss-and-player\.webp\?v=[a-f0-9]{10}$/,

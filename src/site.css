@@ -795,13 +795,6 @@ section[id] {
   max-height: 480px;
   object-fit: contain;
 }
-.catalog-topline {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 8px 20px;
-}
 .catalog-hero h1 {
   font-size: clamp(28px, 2.6vw, 36px);
   letter-spacing: -0.035em;
@@ -818,20 +811,6 @@ section[id] {
   margin: 0;
   font-size: 16px;
   line-height: 1.55;
-}
-.catalog-meta {
-  display: flex;
-  align-items: center;
-  gap: 11px;
-  color: var(--muted);
-  font-family: var(--font-label);
-  font-size: 11px;
-}
-.small-dot {
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  background: var(--accent);
 }
 .catalog-overview {
   display: grid;

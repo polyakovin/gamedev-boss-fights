@@ -334,12 +334,7 @@ for (const locale of locales) {
   const body = /* HTML */ `<main id="main" class="catalog-main">
     <section class="catalog-hero">
       <div class="catalog-hero__copy">
-        <div class="catalog-topline">
-          <span class="eyebrow">${e(t.indexEyebrow)}</span>
-          <div class="catalog-meta">
-            <span class="small-dot" aria-hidden="true"></span>${e(t.allLanguages)}
-          </div>
-        </div>
+        <span class="eyebrow">${e(t.indexEyebrow)}</span>
         <h1>${e(t.indexTitle)}</h1>
         <p class="lead">${e(t.indexSubtitle)}</p>
       </div>
