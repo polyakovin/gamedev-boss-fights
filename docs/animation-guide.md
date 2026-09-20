@@ -41,7 +41,7 @@ Keep the world anchor upright. Translate the actor through the arena; use the sh
 
 Use motion effects sparingly. Dust follows movement, trails follow the path, and impact marks follow contact. They must not obscure the player, extend the apparent damaging region, imply invulnerability, or conceal a discontinuity. Avoid gratuitous screen shake and flashing. Fix the movement before decorating it.
 
-Make the source of an attack visible. A weapon strike needs a recognizable weapon, attached grips, and a cutting edge that leads its trail. Keep equipment present through anticipation, action, and recovery; do not hide a reset by fading it out. Rotate held equipment independently of sprite mirroring, and reuse its artwork in the preview. An attack arc alone does not explain what the boss is striking with.
+Make the source of an attack visible. A weapon strike needs a recognizable weapon, attached grips, and a cutting edge that leads its trail. Keep equipment present through anticipation, action, and recovery; do not hide a reset by fading it out. Rotate held equipment independently of sprite mirroring, and reuse its artwork in the preview. Check drawing order at lesson and thumbnail sizes: the grip must remain understandable when the weapon points above or behind the body. Matching hand and shaft coordinates does not establish a readable hold if the torso hides them. An attack arc alone does not explain what the boss is striking with.
 
 ## Make the visible rule true
 
@@ -75,6 +75,8 @@ Keep `data-rig-part` names unique inside each character instance. Animate repeat
 
 All poses, direction blends, particles, and trails must be reproducible from simulation time. Reuse [`src/encounter-effects.mjs`](../src/encounter-effects.mjs) where appropriate. Do not add independent CSS animation clocks, unseeded randomness, accumulated DOM transforms, or timers that continue while playback is paused. Seeking backward and then returning to a timestamp must produce the same frame. Rendering repeatedly at one timestamp must not advance anything.
 
+Distinguish the complete sequence from each attack's local time. Model wrapping, autoplay, slider limits, progress, keyboard seeking, and effect sampling must cover the same complete sequence; repeat the three localized phases within it as needed. For pattern animations, use `patternDuration(kind)` for the full loop; `PATTERN_DURATION` describes one attack beat. Derive the current variant from simulation time, and return to the beginning only after every planned variant has played.
+
 Keep SVG nodes stable during playback. Cache element references and update their attributes; avoid rebuilding the scene or reading layout on every frame. Reuse shared primitives when the rule fits, and add a separate model when it does not.
 
 ## Preserve the teaching interface
@@ -90,7 +92,7 @@ Keep SVG nodes stable during playback. Cache element references and update their
 
 For animation changes, run `npm run check`, scoped Prettier checks, and `npm run test:browser`. Install Chromium with `npx playwright install chromium` if needed. Finish the build before starting browser checks: the build replaces `dist/`, so rebuilding during a browser run can invalidate the served pages. Do not reformat unrelated files.
 
-Use [`tests/animation-motion.test.mjs`](../tests/animation-motion.test.mjs) and [`tests/browser/animation-motion.spec.mjs`](../tests/browser/animation-motion.spec.mjs) as starting points. Add checks for the actual new rule: full clearance, commitment, finite poses, contact order, settled feet, continuity, and deterministic seeking. Browser checks should verify the rendered rig, playback preferences, controls, and bounds. Scope actor assertions to their role roots; legitimate shared-art reuse by minions must not be mistaken for duplicate main bosses.
+Use [`tests/animation-motion.test.mjs`](../tests/animation-motion.test.mjs) and [`tests/browser/animation-motion.spec.mjs`](../tests/browser/animation-motion.spec.mjs) as starting points. Add checks for the actual new rule: full clearance, commitment, finite poses, contact order, settled feet, continuity, and deterministic seeking. Cover every arrangement, transitions between arrangements, the final staggered projectile, and the complete sequence seam. Browser checks should verify the rendered rig, playback preferences, controls, and bounds, including actual character and projectile extents during passage. Confirm autoplay reaches later variants as well as manual seeking. Scope actor assertions to their role roots; legitimate shared-art reuse by minions must not be mistaken for duplicate main bosses.
 
 Watch at least two complete loops at normal speed, then inspect anticipation, release, contact, recovery, and reset with the slider. Include movement in each used direction and the last staggered entity. Review both individual poses and the moving sequence: a contact sheet alone cannot establish natural timing.
 
