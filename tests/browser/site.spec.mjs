@@ -89,7 +89,7 @@ for (const locale of registry) {
       'loading',
       'lazy',
     );
-    await expect(page.locator('.sources li a')).toHaveCount(7);
+    await expect(page.locator('.sources li a')).toHaveCount(5);
     await expect(page.locator('.review-note')).toBeVisible();
     await expect(page.locator('.implementation-checklist')).toBeVisible();
     await expect(page.locator('.checklist-group')).toHaveCount(2);
@@ -564,7 +564,7 @@ test('homepages fit their core content on a laptop and reflow on mobile', async 
       '1',
       '6',
       '6',
-      '7',
+      '5',
       '+',
     ]);
     await page.setViewportSize({ width: 375, height: 812 });

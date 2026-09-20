@@ -246,22 +246,29 @@ test('published game references cover 2D and 3D with screenshots and stable vide
   );
 });
 
-test('learning sources cover design, animation, accessibility, and implementation', () => {
+test('learning sources stay specific to the charge mechanic and prioritize practitioners', () => {
   const sources = source.mechanics[0].meta.sources;
-  assert.equal(sources.length, 7);
+  assert.equal(sources.length, 5);
   assert.deepEqual(
     new Set(sources.map((item) => new URL(item.url).hostname)),
     new Set([
       'www.gamedeveloper.com',
       'www.gdcvault.com',
-      'learn.microsoft.com',
-      'docs.godotengine.org',
+      'gdn001.itch.io',
+      'snoukdesignnotes.blog',
     ]),
   );
   const titles = sources.map((item) => item.title).join(' ');
-  assert.match(titles, /GDC talk/);
-  assert.match(titles, /Accessibility guideline/);
-  assert.match(titles, /Technical guide/);
+  assert.match(titles, /Developer talk/);
+  assert.match(titles, /Designer article/);
+  assert.match(titles, /Developer devlog/);
+  for (const source of sources) {
+    assert.match(
+      source.title,
+      /charge|wind-up|telegraph|boss attack|warning area/i,
+      `${source.title} must name the charge behavior it supports`,
+    );
+  }
 });
 
 test('long boss references open at the exact mechanic instead of unrelated gameplay', async () => {

@@ -16,32 +16,24 @@
   "related": [],
   "sources": [
     {
-      "title": "Article · Mike Stout — Boss Battle Design and Structure",
-      "url": "https://www.gamedeveloper.com/design/boss-battle-design-and-structure"
+      "title": "Developer talk · Rebecca Vessal (Double Fine) — Maligula charge attack conditions in Psychonauts 2",
+      "url": "https://www.gdcvault.com/play/1028927/AI-Summit-Crafting-Epic-Boss"
     },
     {
-      "title": "Article · Mike Stout — Enemy Attacks and Telegraphing",
+      "title": "Designer article · Mike Stout — wind-up and telegraphing for avoidable attacks",
       "url": "https://www.gamedeveloper.com/design/enemy-attacks-and-telegraphing"
     },
     {
-      "title": "GDC talk · Itay Keren — Boss Up: Boss Battle Design Fundamentals and Retrospective",
-      "url": "https://www.gdcvault.com/play/1024921/Boss-Up-"
+      "title": "Combat designer article · Mike Birkhead — boss attack anticipation and recovery windows",
+      "url": "https://www.gamedeveloper.com/design/opinion-boss-design---tips-from-a-combat-designer"
     },
     {
-      "title": "Attack analysis · Jerry Zhang — Anatomy of an Enemy Attack in Dark Souls 3",
-      "url": "https://www.gamedeveloper.com/game-platforms/anatomy-of-an-enemy-attack-in-dark-souls-3"
+      "title": "Developer devlog · gdn001 — Staff Guardian blade-spin charge and recovery",
+      "url": "https://gdn001.itch.io/kalia-and-the-fire-staff/devlog/1022309/katfs-alpha-devlog-14-august-2025"
     },
     {
-      "title": "Book excerpt · Jonathan Cooper — The 12 Principles of Animation in Video Games",
-      "url": "https://www.gamedeveloper.com/production/the-12-principles-of-animation-in-video-games"
-    },
-    {
-      "title": "Accessibility guideline · Xbox — Additional Channels for Visual and Audio Cues",
-      "url": "https://learn.microsoft.com/en-us/xbox/accessibility/xbox-accessibility-guidelines/103"
-    },
-    {
-      "title": "Technical guide · Godot Engine — Physics Introduction",
-      "url": "https://docs.godotengine.org/en/stable/tutorials/physics/physics_introduction.html"
+      "title": "Charge attack analysis · Chandra Kouns — Esdras in Blasphemous",
+      "url": "https://snoukdesignnotes.blog/2021/06/30/boss-design-ft-blasphemous/#charge-attack"
     }
   ]
 }
