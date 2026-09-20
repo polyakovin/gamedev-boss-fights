@@ -1,8 +1,12 @@
 import { sweepWeaponPose, SWEEP_OUTER_RADIUS, SWEEP_PLAYER_RADIUS } from './sweep-weapon-model.mjs';
+import { GAP_VOLLEY_DURATION, gapVolleyPlan, volleyPlayerIsClear } from './gap-volley-model.mjs';
 
 export const PATTERN_DURATION = 6;
 export const PATTERN_PHASE_ENDS = Object.freeze([1.6, 4.25, PATTERN_DURATION]);
 export const BOSS_LABEL_OFFSET_Y = -104;
+
+export const patternDuration = (kind) =>
+  kind === 'gap-volley' ? GAP_VOLLEY_DURATION : PATTERN_DURATION;
 
 const clamp = (value, min = 0, max = 1) => Math.min(max, Math.max(min, value));
 const mix = (from, to, amount) => from + (to - from) * amount;
@@ -17,6 +21,10 @@ const speed = (value) => {
 };
 const angleTo = (from, to) => (Math.atan2(to.y - from.y, to.x - from.x) * 180) / Math.PI;
 const turn = (from, to, amount) => from + (((((to - from) % 360) + 540) % 360) - 180) * amount;
+const localTime = (time) => {
+  const remainder = (Number.isFinite(time) ? time : 0) % PATTERN_DURATION;
+  return remainder < 0 ? remainder + PATTERN_DURATION : remainder;
+};
 /** Gait is a distance-driven angle in radians; the other pose weights are normalized. */
 const motion = (pose = {}) => ({
   gait: 0,
@@ -31,15 +39,14 @@ const motion = (pose = {}) => ({
 });
 
 export function patternPhaseAt(time) {
-  const t =
-    (((Number.isFinite(time) ? time : 0) % PATTERN_DURATION) + PATTERN_DURATION) % PATTERN_DURATION;
+  const t = localTime(time);
   return t < PATTERN_PHASE_ENDS[0] ? 0 : t < PATTERN_PHASE_ENDS[1] ? 1 : 2;
 }
 
 /** A deterministic frame shared by browser animation and tests. */
 export function patternFrame(kind, time) {
-  const t =
-    (((Number.isFinite(time) ? time : 0) % PATTERN_DURATION) + PATTERN_DURATION) % PATTERN_DURATION;
+  const volley = kind === 'gap-volley' ? gapVolleyPlan(time) : null;
+  const t = volley?.localTime ?? localTime(time);
   const phase = patternPhaseAt(t);
   const prepare = smooth(t / PATTERN_PHASE_ENDS[0]);
   const action = clamp(
@@ -48,24 +55,26 @@ export function patternFrame(kind, time) {
   const recover = smooth((t - PATTERN_PHASE_ENDS[1]) / (PATTERN_DURATION - PATTERN_PHASE_ENDS[1]));
   const visibility = phase === 2 ? 1 - recover : phase === 0 ? prepare : 1;
   const boss = { x: 280, y: kind === 'gap-volley' ? 175 : kind === 'summon' ? 235 : 275 };
-  const playerStart = kind === 'sweep' ? { x: 412, y: 525 } : { x: 390, y: 700 };
+  const playerStart =
+    volley?.playerStart ?? (kind === 'sweep' ? { x: 412, y: 525 } : { x: 390, y: 700 });
   const playerTarget =
-    kind === 'sweep'
+    volley?.playerTarget ??
+    (kind === 'sweep'
       ? { x: 440, y: 650 }
       : kind === 'ground-slam'
         ? { x: 280, y: 785 }
         : kind === 'summon'
           ? { x: 170, y: 720 }
-          : { x: 280, y: 760 };
+          : { x: 280, y: 760 });
+  const playerEnd = volley?.playerEnd ?? playerStart;
   // A brief reaction, a committed run, then planted feet while the threat passes.
   const responseTime = (t - 0.4) / 0.75;
   const returnTime = (t - 4.55) / 1.3;
   const response = smooth(responseTime);
   const returnProgress = smooth(returnTime);
-  const move = response * (1 - returnProgress);
   const player = {
-    x: mix(playerStart.x, playerTarget.x, move),
-    y: mix(playerStart.y, playerTarget.y, move),
+    x: mix(mix(playerStart.x, playerTarget.x, response), playerEnd.x, returnProgress),
+    y: mix(mix(playerStart.y, playerTarget.y, response), playerEnd.y, returnProgress),
   };
   const windup = smooth((t - 0.2) / 1.1);
   const actionTime = t - PATTERN_PHASE_ENDS[0];
@@ -99,14 +108,15 @@ export function patternFrame(kind, time) {
       lean: -0.28 * windup * followThrough,
       crouch: 0.26 * windup * followThrough,
       attack: 0.72 * windup * followThrough,
-      impact: 0.6 * pulse(actionTime / 0.28),
+      impact: Math.max(...[0, 0.2, 0.4].map((delay) => 0.6 * pulse((actionTime - delay) / 0.18))),
     });
   }
   const routeLength = Math.hypot(playerTarget.x - playerStart.x, playerTarget.y - playerStart.y);
+  const returnLength = Math.hypot(playerEnd.x - playerTarget.x, playerEnd.y - playerTarget.y);
   const responseStride = clamp(speed(responseTime));
   const returnStride = clamp(speed(returnTime) * 0.85);
   const playerMotion = motion({
-    gait: (routeLength * (response + returnProgress)) / 20,
+    gait: (routeLength * response + returnLength * returnProgress) / 20,
     stride: responseStride + returnStride,
     lean: 0.52 * responseStride + 0.25 * returnStride,
     crouch: 0.2 * responseStride,
@@ -120,7 +130,7 @@ export function patternFrame(kind, time) {
   );
   const playerFacing =
     returnTime > 0
-      ? turn(angleTo(playerTarget, playerStart), readyFacing, smooth((returnTime - 0.8) / 0.2))
+      ? turn(angleTo(playerTarget, playerEnd), readyFacing, smooth((returnTime - 0.8) / 0.2))
       : turn(outgoingFacing, readyFacing, smooth((responseTime - 0.8) / 0.4));
   const bossFacing = 90;
   // The blade leads the annular trail. Recovery finishes the turn to the ready
@@ -139,7 +149,7 @@ export function patternFrame(kind, time) {
 
   return Object.freeze({
     kind,
-    time: t,
+    time: volley?.time ?? t,
     phase,
     prepare,
     action,
@@ -167,8 +177,12 @@ export function patternFrame(kind, time) {
     slamOpacity: kind === 'ground-slam' ? visibility : 0,
     summonProgress: kind === 'summon' ? action : 0,
     summonOpacity: kind === 'summon' ? visibility : 0,
-    volleyY: mix(0, 560, action),
-    volleyOpacity: kind === 'gap-volley' ? visibility : 0,
-    clear: phase > 0 && (kind !== 'sweep' || phase === 2 || sweepClear),
+    volley,
+    volleyOpacity: volley ? 1 : 0,
+    clear:
+      phase > 0 &&
+      (volley
+        ? volleyPlayerIsClear(volley, player)
+        : kind !== 'sweep' || phase === 2 || sweepClear),
   });
 }

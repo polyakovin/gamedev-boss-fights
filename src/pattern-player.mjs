@@ -1,7 +1,8 @@
-import { patternFrame, PATTERN_DURATION } from './pattern-model.mjs';
+import { patternFrame, patternDuration } from './pattern-model.mjs';
 import { createCharacterAnimator } from './character-motion.mjs';
 import { createEncounterEffects } from './encounter-effects.mjs';
 import { createSweepWeaponAnimator } from './sweep-weapon-player.mjs';
+import { createGapVolleyAnimator } from './gap-volley-player.mjs';
 
 for (const widget of document.querySelectorAll('[data-pattern-demo]')) initializePattern(widget);
 
@@ -10,6 +11,7 @@ export function initializePattern(widget) {
   const find = (selector) => widget.querySelector(selector);
   const config = JSON.parse(find('[data-pattern-config]').textContent);
   const kind = widget.dataset.patternKind;
+  const duration = patternDuration(kind);
   const timeline = find('[data-pattern-timeline]');
   const currentPhase = find('[data-pattern-current-phase]');
   const phaseName = find('[data-pattern-phase-name]');
@@ -30,7 +32,7 @@ export function initializePattern(widget) {
   const minions = [...widget.querySelectorAll('[data-pattern-minion]')];
   const animateMinions = minions.map((minion) => createCharacterAnimator(minion, 'kern'));
   const volley = find('[data-pattern-volley]');
-  const projectiles = find('[data-pattern-projectiles]');
+  const animateVolley = createGapVolleyAnimator(volley);
   const status = find('[data-pattern-status]');
   const motionNote = find('[data-pattern-motion-note]');
   const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
@@ -88,7 +90,7 @@ export function initializePattern(widget) {
       );
     });
     volley.setAttribute('opacity', String(frame.volleyOpacity));
-    projectiles.setAttribute('transform', `translate(0 ${frame.volleyY})`);
+    animateVolley(frame.volley);
     phaseName.textContent = config.phaseNames[frame.phase];
     phaseTooltip.textContent = config.phaseDescriptions[frame.phase];
     if (announcedPhase !== frame.phase) {
@@ -98,7 +100,7 @@ export function initializePattern(widget) {
     }
     timeline.value = String(Math.round(time * 1000));
     timeline.setAttribute('aria-valuetext', config.phaseNames[frame.phase]);
-    widget.style.setProperty('--pattern-progress', `${(time / PATTERN_DURATION) * 100}%`);
+    widget.style.setProperty('--pattern-progress', `${(time / duration) * 100}%`);
   }
 
   function setRunning(next) {
@@ -110,8 +112,7 @@ export function initializePattern(widget) {
   }
   function tick(timestamp) {
     if (!running) return;
-    if (lastTimestamp !== undefined)
-      time = (time + (timestamp - lastTimestamp) / 1000) % PATTERN_DURATION;
+    if (lastTimestamp !== undefined) time = (time + (timestamp - lastTimestamp) / 1000) % duration;
     lastTimestamp = timestamp;
     render();
     animationId = requestAnimationFrame(tick);

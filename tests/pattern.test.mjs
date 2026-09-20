@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import {
   BOSS_LABEL_OFFSET_Y,
   patternFrame,
+  patternDuration,
   patternPhaseAt,
   PATTERN_DURATION,
 } from '../src/pattern-model.mjs';
@@ -23,7 +24,7 @@ test('shared pattern model gives every mechanic three moving phases', () => {
           frame.sweepRotation,
           frame.slamRadius,
           frame.summonProgress,
-          frame.volleyY,
+          frame.time,
         ].every(Number.isFinite),
       );
     }
@@ -43,7 +44,7 @@ test('each pattern exposes only its own threat geometry', () => {
 test('player and threat return smoothly before the loop repeats', () => {
   for (const kind of kinds) {
     const start = patternFrame(kind, 0);
-    const end = patternFrame(kind, PATTERN_DURATION - 0.001);
+    const end = patternFrame(kind, patternDuration(kind) - 0.001);
     assert.ok(Math.abs(start.player.x - end.player.x) < 0.01);
     assert.ok(Math.abs(start.player.y - end.player.y) < 0.01);
     assert.ok(end.visibility < 0.01);
@@ -52,7 +53,7 @@ test('player and threat return smoothly before the loop repeats', () => {
 
 test('the boss label stays above the boss throughout every pattern', () => {
   for (const kind of kinds) {
-    for (let time = 0; time < PATTERN_DURATION; time += 0.025) {
+    for (let time = 0; time < patternDuration(kind); time += 0.025) {
       const frame = patternFrame(kind, time);
       assert.equal(frame.bossLabel.x, frame.boss.x);
       assert.equal(frame.bossLabel.y, frame.boss.y + frame.bossRock + BOSS_LABEL_OFFSET_Y);

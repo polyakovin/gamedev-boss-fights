@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { ATTACK_DURATION, chargeFrame, DURATION, PHASE_ENDS } from '../src/charge-model.mjs';
-import { patternFrame, PATTERN_DURATION, PATTERN_PHASE_ENDS } from '../src/pattern-model.mjs';
+import { patternFrame, patternDuration, PATTERN_PHASE_ENDS } from '../src/pattern-model.mjs';
 
 const kinds = ['sweep', 'ground-slam', 'summon', 'gap-volley'];
 const distance = (a, b) => Math.hypot(a.x - b.x, a.y - b.y);
@@ -90,8 +90,9 @@ test('scrubbing derives finite reproducible poses without advancing a separate a
     const expected = patternFrame(kind, 0.78);
     patternFrame(kind, 4.7);
     assert.deepEqual(patternFrame(kind, 0.78), expected);
-    for (let time = 0; time <= PATTERN_DURATION; time += 0.017) sample(patternFrame(kind, time));
-    for (const boundary of [...PATTERN_PHASE_ENDS, 0]) {
+    for (let time = 0; time <= patternDuration(kind); time += 0.017)
+      sample(patternFrame(kind, time));
+    for (const boundary of [...PATTERN_PHASE_ENDS, 0, patternDuration(kind)]) {
       const before = patternFrame(kind, boundary - 0.0001);
       const after = patternFrame(kind, boundary + 0.0001);
       assert.ok(distance(before.player, after.player) < 0.01);
