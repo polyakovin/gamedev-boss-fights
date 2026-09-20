@@ -285,6 +285,20 @@ test('the loop autoplays, alternates sides, shows the current phase, and keeps o
   await expect(page.locator('.charge-demo [stroke="var(--diagram-corners)"]')).toHaveCount(0);
   await expect(page.locator('.charge-demo [fill="var(--diagram-arena)"]')).toHaveCount(0);
   await expect(page.locator('.charge-demo [stroke="var(--diagram-border)"]')).toHaveCount(0);
+  const currentPhase = page.locator('.charge-demo__phase-label');
+  const phaseBackground = await currentPhase.evaluate(
+    (element) => getComputedStyle(element).backgroundColor,
+  );
+  await currentPhase.hover();
+  await expect(demo).toHaveAttribute('data-charge-playing', 'false');
+  await expect
+    .poll(async () => currentPhase.evaluate((element) => getComputedStyle(element).backgroundColor))
+    .toBe(phaseBackground);
+  const pausedTime = await timeline.inputValue();
+  await page.waitForTimeout(100);
+  await expect(timeline).toHaveValue(pausedTime);
+  await timeline.hover();
+  await expect(demo).toHaveAttribute('data-charge-playing', 'true');
   await timeline.evaluate(
     (element, value) => {
       element.dispatchEvent(new PointerEvent('pointerdown', { bubbles: true }));
@@ -295,7 +309,6 @@ test('the loop autoplays, alternates sides, shows the current phase, and keeps o
   );
   await expect(demo).toHaveAttribute('data-charge-phase', '1');
   await expect(page.locator('[data-charge-phase-name]')).toHaveText('Фиксация и уклонение');
-  const currentPhase = page.locator('.charge-demo__phase-label');
   const lockTooltip = currentPhase.locator('[role="tooltip"]');
   await expect(lockTooltip).toBeHidden();
   await currentPhase.hover();
@@ -386,6 +399,23 @@ for (const [id, title, activePhase] of [
     await expect(page.locator('.lesson-hero h1')).toHaveText(title);
     await expect(page.locator('[data-pattern-demo]')).toHaveAttribute('data-pattern-ready', 'true');
     await expect(page.locator('[data-pattern-demo]')).toHaveAttribute('data-pattern-kind', id);
+    await expect(page.locator('[data-pattern-demo]')).toHaveAttribute(
+      'data-pattern-playing',
+      'true',
+    );
+    const phaseLabel = page.locator('.pattern-demo__phase-label');
+    const phaseBackground = await phaseLabel.evaluate(
+      (element) => getComputedStyle(element).backgroundColor,
+    );
+    await phaseLabel.hover();
+    await expect(page.locator('[data-pattern-demo]')).toHaveAttribute(
+      'data-pattern-playing',
+      'false',
+    );
+    expect(await phaseLabel.evaluate((element) => getComputedStyle(element).backgroundColor)).toBe(
+      phaseBackground,
+    );
+    await page.locator('[data-pattern-timeline]').hover();
     await expect(page.locator('[data-pattern-demo]')).toHaveAttribute(
       'data-pattern-playing',
       'true',

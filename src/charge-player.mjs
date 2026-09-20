@@ -30,7 +30,8 @@ export function initializeCharge(widget) {
   let animationId = 0;
   let lastTimestamp;
   let announcedState = '';
-  let resumeAfterScrub = false;
+  let scrubbing = false;
+  let phaseHovered = false;
 
   function render() {
     const frame = chargeFrame(time);
@@ -96,30 +97,40 @@ export function initializeCharge(widget) {
     animationId = requestAnimationFrame(tick);
   }
 
+  function updatePlayback() {
+    setRunning(!reducedMotion.matches && !document.hidden && !scrubbing && !phaseHovered);
+  }
+
   timeline.addEventListener('pointerdown', () => {
-    resumeAfterScrub = running;
-    setRunning(false);
+    scrubbing = true;
+    updatePlayback();
   });
   timeline.addEventListener('input', () => {
     time = Number(timeline.value) / 1000;
     render();
   });
   const finishScrub = () => {
-    if (resumeAfterScrub && !reducedMotion.matches && !document.hidden) setRunning(true);
-    resumeAfterScrub = false;
+    scrubbing = false;
+    updatePlayback();
   };
   timeline.addEventListener('pointerup', finishScrub);
   timeline.addEventListener('pointercancel', finishScrub);
   timeline.addEventListener('change', finishScrub);
+  currentPhase.addEventListener('pointerenter', () => {
+    phaseHovered = true;
+    updatePlayback();
+  });
+  currentPhase.addEventListener('pointerleave', () => {
+    phaseHovered = false;
+    updatePlayback();
+  });
 
   function applyMotionPreference() {
     find('[data-charge-motion-note]').hidden = !reducedMotion.matches;
-    setRunning(!reducedMotion.matches && !document.hidden);
+    updatePlayback();
   }
   reducedMotion.addEventListener('change', applyMotionPreference);
-  document.addEventListener('visibilitychange', () => {
-    setRunning(!document.hidden && !reducedMotion.matches);
-  });
+  document.addEventListener('visibilitychange', updatePlayback);
   widget.dataset.chargeReady = 'true';
   render();
   applyMotionPreference();

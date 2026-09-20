@@ -88,7 +88,6 @@
 .charge-demo__phase-label:hover,
 .charge-demo__phase-label:focus-visible {
   color: var(--charge-ink);
-  background: color-mix(in srgb, var(--accent-soft) 58%, transparent);
 }
 .charge-demo__phase-tooltip {
   position: absolute;

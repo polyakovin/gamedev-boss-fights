@@ -73,7 +73,6 @@
 .pattern-demo__phase-label:hover,
 .pattern-demo__phase-label:focus-visible {
   color: var(--ink);
-  background: color-mix(in srgb, var(--accent-soft) 58%, transparent);
 }
 .pattern-demo__phase-label:focus-visible,
 .pattern-demo input:focus-visible {

@@ -8,6 +8,7 @@ export function initializePattern(widget) {
   const config = JSON.parse(find('[data-pattern-config]').textContent);
   const kind = widget.dataset.patternKind;
   const timeline = find('[data-pattern-timeline]');
+  const currentPhase = find('[data-pattern-current-phase]');
   const phaseName = find('[data-pattern-phase-name]');
   const phaseTooltip = find('[data-pattern-phase-tooltip]');
   const boss = find('[data-pattern-boss]');
@@ -30,7 +31,8 @@ export function initializePattern(widget) {
   let animationId = 0;
   let lastTimestamp;
   let announcedPhase = -1;
-  let resumeAfterScrub = false;
+  let scrubbing = false;
+  let phaseHovered = false;
 
   function render() {
     const frame = patternFrame(kind, time);
@@ -97,27 +99,38 @@ export function initializePattern(widget) {
     render();
     animationId = requestAnimationFrame(tick);
   }
+  function updatePlayback() {
+    setRunning(!reducedMotion.matches && !document.hidden && !scrubbing && !phaseHovered);
+  }
   timeline.addEventListener('pointerdown', () => {
-    resumeAfterScrub = running;
-    setRunning(false);
+    scrubbing = true;
+    updatePlayback();
   });
   timeline.addEventListener('input', () => {
     time = Number(timeline.value) / 1000;
     render();
   });
   const finishScrub = () => {
-    if (resumeAfterScrub && !reducedMotion.matches && !document.hidden) setRunning(true);
-    resumeAfterScrub = false;
+    scrubbing = false;
+    updatePlayback();
   };
   timeline.addEventListener('pointerup', finishScrub);
   timeline.addEventListener('pointercancel', finishScrub);
   timeline.addEventListener('change', finishScrub);
+  currentPhase.addEventListener('pointerenter', () => {
+    phaseHovered = true;
+    updatePlayback();
+  });
+  currentPhase.addEventListener('pointerleave', () => {
+    phaseHovered = false;
+    updatePlayback();
+  });
   const applyMotionPreference = () => {
     motionNote.hidden = !reducedMotion.matches;
-    setRunning(!reducedMotion.matches && !document.hidden);
+    updatePlayback();
   };
   reducedMotion.addEventListener('change', applyMotionPreference);
-  document.addEventListener('visibilitychange', applyMotionPreference);
+  document.addEventListener('visibilitychange', updatePlayback);
   widget.dataset.patternReady = 'true';
   render();
   applyMotionPreference();
