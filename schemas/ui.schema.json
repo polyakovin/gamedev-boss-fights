@@ -50,6 +50,7 @@
     "games2D",
     "games3D",
     "watchVideo",
+    "screenshotSource",
     "storyTitle",
     "adaptTitle",
     "relatedTitle",
@@ -248,6 +249,10 @@
       "minLength": 1
     },
     "watchVideo": {
+      "type": "string",
+      "minLength": 1
+    },
+    "screenshotSource": {
       "type": "string",
       "minLength": 1
     },

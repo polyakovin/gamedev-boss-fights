@@ -112,7 +112,9 @@
       "boss": "Chub",
       "body": "छोटा संकेत एक सीधे धावे में बदलता है, जो बाधा से टकराकर रुकता है। बाधाएँ और पट्टी की चौड़ाई हमले को तय करती हैं।",
       "video": "https://www.youtube.com/watch?v=7pVgc-VBuPk",
-      "videoDurationSeconds": 94
+      "videoDurationSeconds": 94,
+      "screenshot": "https://i.ytimg.com/vi/mF94NXhKMLU/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=mF94NXhKMLU"
     },
     {
       "dimension": "2D",
@@ -120,7 +122,9 @@
       "boss": "Eye of Cthulhu",
       "body": "दूसरे चरण में अलग-अलग कोणों से तेज़ धावे लगातार आते हैं। छोटी रुकावटें एक साफ़ चाल को लगातार दबाव में बदल देती हैं।",
       "video": "https://www.youtube.com/watch?v=VaYY2fauQNo",
-      "videoDurationSeconds": 109
+      "videoDurationSeconds": 109,
+      "screenshot": "https://s2-techtudo.glbimg.com/QRx3ftM6X5Nce00u19Bc_Bs_4Zc%3D/0x0%3A695x382/984x0/smart/filters%3Astrip_icc%28%29/i.s3.glbimg.com/v1/AUTH_08fbf48bc0524877943fe86e43087e7a/internal_photos/bs/2021/H/h/9HLmqcREqLdI8qcQuQyg/2014-12-09-terraria-chefe-2.jpg",
+      "screenshotSource": "https://www.techtudo.com.br/noticias/2014/12/terraria-confira-dicas-para-vencer-o-chefao-eye-cthulhu-no-game.ghtml"
     },
     {
       "dimension": "2D",
@@ -128,7 +132,9 @@
       "boss": "Traitor Lord",
       "body": "शरीर का छोटा पीछे झुकना क्षैतिज धावे का संकेत है। छोटा अखाड़ा और अधिक नुकसान बहुत साफ़ संकेत माँगते हैं।",
       "video": "https://www.youtube.com/watch?v=f62A5eOtLzI",
-      "videoDurationSeconds": 87
+      "videoDurationSeconds": 87,
+      "screenshot": "https://images.steamusercontent.com/ugc/934933661263882188/D1FF43ECDD99C1E7DD0A34C01775161FB418F6E9/",
+      "screenshotSource": "https://steamcommunity.com/sharedfiles/filedetails/?id=1333668324"
     },
     {
       "dimension": "3D",
@@ -136,7 +142,9 @@
       "boss": "Blazing Bull",
       "body": "लंबी दौड़, चौड़े मोड़ और दीवारें गति को लड़ाई का हिस्सा बनाते हैं। रास्ता मुड़ने पर भी धावा पढ़ा जा सकता है।",
       "video": "https://www.youtube.com/watch?v=KXeOFXIpOC0",
-      "videoDurationSeconds": 177
+      "videoDurationSeconds": 177,
+      "screenshot": "https://d1lss44hh2trtw.cloudfront.net/assets/editorial/2019/03/blazing-bull-boss-fight-sekiro.jpg",
+      "screenshotSource": "https://www.shacknews.com/article/110811/how-to-beat-the-blazing-bull-boss-fight-sekiro"
     },
     {
       "dimension": "3D",
@@ -144,7 +152,9 @@
       "boss": "Diablos",
       "body": "झुका सिर लंबे धावे का संकेत देता है। शरीर का आकार और खुला अखाड़ा दूरी और बगल के निकास को स्पष्ट बनाते हैं।",
       "video": "https://www.youtube.com/watch?v=NwFX9I69uss&t=265s",
-      "videoDurationSeconds": 1358
+      "videoDurationSeconds": 1358,
+      "screenshot": "https://i.ytimg.com/vi/NwFX9I69uss/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=NwFX9I69uss&t=265s"
     },
     {
       "dimension": "3D",
@@ -152,7 +162,9 @@
       "boss": "Fallingstar Beast",
       "body": "थोड़ा पीछा करने के बाद वह पूरे अखाड़े को पार करता है। गोल कमरा और 3D कैमरा सुरक्षित दिशा का अनुमान कठिन बनाते हैं।",
       "video": "https://www.youtube.com/watch?v=gzwO84ERsb8",
-      "videoDurationSeconds": 20
+      "videoDurationSeconds": 20,
+      "screenshot": "https://cdn.gamegrin.com/assets/Uploads/_resampled/croppedimage1201631-Fallingstar-Beast-HEADER-AND-GIMP.png",
+      "screenshotSource": "https://www.gamegrin.com/articles/elden-ring-fallingstar-beast-boss-guide/"
     }
   ],
   "reviewStatus": "needs-review",

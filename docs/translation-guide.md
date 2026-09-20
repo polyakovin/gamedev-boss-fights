@@ -25,7 +25,7 @@ Translate displayed strings naturally, including SVG descriptions, control label
 - Keep machine values such as `reviewStatus` in their defined English form. Do not translate IDs, locale codes, filenames, or URL paths.
 - For a lens, translate `title` and the reusable `summary` while preserving its folder ID and metadata. The summary introduces the lens page and must not assume one specific mechanic.
 - In a mechanic’s `lensNotes`, preserve the IDs and order from `meta.lenses`. Translate each `body` as the short explanation shown in that mechanic’s tooltip.
-- In `examples`, preserve `dimension`, `game`, `boss`, `video`, and `videoDurationSeconds` exactly as in English. Translate only `body`.
+- In `examples`, preserve `dimension`, `game`, `boss`, `screenshot`, `screenshotSource`, `video`, and `videoDurationSeconds` exactly as in English. Translate only `body`.
 - Do not add HTML, Markdown formatting, invisible direction overrides, or English filler to a text field.
 - Use consistent terms for the mechanic, its phases, commitment, danger lane, and recovery. Prefer a natural explanation over an unclear borrowed term.
 

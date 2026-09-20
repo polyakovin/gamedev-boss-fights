@@ -66,4 +66,4 @@ The default URL prefix is `/gamedev-boss-fights/`. `lib/config.mjs` defines the 
 
 ## License
 
-Text, translations, and original SVG illustrations are licensed under **[CC BY 4.0](LICENSE-CONTENT.md)**. Source code is licensed under **[MIT](LICENSE-CODE)**. Linked articles and other third-party works retain their own licenses. Please keep attribution when reusing or adapting the lessons.
+Text, translations, and original SVG illustrations are licensed under **[CC BY 4.0](LICENSE-CONTENT.md)**. Source code is licensed under **[MIT](LICENSE-CODE)**. Externally hosted game screenshots and linked third-party works retain their owners’ rights and are excluded from the atlas license; each screenshot links to its source. Please keep attribution when reusing or adapting the lessons.

@@ -280,7 +280,16 @@
       "items": {
         "type": "object",
         "additionalProperties": false,
-        "required": ["dimension", "game", "boss", "body", "video", "videoDurationSeconds"],
+        "required": [
+          "dimension",
+          "game",
+          "boss",
+          "screenshot",
+          "screenshotSource",
+          "body",
+          "video",
+          "videoDurationSeconds"
+        ],
         "properties": {
           "dimension": {
             "enum": ["2D", "3D"]
@@ -292,6 +301,14 @@
           "boss": {
             "type": "string",
             "minLength": 1
+          },
+          "screenshot": {
+            "type": "string",
+            "format": "https-url"
+          },
+          "screenshotSource": {
+            "type": "string",
+            "format": "https-url"
           },
           "body": {
             "type": "string",

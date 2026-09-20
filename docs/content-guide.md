@@ -30,7 +30,7 @@ Use `content/mechanics/charge/en.json` as a structural example and `schemas/less
 | `adaptation`                  | Explain how the encounter respects available movement, reach, and upgrades |
 | `distinction`                 | Separate neighboring mechanics without asserting universal terminology     |
 | `lensNotes`                   | Explain how each lens from `meta.lenses` applies to this mechanic          |
-| `examples`                    | Compare concrete 2D and 3D bosses and link to a video of each fight        |
+| `examples`                    | Compare 2D and 3D bosses with a sourced screenshot and focused video       |
 | `reviewStatus`                | Record `needs-review` until independent fluent review is complete          |
 
 The current template requires exactly three steps, matching the localized “Three questions” heading. Its demo contract has four phase names and four descriptions. Do not force a mechanic into misleading phases to fit it. If another mechanic needs a different structure, update the schema, renderer, translations, and tests together. Shared headings live in `locales/*.json`; check that they still fit when extending the lesson structure.
@@ -53,7 +53,9 @@ A mechanic connects to published lenses through the stable kebab-case IDs in `me
 
 ### Add game references
 
-Every published lesson must include at least one 2D and one 3D boss that uses the mechanic. Name the game and boss, explain one useful design observation, and link directly to a YouTube demonstration of that behavior. Verify that the link works before submitting the PR.
+Every published lesson must include at least one 2D and one 3D boss that uses the mechanic. Name the game and boss, explain one useful design observation, show a clear in-game screenshot of that boss, and link directly to a YouTube demonstration of the behavior. Verify the screenshot, its source page, and the video before submitting the PR.
+
+Keep the screenshot externally hosted: record its direct HTTPS URL in `screenshot` and the page that published it in `screenshotSource`. The frame should make the named boss easy to recognize at card size; avoid key art, logos, unrelated enemies, strategy diagrams, and thumbnails dominated by added text. The source link is displayed over the image. Preserve both fields across translations. Externally hosted screenshots retain their owners’ rights and are not covered by the atlas’s CC BY license; do not copy them into the repository.
 
 Prefer a focused clip no longer than three minutes. It should show the boss behavior without travel, builds, commentary, or unrelated play; a speedrun is not a useful substitute merely because it is short. Record the full clip length in `videoDurationSeconds`. When the only useful source is longer, add `&t=<seconds>s` so the link opens immediately before the mechanic becomes visible. A chapter or the start of the whole fight is too broad. CI rejects long references without this exact timestamp.
 
@@ -90,9 +92,9 @@ Mechanic `meta.json` contains a unique `id` matching its folder, a unique positi
 
 Explain the role of a source in the PR: a documented example, research supporting a claim, or wider design context. Prefer a developer’s own description or another primary source for claims about a specific game. Verify the link and the relevant claim. When useful, combine complementary formats such as a design talk, attack analysis, animation reference, accessibility guideline, and engine documentation instead of listing several sources that repeat the same advice. The current original teaching example is not a reconstruction of a particular game; its linked materials provide context rather than evidence for a universal rule.
 
-Create original illustrations. Do not copy game screenshots, sprites, logos, or article artwork into the atlas. Keep third-party links as references and respect their original licenses. Our [content license](../LICENSE-CONTENT.md) applies to our contributions, not to linked material.
+Create original teaching illustrations. Do not copy game screenshots, sprites, logos, thumbnails, or article artwork into the repository. A boss-reference card may embed an externally hosted in-game screenshot with a visible source link as described above. Keep third-party material separate and respect its original rights. Our [content license](../LICENSE-CONTENT.md) applies to our contributions, not to embedded or linked material.
 
-YouTube links remain external references. Do not download or publish video frames, thumbnails, subtitles, or other assets from them. Linking to a video does not imply that its creator endorses the atlas.
+YouTube links remain external references. Do not download, rehost, or commit video frames, thumbnails, subtitles, or other assets from them. A reference card may load a YouTube-hosted thumbnail directly when its source link identifies the video. Linking to or embedding material does not imply that its creator endorses the atlas.
 
 ## Publish or change a published lesson
 

@@ -8,7 +8,8 @@ for (const locale of registry) {
     const errors = [];
     page.on('pageerror', (e) => errors.push(e.message));
     page.on('response', (r) => {
-      if (r.status() >= 400) errors.push(`${r.status()} ${r.url()}`);
+      if (new URL(r.url()).hostname === '127.0.0.1' && r.status() >= 400)
+        errors.push(`${r.status()} ${r.url()}`);
     });
     await page.setViewportSize({ width: 1440, height: 1000 });
     await page.goto(`${locale.code}/mechanics/charge/`);
@@ -31,6 +32,16 @@ for (const locale of registry) {
     await expect(page.locator('.lesson-title-line .lens-chip')).toHaveCount(6);
     await expect(page.locator('.lesson-title-line [role="tooltip"]')).toHaveCount(6);
     await expect(page.locator('.game-example')).toHaveCount(6);
+    await expect(page.locator('.game-example__media img')).toHaveCount(6);
+    await expect(page.locator('.game-example__source')).toHaveCount(6);
+    await expect(page.locator('.game-example__media img').first()).toHaveAttribute(
+      'alt',
+      'Chub — The Binding of Isaac: Rebirth',
+    );
+    await expect(page.locator('.game-example__media img').first()).toHaveAttribute(
+      'loading',
+      'lazy',
+    );
     await expect(page.locator('.sources li a')).toHaveCount(7);
     await expect(page.locator('.review-note')).toBeVisible();
     await expect(page.locator('.implementation-checklist')).toBeVisible();
@@ -43,14 +54,14 @@ for (const locale of registry) {
       `${locale.code}: checklist fits first screen`,
     ).toBeLessThanOrEqual(1000);
     await expect(page.locator('#quiz, .quiz, [data-quiz]')).toHaveCount(0);
-    await expect(page.locator('.game-example a[href*="youtube.com/watch"]')).toHaveCount(6);
+    await expect(page.locator('.game-example__video[href*="youtube.com/watch"]')).toHaveCount(6);
     const videos = await page
-      .locator('.game-example a')
+      .locator('.game-example__video')
       .evaluateAll((links) => links.map((link) => link.href));
     expect(videos[1]).toBe('https://www.youtube.com/watch?v=VaYY2fauQNo');
     expect(videos[4]).toBe('https://www.youtube.com/watch?v=NwFX9I69uss&t=265s');
     expect(videos[5]).toBe('https://www.youtube.com/watch?v=gzwO84ERsb8');
-    await expect(page.locator('.game-example a').first()).toHaveAttribute(
+    await expect(page.locator('.game-example__video').first()).toHaveAttribute(
       'rel',
       'noopener noreferrer',
     );

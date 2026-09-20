@@ -16,7 +16,7 @@ The complete terms are at [CC BY 4.0 legal code](https://creativecommons.org/lic
 
 The generator, simulation and interaction code, HTML-generation logic, CSS, schemas, configuration, and tests are software covered by [LICENSE-CODE](LICENSE-CODE), the MIT License. When a source file contains both programming logic and an original SVG illustration, the logic is MIT-licensed and the illustration is CC BY 4.0. Extracting the artwork from that file does not remove its attribution requirement.
 
-External articles, referenced games, and other third-party works retain their own rights and licenses. Linking to a work does not bring it under this license.
+External articles, referenced games, externally hosted screenshots shown on boss-reference cards, and other third-party works retain their own rights and licenses. They are not covered by CC BY 4.0. Each screenshot links to the page that published it; displaying that source does not imply endorsement of the atlas. Linking to or embedding a work does not bring it under this license.
 
 ## Attribution when reusing content
 

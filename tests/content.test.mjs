@@ -170,11 +170,14 @@ test('community review explicitly includes facts, concepts, examples, and transl
   assert.match(source.ui.ru.contributeNavText, /факты.*концепции.*примеры.*переводы/i);
 });
 
-test('published game references cover 2D and 3D with stable YouTube videos', async () => {
+test('published game references cover 2D and 3D with screenshots and stable videos', async () => {
   const examples = source.mechanics[0].translations.en.examples;
   assert.equal(examples.length, 6);
   assert.deepEqual(new Set(examples.map((example) => example.dimension)), new Set(['2D', '3D']));
   assert.ok(examples.every((example) => new URL(example.video).hostname === 'www.youtube.com'));
+  assert.ok(examples.every((example) => new URL(example.screenshot).protocol === 'https:'));
+  assert.ok(examples.every((example) => new URL(example.screenshotSource).protocol === 'https:'));
+  assert.equal(new Set(examples.map((example) => example.screenshot)).size, examples.length);
   assert.ok(examples.every((example) => example.videoDurationSeconds > 0));
   assert.equal(examples.filter((example) => example.videoDurationSeconds <= 180).length, 5);
   assert.equal(new URL(examples[4].video).searchParams.get('t'), '265s');
