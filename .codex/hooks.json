@@ -1,0 +1,17 @@
+{
+  "description": "Require a safe commit, push, and GitHub Pages deployment pass before a turn ends.",
+  "hooks": {
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"$(git rev-parse --show-toplevel)/.codex/hooks/finalize-turn.mjs\"",
+            "timeout": 10,
+            "statusMessage": "Checking commit, push, and deployment"
+          }
+        ]
+      }
+    ]
+  }
+}
