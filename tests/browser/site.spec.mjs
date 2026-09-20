@@ -92,7 +92,9 @@ for (const locale of registry) {
       0,
     );
     await expect(page.locator('.game-example__media img')).toHaveCount(6);
-    await expect(page.locator('.game-example__source')).toHaveCount(6);
+    await expect(page.locator('.game-example__source')).toHaveCount(0);
+    await expect(page.locator('.game-example[data-screenshot-source]')).toHaveCount(6);
+    await expect(page.locator('.game-example__title')).toHaveCount(6);
     await expect(page.locator('.game-example__media img').first()).toHaveAttribute(
       'alt',
       'Chub — The Binding of Isaac: Rebirth',
@@ -140,6 +142,25 @@ for (const locale of registry) {
       /.+/,
     );
     await expect(page.locator('.game-example__body a')).toHaveCount(0);
+    await page.locator('.game-example__link').first().hover();
+    expect(
+      await page
+        .locator('.game-example__link')
+        .first()
+        .evaluate((element) => getComputedStyle(element).textDecorationLine),
+    ).toBe('none');
+    const exampleTitleLayout = await page.locator('.game-example__title').evaluateAll((titles) =>
+      titles.map((title) => {
+        const boss = title.querySelector('h4').getBoundingClientRect();
+        const game = title.querySelector('.game-example__game').getBoundingClientRect();
+        return { bossCenter: boss.left + boss.width / 2, gameCenter: game.left + game.width / 2 };
+      }),
+    );
+    expect(
+      exampleTitleLayout.every(({ bossCenter, gameCenter }) =>
+        locale.code === 'ar' ? gameCenter < bossCenter : gameCenter > bossCenter,
+      ),
+    ).toBe(true);
     const cardCoverage = await page.locator('.game-example').evaluateAll((cards) =>
       cards.map((card) => {
         const cardRect = card.getBoundingClientRect();

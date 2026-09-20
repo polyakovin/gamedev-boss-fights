@@ -640,6 +640,9 @@ section[id] {
   min-width: 0;
   color: inherit;
 }
+.game-example__link:hover {
+  text-decoration: none;
+}
 .game-example__link:focus-visible {
   outline-offset: -3px;
 }
@@ -657,39 +660,33 @@ section[id] {
   height: 100%;
   object-fit: cover;
 }
-.game-example__source {
-  position: absolute;
-  inset-inline-end: 9px;
-  inset-block-start: 9px;
-  z-index: 1;
-  padding: 5px 8px;
-  border: 1px solid rgb(255 255 255 / 0.22);
-  border-radius: 999px;
-  background: rgb(9 15 28 / 0.88);
-  color: #fff;
-  font-family: var(--font-label);
-  font-size: 9px;
-  font-weight: 700;
-  letter-spacing: 0.03em;
-  backdrop-filter: blur(5px);
-}
 .game-example__body {
   display: flex;
   flex: 1;
   flex-direction: column;
   padding: 18px 21px 20px;
 }
+.game-example__title {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+}
 .game-example__game {
+  flex: 0 1 auto;
   color: var(--muted);
   font-family: var(--font-label);
   font-size: 10px;
   font-weight: 700;
   letter-spacing: 0.07em;
   line-height: 1.5;
+  text-align: end;
   text-transform: uppercase;
 }
 .game-example h4 {
-  margin-top: 9px;
+  flex: 1 1 auto;
+  min-width: 0;
+  margin: 0;
   font-size: 19px;
 }
 .game-example p {

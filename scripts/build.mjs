@@ -232,7 +232,10 @@ function exampleGroup(dimension, label, items, t) {
     .filter((item) => item.dimension === dimension)
     .map(
       (item) =>
-        /* HTML */ `<article class="game-example">
+        /* HTML */ `<article
+          class="game-example"
+          data-screenshot-source="${e(item.screenshotSource)}"
+        >
           <a
             class="game-example__link"
             href="${e(item.video)}"
@@ -250,19 +253,13 @@ function exampleGroup(dimension, label, items, t) {
               />
             </figure>
             <div class="game-example__body">
-              <span class="game-example__game">${e(item.game)}</span>
-              <h4>${e(item.boss)}</h4>
+              <div class="game-example__title">
+                <h4>${e(item.boss)}</h4>
+                <span class="game-example__game">${e(item.game)}</span>
+              </div>
               <p>${e(item.body)}</p>
             </div>
           </a>
-          <a
-            class="game-example__source"
-            href="${e(item.screenshotSource)}"
-            target="_blank"
-            rel="noopener noreferrer"
-            aria-label="${e(`${t.screenshotSource}: ${item.boss}, ${item.game}`)}"
-            >${e(t.screenshotSource)} <span aria-hidden="true">↗</span></a
-          >
         </article>`,
     )
     .join('');
