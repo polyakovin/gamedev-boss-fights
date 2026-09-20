@@ -761,7 +761,7 @@ section[id] {
 }
 .catalog-main {
   max-width: 1220px;
-  padding: 24px 28px;
+  padding: 12px 28px 24px;
   margin: auto;
 }
 .catalog-page .header-inner {
@@ -774,7 +774,26 @@ section[id] {
   padding: 16px 0;
 }
 .catalog-hero {
-  padding-bottom: 24px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(260px, 390px);
+  align-items: center;
+  gap: clamp(24px, 4vw, 64px);
+  padding-bottom: 12px;
+}
+.catalog-hero__copy {
+  min-width: 0;
+}
+.catalog-hero__art {
+  width: min(100%, 390px);
+  margin: 0;
+  justify-self: end;
+}
+.catalog-hero__art img {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-height: 160px;
+  object-fit: contain;
 }
 .catalog-topline {
   display: flex;
@@ -1788,6 +1807,13 @@ section[id] {
     grid-template-columns: 1fr;
     gap: 24px;
   }
+  .catalog-hero {
+    grid-template-columns: minmax(0, 1fr) minmax(240px, 320px);
+    gap: 24px;
+  }
+  .catalog-hero__art img {
+    max-height: 150px;
+  }
   .mechanic-card {
     display: grid;
     grid-template-columns: 0.8fr 1.2fr;
@@ -2018,7 +2044,16 @@ section[id] {
     padding: 24px 18px;
   }
   .catalog-hero {
+    grid-template-columns: 1fr;
+    gap: 14px;
     padding-bottom: 24px;
+  }
+  .catalog-hero__art {
+    width: min(100%, 360px);
+    justify-self: center;
+  }
+  .catalog-hero__art img {
+    max-height: none;
   }
   .catalog-hero h1 {
     font-size: 28px;

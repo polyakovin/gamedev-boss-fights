@@ -707,7 +707,12 @@ test('catalog and language gateway point to real pages', async ({ page, request 
     expect(await builder.text()).toContain('data-boss-builder');
   }
   await page.goto('ru/');
-  await expect(page.locator('.catalog-hero h1')).toHaveText('Как устроены бои с боссами');
+  await expect(page.locator('.catalog-hero h1')).toHaveText('Тави и Керн приветствуют вас');
+  await expect(page.locator('.catalog-hero__art img')).toHaveAttribute(
+    'src',
+    /\/gamedev-boss-fights\/assets\/welcome-boss-and-player\.png\?v=[a-f0-9]{10}$/,
+  );
+  await expect(page.locator('.catalog-hero__art img')).toBeVisible();
   expect(
     await page
       .locator('.catalog-hero h1')
