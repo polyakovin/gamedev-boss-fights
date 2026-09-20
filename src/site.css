@@ -964,6 +964,22 @@ section[id] {
   letter-spacing: 0.09em;
   line-height: 1.2;
 }
+.core-badge {
+  display: inline-flex;
+  align-items: center;
+  width: max-content;
+  padding: 3px 7px;
+  border: 1px solid var(--variant-line);
+  border-radius: 999px;
+  background: var(--variant-bg);
+  color: var(--variant-ink);
+  font-family: var(--font-label);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  line-height: 1.2;
+  text-transform: uppercase;
+}
 .catalog-lesson__copy small {
   color: var(--muted);
   font-size: 13px;
@@ -1738,7 +1754,8 @@ section[id] {
   font-size: 19px;
   line-height: 1.25;
 }
-.boss-builder-mechanic__copy strong .wip-badge {
+.boss-builder-mechanic__copy strong .wip-badge,
+.boss-builder-mechanic__copy strong .core-badge {
   display: inline-flex;
   margin-inline-start: 5px;
   vertical-align: 3px;
@@ -1783,11 +1800,63 @@ section[id] {
   padding: 5px 9px;
   font-size: 11px;
 }
+.wip-mechanic-title .core-badge {
+  padding: 6px 10px;
+  font-size: 10px;
+}
 .wip-mechanic-hero > p {
   max-width: 760px;
   margin: 24px 0 0;
   color: var(--soft-ink);
   font-size: clamp(17px, 2vw, 21px);
+  line-height: 1.65;
+}
+.draft-profile {
+  margin-top: clamp(48px, 7vw, 84px);
+  padding-top: 32px;
+  border-top: 1px solid var(--line);
+}
+.draft-profile__header {
+  max-width: 860px;
+}
+.draft-profile__header h2 {
+  margin: 12px 0 14px;
+  font-size: clamp(30px, 4vw, 46px);
+}
+.draft-profile__header p {
+  margin: 0;
+  color: var(--soft-ink);
+  font-size: 17px;
+  line-height: 1.7;
+}
+.draft-profile__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 210px), 1fr));
+  gap: 14px;
+  margin-top: 28px;
+}
+.draft-profile__card {
+  min-width: 0;
+  padding: 22px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--surface);
+}
+.draft-profile__card > span {
+  color: var(--accent);
+  font-family: var(--font-label);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+}
+.draft-profile__card h3 {
+  margin: 11px 0 8px;
+  font-size: 19px;
+}
+.draft-profile__card p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 14px;
   line-height: 1.65;
 }
 .wip-examples {

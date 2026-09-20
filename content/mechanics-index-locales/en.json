@@ -1,0 +1,213 @@
+{
+  "popularUi": {
+    "badge": "Top 30",
+    "blueprintTitle": "Mechanic blueprint",
+    "signalTitle": "Signal",
+    "responseTitle": "Player response",
+    "tuningTitle": "Tuning",
+    "pitfallTitle": "Common failure",
+    "escalationTitle": "Escalation"
+  },
+  "popularProfiles": {
+    "wide-swing": {
+      "overview": "A broad melee arc denies the space beside and in front of the boss, asking the player to leave the arc, pass through it, or exploit the unprotected side.",
+      "signal": "Show the weapon’s start side, shoulder rotation, and intended arc before the hitbox becomes active; the pose should reveal whether the swing is high, low, or full-height.",
+      "response": "Support at least one ordinary escape such as stepping out, moving behind the boss, or timing a dodge through the active edge, then leave a short punish window.",
+      "tuning": "Tune reach, angular speed, active duration, and boss rotation together; test the slowest legal movement option at several starting distances.",
+      "pitfall": "If the hitbox leads the weapon or extends far beyond it, the player learns to distrust the animation instead of reading the arc.",
+      "escalation": "Add a delayed reverse swing or a second height only after the base arc and its safe side are readable on their own."
+    },
+    "lunge": {
+      "overview": "The boss commits its body along a short line to close distance, converting open space into immediate contact danger and a new final position.",
+      "signal": "Use a compressed stance, fixed facing, and a clear line from the boss to the destination; lock the direction before the damaging movement begins.",
+      "response": "Let the player sidestep the line, cross over it, interrupt the preparation, or bait the destination, depending on the game’s movement verbs.",
+      "tuning": "Balance travel distance against preparation time and recovery; verify that the player can clear the boss’s full body, not only its center line.",
+      "pitfall": "Late homing turns a readable lunge into a tracking hit and invalidates the position chosen during the tell.",
+      "escalation": "Chain a second lunge toward the new position or vary the travel distance while preserving the same commitment cue."
+    },
+    "grab": {
+      "overview": "A grab replaces ordinary damage with capture, displacement, or a special follow-up, so it needs stronger communication than a routine strike.",
+      "signal": "Give the grab a unique hand pose, sound, and reach preview that cannot be confused with a blockable or low-damage melee attack.",
+      "response": "Define whether spacing, dodging, interruption, or an escape input works, and keep that rule consistent across player states and camera angles.",
+      "tuning": "Measure acquisition width, forward reach, tracking cutoff, escape timing, and the total consequence of failure as one package.",
+      "pitfall": "A grab that visually misses but snaps the player into place feels like broken collision, especially when its consequence is severe.",
+      "escalation": "Change what happens after capture or combine the grab with arena displacement instead of quietly increasing invisible reach."
+    },
+    "burrow-and-emerge": {
+      "overview": "The boss leaves direct interaction, relocates beneath or outside the arena, and returns through a marked emergence that reshapes positioning.",
+      "signal": "Keep an exit cue and a destination cue visible: disturbed ground, a moving trail, particles, or an arena marker should bridge the hidden interval.",
+      "response": "The player should relocate away from the emergence zone, prepare an intercept, or use the hidden interval for a different objective.",
+      "tuning": "Tune hidden duration, destination lock time, emergence radius, and recovery so relocation creates tension without becoming dead time.",
+      "pitfall": "A random reappearance under the player with no trackable cue makes movement irrelevant and rewards guessing.",
+      "escalation": "Add false trails, several possible exits, or hazards left behind while keeping the final committed destination identifiable."
+    },
+    "projectile-fan": {
+      "overview": "Several projectiles leave one origin at different angles, creating readable lanes whose gaps determine whether the player moves near, far, or through the spread.",
+      "signal": "Preview the emitter direction and spread width before release; the first readable frame should already communicate the center line and outer limits.",
+      "response": "Players can occupy a gap, move beyond the fan’s edge, approach before lanes separate, or use a defensive verb that is explicitly supported.",
+      "tuning": "Set projectile count, angular spacing, speed, size, and arena distance together because each changes the width of reachable gaps.",
+      "pitfall": "Adding projectiles without preserving navigable gaps turns a spacing test into unavoidable chip damage.",
+      "escalation": "Rotate the next fan, offset its center line, or alternate narrow and wide spreads while keeping each volley’s geometry legible."
+    },
+    "ring-volley": {
+      "overview": "Projectiles expand from the boss in every direction, testing radial spacing and the player’s ability to find or create a route through a closing circle.",
+      "signal": "Charge energy around the complete emitter and show any deliberate gap before launch so the player reads a ring rather than unrelated shots.",
+      "response": "Let the player pass through a gap, move with the expanding ring, block a limited section, or interrupt the charge if that counter is intended.",
+      "tuning": "Tune projectile count and radius growth against arena size; gaps must remain wide enough at the distance where the player is expected to cross.",
+      "pitfall": "A ring spawned directly on the player tests reaction latency instead of radial planning.",
+      "escalation": "Offset consecutive rings, rotate their gaps, or vary expansion speed without hiding where each safe route begins."
+    },
+    "spiral-barrage": {
+      "overview": "A rotating emitter releases a stream that traces a spiral, turning projectile timing into a moving lane the player can follow or cross.",
+      "signal": "Show rotation direction, emission rhythm, and the first arm of the spiral before the pattern fills the arena.",
+      "response": "The player can move with the rotation, cross one arm during a wide interval, or reposition toward a region where lane spacing is larger.",
+      "tuning": "Coordinate angular velocity, fire interval, projectile speed, and duration; small changes can close every lane several seconds later.",
+      "pitfall": "Tuning only the first second misses delayed overlaps that make the mature spiral impossible to navigate.",
+      "escalation": "Reverse rotation, add a second offset arm, or pulse the fire rate after the player has learned the base lane motion."
+    },
+    "ricochet-projectile": {
+      "overview": "A projectile changes direction after contacting arena boundaries, making walls part of its future trajectory and extending the threat beyond the initial shot.",
+      "signal": "Use a stable reflection rule and a visible impact cue so the next segment can be predicted from the incoming angle and surface.",
+      "response": "Players should anticipate the bounce, move to a region the reflected line will miss, or manipulate the impact point when the system permits it.",
+      "tuning": "Limit lifetime or bounce count, then test speed, collision radius, wall angles, and camera framing across every supported arena shape.",
+      "pitfall": "Random reflection angles remove the spatial reasoning that distinguishes a ricochet from an ordinary erratic projectile.",
+      "escalation": "Increase bounce count or add destructible reflectors while keeping the reflection law and projectile lifetime visible."
+    },
+    "homing-projectile": {
+      "overview": "A projectile adjusts its heading toward the player after launch, creating a moving pursuit problem instead of a single predicted line.",
+      "signal": "Identify lock-on and tracking strength through a marker, curved trail, or turning pose before the projectile reaches close range.",
+      "response": "Allow sharp direction changes, cover, interception, outrunning, or redirection according to the game’s verbs, and establish when tracking stops.",
+      "tuning": "Tune speed, turn rate, tracking delay, lifetime, and collision size together; a slower projectile can still be inescapable with unlimited turning.",
+      "pitfall": "Perfect turning with no lifetime or cutoff forces a specific exploit instead of supporting readable movement.",
+      "escalation": "Combine weak homing with obstacles or stagger several lock times rather than simply raising turn rate to perfect tracking."
+    },
+    "straight-beam": {
+      "overview": "The boss projects a sustained line of danger that controls a corridor and separates warning, activation, and recovery into clear timing phases.",
+      "signal": "Draw the future line with aiming posture, light, particles, or a harmless guide before the damaging beam appears.",
+      "response": "The player leaves the corridor, crosses before activation, uses cover, interrupts the cast, or exploits the boss’s fixed facing.",
+      "tuning": "Measure warning time, beam width, active duration, rotation tolerance, and recovery against the distance needed to clear the whole player body.",
+      "pitfall": "If the damaging width exceeds the preview or the beam snaps after the warning, the telegraph teaches the wrong rule.",
+      "escalation": "Add multiple fixed lines or shorten the warning after mastery while preserving the exact relationship between preview and damage."
+    },
+    "scanning-beam": {
+      "overview": "A sustained beam sweeps across space from one side to another, turning a line hazard into a timed crossing or pacing challenge.",
+      "signal": "Reveal the pivot, sweep direction, start angle, and movement speed before activation so the player can plan where to cross.",
+      "response": "Players can move ahead of the sweep, cross through a permitted gap, use cover, or rotate around the pivot at a safer radius.",
+      "tuning": "Tune angular speed, beam width, pivot position, sweep range, and arena obstructions; test inner and outer routes separately.",
+      "pitfall": "Changing sweep speed mid-attack without a cue invalidates the timing learned from the beam’s earlier movement.",
+      "escalation": "Reverse after a pause, move the pivot, or pair two scanners with offset timing while maintaining visible paths."
+    },
+    "rotating-beams": {
+      "overview": "Two or more beam arms rotate around a source, dividing the arena into moving sectors whose spacing defines a continuous navigation rhythm.",
+      "signal": "Show arm count, rotation direction, and safe sector size before damage begins; all active arms should share an understandable pivot.",
+      "response": "The player follows a safe sector, crosses one arm at a controlled moment, or changes radius to alter the required movement speed.",
+      "tuning": "Coordinate arm count, angular speed, width, radius, and duration; verify that camera motion does not disguise the world-space rotation.",
+      "pitfall": "Too many wide arms erase the safe sector and reduce the mechanic to mandatory invulnerability frames.",
+      "escalation": "Change direction or arm count only at signaled breaks, giving the player time to adopt the new rhythm."
+    },
+    "marked-area-strike": {
+      "overview": "The boss marks a region first and damages it after a delay, testing whether the player can interpret shape, timing, and overlap before detonation.",
+      "signal": "The marker must match the final damage footprint and communicate countdown through fill, pulse, sound, or another redundant channel.",
+      "response": "Players leave the shape, choose a safe overlap, bait the mark away from useful space, or use a clearly supported defensive action.",
+      "tuning": "Tune delay, footprint, placement rule, persistence, and simultaneous mark count against the player’s ordinary travel distance.",
+      "pitfall": "A decorative marker that is smaller than the real hitbox makes careful positioning less reliable than panic movement.",
+      "escalation": "Layer shapes with different delays or let old marks persist briefly, but keep their detonation order unmistakable."
+    },
+    "shockwave": {
+      "overview": "An impact creates a threat that travels across a surface, separating the boss’s strike location from the later line the player must clear.",
+      "signal": "Emphasize the source impact and the surface that will carry the wave; height and travel direction should be visible at release.",
+      "response": "The player jumps, changes elevation, blocks, moves beyond the wave’s reach, or exploits a deliberate break in the surface.",
+      "tuning": "Tune travel speed, height, lifetime, surface coverage, and repeated spacing against jump airtime and landing control.",
+      "pitfall": "A wave hidden by floor art or camera effects becomes a reaction test to an unreadable hazard.",
+      "escalation": "Alternate low and high waves, split them at obstacles, or repeat them in a learnable rhythm after the base traversal is clear."
+    },
+    "lingering-hazard": {
+      "overview": "An attack leaves danger active after the initial hit, converting a momentary threat into temporary arena control and future route planning.",
+      "signal": "Distinguish the initial impact, active hazard, and expiration states so the player knows when entering the area is unsafe and when it clears.",
+      "response": "Players route around the zone, bait it toward low-value space, remove it with a supported tool, or accept a clearly priced tradeoff.",
+      "tuning": "Tune footprint, lifetime, placement frequency, damage cadence, and maximum simultaneous coverage as one arena budget.",
+      "pitfall": "Hazards that outlive their readable visuals create invisible damage and make the arena state impossible to audit.",
+      "escalation": "Let zones grow, drift, or react to other attacks while enforcing a cap that preserves at least one viable route."
+    },
+    "hazard-trail": {
+      "overview": "Movement leaves a temporary dangerous path behind the boss or player, making recent trajectories constrain the next route through the arena.",
+      "signal": "Show where the trail begins, its exact width, and how it expires; the moving source and persistent residue need distinct visual states.",
+      "response": "The player curves movement to place the trail safely, crosses behind its expiration edge, or uses open space before routes close.",
+      "tuning": "Balance trail lifetime, width, source speed, turn radius, and arena area so route choices matter without sealing every exit.",
+      "pitfall": "A trail that appears behind the visual source with no placement preview punishes movement the player has already committed to.",
+      "escalation": "Increase persistence or add a second trail source, then cap overlap and preserve a readable expiration order."
+    },
+    "platform-destruction": {
+      "overview": "The boss removes or disables pieces of traversable space, making arena geometry a changing resource rather than a fixed backdrop.",
+      "signal": "Cracks, deformation, targeted highlights, and sound should identify the exact platform and whether its loss is temporary or permanent.",
+      "response": "Players relocate before collapse, choose which space to sacrifice, use alternate traversal, or complete an objective before the route disappears.",
+      "tuning": "Track remaining safe area, route connectivity, destruction order, recovery options, and the abilities required to survive each layout.",
+      "pitfall": "Removing the only reachable platform after an earlier irreversible choice creates a soft lock instead of meaningful pressure.",
+      "escalation": "Destroy space in authored stages or allow restoration between cycles, ensuring every state has a tested route for the intended loadout."
+    },
+    "shrinking-safe-area": {
+      "overview": "Danger advances inward or outward to reduce usable space, increasing contact pressure and forcing the encounter toward a tighter final layout.",
+      "signal": "Show the future boundary, direction of travel, and final stopping point before it moves; the safe side must remain unambiguous.",
+      "response": "The player repositions early, finishes a task before compression, controls where other hazards land, or uses a temporary opening to cross.",
+      "tuning": "Tune boundary speed, minimum safe area, pause intervals, other attack footprints, and camera framing at every shrink stage.",
+      "pitfall": "Continuous compression with no stable interval denies the player time to understand or use the new arena state.",
+      "escalation": "Shrink in discrete, signaled steps or shift the safe center while preserving enough space for the next required response."
+    },
+    "knockback": {
+      "overview": "A hit displaces the player, so its real danger depends on nearby walls, ledges, hazards, and the loss of a chosen position.",
+      "signal": "Communicate push direction and strength through the boss pose, impact line, and arena context before the force resolves.",
+      "response": "Players brace, move away from dangerous boundaries, steer during displacement, use immunity, or deliberately take a safe push for repositioning.",
+      "tuning": "Evaluate force, stun time, air control, collision behavior, and every possible landing zone rather than balancing damage alone.",
+      "pitfall": "A small-looking hit that launches the player farther than the arena reads makes environmental deaths feel arbitrary.",
+      "escalation": "Combine moderate push with changing boundary hazards or directional choices instead of scaling force until recovery is impossible."
+    },
+    "target-lock": {
+      "overview": "The boss selects a player or position, communicates that selection, and commits a later attack to it, creating a window for deliberate placement.",
+      "signal": "Use a persistent marker and a clear lock moment that distinguishes tracking before commitment from the fixed target after commitment.",
+      "response": "The marked player moves the attack away, shares or transfers responsibility if supported, or waits for commitment before leaving the area.",
+      "tuning": "Tune selection range, tracking duration, lock delay, attack delay, and multiplayer priority rules so responsibility remains legible.",
+      "pitfall": "Continuing to retarget after the lock cue teaches players that the marker has no dependable meaning.",
+      "escalation": "Lock several targets, attach different outcomes to markers, or shorten the placement window while keeping commitment explicit."
+    },
+    "attack-combination": {
+      "overview": "Two or more familiar attacks are sequenced so the first response changes the starting conditions for the next, creating a composite decision.",
+      "signal": "Preserve the tells of each component and add a rhythm or stance that communicates whether the sequence will continue.",
+      "response": "The player chooses a first answer that also leaves space, resources, and facing for the known follow-up rather than solving each hit in isolation.",
+      "tuning": "Tune transition gaps, positional carryover, cancellation rules, and total sequence duration; test every legal response to the opening move.",
+      "pitfall": "Combining individually fair attacks can still create an unavoidable follow-up if the first recovery ends in the second danger zone.",
+      "escalation": "Branch the final move from a small set of clearly signaled options after the fixed opening sequence is learned."
+    },
+    "weak-point": {
+      "overview": "Damage is concentrated on a specific body part, state, or facing, turning access to the target into a positioning and timing objective.",
+      "signal": "Use shape, material, animation, and hit feedback to distinguish the vulnerable region and show when it opens or closes.",
+      "response": "Players reposition, provoke an exposing attack, break protection, or reserve high-value actions for the vulnerability window.",
+      "tuning": "Tune access frequency, window length, damage multiplier, target size, camera visibility, and support for different attack ranges.",
+      "pitfall": "A weak point that visually reads as exposed but rejects valid hits makes the vulnerability rule feel inconsistent.",
+      "escalation": "Move the weak point, link it to a breakable part, or require alternating access routes while preserving clear open and closed feedback."
+    },
+    "telegraph": {
+      "overview": "A telegraph communicates an upcoming attack’s timing, origin, direction, and footprint early enough for a meaningful response.",
+      "signal": "Coordinate pose, motion, sound, effects, and arena markers so at least two channels identify the same future event without visual clutter.",
+      "response": "The player should be able to convert the cue into a specific action—move, wait, interrupt, guard, or prepare—before commitment removes that choice.",
+      "tuning": "Tune recognition time separately from movement time, then test cue visibility at combat distance, under effects, and with reduced audio or color perception.",
+      "pitfall": "A long animation is not a useful telegraph if it does not reveal what space becomes dangerous or when commitment occurs.",
+      "escalation": "Shorten or partially share tells only after the base vocabulary is established, preserving one reliable discriminator for each outcome."
+    },
+    "fight-phase": {
+      "overview": "A health, time, or objective threshold changes the encounter’s rules, moves, arena, or goals to create a distinct stage of the same fight.",
+      "signal": "Mark the transition with a pause, animation, music change, camera beat, or environment shift that clearly separates old and new rules.",
+      "response": "Give the player a moment to read the new state, reposition, or change priorities before the first unfamiliar threat fully resolves.",
+      "tuning": "Balance phase length, transition safety, retained hazards, resource state, checkpoints, and how quickly the new rule is introduced.",
+      "pitfall": "Changing several rules during an unprotected attack can make the first failure feel like missing information rather than a design challenge.",
+      "escalation": "Recombine mastered mechanics or change the immediate objective in later phases instead of only increasing health and damage."
+    },
+    "enrage": {
+      "overview": "The boss enters a more demanding state after a threshold or time limit, raising pressure and establishing a clear late-fight climax.",
+      "signal": "Use a distinct transition and persistent state cue so players know which speeds, sequences, or recovery rules have changed.",
+      "response": "The player adapts positioning and resource use to the announced changes while retaining at least one dependable answer to every attack.",
+      "tuning": "Choose the trigger, speed increase, damage change, new moves, and recovery reduction independently; avoid multiplying every value at once.",
+      "pitfall": "Removing all punish windows during enrage turns mastery into attrition and can invalidate builds that rely on deliberate counterattacks.",
+      "escalation": "Add one new rule or compress selected timings, then preserve the visual grammar learned earlier so the climax remains readable."
+    }
+  }
+}
