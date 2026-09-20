@@ -1,0 +1,120 @@
+{
+  "title": "Invocación",
+  "subtitle": "Diseña una señal clara, una respuesta posible y una apertura útil.",
+  "variant": "Oleada limitada de ayudantes",
+  "summary": "El jefe llama a un grupo limitado de ayudantes y cambia prioridades sin llenar la arena.",
+  "overview": "La invocación añade temporalmente actores y decisiones. Funciona cuando puntos, roles y límites son claros, y atender a los ayudantes compite de verdad con atacar al jefe.",
+  "learning": "Ajusta la señal, los puntos de llegada y el límite activo, el tiempo de respuesta y la recuperación.",
+  "category": "Patrones de ataque",
+  "readTime": "3 min",
+  "demo": {
+    "title": "Prueba el patrón",
+    "timeline": "Línea temporal del ataque",
+    "step": "Fases del ataque",
+    "phaseNames": ["Llamada", "Llegada", "Orden"],
+    "phaseDescriptions": [
+      "El jefe indica dónde y cuántos ayudantes aparecerán.",
+      "Un grupo limitado entra por puntos visibles.",
+      "Los ayudantes asumen roles distintos mientras el jefe queda ocupado."
+    ],
+    "boss": "Jefe",
+    "player": "Jugador",
+    "danger": "Aparece la amenaza",
+    "locked": "El patrón está activo",
+    "safe": "La respuesta funciona",
+    "reducedMotion": "La reproducción automática está desactivada por la preferencia de movimiento reducido. Usa el deslizador para revisar el ciclo.",
+    "diagramDescription": "Diagrama en bucle de invocación: el jefe avisa, el jugador responde y ambos regresan con suavidad al inicio."
+  },
+  "steps": [
+    {
+      "title": "¿La señal es específica?",
+      "body": "Revela puntos, cantidad y tipo antes de que sean peligrosos."
+    },
+    {
+      "title": "¿La respuesta es posible?",
+      "body": "Fija un límite estricto y comprueba que cada objetivo siga legible."
+    },
+    {
+      "title": "¿La apertura es útil?",
+      "body": "Decide si la llamada expone al jefe o premia limpiar primero."
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "Regla oculta",
+      "body": "Si la señal no muestra los puntos de llegada y el límite activo, el golpe parece arbitrario."
+    },
+    {
+      "title": "Escala incorrecta",
+      "body": "Probar un solo nivel de mejoras puede volver el patrón trivial o inevitable."
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "Alinea imagen y colisión",
+      "body": "La amenaza visible debe coincidir con el área activa en espacio y tiempo."
+    },
+    {
+      "title": "Empieza con habilidades normales",
+      "body": "Conserva una respuesta posible con las habilidades que el jugador ya tiene."
+    },
+    {
+      "title": "Repite con mejoras",
+      "body": "Comprueba movimiento, alcance, daño e invulnerabilidad en cada fase."
+    }
+  ],
+  "story": {
+    "title": "Haz que la arena apoye la regla",
+    "body": "Da espacio a cada punto y no aparezcas sobre el jugador."
+  },
+  "adaptation": {
+    "title": "Respeta las mejoras del jugador",
+    "body": "Prueba la configuración disponible más fuerte. Si el jefe bloquea un ataque, muestra la inmunidad y conserva otra respuesta útil."
+  },
+  "distinction": {
+    "title": "Nombra el patrón exacto",
+    "body": "Una invocación añade actores con conducta propia; un proyectil o peligro no tiene rol independiente."
+  },
+  "lensNotes": [
+    {
+      "id": "commitment",
+      "body": "El jefe renuncia a otra acción mientras desarrolla el patrón."
+    },
+    {
+      "id": "counterplay",
+      "body": "Una respuesta legible convierte la presión en decisión."
+    },
+    {
+      "id": "risk-reward",
+      "body": "Más cobertura o duración exige una apertura mejor."
+    },
+    {
+      "id": "mastery-check",
+      "body": "El patrón comprueba habilidades enseñadas antes del encuentro."
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "Hollow Knight",
+      "boss": "The Collector",
+      "video": "https://www.youtube.com/watch?v=rwZmf4u366o&t=1000s",
+      "videoDurationSeconds": 2630,
+      "screenshot": "https://i.ytimg.com/vi/uHK-Rtw7ccY/maxresdefault.jpg",
+      "screenshotSource": "https://thecenturionreport.com/hollow-knight-the-collector-boss-guide-a-shadowy-threat/",
+      "body": "El jefe libera enemigos de recipientes visibles y centra el combate en la oleada."
+    },
+    {
+      "dimension": "3D",
+      "game": "Elden Ring",
+      "boss": "Rennala, Queen of the Full Moon",
+      "video": "https://www.youtube.com/watch?v=8wTLAgG3dX0&t=250s",
+      "videoDurationSeconds": 500,
+      "screenshot": "https://i.ytimg.com/vi/8wTLAgG3dX0/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=8wTLAgG3dX0&t=250s",
+      "body": "Los espíritus temporales varían la amenaza y el lanzamiento expone al jefe."
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

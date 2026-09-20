@@ -1,0 +1,120 @@
+{
+  "title": "召唤",
+  "subtitle": "设计清楚的提示、可行的应对和有价值的空档。",
+  "variant": "数量受限的助手波次",
+  "summary": "首领 召来数量受限的助手，改变优先级但不塞满场地。",
+  "overview": "召唤会暂时增加参与者与决策。出生点、角色和上限清楚，处理助手与攻击 首领 形成真实取舍时，它最有效。",
+  "learning": "调整提示、出生点与存活上限、反应时间和恢复。",
+  "category": "攻击模式",
+  "readTime": "3 min",
+  "demo": {
+    "title": "测试模式",
+    "timeline": "攻击时间线",
+    "step": "攻击阶段",
+    "phaseNames": ["呼唤", "到场", "行动"],
+    "phaseDescriptions": [
+      "首领 提示助手的地点与数量。",
+      "受限队伍从可见地点进入。",
+      "助手承担不同职责，首领 仍被施法占用。"
+    ],
+    "boss": "首领",
+    "player": "玩家",
+    "danger": "威胁出现",
+    "locked": "模式生效",
+    "safe": "应对成功",
+    "reducedMotion": "系统因“减少动态效果”设置而停止自动播放。可用时间轴滑块查看循环。",
+    "diagramDescription": "召唤的循环图示：首领 给出提示，玩家应对，然后双方平滑回到起点。"
+  },
+  "steps": [
+    {
+      "title": "提示是否明确？",
+      "body": "在产生威胁前显示地点、数量和类型。"
+    },
+    {
+      "title": "应对是否可行？",
+      "body": "设定严格上限并检查所有目标是否可读。"
+    },
+    {
+      "title": "空档是否有用？",
+      "body": "决定施法会暴露 首领，还是先清理助手更有价值。"
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "隐藏规则",
+      "body": "如果提示没有说明出生点与存活上限，命中会显得随意。"
+    },
+    {
+      "title": "尺度错误",
+      "body": "只在一种成长强度下测试，会让模式变得无效或无法躲避。"
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "视觉与碰撞一致",
+      "body": "可见威胁必须在空间和时间上与实际碰撞一致。"
+    },
+    {
+      "title": "从普通能力开始",
+      "body": "至少保留一种玩家现有能力可完成的应对。"
+    },
+    {
+      "title": "重新测试成长",
+      "body": "在所有阶段检查移动、射程、伤害和无敌时间。"
+    }
+  ],
+  "story": {
+    "title": "让场地支持规则",
+    "body": "每个出生点要留空间，不要在玩家身上生成。"
+  },
+  "adaptation": {
+    "title": "考虑玩家成长",
+    "body": "用当前最强配置测试。若 首领 免疫某种攻击，要清楚表现，并保留另一种有效应对。"
+  },
+  "distinction": {
+    "title": "准确命名模式",
+    "body": "召唤增加有独立行为的角色；弹幕和陷阱没有独立职责。"
+  },
+  "lensNotes": [
+    {
+      "id": "commitment",
+      "body": "模式展开时，首领 放弃其他行动。"
+    },
+    {
+      "id": "counterplay",
+      "body": "可读的应对把压力变成选择。"
+    },
+    {
+      "id": "risk-reward",
+      "body": "覆盖越广或持续越久，空档就应越有价值。"
+    },
+    {
+      "id": "mastery-check",
+      "body": "模式检验本场战斗前已教授的能力。"
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "Hollow Knight",
+      "boss": "The Collector",
+      "video": "https://www.youtube.com/watch?v=rwZmf4u366o&t=1000s",
+      "videoDurationSeconds": 2630,
+      "screenshot": "https://i.ytimg.com/vi/uHK-Rtw7ccY/maxresdefault.jpg",
+      "screenshotSource": "https://thecenturionreport.com/hollow-knight-the-collector-boss-guide-a-shadowy-threat/",
+      "body": "首领 从可见容器放出敌人，使波次数量与清理成为核心。"
+    },
+    {
+      "dimension": "3D",
+      "game": "Elden Ring",
+      "boss": "Rennala, Queen of the Full Moon",
+      "video": "https://www.youtube.com/watch?v=8wTLAgG3dX0&t=250s",
+      "videoDurationSeconds": 500,
+      "screenshot": "https://i.ytimg.com/vi/8wTLAgG3dX0/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=8wTLAgG3dX0&t=250s",
+      "body": "临时灵体改变威胁后消失，施法时间也让 首领 暴露。"
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

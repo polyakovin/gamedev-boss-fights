@@ -4,9 +4,9 @@ An open, interactive encyclopedia of boss mechanics for game designers. Each les
 
 [Explore the atlas](https://polyakovin.github.io/gamedev-boss-fights/) · [Build a boss sketch](https://polyakovin.github.io/gamedev-boss-fights/en/builder/) · [Read in Russian](README.ru.md) · [Contribute](CONTRIBUTING.md)
 
-The first lesson is **Charge**. Watch the looping animation and inspect how tracking, commitment, collision, and recovery work together. Six design-lens chips connect the lesson to general game-design tools that apply across games, while six boss references from 2D and 3D games show how the mechanic changes across real encounters. The **Boss builder** lets you name a boss, add an optional description, combine published mechanics, and download the resulting sketch as JSON. Its draft stays in your browser.
+The atlas currently has five lessons: **Charge**, **Arc sweep**, **Ground slam**, **Summon**, and **Gap volley**. Each page combines a looping interactive diagram, an implementation checklist, general game-design lenses, focused learning sources, and timestamped 2D and 3D boss references. The **Boss builder** lets you name a boss, add an optional description, combine any published mechanics, and download the resulting sketch as JSON. Its draft stays in your browser.
 
-Available in English, Russian, Simplified Chinese, Hindi, Bengali, Spanish, Arabic, and Japanese. Facts, design concepts, examples, and translations all welcome independent review. [Open «Таран» in Russian](https://polyakovin.github.io/gamedev-boss-fights/ru/mechanics/charge/).
+Available in English, Russian, Simplified Chinese, Hindi, Bengali, Spanish, Arabic, and Japanese. Facts, design concepts, examples, and translations all welcome independent review. [Open the Russian catalog](https://polyakovin.github.io/gamedev-boss-fights/ru/).
 
 ## Make your first contribution
 

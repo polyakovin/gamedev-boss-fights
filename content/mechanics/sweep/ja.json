@@ -1,0 +1,120 @@
+{
+  "title": "弧状なぎ払い",
+  "subtitle": "明確な予告、実行可能な対応、有効な隙を設計します。",
+  "variant": "固定された回転弧",
+  "summary": "ボスが攻撃の一端を固定し、危険な弧をアリーナ全体へ動かします。",
+  "overview": "弧状なぎ払いはボスを中心に広い脅威を回転させます。支点と端が見え、安全地帯へ届き、固定動作が確かな隙を作ると機能します。",
+  "learning": "予告、支点と弧の端、対応時間、硬直を調整します。",
+  "category": "攻撃パターン",
+  "readTime": "3 min",
+  "demo": {
+    "title": "パターンを検証",
+    "timeline": "攻撃タイムライン",
+    "step": "攻撃の段階",
+    "phaseNames": ["予備動作", "弧の固定", "硬直"],
+    "phaseDescriptions": [
+      "ボスが支点と弧の始点を示します。",
+      "弧が一定速度で回り、プレイヤーが安全地帯へ移動します。",
+      "攻撃が終わり、ボスは滑らかに構えへ戻ります。"
+    ],
+    "boss": "ボス",
+    "player": "プレイヤー",
+    "danger": "脅威が現れる",
+    "locked": "パターンが発動",
+    "safe": "対応に成功",
+    "reducedMotion": "視差効果を減らす設定により自動再生を停止しています。スライダーでループを確認できます。",
+    "diagramDescription": "弧状なぎ払いのループ図。ボスが予告し、プレイヤーが対応し、両者が滑らかに開始位置へ戻ります。"
+  },
+  "steps": [
+    {
+      "title": "予告は具体的か？",
+      "body": "支点、開始角、方向、固定される瞬間を示します。"
+    },
+    {
+      "title": "対応は間に合うか？",
+      "body": "近距離と遠距離から最短の安全経路を測ります。"
+    },
+    {
+      "title": "隙は有効か？",
+      "body": "位置変更と行動ができる時間だけボスを動作に拘束します。"
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "隠れたルール",
+      "body": "予告が支点と弧の端を示さないと、被弾が理不尽に感じられます。"
+    },
+    {
+      "title": "誤った規模",
+      "body": "一つの強化段階だけで調整すると、無意味または回避不能になります。"
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "見た目と当たり判定を合わせる",
+      "body": "見える脅威と実際の当たり判定を時間と空間の両方で一致させます。"
+    },
+    {
+      "title": "通常能力から始める",
+      "body": "取得済みの能力で可能な対応を一つ以上残します。"
+    },
+    {
+      "title": "強化後も再検証する",
+      "body": "全段階で移動、射程、ダメージ、無敵時間を確認します。"
+    }
+  ],
+  "story": {
+    "title": "アリーナでルールを支える",
+    "body": "弧の端と支点を隠さない床を用意します。"
+  },
+  "adaptation": {
+    "title": "プレイヤーの強化を考慮する",
+    "body": "利用可能な最強構成で検証します。攻撃を無効化する場合は明示し、別の有効な対応を残します。"
+  },
+  "distinction": {
+    "title": "正確なパターン名を使う",
+    "body": "なぎ払いは支点の周囲で端を回します。回転攻撃はボス中心で、光線は追尾する場合があります。"
+  },
+  "lensNotes": [
+    {
+      "id": "telegraphing",
+      "body": "何が、どこで、いつ起こるかを予告します。"
+    },
+    {
+      "id": "threat-geometry",
+      "body": "危険の形がプレイヤーの経路を決めます。"
+    },
+    {
+      "id": "counterplay",
+      "body": "読み取れる対応が圧力を判断へ変えます。"
+    },
+    {
+      "id": "risk-reward",
+      "body": "範囲や時間が大きいほど、有効な隙が必要です。"
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "Hollow Knight",
+      "boss": "Mantis Lords",
+      "video": "https://www.youtube.com/watch?v=VG3h6uVtWyY&t=19s",
+      "videoDurationSeconds": 148,
+      "screenshot": "https://i.ytimg.com/vi/VG3h6uVtWyY/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=VG3h6uVtWyY&t=19s",
+      "body": "固定軌道の刃により次の安全地帯を予測できます。"
+    },
+    {
+      "dimension": "3D",
+      "game": "Dark Souls III",
+      "boss": "Dancer of the Boreal Valley",
+      "video": "https://www.youtube.com/watch?v=vCWh1bhHNKo&t=38s",
+      "videoDurationSeconds": 190,
+      "screenshot": "https://i.ytimg.com/vi/vCWh1bhHNKo/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=vCWh1bhHNKo&t=38s",
+      "body": "長い剣の連続なぎ払いは、アニメと空間が範囲を決める例です。"
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

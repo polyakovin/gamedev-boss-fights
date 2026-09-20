@@ -1,0 +1,120 @@
+{
+  "title": "Gap volley",
+  "subtitle": "Design a clear signal, a reachable response, and a useful opening.",
+  "variant": "Projectile wall with a safe gap",
+  "summary": "The boss fires a broad volley with one readable opening that the player can reach in time.",
+  "overview": "A gap volley covers most of a lane while preserving a deliberate safe route. It works when the opening is shown before motion begins, stays wider than the player, and moves at a speed the camera can communicate.",
+  "learning": "Tune the signal, the projectile lanes and safe gap, response time, and recovery.",
+  "category": "Attack patterns",
+  "readTime": "3 min",
+  "demo": {
+    "title": "Test the pattern",
+    "timeline": "Attack timeline",
+    "step": "Attack phases",
+    "phaseNames": ["Preview", "Volley", "Reposition"],
+    "phaseDescriptions": [
+      "The future lanes appear and one safe gap remains open.",
+      "The wall advances while the player aligns with the gap.",
+      "The projectiles clear and both sides prepare the next arrangement."
+    ],
+    "boss": "Boss",
+    "player": "Player",
+    "danger": "Threat appears",
+    "locked": "Pattern is active",
+    "safe": "Response succeeds",
+    "reducedMotion": "Autoplay is disabled by the reduced-motion setting. Use the timeline slider to inspect the loop.",
+    "diagramDescription": "A looping diagram of gap volley. The boss signals the pattern, the player responds, and both return smoothly to their starting positions."
+  },
+  "steps": [
+    {
+      "title": "Is the signal specific?",
+      "body": "Preview the whole wall, especially the gap, before projectiles block the view."
+    },
+    {
+      "title": "Is the response reachable?",
+      "body": "Measure gap width against the full collision shape and lateral travel time."
+    },
+    {
+      "title": "Is the opening useful?",
+      "body": "Use the next pause to reset spacing or let the player attack."
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "Hidden rule",
+      "body": "If the signal does not reveal the projectile lanes and safe gap, the hit feels arbitrary."
+    },
+    {
+      "title": "Wrong scale",
+      "body": "If timing is tested only at one upgrade level, the pattern can become trivial or unavoidable."
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "Match visuals and collision",
+      "body": "The visible threat must match the active hitbox in space and time."
+    },
+    {
+      "title": "Start with ordinary abilities",
+      "body": "Keep one response available with abilities the player already has."
+    },
+    {
+      "title": "Retest upgrades",
+      "body": "Check movement, range, damage, and invulnerability against every phase."
+    }
+  ],
+  "story": {
+    "title": "Make the arena support the rule",
+    "body": "Keep the incoming edge on camera and avoid effects that visually close the gap."
+  },
+  "adaptation": {
+    "title": "Respect player upgrades",
+    "body": "Test the strongest available build. If an attack is blocked, make the immunity clear and preserve another useful response."
+  },
+  "distinction": {
+    "title": "Name the exact pattern",
+    "body": "A gap volley asks the player to find a route through a formation, not dodge isolated shots."
+  },
+  "lensNotes": [
+    {
+      "id": "telegraphing",
+      "body": "The cue reveals what will happen, where, and when."
+    },
+    {
+      "id": "threat-geometry",
+      "body": "The shape of danger defines the player’s possible routes."
+    },
+    {
+      "id": "counterplay",
+      "body": "A readable response turns pressure into a decision."
+    },
+    {
+      "id": "mastery-check",
+      "body": "The pattern tests skills taught before this encounter."
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "Cuphead",
+      "boss": "Wally Warbles",
+      "video": "https://www.youtube.com/watch?v=Ol3-4Y0eS9M&t=58s",
+      "videoDurationSeconds": 199,
+      "screenshot": "https://i.ytimg.com/vi/Ol3-4Y0eS9M/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=Ol3-4Y0eS9M&t=58s",
+      "body": "Dense feather rows remain readable because their rhythm and openings can be seen before contact."
+    },
+    {
+      "dimension": "3D",
+      "game": "Returnal",
+      "boss": "Phrike",
+      "video": "https://www.youtube.com/watch?v=tGGoNmmEoXQ&t=44s",
+      "videoDurationSeconds": 262,
+      "screenshot": "https://i.ytimg.com/vi/tGGoNmmEoXQ/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=tGGoNmmEoXQ&t=44s",
+      "body": "Layered projectile walls use depth and color to preserve safe spacing inside a 3D arena."
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

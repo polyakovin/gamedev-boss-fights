@@ -1,0 +1,120 @@
+{
+  "title": "砸地",
+  "subtitle": "设计清楚的提示、可行的应对和有价值的空档。",
+  "variant": "冲击与扩散震波",
+  "summary": "首领 砸击地面，从接触点向外发出可读的震波。",
+  "overview": "砸地把一次冲击变成扩散的区域威胁。中心与速度清楚、应对路线存在，并检验已经教授的技能时，它最有效。",
+  "learning": "调整提示、冲击中心与波纹边缘、反应时间和恢复。",
+  "category": "攻击模式",
+  "readTime": "3 min",
+  "demo": {
+    "title": "测试模式",
+    "timeline": "攻击时间线",
+    "step": "攻击阶段",
+    "phaseNames": ["抬起", "冲击", "震波"],
+    "phaseDescriptions": [
+      "首领 抬起重量并标出落点。",
+      "冲击固定威胁中心。",
+      "圆环沿地面扩散，玩家到达安全区。"
+    ],
+    "boss": "首领",
+    "player": "玩家",
+    "danger": "威胁出现",
+    "locked": "模式生效",
+    "safe": "应对成功",
+    "reducedMotion": "系统因“减少动态效果”设置而停止自动播放。可用时间轴滑块查看循环。",
+    "diagramDescription": "砸地的循环图示：首领 给出提示，玩家应对，然后双方平滑回到起点。"
+  },
+  "steps": [
+    {
+      "title": "提示是否明确？",
+      "body": "让抬起、落点和接触帧区别于普通移动。"
+    },
+    {
+      "title": "应对是否可行？",
+      "body": "用跑、跳、闪避和场地边界检验波速。"
+    },
+    {
+      "title": "空档是否有用？",
+      "body": "留下足够恢复，让成功应对能改变战局。"
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "隐藏规则",
+      "body": "如果提示没有说明冲击中心与波纹边缘，命中会显得随意。"
+    },
+    {
+      "title": "尺度错误",
+      "body": "只在一种成长强度下测试，会让模式变得无效或无法躲避。"
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "视觉与碰撞一致",
+      "body": "可见威胁必须在空间和时间上与实际碰撞一致。"
+    },
+    {
+      "title": "从普通能力开始",
+      "body": "至少保留一种玩家现有能力可完成的应对。"
+    },
+    {
+      "title": "重新测试成长",
+      "body": "在所有阶段检查移动、射程、伤害和无敌时间。"
+    }
+  ],
+  "story": {
+    "title": "让场地支持规则",
+    "body": "地面和波纹边缘必须可见。"
+  },
+  "adaptation": {
+    "title": "考虑玩家成长",
+    "body": "用当前最强配置测试。若 首领 免疫某种攻击，要清楚表现，并保留另一种有效应对。"
+  },
+  "distinction": {
+    "title": "准确命名模式",
+    "body": "砸地是冲击；震波是随后扩散的威胁。"
+  },
+  "lensNotes": [
+    {
+      "id": "telegraphing",
+      "body": "提示要说明会发生什么、在哪里、何时发生。"
+    },
+    {
+      "id": "threat-geometry",
+      "body": "危险形状决定玩家可走的路线。"
+    },
+    {
+      "id": "counterplay",
+      "body": "可读的应对把压力变成选择。"
+    },
+    {
+      "id": "mastery-check",
+      "body": "模式检验本场战斗前已教授的能力。"
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "Hollow Knight",
+      "boss": "False Knight",
+      "video": "https://www.youtube.com/watch?v=rwZmf4u366o&t=151s",
+      "videoDurationSeconds": 2630,
+      "screenshot": "https://consolegamestuff.com/wp-content/uploads/2021/01/hollow-knight-how-to-beat-the-false-knight-attack-sm.png",
+      "screenshotSource": "https://consolegamestuff.com/hollow-knight-how-to-beat-the-false-knight/",
+      "body": "锤击产生侧视图中边缘清楚的地面波。"
+    },
+    {
+      "dimension": "3D",
+      "game": "Elden Ring",
+      "boss": "Godfrey, First Elden Lord",
+      "video": "https://www.youtube.com/watch?v=U2jd1fqLpsE&t=180s",
+      "videoDurationSeconds": 480,
+      "screenshot": "https://i.ytimg.com/vi/U2jd1fqLpsE/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=U2jd1fqLpsE&t=180s",
+      "body": "连续跺地把压力传遍 3D 场地并检验跳跃时机。"
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

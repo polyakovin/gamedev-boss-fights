@@ -1,0 +1,120 @@
+{
+  "title": "Barrido en arco",
+  "subtitle": "Diseña una señal clara, una respuesta posible y una apertura útil.",
+  "variant": "Arco rotatorio comprometido",
+  "summary": "El jefe fija un extremo del ataque y barre un arco peligroso por la arena.",
+  "overview": "El barrido rota una amenaza amplia alrededor del jefe. Funciona cuando se ven el pivote y el borde, la zona segura es alcanzable y el movimiento fijo crea una apertura fiable.",
+  "learning": "Ajusta la señal, el pivote y el borde del arco, el tiempo de respuesta y la recuperación.",
+  "category": "Patrones de ataque",
+  "readTime": "3 min",
+  "demo": {
+    "title": "Prueba el patrón",
+    "timeline": "Línea temporal del ataque",
+    "step": "Fases del ataque",
+    "phaseNames": ["Preparación", "Arco fijado", "Recuperación"],
+    "phaseDescriptions": [
+      "El jefe marca el pivote y el inicio del arco.",
+      "El arco rota a velocidad fija y el jugador entra en la zona segura.",
+      "El barrido termina y el jefe vuelve suavemente a su postura."
+    ],
+    "boss": "Jefe",
+    "player": "Jugador",
+    "danger": "Aparece la amenaza",
+    "locked": "El patrón está activo",
+    "safe": "La respuesta funciona",
+    "reducedMotion": "La reproducción automática está desactivada por la preferencia de movimiento reducido. Usa el deslizador para revisar el ciclo.",
+    "diagramDescription": "Diagrama en bucle de barrido en arco: el jefe avisa, el jugador responde y ambos regresan con suavidad al inicio."
+  },
+  "steps": [
+    {
+      "title": "¿La señal es específica?",
+      "body": "Muestra el pivote, ángulo inicial, dirección y momento de fijación."
+    },
+    {
+      "title": "¿La respuesta es posible?",
+      "body": "Mide la ruta segura más corta desde posiciones cercanas y lejanas."
+    },
+    {
+      "title": "¿La apertura es útil?",
+      "body": "Mantén al jefe comprometido para que el jugador pueda recolocarse y actuar."
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "Regla oculta",
+      "body": "Si la señal no muestra el pivote y el borde del arco, el golpe parece arbitrario."
+    },
+    {
+      "title": "Escala incorrecta",
+      "body": "Probar un solo nivel de mejoras puede volver el patrón trivial o inevitable."
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "Alinea imagen y colisión",
+      "body": "La amenaza visible debe coincidir con el área activa en espacio y tiempo."
+    },
+    {
+      "title": "Empieza con habilidades normales",
+      "body": "Conserva una respuesta posible con las habilidades que el jugador ya tiene."
+    },
+    {
+      "title": "Repite con mejoras",
+      "body": "Comprueba movimiento, alcance, daño e invulnerabilidad en cada fase."
+    }
+  ],
+  "story": {
+    "title": "Haz que la arena apoye la regla",
+    "body": "Deja suelo limpio para leer el borde y el pivote."
+  },
+  "adaptation": {
+    "title": "Respeta las mejoras del jugador",
+    "body": "Prueba la configuración disponible más fuerte. Si el jefe bloquea un ataque, muestra la inmunidad y conserva otra respuesta útil."
+  },
+  "distinction": {
+    "title": "Nombra el patrón exacto",
+    "body": "Un barrido rota un borde alrededor de un pivote; un giro se centra en el jefe y un rayo puede seguir apuntando."
+  },
+  "lensNotes": [
+    {
+      "id": "telegraphing",
+      "body": "La señal revela qué ocurrirá, dónde y cuándo."
+    },
+    {
+      "id": "threat-geometry",
+      "body": "La forma del peligro define las rutas posibles."
+    },
+    {
+      "id": "counterplay",
+      "body": "Una respuesta legible convierte la presión en decisión."
+    },
+    {
+      "id": "risk-reward",
+      "body": "Más cobertura o duración exige una apertura mejor."
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "Hollow Knight",
+      "boss": "Mantis Lords",
+      "video": "https://www.youtube.com/watch?v=VG3h6uVtWyY&t=19s",
+      "videoDurationSeconds": 148,
+      "screenshot": "https://i.ytimg.com/vi/VG3h6uVtWyY/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=VG3h6uVtWyY&t=19s",
+      "body": "La trayectoria fija de la hoja permite anticipar la próxima zona segura."
+    },
+    {
+      "dimension": "3D",
+      "game": "Dark Souls III",
+      "boss": "Dancer of the Boreal Valley",
+      "video": "https://www.youtube.com/watch?v=vCWh1bhHNKo&t=38s",
+      "videoDurationSeconds": 190,
+      "screenshot": "https://i.ytimg.com/vi/vCWh1bhHNKo/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=vCWh1bhHNKo&t=38s",
+      "body": "Los barridos largos muestran cómo animación y arena definen la cobertura."
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

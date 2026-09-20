@@ -1,0 +1,24 @@
+{
+  "id": "summon",
+  "number": 4,
+  "published": true,
+  "sourceLocale": "en",
+  "contentVersion": 1,
+  "animation": "summon",
+  "lenses": ["commitment", "counterplay", "risk-reward", "mastery-check"],
+  "related": ["gap-volley"],
+  "sources": [
+    {
+      "title": "Gameplay reference · The Collector — bounded waves of helpers",
+      "url": "https://www.youtube.com/watch?v=rwZmf4u366o&t=1000s"
+    },
+    {
+      "title": "Gameplay reference · Rennala — temporary spirit summons",
+      "url": "https://www.youtube.com/watch?v=8wTLAgG3dX0&t=250s"
+    },
+    {
+      "title": "Boss guide · Rennala summon roster and phase structure",
+      "url": "https://www.gameinformer.com/guide/2022/03/02/how-to-beat-rennala-queen-of-the-full-moon-elden-ring-boss-guide"
+    }
+  ]
+}

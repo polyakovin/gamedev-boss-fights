@@ -4,12 +4,17 @@ import { loadContent, validateContent } from '../lib/content.mjs';
 import { escape, jsonForHtml } from '../lib/html.mjs';
 import { lensVisualIds, renderLensVisual } from '../lib/lens-view.mjs';
 const source = await loadContent();
-test('all eight published lessons have complete valid content', async () => {
+test('all published mechanics have complete content in eight languages', async () => {
   await validateContent(source);
-  assert.equal(Object.keys(source.mechanics[0].translations).length, 8);
+  assert.equal(source.mechanics.length, 5);
+  assert.ok(source.mechanics.every((mechanic) => Object.keys(mechanic.translations).length === 8));
   assert.equal(source.lenses.length, 6);
   assert.ok(source.lenses.every((lens) => Object.keys(lens.translations).length === 8));
-  assert.ok(Object.values(source.mechanics[0].translations).every((lesson) => !('quiz' in lesson)));
+  assert.ok(
+    source.mechanics.every((mechanic) =>
+      Object.values(mechanic.translations).every((lesson) => !('quiz' in lesson)),
+    ),
+  );
 });
 test('a missing published translation is rejected instead of silently showing English', async () => {
   const data = structuredClone(source);
@@ -38,7 +43,7 @@ test('drafts may land before translations and animation are ready', async () => 
   draft.meta = {
     ...draft.meta,
     id: 'draft-mechanic',
-    number: 2,
+    number: Math.max(...data.mechanics.map((mechanic) => mechanic.meta.number)) + 1,
     published: false,
     animation: null,
     lenses: [],
@@ -82,10 +87,11 @@ test('published translations cannot lag behind the current source version', asyn
 });
 
 test('published diagrams use only generic boss and player labels', () => {
-  for (const lesson of Object.values(source.mechanics[0].translations)) {
-    assert.ok(!lesson.demo.boss.includes('·'));
-    assert.ok(!lesson.demo.player.includes('·'));
-  }
+  for (const mechanic of source.mechanics)
+    for (const lesson of Object.values(mechanic.translations)) {
+      assert.ok(!lesson.demo.boss.includes('·'));
+      assert.ok(!lesson.demo.player.includes('·'));
+    }
 });
 
 test('the published lesson teaches design decisions rather than player execution', () => {
@@ -96,10 +102,11 @@ test('the published lesson teaches design decisions rather than player execution
 });
 
 test('each mechanic overview defines the rule and explains why it works', () => {
-  for (const lesson of Object.values(source.mechanics[0].translations)) {
-    assert.ok(lesson.overview.length > lesson.summary.length);
-    assert.ok(lesson.overview.length < 350);
-  }
+  for (const mechanic of source.mechanics)
+    for (const lesson of Object.values(mechanic.translations)) {
+      assert.ok(lesson.overview.length > lesson.summary.length);
+      assert.ok(lesson.overview.length < 350);
+    }
   const { en, ru } = source.mechanics[0].translations;
   assert.match(en.overview, /locks its direction/i);
   assert.match(en.overview, /predictable/i);
@@ -132,11 +139,12 @@ test('design lenses stay complete and linkable across translations', async () =>
     assert.match(markup, /role="img"/);
     assert.ok(markup.includes(escape(lens.translations.en.summary)));
   }
-  for (const lesson of Object.values(source.mechanics[0].translations))
-    assert.deepEqual(
-      lesson.lensNotes.map((note) => note.id),
-      expected,
-    );
+  for (const mechanic of source.mechanics)
+    for (const lesson of Object.values(mechanic.translations))
+      assert.deepEqual(
+        lesson.lensNotes.map((note) => note.id),
+        mechanic.meta.lenses,
+      );
   assert.ok(
     source.lenses.every((lens) =>
       Object.values(lens.translations).every(
@@ -222,7 +230,18 @@ test('community review explicitly includes facts, concepts, examples, and transl
   assert.match(source.ui.ru.contributeNavText, /факты.*концепции.*примеры.*переводы/i);
 });
 
-test('published game references cover 2D and 3D with screenshots and stable videos', async () => {
+test('published game references cover 2D and 3D with screenshots and timestamped videos', async () => {
+  for (const mechanic of source.mechanics) {
+    const published = mechanic.translations.en.examples;
+    assert.deepEqual(new Set(published.map((example) => example.dimension)), new Set(['2D', '3D']));
+    assert.ok(published.every((example) => new URL(example.video).hostname === 'www.youtube.com'));
+    assert.ok(published.every((example) => new URL(example.video).searchParams.get('t')));
+    assert.ok(published.every((example) => new URL(example.screenshot).protocol === 'https:'));
+    assert.ok(
+      published.every((example) => new URL(example.screenshotSource).protocol === 'https:'),
+    );
+    assert.ok(published.every((example) => example.videoDurationSeconds > 0));
+  }
   const examples = source.mechanics[0].translations.en.examples;
   assert.equal(examples.length, 6);
   assert.deepEqual(new Set(examples.map((example) => example.dimension)), new Set(['2D', '3D']));
@@ -276,7 +295,7 @@ test('learning sources stay specific to the charge mechanic and prioritize pract
 
 test('every boss reference opens at the exact attack instead of unrelated gameplay', async () => {
   const data = structuredClone(source);
-  for (const lesson of Object.values(data.mechanics[0].translations))
+  for (const lesson of Object.values(data.mechanics.at(-1).translations))
     lesson.examples[0].video = 'https://www.youtube.com/watch?v=7pVgc-VBuPk';
   await assert.rejects(validateContent(data), /example 1 needs an exact YouTube timestamp/);
 });

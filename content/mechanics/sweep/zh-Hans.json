@@ -1,0 +1,120 @@
+{
+  "title": "弧形横扫",
+  "subtitle": "设计清楚的提示、可行的应对和有价值的空档。",
+  "variant": "固定旋转弧",
+  "summary": "首领 围绕固定支点横扫危险弧线。",
+  "overview": "弧形横扫让大范围威胁绕 首领 旋转。支点和边缘清楚、安全区可达、固定动作能产生可靠空档时，这个机制最有效。",
+  "learning": "调整提示、支点与弧线边缘、反应时间和恢复。",
+  "category": "攻击模式",
+  "readTime": "3 min",
+  "demo": {
+    "title": "测试模式",
+    "timeline": "攻击时间线",
+    "step": "攻击阶段",
+    "phaseNames": ["蓄力", "弧线锁定", "恢复"],
+    "phaseDescriptions": [
+      "首领 标出支点与弧线起始边缘。",
+      "弧线按固定速度旋转，玩家进入安全区。",
+      "横扫结束，首领 平滑回到准备姿势。"
+    ],
+    "boss": "首领",
+    "player": "玩家",
+    "danger": "威胁出现",
+    "locked": "模式生效",
+    "safe": "应对成功",
+    "reducedMotion": "系统因“减少动态效果”设置而停止自动播放。可用时间轴滑块查看循环。",
+    "diagramDescription": "弧形横扫的循环图示：首领 给出提示，玩家应对，然后双方平滑回到起点。"
+  },
+  "steps": [
+    {
+      "title": "提示是否明确？",
+      "body": "显示支点、起始角、方向和锁定时刻。"
+    },
+    {
+      "title": "应对是否可行？",
+      "body": "从近处和远处测量到最近安全区的路线。"
+    },
+    {
+      "title": "空档是否有用？",
+      "body": "让 首领 保持动作足够久，使玩家能换位并行动。"
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "隐藏规则",
+      "body": "如果提示没有说明支点与弧线边缘，命中会显得随意。"
+    },
+    {
+      "title": "尺度错误",
+      "body": "只在一种成长强度下测试，会让模式变得无效或无法躲避。"
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "视觉与碰撞一致",
+      "body": "可见威胁必须在空间和时间上与实际碰撞一致。"
+    },
+    {
+      "title": "从普通能力开始",
+      "body": "至少保留一种玩家现有能力可完成的应对。"
+    },
+    {
+      "title": "重新测试成长",
+      "body": "在所有阶段检查移动、射程、伤害和无敌时间。"
+    }
+  ],
+  "story": {
+    "title": "让场地支持规则",
+    "body": "场地要让弧线边缘和支点保持可见。"
+  },
+  "adaptation": {
+    "title": "考虑玩家成长",
+    "body": "用当前最强配置测试。若 首领 免疫某种攻击，要清楚表现，并保留另一种有效应对。"
+  },
+  "distinction": {
+    "title": "准确命名模式",
+    "body": "横扫围绕支点旋转边缘；旋转攻击以 首领 为中心，光束可能继续追踪。"
+  },
+  "lensNotes": [
+    {
+      "id": "telegraphing",
+      "body": "提示要说明会发生什么、在哪里、何时发生。"
+    },
+    {
+      "id": "threat-geometry",
+      "body": "危险形状决定玩家可走的路线。"
+    },
+    {
+      "id": "counterplay",
+      "body": "可读的应对把压力变成选择。"
+    },
+    {
+      "id": "risk-reward",
+      "body": "覆盖越广或持续越久，空档就应越有价值。"
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "Hollow Knight",
+      "boss": "Mantis Lords",
+      "video": "https://www.youtube.com/watch?v=VG3h6uVtWyY&t=19s",
+      "videoDurationSeconds": 148,
+      "screenshot": "https://i.ytimg.com/vi/VG3h6uVtWyY/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=VG3h6uVtWyY&t=19s",
+      "body": "固定轨迹的刀刃让下一块安全区可以预判。"
+    },
+    {
+      "dimension": "3D",
+      "game": "Dark Souls III",
+      "boss": "Dancer of the Boreal Valley",
+      "video": "https://www.youtube.com/watch?v=vCWh1bhHNKo&t=38s",
+      "videoDurationSeconds": 190,
+      "screenshot": "https://i.ytimg.com/vi/vCWh1bhHNKo/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=vCWh1bhHNKo&t=38s",
+      "body": "连续长剑横扫展示动画与场地如何共同决定覆盖。"
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

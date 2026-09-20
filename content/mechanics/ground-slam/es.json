@@ -1,0 +1,120 @@
+{
+  "title": "Golpe al suelo",
+  "subtitle": "Diseña una señal clara, una respuesta posible y una apertura útil.",
+  "variant": "Impacto con onda expansiva",
+  "summary": "El jefe golpea el suelo y envía una onda legible desde el punto de impacto.",
+  "overview": "El golpe convierte un impacto en una amenaza expansiva. Funciona cuando el centro y la velocidad se ven, existe una ruta válida y el tiempo comprueba una habilidad ya enseñada.",
+  "learning": "Ajusta la señal, el centro y el borde de la onda, el tiempo de respuesta y la recuperación.",
+  "category": "Patrones de ataque",
+  "readTime": "3 min",
+  "demo": {
+    "title": "Prueba el patrón",
+    "timeline": "Línea temporal del ataque",
+    "step": "Fases del ataque",
+    "phaseNames": ["Alzar", "Impacto", "Onda"],
+    "phaseDescriptions": [
+      "El jefe alza su peso y marca el punto de impacto.",
+      "El golpe fija el centro de la amenaza.",
+      "Un anillo se expande mientras el jugador alcanza espacio seguro."
+    ],
+    "boss": "Jefe",
+    "player": "Jugador",
+    "danger": "Aparece la amenaza",
+    "locked": "El patrón está activo",
+    "safe": "La respuesta funciona",
+    "reducedMotion": "La reproducción automática está desactivada por la preferencia de movimiento reducido. Usa el deslizador para revisar el ciclo.",
+    "diagramDescription": "Diagrama en bucle de golpe al suelo: el jefe avisa, el jugador responde y ambos regresan con suavidad al inicio."
+  },
+  "steps": [
+    {
+      "title": "¿La señal es específica?",
+      "body": "Diferencia el alzado, el punto y el fotograma de contacto del movimiento normal."
+    },
+    {
+      "title": "¿La respuesta es posible?",
+      "body": "Compara la onda con carrera, salto, esquiva y límites de la arena."
+    },
+    {
+      "title": "¿La apertura es útil?",
+      "body": "Deja recuperación suficiente para que responder cambie el combate."
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "Regla oculta",
+      "body": "Si la señal no muestra el centro y el borde de la onda, el golpe parece arbitrario."
+    },
+    {
+      "title": "Escala incorrecta",
+      "body": "Probar un solo nivel de mejoras puede volver el patrón trivial o inevitable."
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "Alinea imagen y colisión",
+      "body": "La amenaza visible debe coincidir con el área activa en espacio y tiempo."
+    },
+    {
+      "title": "Empieza con habilidades normales",
+      "body": "Conserva una respuesta posible con las habilidades que el jugador ya tiene."
+    },
+    {
+      "title": "Repite con mejoras",
+      "body": "Comprueba movimiento, alcance, daño e invulnerabilidad en cada fase."
+    }
+  ],
+  "story": {
+    "title": "Haz que la arena apoye la regla",
+    "body": "Mantén visibles el suelo y el borde de la onda."
+  },
+  "adaptation": {
+    "title": "Respeta las mejoras del jugador",
+    "body": "Prueba la configuración disponible más fuerte. Si el jefe bloquea un ataque, muestra la inmunidad y conserva otra respuesta útil."
+  },
+  "distinction": {
+    "title": "Nombra el patrón exacto",
+    "body": "El golpe es el impacto; la onda es la amenaza que se expande después."
+  },
+  "lensNotes": [
+    {
+      "id": "telegraphing",
+      "body": "La señal revela qué ocurrirá, dónde y cuándo."
+    },
+    {
+      "id": "threat-geometry",
+      "body": "La forma del peligro define las rutas posibles."
+    },
+    {
+      "id": "counterplay",
+      "body": "Una respuesta legible convierte la presión en decisión."
+    },
+    {
+      "id": "mastery-check",
+      "body": "El patrón comprueba habilidades enseñadas antes del encuentro."
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "Hollow Knight",
+      "boss": "False Knight",
+      "video": "https://www.youtube.com/watch?v=rwZmf4u366o&t=151s",
+      "videoDurationSeconds": 2630,
+      "screenshot": "https://consolegamestuff.com/wp-content/uploads/2021/01/hollow-knight-how-to-beat-the-false-knight-attack-sm.png",
+      "screenshotSource": "https://consolegamestuff.com/hollow-knight-how-to-beat-the-false-knight/",
+      "body": "El martillo crea una onda de suelo legible en vista lateral."
+    },
+    {
+      "dimension": "3D",
+      "game": "Elden Ring",
+      "boss": "Godfrey, First Elden Lord",
+      "video": "https://www.youtube.com/watch?v=U2jd1fqLpsE&t=180s",
+      "videoDurationSeconds": 480,
+      "screenshot": "https://i.ytimg.com/vi/U2jd1fqLpsE/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=U2jd1fqLpsE&t=180s",
+      "body": "Los pisotones llevan presión por la arena 3D y comprueban el salto ya enseñado."
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

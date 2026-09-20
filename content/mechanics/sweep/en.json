@@ -1,0 +1,120 @@
+{
+  "title": "Arc sweep",
+  "subtitle": "Design a clear signal, a reachable response, and a useful opening.",
+  "variant": "Committed rotating arc",
+  "summary": "The boss anchors one end of an attack and sweeps a dangerous arc across the arena.",
+  "overview": "An arc sweep rotates a wide threat around the boss. It works when the pivot and edge are visible, the safe region remains reachable, and the committed motion creates a reliable opening.",
+  "learning": "Tune the signal, the pivot and arc, response time, and recovery.",
+  "category": "Attack patterns",
+  "readTime": "3 min",
+  "demo": {
+    "title": "Test the pattern",
+    "timeline": "Attack timeline",
+    "step": "Attack phases",
+    "phaseNames": ["Wind-up", "Arc commits", "Recovery"],
+    "phaseDescriptions": [
+      "The boss marks the pivot and the starting edge of the arc.",
+      "The arc rotates at a fixed rate while the player moves into the safe region.",
+      "The sweep ends and the boss returns smoothly to its ready pose."
+    ],
+    "boss": "Boss",
+    "player": "Player",
+    "danger": "Threat appears",
+    "locked": "Pattern is active",
+    "safe": "Response succeeds",
+    "reducedMotion": "Autoplay is disabled by the reduced-motion setting. Use the timeline slider to inspect the loop.",
+    "diagramDescription": "A looping diagram of arc sweep. The boss signals the pattern, the player responds, and both return smoothly to their starting positions."
+  },
+  "steps": [
+    {
+      "title": "Is the signal specific?",
+      "body": "Show the pivot, start angle, direction, and moment the rotation becomes fixed."
+    },
+    {
+      "title": "Is the response reachable?",
+      "body": "Measure the nearest safe route from both close and distant positions."
+    },
+    {
+      "title": "Is the opening useful?",
+      "body": "Keep the boss committed long enough for the player to reposition and act."
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "Hidden rule",
+      "body": "If the signal does not reveal the pivot and arc, the hit feels arbitrary."
+    },
+    {
+      "title": "Wrong scale",
+      "body": "If timing is tested only at one upgrade level, the pattern can become trivial or unavoidable."
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "Match visuals and collision",
+      "body": "The visible threat must match the active hitbox in space and time."
+    },
+    {
+      "title": "Start with ordinary abilities",
+      "body": "Keep one response available with abilities the player already has."
+    },
+    {
+      "title": "Retest upgrades",
+      "body": "Check movement, range, damage, and invulnerability against every phase."
+    }
+  ],
+  "story": {
+    "title": "Make the arena support the rule",
+    "body": "Use enough clear floor to read the arc edge; remove props that hide the pivot."
+  },
+  "adaptation": {
+    "title": "Respect player upgrades",
+    "body": "Test the strongest available build. If an attack is blocked, make the immunity clear and preserve another useful response."
+  },
+  "distinction": {
+    "title": "Name the exact pattern",
+    "body": "A sweep rotates an edge around a pivot. A spin is centered on the boss; a beam may keep tracking."
+  },
+  "lensNotes": [
+    {
+      "id": "telegraphing",
+      "body": "The cue reveals what will happen, where, and when."
+    },
+    {
+      "id": "threat-geometry",
+      "body": "The shape of danger defines the player’s possible routes."
+    },
+    {
+      "id": "counterplay",
+      "body": "A readable response turns pressure into a decision."
+    },
+    {
+      "id": "risk-reward",
+      "body": "More coverage or duration earns a clearer opening."
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "Hollow Knight",
+      "boss": "Mantis Lords",
+      "video": "https://www.youtube.com/watch?v=VG3h6uVtWyY&t=19s",
+      "videoDurationSeconds": 148,
+      "screenshot": "https://i.ytimg.com/vi/VG3h6uVtWyY/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=VG3h6uVtWyY&t=19s",
+      "body": "A blade travels on a clean arc; the fixed trajectory lets the next safe region be anticipated."
+    },
+    {
+      "dimension": "3D",
+      "game": "Dark Souls III",
+      "boss": "Dancer of the Boreal Valley",
+      "video": "https://www.youtube.com/watch?v=vCWh1bhHNKo&t=38s",
+      "videoDurationSeconds": 190,
+      "screenshot": "https://i.ytimg.com/vi/vCWh1bhHNKo/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=vCWh1bhHNKo&t=38s",
+      "body": "Long sword sweeps overlap into changing arcs, showing how animation and arena spacing define coverage."
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

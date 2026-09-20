@@ -1,0 +1,120 @@
+{
+  "title": "Ground slam",
+  "subtitle": "Design a clear signal, a reachable response, and a useful opening.",
+  "variant": "Impact with expanding shockwave",
+  "summary": "The boss strikes the floor and sends a readable shockwave outward from the impact point.",
+  "overview": "A ground slam turns one impact into an expanding area threat. It works when the center and growth rate are visible, a valid route exists, and the impact timing tests a skill already taught.",
+  "learning": "Tune the signal, the impact center and wave edge, response time, and recovery.",
+  "category": "Attack patterns",
+  "readTime": "3 min",
+  "demo": {
+    "title": "Test the pattern",
+    "timeline": "Attack timeline",
+    "step": "Attack phases",
+    "phaseNames": ["Lift", "Impact", "Shockwave"],
+    "phaseDescriptions": [
+      "The boss raises its weight and marks the future impact point.",
+      "The strike lands and fixes the center of the threat.",
+      "A ring expands across the floor while the player reaches clear space."
+    ],
+    "boss": "Boss",
+    "player": "Player",
+    "danger": "Threat appears",
+    "locked": "Pattern is active",
+    "safe": "Response succeeds",
+    "reducedMotion": "Autoplay is disabled by the reduced-motion setting. Use the timeline slider to inspect the loop.",
+    "diagramDescription": "A looping diagram of ground slam. The boss signals the pattern, the player responds, and both return smoothly to their starting positions."
+  },
+  "steps": [
+    {
+      "title": "Is the signal specific?",
+      "body": "Make the lift, impact point, and exact contact frame distinct from ordinary movement."
+    },
+    {
+      "title": "Is the response reachable?",
+      "body": "Compare wave speed with running, jumping, dodging, and the arena boundary."
+    },
+    {
+      "title": "Is the opening useful?",
+      "body": "Give the slam enough recovery for the successful response to change the fight."
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "Hidden rule",
+      "body": "If the signal does not reveal the impact center and wave edge, the hit feels arbitrary."
+    },
+    {
+      "title": "Wrong scale",
+      "body": "If timing is tested only at one upgrade level, the pattern can become trivial or unavoidable."
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "Match visuals and collision",
+      "body": "The visible threat must match the active hitbox in space and time."
+    },
+    {
+      "title": "Start with ordinary abilities",
+      "body": "Keep one response available with abilities the player already has."
+    },
+    {
+      "title": "Retest upgrades",
+      "body": "Check movement, range, damage, and invulnerability against every phase."
+    }
+  ],
+  "story": {
+    "title": "Make the arena support the rule",
+    "body": "Keep the floor and wave edge visible; slopes and decoration must not mask timing."
+  },
+  "adaptation": {
+    "title": "Respect player upgrades",
+    "body": "Test the strongest available build. If an attack is blocked, make the immunity clear and preserve another useful response."
+  },
+  "distinction": {
+    "title": "Name the exact pattern",
+    "body": "A slam is the impact; the shockwave is the expanding threat it may create."
+  },
+  "lensNotes": [
+    {
+      "id": "telegraphing",
+      "body": "The cue reveals what will happen, where, and when."
+    },
+    {
+      "id": "threat-geometry",
+      "body": "The shape of danger defines the player’s possible routes."
+    },
+    {
+      "id": "counterplay",
+      "body": "A readable response turns pressure into a decision."
+    },
+    {
+      "id": "mastery-check",
+      "body": "The pattern tests skills taught before this encounter."
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "Hollow Knight",
+      "boss": "False Knight",
+      "video": "https://www.youtube.com/watch?v=rwZmf4u366o&t=151s",
+      "videoDurationSeconds": 2630,
+      "screenshot": "https://consolegamestuff.com/wp-content/uploads/2021/01/hollow-knight-how-to-beat-the-false-knight-attack-sm.png",
+      "screenshotSource": "https://consolegamestuff.com/hollow-knight-how-to-beat-the-false-knight/",
+      "body": "The hammer impact produces a floor wave whose edge and travel time can be read in a side view."
+    },
+    {
+      "dimension": "3D",
+      "game": "Elden Ring",
+      "boss": "Godfrey, First Elden Lord",
+      "video": "https://www.youtube.com/watch?v=U2jd1fqLpsE&t=180s",
+      "videoDurationSeconds": 480,
+      "screenshot": "https://i.ytimg.com/vi/U2jd1fqLpsE/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=U2jd1fqLpsE&t=180s",
+      "body": "Repeated stomps project pressure through a 3D arena and test the jump timing taught by the game."
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

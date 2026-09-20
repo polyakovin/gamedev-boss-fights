@@ -355,6 +355,48 @@ test('the lesson and language navigation work with JavaScript disabled', async (
   await context.close();
 });
 
+for (const [id, title, activePhase] of [
+  ['sweep', 'Круговой удар', 'Фиксация дуги'],
+  ['ground-slam', 'Удар по земле', 'Удар'],
+  ['summon', 'Призыв', 'Появление'],
+  ['gap-volley', 'Залп с разрывом', 'Залп'],
+]) {
+  test(`${id}: localized page animates its own pattern`, async ({ page }) => {
+    await page.emulateMedia({ reducedMotion: 'no-preference' });
+    await page.goto(`ru/mechanics/${id}/`);
+    await expect(page.locator('.lesson-hero h1')).toHaveText(title);
+    await expect(page.locator('[data-pattern-demo]')).toHaveAttribute('data-pattern-ready', 'true');
+    await expect(page.locator('[data-pattern-demo]')).toHaveAttribute('data-pattern-kind', id);
+    await expect(page.locator('[data-pattern-demo]')).toHaveAttribute(
+      'data-pattern-playing',
+      'true',
+    );
+    await expect(page.locator('.pattern-demo button')).toHaveCount(0);
+    await expect(page.locator('[data-pattern-timeline]')).toHaveCount(1);
+    await expect(page.locator('.lesson-title-line .lens-chip')).toHaveCount(4);
+    await expect(page.locator('.game-example')).toHaveCount(2);
+    await expect(page.locator('.game-example__media img')).toHaveCount(2);
+    await expect(page.locator('.sources li a')).toHaveCount(3);
+    await expect(page.locator('[data-charge-art="tank"]')).toHaveCount(1);
+    await expect(page.locator('[data-charge-art="monster"]')).toHaveCount(1);
+    await page.locator('[data-pattern-timeline]').evaluate((element) => {
+      element.value = '2500';
+      element.dispatchEvent(new Event('input', { bubbles: true }));
+    });
+    await expect(page.locator('[data-pattern-demo]')).toHaveAttribute('data-pattern-phase', '1');
+    await expect(page.locator('[data-pattern-demo]')).toHaveAttribute(
+      'data-pattern-outcome',
+      'safe',
+    );
+    await expect(page.locator('[data-pattern-phase-name]')).toHaveText(activePhase);
+    await page.locator('.language-menu summary').click();
+    const languageLinks = await page
+      .locator('.language-menu nav a')
+      .evaluateAll((links) => links.map((link) => link.getAttribute('href')));
+    expect(languageLinks.every((href) => href.endsWith(`/mechanics/${id}/`))).toBe(true);
+  });
+}
+
 test('checklist progress persists locally and can be reset', async ({ page }) => {
   await page.goto('ru/mechanics/charge/');
   const first = page.locator('[data-checklist-checkbox]').first();
@@ -406,9 +448,10 @@ test('boss builder persists a local draft and downloads portable JSON', async ({
   await expect(page.locator('.boss-builder-storage')).toHaveText(
     'Черновик хранится только в этом браузере.',
   );
-  await expect(page.locator('.boss-builder-mechanic')).toHaveCount(1);
-  await expect(page.locator('.boss-builder-mechanic [data-charge-art="tank"]')).toHaveCount(1);
-  await expect(page.locator('.boss-builder-mechanic [data-charge-art="monster"]')).toHaveCount(1);
+  await expect(page.locator('.boss-builder-mechanic')).toHaveCount(5);
+  await expect(page.locator('.boss-builder-mechanic [data-charge-art="tank"]')).toHaveCount(5);
+  await expect(page.locator('.boss-builder-mechanic [data-charge-art="monster"]')).toHaveCount(5);
+  await expect(page.locator('.boss-builder-mechanic [data-pattern-preview]')).toHaveCount(4);
 
   await page.locator('[data-boss-download]').click();
   await expect(page.locator('[data-boss-status]')).toHaveText('Введите название босса.');
@@ -505,8 +548,13 @@ test('lens chips show explanations and open localized lens pages', async ({ page
     /Телеграфирование.*Игра сообщает/,
   );
   await expect(page.locator('.lens-page__hero')).not.toContainText(/босс|таран/i);
-  await expect(page.locator('.lens-mechanic-card')).toHaveCount(1);
-  await expect(page.locator('.lens-mechanic-card h2')).toContainText('Таран');
+  await expect(page.locator('.lens-mechanic-card')).toHaveCount(4);
+  await expect(page.locator('.lens-mechanic-card h2')).toHaveText([
+    'Таран →',
+    'Круговой удар →',
+    'Удар по земле →',
+    'Залп с разрывом →',
+  ]);
   await page.locator('.language-menu summary').click();
   const languageLinks = await page
     .locator('.language-menu nav a')
@@ -642,8 +690,10 @@ test('catalog and language gateway point to real pages', async ({ page, request 
     'http://127.0.0.1:4173/gamedev-boss-fights/ru/mechanics/charge/#sources',
     'https://github.com/polyakovin/gamedev-boss-fights/blob/main/CONTRIBUTING.md',
   ]);
-  await expect(page.locator('.card-diagram [data-charge-art="tank"]')).toHaveCount(1);
-  await expect(page.locator('.card-diagram [data-charge-art="monster"]')).toHaveCount(1);
+  await expect(page.locator('.mechanic-card')).toHaveCount(5);
+  await expect(page.locator('.card-diagram [data-charge-art="tank"]')).toHaveCount(5);
+  await expect(page.locator('.card-diagram [data-charge-art="monster"]')).toHaveCount(5);
+  await expect(page.locator('.card-diagram [data-pattern-preview]')).toHaveCount(4);
   await expect(page.locator('.card-number')).toHaveCount(0);
   await page.setViewportSize({ width: 375, height: 812 });
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
@@ -654,7 +704,7 @@ test('homepages fit their core content on a laptop and reflow on mobile', async 
     await page.setViewportSize({ width: 1280, height: 720 });
     await page.goto(`${locale.code}/`);
     await expect(page.locator('html')).toHaveAttribute('dir', locale.dir);
-    for (const selector of ['.catalog-hero', '.mechanic-card', '.atlas-map']) {
+    for (const selector of ['.catalog-hero', '.mechanic-card:first-child', '.atlas-map']) {
       const box = await page.locator(selector).boundingBox();
       expect(box.y, `${locale.code}: ${selector} starts on screen`).toBeGreaterThanOrEqual(0);
       expect(
@@ -663,7 +713,7 @@ test('homepages fit their core content on a laptop and reflow on mobile', async 
       ).toBeLessThanOrEqual(720);
     }
     expect(await page.locator('.atlas-map__count').allTextContents()).toEqual([
-      '1',
+      '5',
       '1',
       '6',
       '6',
@@ -674,10 +724,10 @@ test('homepages fit their core content on a laptop and reflow on mobile', async 
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(
       true,
     );
-    const card = await page.locator('.mechanic-card').boundingBox();
+    const card = await page.locator('.mechanic-card').last().boundingBox();
     const navigation = await page.locator('.atlas-map').boundingBox();
     expect(navigation.y).toBeGreaterThan(card.y + card.height);
-    await expect(page.locator('.card-learning')).toBeVisible();
+    await expect(page.locator('.card-learning').first()).toBeVisible();
     await expect(page.locator('.atlas-map__link')).toHaveCount(6);
     await expect(page.locator('.atlas-map__builder')).toHaveAttribute(
       'href',

@@ -1,0 +1,24 @@
+{
+  "id": "gap-volley",
+  "number": 5,
+  "published": true,
+  "sourceLocale": "en",
+  "contentVersion": 1,
+  "animation": "gap-volley",
+  "lenses": ["telegraphing", "threat-geometry", "counterplay", "mastery-check"],
+  "related": ["sweep", "summon"],
+  "sources": [
+    {
+      "title": "Gameplay reference · Wally Warbles — feather volley with readable gaps",
+      "url": "https://www.youtube.com/watch?v=Ol3-4Y0eS9M&t=58s"
+    },
+    {
+      "title": "Gameplay reference · Phrike — projectile wall and safe spacing",
+      "url": "https://www.youtube.com/watch?v=tGGoNmmEoXQ&t=44s"
+    },
+    {
+      "title": "Encounter reference · Wally Warbles attack sequence",
+      "url": "https://gamerwalkthroughs.com/cuphead/world-2-inkwell-isle-2/aviary-action/"
+    }
+  ]
+}

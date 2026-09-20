@@ -1,0 +1,120 @@
+{
+  "title": "Summon",
+  "subtitle": "Design a clear signal, a reachable response, and a useful opening.",
+  "variant": "Bounded helper wave",
+  "summary": "The boss calls a limited group of helpers, changing priorities without flooding the arena.",
+  "overview": "A summon temporarily adds new actors and decisions to the fight. It works when arrival points, roles, and limits are clear, and when handling the helpers creates a real tradeoff with attacking the boss.",
+  "learning": "Tune the signal, the arrival points and active limit, response time, and recovery.",
+  "category": "Attack patterns",
+  "readTime": "3 min",
+  "demo": {
+    "title": "Test the pattern",
+    "timeline": "Attack timeline",
+    "step": "Attack phases",
+    "phaseNames": ["Call", "Arrival", "Command"],
+    "phaseDescriptions": [
+      "The boss signals where and how many helpers will appear.",
+      "A limited group enters through visible arrival points.",
+      "The helpers take distinct roles while the boss remains committed."
+    ],
+    "boss": "Boss",
+    "player": "Player",
+    "danger": "Threat appears",
+    "locked": "Pattern is active",
+    "safe": "Response succeeds",
+    "reducedMotion": "Autoplay is disabled by the reduced-motion setting. Use the timeline slider to inspect the loop.",
+    "diagramDescription": "A looping diagram of summon. The boss signals the pattern, the player responds, and both return smoothly to their starting positions."
+  },
+  "steps": [
+    {
+      "title": "Is the signal specific?",
+      "body": "Reveal arrival points, count, and helper type before they become dangerous."
+    },
+    {
+      "title": "Is the response reachable?",
+      "body": "Set a strict active limit and test whether every target remains readable."
+    },
+    {
+      "title": "Is the opening useful?",
+      "body": "Decide whether the call exposes the boss or rewards clearing helpers first."
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "Hidden rule",
+      "body": "If the signal does not reveal the arrival points and active limit, the hit feels arbitrary."
+    },
+    {
+      "title": "Wrong scale",
+      "body": "If timing is tested only at one upgrade level, the pattern can become trivial or unavoidable."
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "Match visuals and collision",
+      "body": "The visible threat must match the active hitbox in space and time."
+    },
+    {
+      "title": "Start with ordinary abilities",
+      "body": "Keep one response available with abilities the player already has."
+    },
+    {
+      "title": "Retest upgrades",
+      "body": "Check movement, range, damage, and invulnerability against every phase."
+    }
+  ],
+  "story": {
+    "title": "Make the arena support the rule",
+    "body": "Give each arrival point room and keep helpers from spawning on the player."
+  },
+  "adaptation": {
+    "title": "Respect player upgrades",
+    "body": "Test the strongest available build. If an attack is blocked, make the immunity clear and preserve another useful response."
+  },
+  "distinction": {
+    "title": "Name the exact pattern",
+    "body": "A summon adds actors with their own behavior. A projectile or hazard has no independent role."
+  },
+  "lensNotes": [
+    {
+      "id": "commitment",
+      "body": "The boss gives up another action while the pattern develops."
+    },
+    {
+      "id": "counterplay",
+      "body": "A readable response turns pressure into a decision."
+    },
+    {
+      "id": "risk-reward",
+      "body": "More coverage or duration earns a clearer opening."
+    },
+    {
+      "id": "mastery-check",
+      "body": "The pattern tests skills taught before this encounter."
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "Hollow Knight",
+      "boss": "The Collector",
+      "video": "https://www.youtube.com/watch?v=rwZmf4u366o&t=1000s",
+      "videoDurationSeconds": 2630,
+      "screenshot": "https://i.ytimg.com/vi/uHK-Rtw7ccY/maxresdefault.jpg",
+      "screenshotSource": "https://thecenturionreport.com/hollow-knight-the-collector-boss-guide-a-shadowy-threat/",
+      "body": "The boss releases enemies from visible containers, making wave size and cleanup central to the encounter."
+    },
+    {
+      "dimension": "3D",
+      "game": "Elden Ring",
+      "boss": "Rennala, Queen of the Full Moon",
+      "video": "https://www.youtube.com/watch?v=8wTLAgG3dX0&t=250s",
+      "videoDurationSeconds": 500,
+      "screenshot": "https://i.ytimg.com/vi/8wTLAgG3dX0/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=8wTLAgG3dX0&t=250s",
+      "body": "Temporary spirit summons vary the threat without remaining forever, while the casting window exposes the boss."
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

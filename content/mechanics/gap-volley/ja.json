@@ -1,0 +1,120 @@
+{
+  "title": "隙間つき一斉射撃",
+  "subtitle": "明確な予告、実行可能な対応、有効な隙を設計します。",
+  "variant": "安全な隙間を持つ弾幕壁",
+  "summary": "ボスが広い弾幕を放ち、プレイヤーが間に合う一つの隙間を残します。",
+  "overview": "通路の大半を覆いながら意図した安全経路を残します。隙間を事前に示し、プレイヤーより広く、カメラで速度を伝えると機能します。",
+  "learning": "予告、弾道と安全な隙間、対応時間、硬直を調整します。",
+  "category": "攻撃パターン",
+  "readTime": "3 min",
+  "demo": {
+    "title": "パターンを検証",
+    "timeline": "攻撃タイムライン",
+    "step": "攻撃の段階",
+    "phaseNames": ["予告", "一斉射撃", "再配置"],
+    "phaseDescriptions": [
+      "将来の弾道が現れ、一つの隙間が残ります。",
+      "壁が進み、プレイヤーが隙間へ合わせます。",
+      "弾が抜け、双方が滑らかに次の配置へ移ります。"
+    ],
+    "boss": "ボス",
+    "player": "プレイヤー",
+    "danger": "脅威が現れる",
+    "locked": "パターンが発動",
+    "safe": "対応に成功",
+    "reducedMotion": "視差効果を減らす設定により自動再生を停止しています。スライダーでループを確認できます。",
+    "diagramDescription": "隙間つき一斉射撃のループ図。ボスが予告し、プレイヤーが対応し、両者が滑らかに開始位置へ戻ります。"
+  },
+  "steps": [
+    {
+      "title": "予告は具体的か？",
+      "body": "視界を塞ぐ前に壁全体、特に隙間を示します。"
+    },
+    {
+      "title": "対応は間に合うか？",
+      "body": "隙間幅を当たり判定全体と横移動時間で測ります。"
+    },
+    {
+      "title": "隙は有効か？",
+      "body": "次の間で距離を整えるか攻撃できるようにします。"
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "隠れたルール",
+      "body": "予告が弾道と安全な隙間を示さないと、被弾が理不尽に感じられます。"
+    },
+    {
+      "title": "誤った規模",
+      "body": "一つの強化段階だけで調整すると、無意味または回避不能になります。"
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "見た目と当たり判定を合わせる",
+      "body": "見える脅威と実際の当たり判定を時間と空間の両方で一致させます。"
+    },
+    {
+      "title": "通常能力から始める",
+      "body": "取得済みの能力で可能な対応を一つ以上残します。"
+    },
+    {
+      "title": "強化後も再検証する",
+      "body": "全段階で移動、射程、ダメージ、無敵時間を確認します。"
+    }
+  ],
+  "story": {
+    "title": "アリーナでルールを支える",
+    "body": "進入端を画面に保ち、効果で隙間を塞ぎません。"
+  },
+  "adaptation": {
+    "title": "プレイヤーの強化を考慮する",
+    "body": "利用可能な最強構成で検証します。攻撃を無効化する場合は明示し、別の有効な対応を残します。"
+  },
+  "distinction": {
+    "title": "正確なパターン名を使う",
+    "body": "隊形から経路を探す攻撃であり、単発弾の回避とは異なります。"
+  },
+  "lensNotes": [
+    {
+      "id": "telegraphing",
+      "body": "何が、どこで、いつ起こるかを予告します。"
+    },
+    {
+      "id": "threat-geometry",
+      "body": "危険の形がプレイヤーの経路を決めます。"
+    },
+    {
+      "id": "counterplay",
+      "body": "読み取れる対応が圧力を判断へ変えます。"
+    },
+    {
+      "id": "mastery-check",
+      "body": "遭遇前に教えた技能を確認します。"
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "Cuphead",
+      "boss": "Wally Warbles",
+      "video": "https://www.youtube.com/watch?v=Ol3-4Y0eS9M&t=58s",
+      "videoDurationSeconds": 199,
+      "screenshot": "https://i.ytimg.com/vi/Ol3-4Y0eS9M/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=Ol3-4Y0eS9M&t=58s",
+      "body": "羽の密集列は接触前にリズムと隙間が見えるため読めます。"
+    },
+    {
+      "dimension": "3D",
+      "game": "Returnal",
+      "boss": "Phrike",
+      "video": "https://www.youtube.com/watch?v=tGGoNmmEoXQ&t=44s",
+      "videoDurationSeconds": 262,
+      "screenshot": "https://i.ytimg.com/vi/tGGoNmmEoXQ/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=tGGoNmmEoXQ&t=44s",
+      "body": "多層の弾幕壁は奥行きと色で3D空間の安全間隔を保ちます。"
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

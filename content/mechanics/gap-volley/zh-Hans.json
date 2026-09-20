@@ -1,0 +1,120 @@
+{
+  "title": "缺口齐射",
+  "subtitle": "设计清楚的提示、可行的应对和有价值的空档。",
+  "variant": "带安全缺口的弹幕墙",
+  "summary": "首领 发射宽阔齐射，并留下玩家能及时到达的清楚缺口。",
+  "overview": "缺口齐射覆盖大部分通道但保留刻意的安全路线。缺口提前显示、宽于玩家，速度又能被镜头清楚传达时，它最有效。",
+  "learning": "调整提示、弹道与安全缺口、反应时间和恢复。",
+  "category": "攻击模式",
+  "readTime": "3 min",
+  "demo": {
+    "title": "测试模式",
+    "timeline": "攻击时间线",
+    "step": "攻击阶段",
+    "phaseNames": ["预览", "齐射", "重排"],
+    "phaseDescriptions": [
+      "未来弹道出现并留下一个缺口。",
+      "弹幕墙前进，玩家对准缺口。",
+      "弹幕离开，双方平滑准备下一次排列。"
+    ],
+    "boss": "首领",
+    "player": "玩家",
+    "danger": "威胁出现",
+    "locked": "模式生效",
+    "safe": "应对成功",
+    "reducedMotion": "系统因“减少动态效果”设置而停止自动播放。可用时间轴滑块查看循环。",
+    "diagramDescription": "缺口齐射的循环图示：首领 给出提示，玩家应对，然后双方平滑回到起点。"
+  },
+  "steps": [
+    {
+      "title": "提示是否明确？",
+      "body": "在弹幕遮挡画面前展示整面墙和缺口。"
+    },
+    {
+      "title": "应对是否可行？",
+      "body": "用完整碰撞体与横向移动时间检验缺口宽度。"
+    },
+    {
+      "title": "空档是否有用？",
+      "body": "利用间歇重置距离或让玩家进攻。"
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "隐藏规则",
+      "body": "如果提示没有说明弹道与安全缺口，命中会显得随意。"
+    },
+    {
+      "title": "尺度错误",
+      "body": "只在一种成长强度下测试，会让模式变得无效或无法躲避。"
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "视觉与碰撞一致",
+      "body": "可见威胁必须在空间和时间上与实际碰撞一致。"
+    },
+    {
+      "title": "从普通能力开始",
+      "body": "至少保留一种玩家现有能力可完成的应对。"
+    },
+    {
+      "title": "重新测试成长",
+      "body": "在所有阶段检查移动、射程、伤害和无敌时间。"
+    }
+  ],
+  "story": {
+    "title": "让场地支持规则",
+    "body": "镜头要包含来袭边缘，特效不能遮住缺口。"
+  },
+  "adaptation": {
+    "title": "考虑玩家成长",
+    "body": "用当前最强配置测试。若 首领 免疫某种攻击，要清楚表现，并保留另一种有效应对。"
+  },
+  "distinction": {
+    "title": "准确命名模式",
+    "body": "缺口齐射要求穿过队形寻找路线，而非躲开零散弹体。"
+  },
+  "lensNotes": [
+    {
+      "id": "telegraphing",
+      "body": "提示要说明会发生什么、在哪里、何时发生。"
+    },
+    {
+      "id": "threat-geometry",
+      "body": "危险形状决定玩家可走的路线。"
+    },
+    {
+      "id": "counterplay",
+      "body": "可读的应对把压力变成选择。"
+    },
+    {
+      "id": "mastery-check",
+      "body": "模式检验本场战斗前已教授的能力。"
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "Cuphead",
+      "boss": "Wally Warbles",
+      "video": "https://www.youtube.com/watch?v=Ol3-4Y0eS9M&t=58s",
+      "videoDurationSeconds": 199,
+      "screenshot": "https://i.ytimg.com/vi/Ol3-4Y0eS9M/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=Ol3-4Y0eS9M&t=58s",
+      "body": "密集羽毛因为节奏与空隙提前可见而保持可读。"
+    },
+    {
+      "dimension": "3D",
+      "game": "Returnal",
+      "boss": "Phrike",
+      "video": "https://www.youtube.com/watch?v=tGGoNmmEoXQ&t=44s",
+      "videoDurationSeconds": 262,
+      "screenshot": "https://i.ytimg.com/vi/tGGoNmmEoXQ/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=tGGoNmmEoXQ&t=44s",
+      "body": "分层弹幕利用深度和色彩在 3D 场地中保留安全间距。"
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

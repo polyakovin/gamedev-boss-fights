@@ -1,0 +1,120 @@
+{
+  "title": "Salva con hueco",
+  "subtitle": "Diseña una señal clara, una respuesta posible y una apertura útil.",
+  "variant": "Muro de proyectiles con paso seguro",
+  "summary": "El jefe dispara una salva ancha con una abertura legible que el jugador puede alcanzar.",
+  "overview": "La salva cubre casi todo un carril y conserva una ruta segura. Funciona cuando el hueco se anticipa, supera el tamaño del jugador y avanza a una velocidad que la cámara comunica.",
+  "learning": "Ajusta la señal, los carriles y el hueco seguro, el tiempo de respuesta y la recuperación.",
+  "category": "Patrones de ataque",
+  "readTime": "3 min",
+  "demo": {
+    "title": "Prueba el patrón",
+    "timeline": "Línea temporal del ataque",
+    "step": "Fases del ataque",
+    "phaseNames": ["Vista previa", "Salva", "Recolocación"],
+    "phaseDescriptions": [
+      "Aparecen los carriles futuros y queda un hueco.",
+      "El muro avanza mientras el jugador se alinea.",
+      "Los proyectiles salen y ambos preparan otra formación."
+    ],
+    "boss": "Jefe",
+    "player": "Jugador",
+    "danger": "Aparece la amenaza",
+    "locked": "El patrón está activo",
+    "safe": "La respuesta funciona",
+    "reducedMotion": "La reproducción automática está desactivada por la preferencia de movimiento reducido. Usa el deslizador para revisar el ciclo.",
+    "diagramDescription": "Diagrama en bucle de salva con hueco: el jefe avisa, el jugador responde y ambos regresan con suavidad al inicio."
+  },
+  "steps": [
+    {
+      "title": "¿La señal es específica?",
+      "body": "Muestra todo el muro y el hueco antes de tapar la vista."
+    },
+    {
+      "title": "¿La respuesta es posible?",
+      "body": "Compara el ancho con la colisión completa y el tiempo lateral."
+    },
+    {
+      "title": "¿La apertura es útil?",
+      "body": "Usa la pausa para reajustar distancia o permitir atacar."
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "Regla oculta",
+      "body": "Si la señal no muestra los carriles y el hueco seguro, el golpe parece arbitrario."
+    },
+    {
+      "title": "Escala incorrecta",
+      "body": "Probar un solo nivel de mejoras puede volver el patrón trivial o inevitable."
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "Alinea imagen y colisión",
+      "body": "La amenaza visible debe coincidir con el área activa en espacio y tiempo."
+    },
+    {
+      "title": "Empieza con habilidades normales",
+      "body": "Conserva una respuesta posible con las habilidades que el jugador ya tiene."
+    },
+    {
+      "title": "Repite con mejoras",
+      "body": "Comprueba movimiento, alcance, daño e invulnerabilidad en cada fase."
+    }
+  ],
+  "story": {
+    "title": "Haz que la arena apoye la regla",
+    "body": "Mantén el borde entrante en cámara y evita efectos que tapen el hueco."
+  },
+  "adaptation": {
+    "title": "Respeta las mejoras del jugador",
+    "body": "Prueba la configuración disponible más fuerte. Si el jefe bloquea un ataque, muestra la inmunidad y conserva otra respuesta útil."
+  },
+  "distinction": {
+    "title": "Nombra el patrón exacto",
+    "body": "La salva pide encontrar una ruta por una formación, no esquivar tiros aislados."
+  },
+  "lensNotes": [
+    {
+      "id": "telegraphing",
+      "body": "La señal revela qué ocurrirá, dónde y cuándo."
+    },
+    {
+      "id": "threat-geometry",
+      "body": "La forma del peligro define las rutas posibles."
+    },
+    {
+      "id": "counterplay",
+      "body": "Una respuesta legible convierte la presión en decisión."
+    },
+    {
+      "id": "mastery-check",
+      "body": "El patrón comprueba habilidades enseñadas antes del encuentro."
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "Cuphead",
+      "boss": "Wally Warbles",
+      "video": "https://www.youtube.com/watch?v=Ol3-4Y0eS9M&t=58s",
+      "videoDurationSeconds": 199,
+      "screenshot": "https://i.ytimg.com/vi/Ol3-4Y0eS9M/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=Ol3-4Y0eS9M&t=58s",
+      "body": "Las filas de plumas son legibles porque ritmo y huecos se ven antes del contacto."
+    },
+    {
+      "dimension": "3D",
+      "game": "Returnal",
+      "boss": "Phrike",
+      "video": "https://www.youtube.com/watch?v=tGGoNmmEoXQ&t=44s",
+      "videoDurationSeconds": 262,
+      "screenshot": "https://i.ytimg.com/vi/tGGoNmmEoXQ/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=tGGoNmmEoXQ&t=44s",
+      "body": "Los muros superpuestos usan profundidad y color para conservar espacio seguro en 3D."
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}
