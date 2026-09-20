@@ -2,6 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { loadContent, validateContent } from '../lib/content.mjs';
 import { escape, jsonForHtml } from '../lib/html.mjs';
+import { lensVisualIds, renderLensVisual } from '../lib/lens-view.mjs';
 const source = await loadContent();
 test('all eight published lessons have complete valid content', async () => {
   await validateContent(source);
@@ -124,6 +125,13 @@ test('design lenses stay complete and linkable across translations', async () =>
     source.lenses.map((lens) => lens.meta.id),
     expected,
   );
+  assert.deepEqual(lensVisualIds, expected);
+  for (const lens of source.lenses) {
+    const markup = renderLensVisual(lens.meta.id, lens.translations.en);
+    assert.match(markup, new RegExp(`data-lens-visual="${lens.meta.id}"`));
+    assert.match(markup, /role="img"/);
+    assert.ok(markup.includes(escape(lens.translations.en.summary)));
+  }
   for (const lesson of Object.values(source.mechanics[0].translations))
     assert.deepEqual(
       lesson.lensNotes.map((note) => note.id),

@@ -266,6 +266,11 @@ test('lens chips show explanations and open localized lens pages', async ({ page
   await expect(page.locator('.lens-page__hero p')).toHaveText(
     'Игра сообщает о предстоящем действии, смене состояния или правила визуальным, звуковым или тактильным сигналом. Сигнал, тайминг и результат должны совпадать.',
   );
+  await expect(page.locator('.lens-page__hero [data-lens-visual="telegraphing"]')).toHaveCount(1);
+  await expect(page.locator('.lens-page__hero .lens-visual__svg')).toHaveAttribute(
+    'aria-label',
+    /Телеграфирование.*Игра сообщает/,
+  );
   await expect(page.locator('.lens-page__hero')).not.toContainText(/босс|таран/i);
   await expect(page.locator('.lens-mechanic-card')).toHaveCount(1);
   await expect(page.locator('.lens-mechanic-card h2')).toContainText('Таран');
@@ -278,6 +283,19 @@ test('lens chips show explanations and open localized lens pages', async ({ page
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
   await page.goto('ru/lenses/');
   await expect(page.locator('.lens-card')).toHaveCount(6);
+  await expect(page.locator('.lens-card [data-lens-visual]')).toHaveCount(6);
+  expect(
+    await page
+      .locator('.lens-card [data-lens-visual]')
+      .evaluateAll((visuals) => visuals.map((visual) => visual.dataset.lensVisual)),
+  ).toEqual([
+    'telegraphing',
+    'commitment',
+    'threat-geometry',
+    'counterplay',
+    'risk-reward',
+    'mastery-check',
+  ]);
   await expect(page.locator('.lens-catalog-hero p')).toHaveText(
     'Эти практические призмы помогают анализировать решения, обратную связь, испытания, пространство и обучение в любых играх. Это рабочие инструменты, а не универсальная классификация.',
   );
@@ -289,6 +307,29 @@ test('lens chips show explanations and open localized lens pages', async ({ page
   for (const locale of registry) {
     expect((await request.get(`${locale.code}/lenses/`)).status()).toBe(200);
     expect((await request.get(`${locale.code}/lenses/telegraphing/`)).status()).toBe(200);
+  }
+});
+
+test('every design lens has its own visual explanation', async ({ page }) => {
+  const lensIds = [
+    'telegraphing',
+    'commitment',
+    'threat-geometry',
+    'counterplay',
+    'risk-reward',
+    'mastery-check',
+  ];
+  for (const lensId of lensIds) {
+    await page.goto(`ru/lenses/${lensId}/`);
+    const visual = page.locator(`.lens-page__hero [data-lens-visual="${lensId}"]`);
+    await expect(visual).toBeVisible();
+    await expect(visual.locator('svg[role="img"]')).toHaveCount(1);
+    const box = await visual.boundingBox();
+    expect(box.width).toBeGreaterThan(300);
+    expect(box.height).toBeGreaterThan(160);
+    expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(
+      true,
+    );
   }
 });
 

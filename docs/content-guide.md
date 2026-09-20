@@ -52,6 +52,8 @@ npm run new:lens -- your-lens
 
 Keep `published: false` while the lens is incomplete. The localized file contains a short `title` and `summary`; explain what the lens reveals and what a designer should inspect. A lens must apply to games in general: describe choices, systems, feedback, challenges, space, learning, or another reusable concern without assuming a boss fight. Treat lenses as practical analytical tools, not a universal taxonomy.
 
+Every published lens also needs a distinct visual explanation registered in `lib/lens-view.mjs`. Use setting-neutral shapes and motion to show the relationship described by the lens, keep the SVG understandable beside the localized summary, and respect reduced-motion preferences. The catalog preview and the full lens page must reuse the same renderer so the visual identity stays consistent.
+
 A mechanic connects to published lenses through the stable kebab-case IDs in `meta.lenses`. Each lesson translation has a matching `lensNotes` array in the same order; its short, mechanic-specific explanation becomes the tooltip. This is the only place where the lens explanation should assume a boss or a particular mechanic. The chip label and destination come from the independent lens material, whose `summary` defines the reusable lens across games. When changing a published lens’s meaning, increment its own `contentVersion`, update all published translations and their `sourceVersion`, and reset their `reviewStatus`.
 
 ### Add game references

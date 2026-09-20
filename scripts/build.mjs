@@ -4,6 +4,7 @@ import { createHash } from 'node:crypto';
 import { ROOT, loadContent, validateContent } from '../lib/content.mjs';
 import { animations } from '../lib/animations.mjs';
 import { escape as e } from '../lib/html.mjs';
+import { renderLensVisual } from '../lib/lens-view.mjs';
 import { link, canonical, REPOSITORY } from '../lib/config.mjs';
 const { locales, ui, mechanics, lenses } = await validateContent(await loadContent());
 const published = mechanics.filter((m) => m.meta.published);
@@ -474,6 +475,7 @@ for (const locale of locales) {
         class="lens-card"
         href="${link(`${locale.code}/lenses/${lens.meta.id}/`)}"
       >
+        ${renderLensVisual(lens.meta.id, content, { compact: true })}
         <span class="eyebrow">${e(t.lensLabel)}</span>
         <h2>${e(content.title)} <span aria-hidden="true">→</span></h2>
         <p>${e(content.summary)}</p>
@@ -523,9 +525,12 @@ for (const locale of locales) {
     const body = /* HTML */ `<main id="main" class="lens-main">
       <article class="lens-page">
         <header class="lens-page__hero">
-          <span class="eyebrow">${e(t.lensLabel)}</span>
-          <h1>${e(content.title)}</h1>
-          <p>${e(content.summary)}</p>
+          <div class="lens-page__copy">
+            <span class="eyebrow">${e(t.lensLabel)}</span>
+            <h1>${e(content.title)}</h1>
+            <p>${e(content.summary)}</p>
+          </div>
+          ${renderLensVisual(lens.meta.id, content)}
         </header>
         <section class="lens-page__mechanics" aria-labelledby="lens-mechanics-title">
           <span class="eyebrow">${e(t.catalog)}</span>

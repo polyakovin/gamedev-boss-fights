@@ -872,6 +872,292 @@ section[id] {
   font-weight: 650;
   color: var(--accent);
 }
+.lens-visual {
+  margin: 0;
+  min-width: 0;
+}
+.lens-visual__svg {
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+.lens-visual__frame {
+  fill: var(--panel);
+  stroke: var(--line);
+  stroke-width: 2;
+}
+.lens-visual__arena {
+  fill: var(--diagram-arena);
+  stroke: var(--diagram-border);
+  stroke-width: 2;
+}
+.lens-visual__grid {
+  fill: none;
+  stroke: var(--diagram-grid);
+  stroke-width: 1;
+}
+.lens-visual__grid--arena {
+  opacity: 0.75;
+}
+.lens-visual__muted-line,
+.lens-visual__accent-line,
+.lens-visual__signal-line,
+.lens-visual__ink-line,
+.lens-visual__paper-line,
+.lens-visual__response-path,
+.lens-visual__escape-arrow {
+  fill: none;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 5;
+  vector-effect: non-scaling-stroke;
+}
+.lens-visual__muted-line {
+  stroke: var(--diagram-corners);
+}
+.lens-visual__accent-line,
+.lens-visual__response-path,
+.lens-visual__escape-arrow {
+  stroke: var(--accent);
+}
+.lens-visual__signal-line {
+  stroke: var(--signal);
+}
+.lens-visual__ink-line {
+  stroke: var(--ink);
+}
+.lens-visual__paper-line {
+  stroke: var(--surface);
+}
+.lens-visual__accent-fill {
+  fill: var(--accent);
+}
+.lens-visual__signal-fill {
+  fill: var(--signal);
+}
+.lens-visual__paper-fill {
+  fill: var(--surface);
+}
+.lens-visual__ink-fill {
+  fill: var(--ink);
+}
+.lens-visual__node {
+  fill: var(--surface);
+  stroke: var(--diagram-border);
+  stroke-width: 3;
+}
+.lens-visual__beats circle {
+  fill: var(--surface);
+  stroke: var(--accent);
+  stroke-width: 3;
+}
+.lens-visual__pulse-ring {
+  opacity: 0.25;
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: lens-pulse 3.2s ease-out infinite;
+}
+.lens-visual__timeline-fill,
+.lens-visual__chosen-path,
+.lens-visual__learning-progress {
+  stroke-dasharray: 440;
+  stroke-dashoffset: 0;
+  animation: lens-draw-line 3.2s ease-in-out infinite;
+}
+.lens-visual__result,
+.lens-visual__committed-result,
+.lens-visual__test-node {
+  animation: lens-result 3.2s ease-in-out infinite;
+}
+.lens-visual__lock {
+  animation: lens-lock 3.2s ease-in-out infinite;
+}
+.lens-visual__unused-options {
+  animation: lens-options 3.2s ease-in-out infinite;
+}
+.lens-visual__safe-zone {
+  fill: var(--accent-soft);
+  stroke: var(--accent);
+  stroke-width: 2;
+  stroke-dasharray: 8 8;
+}
+.lens-visual__threat-band .lens-visual__signal-fill,
+.lens-visual__challenge .lens-visual__signal-fill,
+.lens-visual__test-node .lens-visual__signal-fill {
+  opacity: 0.18;
+}
+.lens-visual__threat-band {
+  animation: lens-threat 4s ease-in-out infinite;
+}
+.lens-visual__player-footprint {
+  animation: lens-escape 4s ease-in-out infinite;
+}
+.lens-visual__escape-arrow {
+  stroke-dasharray: 9 9;
+}
+.lens-visual__response-path {
+  stroke-dasharray: 12 11;
+}
+.lens-visual__response-path--top {
+  animation: lens-response 3.6s ease-in-out infinite;
+}
+.lens-visual__response-path--bottom {
+  animation: lens-response 3.6s 1.8s ease-in-out infinite;
+}
+.lens-visual__tool {
+  animation: lens-tool 3.6s ease-in-out infinite;
+}
+.lens-visual__scale {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: lens-balance 4s ease-in-out infinite;
+}
+.lens-visual__trade-arrows {
+  animation: lens-trade 4s ease-in-out infinite;
+}
+.lens-visual__practice-loop {
+  animation: lens-practice 3.2s ease-in-out infinite;
+}
+.lens-visual--compact {
+  margin: -10px -10px 17px;
+}
+.lens-visual--compact .lens-visual__frame {
+  fill: var(--preview);
+}
+@keyframes lens-pulse {
+  0%,
+  18% {
+    opacity: 0.75;
+    transform: scale(0.6);
+  }
+  52%,
+  100% {
+    opacity: 0;
+    transform: scale(1.25);
+  }
+}
+@keyframes lens-draw-line {
+  0%,
+  15% {
+    stroke-dashoffset: 440;
+  }
+  70%,
+  100% {
+    stroke-dashoffset: 0;
+  }
+}
+@keyframes lens-result {
+  0%,
+  58% {
+    opacity: 0.35;
+  }
+  72%,
+  100% {
+    opacity: 1;
+  }
+}
+@keyframes lens-lock {
+  0%,
+  38% {
+    opacity: 0.35;
+  }
+  49%,
+  100% {
+    opacity: 1;
+  }
+}
+@keyframes lens-options {
+  0%,
+  38% {
+    opacity: 1;
+  }
+  55%,
+  100% {
+    opacity: 0.22;
+  }
+}
+@keyframes lens-threat {
+  0%,
+  18% {
+    transform: translateX(-34px);
+  }
+  50%,
+  68% {
+    transform: translateX(34px);
+  }
+  100% {
+    transform: translateX(-34px);
+  }
+}
+@keyframes lens-escape {
+  0%,
+  28% {
+    transform: translateX(0);
+  }
+  48%,
+  78% {
+    transform: translateX(-124px);
+  }
+  100% {
+    transform: translateX(0);
+  }
+}
+@keyframes lens-response {
+  0%,
+  20% {
+    opacity: 0.25;
+    stroke-dashoffset: 92;
+  }
+  55%,
+  75% {
+    opacity: 1;
+    stroke-dashoffset: 0;
+  }
+  100% {
+    opacity: 0.25;
+    stroke-dashoffset: -92;
+  }
+}
+@keyframes lens-tool {
+  0%,
+  22%,
+  100% {
+    opacity: 0.45;
+  }
+  45%,
+  72% {
+    opacity: 1;
+  }
+}
+@keyframes lens-balance {
+  0%,
+  100% {
+    transform: rotate(-4deg);
+  }
+  50% {
+    transform: rotate(4deg);
+  }
+}
+@keyframes lens-trade {
+  0%,
+  100% {
+    opacity: 0.35;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+@keyframes lens-practice {
+  0%,
+  22%,
+  100% {
+    opacity: 0.3;
+  }
+  45%,
+  76% {
+    opacity: 1;
+  }
+}
 .lens-catalog-main,
 .lens-main {
   width: min(1180px, calc(100% - 88px));
@@ -884,7 +1170,7 @@ section[id] {
   border-bottom: 1px solid var(--line);
 }
 .lens-catalog-hero > .eyebrow,
-.lens-page__hero > .eyebrow {
+.lens-page__copy > .eyebrow {
   color: var(--accent);
 }
 .lens-catalog-hero h1,
@@ -911,7 +1197,7 @@ section[id] {
 .lens-card {
   display: flex;
   flex-direction: column;
-  min-height: 235px;
+  min-height: 350px;
   padding: 22px;
   border: 1px solid var(--line);
   border-radius: var(--radius);
@@ -956,13 +1242,17 @@ section[id] {
   font-weight: 650;
 }
 .lens-page {
-  max-width: 980px;
+  max-width: 1180px;
 }
 .lens-page__hero {
-  max-width: 820px;
+  display: grid;
+  grid-template-columns: minmax(0, 0.86fr) minmax(410px, 1.14fr);
+  align-items: center;
+  gap: 48px;
+  max-width: none;
   padding-bottom: 42px;
 }
-.lens-page__hero p {
+.lens-page__copy p {
   font-size: 21px;
 }
 .lens-page__mechanics,
@@ -1154,6 +1444,16 @@ section[id] {
   }
   .lens-catalog-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .lens-page__hero {
+    grid-template-columns: 1fr;
+    gap: 28px;
+  }
+  .lens-page__copy {
+    max-width: 760px;
+  }
+  .lens-page__hero .lens-visual {
+    max-width: 720px;
   }
 }
 @media (max-width: 850px) {
@@ -1394,6 +1694,9 @@ section[id] {
   *::after {
     scroll-behavior: auto !important;
     transition: none !important;
+  }
+  .lens-visual * {
+    animation: none !important;
   }
 }
 @media print {
