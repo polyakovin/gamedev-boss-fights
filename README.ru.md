@@ -17,6 +17,7 @@
 - [Участие и проверки](CONTRIBUTING.md).
 - [Новые механики, иллюстрации и источники](docs/content-guide.md).
 - [Переводы и языковая проверка](docs/translation-guide.md).
+- [Аудит 124 механик боссов и источники](docs/research/boss-mechanics-audit-ru.md).
 - [Предложить механику или исправление](https://github.com/polyakovin/gamedev-boss-fights/issues/new?template=content.yml).
 - [Сообщить о проблеме перевода](https://github.com/polyakovin/gamedev-boss-fights/issues/new?template=translation.yml).
 

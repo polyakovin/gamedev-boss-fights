@@ -15,6 +15,7 @@ A single wording correction, factual check, concept review, or translation impro
 - [Contribution guide](CONTRIBUTING.md): small PRs, checks, and review.
 - [Content guide](docs/content-guide.md): new mechanics, examples, animations, and sources.
 - [Translation guide](docs/translation-guide.md): language files, terminology, and review status.
+- [Russian audit of 124 boss mechanics](docs/research/boss-mechanics-audit-ru.md): normalized terms, examples, and sources.
 - [Report a content problem or suggest a mechanic](https://github.com/polyakovin/gamedev-boss-fights/issues/new?template=content.yml).
 - [Report or review a translation](https://github.com/polyakovin/gamedev-boss-fights/issues/new?template=translation.yml).
 
