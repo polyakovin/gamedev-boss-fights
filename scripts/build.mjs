@@ -649,6 +649,12 @@ for (const locale of locales) {
         <span class="eyebrow">${e(t.indexEyebrow)}</span>
         <h1>${e(t.indexTitle)}</h1>
         <p class="lead">${e(t.indexSubtitle)}</p>
+        <p class="catalog-hero__reference">
+          <a href="https://gamemechanics.org/" target="_blank" rel="noopener noreferrer"
+            >Game Mechanics</a
+          >
+          ${e(t.indexReference)}
+        </p>
       </div>
       <figure class="catalog-hero__art" aria-hidden="true">
         <img

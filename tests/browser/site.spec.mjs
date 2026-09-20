@@ -840,6 +840,14 @@ test('the root defaults to English and localized catalogs point to real pages', 
     'Interactive pattern library for boss encounter designers',
   );
   await expect(page.locator('.catalog-hero h1')).toHaveText('Tavi and Kern welcome you');
+  const relatedCatalog = page.locator('.catalog-hero__reference');
+  await expect(relatedCatalog.getByRole('link', { name: 'Game Mechanics' })).toHaveAttribute(
+    'href',
+    'https://gamemechanics.org/',
+  );
+  await expect(relatedCatalog).toContainText(
+    'Boss Fight Atlas has a similar purpose, but focuses specifically on bosses',
+  );
   await expect(page.locator('.catalog-lenses .lens-card')).toHaveCount(15);
   await expect(page.locator('.catalog-lenses .lens-visual')).toHaveCount(15);
   await expect(page.locator('.catalog-lenses__all')).toHaveAttribute(

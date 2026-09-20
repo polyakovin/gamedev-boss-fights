@@ -45,6 +45,7 @@
     "reviewNote",
     "indexTitle",
     "indexSubtitle",
+    "indexReference",
     "indexEyebrow",
     "siteMapTitle",
     "siteMapIntro",
@@ -267,6 +268,10 @@
       "minLength": 1
     },
     "indexSubtitle": {
+      "type": "string",
+      "minLength": 1
+    },
+    "indexReference": {
       "type": "string",
       "minLength": 1
     },
