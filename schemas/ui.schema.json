@@ -40,6 +40,7 @@
     "variantLabel",
     "learnLabel",
     "implementationChecklist",
+    "checklistReset",
     "stepsTitle",
     "mistakesTitle",
     "designerTitle",
@@ -209,6 +210,10 @@
       "minLength": 1
     },
     "implementationChecklist": {
+      "type": "string",
+      "minLength": 1
+    },
+    "checklistReset": {
       "type": "string",
       "minLength": 1
     },

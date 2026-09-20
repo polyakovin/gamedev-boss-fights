@@ -90,6 +90,12 @@ for (const locale of registry) {
     await expect(page.locator('.implementation-checklist')).toBeVisible();
     await expect(page.locator('.checklist-group')).toHaveCount(2);
     await expect(page.locator('.checklist-item')).toHaveCount(11);
+    await expect(page.locator('[data-checklist-checkbox]')).toHaveCount(11);
+    await expect(page.locator('[data-checklist-reset]')).toBeDisabled();
+    await expect(page.locator('.implementation-checklist')).toHaveAttribute(
+      'data-checklist-ready',
+      'true',
+    );
     await expect(page.locator('#playbook, #design')).toHaveCount(0);
     const checklistBox = await page.locator('.implementation-checklist').boundingBox();
     expect(
@@ -239,6 +245,42 @@ test('the lesson and language navigation work with JavaScript disabled', async (
   await page.locator('.language-menu a[lang="ja"]').click();
   await expect(page.locator('html')).toHaveAttribute('lang', 'ja');
   await context.close();
+});
+
+test('checklist progress persists locally and can be reset', async ({ page }) => {
+  await page.goto('ru/mechanics/charge/');
+  const first = page.locator('[data-checklist-checkbox]').first();
+  const third = page.locator('[data-checklist-checkbox]').nth(2);
+  const firstDetails = page.locator('.checklist-item details').first();
+  const reset = page.locator('[data-checklist-reset]');
+
+  await first.check();
+  await third.check();
+  await expect(firstDetails).not.toHaveAttribute('open', '');
+  await expect(reset).toBeEnabled();
+  await expect(page.locator('.implementation-checklist')).toHaveAttribute(
+    'data-checklist-complete',
+    '2',
+  );
+  expect(
+    await page.evaluate(() =>
+      JSON.parse(localStorage.getItem('boss-fight-atlas-checklist:charge')),
+    ),
+  ).toEqual(['steps-0', 'steps-2']);
+
+  await page.reload();
+  await expect(first).toBeChecked();
+  await expect(third).toBeChecked();
+  await page.goto('en/mechanics/charge/');
+  await expect(page.locator('[data-checklist-checkbox]').first()).toBeChecked();
+  await expect(page.locator('[data-checklist-reset]')).toHaveText('Clear checks');
+
+  await page.locator('[data-checklist-reset]').click();
+  await expect(page.locator('[data-checklist-checkbox]:checked')).toHaveCount(0);
+  await expect(page.locator('[data-checklist-reset]')).toBeDisabled();
+  expect(
+    await page.evaluate(() => localStorage.getItem('boss-fight-atlas-checklist:charge')),
+  ).toBeNull();
 });
 
 test('lens chips show explanations and open localized lens pages', async ({ page, request }) => {

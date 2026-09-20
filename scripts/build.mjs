@@ -168,19 +168,27 @@ function shell(
       </body>
     </html>`;
 }
-function checklistItems(items) {
+function checklistItems(items, group) {
   return items
     .map(
-      (item) =>
+      (item, index) =>
         /* HTML */ `<li>
-          <details class="checklist-item">
-            <summary>
-              <span class="checklist-mark" aria-hidden="true"></span>
-              <span>${e(item.title)}</span>
-              <span class="checklist-toggle" aria-hidden="true">+</span>
-            </summary>
-            <p>${e(item.body)}</p>
-          </details>
+          <div class="checklist-item">
+            <input
+              class="checklist-checkbox"
+              type="checkbox"
+              value="${e(`${group}-${index}`)}"
+              data-checklist-checkbox
+              aria-label="${e(item.title)}"
+            />
+            <details>
+              <summary>
+                <span>${e(item.title)}</span>
+                <span class="checklist-toggle" aria-hidden="true">+</span>
+              </summary>
+              <p>${e(item.body)}</p>
+            </details>
+          </div>
         </li>`,
     )
     .join('');
@@ -386,40 +394,44 @@ for (const locale of locales) {
             <section
               class="implementation-checklist"
               aria-labelledby="implementation-checklist-title"
+              data-checklist-id="${e(m.meta.id)}"
             >
               <div class="implementation-checklist__intro">
                 <h2 id="implementation-checklist-title">${e(t.implementationChecklist)}</h2>
                 <p>${e(c.learning)}</p>
+                <button type="button" class="checklist-reset" data-checklist-reset disabled>
+                  ${e(t.checklistReset)}
+                </button>
               </div>
               <div class="implementation-checklist__groups">
                 <section class="checklist-group" aria-labelledby="core-checks-title">
                   <span class="eyebrow">${e(t.playbook)}</span>
                   <h3 id="core-checks-title">${e(t.stepsTitle)}</h3>
                   <ul class="checklist-items">
-                    ${checklistItems(c.steps)}
+                    ${checklistItems(c.steps, 'steps')}
                   </ul>
                   <h4>${e(t.mistakesTitle)}</h4>
                   <ul class="checklist-items checklist-items--mistakes">
-                    ${checklistItems(c.mistakes)}
+                    ${checklistItems(c.mistakes, 'mistakes')}
                   </ul>
                 </section>
                 <section class="checklist-group" aria-labelledby="tuning-title">
                   <span class="eyebrow">${e(t.design)}</span>
                   <h3 id="tuning-title">${e(t.designerTitle)}</h3>
                   <ul class="checklist-items">
-                    ${checklistItems(c.designNotes)}
+                    ${checklistItems(c.designNotes, 'design')}
                   </ul>
                   <h4>${e(t.storyTitle)}</h4>
                   <ul class="checklist-items">
-                    ${checklistItems([c.story])}
+                    ${checklistItems([c.story], 'story')}
                   </ul>
                   <h4>${e(t.adaptTitle)}</h4>
                   <ul class="checklist-items">
-                    ${checklistItems([c.adaptation])}
+                    ${checklistItems([c.adaptation], 'adaptation')}
                   </ul>
                   <h4>${e(t.relatedTitle)}</h4>
                   <ul class="checklist-items">
-                    ${checklistItems([c.distinction])}
+                    ${checklistItems([c.distinction], 'distinction')}
                   </ul>
                 </section>
               </div>
