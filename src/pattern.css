@@ -37,11 +37,6 @@
   inset: auto 0.9rem 1rem;
   overflow: visible;
   padding: 0.4rem 0.55rem 0.45rem;
-  background: color-mix(in srgb, var(--surface) 88%, transparent);
-  border: 1px solid var(--line);
-  border-radius: 10px;
-  box-shadow: 0 5px 18px var(--shadow);
-  backdrop-filter: blur(8px);
 }
 .pattern-demo__svg {
   display: block;

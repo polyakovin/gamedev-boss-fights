@@ -259,6 +259,22 @@ test('the loop autoplays, alternates sides, shows the current phase, and keeps o
   expect(sceneTimelineBox.y + sceneTimelineBox.height).toBeLessThan(
     diagramBox.y + diagramBox.height,
   );
+  expect(
+    await page.locator('.charge-demo__scene-timeline').evaluate((element) => {
+      const style = getComputedStyle(element);
+      return {
+        backgroundColor: style.backgroundColor,
+        borderStyle: style.borderStyle,
+        boxShadow: style.boxShadow,
+        backdropFilter: style.backdropFilter,
+      };
+    }),
+  ).toEqual({
+    backgroundColor: 'rgba(0, 0, 0, 0)',
+    borderStyle: 'none',
+    boxShadow: 'none',
+    backdropFilter: 'none',
+  });
   expect(Math.abs(simulationBox.height - (1000 - simulationBox.y - 24))).toBeLessThan(2);
   expect(diagramBox.height).toBeGreaterThan(simulationBox.height - 10);
   await expect(page.locator('[data-charge-phase-name]')).toHaveText('Прицеливание');
@@ -373,6 +389,22 @@ for (const [id, title, activePhase] of [
     );
     await expect(page.locator('.pattern-demo button')).toHaveCount(0);
     await expect(page.locator('[data-pattern-timeline]')).toHaveCount(1);
+    expect(
+      await page.locator('.pattern-demo__scene-timeline').evaluate((element) => {
+        const style = getComputedStyle(element);
+        return {
+          backgroundColor: style.backgroundColor,
+          borderStyle: style.borderStyle,
+          boxShadow: style.boxShadow,
+          backdropFilter: style.backdropFilter,
+        };
+      }),
+    ).toEqual({
+      backgroundColor: 'rgba(0, 0, 0, 0)',
+      borderStyle: 'none',
+      boxShadow: 'none',
+      backdropFilter: 'none',
+    });
     await expect(page.locator('.lesson-title-line .lens-chip')).toHaveCount(4);
     await expect(page.locator('.game-example')).toHaveCount(2);
     await expect(page.locator('.game-example__media img')).toHaveCount(2);
