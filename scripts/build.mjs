@@ -3,7 +3,7 @@ import path from 'node:path';
 import { createHash } from 'node:crypto';
 import { ROOT, loadContent, validateContent } from '../lib/content.mjs';
 import { animations } from '../lib/animations.mjs';
-import { escape as e } from '../lib/html.mjs';
+import { escape as e, jsonForHtml } from '../lib/html.mjs';
 import { renderLensVisual } from '../lib/lens-view.mjs';
 import { link, canonical, REPOSITORY } from '../lib/config.mjs';
 const { locales, ui, mechanics, lenses } = await validateContent(await loadContent());
@@ -96,7 +96,13 @@ function shell(
   title,
   description,
   body,
-  { route: localizedPath = '', assets = [], catalog = false, pageClass = '' } = {},
+  {
+    route: localizedPath = '',
+    assets = [],
+    catalog = false,
+    builderPage = false,
+    pageClass = '',
+  } = {},
 ) {
   const t = ui[locale.code];
   const route = `${locale.code}/${localizedPath}`;
@@ -146,6 +152,11 @@ function shell(
                 href="${link(locale.code + '/')}"
                 ${catalog ? ' aria-current="page"' : ''}
                 >${e(t.catalog)}</a
+              ><a
+                class="builder-link"
+                href="${link(`${locale.code}/builder/`)}"
+                ${builderPage ? ' aria-current="page"' : ''}
+                >${e(t.builder)}</a
               ><a class="contribute-link" href="${REPOSITORY}/blob/main/CONTRIBUTING.md"
                 >${e(t.contribute)} <span aria-hidden="true">↗</span></a
               >
@@ -350,7 +361,7 @@ for (const locale of locales) {
         <div class="section-heading atlas-map__heading">
           <h2 id="atlas-map-title">${e(t.siteMapTitle)}</h2>
         </div>
-        ${featuredContent ? `<p class="atlas-map__intro">${e(t.siteMapIntro)}: <a href="${link(lessonPath)}">${e(featuredContent.title)}</a></p>` : ''}
+        ${featuredContent ? `<p class="atlas-map__intro">${e(t.siteMapIntro)}: <a href="${link(lessonPath)}">${e(featuredContent.title)}</a> <span aria-hidden="true">·</span> <a class="atlas-map__builder" href="${link(`${locale.code}/builder/`)}">${e(t.builder)} <span aria-hidden="true">→</span></a></p>` : ''}
         <div class="atlas-map__grid">
           ${atlasLinks
             .map(
@@ -375,6 +386,112 @@ for (const locale of locales) {
   await write(
     locale.code + '/',
     shell(locale, t.catalog, t.indexSubtitle, body, { catalog: true }),
+  );
+  const builderMechanics = published.map((mechanic) => {
+    const content = mechanic.translations[locale.code];
+    return {
+      id: mechanic.meta.id,
+      title: content.title,
+      category: content.category,
+      summary: content.summary,
+      url: canonical(`${locale.code}/mechanics/${mechanic.meta.id}/`),
+    };
+  });
+  const builderCards = published
+    .map((mechanic) => {
+      const content = mechanic.translations[locale.code];
+      return /* HTML */ `<article class="boss-builder-mechanic">
+        <label class="boss-builder-mechanic__select">
+          <input type="checkbox" value="${e(mechanic.meta.id)}" data-boss-mechanic />
+          <span class="boss-builder-mechanic__check" aria-hidden="true">✓</span>
+          <span class="boss-builder-mechanic__diagram" aria-hidden="true">
+            ${animations[mechanic.meta.animation].thumbnail(mechanic.meta.id)}
+          </span>
+          <span class="boss-builder-mechanic__copy">
+            <span class="eyebrow">${e(content.category)}</span>
+            <strong>${e(content.title)}</strong>
+            <span>${e(content.summary)}</span>
+          </span>
+        </label>
+        <a href="${link(`${locale.code}/mechanics/${mechanic.meta.id}/`)}">
+          ${e(t.readLesson)} <span aria-hidden="true">→</span>
+        </a>
+      </article>`;
+    })
+    .join('');
+  const builderConfig = {
+    locale: locale.code,
+    mechanics: builderMechanics,
+    messages: {
+      selected: t.builderSelected,
+      saved: t.builderSaved,
+      cleared: t.builderCleared,
+      nameRequired: t.builderNameRequired,
+      mechanicRequired: t.builderMechanicRequired,
+    },
+  };
+  const builderBody = /* HTML */ `<main id="main" class="boss-builder-main" data-boss-builder>
+    <header class="boss-builder-hero">
+      <span class="eyebrow">${e(t.builder)}</span>
+      <h1>${e(t.builderTitle)}</h1>
+      <p>${e(t.builderIntro)}</p>
+      <span class="boss-builder-storage">${e(t.builderStorageNote)}</span>
+    </header>
+    <div class="boss-builder-layout">
+      <section class="boss-builder-form" aria-label="${e(t.builderTitle)}">
+        <label class="boss-builder-field">
+          <span>${e(t.builderName)}</span>
+          <input
+            type="text"
+            maxlength="120"
+            autocomplete="off"
+            placeholder="${e(t.builderNamePlaceholder)}"
+            data-boss-name
+          />
+        </label>
+        <label class="boss-builder-field">
+          <span>${e(t.builderDescription)}</span>
+          <textarea
+            maxlength="2000"
+            rows="8"
+            placeholder="${e(t.builderDescriptionPlaceholder)}"
+            data-boss-description
+          ></textarea>
+        </label>
+        <div class="boss-builder-actions">
+          <button type="button" class="boss-builder-download" data-boss-download>
+            ${e(t.builderDownload)}
+          </button>
+          <button type="button" class="boss-builder-reset" data-boss-reset disabled>
+            ${e(t.builderReset)}
+          </button>
+        </div>
+        <p class="boss-builder-status" role="status" aria-live="polite" data-boss-status></p>
+      </section>
+      <section class="boss-builder-mechanics" aria-labelledby="boss-builder-mechanics-title">
+        <div class="boss-builder-mechanics__heading">
+          <div>
+            <span class="eyebrow">${e(t.builderSelected)}</span>
+            <h2 id="boss-builder-mechanics-title">${e(t.catalog)}</h2>
+          </div>
+          <span data-boss-selected>${e(t.builderSelected)}: 0</span>
+        </div>
+        <p>${e(t.builderMechanicsIntro)}</p>
+        <div class="boss-builder-mechanics__grid">${builderCards}</div>
+      </section>
+    </div>
+    <script type="application/json" data-boss-builder-config>
+      ${jsonForHtml(builderConfig)}
+    </script>
+  </main>`;
+  await write(
+    `${locale.code}/builder/`,
+    shell(locale, t.builderTitle, t.builderIntro, builderBody, {
+      route: 'builder/',
+      assets: ['boss-builder.mjs'],
+      builderPage: true,
+      pageClass: 'boss-builder-page',
+    }),
   );
   for (const m of published) {
     const c = m.translations[locale.code],

@@ -283,6 +283,79 @@ test('checklist progress persists locally and can be reset', async ({ page }) =>
   ).toBeNull();
 });
 
+test('boss builder persists a local draft and downloads portable JSON', async ({ page }) => {
+  await page.goto('ru/builder/');
+  await expect(page.locator('[data-boss-builder]')).toHaveAttribute(
+    'data-boss-builder-ready',
+    'true',
+  );
+  await expect(page.locator('.boss-builder-hero h1')).toHaveText('Конструктор босса');
+  await expect(page.locator('.boss-builder-storage')).toHaveText(
+    'Черновик хранится только в этом браузере.',
+  );
+  await expect(page.locator('.boss-builder-mechanic')).toHaveCount(1);
+  await expect(page.locator('.boss-builder-mechanic [data-charge-art="tank"]')).toHaveCount(1);
+  await expect(page.locator('.boss-builder-mechanic [data-charge-art="monster"]')).toHaveCount(1);
+
+  await page.locator('[data-boss-download]').click();
+  await expect(page.locator('[data-boss-status]')).toHaveText('Введите название босса.');
+  await expect(page.locator('[data-boss-name]')).toHaveAttribute('aria-invalid', 'true');
+  await page.locator('[data-boss-name]').fill('Страж шлюза');
+  await page.locator('[data-boss-description]').fill('Охраняет переход в следующую локацию.');
+  await page.locator('[data-boss-download]').click();
+  await expect(page.locator('[data-boss-status]')).toHaveText('Выберите хотя бы одну механику.');
+  await page.locator('[data-boss-mechanic][value="charge"]').check();
+  await expect(page.locator('[data-boss-selected]')).toHaveText('Выбрано: 1');
+  expect(
+    await page.evaluate(() => JSON.parse(localStorage.getItem('boss-fight-atlas-boss-builder'))),
+  ).toEqual({
+    version: 1,
+    name: 'Страж шлюза',
+    description: 'Охраняет переход в следующую локацию.',
+    mechanics: ['charge'],
+  });
+
+  await page.reload();
+  await expect(page.locator('[data-boss-name]')).toHaveValue('Страж шлюза');
+  await expect(page.locator('[data-boss-description]')).toHaveValue(
+    'Охраняет переход в следующую локацию.',
+  );
+  await expect(page.locator('[data-boss-mechanic][value="charge"]')).toBeChecked();
+
+  const downloadPromise = page.waitForEvent('download');
+  await page.locator('[data-boss-download]').click();
+  const download = await downloadPromise;
+  expect(download.suggestedFilename()).toBe('Страж-шлюза.json');
+  const exported = JSON.parse(await fs.readFile(await download.path(), 'utf8'));
+  expect(exported).toEqual({
+    format: 'boss-fight-atlas/boss-sketch',
+    version: 1,
+    locale: 'ru',
+    name: 'Страж шлюза',
+    description: 'Охраняет переход в следующую локацию.',
+    mechanics: [
+      {
+        id: 'charge',
+        title: 'Таран',
+        category: 'Движение и пространство',
+        summary:
+          'Босс целится, фиксирует направление и мчится вперёд. После фиксации он не может повернуть.',
+        url: 'https://polyakovin.github.io/gamedev-boss-fights/ru/mechanics/charge/',
+      },
+    ],
+  });
+
+  await page.goto('en/builder/');
+  await expect(page.locator('[data-boss-name]')).toHaveValue('Страж шлюза');
+  await expect(page.locator('[data-boss-mechanic][value="charge"]')).toBeChecked();
+  await page.locator('[data-boss-reset]').click();
+  await expect(page.locator('[data-boss-name]')).toHaveValue('');
+  await expect(page.locator('[data-boss-mechanic]:checked')).toHaveCount(0);
+  expect(
+    await page.evaluate(() => localStorage.getItem('boss-fight-atlas-boss-builder')),
+  ).toBeNull();
+});
+
 test('lens chips show explanations and open localized lens pages', async ({ page, request }) => {
   await page.goto('ru/mechanics/charge/');
   const chips = page.locator('.lesson-title-line .lens-chip');
@@ -420,10 +493,17 @@ test('catalog and language gateway point to real pages', async ({ page, request 
     const response = await request.get(`${locale.code}/`);
     expect(response.status()).toBe(200);
     expect(await response.text()).toContain(`${locale.code}/mechanics/charge/`);
+    const builder = await request.get(`${locale.code}/builder/`);
+    expect(builder.status()).toBe(200);
+    expect(await builder.text()).toContain('data-boss-builder');
   }
   await page.goto('ru/');
   await expect(page.locator('.catalog-hero h1')).toHaveText('Как устроены бои с боссами');
   await expect(page.locator('.atlas-map__link')).toHaveCount(6);
+  await expect(page.locator('.atlas-map__builder')).toHaveAttribute(
+    'href',
+    '/gamedev-boss-fights/ru/builder/',
+  );
   expect(
     await page.locator('.atlas-map__link').evaluateAll((links) => links.map((a) => a.href)),
   ).toEqual([
@@ -471,5 +551,9 @@ test('homepages fit their core content on a laptop and reflow on mobile', async 
     expect(navigation.y).toBeGreaterThan(card.y + card.height);
     await expect(page.locator('.card-learning')).toBeVisible();
     await expect(page.locator('.atlas-map__link')).toHaveCount(6);
+    await expect(page.locator('.atlas-map__builder')).toHaveAttribute(
+      'href',
+      `/gamedev-boss-fights/${locale.code}/builder/`,
+    );
   }
 });

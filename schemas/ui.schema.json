@@ -41,6 +41,23 @@
     "learnLabel",
     "implementationChecklist",
     "checklistReset",
+    "builder",
+    "builderNavText",
+    "builderTitle",
+    "builderIntro",
+    "builderStorageNote",
+    "builderName",
+    "builderNamePlaceholder",
+    "builderDescription",
+    "builderDescriptionPlaceholder",
+    "builderMechanicsIntro",
+    "builderSelected",
+    "builderDownload",
+    "builderReset",
+    "builderSaved",
+    "builderCleared",
+    "builderNameRequired",
+    "builderMechanicRequired",
     "stepsTitle",
     "mistakesTitle",
     "designerTitle",
@@ -214,6 +231,74 @@
       "minLength": 1
     },
     "checklistReset": {
+      "type": "string",
+      "minLength": 1
+    },
+    "builder": {
+      "type": "string",
+      "minLength": 1
+    },
+    "builderNavText": {
+      "type": "string",
+      "minLength": 1
+    },
+    "builderTitle": {
+      "type": "string",
+      "minLength": 1
+    },
+    "builderIntro": {
+      "type": "string",
+      "minLength": 1
+    },
+    "builderStorageNote": {
+      "type": "string",
+      "minLength": 1
+    },
+    "builderName": {
+      "type": "string",
+      "minLength": 1
+    },
+    "builderNamePlaceholder": {
+      "type": "string",
+      "minLength": 1
+    },
+    "builderDescription": {
+      "type": "string",
+      "minLength": 1
+    },
+    "builderDescriptionPlaceholder": {
+      "type": "string",
+      "minLength": 1
+    },
+    "builderMechanicsIntro": {
+      "type": "string",
+      "minLength": 1
+    },
+    "builderSelected": {
+      "type": "string",
+      "minLength": 1
+    },
+    "builderDownload": {
+      "type": "string",
+      "minLength": 1
+    },
+    "builderReset": {
+      "type": "string",
+      "minLength": 1
+    },
+    "builderSaved": {
+      "type": "string",
+      "minLength": 1
+    },
+    "builderCleared": {
+      "type": "string",
+      "minLength": 1
+    },
+    "builderNameRequired": {
+      "type": "string",
+      "minLength": 1
+    },
+    "builderMechanicRequired": {
       "type": "string",
       "minLength": 1
     },

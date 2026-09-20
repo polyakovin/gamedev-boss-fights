@@ -2,9 +2,9 @@
 
 An open, interactive encyclopedia of boss mechanics for game designers. Each lesson explains how to shape, communicate, tune, and test one part of a boss encounter.
 
-[Explore the atlas](https://polyakovin.github.io/gamedev-boss-fights/) · [Read in Russian](README.ru.md) · [Contribute](CONTRIBUTING.md)
+[Explore the atlas](https://polyakovin.github.io/gamedev-boss-fights/) · [Build a boss sketch](https://polyakovin.github.io/gamedev-boss-fights/en/builder/) · [Read in Russian](README.ru.md) · [Contribute](CONTRIBUTING.md)
 
-The first lesson is **Charge**. Watch the looping animation and inspect how tracking, commitment, collision, and recovery work together. Six design-lens chips connect the lesson to general game-design tools that apply across games, while six boss references from 2D and 3D games show how the mechanic changes across real encounters.
+The first lesson is **Charge**. Watch the looping animation and inspect how tracking, commitment, collision, and recovery work together. Six design-lens chips connect the lesson to general game-design tools that apply across games, while six boss references from 2D and 3D games show how the mechanic changes across real encounters. The **Boss builder** lets you name a boss, add an optional description, combine published mechanics, and download the resulting sketch as JSON. Its draft stays in your browser.
 
 Available in English, Russian, Simplified Chinese, Hindi, Bengali, Spanish, Arabic, and Japanese. Facts, design concepts, examples, and translations all welcome independent review. [Open «Таран» in Russian](https://polyakovin.github.io/gamedev-boss-fights/ru/mechanics/charge/).
 
@@ -27,7 +27,7 @@ npm ci
 npm run dev
 ```
 
-Open [localhost:4173/gamedev-boss-fights/](http://localhost:4173/gamedev-boss-fights/). The Russian lesson is at `/gamedev-boss-fights/ru/mechanics/charge/`.
+Open [localhost:4173/gamedev-boss-fights/](http://localhost:4173/gamedev-boss-fights/). The Russian lesson is at `/gamedev-boss-fights/ru/mechanics/charge/`, and the localized builder is at `/gamedev-boss-fights/ru/builder/`.
 
 The development command builds once and serves `dist/`. After editing source files, run `npm run build` in another terminal and refresh the page. There is no automatic rebuild watcher.
 
@@ -55,6 +55,7 @@ This is a static Node generator with plain HTML, CSS, browser JavaScript modules
 | `locales/*.json`                       | Shared interface translations and language registry                |
 | `schemas/`                             | JSON schemas checked before building                               |
 | `lib/animations.mjs`, `lib/*-view.mjs` | Registered lesson diagrams, catalog thumbnails, and browser assets |
+| `src/boss-builder*.mjs`                | Local draft state, portable JSON export, and builder behavior      |
 | `src/`                                 | Browser behavior, styles, original SVG, and pure simulation models |
 | `scripts/`                             | Validation, generation, draft scaffolding, and local server        |
 | `tests/`                               | Model and browser checks                                           |

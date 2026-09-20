@@ -14,6 +14,8 @@ Use a lowercase slug with hyphens. The command creates `content/mechanics/your-m
 
 A draft PR can contain just the proposed explanation and open questions. It does not need all eight translations or a finished animation. Fill the required JSON fields and keep any unfinished text clearly marked. Do not set `published: true` merely to make an incomplete lesson appear on the site.
 
+Every published mechanic is also offered in the localized boss builder. The builder uses the mechanic folder name as its stable ID and reuses the lesson title, category, catalog summary, URL, and registered thumbnail. Keep the ID stable after publication, and make sure those compact fields still describe the mechanic clearly when read outside the full lesson. Draft mechanics never appear in the builder.
+
 ## Write the lesson
 
 Use `content/mechanics/charge/en.json` as a structural example and `schemas/lesson.schema.json` as the contract. JSON text is plain text, not Markdown or HTML.
@@ -114,3 +116,9 @@ Before changing `published` to `true`, ensure every registered locale has a comp
 When an edit changes meaning, increment `meta.contentVersion`, synchronize the published lesson’s translations, and set each updated lesson’s `sourceVersion` to that version, including English. Reset `reviewStatus` to `needs-review` in every locale. A stale `sourceVersion` blocks publication. Update the number only after bringing the text into agreement with the new meaning; changing the number alone is not synchronization. Describe what changed in the PR so translators can verify the affected passage. A spelling correction that preserves meaning does not require a version bump or unrelated translation edits.
 
 Never use `reviewed` to mean merely that JSON validation passed. Follow the [translation review process](translation-guide.md#review-status), and include actual validation results and remaining limitations in the PR.
+
+## Maintain the boss builder
+
+The builder is a static browser feature. `src/boss-builder.mjs` handles the form, persistence, and download; `src/boss-builder-model.mjs` defines the normalized draft and portable export. It stores one draft under `boss-fight-atlas-boss-builder` in `localStorage`. No draft data is sent to the site or another service.
+
+The downloaded JSON is versioned with `format: "boss-fight-atlas/boss-sketch"` and `version: 1`. It contains the current locale, boss name, optional description, and a snapshot of each selected mechanic: stable ID, localized title, category, summary, and public lesson URL. Additive fields are safe for readers that ignore unknown keys; changing or removing existing fields requires a format-version decision and updated model and browser tests.
