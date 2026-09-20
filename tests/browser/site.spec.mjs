@@ -69,6 +69,7 @@ for (const locale of registry) {
       'href',
       `/gamedev-boss-fights/${locale.code}/#mechanics`,
     );
+    await expect(page.locator('.lesson-title-line > .lesson-category')).toHaveCount(1);
     expect(
       await page
         .locator('.lesson-category')
@@ -202,10 +203,16 @@ test('the loop autoplays, alternates sides, shows phase tooltips, and keeps only
     ),
   ).toHaveCount(0);
   const heroBox = await page.locator('.lesson-hero').boundingBox();
+  const titleBox = await page.locator('.lesson-hero h1').boundingBox();
+  const categoryBox = await page.locator('.lesson-category').boundingBox();
   const simulationBox = await page.locator('.simulation-section').boundingBox();
   const diagramBox = await page.locator('[data-charge-svg]').boundingBox();
   const sceneTimelineBox = await page.locator('.charge-demo__scene-timeline').boundingBox();
   expect(simulationBox.x).toBeGreaterThan(heroBox.x + heroBox.width);
+  expect(categoryBox.x).toBeGreaterThan(titleBox.x + titleBox.width);
+  expect(
+    Math.abs(categoryBox.y + categoryBox.height - (titleBox.y + titleBox.height)),
+  ).toBeLessThan(16);
   expect(simulationBox.width).toBeLessThanOrEqual(400);
   expect(diagramBox.height).toBeGreaterThan(diagramBox.width);
   expect(sceneTimelineBox.y).toBeGreaterThanOrEqual(diagramBox.y);
