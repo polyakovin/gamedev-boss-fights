@@ -13,6 +13,8 @@ if (builder) {
   const mechanicIds = config.mechanics.map(({ id }) => id);
   const name = builder.querySelector('[data-boss-name]');
   const description = builder.querySelector('[data-boss-description]');
+  const mechanicSearch = builder.querySelector('[data-boss-mechanic-search]');
+  const mechanicCards = [...builder.querySelectorAll('[data-boss-mechanic-card]')];
   const mechanicInputs = [...builder.querySelectorAll('[data-boss-mechanic]')];
   const selected = builder.querySelector('[data-boss-selected]');
   const status = builder.querySelector('[data-boss-status]');
@@ -66,6 +68,13 @@ if (builder) {
   name.addEventListener('input', save);
   description.addEventListener('input', save);
   for (const input of mechanicInputs) input.addEventListener('change', save);
+  mechanicSearch?.addEventListener('input', () => {
+    const query = mechanicSearch.value.trim().toLocaleLowerCase(config.locale);
+    for (const card of mechanicCards)
+      card.hidden = Boolean(
+        query && !card.textContent.toLocaleLowerCase(config.locale).includes(query),
+      );
+  });
 
   reset.addEventListener('click', () => {
     const empty = normalizeBossDraft(null, mechanicIds);

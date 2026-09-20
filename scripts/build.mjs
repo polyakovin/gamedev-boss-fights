@@ -6,8 +6,11 @@ import { animations } from '../lib/animations.mjs';
 import { escape as e, jsonForHtml } from '../lib/html.mjs';
 import { renderLensVisual } from '../lib/lens-view.mjs';
 import { link, canonical, REPOSITORY } from '../lib/config.mjs';
-const { locales, ui, mechanics, lenses } = await validateContent(await loadContent());
+const { locales, ui, mechanicsIndex, mechanics, lenses } = await validateContent(
+  await loadContent(),
+);
 const published = mechanics.filter((m) => m.meta.published);
+const publishedById = new Map(published.map((mechanic) => [mechanic.meta.id, mechanic]));
 const publishedLenses = lenses.filter((lens) => lens.meta.published);
 const lensById = new Map(publishedLenses.map((lens) => [lens.meta.id, lens]));
 for (const m of published)
@@ -270,17 +273,30 @@ function exampleGroup(dimension, label, items, t) {
 }
 for (const locale of locales) {
   const t = ui[locale.code];
+  const catalogEntries = mechanicsIndex.mechanics.map((outline) => {
+    const mechanic = publishedById.get(outline.id);
+    const outlineContent = outline.translations[locale.code] ?? outline.translations.en;
+    const lesson = mechanic?.translations[locale.code];
+    return {
+      id: outline.id,
+      number: outline.number,
+      category: outlineContent.category,
+      title: lesson?.title ?? outlineContent.title,
+      summary: lesson?.summary ?? outlineContent.summary,
+      mechanic,
+      isWip: !mechanic,
+    };
+  });
   const catalogParts = [];
   const partsByCategory = new Map();
-  for (const mechanic of published) {
-    const content = mechanic.translations[locale.code];
-    let part = partsByCategory.get(content.category);
+  for (const entry of catalogEntries) {
+    let part = partsByCategory.get(entry.category);
     if (!part) {
-      part = { category: content.category, mechanics: [] };
-      partsByCategory.set(content.category, part);
+      part = { category: entry.category, mechanics: [] };
+      partsByCategory.set(entry.category, part);
       catalogParts.push(part);
     }
-    part.mechanics.push({ mechanic, content });
+    part.mechanics.push(entry);
   }
   const catalogNavigation = catalogParts
     .map(
@@ -306,21 +322,27 @@ for (const locale of locales) {
           <ol class="catalog-lessons">
             ${part.mechanics
               .map(
-                ({ mechanic, content }, mechanicIndex) =>
+                (entry, mechanicIndex) =>
                   /* HTML */ `<li>
                     <a
-                      class="catalog-lesson"
-                      href="${link(`${locale.code}/mechanics/${mechanic.meta.id}/`)}"
+                      class="catalog-lesson${entry.isWip ? ' catalog-lesson--wip' : ''}"
+                      href="${link(`${locale.code}/mechanics/${entry.id}/`)}"
                     >
                       <span class="catalog-lesson__number"
                         >${partIndex + 1}.${mechanicIndex + 1}</span
                       >
                       <span class="catalog-lesson__copy">
-                        <strong>${e(content.title)}</strong>
-                        <small>${e(content.summary)}</small>
+                        <span class="catalog-lesson__title">
+                          <strong>${e(entry.title)}</strong>
+                          ${entry.isWip ? '<span class="wip-badge">WIP</span>' : ''}
+                        </span>
+                        <small>${e(entry.summary)}</small>
                       </span>
-                      <span class="catalog-lesson__preview" aria-hidden="true">
-                        ${animations[mechanic.meta.animation].thumbnail(mechanic.meta.id)}
+                      <span
+                        class="catalog-lesson__preview${entry.isWip ? ' catalog-lesson__preview--wip' : ''}"
+                        aria-hidden="true"
+                      >
+                        ${entry.isWip ? '<span>WIP</span>' : animations[entry.mechanic.meta.animation].thumbnail(entry.id)}
                       </span>
                       <span class="catalog-lesson__arrow" aria-hidden="true">→</span>
                     </a>
@@ -352,7 +374,7 @@ for (const locale of locales) {
     <section id="mechanics" class="catalog-contents" aria-labelledby="mechanics-title">
       <div class="catalog-contents__heading">
         <h2 id="mechanics-title">${e(t.available)}</h2>
-        <span class="count">${published.length}</span>
+        <span class="count">${catalogEntries.length}</span>
       </div>
       <nav class="catalog-part-nav" aria-label="${e(t.available)}">${catalogNavigation}</nav>
       <div class="catalog-parts">${catalogSections}</div>
@@ -362,33 +384,37 @@ for (const locale of locales) {
     locale.code + '/',
     shell(locale, t.catalog, t.indexSubtitle, body, { catalog: true }),
   );
-  const builderMechanics = published.map((mechanic) => {
-    const content = mechanic.translations[locale.code];
-    return {
-      id: mechanic.meta.id,
-      title: content.title,
-      category: content.category,
-      summary: content.summary,
-      url: canonical(`${locale.code}/mechanics/${mechanic.meta.id}/`),
-    };
-  });
-  const builderCards = published
-    .map((mechanic) => {
-      const content = mechanic.translations[locale.code];
-      return /* HTML */ `<article class="boss-builder-mechanic">
+  const builderMechanics = catalogEntries.map((entry) => ({
+    id: entry.id,
+    title: entry.title,
+    category: entry.category,
+    summary: entry.summary,
+    url: canonical(`${locale.code}/mechanics/${entry.id}/`),
+  }));
+  const builderCards = catalogEntries
+    .map((entry) => {
+      return /* HTML */ `<article
+        class="boss-builder-mechanic${entry.isWip ? ' boss-builder-mechanic--wip' : ''}"
+        data-boss-mechanic-card
+      >
         <label class="boss-builder-mechanic__select">
-          <input type="checkbox" value="${e(mechanic.meta.id)}" data-boss-mechanic />
+          <input type="checkbox" value="${e(entry.id)}" data-boss-mechanic />
           <span class="boss-builder-mechanic__check" aria-hidden="true">✓</span>
-          <span class="boss-builder-mechanic__diagram" aria-hidden="true">
-            ${animations[mechanic.meta.animation].thumbnail(mechanic.meta.id)}
+          <span
+            class="boss-builder-mechanic__diagram${entry.isWip ? ' boss-builder-mechanic__diagram--wip' : ''}"
+            aria-hidden="true"
+          >
+            ${entry.isWip ? '<span>WIP</span>' : animations[entry.mechanic.meta.animation].thumbnail(entry.id)}
           </span>
           <span class="boss-builder-mechanic__copy">
-            <span class="eyebrow">${e(content.category)}</span>
-            <strong>${e(content.title)}</strong>
-            <span>${e(content.summary)}</span>
+            <span class="eyebrow">${e(entry.category)}</span>
+            <strong
+              >${e(entry.title)} ${entry.isWip ? '<span class="wip-badge">WIP</span>' : ''}</strong
+            >
+            <span>${e(entry.summary)}</span>
           </span>
         </label>
-        <a href="${link(`${locale.code}/mechanics/${mechanic.meta.id}/`)}">
+        <a href="${link(`${locale.code}/mechanics/${entry.id}/`)}">
           ${e(t.readLesson)} <span aria-hidden="true">→</span>
         </a>
       </article>`;
@@ -452,6 +478,15 @@ for (const locale of locales) {
           <span data-boss-selected>${e(t.builderSelected)}: 0</span>
         </div>
         <p>${e(t.builderMechanicsIntro)}</p>
+        <label class="boss-builder-search">
+          <span class="visually-hidden">${e(t.catalog)}</span>
+          <input
+            type="search"
+            placeholder="${e(t.catalog)}"
+            autocomplete="off"
+            data-boss-mechanic-search
+          />
+        </label>
         <div class="boss-builder-mechanics__grid">${builderCards}</div>
       </section>
     </div>
@@ -562,6 +597,42 @@ for (const locale of locales) {
       shell(locale, c.title, c.summary, body, {
         route: `mechanics/${m.meta.id}/`,
         assets: [...a.styles, ...a.scripts],
+      }),
+    );
+  }
+  for (const entry of catalogEntries.filter(({ isWip }) => isWip)) {
+    const fallbackAttributes =
+      locale.code === 'ru' || locale.code === 'en' ? '' : ' lang="en" dir="ltr"';
+    const body = /* HTML */ `<main id="main" class="wip-mechanic-main">
+      <header class="wip-mechanic-hero" ${fallbackAttributes}>
+        <a class="eyebrow lesson-category" href="${link(`${locale.code}/#mechanics`)}"
+          >${e(entry.category)}</a
+        >
+        <div class="wip-mechanic-title">
+          <h1>${e(entry.title)}</h1>
+          <span class="wip-badge">WIP</span>
+        </div>
+        <p>${e(entry.summary)}</p>
+      </header>
+      <section class="wip-mechanic-panel" aria-label="WIP">
+        <div class="wip-mechanic-placeholder" aria-hidden="true">
+          <span>WIP</span>
+        </div>
+        <div>
+          <span class="eyebrow">${e(t.builder)}</span>
+          <h2>${e(t.builderTitle)}</h2>
+          <p>${e(t.builderIntro)}</p>
+          <a class="wip-builder-link" href="${link(`${locale.code}/builder/`)}">
+            ${e(t.builder)} <span aria-hidden="true">→</span>
+          </a>
+        </div>
+      </section>
+    </main>`;
+    await write(
+      `${locale.code}/mechanics/${entry.id}/`,
+      shell(locale, entry.title, entry.summary, body, {
+        route: `mechanics/${entry.id}/`,
+        pageClass: 'wip-mechanic-page',
       }),
     );
   }

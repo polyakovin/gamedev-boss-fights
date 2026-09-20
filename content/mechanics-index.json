@@ -1,0 +1,1990 @@
+{
+  "version": 1,
+  "source": "docs/research/boss-mechanics-audit-ru.md",
+  "mechanics": [
+    {
+      "id": "wide-swing",
+      "number": 1,
+      "translations": {
+        "en": {
+          "title": "Wide swing",
+          "category": "Body and melee",
+          "summary": "Draft outline for the wide swing mechanic. Rules, tuning guidance, and examples are still in progress."
+        },
+        "ru": {
+          "title": "Размашистый удар",
+          "category": "Тело и ближний бой",
+          "summary": "Черновой контур механики «размашистый удар». Правила, настройка и примеры ещё в работе."
+        }
+      }
+    },
+    {
+      "id": "lunge",
+      "number": 2,
+      "translations": {
+        "en": {
+          "title": "Lunge",
+          "category": "Body and melee",
+          "summary": "Draft outline for the lunge mechanic. Rules, tuning guidance, and examples are still in progress."
+        },
+        "ru": {
+          "title": "Выпад",
+          "category": "Тело и ближний бой",
+          "summary": "Черновой контур механики «выпад». Правила, настройка и примеры ещё в работе."
+        }
+      }
+    },
+    {
+      "id": "ground-slam",
+      "number": 3,
+      "translations": {
+        "en": {
+          "title": "Ground slam",
+          "category": "Body and melee",
+          "summary": "Draft outline for the ground slam mechanic. Rules, tuning guidance, and examples are still in progress."
+        },
+        "ru": {
+          "title": "Удар по земле",
+          "category": "Тело и ближний бой",
+          "summary": "Черновой контур механики «удар по земле». Правила, настройка и примеры ещё в работе."
+        }
+      }
+    },
+    {
+      "id": "landing-jump",
+      "number": 4,
+      "translations": {
+        "en": {
+          "title": "Landing jump",
+          "category": "Body and melee",
+          "summary": "Draft outline for the landing jump mechanic. Rules, tuning guidance, and examples are still in progress."
+        },
+        "ru": {
+          "title": "Прыжок с приземлением",
+          "category": "Тело и ближний бой",
+          "summary": "Черновой контур механики «прыжок с приземлением». Правила, настройка и примеры ещё в работе."
+        }
+      }
+    },
+    {
+      "id": "charge",
+      "number": 5,
+      "translations": {
+        "en": {
+          "title": "Charge",
+          "category": "Body and melee",
+          "summary": "Draft outline for the charge mechanic. Rules, tuning guidance, and examples are still in progress."
+        },
+        "ru": {
+          "title": "Таран",
+          "category": "Тело и ближний бой",
+          "summary": "Черновой контур механики «таран». Правила, настройка и примеры ещё в работе."
+        }
+      }
+    },
+    {
+      "id": "grab",
+      "number": 6,
+      "translations": {
+        "en": {
+          "title": "Grab",
+          "category": "Body and melee",
+          "summary": "Draft outline for the grab mechanic. Rules, tuning guidance, and examples are still in progress."
+        },
+        "ru": {
+          "title": "Захват",
+          "category": "Тело и ближний бой",
+          "summary": "Черновой контур механики «захват». Правила, настройка и примеры ещё в работе."
+        }
+      }
+    },
+    {
+      "id": "sweep",
+      "number": 7,
+      "translations": {
+        "en": {
+          "title": "Arc sweep",
+          "category": "Body and melee",
+          "summary": "Draft outline for the arc sweep mechanic. Rules, tuning guidance, and examples are still in progress."
+        },
+        "ru": {
+          "title": "Круговой удар",
+          "category": "Тело и ближний бой",
+          "summary": "Черновой контур механики «круговой удар». Правила, настройка и примеры ещё в работе."
+        }
+      }
+    },
+    {
+      "id": "burrow-and-emerge",
+      "number": 8,
+      "translations": {
+        "en": {
+          "title": "Burrow and emerge",
+          "category": "Body and melee",
+          "summary": "Draft outline for the burrow and emerge mechanic. Rules, tuning guidance, and examples are still in progress."
+        },
+        "ru": {
+          "title": "Подкоп с выныриванием",
+          "category": "Тело и ближний бой",
+          "summary": "Черновой контур механики «подкоп с выныриванием». Правила, настройка и примеры ещё в работе."
+        }
+      }
+    },
+    {
+      "id": "single-shot",
+      "number": 9,
+      "translations": {
+        "en": {
+          "title": "Single shot",
+          "category": "Projectiles",
+          "summary": "Draft outline for the single shot mechanic. Rules, tuning guidance, and examples are still in progress."
+        },
+        "ru": {
+          "title": "Одиночный выстрел",
+          "category": "Снаряды",
+          "summary": "Черновой контур механики «одиночный выстрел». Правила, настройка и примеры ещё в работе."
+        }
+      }
+    },
+    {
+      "id": "projectile-fan",
+      "number": 10,
+      "translations": {
+        "en": {
+          "title": "Projectile fan",
+          "category": "Projectiles",
+          "summary": "Draft outline for the projectile fan mechanic. Rules, tuning guidance, and examples are still in progress."
+        },
+        "ru": {
+          "title": "Веер",
+          "category": "Снаряды",
+          "summary": "Черновой контур механики «веер». Правила, настройка и примеры ещё в работе."
+        }
+      }
+    },
+    {
+      "id": "ring-volley",
+      "number": 11,
+      "translations": {
+        "en": {
+          "title": "Ring volley",
+          "category": "Projectiles",
+          "summary": "Draft outline for the ring volley mechanic. Rules, tuning guidance, and examples are still in progress."
+        },
+        "ru": {
+          "title": "Кольцевой залп",
+          "category": "Снаряды",
+          "summary": "Черновой контур механики «кольцевой залп». Правила, настройка и примеры ещё в работе."
+        }
+      }
+    },
+    {
+      "id": "spiral-barrage",
+      "number": 12,
+      "translations": {
+        "en": {
+          "title": "Spiral barrage",
+          "category": "Projectiles",
+          "summary": "Draft outline for the spiral barrage mechanic. Rules, tuning guidance, and examples are still in progress."
+        },
+        "ru": {
+          "title": "Спиральный обстрел",
+          "category": "Снаряды",
+          "summary": "Черновой контур механики «спиральный обстрел». Правила, настройка и примеры ещё в работе."
+        }
+      }
+    },
+    {
+      "id": "gap-volley",
+      "number": 13,
+      "translations": {
+        "en": {
+          "title": "Gap wall",
+          "category": "Projectiles",
+          "summary": "Draft outline for the gap wall mechanic. Rules, tuning guidance, and examples are still in progress."
+        },
+        "ru": {
+          "title": "Стена с проходом",
+          "category": "Снаряды",
+          "summary": "Черновой контур механики «стена с проходом». Правила, настройка и примеры ещё в работе."
+        }
+      }
+    },
+    {
+      "id": "crossfire",
+      "number": 14,
+      "translations": {
+        "en": {
+          "title": "Crossfire",
+          "category": "Projectiles",
+          "summary": "Draft outline for the crossfire mechanic. Rules, tuning guidance, and examples are still in progress."
+        },
+        "ru": {
+          "title": "Перекрёстный огонь",
+          "category": "Снаряды",
+          "summary": "Черновой контур механики «перекрёстный огонь». Правила, настройка и примеры ещё в работе."
+        }
+      }
+    },
+    {
+      "id": "ricochet-projectile",
+      "number": 15,
+      "translations": {
+        "en": {
+          "title": "Ricochet projectile",
+          "category": "Projectiles",
+          "summary": "Draft outline for the ricochet projectile mechanic. Rules, tuning guidance, and examples are still in progress."
+        },
+        "ru": {
+          "title": "Рикошетирующий снаряд",
+          "category": "Снаряды",
+          "summary": "Черновой контур механики «рикошетирующий снаряд». Правила, настройка и примеры ещё в работе."
+        }
+      }
+    },
+    {
+      "id": "splitting-projectile",
+      "number": 16,
+      "translations": {
+        "en": {
+          "title": "Splitting projectile",
+          "category": "Projectiles",
+          "summary": "Draft outline for the splitting projectile mechanic. Rules, tuning guidance, and examples are still in progress."
+        },
+        "ru": {
+          "title": "Разделяющийся снаряд",
+          "category": "Снаряды",
+          "summary": "Черновой контур механики «разделяющийся снаряд». Правила, настройка и примеры ещё в работе."
+        }
+      }
+    },
+    {
+      "id": "returning-projectile",
+      "number": 17,
+      "translations": {
+        "en": {
+          "title": "Returning projectile",
+          "category": "Projectiles",
+          "summary": "Draft outline for the returning projectile mechanic. Rules, tuning guidance, and examples are still in progress."
+        },
+        "ru": {
+          "title": "Возвратный снаряд",
+          "category": "Снаряды",
+          "summary": "Черновой контур механики «возвратный снаряд». Правила, настройка и примеры ещё в работе."
+        }
+      }
+    },
+    {
+      "id": "orbiting-projectiles",
+      "number": 18,
+      "translations": {
+        "en": {
+          "title": "Orbiting projectiles",
+          "category": "Projectiles",
+          "summary": "Draft outline for the orbiting projectiles mechanic. Rules, tuning guidance, and examples are still in progress."
+        },
+        "ru": {
+          "title": "Орбитальные снаряды",
+          "category": "Снаряды",
+          "summary": "Черновой контур механики «орбитальные снаряды». Правила, настройка и примеры ещё в работе."
+        }
+      }
+    },
+    {
+      "id": "straight-beam",
+      "number": 19,
+      "translations": {
+        "en": {
+          "title": "Straight beam",
+          "category": "Beams",
+          "summary": "Draft outline for the straight beam mechanic. Rules, tuning guidance, and examples are still in progress."
+        },
+        "ru": {
+          "title": "Прямой луч",
+          "category": "Лучи",
+          "summary": "Черновой контур механики «прямой луч». Правила, настройка и примеры ещё в работе."
+        }
+      }
+    },
+    {
+      "id": "scanning-beam",
+      "number": 20,
+      "translations": {
+        "en": {
+          "title": "Scanning beam",
+          "category": "Beams",
+          "summary": "Draft outline for the scanning beam mechanic. Rules, tuning guidance, and examples are still in progress."
+        },
+        "ru": {
+          "title": "Сканирующий луч",
+          "category": "Лучи",
+          "summary": "Черновой контур механики «сканирующий луч». Правила, настройка и примеры ещё в работе."
+        }
+      }
+    },
+    {
+      "id": "rotating-beams",
+      "number": 21,
+      "translations": {
+        "en": {
+          "title": "Rotating beams",
+          "category": "Beams",
+          "summary": "Draft outline for the rotating beams mechanic. Rules, tuning guidance, and examples are still in progress."
+        },
+        "ru": {
+          "title": "Вращающиеся лучи",
+          "category": "Лучи",
+          "summary": "Черновой контур механики «вращающиеся лучи». Правила, настройка и примеры ещё в работе."
+        }
+      }
+    },
+    {
+      "id": "pulse-beam",
+      "number": 22,
+      "translations": {
+        "en": {
+          "title": "Pulse beam",
+          "category": "Beams",
+          "summary": "Draft outline for the pulse beam mechanic. Rules, tuning guidance, and examples are still in progress."
+        },
+        "ru": {
+          "title": "Импульсный луч",
+          "category": "Лучи",
+          "summary": "Черновой контур механики «импульсный луч». Правила, настройка и примеры ещё в работе."
+        }
+      }
+    },
+    {
+      "id": "marked-area-strike",
+      "number": 23,
+      "translations": {
+        "en": {
+          "title": "Marked-area strike",
+          "category": "Zones and traps",
+          "summary": "Draft outline for the marked-area strike mechanic. Rules, tuning guidance, and examples are still in progress."
+        },
+        "ru": {
+          "title": "Удар по отмеченной области",
+          "category": "Зоны и ловушки",
+          "summary": "Черновой контур механики «удар по отмеченной области». Правила, настройка и примеры ещё в работе."
+        }
+      }
+    },
+    {
+      "id": "chain-explosions",
+      "number": 24,
+      "translations": {
+        "en": {
+          "title": "Chain explosions",
+          "category": "Zones and traps",
+          "summary": "Draft outline for the chain explosions mechanic. Rules, tuning guidance, and examples are still in progress."
+        },
+        "ru": {
+          "title": "Цепочка взрывов",
+          "category": "Зоны и ловушки",
+          "summary": "Черновой контур механики «цепочка взрывов». Правила, настройка и примеры ещё в работе."
+        }
+      }
+    },
+    {
+      "id": "shockwave",
+      "number": 25,
+      "translations": {
+        "en": {
+          "title": "Shockwave",
+          "category": "Zones and traps",
+          "summary": "Draft outline for the shockwave mechanic. Rules, tuning guidance, and examples are still in progress."
+        },
+        "ru": {
+          "title": "Ударная волна",
+          "category": "Зоны и ловушки",
+          "summary": "Черновой контур механики «ударная волна». Правила, настройка и примеры ещё в работе."
+        }
+      }
+    },
+    {
+      "id": "lingering-hazard",
+      "number": 26,
+      "translations": {
+        "en": {
+          "title": "Lingering hazard",
+          "category": "Zones and traps",
+          "summary": "Draft outline for the lingering hazard mechanic. Rules, tuning guidance, and examples are still in progress."
+        },
+        "ru": {
+          "title": "Остаточная опасная зона",
+          "category": "Зоны и ловушки",
+          "summary": "Черновой контур механики «остаточная опасная зона». Правила, настройка и примеры ещё в работе."
+        }
+      }
+    },
+    {
+      "id": "mine",
+      "number": 27,
+      "translations": {
+        "en": {
+          "title": "Mine",
+          "category": "Zones and traps",
+          "summary": "Draft outline for the mine mechanic. Rules, tuning guidance, and examples are still in progress."
+        },
+        "ru": {
+          "title": "Мина",
+          "category": "Зоны и ловушки",
+          "summary": "Черновой контур механики «мина». Правила, настройка и примеры ещё в работе."
+        }
+      }
+    },
+    {
+      "id": "hazard-trail",
+      "number": 28,
+      "translations": {
+        "en": {
+          "title": "Hazard trail",
+          "category": "Zones and traps",
+          "summary": "Draft outline for the hazard trail mechanic. Rules, tuning guidance, and examples are still in progress."
+        },
+        "ru": {
+          "title": "Опасный след",
+          "category": "Зоны и ловушки",
+          "summary": "Черновой контур механики «опасный след». Правила, настройка и примеры ещё в работе."
+        }
+      }
+    },
+    {
+      "id": "moving-hazard",
+      "number": 29,
+      "translations": {
+        "en": {
+          "title": "Moving hazard",
+          "category": "Arena",
+          "summary": "Draft outline for the moving hazard mechanic. Rules, tuning guidance, and examples are still in progress."
+        },
+        "ru": {
+          "title": "Подвижная опасная зона",
+          "category": "Арена",
+          "summary": "Черновой контур механики «подвижная опасная зона». Правила, настройка и примеры ещё в работе."
+        }
+      }
+    },
+    {
+      "id": "converging-threats",
+      "number": 30,
+      "translations": {
+        "en": {
+          "title": "Converging threats",
+          "category": "Arena",
+          "summary": "Draft outline for the converging threats mechanic. Rules, tuning guidance, and examples are still in progress."
+        },
+        "ru": {
+          "title": "Сходящиеся угрозы",
+          "category": "Арена",
+          "summary": "Черновой контур механики «сходящиеся угрозы». Правила, настройка и примеры ещё в работе."
+        }
+      }
+    },
+    {
+      "id": "platform-destruction",
+      "number": 31,
+      "translations": {
+        "en": {
+          "title": "Platform destruction",
+          "category": "Arena",
+          "summary": "Draft outline for the platform destruction mechanic. Rules, tuning guidance, and examples are still in progress."
+        },
+        "ru": {
+          "title": "Разрушение опоры",
+          "category": "Арена",
+          "summary": "Черновой контур механики «разрушение опоры». Правила, настройка и примеры ещё в работе."
+        }
+      }
+    },
+    {
+      "id": "shrinking-safe-area",
+      "number": 32,
+      "translations": {
+        "en": {
+          "title": "Shrinking safe area",
+          "category": "Arena",
+          "summary": "Draft outline for the shrinking safe area mechanic. Rules, tuning guidance, and examples are still in progress."
+        },
+        "ru": {
+          "title": "Сужение безопасной области",
+          "category": "Арена",
+          "summary": "Черновой контур механики «сужение безопасной области». Правила, настройка и примеры ещё в работе."
+        }
+      }
+    },
+    {
+      "id": "pull",
+      "number": 33,
+      "translations": {
+        "en": {
+          "title": "Pull",
+          "category": "Arena",
+          "summary": "Draft outline for the pull mechanic. Rules, tuning guidance, and examples are still in progress."
+        },
+        "ru": {
+          "title": "Притягивание",
+          "category": "Арена",
+          "summary": "Черновой контур механики «притягивание». Правила, настройка и примеры ещё в работе."
+        }
+      }
+    },
+    {
+      "id": "knockback",
+      "number": 34,
+      "translations": {
+        "en": {
+          "title": "Knockback",
+          "category": "Arena",
+          "summary": "Draft outline for the knockback mechanic. Rules, tuning guidance, and examples are still in progress."
+        },
+        "ru": {
+          "title": "Отталкивание",
+          "category": "Арена",
+          "summary": "Черновой контур механики «отталкивание». Правила, настройка и примеры ещё в работе."
+        }
+      }
+    },
+    {
+      "id": "summon",
+      "number": 35,
+      "translations": {
+        "en": {
+          "title": "Summon reinforcements",
+          "category": "Additional targets",
+          "summary": "Draft outline for the summon reinforcements mechanic. Rules, tuning guidance, and examples are still in progress."
+        },
+        "ru": {
+          "title": "Призыв подкрепления",
+          "category": "Дополнительные цели",
+          "summary": "Черновой контур механики «призыв подкрепления». Правила, настройка и примеры ещё в работе."
+        }
+      }
+    },
+    {
+      "id": "turret-deployment",
+      "number": 36,
+      "translations": {
+        "en": {
+          "title": "Turret deployment",
+          "category": "Additional targets",
+          "summary": "Draft outline for the turret deployment mechanic. Rules, tuning guidance, and examples are still in progress."
+        },
+        "ru": {
+          "title": "Установка турели",
+          "category": "Дополнительные цели",
+          "summary": "Черновой контур механики «установка турели». Правила, настройка и примеры ещё в работе."
+        }
+      }
+    },
+    {
+      "id": "threat-generator",
+      "number": 37,
+      "translations": {
+        "en": {
+          "title": "Threat generator",
+          "category": "Additional targets",
+          "summary": "Draft outline for the threat generator mechanic. Rules, tuning guidance, and examples are still in progress."
+        },
+        "ru": {
+          "title": "Генератор угроз",
+          "category": "Дополнительные цели",
+          "summary": "Черновой контур механики «генератор угроз». Правила, настройка и примеры ещё в работе."
+        }
+      }
+    },
+    {
+      "id": "decoy",
+      "number": 38,
+      "translations": {
+        "en": {
+          "title": "Decoy",
+          "category": "Additional targets",
+          "summary": "Draft outline for the decoy mechanic. Rules, tuning guidance, and examples are still in progress."
+        },
+        "ru": {
+          "title": "Ложная цель",
+          "category": "Дополнительные цели",
+          "summary": "Черновой контур механики «ложная цель». Правила, настройка и примеры ещё в работе."
+        }
+      }
+    },
+    {
+      "id": "target-lock",
+      "number": 39,
+      "translations": {
+        "en": {
+          "title": "Target lock",
+          "category": "Targeting and rhythm",
+          "summary": "Draft outline for the target lock mechanic. Rules, tuning guidance, and examples are still in progress."
+        },
+        "ru": {
+          "title": "Наведение с фиксацией",
+          "category": "Наведение и ритм",
+          "summary": "Черновой контур механики «наведение с фиксацией». Правила, настройка и примеры ещё в работе."
+        }
+      }
+    },
+    {
+      "id": "predictive-aiming",
+      "number": 40,
+      "translations": {
+        "en": {
+          "title": "Predictive aiming",
+          "category": "Targeting and rhythm",
+          "summary": "Draft outline for the predictive aiming mechanic. Rules, tuning guidance, and examples are still in progress."
+        },
+        "ru": {
+          "title": "Наведение с упреждением",
+          "category": "Наведение и ритм",
+          "summary": "Черновой контур механики «наведение с упреждением». Правила, настройка и примеры ещё в работе."
+        }
+      }
+    },
+    {
+      "id": "source-tracking",
+      "number": 41,
+      "translations": {
+        "en": {
+          "title": "Source tracking",
+          "category": "Targeting and rhythm",
+          "summary": "Draft outline for the source tracking mechanic. Rules, tuning guidance, and examples are still in progress."
+        },
+        "ru": {
+          "title": "Сопровождение источником",
+          "category": "Наведение и ритм",
+          "summary": "Черновой контур механики «сопровождение источником». Правила, настройка и примеры ещё в работе."
+        }
+      }
+    },
+    {
+      "id": "homing-projectile",
+      "number": 42,
+      "translations": {
+        "en": {
+          "title": "Homing projectile",
+          "category": "Targeting and rhythm",
+          "summary": "Draft outline for the homing projectile mechanic. Rules, tuning guidance, and examples are still in progress."
+        },
+        "ru": {
+          "title": "Самонаведение снаряда",
+          "category": "Наведение и ритм",
+          "summary": "Черновой контур механики «самонаведение снаряда». Правила, настройка и примеры ещё в работе."
+        }
+      }
+    },
+    {
+      "id": "burst-fire",
+      "number": 43,
+      "translations": {
+        "en": {
+          "title": "Burst fire",
+          "category": "Targeting and rhythm",
+          "summary": "Draft outline for the burst fire mechanic. Rules, tuning guidance, and examples are still in progress."
+        },
+        "ru": {
+          "title": "Очередь",
+          "category": "Наведение и ритм",
+          "summary": "Черновой контур механики «очередь». Правила, настройка и примеры ещё в работе."
+        }
+      }
+    },
+    {
+      "id": "volley",
+      "number": 44,
+      "translations": {
+        "en": {
+          "title": "Volley",
+          "category": "Targeting and rhythm",
+          "summary": "Draft outline for the volley mechanic. Rules, tuning guidance, and examples are still in progress."
+        },
+        "ru": {
+          "title": "Залп",
+          "category": "Наведение и ритм",
+          "summary": "Черновой контур механики «залп». Правила, настройка и примеры ещё в работе."
+        }
+      }
+    },
+    {
+      "id": "attack-combination",
+      "number": 45,
+      "translations": {
+        "en": {
+          "title": "Attack combination",
+          "category": "Targeting and rhythm",
+          "summary": "Draft outline for the attack combination mechanic. Rules, tuning guidance, and examples are still in progress."
+        },
+        "ru": {
+          "title": "Комбинация атак",
+          "category": "Наведение и ритм",
+          "summary": "Черновой контур механики «комбинация атак». Правила, настройка и примеры ещё в работе."
+        }
+      }
+    },
+    {
+      "id": "delayed-activation",
+      "number": 46,
+      "translations": {
+        "en": {
+          "title": "Delayed activation",
+          "category": "Targeting and rhythm",
+          "summary": "Draft outline for the delayed activation mechanic. Rules, tuning guidance, and examples are still in progress."
+        },
+        "ru": {
+          "title": "Отложенная активация",
+          "category": "Наведение и ритм",
+          "summary": "Черновой контур механики «отложенная активация». Правила, настройка и примеры ещё в работе."
+        }
+      }
+    },
+    {
+      "id": "speed-change",
+      "number": 47,
+      "translations": {
+        "en": {
+          "title": "Speed change",
+          "category": "Targeting and rhythm",
+          "summary": "Draft outline for the speed change mechanic. Rules, tuning guidance, and examples are still in progress."
+        },
+        "ru": {
+          "title": "Изменение скорости",
+          "category": "Наведение и ритм",
+          "summary": "Черновой контур механики «изменение скорости». Правила, настройка и примеры ещё в работе."
+        }
+      }
+    },
+    {
+      "id": "limited-spread",
+      "number": 48,
+      "translations": {
+        "en": {
+          "title": "Limited spread",
+          "category": "Targeting and rhythm",
+          "summary": "Draft outline for the limited spread mechanic. Rules, tuning guidance, and examples are still in progress."
+        },
+        "ru": {
+          "title": "Ограниченный разброс",
+          "category": "Наведение и ритм",
+          "summary": "Черновой контур механики «ограниченный разброс». Правила, настройка и примеры ещё в работе."
+        }
+      }
+    },
+    {
+      "id": "directional-shield",
+      "number": 49,
+      "translations": {
+        "en": {
+          "title": "Directional shield",
+          "category": "Defense",
+          "summary": "Draft outline for the directional shield mechanic. Rules, tuning guidance, and examples are still in progress."
+        },
+        "ru": {
+          "title": "Направленный щит",
+          "category": "Защита",
+          "summary": "Черновой контур механики «направленный щит». Правила, настройка и примеры ещё в работе."
+        }
+      }
+    },
+    {
+      "id": "damage-type-resistance",
+      "number": 50,
+      "translations": {
+        "en": {
+          "title": "Damage-type resistance",
+          "category": "Defense",
+          "summary": "Draft outline for the damage-type resistance mechanic. Rules, tuning guidance, and examples are still in progress."
+        },
+        "ru": {
+          "title": "Сопротивление типу урона",
+          "category": "Защита",
+          "summary": "Черновой контур механики «сопротивление типу урона». Правила, настройка и примеры ещё в работе."
+        }
+      }
+    },
+    {
+      "id": "situational-immunity",
+      "number": 51,
+      "translations": {
+        "en": {
+          "title": "Situational immunity",
+          "category": "Defense",
+          "summary": "Draft outline for the situational immunity mechanic. Rules, tuning guidance, and examples are still in progress."
+        },
+        "ru": {
+          "title": "Ситуационный иммунитет",
+          "category": "Защита",
+          "summary": "Черновой контур механики «ситуационный иммунитет». Правила, настройка и примеры ещё в работе."
+        }
+      }
+    },
+    {
+      "id": "weak-point",
+      "number": 52,
+      "translations": {
+        "en": {
+          "title": "Weak point",
+          "category": "Defense",
+          "summary": "Draft outline for the weak point mechanic. Rules, tuning guidance, and examples are still in progress."
+        },
+        "ru": {
+          "title": "Уязвимая точка",
+          "category": "Защита",
+          "summary": "Черновой контур механики «уязвимая точка». Правила, настройка и примеры ещё в работе."
+        }
+      }
+    },
+    {
+      "id": "part-break",
+      "number": 53,
+      "translations": {
+        "en": {
+          "title": "Part break",
+          "category": "Defense",
+          "summary": "Draft outline for the part break mechanic. Rules, tuning guidance, and examples are still in progress."
+        },
+        "ru": {
+          "title": "Разрушение части",
+          "category": "Защита",
+          "summary": "Черновой контур механики «разрушение части». Правила, настройка и примеры ещё в работе."
+        }
+      }
+    },
+    {
+      "id": "attack-reflection",
+      "number": 54,
+      "translations": {
+        "en": {
+          "title": "Attack reflection",
+          "category": "Defense",
+          "summary": "Draft outline for the attack reflection mechanic. Rules, tuning guidance, and examples are still in progress."
+        },
+        "ru": {
+          "title": "Отражение атак",
+          "category": "Защита",
+          "summary": "Черновой контур механики «отражение атак». Правила, настройка и примеры ещё в работе."
+        }
+      }
+    },
+    {
+      "id": "counter-stance",
+      "number": 55,
+      "translations": {
+        "en": {
+          "title": "Counter stance",
+          "category": "Defense",
+          "summary": "Draft outline for the counter stance mechanic. Rules, tuning guidance, and examples are still in progress."
+        },
+        "ru": {
+          "title": "Контратакующая стойка",
+          "category": "Защита",
+          "summary": "Черновой контур механики «контратакующая стойка». Правила, настройка и примеры ещё в работе."
+        }
+      }
+    },
+    {
+      "id": "absorption-power-up",
+      "number": 56,
+      "translations": {
+        "en": {
+          "title": "Absorption power-up",
+          "category": "Defense",
+          "summary": "Draft outline for the absorption power-up mechanic. Rules, tuning guidance, and examples are still in progress."
+        },
+        "ru": {
+          "title": "Поглощение с усилением",
+          "category": "Защита",
+          "summary": "Черновой контур механики «поглощение с усилением». Правила, настройка и примеры ещё в работе."
+        }
+      }
+    },
+    {
+      "id": "interruptible-wind-up",
+      "number": 57,
+      "translations": {
+        "en": {
+          "title": "Interruptible wind-up",
+          "category": "Defense",
+          "summary": "Draft outline for the interruptible wind-up mechanic. Rules, tuning guidance, and examples are still in progress."
+        },
+        "ru": {
+          "title": "Прерываемая подготовка",
+          "category": "Защита",
+          "summary": "Черновой контур механики «прерываемая подготовка». Правила, настройка и примеры ещё в работе."
+        }
+      }
+    },
+    {
+      "id": "loadout-adaptation",
+      "number": 58,
+      "translations": {
+        "en": {
+          "title": "Loadout adaptation",
+          "category": "Defense",
+          "summary": "Draft outline for the loadout adaptation mechanic. Rules, tuning guidance, and examples are still in progress."
+        },
+        "ru": {
+          "title": "Адаптация к арсеналу",
+          "category": "Защита",
+          "summary": "Черновой контур механики «адаптация к арсеналу». Правила, настройка и примеры ещё в работе."
+        }
+      }
+    },
+    {
+      "id": "telegraph",
+      "number": 59,
+      "translations": {
+        "en": {
+          "title": "Telegraph",
+          "category": "Structure and readability",
+          "summary": "Draft outline for the telegraph mechanic. Rules, tuning guidance, and examples are still in progress."
+        },
+        "ru": {
+          "title": "Предупреждение",
+          "category": "Структура и читаемость",
+          "summary": "Черновой контур механики «предупреждение». Правила, настройка и примеры ещё в работе."
+        }
+      }
+    },
+    {
+      "id": "wind-up",
+      "number": 60,
+      "translations": {
+        "en": {
+          "title": "Wind-up",
+          "category": "Structure and readability",
+          "summary": "Draft outline for the wind-up mechanic. Rules, tuning guidance, and examples are still in progress."
+        },
+        "ru": {
+          "title": "Подготовка",
+          "category": "Структура и читаемость",
+          "summary": "Черновой контур механики «подготовка». Правила, настройка и примеры ещё в работе."
+        }
+      }
+    },
+    {
+      "id": "attack-lock",
+      "number": 61,
+      "translations": {
+        "en": {
+          "title": "Attack lock",
+          "category": "Structure and readability",
+          "summary": "Draft outline for the attack lock mechanic. Rules, tuning guidance, and examples are still in progress."
+        },
+        "ru": {
+          "title": "Фиксация атаки",
+          "category": "Структура и читаемость",
+          "summary": "Черновой контур механики «фиксация атаки». Правила, настройка и примеры ещё в работе."
+        }
+      }
+    },
+    {
+      "id": "active-phase",
+      "number": 62,
+      "translations": {
+        "en": {
+          "title": "Active phase",
+          "category": "Structure and readability",
+          "summary": "Draft outline for the active phase mechanic. Rules, tuning guidance, and examples are still in progress."
+        },
+        "ru": {
+          "title": "Активная фаза",
+          "category": "Структура и читаемость",
+          "summary": "Черновой контур механики «активная фаза». Правила, настройка и примеры ещё в работе."
+        }
+      }
+    },
+    {
+      "id": "recovery",
+      "number": 63,
+      "translations": {
+        "en": {
+          "title": "Recovery",
+          "category": "Structure and readability",
+          "summary": "Draft outline for the recovery mechanic. Rules, tuning guidance, and examples are still in progress."
+        },
+        "ru": {
+          "title": "Восстановление",
+          "category": "Структура и читаемость",
+          "summary": "Черновой контур механики «восстановление». Правила, настройка и примеры ещё в работе."
+        }
+      }
+    },
+    {
+      "id": "fight-phase",
+      "number": 64,
+      "translations": {
+        "en": {
+          "title": "Fight phase",
+          "category": "Structure and readability",
+          "summary": "Draft outline for the fight phase mechanic. Rules, tuning guidance, and examples are still in progress."
+        },
+        "ru": {
+          "title": "Фаза боя",
+          "category": "Структура и читаемость",
+          "summary": "Черновой контур механики «фаза боя». Правила, настройка и примеры ещё в работе."
+        }
+      }
+    },
+    {
+      "id": "enrage",
+      "number": 65,
+      "translations": {
+        "en": {
+          "title": "Enrage",
+          "category": "Structure and readability",
+          "summary": "Draft outline for the enrage mechanic. Rules, tuning guidance, and examples are still in progress."
+        },
+        "ru": {
+          "title": "Ярость",
+          "category": "Структура и читаемость",
+          "summary": "Черновой контур механики «ярость». Правила, настройка и примеры ещё в работе."
+        }
+      }
+    },
+    {
+      "id": "survival-phase",
+      "number": 66,
+      "translations": {
+        "en": {
+          "title": "Survival phase",
+          "category": "Structure and readability",
+          "summary": "Draft outline for the survival phase mechanic. Rules, tuning guidance, and examples are still in progress."
+        },
+        "ru": {
+          "title": "Фаза выживания",
+          "category": "Структура и читаемость",
+          "summary": "Черновой контур механики «фаза выживания». Правила, настройка и примеры ещё в работе."
+        }
+      }
+    },
+    {
+      "id": "teleport",
+      "number": 67,
+      "translations": {
+        "en": {
+          "title": "Teleport",
+          "category": "Space, movement, and perception",
+          "summary": "Draft outline for the teleport mechanic. Rules, tuning guidance, and examples are still in progress."
+        },
+        "ru": {
+          "title": "Телепортация",
+          "category": "Пространство, движение и восприятие",
+          "summary": "Босс мгновенно меняет позицию; новая точка появления и следующая атака образуют одно читаемое действие."
+        }
+      }
+    },
+    {
+      "id": "boundary-attack",
+      "number": 68,
+      "translations": {
+        "en": {
+          "title": "Boundary",
+          "category": "Space, movement, and perception",
+          "summary": "Draft outline for the boundary mechanic. Rules, tuning guidance, and examples are still in progress."
+        },
+        "ru": {
+          "title": "Атака с границы арены",
+          "category": "Пространство, движение и восприятие",
+          "summary": "Источник удара находится вне обычного игрового поля или появляется в стене, двери либо за кадром."
+        }
+      }
+    },
+    {
+      "id": "forced-scrolling",
+      "number": 69,
+      "translations": {
+        "en": {
+          "title": "Forced scrolling",
+          "category": "Space, movement, and perception",
+          "summary": "Draft outline for the forced scrolling mechanic. Rules, tuning guidance, and examples are still in progress."
+        },
+        "ru": {
+          "title": "Принудительная прокрутка",
+          "category": "Пространство, движение и восприятие",
+          "summary": "Камера или арена движется независимо от игрока и превращает сохранение темпа в обязательное условие."
+        }
+      }
+    },
+    {
+      "id": "chase-herding",
+      "number": 70,
+      "translations": {
+        "en": {
+          "title": "Chase",
+          "category": "Space, movement, and perception",
+          "summary": "Draft outline for the chase mechanic. Rules, tuning guidance, and examples are still in progress."
+        },
+        "ru": {
+          "title": "Погоня с загоном",
+          "category": "Пространство, движение и восприятие",
+          "summary": "Цель боя временно состоит в том, чтобы догнать босса или направить его в нужную часть пространства."
+        }
+      }
+    },
+    {
+      "id": "escape-phase",
+      "number": 71,
+      "translations": {
+        "en": {
+          "title": "Escape phase",
+          "category": "Space, movement, and perception",
+          "summary": "Draft outline for the escape phase mechanic. Rules, tuning guidance, and examples are still in progress."
+        },
+        "ru": {
+          "title": "Побег босса",
+          "category": "Пространство, движение и восприятие",
+          "summary": "После порога здоровья босс пытается уйти; исход может зависеть от того, успел ли игрок остановить его."
+        }
+      }
+    },
+    {
+      "id": "relocated-arena",
+      "number": 72,
+      "translations": {
+        "en": {
+          "title": "Nested",
+          "category": "Space, movement, and perception",
+          "summary": "Draft outline for the nested mechanic. Rules, tuning guidance, and examples are still in progress."
+        },
+        "ru": {
+          "title": "Вложенная или сменная арена",
+          "category": "Пространство, движение и восприятие",
+          "summary": "Бой переносит игрока в другое пространство с новой геометрией, сохраняя текущую встречу."
+        }
+      }
+    },
+    {
+      "id": "control-mode-shift",
+      "number": 73,
+      "translations": {
+        "en": {
+          "title": "Perspective",
+          "category": "Space, movement, and perception",
+          "summary": "Draft outline for the perspective mechanic. Rules, tuning guidance, and examples are still in progress."
+        },
+        "ru": {
+          "title": "Смена перспективы или схемы управления",
+          "category": "Пространство, движение и восприятие",
+          "summary": "Внутри боя меняется способ перемещения и чтения пространства, а не только набор атак."
+        }
+      }
+    },
+    {
+      "id": "boss-as-terrain",
+      "number": 74,
+      "translations": {
+        "en": {
+          "title": "Boss as terrain",
+          "category": "Space, movement, and perception",
+          "summary": "Draft outline for the boss as terrain mechanic. Rules, tuning guidance, and examples are still in progress."
+        },
+        "ru": {
+          "title": "Босс как уровень",
+          "category": "Пространство, движение и восприятие",
+          "summary": "Игрок перемещается по телу босса, а доступ к цели зависит от удержания и маршрута."
+        }
+      }
+    },
+    {
+      "id": "cover-line-of-sight",
+      "number": 75,
+      "translations": {
+        "en": {
+          "title": "Cover",
+          "category": "Space, movement, and perception",
+          "summary": "Draft outline for the cover mechanic. Rules, tuning guidance, and examples are still in progress."
+        },
+        "ru": {
+          "title": "Укрытие и линия видимости",
+          "category": "Пространство, движение и восприятие",
+          "summary": "Безопасность создаёт объект, который физически перекрывает направленную угрозу."
+        }
+      }
+    },
+    {
+      "id": "forced-inertia",
+      "number": 76,
+      "translations": {
+        "en": {
+          "title": "Forced inertia",
+          "category": "Space, movement, and perception",
+          "summary": "Draft outline for the forced inertia mechanic. Rules, tuning guidance, and examples are still in progress."
+        },
+        "ru": {
+          "title": "Принудительная инерция",
+          "category": "Пространство, движение и восприятие",
+          "summary": "Поверхность или эффект не даёт остановиться в выбранной точке и заставляет заранее рассчитывать конечную позицию."
+        }
+      }
+    },
+    {
+      "id": "wraparound-projectile",
+      "number": 77,
+      "translations": {
+        "en": {
+          "title": "Wraparound projectile",
+          "category": "Space, movement, and perception",
+          "summary": "Draft outline for the wraparound projectile mechanic. Rules, tuning guidance, and examples are still in progress."
+        },
+        "ru": {
+          "title": "Зацикленная траектория",
+          "category": "Пространство, движение и восприятие",
+          "summary": "Снаряд, покинувший одну границу арены, возвращается с противоположной стороны."
+        }
+      }
+    },
+    {
+      "id": "beat-synced-attack",
+      "number": 78,
+      "translations": {
+        "en": {
+          "title": "Beat-synced attack",
+          "category": "Space, movement, and perception",
+          "summary": "Draft outline for the beat-synced attack mechanic. Rules, tuning guidance, and examples are still in progress."
+        },
+        "ru": {
+          "title": "Ритмическая синхронизация",
+          "category": "Пространство, движение и восприятие",
+          "summary": "Момент атаки привязан к слышимому регулярному ритму, который становится частью правила, а не только сопровождением."
+        }
+      }
+    },
+    {
+      "id": "secondary-cues-invisibility",
+      "number": 79,
+      "translations": {
+        "en": {
+          "title": "Invisibility",
+          "category": "Space, movement, and perception",
+          "summary": "Draft outline for the invisibility mechanic. Rules, tuning guidance, and examples are still in progress."
+        },
+        "ru": {
+          "title": "Скрытый босс и вторичные следы",
+          "category": "Пространство, движение и восприятие",
+          "summary": "Босс скрывает модель или основной сигнал позиции, а игрок читает его по следам, частицам, звуку или реакции окружения."
+        }
+      }
+    },
+    {
+      "id": "sound-detection",
+      "number": 80,
+      "translations": {
+        "en": {
+          "title": "Sound detection",
+          "category": "Space, movement, and perception",
+          "summary": "Draft outline for the sound detection mechanic. Rules, tuning guidance, and examples are still in progress."
+        },
+        "ru": {
+          "title": "Обнаружение игрока по шуму",
+          "category": "Пространство, движение и восприятие",
+          "summary": "Босс не знает точную позицию игрока без звукового события; интенсивность движения и атак становится частью скрытности."
+        }
+      }
+    },
+    {
+      "id": "objective-linked-invulnerability",
+      "number": 81,
+      "translations": {
+        "en": {
+          "title": "Objective-linked invulnerability",
+          "category": "Encounter goals and vulnerability",
+          "summary": "Draft outline for the objective-linked invulnerability mechanic. Rules, tuning guidance, and examples are still in progress."
+        },
+        "ru": {
+          "title": "Неуязвимость, привязанная к цели",
+          "category": "Цель боя и открытие уязвимости",
+          "summary": "Босс не получает обычный урон, пока игрок не отключит отдельные источники защиты."
+        }
+      }
+    },
+    {
+      "id": "wave-clear-objective",
+      "number": 82,
+      "translations": {
+        "en": {
+          "title": "Wave-clear objective",
+          "category": "Encounter goals and vulnerability",
+          "summary": "Draft outline for the wave-clear objective mechanic. Rules, tuning guidance, and examples are still in progress."
+        },
+        "ru": {
+          "title": "Победа через волны",
+          "category": "Цель боя и открытие уязвимости",
+          "summary": "У босса нет обычного здоровья; прогресс даёт уничтожение заданного числа волн."
+        }
+      }
+    },
+    {
+      "id": "environmental-weapon",
+      "number": 83,
+      "translations": {
+        "en": {
+          "title": "Environmental weapon",
+          "category": "Encounter goals and vulnerability",
+          "summary": "Draft outline for the environmental weapon mechanic. Rules, tuning guidance, and examples are still in progress."
+        },
+        "ru": {
+          "title": "Орудие арены",
+          "category": "Цель боя и открытие уязвимости",
+          "summary": "Основной урон наносит стационарный объект арены, до которого нужно добраться или который нужно подготовить."
+        }
+      }
+    },
+    {
+      "id": "encounter-specific-tool",
+      "number": 84,
+      "translations": {
+        "en": {
+          "title": "Encounter-specific tool",
+          "category": "Encounter goals and vulnerability",
+          "summary": "Draft outline for the encounter-specific tool mechanic. Rules, tuning guidance, and examples are still in progress."
+        },
+        "ru": {
+          "title": "Особый инструмент боя",
+          "category": "Цель боя и открытие уязвимости",
+          "summary": "Встреча выдаёт или активирует средство, чьё специальное свойство работает прежде всего против этого босса."
+        }
+      }
+    },
+    {
+      "id": "player-controlled-boss",
+      "number": 85,
+      "translations": {
+        "en": {
+          "title": "Player-controlled boss",
+          "category": "Encounter goals and vulnerability",
+          "summary": "Draft outline for the player-controlled boss mechanic. Rules, tuning guidance, and examples are still in progress."
+        },
+        "ru": {
+          "title": "Босс под управлением другого игрока",
+          "category": "Цель боя и открытие уязвимости",
+          "summary": "Система назначает реального игрока противником внутри структуры босс-файта, а при отсутствии кандидата подставляет ИИ."
+        }
+      }
+    },
+    {
+      "id": "projectile-rally",
+      "number": 86,
+      "translations": {
+        "en": {
+          "title": "Projectile rally",
+          "category": "Encounter goals and vulnerability",
+          "summary": "Draft outline for the projectile rally mechanic. Rules, tuning guidance, and examples are still in progress."
+        },
+        "ru": {
+          "title": "Ответный залп",
+          "category": "Цель боя и открытие уязвимости",
+          "summary": "Игрок отбивает атаку босса обратно; несколько отражений могут образовать ритмический обмен."
+        }
+      }
+    },
+    {
+      "id": "baited-self-hit",
+      "number": 87,
+      "translations": {
+        "en": {
+          "title": "Baited collision",
+          "category": "Encounter goals and vulnerability",
+          "summary": "Draft outline for the baited collision mechanic. Rules, tuning guidance, and examples are still in progress."
+        },
+        "ru": {
+          "title": "Самоповреждение через приманку",
+          "category": "Цель боя и открытие уязвимости",
+          "summary": "Игрок вынуждает босса врезаться в препятствие, проглотить опасный объект или попасть под собственную угрозу."
+        }
+      }
+    },
+    {
+      "id": "posture-stagger-gauge",
+      "number": 88,
+      "translations": {
+        "en": {
+          "title": "Posture",
+          "category": "Encounter goals and vulnerability",
+          "summary": "Draft outline for the posture mechanic. Rules, tuning guidance, and examples are still in progress."
+        },
+        "ru": {
+          "title": "Шкала стойкости и добивание",
+          "category": "Цель боя и открытие уязвимости",
+          "summary": "Давление заполняет или опустошает отдельную шкалу; её слом открывает обязательное критическое действие."
+        }
+      }
+    },
+    {
+      "id": "pacifist-resolution",
+      "number": 89,
+      "translations": {
+        "en": {
+          "title": "Spare",
+          "category": "Encounter goals and vulnerability",
+          "summary": "Draft outline for the spare mechanic. Rules, tuning guidance, and examples are still in progress."
+        },
+        "ru": {
+          "title": "Ненасильственное завершение",
+          "category": "Цель боя и открытие уязвимости",
+          "summary": "Бой можно закончить без обнуления здоровья босса, выполнив условие отказа от атаки или взаимодействия."
+        }
+      }
+    },
+    {
+      "id": "persistent-progress",
+      "number": 90,
+      "translations": {
+        "en": {
+          "title": "Persistent encounter progress",
+          "category": "Encounter goals and vulnerability",
+          "summary": "Draft outline for the persistent encounter progress mechanic. Rules, tuning guidance, and examples are still in progress."
+        },
+        "ru": {
+          "title": "Сохранение прогресса между попытками",
+          "category": "Цель боя и открытие уязвимости",
+          "summary": "Выполненные части боя не сбрасываются после смерти игрока."
+        }
+      }
+    },
+    {
+      "id": "status-buildup",
+      "number": 91,
+      "translations": {
+        "en": {
+          "title": "Status buildup",
+          "category": "States, resources, and scaling",
+          "summary": "Draft outline for the status buildup mechanic. Rules, tuning guidance, and examples are still in progress."
+        },
+        "ru": {
+          "title": "Накопление состояния",
+          "category": "Состояния, ресурсы и масштабирование",
+          "summary": "Попадания заполняют отдельную шкалу; эффект наступает только при достижении порога."
+        }
+      }
+    },
+    {
+      "id": "instant-kill",
+      "number": 92,
+      "translations": {
+        "en": {
+          "title": "Instant-kill",
+          "category": "States, resources, and scaling",
+          "summary": "Draft outline for the instant-kill mechanic. Rules, tuning guidance, and examples are still in progress."
+        },
+        "ru": {
+          "title": "Мгновенная казнь",
+          "category": "Состояния, ресурсы и масштабирование",
+          "summary": "Отдельное условие обходит обычную модель урона и сразу завершает попытку."
+        }
+      }
+    },
+    {
+      "id": "maximum-health-reduction",
+      "number": 93,
+      "translations": {
+        "en": {
+          "title": "Maximum-health reduction",
+          "category": "States, resources, and scaling",
+          "summary": "Draft outline for the maximum-health reduction mechanic. Rules, tuning guidance, and examples are still in progress."
+        },
+        "ru": {
+          "title": "Снижение максимального здоровья",
+          "category": "Состояния, ресурсы и масштабирование",
+          "summary": "Атака временно или постоянно уменьшает потолок здоровья, а не только текущее значение."
+        }
+      }
+    },
+    {
+      "id": "ability-lock",
+      "number": 94,
+      "translations": {
+        "en": {
+          "title": "Ability",
+          "category": "States, resources, and scaling",
+          "summary": "Draft outline for the ability mechanic. Rules, tuning guidance, and examples are still in progress."
+        },
+        "ru": {
+          "title": "Блокировка способности или лечения",
+          "category": "Состояния, ресурсы и масштабирование",
+          "summary": "Попадание временно запрещает конкретную часть набора игрока."
+        }
+      }
+    },
+    {
+      "id": "resource-steal",
+      "number": 95,
+      "translations": {
+        "en": {
+          "title": "Resource steal",
+          "category": "States, resources, and scaling",
+          "summary": "Draft outline for the resource steal mechanic. Rules, tuning guidance, and examples are still in progress."
+        },
+        "ru": {
+          "title": "Кража или выбивание ресурса",
+          "category": "Состояния, ресурсы и масштабирование",
+          "summary": "Босс отнимает валюту, заряд, боеприпасы или заставляет игрока выронить ресурс на арену."
+        }
+      }
+    },
+    {
+      "id": "on-hit-healing",
+      "number": 96,
+      "translations": {
+        "en": {
+          "title": "On-hit healing",
+          "category": "States, resources, and scaling",
+          "summary": "Draft outline for the on-hit healing mechanic. Rules, tuning guidance, and examples are still in progress."
+        },
+        "ru": {
+          "title": "Лечение от попаданий",
+          "category": "Состояния, ресурсы и масштабирование",
+          "summary": "Успешный контакт восстанавливает здоровье босса, включая оговорённые блокированные попадания."
+        }
+      }
+    },
+    {
+      "id": "self-heal-cast",
+      "number": 97,
+      "translations": {
+        "en": {
+          "title": "Self-heal",
+          "category": "States, resources, and scaling",
+          "summary": "Draft outline for the self-heal mechanic. Rules, tuning guidance, and examples are still in progress."
+        },
+        "ru": {
+          "title": "Самолечение с подготовкой",
+          "category": "Состояния, ресурсы и масштабирование",
+          "summary": "Босс тратит читаемое время на восстановление здоровья; игрок решает, прервать действие, применить контрсредство или принять потерю прогресса."
+        }
+      }
+    },
+    {
+      "id": "external-healing-source",
+      "number": 98,
+      "translations": {
+        "en": {
+          "title": "External healing source",
+          "category": "States, resources, and scaling",
+          "summary": "Draft outline for the external healing source mechanic. Rules, tuning guidance, and examples are still in progress."
+        },
+        "ru": {
+          "title": "Лечение через объекты или помощников",
+          "category": "Состояния, ресурсы и масштабирование",
+          "summary": "На арене появляются цели или ресурсы, которые нужно перехватить до того, как они восстановят босса."
+        }
+      }
+    },
+    {
+      "id": "damage-rate-cap",
+      "number": 99,
+      "translations": {
+        "en": {
+          "title": "DPS scaling",
+          "category": "States, resources, and scaling",
+          "summary": "Draft outline for the dps scaling mechanic. Rules, tuning guidance, and examples are still in progress."
+        },
+        "ru": {
+          "title": "Ограничение темпа урона",
+          "category": "Состояния, ресурсы и масштабирование",
+          "summary": "Эффективный входящий урон уменьшается в зависимости от недавнего DPS, чтобы всплеск силы не пропустил бой."
+        }
+      }
+    },
+    {
+      "id": "loadout-mirror",
+      "number": 100,
+      "translations": {
+        "en": {
+          "title": "Loadout mirror",
+          "category": "States, resources, and scaling",
+          "summary": "Draft outline for the loadout mirror mechanic. Rules, tuning guidance, and examples are still in progress."
+        },
+        "ru": {
+          "title": "Зеркало экипировки игрока",
+          "category": "Состояния, ресурсы и масштабирование",
+          "summary": "Босс копирует текущие характеристики, оружие, заклинания или предметы игрока."
+        }
+      }
+    },
+    {
+      "id": "moveset-shapeshifting",
+      "number": 101,
+      "translations": {
+        "en": {
+          "title": "Moveset shapeshifting",
+          "category": "States, resources, and scaling",
+          "summary": "Draft outline for the moveset shapeshifting mechanic. Rules, tuning guidance, and examples are still in progress."
+        },
+        "ru": {
+          "title": "Смена чужих наборов атак",
+          "category": "Состояния, ресурсы и масштабирование",
+          "summary": "Босс переключается между полноценными наборами движений других противников."
+        }
+      }
+    },
+    {
+      "id": "ally-theft",
+      "number": 102,
+      "translations": {
+        "en": {
+          "title": "Ally theft",
+          "category": "States, resources, and scaling",
+          "summary": "Draft outline for the ally theft mechanic. Rules, tuning guidance, and examples are still in progress."
+        },
+        "ru": {
+          "title": "Кража союзников игрока",
+          "category": "Состояния, ресурсы и масштабирование",
+          "summary": "Призванные игроком помощники временно переходят на сторону босса или используют свои эффекты против владельца."
+        }
+      }
+    },
+    {
+      "id": "false-death",
+      "number": 103,
+      "translations": {
+        "en": {
+          "title": "False death",
+          "category": "States, resources, and scaling",
+          "summary": "Draft outline for the false death mechanic. Rules, tuning guidance, and examples are still in progress."
+        },
+        "ru": {
+          "title": "Ложная смерть и возвращение",
+          "category": "Состояния, ресурсы и масштабирование",
+          "summary": "Обнуление полосы здоровья изображает победу, после чего тот же босс возвращается с другим правилом или телом."
+        }
+      }
+    },
+    {
+      "id": "action-reactive-punish",
+      "number": 104,
+      "translations": {
+        "en": {
+          "title": "Action-reactive punish",
+          "category": "States, resources, and scaling",
+          "summary": "Draft outline for the action-reactive punish mechanic. Rules, tuning guidance, and examples are still in progress."
+        },
+        "ru": {
+          "title": "Реакция на действие игрока",
+          "category": "Состояния, ресурсы и масштабирование",
+          "summary": "Босс выбирает ответ после начала лечения, применения предмета, заклинания или другой длительной команды игрока."
+        }
+      }
+    },
+    {
+      "id": "run-history-manifestation",
+      "number": 105,
+      "translations": {
+        "en": {
+          "title": "Run-history manifestation",
+          "category": "States, resources, and scaling",
+          "summary": "Draft outline for the run-history manifestation mechanic. Rules, tuning guidance, and examples are still in progress."
+        },
+        "ru": {
+          "title": "История прохождения внутри боя",
+          "category": "Состояния, ресурсы и масштабирование",
+          "summary": "Состав или сложность встречи зависит от решений игрока, накопленных до входа к боссу."
+        }
+      }
+    },
+    {
+      "id": "real-time-progression",
+      "number": 106,
+      "translations": {
+        "en": {
+          "title": "Real-time progression",
+          "category": "States, resources, and scaling",
+          "summary": "Draft outline for the real-time progression mechanic. Rules, tuning guidance, and examples are still in progress."
+        },
+        "ru": {
+          "title": "Реальное время меняет бой",
+          "category": "Состояния, ресурсы и масштабирование",
+          "summary": "Состояние встречи изменяется, пока игра закрыта, по реальному времени или системным часам."
+        }
+      }
+    },
+    {
+      "id": "interface-interaction",
+      "number": 107,
+      "translations": {
+        "en": {
+          "title": "Hardware",
+          "category": "States, resources, and scaling",
+          "summary": "Draft outline for the hardware mechanic. Rules, tuning guidance, and examples are still in progress."
+        },
+        "ru": {
+          "title": "Внешний интерфейс как правило боя",
+          "category": "Состояния, ресурсы и масштабирование",
+          "summary": "Для отключения способности босса игрок меняет канал ввода или другой элемент вне обычного игрового мира."
+        }
+      }
+    },
+    {
+      "id": "world-state-variant",
+      "number": 108,
+      "translations": {
+        "en": {
+          "title": "World-state encounter variant",
+          "category": "States, resources, and scaling",
+          "summary": "Draft outline for the world-state encounter variant mechanic. Rules, tuning guidance, and examples are still in progress."
+        },
+        "ru": {
+          "title": "Контекстное правило мира",
+          "category": "Состояния, ресурсы и масштабирование",
+          "summary": "Время суток, область, режим или состояние мира меняет правила боя и награду, а не только числовую сложность."
+        }
+      }
+    },
+    {
+      "id": "party-size-scaling",
+      "number": 109,
+      "translations": {
+        "en": {
+          "title": "Party-size scaling",
+          "category": "States, resources, and scaling",
+          "summary": "Draft outline for the party-size scaling mechanic. Rules, tuning guidance, and examples are still in progress."
+        },
+        "ru": {
+          "title": "Масштабирование по числу игроков",
+          "category": "Состояния, ресурсы и масштабирование",
+          "summary": "Здоровье, защита или иные параметры пересчитываются при входе и выходе участников."
+        }
+      }
+    },
+    {
+      "id": "partner-revival",
+      "number": 110,
+      "translations": {
+        "en": {
+          "title": "Partner revival",
+          "category": "Multi-boss relationships",
+          "summary": "Draft outline for the partner revival mechanic. Rules, tuning guidance, and examples are still in progress."
+        },
+        "ru": {
+          "title": "Воскрешение напарника",
+          "category": "Связи между несколькими боссами",
+          "summary": "Оставшийся противник возвращает побеждённого, создавая окно для прерывания и требование сблизить моменты смерти."
+        }
+      }
+    },
+    {
+      "id": "kill-order-inheritance",
+      "number": 111,
+      "translations": {
+        "en": {
+          "title": "Kill-order inheritance",
+          "category": "Multi-boss relationships",
+          "summary": "Draft outline for the kill-order inheritance mechanic. Rules, tuning guidance, and examples are still in progress."
+        },
+        "ru": {
+          "title": "Наследование силы по порядку убийства",
+          "category": "Связи между несколькими боссами",
+          "summary": "Последний участник пары получает свойства павшего; выбор первой цели меняет следующую фазу."
+        }
+      }
+    },
+    {
+      "id": "shared-group-health",
+      "number": 112,
+      "translations": {
+        "en": {
+          "title": "Shared group health",
+          "category": "Multi-boss relationships",
+          "summary": "Draft outline for the shared group health mechanic. Rules, tuning guidance, and examples are still in progress."
+        },
+        "ru": {
+          "title": "Общее здоровье группы",
+          "category": "Связи между несколькими боссами",
+          "summary": "Несколько активных тел расходуют одну полосу здоровья, хотя могут появляться и исчезать независимо."
+        }
+      }
+    },
+    {
+      "id": "coordinated-duo-attack",
+      "number": 113,
+      "translations": {
+        "en": {
+          "title": "Coordinated duo attack",
+          "category": "Multi-boss relationships",
+          "summary": "Draft outline for the coordinated duo attack mechanic. Rules, tuning guidance, and examples are still in progress."
+        },
+        "ru": {
+          "title": "Связанный приём пары",
+          "category": "Связи между несколькими боссами",
+          "summary": "Два участника выполняют один составной приём, где позиция одного задаёт действие другого."
+        }
+      }
+    },
+    {
+      "id": "stack-damage",
+      "number": 114,
+      "translations": {
+        "en": {
+          "title": "Stack",
+          "category": "Cooperative coordination",
+          "summary": "Draft outline for the stack mechanic. Rules, tuning guidance, and examples are still in progress."
+        },
+        "ru": {
+          "title": "Разделение урона",
+          "category": "Кооперативная координация",
+          "summary": "Урон делится между всеми игроками внутри метки; одиночная цель обычно не выживает."
+        }
+      }
+    },
+    {
+      "id": "personal-spread",
+      "number": 115,
+      "translations": {
+        "en": {
+          "title": "Spread",
+          "category": "Cooperative coordination",
+          "summary": "Draft outline for the spread mechanic. Rules, tuning guidance, and examples are still in progress."
+        },
+        "ru": {
+          "title": "Разведение персональных зон",
+          "category": "Кооперативная координация",
+          "summary": "Несколько игроков получают неизбежные области, которые нельзя накладывать друг на друга."
+        }
+      }
+    },
+    {
+      "id": "tower-soak",
+      "number": 116,
+      "translations": {
+        "en": {
+          "title": "Tower",
+          "category": "Cooperative coordination",
+          "summary": "Draft outline for the tower mechanic. Rules, tuning guidance, and examples are still in progress."
+        },
+        "ru": {
+          "title": "Занятие точки",
+          "category": "Кооперативная координация",
+          "summary": "Один или точное число игроков должны войти в отмеченную область до срабатывания, иначе получает урон вся группа."
+        }
+      }
+    },
+    {
+      "id": "entity-tether",
+      "number": 117,
+      "translations": {
+        "en": {
+          "title": "Tether",
+          "category": "Cooperative coordination",
+          "summary": "Draft outline for the tether mechanic. Rules, tuning guidance, and examples are still in progress."
+        },
+        "ru": {
+          "title": "Связь между сущностями",
+          "category": "Кооперативная координация",
+          "summary": "Видимая связь требует сохранить, разорвать или передать определённую дистанцию между целями."
+        }
+      }
+    },
+    {
+      "id": "gaze-check",
+      "number": 118,
+      "translations": {
+        "en": {
+          "title": "Gaze",
+          "category": "Cooperative coordination",
+          "summary": "Draft outline for the gaze mechanic. Rules, tuning guidance, and examples are still in progress."
+        },
+        "ru": {
+          "title": "Проверка направления взгляда",
+          "category": "Кооперативная координация",
+          "summary": "Результат зависит от того, смотрит ли персонаж на источник в момент срабатывания."
+        }
+      }
+    },
+    {
+      "id": "proximity-damage",
+      "number": 119,
+      "translations": {
+        "en": {
+          "title": "Proximity",
+          "category": "Cooperative coordination",
+          "summary": "Draft outline for the proximity mechanic. Rules, tuning guidance, and examples are still in progress."
+        },
+        "ru": {
+          "title": "Урон по расстоянию",
+          "category": "Кооперативная координация",
+          "summary": "Урон вычисляется по расстоянию до источника, поэтому безопасной бинарной границы может не быть."
+        }
+      }
+    },
+    {
+      "id": "tank-swap",
+      "number": 120,
+      "translations": {
+        "en": {
+          "title": "Tankbuster",
+          "category": "Cooperative coordination",
+          "summary": "Draft outline for the tankbuster mechanic. Rules, tuning guidance, and examples are still in progress."
+        },
+        "ru": {
+          "title": "Ролевая цель и смена агрессии",
+          "category": "Кооперативная координация",
+          "summary": "Атака рассчитана на роль с защитными ресурсами и может требовать сменить текущую цель босса."
+        }
+      }
+    },
+    {
+      "id": "debuff-handoff",
+      "number": 121,
+      "translations": {
+        "en": {
+          "title": "Debuff handoff",
+          "category": "Cooperative coordination",
+          "summary": "Draft outline for the debuff handoff mechanic. Rules, tuning guidance, and examples are still in progress."
+        },
+        "ru": {
+          "title": "Передача состояния",
+          "category": "Кооперативная координация",
+          "summary": "Контакт между игроками передаёт эффект; группе нужно контролировать владельца, время и допустимые сочетания."
+        }
+      }
+    },
+    {
+      "id": "ordered-targets",
+      "number": 122,
+      "translations": {
+        "en": {
+          "title": "Ordered targets",
+          "category": "Cooperative coordination",
+          "summary": "Draft outline for the ordered targets mechanic. Rules, tuning guidance, and examples are still in progress."
+        },
+        "ru": {
+          "title": "Очередь отмеченных целей",
+          "category": "Кооперативная координация",
+          "summary": "Метки назначают порядок последовательных атак; ошибка одного участника меняет пространство для следующих."
+        }
+      }
+    },
+    {
+      "id": "pairing-polarity",
+      "number": 123,
+      "translations": {
+        "en": {
+          "title": "Pairing",
+          "category": "Cooperative coordination",
+          "summary": "Draft outline for the pairing mechanic. Rules, tuning guidance, and examples are still in progress."
+        },
+        "ru": {
+          "title": "Точное спаривание или полярность",
+          "category": "Кооперативная координация",
+          "summary": "Игроки должны образовать пары по совпадающим либо противоположным признакам и не собирать лишних участников."
+        }
+      }
+    },
+    {
+      "id": "party-split",
+      "number": 124,
+      "translations": {
+        "en": {
+          "title": "Party split",
+          "category": "Cooperative coordination",
+          "summary": "Draft outline for the party split mechanic. Rules, tuning guidance, and examples are still in progress."
+        },
+        "ru": {
+          "title": "Параллельные задачи группы",
+          "category": "Кооперативная координация",
+          "summary": "Команда временно делится по разным областям или целям, которые нужно завершить одновременно либо в заданном порядке."
+        }
+      }
+    }
+  ]
+}

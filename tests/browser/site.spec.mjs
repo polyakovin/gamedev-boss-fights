@@ -442,9 +442,9 @@ for (const [id, title, activePhase] of [
       backdropFilter: 'none',
     });
     await expect(page.locator('.lesson-title-line .lens-chip')).toHaveCount(4);
-    await expect(page.locator('.game-example')).toHaveCount(2);
-    await expect(page.locator('.game-example__media img')).toHaveCount(2);
-    await expect(page.locator('.sources li a')).toHaveCount(3);
+    await expect(page.locator('.game-example')).toHaveCount(3);
+    await expect(page.locator('.game-example__media img')).toHaveCount(3);
+    await expect(page.locator('.sources li a')).toHaveCount(1);
     await expect(page.locator('[data-character-art="kern"]')).toHaveCount(1);
     await expect(page.locator('[data-character-art="tavi"]')).toHaveCount(1);
     await page.locator('[data-pattern-timeline]').evaluate((element) => {
@@ -516,10 +516,17 @@ test('boss builder persists a local draft and downloads portable JSON', async ({
   await expect(page.locator('.boss-builder-storage')).toHaveText(
     'Черновик хранится только в этом браузере.',
   );
-  await expect(page.locator('.boss-builder-mechanic')).toHaveCount(5);
+  await expect(page.locator('.boss-builder-mechanic')).toHaveCount(124);
+  await expect(page.locator('.boss-builder-mechanic--wip')).toHaveCount(119);
+  await expect(page.locator('.boss-builder-mechanic:not(.boss-builder-mechanic--wip)')).toHaveCount(
+    5,
+  );
   await expect(page.locator('.boss-builder-mechanic [data-character-art="kern"]')).toHaveCount(5);
   await expect(page.locator('.boss-builder-mechanic [data-character-art="tavi"]')).toHaveCount(5);
   await expect(page.locator('.boss-builder-mechanic [data-pattern-preview]')).toHaveCount(4);
+  await page.locator('[data-boss-mechanic-search]').fill('Таран');
+  await expect(page.locator('.boss-builder-mechanic:visible')).toHaveCount(1);
+  await page.locator('[data-boss-mechanic-search]').fill('');
 
   await page.locator('[data-boss-download]').click();
   await expect(page.locator('[data-boss-status]')).toHaveText('Введите название босса.');
@@ -561,7 +568,7 @@ test('boss builder persists a local draft and downloads portable JSON', async ({
       {
         id: 'charge',
         title: 'Таран',
-        category: 'Движение и пространство',
+        category: 'Тело и ближний бой',
         summary:
           'Босс целится, фиксирует направление и мчится вперёд. После фиксации он не может повернуть.',
         url: 'https://polyakovin.github.io/gamedev-boss-fights/ru/mechanics/charge/',
@@ -578,6 +585,31 @@ test('boss builder persists a local draft and downloads portable JSON', async ({
   expect(
     await page.evaluate(() => localStorage.getItem('boss-fight-atlas-boss-builder')),
   ).toBeNull();
+});
+
+test('WIP mechanics remain selectable and exportable in the boss builder', async ({ page }) => {
+  await page.goto('ru/builder/');
+  await page.locator('[data-boss-mechanic-search]').fill('Телепортация');
+  await expect(page.locator('.boss-builder-mechanic:visible')).toHaveCount(1);
+  await expect(page.locator('.boss-builder-mechanic--wip:visible .wip-badge')).toHaveText('WIP');
+  await page.locator('[data-boss-mechanic][value="teleport"]').check();
+  await expect(page.locator('[data-boss-selected]')).toHaveText('Выбрано: 1');
+  await page.locator('[data-boss-name]').fill('Черновик');
+
+  const downloadPromise = page.waitForEvent('download');
+  await page.locator('[data-boss-download]').click();
+  const download = await downloadPromise;
+  const exported = JSON.parse(await fs.readFile(await download.path(), 'utf8'));
+  expect(exported.mechanics).toEqual([
+    {
+      id: 'teleport',
+      title: 'Телепортация',
+      category: 'Пространство, движение и восприятие',
+      summary:
+        'Босс мгновенно меняет позицию; новая точка появления и следующая атака образуют одно читаемое действие.',
+      url: 'https://polyakovin.github.io/gamedev-boss-fights/ru/mechanics/teleport/',
+    },
+  ]);
 });
 
 test('lens chips show explanations and open localized lens pages', async ({ page, request }) => {
@@ -756,23 +788,30 @@ test('catalog and language gateway point to real pages', async ({ page, request 
       .evaluate((element) => Number.parseFloat(getComputedStyle(element).fontSize)),
   ).toBeLessThanOrEqual(36);
   await expect(page.locator('.atlas-map')).toHaveCount(0);
-  await expect(page.locator('.catalog-part-nav__link')).toHaveCount(2);
-  await expect(page.locator('.catalog-part-nav__link')).toHaveText([
-    /01\s+Движение и пространство/,
-    /02\s+Шаблоны атак/,
-  ]);
-  await expect(page.locator('.catalog-part')).toHaveCount(2);
-  await expect(page.locator('.catalog-lesson')).toHaveCount(5);
-  await expect(page.locator('.catalog-lesson__number')).toHaveText([
-    '1.1',
-    '2.1',
-    '2.2',
-    '2.3',
-    '2.4',
-  ]);
+  await expect(page.locator('.catalog-part-nav__link')).toHaveCount(14);
+  await expect(page.locator('.catalog-part-nav__link').first()).toContainText('Тело и ближний бой');
+  await expect(page.locator('.catalog-part-nav__link').last()).toContainText(
+    'Кооперативная координация',
+  );
+  await expect(page.locator('.catalog-part')).toHaveCount(14);
+  await expect(page.locator('.catalog-lesson')).toHaveCount(124);
+  await expect(page.locator('.catalog-lesson--wip')).toHaveCount(119);
+  await expect(page.locator('.catalog-lesson:not(.catalog-lesson--wip)')).toHaveCount(5);
+  await expect(page.locator('.catalog-lesson__number').first()).toHaveText('1.1');
+  await expect(page.locator('.catalog-lesson__number').last()).toHaveText('14.11');
   await expect(page.locator('.catalog-lesson__preview [data-character-art="kern"]')).toHaveCount(5);
   await expect(page.locator('.catalog-lesson__preview [data-character-art="tavi"]')).toHaveCount(5);
   await expect(page.locator('.catalog-lesson__preview [data-pattern-preview]')).toHaveCount(4);
+  const draftPage = await request.get('ru/mechanics/teleport/');
+  expect(draftPage.status()).toBe(200);
+  expect(await draftPage.text()).toContain('class="wip-badge"');
+  await page.goto('ru/mechanics/teleport/');
+  await expect(page.locator('.wip-mechanic-title h1')).toHaveText('Телепортация');
+  await expect(page.locator('.wip-mechanic-title .wip-badge')).toHaveText('WIP');
+  await expect(page.locator('.wip-builder-link')).toHaveAttribute(
+    'href',
+    '/gamedev-boss-fights/ru/builder/',
+  );
   await page.setViewportSize({ width: 375, height: 812 });
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
 });

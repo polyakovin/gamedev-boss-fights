@@ -4,7 +4,7 @@ An open, interactive encyclopedia of boss mechanics for game designers. Each les
 
 [Explore the atlas](https://polyakovin.github.io/gamedev-boss-fights/) · [Build a boss sketch](https://polyakovin.github.io/gamedev-boss-fights/en/builder/) · [Read in Russian](README.ru.md) · [Contribute](CONTRIBUTING.md)
 
-The atlas currently has five lessons: **Charge**, **Arc sweep**, **Ground slam**, **Summon**, and **Gap volley**. Each page combines a looping interactive diagram, an implementation checklist, general game-design lenses, focused learning sources, and timestamped 2D and 3D boss references. The **Boss builder** lets you name a boss, add an optional description, combine any published mechanics, and download the resulting sketch as JSON. Its draft stays in your browser.
+The atlas indexes all **124 mechanics** from the research audit. Five are complete lessons—**Charge**, **Arc sweep**, **Ground slam**, **Summon**, and **Gap volley**—with interactive diagrams, implementation checklists, design lenses, sources, and boss references. The other 119 have lightweight public pages marked **WIP** while their detailed material is developed. The **Boss builder** can combine any of the 124 mechanics and download the resulting sketch as JSON; its draft stays in your browser.
 
 Available in English, Russian, Simplified Chinese, Hindi, Bengali, Spanish, Arabic, and Japanese. Facts, design concepts, examples, and translations all welcome independent review. [Open the Russian catalog](https://polyakovin.github.io/gamedev-boss-fights/ru/).
 
@@ -51,6 +51,7 @@ This is a static Node generator with plain HTML, CSS, browser JavaScript modules
 | -------------------------------------- | ------------------------------------------------------------------ |
 | `content/mechanics/<id>/meta.json`     | Publication state, content version, animation ID, and sources      |
 | `content/mechanics/<id>/<locale>.json` | A complete lesson in one language                                  |
+| `content/mechanics-index.json`         | Localized 124-mechanic inventory and lightweight WIP copy          |
 | `content/lenses/<id>/meta.json`        | Lens publication state, version, relationships, and sources        |
 | `content/lenses/<id>/<locale>.json`    | A lens title and explanation in one language                       |
 | `locales/*.json`                       | Shared interface translations and language registry                |

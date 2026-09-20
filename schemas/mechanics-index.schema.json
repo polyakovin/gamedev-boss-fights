@@ -1,0 +1,46 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Public mechanic index",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["version", "source", "mechanics"],
+  "properties": {
+    "version": { "const": 1 },
+    "source": { "const": "docs/research/boss-mechanics-audit-ru.md" },
+    "mechanics": {
+      "type": "array",
+      "minItems": 124,
+      "maxItems": 124,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "number", "translations"],
+        "properties": {
+          "id": { "type": "string", "pattern": "^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$" },
+          "number": { "type": "integer", "minimum": 1, "maximum": 124 },
+          "translations": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["en", "ru"],
+            "properties": {
+              "en": { "$ref": "#/definitions/outline" },
+              "ru": { "$ref": "#/definitions/outline" }
+            }
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "outline": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["title", "category", "summary"],
+      "properties": {
+        "title": { "type": "string", "minLength": 1 },
+        "category": { "type": "string", "minLength": 1 },
+        "summary": { "type": "string", "minLength": 1 }
+      }
+    }
+  }
+}

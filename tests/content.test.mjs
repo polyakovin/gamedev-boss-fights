@@ -16,6 +16,26 @@ test('all published mechanics have complete content in eight languages', async (
     ),
   );
 });
+test('the public index contains 124 unique builder-ready mechanics', async () => {
+  const indexed = source.mechanicsIndex.mechanics;
+  assert.equal(indexed.length, 124);
+  assert.equal(new Set(indexed.map(({ id }) => id)).size, 124);
+  assert.equal(new Set(indexed.map(({ number }) => number)).size, 124);
+  assert.deepEqual(
+    indexed.map(({ number }) => number),
+    Array.from({ length: 124 }, (_, index) => index + 1),
+  );
+  const indexedIds = new Set(indexed.map(({ id }) => id));
+  assert.ok(source.mechanics.every(({ meta }) => indexedIds.has(meta.id)));
+  assert.equal(
+    indexed.filter(({ id }) => !source.mechanics.some(({ meta }) => meta.id === id)).length,
+    119,
+  );
+
+  const duplicate = structuredClone(source);
+  duplicate.mechanicsIndex.mechanics[1].id = duplicate.mechanicsIndex.mechanics[0].id;
+  await assert.rejects(validateContent(duplicate), /duplicate mechanic id/);
+});
 test('a missing published translation is rejected instead of silently showing English', async () => {
   const data = structuredClone(source);
   delete data.mechanics[0].translations.bn;

@@ -10,11 +10,13 @@ From the repository root:
 npm run new:mechanic -- your-mechanic
 ```
 
-Use a lowercase slug with hyphens. The command creates `content/mechanics/your-mechanic/meta.json` and an English lesson with `TODO:` text. Keep `published: false` while the mechanic is incomplete. Drafts are validated but are not rendered, listed in the catalog, or included as published lessons in the sitemap.
+Use the stable lowercase ID from `content/mechanics-index.json`. The command creates `content/mechanics/your-mechanic/meta.json` and an English lesson with `TODO:` text. Keep `published: false` while the mechanic is incomplete. Its compact index entry remains publicly available as a WIP page while the full lesson is developed.
 
 A draft PR can contain just the proposed explanation and open questions. It does not need all eight translations or a finished animation. Fill the required JSON fields and keep any unfinished text clearly marked. Do not set `published: true` merely to make an incomplete lesson appear on the site.
 
-Every published mechanic is also offered in the localized boss builder. The builder uses the mechanic folder name as its stable ID and reuses the lesson title, category, catalog summary, URL, and registered thumbnail. Keep the ID stable after publication, and make sure those compact fields still describe the mechanic clearly when read outside the full lesson. Draft mechanics never appear in the builder.
+All 124 indexed mechanics are available in the localized boss builder. Complete lessons reuse their localized title and summary plus their registered thumbnail; WIP mechanics use the compact English or Russian index copy and a neutral placeholder. The index ID is the stable builder and export ID and must match the lesson folder when the outline becomes a full lesson.
+
+`content/mechanics-index.json` is generated from `docs/research/boss-mechanics-audit-ru.md` with `node scripts/sync-mechanics-index.mjs`. It intentionally contains only an ID, order, category, title, and short summary in English and Russian. Update the audit and regeneration script together instead of hand-editing generated entries.
 
 ## Write the lesson
 
