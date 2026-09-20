@@ -168,6 +168,8 @@ test('the diagram reuses shared art and exposes one current phase above the slid
   assert.ok(markup.includes(CHARGE_ART.monster));
   assert.ok(thumbnail.includes(CHARGE_ART.tank));
   assert.ok(thumbnail.includes(CHARGE_ART.monster));
+  assert.doesNotMatch(CHARGE_ART.tank, /<ellipse[^>]*opacity=/);
+  assert.doesNotMatch(CHARGE_ART.monster, /<ellipse[^>]*opacity=/);
   assert.match(thumbnail, /data-charge-preview-boss/);
   assert.match(thumbnail, /data-charge-preview-player/);
   assert.doesNotMatch(markup, /<button|data-charge-play(?:\s|=|>)|data-charge-restart/);
