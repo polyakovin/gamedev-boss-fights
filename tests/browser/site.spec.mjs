@@ -42,6 +42,11 @@ for (const locale of registry) {
     ).toContain('Manrope');
     expect(
       await page
+        .locator('.lesson-hero h1')
+        .evaluate((element) => Number.parseFloat(getComputedStyle(element).fontSize)),
+    ).toBeLessThanOrEqual(64);
+    expect(
+      await page
         .locator('.eyebrow')
         .first()
         .evaluate((element) => getComputedStyle(element).fontFamily),
@@ -158,6 +163,11 @@ for (const locale of registry) {
     expect(links.every((l) => l.endsWith('/mechanics/charge/'))).toBe(true);
     await page.keyboard.press('Escape');
     await page.setViewportSize({ width: 375, height: 812 });
+    expect(
+      await page
+        .locator('.lesson-hero h1')
+        .evaluate((element) => Number.parseFloat(getComputedStyle(element).fontSize)),
+    ).toBeLessThanOrEqual(42);
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(
       true,
     );
@@ -349,6 +359,11 @@ test('boss builder persists a local draft and downloads portable JSON', async ({
     'true',
   );
   await expect(page.locator('.boss-builder-hero h1')).toHaveText('Конструктор босса');
+  expect(
+    await page
+      .locator('.boss-builder-hero h1')
+      .evaluate((element) => Number.parseFloat(getComputedStyle(element).fontSize)),
+  ).toBeLessThanOrEqual(60);
   await expect(page.locator('.boss-builder-storage')).toHaveText(
     'Черновик хранится только в этом браузере.',
   );
@@ -437,6 +452,11 @@ test('lens chips show explanations and open localized lens pages', async ({ page
   await chips.first().click();
   await expect(page).toHaveURL(/\/ru\/lenses\/telegraphing\/$/);
   await expect(page.locator('.lens-page__hero h1')).toHaveText('Телеграфирование');
+  expect(
+    await page
+      .locator('.lens-page__hero h1')
+      .evaluate((element) => Number.parseFloat(getComputedStyle(element).fontSize)),
+  ).toBeLessThanOrEqual(52);
   await expect(page.locator('.lens-page__hero p')).toHaveText(
     'Игра сообщает о предстоящем действии, смене состояния или правила визуальным, звуковым или тактильным сигналом. Сигнал, тайминг и результат должны совпадать.',
   );
@@ -544,6 +564,11 @@ test('theme follows the system and a saved choice persists across pages', async 
 });
 test('catalog and language gateway point to real pages', async ({ page, request }) => {
   await page.goto('./');
+  expect(
+    await page
+      .locator('.language-home h1')
+      .evaluate((element) => Number.parseFloat(getComputedStyle(element).fontSize)),
+  ).toBeLessThanOrEqual(72);
   await expect(page.locator('.language-choices a')).toHaveCount(8);
   await expect(page.locator('.language-choice .language-flag')).toHaveText(
     registry.map((locale) => locale.flag),
@@ -558,6 +583,11 @@ test('catalog and language gateway point to real pages', async ({ page, request 
   }
   await page.goto('ru/');
   await expect(page.locator('.catalog-hero h1')).toHaveText('Как устроены бои с боссами');
+  expect(
+    await page
+      .locator('.catalog-hero h1')
+      .evaluate((element) => Number.parseFloat(getComputedStyle(element).fontSize)),
+  ).toBeLessThanOrEqual(36);
   await expect(page.locator('.atlas-map__link')).toHaveCount(6);
   await expect(page.locator('.atlas-map__builder')).toHaveAttribute(
     'href',
