@@ -438,7 +438,27 @@ function renderLensCards(localeCode, t) {
     })
     .join('');
 }
-function renderAbout(t) {
+function renderAbout(locale, t) {
+  const story = t.aboutStory;
+  const atlasBody = story.atlasBody.replace('{count}', String(mechanicsIndex.mechanics.length));
+  const communityBody = story.communityBody.replace('{localeCount}', String(locales.length));
+  const bossBriefExample = JSON.stringify(
+    {
+      name: 'Gatekeeper',
+      phases: [
+        {
+          goal: 'teach-sideways-escape',
+          mechanics: ['charge', 'ground-slam'],
+        },
+        {
+          goal: 'combine-space-and-timing',
+          mechanics: ['arc-sweep', 'gap-volley'],
+        },
+      ],
+    },
+    null,
+    2,
+  );
   const principles = [
     [t.aboutResearchTitle, t.aboutResearchBody],
     [t.aboutModelsTitle, t.aboutModelsBody],
@@ -454,7 +474,66 @@ function renderAbout(t) {
       </header>
       <section class="about-motivation" aria-labelledby="about-motivation-title">
         <h2 id="about-motivation-title">${e(t.aboutMotivationTitle)}</h2>
-        <p>${e(t.aboutMotivationBody)}</p>
+        <div class="about-story__copy">
+          <p>${e(t.aboutMotivationBody)}</p>
+          <p>${e(atlasBody)}</p>
+          <p>${e(communityBody)}</p>
+          <div class="about-story__actions">
+            <a href="${REPOSITORY}/blob/main/CONTRIBUTING.md"
+              >${e(t.contribute)}${icon('external-link', { className: 'icon--external' })}</a
+            >
+            <a href="${REPOSITORY}/issues/new?template=content.yml"
+              >${e(story.feedbackLabel)}${icon('external-link', { className: 'icon--external' })}</a
+            >
+          </div>
+        </div>
+      </section>
+      <section class="about-prototype" aria-labelledby="about-prototype-title">
+        <header>
+          <span class="eyebrow">${e(t.builder)}</span>
+          <h2 id="about-prototype-title">${e(story.prototypeTitle)}</h2>
+          <p>${e(story.prototypeIntro)}</p>
+        </header>
+        <div class="about-prototype__comparison">
+          <article class="about-prototype__before">
+            <span class="eyebrow">${e(story.beforeLabel)}</span>
+            <blockquote>${e(story.beforeText)}</blockquote>
+          </article>
+          <article class="about-prototype__after">
+            <span class="eyebrow">${e(story.afterLabel)}</span>
+            <pre><code>${e(bossBriefExample)}</code></pre>
+          </article>
+        </div>
+        <footer>
+          <p>${e(story.prototypeNote)}</p>
+          <a href="${link(`${locale.code}/builder/`)}"
+            >${e(t.builder)}${icon('arrow-right', { className: 'icon--directional' })}</a
+          >
+        </footer>
+      </section>
+      <section class="about-resources" aria-labelledby="about-resources-title">
+        <div>
+          <span class="eyebrow">${e(t.sources)}</span>
+          <h2 id="about-resources-title">${e(story.alternativesTitle)}</h2>
+          <p>${e(story.alternativesBody)}</p>
+        </div>
+        <nav aria-label="${e(story.alternativesTitle)}">
+          <a href="https://gamemechanics.org/" target="_blank" rel="noopener noreferrer"
+            >Game Mechanics${icon('external-link', { className: 'icon--external' })}</a
+          >
+          <a href="https://steammaho.com/mechanics" target="_blank" rel="noopener noreferrer"
+            >SteamMaho${icon('external-link', { className: 'icon--external' })}</a
+          >
+          <a
+            href="https://www.jenova.ai/en/resources/ai-boss-fight-generator"
+            target="_blank"
+            rel="noopener noreferrer"
+            >Jenova AI Boss Fight
+            Generator${icon('external-link', {
+              className: 'icon--external',
+            })}</a
+          >
+        </nav>
       </section>
       <section class="about-approach" aria-labelledby="about-approach-title">
         <header>
@@ -504,7 +583,7 @@ for (const locale of locales) {
   const popularUi = popularMechanics.ui[locale.code] ?? popularMechanics.ui.en;
   await write(
     `${locale.code}/about/`,
-    shell(locale, t.aboutTitle, t.aboutDescription, renderAbout(t), {
+    shell(locale, t.aboutTitle, t.aboutDescription, renderAbout(locale, t), {
       route: 'about/',
       pageClass: 'about-page-body',
     }),

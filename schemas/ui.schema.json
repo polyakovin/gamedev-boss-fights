@@ -26,6 +26,7 @@
     "aboutOpenBody",
     "aboutContactTitle",
     "aboutContactBody",
+    "aboutStory",
     "skip",
     "catalog",
     "contribute",
@@ -194,6 +195,36 @@
     "aboutContactBody": {
       "type": "string",
       "minLength": 1
+    },
+    "aboutStory": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "atlasBody",
+        "communityBody",
+        "prototypeTitle",
+        "prototypeIntro",
+        "beforeLabel",
+        "beforeText",
+        "afterLabel",
+        "prototypeNote",
+        "alternativesTitle",
+        "alternativesBody",
+        "feedbackLabel"
+      ],
+      "properties": {
+        "atlasBody": { "type": "string", "minLength": 1 },
+        "communityBody": { "type": "string", "minLength": 1 },
+        "prototypeTitle": { "type": "string", "minLength": 1 },
+        "prototypeIntro": { "type": "string", "minLength": 1 },
+        "beforeLabel": { "type": "string", "minLength": 1 },
+        "beforeText": { "type": "string", "minLength": 1 },
+        "afterLabel": { "type": "string", "minLength": 1 },
+        "prototypeNote": { "type": "string", "minLength": 1 },
+        "alternativesTitle": { "type": "string", "minLength": 1 },
+        "alternativesBody": { "type": "string", "minLength": 1 },
+        "feedbackLabel": { "type": "string", "minLength": 1 }
+      }
     },
     "skip": {
       "type": "string",

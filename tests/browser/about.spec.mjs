@@ -21,6 +21,37 @@ for (const locale of registry) {
     await expect(page.locator('html')).toHaveAttribute('lang', locale.code);
     await expect(page.locator('html')).toHaveAttribute('dir', locale.dir);
     await expect(page.locator('h1')).toHaveText(copy.aboutTitle);
+    const motivation = page.locator('.about-motivation');
+    await expect(motivation).toContainText(copy.aboutMotivationBody);
+    await expect(motivation).toContainText(copy.aboutStory.atlasBody.replace('{count}', '124'));
+    await expect(motivation).toContainText(
+      copy.aboutStory.communityBody.replace('{localeCount}', String(registry.length)),
+    );
+    await expect(
+      motivation.getByRole('link', { name: copy.aboutStory.feedbackLabel }),
+    ).toHaveAttribute(
+      'href',
+      'https://github.com/polyakovin/gamedev-boss-fights/issues/new?template=content.yml',
+    );
+
+    const prototype = page.locator('.about-prototype');
+    await expect(prototype.getByRole('heading')).toHaveText(copy.aboutStory.prototypeTitle);
+    await expect(prototype.locator('blockquote')).toHaveText(copy.aboutStory.beforeText);
+    await expect(prototype.locator('code')).toContainText('"charge"');
+    await expect(prototype.locator('code')).toContainText('"gap-volley"');
+    await expect(prototype.getByRole('link', { name: copy.builder })).toHaveAttribute(
+      'href',
+      `/gamedev-boss-fights/${locale.code}/builder/`,
+    );
+
+    const resourceLinks = page.locator('.about-resources nav a');
+    await expect(resourceLinks).toHaveCount(3);
+    await expect(resourceLinks.nth(0)).toHaveAttribute('href', 'https://gamemechanics.org/');
+    await expect(resourceLinks.nth(1)).toHaveAttribute('href', 'https://steammaho.com/mechanics');
+    await expect(resourceLinks.nth(2)).toHaveAttribute(
+      'href',
+      'https://www.jenova.ai/en/resources/ai-boss-fight-generator',
+    );
     await expect(page.locator('meta[name="author"]')).toHaveAttribute('content', 'Igor Polyakov');
     await expect(page.locator('meta[property="og:site_name"]')).toHaveAttribute(
       'content',
