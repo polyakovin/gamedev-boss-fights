@@ -230,6 +230,10 @@ test('the loop autoplays, alternates sides, shows phase tooltips, and keeps only
   await expect(lockTooltip).toHaveText(
     'Направление фиксируется, и игрок выходит из полосы обычным боковым движением.',
   );
+  const lockLabelBox = await page.locator('.charge-demo__phase-label').nth(1).boundingBox();
+  const lockTooltipBox = await lockTooltip.boundingBox();
+  expect(lockTooltipBox.y + lockTooltipBox.height).toBeLessThan(lockLabelBox.y);
+  expect(lockTooltipBox.y).toBeGreaterThanOrEqual(diagramBox.y);
   expect(Math.abs(simulationBox.y - heroBox.y)).toBeLessThan(2);
   expect(Math.max(heroBox.y + heroBox.height, simulationBox.y + simulationBox.height)).toBeLessThan(
     1000,
