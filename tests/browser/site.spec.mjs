@@ -282,6 +282,7 @@ test('the loop autoplays, alternates sides, shows the current phase, and keeps o
   await expect(page.locator('.charge-demo button')).toHaveCount(0);
   await expect(page.locator('.charge-demo input[type="range"]')).toHaveCount(1);
   await expect(page.locator('.charge-demo output, [data-charge-time]')).toHaveCount(0);
+  await expect(page.locator('.charge-demo [stroke="var(--diagram-corners)"]')).toHaveCount(0);
   await timeline.evaluate(
     (element, value) => {
       element.dispatchEvent(new PointerEvent('pointerdown', { bubbles: true }));
@@ -389,6 +390,7 @@ for (const [id, title, activePhase] of [
     );
     await expect(page.locator('.pattern-demo button')).toHaveCount(0);
     await expect(page.locator('[data-pattern-timeline]')).toHaveCount(1);
+    await expect(page.locator('.pattern-demo [stroke="var(--diagram-corners)"]')).toHaveCount(0);
     expect(
       await page.locator('.pattern-demo__scene-timeline').evaluate((element) => {
         const style = getComputedStyle(element);
