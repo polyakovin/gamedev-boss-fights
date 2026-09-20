@@ -137,7 +137,7 @@ test('localized markup escapes HTML and script closers while preserving JSON con
   assert.ok(markup.includes('direction="ltr"'));
 });
 
-test('the diagram reuses shared art and exposes only a slider plus phase tooltips', () => {
+test('the diagram reuses shared art and exposes one current phase above the slider', () => {
   const demo = {
     title: 'Charge',
     timeline: 'Timeline',
@@ -162,7 +162,9 @@ test('the diagram reuses shared art and exposes only a slider plus phase tooltip
   assert.match(thumbnail, /data-charge-preview-player/);
   assert.doesNotMatch(markup, /<button|data-charge-play(?:\s|=|>)|data-charge-restart/);
   assert.doesNotMatch(markup, /<output(?:\s|>)|data-charge-time(?:\s|=|>)/);
-  assert.equal(markup.match(/class="charge-demo__phase-tooltip"/g)?.length, 3);
+  assert.equal(markup.match(/data-charge-current-phase/g)?.length, 1);
+  assert.equal(markup.match(/data-charge-phase-name/g)?.length, 1);
+  assert.equal(markup.match(/class="charge-demo__phase-tooltip"/g)?.length, 1);
   assert.equal(markup.match(/type="range"/g)?.length, 1);
   assert.equal(markup.match(/data-charge-dodge/g)?.length, 1);
 });

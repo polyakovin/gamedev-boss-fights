@@ -38,9 +38,9 @@
 .charge-demo__scene-timeline {
   position: absolute;
   z-index: 2;
-  inset: 4.25rem 0.9rem auto;
+  inset: auto 0.9rem 1rem;
   overflow: visible;
-  padding: 0.25rem 0.4rem 0.35rem;
+  padding: 0.4rem 0.55rem 0.45rem;
   background: color-mix(in srgb, var(--surface) 88%, transparent);
   border: 1px solid var(--charge-border);
   border-radius: 10px;
@@ -72,33 +72,23 @@
   outline: 3px solid var(--accent);
   outline-offset: 3px;
 }
-.charge-demo__phase-labels {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 0.25rem;
-}
 .charge-demo__phase-label {
   position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
   min-width: 0;
-  min-height: 32px;
-  padding: 0.35rem 0.2rem;
-  color: var(--muted);
+  min-height: 24px;
+  padding: 0.15rem 0.2rem 0.25rem;
+  color: var(--charge-accent);
   background: transparent;
-  border: 1px solid transparent;
-  border-radius: 4px;
-  font-size: 0.62rem;
+  border: 0;
+  border-radius: 3px;
+  font-size: 0.68rem;
   line-height: 1.15;
-  font-weight: 650;
+  font-weight: 700;
   text-align: center;
   cursor: help;
-}
-.charge-demo__phase-label[aria-current='step'] {
-  color: var(--charge-accent);
-  border-color: color-mix(in srgb, var(--accent) 35%, transparent);
-  background: color-mix(in srgb, var(--accent-soft) 76%, transparent);
 }
 .charge-demo__phase-label:hover,
 .charge-demo__phase-label:focus-visible {
@@ -133,14 +123,6 @@
 [dir='rtl'] .charge-demo__phase-tooltip {
   transform: translate(50%, 4px);
 }
-.charge-demo__phase-label:first-child .charge-demo__phase-tooltip {
-  inset-inline-start: 0;
-  transform: translateY(4px);
-}
-.charge-demo__phase-label:last-child .charge-demo__phase-tooltip {
-  inset-inline: auto 0;
-  transform: translateY(4px);
-}
 .charge-demo__phase-label:hover .charge-demo__phase-tooltip,
 .charge-demo__phase-label:focus-visible .charge-demo__phase-tooltip {
   opacity: 1;
@@ -150,12 +132,6 @@
 [dir='rtl'] .charge-demo__phase-label:hover .charge-demo__phase-tooltip,
 [dir='rtl'] .charge-demo__phase-label:focus-visible .charge-demo__phase-tooltip {
   transform: translate(50%, 0);
-}
-.charge-demo__phase-label:first-child:hover .charge-demo__phase-tooltip,
-.charge-demo__phase-label:first-child:focus-visible .charge-demo__phase-tooltip,
-.charge-demo__phase-label:last-child:hover .charge-demo__phase-tooltip,
-.charge-demo__phase-label:last-child:focus-visible .charge-demo__phase-tooltip {
-  transform: translateY(0);
 }
 .charge-demo__timeline {
   display: block;
@@ -223,7 +199,7 @@
     padding-inline: 0;
   }
   .charge-demo__scene-timeline {
-    inset: 4rem 0.65rem auto;
+    inset: auto 0.65rem 0.75rem;
   }
   .charge-demo__entity-label {
     font-size: 19px;

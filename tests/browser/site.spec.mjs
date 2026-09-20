@@ -65,8 +65,9 @@ for (const locale of registry) {
         ),
     ).toBe(locale.dir === 'rtl' ? 'to left' : 'to right');
     await expect(page.locator('[data-charge-motion-note]')).toBeVisible();
-    await expect(page.locator('.charge-demo__phase-label')).toHaveCount(3);
-    await expect(page.locator('.charge-demo__phase-tooltip')).toHaveCount(3);
+    await expect(page.locator('.charge-demo__phase-label')).toHaveCount(1);
+    await expect(page.locator('[data-charge-phase-name]')).toHaveCount(1);
+    await expect(page.locator('.charge-demo__phase-tooltip')).toHaveCount(1);
     await expect(page.locator('.charge-demo button')).toHaveCount(0);
     await expect(page.locator('.charge-demo input')).toHaveCount(1);
     await expect(page.locator('.charge-demo input')).toHaveAttribute('type', 'range');
@@ -202,7 +203,7 @@ for (const locale of registry) {
     expect(errors).toEqual([]);
   });
 }
-test('the loop autoplays, alternates sides, shows phase tooltips, and keeps only the slider', async ({
+test('the loop autoplays, alternates sides, shows the current phase, and keeps only the slider', async ({
   page,
 }) => {
   await page.emulateMedia({ reducedMotion: 'no-preference' });
@@ -239,6 +240,8 @@ test('the loop autoplays, alternates sides, shows phase tooltips, and keeps only
   const simulationBox = await page.locator('.simulation-section').boundingBox();
   const diagramBox = await page.locator('[data-charge-svg]').boundingBox();
   const sceneTimelineBox = await page.locator('.charge-demo__scene-timeline').boundingBox();
+  const demo = page.locator('[data-charge-demo]');
+  const timeline = page.locator('[data-charge-timeline]');
   expect(simulationBox.x).toBeGreaterThan(heroBox.x + heroBox.width);
   expect(categoryBox.x).toBeGreaterThan(titleBox.x + titleBox.width);
   expect(
@@ -246,32 +249,42 @@ test('the loop autoplays, alternates sides, shows phase tooltips, and keeps only
   ).toBeLessThan(16);
   expect(simulationBox.width).toBeLessThanOrEqual(400);
   expect(diagramBox.height).toBeGreaterThan(diagramBox.width);
-  expect(sceneTimelineBox.y).toBeGreaterThanOrEqual(diagramBox.y);
+  expect(sceneTimelineBox.y).toBeGreaterThan(diagramBox.y + diagramBox.height * 0.75);
   expect(sceneTimelineBox.y + sceneTimelineBox.height).toBeLessThan(
     diagramBox.y + diagramBox.height,
   );
   expect(Math.abs(simulationBox.height - (1000 - simulationBox.y - 24))).toBeLessThan(2);
   expect(diagramBox.height).toBeGreaterThan(simulationBox.height - 10);
-  await expect(page.locator('.charge-demo__phase-label')).toHaveText([
-    /Прицеливание/,
-    /Фиксация и уклонение/,
-    /Таран/,
-  ]);
+  await expect(page.locator('[data-charge-phase-name]')).toHaveText('Прицеливание');
   await expect(page.locator('.charge-demo__description')).toHaveCount(0);
   await expect(page.locator('.charge-demo button')).toHaveCount(0);
   await expect(page.locator('.charge-demo input[type="range"]')).toHaveCount(1);
   await expect(page.locator('.charge-demo output, [data-charge-time]')).toHaveCount(0);
-  const lockTooltip = page.locator('.charge-demo__phase-label').nth(1).locator('[role="tooltip"]');
+  await timeline.evaluate(
+    (element, value) => {
+      element.dispatchEvent(new PointerEvent('pointerdown', { bubbles: true }));
+      element.value = String(value);
+      element.dispatchEvent(new Event('input', { bubbles: true }));
+    },
+    (PHASE_ENDS[0] + 0.1) * 1000,
+  );
+  await expect(demo).toHaveAttribute('data-charge-phase', '1');
+  await expect(page.locator('[data-charge-phase-name]')).toHaveText('Фиксация и уклонение');
+  const currentPhase = page.locator('.charge-demo__phase-label');
+  const lockTooltip = currentPhase.locator('[role="tooltip"]');
   await expect(lockTooltip).toBeHidden();
-  await page.locator('.charge-demo__phase-label').nth(1).hover();
+  await currentPhase.hover();
   await expect(lockTooltip).toBeVisible();
   await expect(lockTooltip).toHaveText(
     'Направление фиксируется, и игрок выходит из полосы обычным боковым движением.',
   );
-  const lockLabelBox = await page.locator('.charge-demo__phase-label').nth(1).boundingBox();
+  const lockLabelBox = await currentPhase.boundingBox();
   const lockTooltipBox = await lockTooltip.boundingBox();
   expect(lockTooltipBox.y + lockTooltipBox.height).toBeLessThan(lockLabelBox.y);
   expect(lockTooltipBox.y).toBeGreaterThanOrEqual(diagramBox.y);
+  await timeline.evaluate((element) => {
+    element.dispatchEvent(new PointerEvent('pointerup', { bubbles: true }));
+  });
   expect(Math.abs(simulationBox.y - heroBox.y)).toBeLessThan(2);
   expect(Math.max(heroBox.y + heroBox.height, simulationBox.y + simulationBox.height)).toBeLessThan(
     1000,
@@ -280,12 +293,10 @@ test('the loop autoplays, alternates sides, shows phase tooltips, and keeps only
   await expect(page.locator('.checklist-item').first().locator('p')).toHaveText(
     'Выберите точный момент. Обозначьте его позой, звуком или эффектом.',
   );
-  const demo = page.locator('[data-charge-demo]');
   await expect(demo).toHaveAttribute('data-charge-playing', 'true');
   await expect
     .poll(async () => Number(await page.locator('[data-charge-timeline]').inputValue()))
     .toBeGreaterThan(200);
-  const timeline = page.locator('[data-charge-timeline]');
   await timeline.evaluate((element) => {
     element.value = '2400';
     element.dispatchEvent(new Event('input', { bubbles: true }));
@@ -293,6 +304,7 @@ test('the loop autoplays, alternates sides, shows phase tooltips, and keeps only
   await expect(demo).toHaveAttribute('data-charge-attack', '0');
   await expect(demo).toHaveAttribute('data-charge-phase', '2');
   await expect(demo).toHaveAttribute('data-charge-outcome', 'safe');
+  await expect(page.locator('[data-charge-phase-name]')).toHaveText('Таран');
   await timeline.evaluate(
     (element, value) => {
       element.value = String(value);

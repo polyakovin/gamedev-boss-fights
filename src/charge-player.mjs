@@ -9,7 +9,9 @@ export function initializeCharge(widget) {
   const text = JSON.parse(configElement.textContent);
   const find = (selector) => widget.querySelector(selector);
   const timeline = find('[data-charge-timeline]');
-  const phaseLabels = [...widget.querySelectorAll('[data-charge-phase-label]')];
+  const currentPhase = find('[data-charge-current-phase]');
+  const phaseName = find('[data-charge-phase-name]');
+  const phaseTooltip = find('[data-charge-phase-tooltip]');
   const boss = find('[data-charge-boss]');
   const player = find('[data-charge-player]');
   const lane = find('[data-charge-lane]');
@@ -61,11 +63,9 @@ export function initializeCharge(widget) {
     bossLabel.setAttribute('y', frame.boss.y + frame.bossLabelOffset.y);
     playerLabel.setAttribute('x', frame.player.x);
     playerLabel.setAttribute('y', frame.player.y - 47);
-    for (const label of phaseLabels) {
-      if (Number(label.dataset.chargePhaseLabel) === frame.phase)
-        label.setAttribute('aria-current', 'step');
-      else label.removeAttribute('aria-current');
-    }
+    currentPhase.dataset.chargePhase = String(frame.phase);
+    phaseName.textContent = text.phaseNames[frame.phase];
+    phaseTooltip.textContent = text.phaseDescriptions[frame.phase];
     const state = `${frame.attackIndex}:${frame.phase}`;
     if (state !== announcedState) {
       status.textContent =

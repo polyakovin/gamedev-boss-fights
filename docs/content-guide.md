@@ -87,7 +87,7 @@ Use `lib/charge-view.mjs`, `src/charge-model.mjs`, `src/charge-player.mjs`, and 
 3. A small browser module handles playback, seeking, and status updates.
 4. Tests check the rule itself as well as the visible controls.
 
-Keep prose and control labels in the locale JSON. Escape text inserted into markup, and safely encode JSON embedded in HTML. Charge autoplays as a continuous two-direction loop, pauses while its page is hidden, and exposes only a timeline slider. Its phase labels are explanations with hover and keyboard-focus tooltips, not playback controls. Respect the system reduced-motion preference by disabling autoplay while keeping the slider available. Do not rely on color alone to distinguish danger and safety.
+Keep prose and control labels in the locale JSON. Escape text inserted into markup, and safely encode JSON embedded in HTML. Charge autoplays as a continuous two-direction loop, pauses while its page is hidden, and exposes only a timeline slider at the bottom of the scene. Show only the current phase directly above the slider; its explanation appears on hover or keyboard focus. Respect the system reduced-motion preference by disabling autoplay while keeping the slider available. Do not rely on color alone to distinguish danger and safety.
 
 Use logical CSS properties for surrounding UI and test Arabic `dir="rtl"`. A spatial diagram may keep a stable coordinate direction, as Charge does, while labels and controls follow the page language. Preserve accessible names, keyboard operation, visible focus, and understandable static output with JavaScript disabled.
 
