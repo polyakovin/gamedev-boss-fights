@@ -1,5 +1,6 @@
 export const PATTERN_DURATION = 6;
 export const PATTERN_PHASE_ENDS = Object.freeze([1.6, 4.25, PATTERN_DURATION]);
+export const BOSS_LABEL_OFFSET_Y = -104;
 
 const clamp = (value, min = 0, max = 1) => Math.min(max, Math.max(min, value));
 const mix = (from, to, amount) => from + (to - from) * amount;
@@ -37,6 +38,7 @@ export function patternFrame(kind, time) {
           ? { x: 170, y: 720 }
           : { x: 280, y: 760 };
   const move = phase === 0 ? prepare : phase === 1 ? 1 : 1 - recover;
+  const bossRock = phase === 0 ? -7 * pulse(prepare) : phase === 1 ? 8 * pulse(action) : 0;
   const player = {
     x: mix(playerStart.x, playerTarget.x, move),
     y: mix(playerStart.y, playerTarget.y, move),
@@ -51,8 +53,9 @@ export function patternFrame(kind, time) {
     recover,
     visibility,
     boss,
+    bossLabel: { x: boss.x, y: boss.y + bossRock + BOSS_LABEL_OFFSET_Y },
     player,
-    bossRock: phase === 0 ? -7 * pulse(prepare) : phase === 1 ? 8 * pulse(action) : 0,
+    bossRock,
     sweepRotation: mix(-72, 190, action),
     sweepOpacity: kind === 'sweep' ? visibility : 0,
     slamRadius: mix(58, 390, action),

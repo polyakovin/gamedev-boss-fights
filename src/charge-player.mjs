@@ -59,8 +59,8 @@ export function initializeCharge(widget) {
     );
     const pathOpacity = frame.phase === 1 ? 1 : frame.phase === 2 ? 0.45 : 0;
     path.setAttribute('opacity', String(pathOpacity * frame.overlayOpacity));
-    bossLabel.setAttribute('x', frame.boss.x + frame.bossLabelOffset.x);
-    bossLabel.setAttribute('y', frame.boss.y + frame.bossLabelOffset.y);
+    bossLabel.setAttribute('x', frame.bossLabel.x);
+    bossLabel.setAttribute('y', frame.bossLabel.y);
     playerLabel.setAttribute('x', frame.player.x);
     playerLabel.setAttribute('y', frame.player.y - 47);
     currentPhase.dataset.chargePhase = String(frame.phase);

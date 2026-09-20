@@ -42,8 +42,8 @@ export function initializePattern(widget) {
       `translate(${frame.boss.x} ${frame.boss.y + frame.bossRock}) rotate(${bossRotation})`,
     );
     player.setAttribute('transform', `translate(${frame.player.x} ${frame.player.y})`);
-    bossLabel.setAttribute('x', frame.boss.x);
-    bossLabel.setAttribute('y', frame.boss.y + frame.bossRock + 78);
+    bossLabel.setAttribute('x', frame.bossLabel.x);
+    bossLabel.setAttribute('y', frame.bossLabel.y);
     playerLabel.setAttribute('x', frame.player.x);
     playerLabel.setAttribute('y', frame.player.y - 48);
     sweep.setAttribute('opacity', String(frame.sweepOpacity));

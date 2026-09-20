@@ -1,6 +1,11 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { patternFrame, patternPhaseAt, PATTERN_DURATION } from '../src/pattern-model.mjs';
+import {
+  BOSS_LABEL_OFFSET_Y,
+  patternFrame,
+  patternPhaseAt,
+  PATTERN_DURATION,
+} from '../src/pattern-model.mjs';
 
 const kinds = ['sweep', 'ground-slam', 'summon', 'gap-volley'];
 
@@ -42,5 +47,16 @@ test('player and threat return smoothly before the loop repeats', () => {
     assert.ok(Math.abs(start.player.x - end.player.x) < 0.01);
     assert.ok(Math.abs(start.player.y - end.player.y) < 0.01);
     assert.ok(end.visibility < 0.01);
+  }
+});
+
+test('the boss label stays above the boss throughout every pattern', () => {
+  for (const kind of kinds) {
+    for (let time = 0; time < PATTERN_DURATION; time += 0.025) {
+      const frame = patternFrame(kind, time);
+      assert.equal(frame.bossLabel.x, frame.boss.x);
+      assert.equal(frame.bossLabel.y, frame.boss.y + frame.bossRock + BOSS_LABEL_OFFSET_Y);
+      assert.ok(frame.bossLabel.y < frame.boss.y + frame.bossRock);
+    }
   }
 });

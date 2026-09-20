@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import {
   ATTACK_DURATION,
   ATTACK_PLANS,
+  BOSS_LABEL_OFFSET_Y,
   chargeFrame,
   createChargePlan,
   DEFAULT_PLAN,
@@ -97,6 +98,15 @@ test('boss and player reposition continuously between both charge demonstrations
         beforeBoundary.boss.y - afterBoundary.boss.y,
       ) < 1,
     );
+  }
+});
+
+test('the boss label stays above the boss throughout the loop', () => {
+  for (let time = 0; time < DURATION; time += 0.025) {
+    const frame = chargeFrame(time);
+    assert.equal(frame.bossLabel.x, frame.boss.x);
+    assert.equal(frame.bossLabel.y, frame.boss.y + BOSS_LABEL_OFFSET_Y);
+    assert.ok(frame.bossLabel.y < frame.boss.y);
   }
 });
 

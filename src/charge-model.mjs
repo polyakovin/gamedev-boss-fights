@@ -5,6 +5,7 @@ export const ATTACK_DURATION = PHASE_ENDS[2] + TRANSITION_DURATION;
 export const DURATION = ATTACK_DURATION * 2;
 export const PLAYER_RADIUS = 34;
 export const LANE_HALF_WIDTH = 49;
+export const BOSS_LABEL_OFFSET_Y = -104;
 const clamp = (n, lo, hi) => Math.min(hi, Math.max(lo, n));
 const lerp = (a, b, t) => a + (b - a) * t;
 const smooth = (t) => {
@@ -159,13 +160,10 @@ export function chargeFrame(time, explicitPlan) {
   const overlayOpacity = transitioning ? 1 - transitionProgress : aimFade;
   const baseAngle = (Math.atan2(plan.heading.y, plan.heading.x) * 180) / Math.PI;
   const rotation = transitioning ? baseAngle + 180 * transitionProgress : undefined;
-  const labelSide = sequence.attackIndex === 0 ? 1 : -1;
-  const bossLabelOffset = transitioning
-    ? {
-        x: labelSide * 72 * Math.sin(Math.PI * transitionProgress),
-        y: labelSide * 72 * Math.cos(Math.PI * transitionProgress),
-      }
-    : { x: 0, y: labelSide * 72 };
+  const bossLabel = {
+    x: boss.x,
+    y: boss.y + BOSS_LABEL_OFFSET_Y,
+  };
   return {
     time: sequence.time,
     localTime,
@@ -183,6 +181,6 @@ export function chargeFrame(time, explicitPlan) {
     transitionProgress,
     overlayOpacity,
     rotation,
-    bossLabelOffset,
+    bossLabel,
   };
 }
