@@ -270,24 +270,66 @@ function exampleGroup(dimension, label, items, t) {
 }
 for (const locale of locales) {
   const t = ui[locale.code];
-  const cards = published
-    .map((m) => {
-      const c = m.translations[locale.code];
-      return /* HTML */ `<a
-        class="mechanic-card"
-        href="${link(`${locale.code}/mechanics/${m.meta.id}/`)}"
-        ><div class="card-diagram" aria-hidden="true">
-          ${animations[m.meta.animation].thumbnail(m.meta.id)}
-        </div>
-        <div class="card-copy">
-          <span class="eyebrow">${e(c.category)}</span>
-          <h3>${e(c.title)} <span aria-hidden="true">↗</span></h3>
-          <p>${e(c.summary)}</p>
-          <p class="card-learning"><strong>${e(t.learnLabel)}.</strong> ${e(c.learning)}</p>
-          <span class="text-link">${e(t.readLesson)} <span aria-hidden="true">→</span></span>
-        </div></a
-      >`;
-    })
+  const catalogParts = [];
+  const partsByCategory = new Map();
+  for (const mechanic of published) {
+    const content = mechanic.translations[locale.code];
+    let part = partsByCategory.get(content.category);
+    if (!part) {
+      part = { category: content.category, mechanics: [] };
+      partsByCategory.set(content.category, part);
+      catalogParts.push(part);
+    }
+    part.mechanics.push({ mechanic, content });
+  }
+  const catalogNavigation = catalogParts
+    .map(
+      (part, index) =>
+        /* HTML */ `<a class="catalog-part-nav__link" href="#catalog-part-${index + 1}">
+          <span class="catalog-part-nav__number">${String(index + 1).padStart(2, '0')}</span>
+          <strong>${e(part.category)}</strong>
+        </a>`,
+    )
+    .join('');
+  const catalogSections = catalogParts
+    .map(
+      (part, partIndex) =>
+        /* HTML */ `<section
+          class="catalog-part"
+          id="catalog-part-${partIndex + 1}"
+          aria-labelledby="catalog-part-${partIndex + 1}-title"
+        >
+          <header class="catalog-part__header">
+            <span class="catalog-part__number">${String(partIndex + 1).padStart(2, '0')}</span>
+            <h3 id="catalog-part-${partIndex + 1}-title">${e(part.category)}</h3>
+          </header>
+          <ol class="catalog-lessons">
+            ${part.mechanics
+              .map(
+                ({ mechanic, content }, mechanicIndex) =>
+                  /* HTML */ `<li>
+                    <a
+                      class="catalog-lesson"
+                      href="${link(`${locale.code}/mechanics/${mechanic.meta.id}/`)}"
+                    >
+                      <span class="catalog-lesson__number"
+                        >${partIndex + 1}.${mechanicIndex + 1}</span
+                      >
+                      <span class="catalog-lesson__copy">
+                        <strong>${e(content.title)}</strong>
+                        <small>${e(content.summary)}</small>
+                      </span>
+                      <span class="catalog-lesson__preview" aria-hidden="true">
+                        ${animations[mechanic.meta.animation].thumbnail(mechanic.meta.id)}
+                      </span>
+                      <span class="catalog-lesson__arrow" aria-hidden="true">→</span>
+                    </a>
+                  </li>`,
+              )
+              .join('')}
+          </ol>
+        </section>`,
+    )
     .join('');
   const body = /* HTML */ `<main id="main" class="catalog-main">
     <section class="catalog-hero">
@@ -307,12 +349,13 @@ for (const locale of locales) {
         />
       </figure>
     </section>
-    <section id="mechanics" aria-labelledby="mechanics-title">
-      <div class="section-heading">
+    <section id="mechanics" class="catalog-contents" aria-labelledby="mechanics-title">
+      <div class="catalog-contents__heading">
         <h2 id="mechanics-title">${e(t.available)}</h2>
         <span class="count">${published.length}</span>
       </div>
-      <div class="catalog-grid">${cards}</div>
+      <nav class="catalog-part-nav" aria-label="${e(t.available)}">${catalogNavigation}</nav>
+      <div class="catalog-parts">${catalogSections}</div>
     </section>
   </main>`;
   await write(

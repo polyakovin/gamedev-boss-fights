@@ -756,11 +756,23 @@ test('catalog and language gateway point to real pages', async ({ page, request 
       .evaluate((element) => Number.parseFloat(getComputedStyle(element).fontSize)),
   ).toBeLessThanOrEqual(36);
   await expect(page.locator('.atlas-map')).toHaveCount(0);
-  await expect(page.locator('.mechanic-card')).toHaveCount(5);
-  await expect(page.locator('.card-diagram [data-character-art="kern"]')).toHaveCount(5);
-  await expect(page.locator('.card-diagram [data-character-art="tavi"]')).toHaveCount(5);
-  await expect(page.locator('.card-diagram [data-pattern-preview]')).toHaveCount(4);
-  await expect(page.locator('.card-number')).toHaveCount(0);
+  await expect(page.locator('.catalog-part-nav__link')).toHaveCount(2);
+  await expect(page.locator('.catalog-part-nav__link')).toHaveText([
+    /01\s+Движение и пространство/,
+    /02\s+Шаблоны атак/,
+  ]);
+  await expect(page.locator('.catalog-part')).toHaveCount(2);
+  await expect(page.locator('.catalog-lesson')).toHaveCount(5);
+  await expect(page.locator('.catalog-lesson__number')).toHaveText([
+    '1.1',
+    '2.1',
+    '2.2',
+    '2.3',
+    '2.4',
+  ]);
+  await expect(page.locator('.catalog-lesson__preview [data-character-art="kern"]')).toHaveCount(5);
+  await expect(page.locator('.catalog-lesson__preview [data-character-art="tavi"]')).toHaveCount(5);
+  await expect(page.locator('.catalog-lesson__preview [data-pattern-preview]')).toHaveCount(4);
   await page.setViewportSize({ width: 375, height: 812 });
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
 });
@@ -783,6 +795,7 @@ test('homepages fit their hero on a laptop and reflow on mobile', async ({ page 
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(
       true,
     );
-    await expect(page.locator('.card-learning').first()).toBeVisible();
+    await expect(page.locator('.catalog-part-nav__link').first()).toBeVisible();
+    await expect(page.locator('.catalog-lesson').first()).toBeVisible();
   }
 });
