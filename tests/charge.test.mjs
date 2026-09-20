@@ -11,6 +11,7 @@ import {
   LANE_HALF_WIDTH,
   PHASE_ENDS,
   PLAYER_RADIUS,
+  TRANSITION_DURATION,
 } from '../src/charge-model.mjs';
 import { CHARGE_ART, renderCharge, renderChargeThumbnail } from '../lib/charge-view.mjs';
 
@@ -71,6 +72,32 @@ test('the loop alternates sides and every displayed phase contains motion', () =
   assert.equal(chargeFrame(DURATION).phase, 0);
   assert.equal(chargeFrame(DURATION).time, DURATION);
   assert.equal(chargeFrame(-100).time, 0);
+});
+
+test('boss and player reposition continuously between both charge demonstrations', () => {
+  for (const offset of [0, ATTACK_DURATION]) {
+    const transitionStart = chargeFrame(offset + PHASE_ENDS[2]);
+    const transitionMiddle = chargeFrame(offset + PHASE_ENDS[2] + TRANSITION_DURATION / 2);
+    const beforeBoundary = chargeFrame(offset + ATTACK_DURATION - 0.001);
+    const afterBoundary = chargeFrame((offset + ATTACK_DURATION + 0.001) % DURATION);
+
+    assert.equal(transitionStart.transitioning, true);
+    assert.equal(transitionMiddle.transitioning, true);
+    assert.notDeepEqual(transitionStart.player, transitionMiddle.player);
+    assert.notDeepEqual(transitionStart.boss, transitionMiddle.boss);
+    assert.ok(
+      Math.hypot(
+        beforeBoundary.player.x - afterBoundary.player.x,
+        beforeBoundary.player.y - afterBoundary.player.y,
+      ) < 1,
+    );
+    assert.ok(
+      Math.hypot(
+        beforeBoundary.boss.x - afterBoundary.boss.x,
+        beforeBoundary.boss.y - afterBoundary.boss.y,
+      ) < 1,
+    );
+  }
 });
 
 test('invalid charge plans cannot produce NaN geometry', () => {

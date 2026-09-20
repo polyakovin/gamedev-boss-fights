@@ -1,6 +1,7 @@
 /** The lesson's deterministic simulation, shared by the browser and Node tests. */
 export const PHASE_ENDS = Object.freeze([0.95, 1.65, 3.2]);
-export const ATTACK_DURATION = PHASE_ENDS[2];
+export const TRANSITION_DURATION = 0.8;
+export const ATTACK_DURATION = PHASE_ENDS[2] + TRANSITION_DURATION;
 export const DURATION = ATTACK_DURATION * 2;
 export const PLAYER_RADIUS = 34;
 export const LANE_HALF_WIDTH = 49;
@@ -16,7 +17,7 @@ const point = (x, y) => Object.freeze({ x, y });
 export function createChargePlan({
   origin = { x: 280, y: 155 },
   target = { x: 280, y: 350 },
-  distance = 390,
+  distance = 350,
 } = {}) {
   const dx = target.x - origin.x;
   const dy = target.y - origin.y;
@@ -92,16 +93,35 @@ export function playerPosition(localTime, plan = DEFAULT_PLAN) {
 export function chargeFrame(time, explicitPlan) {
   const sequence = sequenceAt(time);
   const plan = explicitPlan ?? ATTACK_PLANS[sequence.attackIndex];
+  const nextPlan = explicitPlan
+    ? plan
+    : ATTACK_PLANS[(sequence.attackIndex + 1) % ATTACK_PLANS.length];
   const localTime = explicitPlan
     ? sequence.time === DURATION
       ? 0
       : sequence.time % ATTACK_DURATION
     : sequence.localTime;
   const phase = localTime < PHASE_ENDS[0] ? 0 : localTime < PHASE_ENDS[1] ? 1 : 2;
-  const player = playerPosition(localTime, plan);
-  const chargeProgress = smooth((localTime - PHASE_ENDS[1]) / (ATTACK_DURATION - PHASE_ENDS[1]));
+  const transitioning = localTime >= PHASE_ENDS[2];
+  const transitionProgress = smooth((localTime - PHASE_ENDS[2]) / TRANSITION_DURATION);
+  const dodgeTarget = {
+    x: plan.target.x - plan.heading.y * 126,
+    y: plan.target.y + plan.heading.x * 126,
+  };
+  const player = transitioning
+    ? {
+        x: lerp(dodgeTarget.x, nextPlan.target.x, transitionProgress),
+        y: lerp(dodgeTarget.y, nextPlan.target.y, transitionProgress),
+      }
+    : playerPosition(localTime, plan);
+  const chargeProgress = smooth((localTime - PHASE_ENDS[1]) / (PHASE_ENDS[2] - PHASE_ENDS[1]));
   let boss;
-  if (phase === 0) {
+  if (transitioning) {
+    boss = {
+      x: lerp(plan.end.x, nextPlan.origin.x, transitionProgress),
+      y: lerp(plan.end.y, nextPlan.origin.y, transitionProgress),
+    };
+  } else if (phase === 0) {
     const preparation = 14 * Math.sin((Math.PI * localTime) / PHASE_ENDS[0]);
     boss = {
       x: plan.origin.x + plan.heading.x * preparation,
@@ -121,18 +141,31 @@ export function chargeFrame(time, explicitPlan) {
   }
   const target = phase === 0 ? player : plan.target;
   const targetLength = Math.hypot(target.x - plan.origin.x, target.y - plan.origin.y);
-  const heading =
-    phase === 0
+  const heading = transitioning
+    ? {
+        x: Math.cos(Math.atan2(plan.heading.y, plan.heading.x) + Math.PI * transitionProgress),
+        y: Math.sin(Math.atan2(plan.heading.y, plan.heading.x) + Math.PI * transitionProgress),
+      }
+    : phase === 0
       ? {
           x: (target.x - plan.origin.x) / targetLength,
           y: (target.y - plan.origin.y) / targetLength,
         }
       : plan.heading;
-  const clear = distanceToSegment(player, plan.origin, plan.end) > LANE_HALF_WIDTH + PLAYER_RADIUS;
-  const dodgeTarget = {
-    x: plan.target.x - plan.heading.y * 126,
-    y: plan.target.y + plan.heading.x * 126,
-  };
+  const clear =
+    transitioning ||
+    distanceToSegment(player, plan.origin, plan.end) > LANE_HALF_WIDTH + PLAYER_RADIUS;
+  const aimFade = smooth(localTime / 0.18);
+  const overlayOpacity = transitioning ? 1 - transitionProgress : aimFade;
+  const baseAngle = (Math.atan2(plan.heading.y, plan.heading.x) * 180) / Math.PI;
+  const rotation = transitioning ? baseAngle + 180 * transitionProgress : undefined;
+  const labelSide = sequence.attackIndex === 0 ? 1 : -1;
+  const bossLabelOffset = transitioning
+    ? {
+        x: labelSide * 72 * Math.sin(Math.PI * transitionProgress),
+        y: labelSide * 72 * Math.cos(Math.PI * transitionProgress),
+      }
+    : { x: 0, y: labelSide * 72 };
   return {
     time: sequence.time,
     localTime,
@@ -146,5 +179,10 @@ export function chargeFrame(time, explicitPlan) {
     dodgeTarget,
     clear,
     chargeProgress,
+    transitioning,
+    transitionProgress,
+    overlayOpacity,
+    rotation,
+    bossLabelOffset,
   };
 }

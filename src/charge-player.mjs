@@ -32,28 +32,33 @@ export function initializeCharge(widget) {
 
   function render() {
     const frame = chargeFrame(time);
-    const angle = (Math.atan2(frame.heading.y, frame.heading.x) * 180) / Math.PI;
+    const angle = frame.rotation ?? (Math.atan2(frame.heading.y, frame.heading.x) * 180) / Math.PI;
     widget.dataset.chargePhase = String(frame.phase);
     widget.dataset.chargeAttack = String(frame.attackIndex);
     widget.dataset.chargeOutcome = frame.clear ? 'safe' : 'pending';
+    widget.dataset.chargeTransition = String(frame.transitioning);
     boss.setAttribute('transform', `translate(${frame.boss.x} ${frame.boss.y}) rotate(${angle})`);
     player.setAttribute('transform', `translate(${frame.player.x} ${frame.player.y})`);
+    const laneAngle = frame.transitioning
+      ? (Math.atan2(frame.plan.heading.y, frame.plan.heading.x) * 180) / Math.PI
+      : angle;
     lane.setAttribute(
       'transform',
-      `translate(${frame.plan.origin.x} ${frame.plan.origin.y}) rotate(${angle})`,
+      `translate(${frame.plan.origin.x} ${frame.plan.origin.y}) rotate(${laneAngle})`,
     );
-    lane.setAttribute('opacity', frame.phase === 0 ? '.5' : '1');
+    lane.setAttribute('opacity', String((frame.phase === 0 ? 0.5 : 1) * frame.overlayOpacity));
     target.setAttribute('transform', `translate(${frame.target.x} ${frame.target.y})`);
-    target.setAttribute('opacity', frame.phase === 2 ? '.35' : '.8');
+    target.setAttribute('opacity', String((frame.phase === 2 ? 0.35 : 0.8) * frame.overlayOpacity));
     const dodgeDirection = Math.sign(frame.dodgeTarget.x - frame.plan.target.x) || 1;
     const arrowBase = frame.dodgeTarget.x - dodgeDirection * 11;
     path.setAttribute(
       'd',
       `M ${frame.plan.target.x} ${frame.plan.target.y} H ${frame.dodgeTarget.x} M ${arrowBase} ${frame.dodgeTarget.y - 8} L ${frame.dodgeTarget.x} ${frame.dodgeTarget.y} L ${arrowBase} ${frame.dodgeTarget.y + 8}`,
     );
-    path.setAttribute('opacity', frame.phase === 1 ? '1' : frame.phase === 2 ? '.45' : '0');
-    bossLabel.setAttribute('x', frame.boss.x);
-    bossLabel.setAttribute('y', frame.boss.y + (frame.attackIndex === 0 ? 72 : -72));
+    const pathOpacity = frame.phase === 1 ? 1 : frame.phase === 2 ? 0.45 : 0;
+    path.setAttribute('opacity', String(pathOpacity * frame.overlayOpacity));
+    bossLabel.setAttribute('x', frame.boss.x + frame.bossLabelOffset.x);
+    bossLabel.setAttribute('y', frame.boss.y + frame.bossLabelOffset.y);
     playerLabel.setAttribute('x', frame.player.x);
     playerLabel.setAttribute('y', frame.player.y - 47);
     for (const label of phaseLabels) {

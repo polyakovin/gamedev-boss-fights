@@ -1,5 +1,11 @@
 import { test, expect } from '@playwright/test';
 import fs from 'node:fs/promises';
+import {
+  ATTACK_DURATION,
+  DURATION,
+  PHASE_ENDS,
+  TRANSITION_DURATION,
+} from '../../src/charge-model.mjs';
 const registry = JSON.parse(
   await fs.readFile(new URL('../../locales/registry.json', import.meta.url)),
 );
@@ -242,16 +248,30 @@ test('the loop autoplays, alternates sides, shows phase tooltips, and keeps only
   await expect(demo).toHaveAttribute('data-charge-attack', '0');
   await expect(demo).toHaveAttribute('data-charge-phase', '2');
   await expect(demo).toHaveAttribute('data-charge-outcome', 'safe');
-  await timeline.evaluate((element) => {
-    element.value = '5600';
-    element.dispatchEvent(new Event('input', { bubbles: true }));
-  });
+  await timeline.evaluate(
+    (element, value) => {
+      element.value = String(value);
+      element.dispatchEvent(new Event('input', { bubbles: true }));
+    },
+    ATTACK_DURATION * 1000 + 2400,
+  );
   await expect(demo).toHaveAttribute('data-charge-attack', '1');
   await expect(demo).toHaveAttribute('data-charge-phase', '2');
-  await timeline.evaluate((element) => {
-    element.value = '6300';
-    element.dispatchEvent(new Event('input', { bubbles: true }));
-  });
+  await timeline.evaluate(
+    (element, value) => {
+      element.value = String(value);
+      element.dispatchEvent(new Event('input', { bubbles: true }));
+    },
+    (PHASE_ENDS[2] + TRANSITION_DURATION / 2) * 1000,
+  );
+  await expect(demo).toHaveAttribute('data-charge-transition', 'true');
+  await timeline.evaluate(
+    (element, value) => {
+      element.value = String(value);
+      element.dispatchEvent(new Event('input', { bubbles: true }));
+    },
+    DURATION * 1000 - 100,
+  );
   await expect.poll(async () => Number(await timeline.inputValue())).toBeLessThan(1000);
   await expect(demo).toHaveAttribute('data-charge-playing', 'true');
   await page.setViewportSize({ width: 375, height: 812 });
