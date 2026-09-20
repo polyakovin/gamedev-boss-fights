@@ -220,6 +220,7 @@ test('the loop autoplays, alternates sides, shows phase tooltips, and keeps only
   await expect(page.locator('.charge-demo__description')).toHaveCount(0);
   await expect(page.locator('.charge-demo button')).toHaveCount(0);
   await expect(page.locator('.charge-demo input[type="range"]')).toHaveCount(1);
+  await expect(page.locator('.charge-demo output, [data-charge-time]')).toHaveCount(0);
   const lockTooltip = page.locator('.charge-demo__phase-label').nth(1).locator('[role="tooltip"]');
   await expect(lockTooltip).toBeHidden();
   await page.locator('.charge-demo__phase-label').nth(1).hover();

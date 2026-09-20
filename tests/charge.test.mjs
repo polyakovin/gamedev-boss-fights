@@ -161,6 +161,7 @@ test('the diagram reuses shared art and exposes only a slider plus phase tooltip
   assert.match(thumbnail, /data-charge-preview-boss/);
   assert.match(thumbnail, /data-charge-preview-player/);
   assert.doesNotMatch(markup, /<button|data-charge-play(?:\s|=|>)|data-charge-restart/);
+  assert.doesNotMatch(markup, /<output(?:\s|>)|data-charge-time(?:\s|=|>)/);
   assert.equal(markup.match(/class="charge-demo__phase-tooltip"/g)?.length, 3);
   assert.equal(markup.match(/type="range"/g)?.length, 1);
   assert.equal(markup.match(/data-charge-dodge/g)?.length, 1);

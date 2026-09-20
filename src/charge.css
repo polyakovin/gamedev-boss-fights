@@ -158,13 +158,8 @@
   transform: translateY(0);
 }
 .charge-demo__timeline {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  align-items: center;
-  gap: 0.45rem;
+  display: block;
   min-width: 0;
-  color: var(--charge-muted);
-  font-size: 0.62rem;
 }
 .charge-demo__timeline input[type='range'] {
   appearance: none;
@@ -210,12 +205,6 @@
   background: var(--charge-accent);
   border: 2px solid var(--surface);
   border-radius: 50%;
-}
-.charge-demo__timeline output {
-  min-width: 4.8em;
-  font-variant-numeric: tabular-nums;
-  text-align: end;
-  white-space: nowrap;
 }
 .charge-demo__motion-note {
   margin: 0.5rem;

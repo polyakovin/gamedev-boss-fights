@@ -78,7 +78,6 @@ export function initializeCharge(widget) {
       'aria-valuetext',
       `${text.phaseNames[frame.phase]} · ${number.format(time)} / ${number.format(DURATION)}`,
     );
-    find('[data-charge-time]').textContent = `${number.format(time)} / ${number.format(DURATION)}`;
   }
 
   function setRunning(next) {
