@@ -64,7 +64,6 @@
     "conceptsTitle",
     "conceptsIntro",
     "examplesTitle",
-    "examplesIntro",
     "games2D",
     "games3D",
     "watchVideo",
@@ -72,7 +71,6 @@
     "storyTitle",
     "adaptTitle",
     "relatedTitle",
-    "sourceNote",
     "back",
     "notFound",
     "notFoundText"
@@ -326,10 +324,6 @@
       "type": "string",
       "minLength": 1
     },
-    "examplesIntro": {
-      "type": "string",
-      "minLength": 1
-    },
     "games2D": {
       "type": "string",
       "minLength": 1
@@ -355,10 +349,6 @@
       "minLength": 1
     },
     "relatedTitle": {
-      "type": "string",
-      "minLength": 1
-    },
-    "sourceNote": {
       "type": "string",
       "minLength": 1
     },

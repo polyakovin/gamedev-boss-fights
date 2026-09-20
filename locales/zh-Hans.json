@@ -61,7 +61,6 @@
   "conceptsTitle": "游戏设计概念",
   "conceptsIntro": "这些实用视角用于分析各类游戏中的决策、反馈、挑战、空间与学习。它们是工作工具，而不是通用分类。",
   "examplesTitle": "使用这一机制的首领",
-  "examplesIntro": "比较提示、方向锁定、危险区域、场地和收招时间。参考案例展示设计方法，并不是可以直接照搬的配方。",
   "games2D": "2D 游戏",
   "games3D": "3D 游戏",
   "watchVideo": "在 YouTube 观看首领战",
@@ -69,7 +68,6 @@
   "storyTitle": "场地",
   "adaptTitle": "玩家升级",
   "relatedTitle": "不要与这些概念混淆",
-  "sourceNote": "本示意图是原创教学示例。以下讲座、文章、指南和技术资料涵盖首领战结构、攻击阶段、提示、无障碍设计和碰撞实现。",
   "back": "返回机制目录",
   "notFound": "未找到页面",
   "notFoundText": "请选择一种语言，返回图鉴。"

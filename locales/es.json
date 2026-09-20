@@ -61,7 +61,6 @@
   "conceptsTitle": "Conceptos de diseño de juegos",
   "conceptsIntro": "Estas perspectivas prácticas analizan decisiones, respuesta, desafío, espacio y aprendizaje en toda clase de juegos. Son herramientas de trabajo, no una clasificación universal.",
   "examplesTitle": "Jefes que usan esta mecánica",
-  "examplesIntro": "Compara la señal, el compromiso, la zona de peligro, la arena y la recuperación. Una referencia es un ejemplo de diseño, no una receta lista para copiar.",
   "games2D": "Juegos 2D",
   "games3D": "Juegos 3D",
   "watchVideo": "Ver el combate en YouTube",
@@ -69,7 +68,6 @@
   "storyTitle": "Arena",
   "adaptTitle": "Mejoras del jugador",
   "relatedTitle": "No lo confundas con",
-  "sourceNote": "El diagrama es un ejemplo didáctico original. Estas charlas, artículos, guías y referencias técnicas abarcan la estructura del combate, las fases del ataque, las señales, la accesibilidad y la implementación de colisiones.",
   "back": "Volver a las mecánicas",
   "notFound": "Página no encontrada",
   "notFoundText": "Elige un idioma para volver al atlas."

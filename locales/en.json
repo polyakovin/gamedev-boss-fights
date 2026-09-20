@@ -61,7 +61,6 @@
   "conceptsTitle": "Game design concepts",
   "conceptsIntro": "These practical lenses examine decisions, feedback, challenge, space, and learning across games. They are working tools, not a universal classification.",
   "examplesTitle": "Bosses that use this mechanic",
-  "examplesIntro": "Compare the cue, commitment, danger area, arena, and recovery. A reference is a design example, not a ready-made recipe.",
   "games2D": "2D games",
   "games3D": "3D games",
   "watchVideo": "Watch the boss fight on YouTube",
@@ -69,7 +68,6 @@
   "storyTitle": "Arena",
   "adaptTitle": "Player upgrades",
   "relatedTitle": "Do not confuse this with",
-  "sourceNote": "The diagram is an original teaching example. These talks, articles, guidelines, and technical references cover boss structure, attack phases, cues, accessibility, and collision implementation.",
   "back": "Back to mechanics",
   "notFound": "Page not found",
   "notFoundText": "Choose a language to return to the atlas."

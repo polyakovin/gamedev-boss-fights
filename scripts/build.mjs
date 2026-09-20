@@ -553,18 +553,14 @@ for (const locale of locales) {
           <div id="simulation" class="simulation-section">${a.render(c.demo)}</div>
         </div>
         <section id="examples" class="content-section examples-section">
-          <span class="eyebrow">01 / ${e(t.examples)}</span>
           <h2>${e(t.examplesTitle)}</h2>
-          <p class="examples-intro">${e(t.examplesIntro)}</p>
           <div class="example-groups">
             ${exampleGroup('2D', t.games2D, c.examples, t)}
             ${exampleGroup('3D', t.games3D, c.examples, t)}
           </div>
         </section>
         <section id="sources" class="content-section sources">
-          <span class="eyebrow">02 / ${e(t.sources)}</span>
           <h2>${e(t.sources)}</h2>
-          <p>${e(t.sourceNote)}</p>
           <ul>
             ${m.meta.sources.map((s) => `<li><a href="${e(s.url)}">${e(s.title)} <span aria-hidden="true">↗</span></a></li>`).join('')}
           </ul>

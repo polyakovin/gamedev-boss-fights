@@ -582,13 +582,6 @@ section[id] {
 .content-section > h2 {
   margin-bottom: 26px;
 }
-.examples-intro {
-  max-width: 760px;
-  color: var(--muted);
-  font-size: 14px;
-  line-height: 1.8;
-  margin: -10px 0 28px;
-}
 .example-groups {
   display: grid;
   gap: 31px;
@@ -696,7 +689,6 @@ section[id] {
   font-size: 24px;
   margin-bottom: 14px;
 }
-.sources > p,
 .sources li {
   font-size: 12px;
   color: var(--muted);
@@ -717,6 +709,7 @@ section[id] {
   border-bottom: 1px solid var(--line);
 }
 .sources .review-note {
+  color: var(--muted);
   font-size: 11px;
   padding-top: 20px;
   margin-top: 25px;
@@ -1939,10 +1932,6 @@ section[id] {
   .content-section > h2 {
     font-size: 25px;
     margin-bottom: 23px;
-  }
-  .examples-intro {
-    font-size: 13px;
-    margin-bottom: 22px;
   }
   .example-groups {
     gap: 25px;

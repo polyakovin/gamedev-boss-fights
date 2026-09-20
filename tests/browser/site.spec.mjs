@@ -75,6 +75,10 @@ for (const locale of registry) {
       page.locator('.hero-subtitle, .lesson-hero > .variant, .lesson-hero > .summary'),
     ).toHaveCount(0);
     await expect(page.locator('.game-example')).toHaveCount(6);
+    await expect(page.locator('#examples > .eyebrow, .examples-intro')).toHaveCount(0);
+    await expect(page.locator('#sources > .eyebrow, #sources > p:not(.review-note)')).toHaveCount(
+      0,
+    );
     await expect(page.locator('.game-example__media img')).toHaveCount(6);
     await expect(page.locator('.game-example__source')).toHaveCount(6);
     await expect(page.locator('.game-example__media img').first()).toHaveAttribute(
