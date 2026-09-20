@@ -103,17 +103,38 @@ for (const locale of registry) {
       `${locale.code}: checklist fits first screen`,
     ).toBeLessThanOrEqual(1000);
     await expect(page.locator('#quiz, .quiz, [data-quiz]')).toHaveCount(0);
-    await expect(page.locator('.game-example__video[href*="youtube.com/watch"]')).toHaveCount(6);
+    await expect(
+      page.locator('.game-example > .game-example__link[href*="youtube.com/watch"]'),
+    ).toHaveCount(6);
     const videos = await page
-      .locator('.game-example__video')
+      .locator('.game-example__link')
       .evaluateAll((links) => links.map((link) => link.href));
     expect(videos[1]).toBe('https://www.youtube.com/watch?v=VaYY2fauQNo');
     expect(videos[4]).toBe('https://www.youtube.com/watch?v=NwFX9I69uss&t=265s');
     expect(videos[5]).toBe('https://www.youtube.com/watch?v=gzwO84ERsb8');
-    await expect(page.locator('.game-example__video').first()).toHaveAttribute(
+    await expect(page.locator('.game-example__link').first()).toHaveAttribute(
       'rel',
       'noopener noreferrer',
     );
+    await expect(page.locator('.game-example__link .game-example__media')).toHaveCount(6);
+    await expect(page.locator('.game-example__link .game-example__body')).toHaveCount(6);
+    await expect(page.locator('.game-example__link > .visually-hidden')).toHaveCount(6);
+    await expect(page.locator('.game-example__link').first()).not.toHaveAttribute(
+      'aria-label',
+      /.+/,
+    );
+    await expect(page.locator('.game-example__body a')).toHaveCount(0);
+    const cardCoverage = await page.locator('.game-example').evaluateAll((cards) =>
+      cards.map((card) => {
+        const cardRect = card.getBoundingClientRect();
+        const linkRect = card.querySelector('.game-example__link').getBoundingClientRect();
+        return {
+          width: Math.abs(cardRect.width - linkRect.width),
+          height: Math.abs(cardRect.height - linkRect.height),
+        };
+      }),
+    );
+    expect(cardCoverage.every(({ width, height }) => width <= 2 && height <= 2)).toBe(true);
     await expect(page.locator('.language-menu summary .language-flag')).toHaveText(locale.flag);
     await page.locator('.language-menu summary').click();
     await expect(page.locator('.language-menu nav a')).toHaveCount(8);

@@ -233,40 +233,36 @@ function exampleGroup(dimension, label, items, t) {
     .map(
       (item) =>
         /* HTML */ `<article class="game-example">
-          <figure class="game-example__media">
-            <img
-              src="${e(item.screenshot)}"
-              alt="${e(`${item.boss} — ${item.game}`)}"
-              loading="lazy"
-              decoding="async"
-              referrerpolicy="no-referrer"
-            />
-            <figcaption>
-              <a
-                class="game-example__source"
-                href="${e(item.screenshotSource)}"
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label="${e(`${t.screenshotSource}: ${item.boss}, ${item.game}`)}"
-                >${e(t.screenshotSource)} <span aria-hidden="true">↗</span></a
-              >
-            </figcaption>
-          </figure>
-          <div class="game-example__body">
-            <span class="game-example__game">${e(item.game)}</span>
-            <h4>${e(item.boss)}</h4>
-            <p>${e(item.body)}</p>
-            <a
-              class="game-example__video"
-              href="${e(item.video)}"
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label="${e(`${t.watchVideo}: ${item.boss}, ${item.game}`)}"
-              ><span aria-hidden="true">▶</span>${e(t.watchVideo)}<span aria-hidden="true"
-                >↗</span
-              ></a
-            >
-          </div>
+          <a
+            class="game-example__link"
+            href="${e(item.video)}"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <span class="visually-hidden">${e(t.watchVideo)}: </span>
+            <figure class="game-example__media">
+              <img
+                src="${e(item.screenshot)}"
+                alt="${e(`${item.boss} — ${item.game}`)}"
+                loading="lazy"
+                decoding="async"
+                referrerpolicy="no-referrer"
+              />
+            </figure>
+            <div class="game-example__body">
+              <span class="game-example__game">${e(item.game)}</span>
+              <h4>${e(item.boss)}</h4>
+              <p>${e(item.body)}</p>
+            </div>
+          </a>
+          <a
+            class="game-example__source"
+            href="${e(item.screenshotSource)}"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="${e(`${t.screenshotSource}: ${item.boss}, ${item.game}`)}"
+            >${e(t.screenshotSource)} <span aria-hidden="true">↗</span></a
+          >
         </article>`,
     )
     .join('');
