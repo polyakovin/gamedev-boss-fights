@@ -1,6 +1,6 @@
 {
   "title": "Geometría de la amenaza",
-  "summary": "La forma, el tamaño y el movimiento del peligro determinan qué espacio sigue siendo utilizable. Compara el área visible con la colisión, la arena, la cámara y el cuerpo completo del jugador.",
+  "summary": "La forma, el tamaño y el movimiento del peligro determinan qué espacio sigue siendo utilizable. Compara el límite visible con la colisión, la geometría del nivel, la cámara y el cuerpo completo del jugador.",
   "reviewStatus": "needs-review",
-  "sourceVersion": 1
+  "sourceVersion": 2
 }

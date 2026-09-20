@@ -216,9 +216,9 @@ test('lens chips show explanations and open localized lens pages', async ({ page
   await expect(page).toHaveURL(/\/ru\/lenses\/telegraphing\/$/);
   await expect(page.locator('.lens-page__hero h1')).toHaveText('Телеграфирование');
   await expect(page.locator('.lens-page__hero p')).toHaveText(
-    'Визуальный или звуковой сигнал сообщает, что собирается сделать босс и когда меняется правило. Сигнал, тайминг и фактическое поведение должны совпадать.',
+    'Игра сообщает о предстоящем действии, смене состояния или правила визуальным, звуковым или тактильным сигналом. Сигнал, тайминг и результат должны совпадать.',
   );
-  await expect(page.locator('.lens-page__hero')).not.toContainText('таран');
+  await expect(page.locator('.lens-page__hero')).not.toContainText(/босс|таран/i);
   await expect(page.locator('.lens-mechanic-card')).toHaveCount(1);
   await expect(page.locator('.lens-mechanic-card h2')).toContainText('Таран');
   await page.locator('.language-menu summary').click();
@@ -230,6 +230,10 @@ test('lens chips show explanations and open localized lens pages', async ({ page
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
   await page.goto('ru/lenses/');
   await expect(page.locator('.lens-card')).toHaveCount(6);
+  await expect(page.locator('.lens-catalog-hero p')).toHaveText(
+    'Эти практические призмы помогают анализировать решения, обратную связь, испытания, пространство и обучение в любых играх. Это рабочие инструменты, а не универсальная классификация.',
+  );
+  await expect(page.locator('.lens-catalog-main')).not.toContainText(/босс|таран/i);
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
   const firstCard = await page.locator('.lens-card').first().boundingBox();
   const secondCard = await page.locator('.lens-card').nth(1).boundingBox();

@@ -4,7 +4,7 @@ An open, interactive encyclopedia of boss mechanics for game designers. Each les
 
 [Explore the atlas](https://polyakovin.github.io/gamedev-boss-fights/) · [Read in Russian](README.ru.md) · [Contribute](CONTRIBUTING.md)
 
-The first lesson is **Charge**. Pause the animation and inspect how tracking, commitment, collision, and recovery work together. Six design-lens chips provide focused explanations and open independent lens pages, while six boss references from 2D and 3D games show how the mechanic changes across real encounters.
+The first lesson is **Charge**. Pause the animation and inspect how tracking, commitment, collision, and recovery work together. Six design-lens chips connect the lesson to general game-design tools that apply across games, while six boss references from 2D and 3D games show how the mechanic changes across real encounters.
 
 Available in English, Russian, Simplified Chinese, Hindi, Bengali, Spanish, Arabic, and Japanese. Facts, design concepts, examples, and translations all welcome independent review. [Open «Таран» in Russian](https://polyakovin.github.io/gamedev-boss-fights/ru/mechanics/charge/).
 

@@ -1,6 +1,6 @@
 {
-  "title": "攻击预告",
-  "summary": "视觉或听觉提示会传达 Boss 即将采取的行动以及规则何时改变。提示、时机与实际行为必须一致。",
+  "title": "预告信号",
+  "summary": "游戏通过视觉、声音或触觉提示即将发生的动作、状态变化或规则变化。提示、时机与最终行为必须一致。",
   "reviewStatus": "needs-review",
-  "sourceVersion": 1
+  "sourceVersion": 2
 }

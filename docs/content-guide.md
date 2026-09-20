@@ -47,9 +47,9 @@ Design lenses are independent materials under `content/lenses/<id>/`. Each lens 
 npm run new:lens -- your-lens
 ```
 
-Keep `published: false` while the lens is incomplete. The localized file contains a short `title` and `summary`; explain what the lens reveals and what a designer should inspect. Treat lenses as practical analytical tools, not a universal taxonomy.
+Keep `published: false` while the lens is incomplete. The localized file contains a short `title` and `summary`; explain what the lens reveals and what a designer should inspect. A lens must apply to games in general: describe choices, systems, feedback, challenges, space, learning, or another reusable concern without assuming a boss fight. Treat lenses as practical analytical tools, not a universal taxonomy.
 
-A mechanic connects to published lenses through the stable kebab-case IDs in `meta.lenses`. Each lesson translation has a matching `lensNotes` array in the same order; its short, mechanic-specific explanation becomes the tooltip. The chip label and destination come from the independent lens material, whose `summary` defines the reusable lens without assuming a particular mechanic. When changing a published lens’s meaning, increment its own `contentVersion`, update all published translations and their `sourceVersion`, and reset their `reviewStatus`.
+A mechanic connects to published lenses through the stable kebab-case IDs in `meta.lenses`. Each lesson translation has a matching `lensNotes` array in the same order; its short, mechanic-specific explanation becomes the tooltip. This is the only place where the lens explanation should assume a boss or a particular mechanic. The chip label and destination come from the independent lens material, whose `summary` defines the reusable lens across games. When changing a published lens’s meaning, increment its own `contentVersion`, update all published translations and their `sourceVersion`, and reset their `reviewStatus`.
 
 ### Add game references
 

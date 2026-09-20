@@ -141,6 +141,34 @@ test('design lenses stay complete and linkable across translations', async () =>
   );
 });
 
+test('design lenses describe games generally instead of boss fights', () => {
+  const specificEncounterTerms = {
+    en: /\bboss(?:es)?\b|\bcharge\b|\bthis mechanic\b/i,
+    ru: /босс|таран|эт(?:а|ой)\s+механик/i,
+    'zh-Hans': /Boss|首领|冲锋|这项机制/i,
+    hi: /बॉस|धावा|इस युक्ति/i,
+    bn: /(?:^|\s)বস(?:\s|ের|কে|টি|$)|ধেয়ে আসা|এই মেকানিক/i,
+    es: /\bjef(?:e|es)\b|embestida|esta mecánica/i,
+    ar: /الزعيم|الزعماء|الاندفاع|هذه الآلية/i,
+    ja: /ボス|突進|このメカニクス/,
+  };
+  for (const { code } of source.locales) {
+    const lensText = source.lenses
+      .map((lens) => `${lens.translations[code].title} ${lens.translations[code].summary}`)
+      .join(' ');
+    assert.doesNotMatch(
+      lensText,
+      specificEncounterTerms[code],
+      `${code}: lens assumes an encounter`,
+    );
+    assert.doesNotMatch(
+      `${source.ui[code].conceptsTitle} ${source.ui[code].conceptsIntro}`,
+      specificEncounterTerms[code],
+      `${code}: lens catalog assumes an encounter`,
+    );
+  }
+});
+
 test('draft lenses may land before translations are ready', async () => {
   const data = structuredClone(source);
   const draft = structuredClone(data.lenses[0]);

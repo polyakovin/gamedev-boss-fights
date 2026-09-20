@@ -1,6 +1,6 @@
 {
   "title": "Telegraphing",
-  "summary": "A visible or audible cue communicates what the boss is about to do and when the rule changes. The signal, timing, and actual behavior must agree.",
+  "summary": "A game communicates an upcoming action, state change, or rule through visual, audio, or haptic cues. The cue, timing, and resulting behavior must agree.",
   "reviewStatus": "needs-review",
-  "sourceVersion": 1
+  "sourceVersion": 2
 }

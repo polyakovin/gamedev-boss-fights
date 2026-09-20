@@ -1,6 +1,6 @@
 {
   "title": "Compromiso",
-  "summary": "Después de elegir una acción, el jefe renuncia a una o más opciones. Esa limitación hace que su conducta sea lo bastante predecible para que el jugador pueda planear una respuesta.",
+  "summary": "Cuando una acción de juego queda comprometida, algunas alternativas dejan de estar disponibles temporalmente. Esa restricción hace que el resultado sea lo bastante predecible para que el jugador pueda planear una respuesta.",
   "reviewStatus": "needs-review",
-  "sourceVersion": 1
+  "sourceVersion": 2
 }

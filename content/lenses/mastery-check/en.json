@@ -1,6 +1,6 @@
 {
   "title": "Mastery check",
-  "summary": "A boss can test knowledge and skills taught before the encounter. Upgrades may change the solution space, but they should not erase the intended test.",
+  "summary": "A challenge can test knowledge and skills taught earlier in the game. Progression may change the solution space, but it should not erase the intended test.",
   "reviewStatus": "needs-review",
-  "sourceVersion": 1
+  "sourceVersion": 2
 }

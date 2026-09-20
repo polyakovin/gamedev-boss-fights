@@ -1,6 +1,6 @@
 {
   "title": "技能检验",
-  "summary": "Boss 可以检验玩家在战斗前已经学会的知识和技能。升级可以改变解法空间，但不应消除预期的考验。",
+  "summary": "游戏挑战可以检验此前教过的知识和技能。成长系统可以改变解法空间，但不应消除原本要检验的能力。",
   "reviewStatus": "needs-review",
-  "sourceVersion": 1
+  "sourceVersion": 2
 }

@@ -1,6 +1,6 @@
 {
   "title": "行动承诺",
-  "summary": "选择行动后，Boss 会放弃一种或多种选择。这种限制让行为足够可预测，使玩家能够规划应对。",
+  "summary": "当一个游戏行动进入承诺阶段时，部分替代选择会暂时不可用。这种限制让结果足够可预测，使玩家能够规划应对。",
   "reviewStatus": "needs-review",
-  "sourceVersion": 1
+  "sourceVersion": 2
 }

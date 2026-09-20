@@ -1,6 +1,6 @@
 {
   "title": "Commitment",
-  "summary": "After choosing an action, the boss gives up one or more options. That restriction makes the behavior predictable enough for the player to plan a response.",
+  "summary": "When a game action commits, some alternatives become temporarily unavailable. That constraint makes the outcome predictable enough for the player to plan a response.",
   "reviewStatus": "needs-review",
-  "sourceVersion": 1
+  "sourceVersion": 2
 }
