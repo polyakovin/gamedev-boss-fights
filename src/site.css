@@ -812,12 +812,6 @@ section[id] {
   font-size: 16px;
   line-height: 1.55;
 }
-.catalog-overview {
-  display: grid;
-  grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
-  gap: 28px;
-  align-items: start;
-}
 .section-heading {
   display: flex;
   justify-content: space-between;
@@ -829,69 +823,6 @@ section[id] {
 .section-heading h2 {
   font-size: 17px;
 }
-.atlas-map__intro {
-  margin: 0 0 12px;
-  color: var(--muted);
-  font-size: 13px;
-  line-height: 1.6;
-}
-.atlas-map__builder {
-  color: var(--accent);
-  font-weight: 650;
-}
-.atlas-map__grid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 10px;
-}
-.atlas-map__link {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  align-items: start;
-  gap: 8px;
-  min-width: 0;
-  padding: 14px;
-  border: 1px solid var(--line);
-  border-radius: var(--radius);
-  background: var(--surface);
-  transition:
-    border-color 0.2s,
-    background 0.2s;
-}
-.atlas-map__link:hover {
-  border-color: var(--hover-line);
-  background: var(--panel);
-  text-decoration: none;
-}
-.atlas-map__count {
-  display: inline-block;
-  padding: 1px 6px;
-  margin-inline-start: 4px;
-  border-radius: 4px;
-  background: var(--accent-soft);
-  color: var(--accent);
-  font-family: var(--font-label);
-  font-size: 12px;
-}
-.atlas-map__link strong,
-.atlas-map__link small {
-  display: block;
-}
-.atlas-map__link strong {
-  margin-bottom: 6px;
-  color: var(--ink);
-  font-size: 15px;
-  line-height: 1.35;
-}
-.atlas-map__link small {
-  color: var(--muted);
-  font-size: 13px;
-  line-height: 1.5;
-}
-.atlas-map__arrow {
-  color: var(--accent);
-  font-size: 16px;
-}
 .count {
   font-family: var(--font-label);
   font-size: 12px;
@@ -899,6 +830,7 @@ section[id] {
 }
 .catalog-grid {
   display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 20px;
 }
 .mechanic-card {
@@ -1782,9 +1714,8 @@ section[id] {
   .simulation-section {
     justify-self: center;
   }
-  .catalog-overview {
+  .catalog-grid {
     grid-template-columns: 1fr;
-    gap: 24px;
   }
   .catalog-hero {
     grid-template-columns: minmax(0, 1fr) minmax(320px, 480px);
@@ -2039,13 +1970,6 @@ section[id] {
   }
   .lead {
     font-size: 17px;
-  }
-  .atlas-map__grid {
-    grid-template-columns: 1fr;
-  }
-  .atlas-map__link {
-    min-height: 0;
-    padding: 16px;
   }
   .mechanic-card {
     display: block;

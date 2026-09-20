@@ -755,21 +755,7 @@ test('catalog and language gateway point to real pages', async ({ page, request 
       .locator('.catalog-hero h1')
       .evaluate((element) => Number.parseFloat(getComputedStyle(element).fontSize)),
   ).toBeLessThanOrEqual(36);
-  await expect(page.locator('.atlas-map__link')).toHaveCount(6);
-  await expect(page.locator('.atlas-map__builder')).toHaveAttribute(
-    'href',
-    '/gamedev-boss-fights/ru/builder/',
-  );
-  expect(
-    await page.locator('.atlas-map__link').evaluateAll((links) => links.map((a) => a.href)),
-  ).toEqual([
-    'http://127.0.0.1:4173/gamedev-boss-fights/ru/#mechanics',
-    'http://127.0.0.1:4173/gamedev-boss-fights/ru/mechanics/charge/#simulation',
-    'http://127.0.0.1:4173/gamedev-boss-fights/ru/lenses/',
-    'http://127.0.0.1:4173/gamedev-boss-fights/ru/mechanics/charge/#examples',
-    'http://127.0.0.1:4173/gamedev-boss-fights/ru/mechanics/charge/#sources',
-    'https://github.com/polyakovin/gamedev-boss-fights/blob/main/CONTRIBUTING.md',
-  ]);
+  await expect(page.locator('.atlas-map')).toHaveCount(0);
   await expect(page.locator('.mechanic-card')).toHaveCount(5);
   await expect(page.locator('.card-diagram [data-character-art="kern"]')).toHaveCount(5);
   await expect(page.locator('.card-diagram [data-character-art="tavi"]')).toHaveCount(5);
@@ -792,26 +778,11 @@ test('homepages fit their hero on a laptop and reflow on mobile', async ({ page 
         `${locale.code}: ${selector} fits the first screen`,
       ).toBeLessThanOrEqual(720);
     }
-    expect(await page.locator('.atlas-map__count').allTextContents()).toEqual([
-      '5',
-      '1',
-      '6',
-      '6',
-      '5',
-      '+',
-    ]);
+    await expect(page.locator('.atlas-map')).toHaveCount(0);
     await page.setViewportSize({ width: 375, height: 812 });
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(
       true,
     );
-    const card = await page.locator('.mechanic-card').last().boundingBox();
-    const navigation = await page.locator('.atlas-map').boundingBox();
-    expect(navigation.y).toBeGreaterThan(card.y + card.height);
     await expect(page.locator('.card-learning').first()).toBeVisible();
-    await expect(page.locator('.atlas-map__link')).toHaveCount(6);
-    await expect(page.locator('.atlas-map__builder')).toHaveAttribute(
-      'href',
-      `/gamedev-boss-fights/${locale.code}/builder/`,
-    );
   }
 });

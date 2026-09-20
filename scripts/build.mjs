@@ -270,48 +270,6 @@ function exampleGroup(dimension, label, items, t) {
 }
 for (const locale of locales) {
   const t = ui[locale.code];
-  const featured = published[0];
-  const featuredContent = featured?.translations[locale.code];
-  const lessonPath = featured ? `${locale.code}/mechanics/${featured.meta.id}/` : `${locale.code}/`;
-  const atlasLinks = [
-    {
-      title: t.catalog,
-      text: t.mechanicsNavText,
-      href: '#mechanics',
-      count: published.length,
-    },
-    {
-      title: t.simulationNavTitle,
-      text: t.simulationNavText,
-      href: link(`${lessonPath}#simulation`),
-      count: featured ? 1 : 0,
-    },
-    {
-      title: t.concepts,
-      text: t.conceptsNavText,
-      href: link(`${locale.code}/lenses/`),
-      count: publishedLenses.length,
-    },
-    {
-      title: t.examples,
-      text: t.examplesNavText,
-      href: link(`${lessonPath}#examples`),
-      count: featuredContent?.examples.length ?? 0,
-    },
-    {
-      title: t.sources,
-      text: t.sourcesNavText,
-      href: link(`${lessonPath}#sources`),
-      count: featured?.meta.sources.length ?? 0,
-    },
-    {
-      title: t.contribute,
-      text: t.contributeNavText,
-      href: `${REPOSITORY}/blob/main/CONTRIBUTING.md`,
-      external: true,
-      count: '+',
-    },
-  ];
   const cards = published
     .map((m) => {
       const c = m.translations[locale.code];
@@ -349,39 +307,13 @@ for (const locale of locales) {
         />
       </figure>
     </section>
-    <div class="catalog-overview">
-      <section id="mechanics" aria-labelledby="mechanics-title">
-        <div class="section-heading">
-          <h2 id="mechanics-title">${e(t.available)}</h2>
-          <span class="count">${published.length}</span>
-        </div>
-        <div class="catalog-grid">${cards}</div>
-      </section>
-      <nav class="atlas-map" aria-labelledby="atlas-map-title">
-        <div class="section-heading atlas-map__heading">
-          <h2 id="atlas-map-title">${e(t.siteMapTitle)}</h2>
-        </div>
-        ${featuredContent ? `<p class="atlas-map__intro">${e(t.siteMapIntro)}: <a href="${link(lessonPath)}">${e(featuredContent.title)}</a> <span aria-hidden="true">·</span> <a class="atlas-map__builder" href="${link(`${locale.code}/builder/`)}">${e(t.builder)} <span aria-hidden="true">→</span></a></p>` : ''}
-        <div class="atlas-map__grid">
-          ${atlasLinks
-            .map(
-              (item) =>
-                /* HTML */ `<a class="atlas-map__link" href="${e(item.href)}">
-                  <span>
-                    <strong
-                      >${e(item.title)} <span class="atlas-map__count">${item.count}</span></strong
-                    >
-                    <small>${e(item.text)}</small>
-                  </span>
-                  <span class="atlas-map__arrow" aria-hidden="true"
-                    >${item.external ? '↗' : '→'}</span
-                  >
-                </a>`,
-            )
-            .join('')}
-        </div>
-      </nav>
-    </div>
+    <section id="mechanics" aria-labelledby="mechanics-title">
+      <div class="section-heading">
+        <h2 id="mechanics-title">${e(t.available)}</h2>
+        <span class="count">${published.length}</span>
+      </div>
+      <div class="catalog-grid">${cards}</div>
+    </section>
   </main>`;
   await write(
     locale.code + '/',
