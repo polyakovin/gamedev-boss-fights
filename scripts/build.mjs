@@ -379,9 +379,7 @@ for (const locale of locales) {
               <h1>${e(c.title)}</h1>
               ${lensChips(locale.code, m.meta.lenses, c.lensNotes)}
             </div>
-            <p class="hero-subtitle">${e(c.subtitle)}</p>
-            <span class="variant">${e(c.variant)}</span>
-            <p class="summary">${e(c.summary)}</p>
+            <p class="mechanic-overview">${e(c.overview)}</p>
             <section
               class="implementation-checklist"
               aria-labelledby="implementation-checklist-title"

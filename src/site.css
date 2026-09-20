@@ -387,29 +387,12 @@ section[id] {
   transform: translateY(0);
   visibility: visible;
 }
-.hero-subtitle {
-  font-size: 20px;
-  line-height: 1.5;
-  max-width: 720px;
+.mechanic-overview {
+  font-size: 17px;
+  line-height: 1.7;
+  max-width: 66ch;
   color: var(--soft-ink);
-  margin-bottom: 24px;
-}
-.variant {
-  font-size: 11px;
-  line-height: 1.5;
-  display: inline-block;
-  background: var(--variant-bg);
-  color: var(--variant-ink);
-  border: 1px solid var(--variant-line);
-  padding: 4px 10px;
-  border-radius: 30px;
-  margin-bottom: 12px;
-}
-.summary {
-  font-size: 14px;
-  line-height: 1.8;
-  margin: 0;
-  max-width: 54ch;
+  margin: 4px 0 0;
 }
 .implementation-checklist {
   margin-top: 24px;
@@ -1134,9 +1117,6 @@ section[id] {
   .site-footer {
     margin: 0 28px;
   }
-  .hero-subtitle {
-    font-size: 20px;
-  }
 }
 @media (max-width: 960px) {
   .lesson-overview-grid {
@@ -1268,12 +1248,9 @@ section[id] {
     width: auto;
     max-width: none;
   }
-  .hero-subtitle {
-    font-size: 18px;
-    margin-bottom: 24px;
-  }
-  .summary {
-    font-size: 13px;
+  .mechanic-overview {
+    font-size: 15px;
+    line-height: 1.65;
   }
   .implementation-checklist__intro {
     display: block;

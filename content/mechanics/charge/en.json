@@ -3,6 +3,7 @@
   "subtitle": "Design a clear commitment, a reachable escape, and a useful recovery.",
   "variant": "Locked-direction charge",
   "summary": "The boss aims, locks its direction, and charges forward. It cannot turn after the lock.",
+  "overview": "Charge is a high-speed attack: the boss aims, locks its direction, and rushes forward without turning. The mechanic works well when the clear lock makes the path predictable, sideways movement provides a reachable response, and recovery creates an opening for a counterattack.",
   "learning": "Tune tracking, the lock cue, the danger lane, and recovery.",
   "category": "Movement & space",
   "readTime": "3 min · design lesson",
@@ -168,5 +169,5 @@
     }
   ],
   "reviewStatus": "needs-review",
-  "sourceVersion": 7
+  "sourceVersion": 8
 }

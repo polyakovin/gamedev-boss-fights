@@ -56,6 +56,10 @@ for (const locale of registry) {
     await expect(page.locator('[data-charge-motion-note]')).toBeVisible();
     await expect(page.locator('.lesson-title-line .lens-chip')).toHaveCount(6);
     await expect(page.locator('.lesson-title-line [role="tooltip"]')).toHaveCount(6);
+    await expect(page.locator('.mechanic-overview')).toHaveCount(1);
+    await expect(
+      page.locator('.hero-subtitle, .lesson-hero > .variant, .lesson-hero > .summary'),
+    ).toHaveCount(0);
     await expect(page.locator('.game-example')).toHaveCount(6);
     await expect(page.locator('.game-example__media img')).toHaveCount(6);
     await expect(page.locator('.game-example__source')).toHaveCount(6);
@@ -120,6 +124,9 @@ test('controls work by keyboard; play advances; seeking pauses', async ({ page }
   ).toHaveCount(0);
   await expect(page.locator('.lesson-hero h1')).toHaveText('Таран');
   await expect(page.locator('.lesson-category')).toHaveText('Движение и пространство');
+  await expect(page.locator('.mechanic-overview')).toHaveText(
+    'Таран — скоростная атака: босс целится, фиксирует направление и мчится вперёд без возможности повернуть. Механика работает хорошо, когда фиксация делает траекторию предсказуемой, боковое движение даёт доступный ответ, а восстановление создаёт окно для контратаки.',
+  );
   await expect(page.locator('.implementation-checklist > div > h2')).toHaveText(
     'Чеклист внедрения',
   );

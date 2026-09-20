@@ -94,6 +94,22 @@ test('the published lesson teaches design decisions rather than player execution
   assert.ok(ru.steps.every((step) => step.title.endsWith('?')));
 });
 
+test('each mechanic overview defines the rule and explains why it works', () => {
+  for (const lesson of Object.values(source.mechanics[0].translations)) {
+    assert.ok(lesson.overview.length > lesson.summary.length);
+    assert.ok(lesson.overview.length < 350);
+  }
+  const { en, ru } = source.mechanics[0].translations;
+  assert.match(en.overview, /locks its direction/i);
+  assert.match(en.overview, /predictable/i);
+  assert.match(en.overview, /response/i);
+  assert.match(en.overview, /recovery/i);
+  assert.match(ru.overview, /фиксирует направление/i);
+  assert.match(ru.overview, /предсказуемой/i);
+  assert.match(ru.overview, /ответ/i);
+  assert.match(ru.overview, /восстановление/i);
+});
+
 test('design lenses stay complete and linkable across translations', async () => {
   const expected = [
     'telegraphing',

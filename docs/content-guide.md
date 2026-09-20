@@ -20,8 +20,9 @@ Use `content/mechanics/charge/en.json` as a structural example and `schemas/less
 
 | Field                         | What it should teach                                                       |
 | ----------------------------- | -------------------------------------------------------------------------- |
-| `title`, `variant`, `summary` | Name the mechanic and define the exact behavior covered                    |
-| `learning`                    | State the design skill the reader should leave with                        |
+| `title`, `variant`, `summary` | Name the mechanic and provide compact catalog metadata                     |
+| `overview`                    | Define the rule and explain why its signal, response, and reward work      |
+| `learning`                    | State the tuning task that introduces the implementation checklist         |
 | `demo`                        | Turn the animation into a test bench for phases, geometry, and outcomes    |
 | `steps`                       | Ask exactly three design questions in a useful order                       |
 | `mistakes`                    | Explain common implementation mistakes and their effect on the encounter   |
@@ -36,6 +37,8 @@ Use `content/mechanics/charge/en.json` as a structural example and `schemas/less
 The current template requires exactly three steps, matching the localized “Three questions” heading. Its demo contract has four phase names and four descriptions. Do not force a mechanic into misleading phases to fit it. If another mechanic needs a different structure, update the schema, renderer, translations, and tests together. Shared headings live in `locales/*.json`; check that they still fit when extending the lesson structure.
 
 Address the game designer, not a player looking for a walkthrough. Prefer concrete design variables and checks: what becomes fixed, what can still change, which signal communicates the change, and how much space the player must be able to clear. Distinguish an attack’s visual telegraph from a teaching overlay. Test optional dashes, jumps, and invulnerability states without making them silently mandatory for a basic escape.
+
+The mechanic page places `overview` directly under the title as one compact paragraph. Use its first sentence to define the behavior and the rest to explain why the signal, available response, and resulting opportunity work together. Do not repeat the subtitle, variant label, catalog summary, or checklist introduction there.
 
 Content review is as valuable as translation review. Check factual claims, design concepts, terminology, examples, source relevance, and whether the animation actually demonstrates the written rule. When correcting a claim, link evidence and state whether it documents a particular game, supports a general principle, or is only an illustrative design choice.
 

@@ -6,6 +6,7 @@
     "subtitle",
     "variant",
     "summary",
+    "overview",
     "learning",
     "category",
     "readTime",
@@ -35,6 +36,10 @@
       "minLength": 1
     },
     "summary": {
+      "type": "string",
+      "minLength": 1
+    },
+    "overview": {
       "type": "string",
       "minLength": 1
     },

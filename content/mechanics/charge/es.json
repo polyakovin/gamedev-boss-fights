@@ -3,6 +3,7 @@
   "subtitle": "Diseña una fijación clara, una salida posible y una recuperación útil.",
   "variant": "Embestida con dirección fija",
   "summary": "El jefe se lanza a gran velocidad y utiliza su cuerpo como arma. En esta variante puede apuntar antes de fijar la dirección, pero ya no puede girar una vez fijada.",
+  "overview": "La embestida es un ataque veloz: el jefe apunta, fija la dirección y avanza sin poder girar. La mecánica funciona bien cuando una fijación clara vuelve predecible la trayectoria, el movimiento lateral ofrece una respuesta alcanzable y la recuperación crea una oportunidad de contraataque.",
   "learning": "Ajusta el seguimiento, la señal de fijación, la franja de peligro y la recuperación.",
   "category": "Movimiento y espacio",
   "readTime": "3 min · lección de diseño",
@@ -168,5 +169,5 @@
     }
   ],
   "reviewStatus": "needs-review",
-  "sourceVersion": 7
+  "sourceVersion": 8
 }
