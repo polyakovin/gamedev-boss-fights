@@ -1,0 +1,55 @@
+{
+  "bossUpFramework": {
+    "copy": {
+      "eyebrow": "改编自 GDC 2018",
+      "title": "Boss Up：遭遇设计的 10 项检查",
+      "intro": "这是对 Itay Keren 演讲的实践性整理。可将这些卡片用于设计评审；每张卡都链接到一个可复用该思想的图谱视角。",
+      "sourceLabel": "观看演讲",
+      "slidesLabel": "打开幻灯片",
+      "lensSectionTitle": "Boss Up 检查项",
+      "lensSectionIntro": "这个视角对应演讲中的一条实践原则。"
+    },
+    "rules": {
+      "reward-the-journey": {
+        "title": "奖励一路坚持",
+        "body": "让这场对抗成为新鲜的奖励，而不是挡在玩家与进度之间的额外时长。"
+      },
+      "frame-the-story": {
+        "title": "用叙事框定事件",
+        "body": "在挑战前建立期待，并让成功或失败带来有意义的后果。"
+      },
+      "fit-context-and-sequence": {
+        "title": "匹配情境与顺序",
+        "body": "把地点、辅助角色、时机、相邻挑战和后果连接成一个整体。"
+      },
+      "test-and-teach": {
+        "title": "有目的地检验与教学",
+        "body": "检验最近学会的技能；只有在注意力集中且有使用理由时才引入新技能。"
+      },
+      "design-survivable-space": {
+        "title": "先设计可生存空间",
+        "body": "先确定玩家能在何处、以何种方式存活，再围绕这片应对空间构建威胁。"
+      },
+      "make-state-legible": {
+        "title": "让状态易于理解",
+        "body": "展示目标、有效命中、进度与信号，并留出反应时间；谜题可以刻意设置，无助感不应如此。"
+      },
+      "preserve-expression": {
+        "title": "保留玩家表达",
+        "body": "在系统允许时，让不同工具、技能与玩家类型形成可行的解决方式。"
+      },
+      "change-phase-with-purpose": {
+        "title": "有目的地切换阶段",
+        "body": "为机制变化、技能组合、叙事节点或心理喘息而转场，而不是单纯延长时长。"
+      },
+      "shape-difficulty-rhythm": {
+        "title": "把难度塑造成节奏",
+        "body": "利用高峰、缓和、可见进度与可预期的终点，把预期失败转化为预期胜利。"
+      },
+      "break-rules-with-intent": {
+        "title": "有意图地打破规则",
+        "body": "特殊规则、视角或机制可以制造惊喜，但必须服务于奖励、投入感或挑战。"
+      }
+    }
+  }
+}

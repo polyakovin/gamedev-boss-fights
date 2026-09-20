@@ -1,0 +1,100 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Boss Up framework adaptation",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["source", "translations", "rules"],
+  "properties": {
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["title", "speaker", "event", "url", "slidesUrl"],
+      "properties": {
+        "title": { "type": "string", "minLength": 1 },
+        "speaker": { "type": "string", "minLength": 1 },
+        "event": { "type": "string", "minLength": 1 },
+        "url": { "type": "string", "format": "https-url" },
+        "slidesUrl": { "type": "string", "format": "https-url" }
+      }
+    },
+    "translations": { "$ref": "#/definitions/frameworkTranslations" },
+    "rules": {
+      "type": "array",
+      "minItems": 10,
+      "maxItems": 10,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "lensId", "translations"],
+        "properties": {
+          "id": { "type": "string", "pattern": "^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$" },
+          "lensId": { "type": "string", "pattern": "^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$" },
+          "translations": { "$ref": "#/definitions/ruleTranslations" }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "frameworkCopy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "eyebrow",
+        "title",
+        "intro",
+        "sourceLabel",
+        "slidesLabel",
+        "lensSectionTitle",
+        "lensSectionIntro"
+      ],
+      "properties": {
+        "eyebrow": { "type": "string", "minLength": 1 },
+        "title": { "type": "string", "minLength": 1 },
+        "intro": { "type": "string", "minLength": 1 },
+        "sourceLabel": { "type": "string", "minLength": 1 },
+        "slidesLabel": { "type": "string", "minLength": 1 },
+        "lensSectionTitle": { "type": "string", "minLength": 1 },
+        "lensSectionIntro": { "type": "string", "minLength": 1 }
+      }
+    },
+    "ruleCopy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["title", "body"],
+      "properties": {
+        "title": { "type": "string", "minLength": 1 },
+        "body": { "type": "string", "minLength": 1 }
+      }
+    },
+    "frameworkTranslations": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["en", "ru", "zh-Hans", "hi", "bn", "es", "ar", "ja"],
+      "properties": {
+        "en": { "$ref": "#/definitions/frameworkCopy" },
+        "ru": { "$ref": "#/definitions/frameworkCopy" },
+        "zh-Hans": { "$ref": "#/definitions/frameworkCopy" },
+        "hi": { "$ref": "#/definitions/frameworkCopy" },
+        "bn": { "$ref": "#/definitions/frameworkCopy" },
+        "es": { "$ref": "#/definitions/frameworkCopy" },
+        "ar": { "$ref": "#/definitions/frameworkCopy" },
+        "ja": { "$ref": "#/definitions/frameworkCopy" }
+      }
+    },
+    "ruleTranslations": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["en", "ru", "zh-Hans", "hi", "bn", "es", "ar", "ja"],
+      "properties": {
+        "en": { "$ref": "#/definitions/ruleCopy" },
+        "ru": { "$ref": "#/definitions/ruleCopy" },
+        "zh-Hans": { "$ref": "#/definitions/ruleCopy" },
+        "hi": { "$ref": "#/definitions/ruleCopy" },
+        "bn": { "$ref": "#/definitions/ruleCopy" },
+        "es": { "$ref": "#/definitions/ruleCopy" },
+        "ar": { "$ref": "#/definitions/ruleCopy" },
+        "ja": { "$ref": "#/definitions/ruleCopy" }
+      }
+    }
+  }
+}

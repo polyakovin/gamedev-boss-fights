@@ -1,0 +1,100 @@
+{
+  "source": {
+    "title": "Boss Up: Boss Battle Design Fundamentals and Retrospective",
+    "speaker": "Itay Keren",
+    "event": "GDC 2018",
+    "url": "https://www.gdcvault.com/play/1024921/Boss-Up-Boss-Battle-Design",
+    "slidesUrl": "https://media.gdcvault.com/gdc2018/presentations/Keren_Itay_BossUp.pdf"
+  },
+  "translation": {
+    "eyebrow": "ADAPTED FROM GDC 2018",
+    "title": "Boss Up: 10 checks for an encounter",
+    "intro": "A practical adaptation of Itay Keren’s talk. Use these cards as a review pass: each one points to an atlas lens that makes the idea reusable.",
+    "sourceLabel": "Watch the talk",
+    "slidesLabel": "Open the slides",
+    "lensSectionTitle": "A check from Boss Up",
+    "lensSectionIntro": "This lens connects to one of the talk’s practical rules."
+  },
+  "rules": [
+    {
+      "id": "reward-the-journey",
+      "lensId": "encounter-purpose",
+      "translation": {
+        "title": "Reward the journey",
+        "body": "Make the confrontation feel like a fresh reward, not time added between the player and progress."
+      }
+    },
+    {
+      "id": "frame-the-story",
+      "lensId": "dramatic-framing",
+      "translation": {
+        "title": "Frame the story",
+        "body": "Build anticipation before the challenge and give its success or failure a meaningful aftermath."
+      }
+    },
+    {
+      "id": "fit-context-and-sequence",
+      "lensId": "context-and-sequence",
+      "translation": {
+        "title": "Fit context and sequence",
+        "body": "Connect place, supporting actors, timing, neighboring challenges, and consequences into one setup."
+      }
+    },
+    {
+      "id": "test-and-teach",
+      "lensId": "mastery-check",
+      "translation": {
+        "title": "Test and teach deliberately",
+        "body": "Check recently learned skills; introduce a new one only with focused attention and a reason to use it."
+      }
+    },
+    {
+      "id": "design-survivable-space",
+      "lensId": "threat-geometry",
+      "translation": {
+        "title": "Design the survivable space",
+        "body": "Start with where and how the player can remain alive, then build threats around that response space."
+      }
+    },
+    {
+      "id": "make-state-legible",
+      "lensId": "progress-clarity",
+      "translation": {
+        "title": "Make state legible",
+        "body": "Show the goal, valid hits, progress, signals, and enough reaction time; mystery can be intentional, helplessness should not be."
+      }
+    },
+    {
+      "id": "preserve-expression",
+      "lensId": "player-expression",
+      "translation": {
+        "title": "Preserve expression",
+        "body": "Let different tools, skills, and player archetypes produce viable approaches where the system supports them."
+      }
+    },
+    {
+      "id": "change-phase-with-purpose",
+      "lensId": "phase-structure",
+      "translation": {
+        "title": "Change phase with purpose",
+        "body": "Transition for a mechanical change, skill combination, story beat, or mental break—not just more duration."
+      }
+    },
+    {
+      "id": "shape-difficulty-rhythm",
+      "lensId": "difficulty-rhythm",
+      "translation": {
+        "title": "Shape difficulty as rhythm",
+        "body": "Use peaks, relief, visible progress, and a foreseeable ending to turn expected failure into expected triumph."
+      }
+    },
+    {
+      "id": "break-rules-with-intent",
+      "lensId": "rule-exception",
+      "translation": {
+        "title": "Break rules with intent",
+        "body": "Exceptional rules, viewpoints, or mechanics can dazzle, but they must serve reward, engagement, or challenge."
+      }
+    }
+  ]
+}

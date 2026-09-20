@@ -5,5 +5,10 @@
   "sourceLocale": "en",
   "contentVersion": 2,
   "related": [],
-  "sources": []
+  "sources": [
+    {
+      "title": "Boss Up: Boss Battle Design Fundamentals and Retrospective — Itay Keren, GDC 2018",
+      "url": "https://www.gdcvault.com/play/1024921/Boss-Up-Boss-Battle-Design"
+    }
+  ]
 }

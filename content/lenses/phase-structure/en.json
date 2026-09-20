@@ -1,0 +1,6 @@
+{
+  "title": "Phase structure",
+  "summary": "Split an experience into phases only when the transition changes mechanics, combines skills, advances meaning, or creates a useful mental break. A phase should not exist merely to extend duration.",
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

@@ -1,14 +1,18 @@
 {
-  "id": "telegraphing",
-  "number": 1,
+  "id": "progress-clarity",
+  "number": 10,
   "published": true,
   "sourceLocale": "en",
-  "contentVersion": 2,
-  "related": [],
+  "contentVersion": 1,
+  "related": ["telegraphing"],
   "sources": [
     {
       "title": "Boss Up: Boss Battle Design Fundamentals and Retrospective — Itay Keren, GDC 2018",
       "url": "https://www.gdcvault.com/play/1024921/Boss-Up-Boss-Battle-Design"
+    },
+    {
+      "title": "Official Boss Up presentation slides",
+      "url": "https://media.gdcvault.com/gdc2018/presentations/Keren_Itay_BossUp.pdf"
     }
   ]
 }

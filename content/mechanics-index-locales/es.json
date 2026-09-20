@@ -1,0 +1,55 @@
+{
+  "bossUpFramework": {
+    "copy": {
+      "eyebrow": "ADAPTADO DE GDC 2018",
+      "title": "Boss Up: 10 comprobaciones para un encuentro",
+      "intro": "Una adaptación práctica de la charla de Itay Keren. Usa estas tarjetas como revisión de diseño: cada una enlaza con una lente del atlas que vuelve reutilizable la idea.",
+      "sourceLabel": "Ver la charla",
+      "slidesLabel": "Abrir las diapositivas",
+      "lensSectionTitle": "Una comprobación de Boss Up",
+      "lensSectionIntro": "Esta lente se relaciona con una de las reglas prácticas de la charla."
+    },
+    "rules": {
+      "reward-the-journey": {
+        "title": "Recompensa el recorrido",
+        "body": "Haz que la confrontación sea una recompensa nueva, no tiempo añadido entre el jugador y su progreso."
+      },
+      "frame-the-story": {
+        "title": "Enmarca la historia",
+        "body": "Genera anticipación antes del reto y da consecuencias significativas a su éxito o fracaso."
+      },
+      "fit-context-and-sequence": {
+        "title": "Ajusta contexto y secuencia",
+        "body": "Conecta lugar, actores secundarios, momento, retos cercanos y consecuencias en una sola preparación."
+      },
+      "test-and-teach": {
+        "title": "Evalúa y enseña con intención",
+        "body": "Comprueba habilidades recientes; introduce una nueva solo con atención enfocada y un motivo para usarla."
+      },
+      "design-survivable-space": {
+        "title": "Diseña el espacio de supervivencia",
+        "body": "Empieza por dónde y cómo puede sobrevivir el jugador; después construye amenazas alrededor de ese espacio de respuesta."
+      },
+      "make-state-legible": {
+        "title": "Haz legible el estado",
+        "body": "Muestra objetivo, impactos válidos, progreso, señales y tiempo de reacción; el misterio puede ser intencional, la impotencia no."
+      },
+      "preserve-expression": {
+        "title": "Conserva la expresión",
+        "body": "Permite que distintas herramientas, habilidades y perfiles produzcan enfoques viables cuando el sistema los admite."
+      },
+      "change-phase-with-purpose": {
+        "title": "Cambia de fase con propósito",
+        "body": "Transiciona por un cambio mecánico, combinación de habilidades, momento narrativo o descanso mental, no solo por duración."
+      },
+      "shape-difficulty-rhythm": {
+        "title": "Da ritmo a la dificultad",
+        "body": "Usa picos, alivio, progreso visible y un final previsible para convertir el fracaso esperado en triunfo esperado."
+      },
+      "break-rules-with-intent": {
+        "title": "Rompe reglas con intención",
+        "body": "Reglas, perspectivas o mecánicas excepcionales pueden sorprender, pero deben servir a la recompensa, implicación o reto."
+      }
+    }
+  }
+}
