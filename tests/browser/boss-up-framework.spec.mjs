@@ -1,16 +1,8 @@
 import { test, expect } from '@playwright/test';
 
-test('lens catalog presents the attributed Boss Up framework and all lenses', async ({ page }) => {
+test('lens catalog presents all lenses without the Boss Up framework panel', async ({ page }) => {
   await page.goto('en/lenses/');
-  const framework = page.locator('.source-framework');
-  await expect(
-    framework.getByRole('heading', { name: 'Boss Up: 10 checks for an encounter' }),
-  ).toBeVisible();
-  await expect(framework.locator('.source-framework__rules > li')).toHaveCount(10);
-  await expect(framework.getByRole('link', { name: /Watch the talk/ })).toHaveAttribute(
-    'href',
-    'https://www.gdcvault.com/play/1024921/Boss-Up-Boss-Battle-Design',
-  );
+  await expect(page.locator('.source-framework')).toHaveCount(0);
   await expect(page.locator('.lens-card')).toHaveCount(15);
   await expect(page.locator('[data-lens-visual="difficulty-rhythm"]')).toHaveCount(1);
 });

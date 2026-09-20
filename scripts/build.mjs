@@ -438,53 +438,6 @@ function renderLensCards(localeCode, t) {
     })
     .join('');
 }
-function renderBossUpFramework(localeCode) {
-  const copy = bossUpFramework.translations[localeCode];
-  const rules = bossUpFramework.rules
-    .map((rule, index) => {
-      const ruleCopy = rule.translations[localeCode];
-      const lens = lensById.get(rule.lensId);
-      if (!lens) throw new Error(`Unknown Boss Up lens: ${rule.lensId}`);
-      const lensCopy = lens.translations[localeCode];
-      return /* HTML */ `<li>
-        <a href="${link(`${localeCode}/lenses/${rule.lensId}/`)}">
-          <span class="source-framework__number" aria-hidden="true"
-            >${String(index + 1).padStart(2, '0')}</span
-          >
-          <span class="source-framework__rule-copy">
-            <strong>${e(ruleCopy.title)}</strong>
-            <span>${e(ruleCopy.body)}</span>
-            <em>${e(lensCopy.title)} <span aria-hidden="true">→</span></em>
-          </span>
-        </a>
-      </li>`;
-    })
-    .join('');
-  return /* HTML */ `<section class="source-framework" aria-labelledby="boss-up-framework-title">
-    <header class="source-framework__header">
-      <div>
-        <span class="eyebrow">${e(copy.eyebrow)}</span>
-        <h2 id="boss-up-framework-title">${e(copy.title)}</h2>
-        <p>${e(copy.intro)}</p>
-      </div>
-      <div class="source-framework__links">
-        <a href="${e(bossUpFramework.source.url)}"
-          >${e(copy.sourceLabel)} <span aria-hidden="true">↗</span></a
-        >
-        <a href="${e(bossUpFramework.source.slidesUrl)}"
-          >${e(copy.slidesLabel)} <span aria-hidden="true">↗</span></a
-        >
-      </div>
-    </header>
-    <ol class="source-framework__rules">
-      ${rules}
-    </ol>
-    <p class="source-framework__credit">
-      ${e(bossUpFramework.source.title)} · ${e(bossUpFramework.source.speaker)} ·
-      ${e(bossUpFramework.source.event)}
-    </p>
-  </section>`;
-}
 function renderAbout(t) {
   const principles = [
     [t.aboutResearchTitle, t.aboutResearchBody],
@@ -949,7 +902,6 @@ for (const locale of locales) {
       <h1>${e(t.conceptsTitle)}</h1>
       <p>${e(t.conceptsIntro)}</p>
     </header>
-    ${renderBossUpFramework(locale.code)}
     <div class="lens-catalog-grid">${lensCards}</div>
   </main>`;
   await write(
