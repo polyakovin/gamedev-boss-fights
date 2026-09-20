@@ -14,6 +14,13 @@ const mechanics = [
     category: 'Movement and space',
     summary: 'A fixed-direction rush.',
     url: 'https://example.com/en/mechanics/charge/',
+    profile: {
+      geometry: ['line'],
+      signal: ['pose', 'trajectory'],
+      response: ['dodge', 'reposition'],
+      dimensions: ['2d', '3d'],
+      lenses: ['telegraphing'],
+    },
   },
 ];
 
@@ -28,10 +35,43 @@ test('boss drafts keep safe local fields and published mechanic ids', () => {
       ['charge'],
     ),
     {
-      version: 1,
+      version: 2,
       name: 'Gatekeeper',
       description: 'Guards the next area.',
-      mechanics: ['charge'],
+      phases: [{ id: 'phase-1', name: '', goal: '' }],
+      assignments: [{ mechanicId: 'charge', phaseId: 'phase-1', combo: 'solo' }],
+    },
+  );
+});
+
+test('boss drafts normalize phase ids, assignments, and combinations', () => {
+  assert.deepEqual(
+    normalizeBossDraft(
+      {
+        phases: [
+          { id: 'phase-opening', name: ' Opening ', goal: 'Teach the lane.' },
+          { id: 'invalid', name: 'Finale' },
+        ],
+        assignments: [
+          { mechanicId: 'charge', phaseId: 'missing', combo: 'unknown' },
+          { mechanicId: 'charge', phaseId: 'phase-opening', combo: 'a' },
+          { mechanicId: 'charge', phaseId: 'phase-2', combo: 'a' },
+        ],
+      },
+      ['charge'],
+    ),
+    {
+      version: 2,
+      name: '',
+      description: '',
+      phases: [
+        { id: 'phase-opening', name: ' Opening ', goal: 'Teach the lane.' },
+        { id: 'phase-2', name: 'Finale', goal: '' },
+      ],
+      assignments: [
+        { mechanicId: 'charge', phaseId: 'phase-opening', combo: 'solo' },
+        { mechanicId: 'charge', phaseId: 'phase-2', combo: 'a' },
+      ],
     },
   );
 });
@@ -39,17 +79,37 @@ test('boss drafts keep safe local fields and published mechanic ids', () => {
 test('boss sketch exports a portable localized mechanic snapshot', () => {
   assert.deepEqual(
     createBossSketch(
-      { name: ' Gatekeeper ', description: ' Guards the next area. ', mechanics: ['charge'] },
+      {
+        name: ' Gatekeeper ',
+        description: ' Guards the next area. ',
+        phases: [{ id: 'phase-1', name: 'Opening', goal: 'Teach the lane.' }],
+        assignments: [{ mechanicId: 'charge', phaseId: 'phase-1', combo: 'a' }],
+      },
       mechanics,
       'en',
+      { phase: 'Phase', combos: { solo: 'Solo', a: 'Combination A' } },
     ),
     {
       format: BOSS_SKETCH_FORMAT,
-      version: 1,
+      version: 2,
       locale: 'en',
       name: 'Gatekeeper',
       description: 'Guards the next area.',
       mechanics,
+      phases: [
+        {
+          id: 'phase-1',
+          name: 'Opening',
+          goal: 'Teach the lane.',
+          combinations: [
+            {
+              id: 'a',
+              name: 'Combination A',
+              mechanics,
+            },
+          ],
+        },
+      ],
     },
   );
   assert.throws(() => createBossSketch({ name: '', mechanics: ['charge'] }, mechanics, 'en'));

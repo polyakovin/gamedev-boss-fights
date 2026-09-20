@@ -7,6 +7,7 @@ import { escape as e, jsonForHtml } from '../lib/html.mjs';
 import { icon } from '../lib/icons.mjs';
 import { renderLensVisual } from '../lib/lens-view.mjs';
 import { link, canonical, REPOSITORY, AUTHOR } from '../lib/config.mjs';
+import { MECHANIC_TAXONOMY, createMechanicProfile } from '../src/mechanic-relations.mjs';
 const {
   locales,
   ui,
@@ -596,12 +597,18 @@ for (const locale of locales) {
       id: outline.id,
       number: outline.number,
       category: outlineContent.category,
+      categoryKey: outline.translations.en.category,
       title: lesson?.title ?? outlineContent.title,
       summary: lesson?.summary ?? outlineContent.summary,
       mechanic,
       examples: mechanicsExamplesById.get(outline.id) ?? [],
       popularRank: popularRankById.get(outline.id) ?? null,
       profile: popularProfilesById.get(outline.id) ?? null,
+      connectionProfile: createMechanicProfile({
+        id: outline.id,
+        category: outline.translations.en.category,
+        lenses: mechanic?.meta.lenses ?? [],
+      }),
       isWip: !mechanic,
     };
   });
@@ -714,16 +721,68 @@ for (const locale of locales) {
   );
   const builderMechanics = catalogEntries.map((entry) => ({
     id: entry.id,
+    number: entry.number,
     title: entry.title,
     category: entry.category,
+    categoryKey: entry.categoryKey,
     summary: entry.summary,
     url: canonical(`${locale.code}/mechanics/${entry.id}/`),
+    profile: entry.connectionProfile,
   }));
+  const connectionCopy = t.builderConnections;
+  const taxonomyLabels = {
+    geometry: Object.fromEntries(
+      MECHANIC_TAXONOMY.geometry.map((value) => [
+        value,
+        connectionCopy[`geometry${value[0].toUpperCase()}${value.slice(1)}`],
+      ]),
+    ),
+    signal: Object.fromEntries(
+      MECHANIC_TAXONOMY.signal.map((value) => [
+        value,
+        connectionCopy[`signal${value[0].toUpperCase()}${value.slice(1)}`],
+      ]),
+    ),
+    response: Object.fromEntries(
+      MECHANIC_TAXONOMY.response.map((value) => [
+        value,
+        connectionCopy[`response${value[0].toUpperCase()}${value.slice(1)}`],
+      ]),
+    ),
+    dimensions: {
+      '2d': connectionCopy.dimension2d,
+      '3d': connectionCopy.dimension3d,
+    },
+    lenses: Object.fromEntries(
+      publishedLenses.map((lens) => [lens.meta.id, lens.translations[locale.code].title]),
+    ),
+  };
+  const filterGroups = [
+    ['geometry', connectionCopy.geometry, MECHANIC_TAXONOMY.geometry],
+    ['signal', connectionCopy.signal, MECHANIC_TAXONOMY.signal],
+    ['response', connectionCopy.response, MECHANIC_TAXONOMY.response],
+    ['dimensions', connectionCopy.dimension, MECHANIC_TAXONOMY.dimension],
+    ['lenses', connectionCopy.lens, publishedLenses.map((lens) => lens.meta.id)],
+  ];
+  const builderFilters = filterGroups
+    .map(
+      ([key, label, values]) =>
+        /* HTML */ `<label class="boss-builder-filter">
+          <span>${e(label)}</span>
+          <select data-boss-filter="${key}">
+            <option value="">${e(connectionCopy.all)}</option>
+            ${values.map((value) => `<option value="${e(value)}">${e(taxonomyLabels[key][value])}</option>`).join('')}
+          </select>
+        </label>`,
+    )
+    .join('');
   const builderCards = catalogEntries
     .map((entry) => {
+      const profile = entry.connectionProfile;
       return /* HTML */ `<article
         class="boss-builder-mechanic${entry.isWip ? ' boss-builder-mechanic--wip' : ''}"
         data-boss-mechanic-card
+        data-mechanic-id="${e(entry.id)}"
       >
         <label class="boss-builder-mechanic__select">
           <input type="checkbox" value="${e(entry.id)}" data-boss-mechanic />
@@ -741,7 +800,14 @@ for (const locale of locales) {
               ${entry.popularRank ? `<span class="core-badge">${e(popularUi.badge)}</span>` : ''}
               ${entry.isWip ? '<span class="wip-badge">WIP</span>' : ''}</strong
             >
-            <span>${e(entry.summary)}</span>
+            <span class="boss-builder-mechanic__tags">
+              <span>${e(taxonomyLabels.geometry[profile.geometry[0]])}</span>
+              <span>${e(taxonomyLabels.response[profile.response[0]])}</span>
+              <span
+                >${profile.dimensions.map((value) => e(taxonomyLabels.dimensions[value])).join(' · ')}</span
+              >
+            </span>
+            <span class="boss-builder-mechanic__summary">${e(entry.summary)}</span>
           </span>
         </label>
         <a href="${link(`${locale.code}/mechanics/${entry.id}/`)}">
@@ -759,7 +825,9 @@ for (const locale of locales) {
       cleared: t.builderCleared,
       nameRequired: t.builderNameRequired,
       mechanicRequired: t.builderMechanicRequired,
+      ...connectionCopy,
     },
+    labels: taxonomyLabels,
   };
   const builderBody = /* HTML */ `<main id="main" class="boss-builder-main" data-boss-builder>
     <header class="boss-builder-hero">
@@ -769,45 +837,74 @@ for (const locale of locales) {
       <span class="boss-builder-storage">${e(t.builderStorageNote)}</span>
     </header>
     <div class="boss-builder-layout">
-      <section class="boss-builder-form" aria-label="${e(t.builderTitle)}">
-        <label class="boss-builder-field">
-          <span>${e(t.builderName)}</span>
-          <input
-            type="text"
-            maxlength="120"
-            autocomplete="off"
-            placeholder="${e(t.builderNamePlaceholder)}"
-            data-boss-name
-          />
-        </label>
-        <label class="boss-builder-field">
-          <span>${e(t.builderDescription)}</span>
-          <textarea
-            maxlength="2000"
-            rows="8"
-            placeholder="${e(t.builderDescriptionPlaceholder)}"
-            data-boss-description
-          ></textarea>
-        </label>
-        <div class="boss-builder-actions">
-          <button type="button" class="boss-builder-download" data-boss-download>
-            ${icon('download')}${e(t.builderDownload)}
-          </button>
-          <button type="button" class="boss-builder-reset" data-boss-reset disabled>
-            ${icon('rotate-ccw')}${e(t.builderReset)}
-          </button>
-        </div>
-        <p class="boss-builder-status" role="status" aria-live="polite" data-boss-status></p>
-      </section>
+      <aside class="boss-builder-sidebar">
+        <section class="boss-builder-form" aria-label="${e(t.builderTitle)}">
+          <label class="boss-builder-field">
+            <span>${e(t.builderName)}</span>
+            <input
+              type="text"
+              maxlength="120"
+              autocomplete="off"
+              placeholder="${e(t.builderNamePlaceholder)}"
+              data-boss-name
+            />
+          </label>
+          <label class="boss-builder-field">
+            <span>${e(t.builderDescription)}</span>
+            <textarea
+              maxlength="2000"
+              rows="6"
+              placeholder="${e(t.builderDescriptionPlaceholder)}"
+              data-boss-description
+            ></textarea>
+          </label>
+          <div class="boss-builder-actions">
+            <button type="button" class="boss-builder-download" data-boss-download>
+              ${icon('download')}${e(t.builderDownload)}
+            </button>
+            <button type="button" class="boss-builder-reset" data-boss-reset disabled>
+              ${icon('rotate-ccw')}${e(t.builderReset)}
+            </button>
+          </div>
+          <p class="boss-builder-status" role="status" aria-live="polite" data-boss-status></p>
+        </section>
+        <section class="boss-builder-phases" aria-labelledby="boss-builder-phases-title">
+          <header>
+            <h2 id="boss-builder-phases-title">${e(connectionCopy.phasesTitle)}</h2>
+            <button type="button" data-boss-add-phase>${e(connectionCopy.addPhase)}</button>
+          </header>
+          <p>${e(connectionCopy.phasesIntro)}</p>
+          <div class="boss-builder-phase-list" data-boss-phases></div>
+        </section>
+        <section class="boss-builder-relations" aria-labelledby="boss-builder-relations-title">
+          <header>
+            <span class="eyebrow">${e(connectionCopy.relationsTitle)}</span>
+            <h2 id="boss-builder-relations-title">${e(connectionCopy.relationsTitle)}</h2>
+            <p>${e(connectionCopy.relationsIntro)}</p>
+          </header>
+          <div class="boss-builder-relation-group boss-builder-relation-group--compatible">
+            <h3>${e(connectionCopy.compatibleTitle)}</h3>
+            <ul data-boss-compatible></ul>
+          </div>
+          <div class="boss-builder-relation-group boss-builder-relation-group--conflict">
+            <h3>${e(connectionCopy.conflictsTitle)}</h3>
+            <ul data-boss-conflicts></ul>
+          </div>
+          <div class="boss-builder-relation-group">
+            <h3>${e(connectionCopy.suggestionsTitle)}</h3>
+            <ul data-boss-suggestions></ul>
+          </div>
+        </section>
+      </aside>
       <section class="boss-builder-mechanics" aria-labelledby="boss-builder-mechanics-title">
         <div class="boss-builder-mechanics__heading">
           <div>
             <span class="eyebrow">${e(t.builderSelected)}</span>
-            <h2 id="boss-builder-mechanics-title">${e(t.catalog)}</h2>
+            <h2 id="boss-builder-mechanics-title">${e(connectionCopy.explorerTitle)}</h2>
           </div>
           <span data-boss-selected>${e(t.builderSelected)}: 0</span>
         </div>
-        <p>${e(t.builderMechanicsIntro)}</p>
+        <p>${e(connectionCopy.explorerIntro)}</p>
         <label class="boss-builder-search">
           <span class="visually-hidden">${e(t.catalog)}</span>
           <span class="boss-builder-search__icon">${icon('search')}</span>
@@ -817,6 +914,19 @@ for (const locale of locales) {
             autocomplete="off"
             data-boss-mechanic-search
           />
+        </label>
+        <div class="boss-builder-filters" data-boss-filters>
+          ${builderFilters}
+          <div class="boss-builder-filter-actions">
+            <span data-boss-results
+              >${e(connectionCopy.results.replace('{count}', String(catalogEntries.length)))}</span
+            >
+            <button type="button" data-boss-reset-filters>${e(connectionCopy.resetFilters)}</button>
+          </div>
+        </div>
+        <label class="boss-builder-active-phase">
+          <span>${e(connectionCopy.activePhase)}</span>
+          <select data-boss-active-phase></select>
         </label>
         <div class="boss-builder-mechanics__grid">${builderCards}</div>
       </section>

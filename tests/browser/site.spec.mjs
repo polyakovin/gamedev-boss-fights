@@ -579,6 +579,14 @@ test('boss builder persists a local draft and downloads portable JSON', async ({
   await expect(page.locator('.boss-builder-mechanic [data-character-art="kern"]')).toHaveCount(5);
   await expect(page.locator('.boss-builder-mechanic [data-character-art="tavi"]')).toHaveCount(5);
   await expect(page.locator('.boss-builder-mechanic [data-pattern-preview]')).toHaveCount(4);
+  await expect(page.locator('[data-boss-filter]')).toHaveCount(5);
+  await page.locator('[data-boss-filter="geometry"]').selectOption('radial');
+  const radialCount = await page.locator('.boss-builder-mechanic:visible').count();
+  expect(radialCount).toBeGreaterThan(0);
+  expect(radialCount).toBeLessThan(124);
+  await expect(page.locator('[data-boss-results]')).toContainText(String(radialCount));
+  await page.locator('[data-boss-reset-filters]').click();
+  await expect(page.locator('.boss-builder-mechanic:visible')).toHaveCount(124);
   await page.locator('[data-boss-mechanic-search]').fill('Charge');
   await expect(page.locator('.boss-builder-mechanic:visible')).toHaveCount(1);
   await page.locator('[data-boss-mechanic-search]').fill('');
@@ -592,18 +600,31 @@ test('boss builder persists a local draft and downloads portable JSON', async ({
   await expect(page.locator('[data-boss-status]')).toHaveText('Select at least one mechanic.');
   await page.locator('[data-boss-mechanic][value="charge"]').check();
   await expect(page.locator('[data-boss-selected]')).toHaveText('Selected: 1');
+  await page.locator('[data-boss-add-phase]').click();
+  await expect(page.locator('.boss-builder-phase')).toHaveCount(2);
+  await page.locator('[data-phase-name="phase-2"]').fill('Finale');
+  await page.locator('[data-phase-goal="phase-2"]').fill('Compress the safe space.');
+  await expect(page.locator('[data-boss-active-phase]')).toHaveValue('phase-2');
   await page.locator('[data-boss-mechanic-search]').fill('Teleport');
   await expect(page.locator('.boss-builder-mechanic:visible')).toHaveCount(1);
   await page.locator('[data-boss-mechanic][value="teleport"]').check();
+  await page.locator('[data-assignment-combo="teleport"]').selectOption('a');
   await expect(page.locator('[data-boss-selected]')).toHaveText('Selected: 2');
   await page.locator('[data-boss-mechanic-search]').fill('');
   expect(
     await page.evaluate(() => JSON.parse(localStorage.getItem('boss-fight-atlas-boss-builder'))),
   ).toEqual({
-    version: 1,
+    version: 2,
     name: 'Gate Warden',
     description: 'Guards the passage to the next area.',
-    mechanics: ['charge', 'teleport'],
+    phases: [
+      { id: 'phase-1', name: '', goal: '' },
+      { id: 'phase-2', name: 'Finale', goal: 'Compress the safe space.' },
+    ],
+    assignments: [
+      { mechanicId: 'charge', phaseId: 'phase-1', combo: 'solo' },
+      { mechanicId: 'teleport', phaseId: 'phase-2', combo: 'a' },
+    ],
   });
 
   await page.reload();
@@ -612,49 +633,74 @@ test('boss builder persists a local draft and downloads portable JSON', async ({
     'Guards the passage to the next area.',
   );
   await expect(page.locator('[data-boss-mechanic][value="charge"]')).toBeChecked();
+  await expect(page.locator('[data-boss-mechanic][value="teleport"]')).not.toBeChecked();
+  await page.locator('[data-boss-active-phase]').selectOption('phase-2');
   await expect(page.locator('[data-boss-mechanic][value="teleport"]')).toBeChecked();
+  await expect(page.locator('[data-boss-mechanic][value="charge"]')).not.toBeChecked();
 
   const downloadPromise = page.waitForEvent('download');
   await page.locator('[data-boss-download]').click();
   const download = await downloadPromise;
   expect(download.suggestedFilename()).toBe('Gate-Warden.json');
   const exported = JSON.parse(await fs.readFile(await download.path(), 'utf8'));
-  expect(exported).toEqual({
+  expect(exported).toMatchObject({
     format: 'boss-fight-atlas/boss-sketch',
-    version: 1,
+    version: 2,
     locale: 'en',
     name: 'Gate Warden',
     description: 'Guards the passage to the next area.',
-    mechanics: [
+    phases: [
       {
-        id: 'charge',
-        title: 'Charge',
-        category: 'Body and melee',
-        summary:
-          'The boss aims, locks its direction, and charges forward. It cannot turn after the lock.',
-        url: 'https://polyakovin.github.io/gamedev-boss-fights/en/mechanics/charge/',
+        id: 'phase-1',
+        name: 'Phase 1',
+        combinations: [{ id: 'solo', name: 'Solo' }],
       },
       {
-        id: 'teleport',
-        title: 'Teleport',
-        category: 'Space, movement, and perception',
-        summary:
-          'Draft outline for the teleport mechanic. Rules, tuning guidance, and examples are still in progress.',
-        url: 'https://polyakovin.github.io/gamedev-boss-fights/en/mechanics/teleport/',
+        id: 'phase-2',
+        name: 'Finale',
+        goal: 'Compress the safe space.',
+        combinations: [{ id: 'a', name: 'Combination A' }],
       },
     ],
   });
+  expect(exported.mechanics.map(({ id }) => id)).toEqual(['charge', 'teleport']);
+  expect(exported.mechanics[0].profile).toMatchObject({
+    geometry: ['line'],
+    dimensions: ['2d', '3d'],
+  });
+  expect(exported.phases[0].combinations[0].mechanics.map(({ id }) => id)).toEqual(['charge']);
+  expect(exported.phases[1].combinations[0].mechanics.map(({ id }) => id)).toEqual(['teleport']);
 
   await page.goto('ru/builder/');
   await expect(page.locator('[data-boss-name]')).toHaveValue('Gate Warden');
   await expect(page.locator('[data-boss-mechanic][value="charge"]')).toBeChecked();
+  await page.locator('[data-boss-active-phase]').selectOption('phase-2');
   await expect(page.locator('[data-boss-mechanic][value="teleport"]')).toBeChecked();
   await page.locator('[data-boss-reset]').click();
   await expect(page.locator('[data-boss-name]')).toHaveValue('');
   await expect(page.locator('[data-boss-mechanic]:checked')).toHaveCount(0);
+  await page.setViewportSize({ width: 390, height: 844 });
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
   expect(
     await page.evaluate(() => localStorage.getItem('boss-fight-atlas-boss-builder')),
   ).toBeNull();
+});
+
+test('boss builder surfaces compatible and conflicting mechanics in the active phase', async ({
+  page,
+}) => {
+  await page.goto('en/builder/');
+  await page.locator('[data-boss-mechanic][value="charge"]').check();
+  await page.locator('[data-boss-mechanic][value="attack-lock"]').check();
+  await expect(page.locator('[data-boss-compatible]')).toContainText('Charge + Attack lock');
+  await expect(page.locator('[data-boss-suggestions] button').first()).toBeVisible();
+
+  await page.locator('[data-boss-mechanic][value="stack-damage"]').check();
+  await page.locator('[data-boss-mechanic][value="personal-spread"]').check();
+  await expect(page.locator('[data-boss-conflicts]')).toContainText('Stack + Spread');
+  await expect(page.locator('[data-mechanic-id="personal-spread"]')).toHaveClass(
+    /boss-builder-mechanic--conflict/,
+  );
 });
 
 test('lens chips show explanations and open localized lens pages', async ({ page, request }) => {
