@@ -54,6 +54,15 @@ for (const locale of registry) {
         ),
     ).toBe(locale.dir === 'rtl' ? 'to left' : 'to right');
     await expect(page.locator('[data-charge-motion-note]')).toBeVisible();
+    await expect(page.locator('.lesson-category')).toHaveAttribute(
+      'href',
+      `/gamedev-boss-fights/${locale.code}/#mechanics`,
+    );
+    expect(
+      await page
+        .locator('.lesson-category')
+        .evaluate((element) => getComputedStyle(element).textAlign),
+    ).toBe('right');
     await expect(page.locator('.lesson-title-line .lens-chip')).toHaveCount(6);
     await expect(page.locator('.lesson-title-line [role="tooltip"]')).toHaveCount(6);
     await expect(page.locator('.mechanic-overview')).toHaveCount(1);
@@ -124,6 +133,10 @@ test('controls work by keyboard; play advances; seeking pauses', async ({ page }
   ).toHaveCount(0);
   await expect(page.locator('.lesson-hero h1')).toHaveText('Таран');
   await expect(page.locator('.lesson-category')).toHaveText('Движение и пространство');
+  await page.locator('.lesson-category').click();
+  await expect(page).toHaveURL(/\/ru\/#mechanics$/);
+  await expect(page.locator('#mechanics')).toBeVisible();
+  await page.goto('ru/mechanics/charge/');
   await expect(page.locator('.mechanic-overview')).toHaveText(
     'Таран — скоростная атака: босс целится, фиксирует направление и мчится вперёд без возможности повернуть. Механика работает хорошо, когда фиксация делает траекторию предсказуемой, боковое движение даёт доступный ответ, а восстановление создаёт окно для контратаки.',
   );

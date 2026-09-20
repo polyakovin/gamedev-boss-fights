@@ -309,8 +309,17 @@ section[id] {
   justify-self: end;
 }
 .lesson-category {
+  display: block;
+  width: 100%;
   color: var(--accent);
   font-family: var(--font-label);
+  text-align: right;
+  text-decoration: none;
+}
+.lesson-category:hover,
+.lesson-category:focus-visible {
+  text-decoration: underline;
+  text-underline-offset: 4px;
 }
 .lesson-hero h1 {
   font-size: clamp(58px, 5.5vw, 80px);

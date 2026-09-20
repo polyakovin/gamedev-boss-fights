@@ -374,7 +374,9 @@ for (const locale of locales) {
       <main id="main" class="lesson-main">
         <div class="lesson-overview-grid">
           <section id="overview" class="lesson-hero">
-            <span class="eyebrow lesson-category">${e(c.category)}</span>
+            <a class="eyebrow lesson-category" href="${link(`${locale.code}/#mechanics`)}"
+              >${e(c.category)}</a
+            >
             <div class="lesson-title-line">
               <h1>${e(c.title)}</h1>
               ${lensChips(locale.code, m.meta.lenses, c.lensNotes)}
