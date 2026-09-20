@@ -39,7 +39,7 @@ lesson.examples = [
     screenshot: 'https://example.com/TODO-screenshot-2d.jpg',
     screenshotSource: 'https://example.com/TODO-screenshot-source-2d',
     body: 'TODO: design observation',
-    video: 'https://www.youtube.com/watch?v=TODO-video-2d',
+    video: 'https://www.youtube.com/watch?v=TODO-video-2d&t=1s',
     videoDurationSeconds: 180,
   },
   {
@@ -49,7 +49,7 @@ lesson.examples = [
     screenshot: 'https://example.com/TODO-screenshot-3d.jpg',
     screenshotSource: 'https://example.com/TODO-screenshot-source-3d',
     body: 'TODO: design observation',
-    video: 'https://www.youtube.com/watch?v=TODO-video-3d',
+    video: 'https://www.youtube.com/watch?v=TODO-video-3d&t=1s',
     videoDurationSeconds: 180,
   },
 ];

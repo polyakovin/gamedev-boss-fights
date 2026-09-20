@@ -232,7 +232,10 @@ test('published game references cover 2D and 3D with screenshots and stable vide
   assert.equal(new Set(examples.map((example) => example.screenshot)).size, examples.length);
   assert.ok(examples.every((example) => example.videoDurationSeconds > 0));
   assert.equal(examples.filter((example) => example.videoDurationSeconds <= 180).length, 5);
-  assert.equal(new URL(examples[4].video).searchParams.get('t'), '265s');
+  assert.deepEqual(
+    examples.map((example) => new URL(example.video).searchParams.get('t')),
+    ['2s', '66s', '7s', '15s', '265s', '2s'],
+  );
 
   const data = structuredClone(source);
   data.mechanics[0].translations.ru.examples[0].video = 'https://vimeo.com/123456';
@@ -271,12 +274,9 @@ test('learning sources stay specific to the charge mechanic and prioritize pract
   }
 });
 
-test('long boss references open at the exact mechanic instead of unrelated gameplay', async () => {
+test('every boss reference opens at the exact attack instead of unrelated gameplay', async () => {
   const data = structuredClone(source);
   for (const lesson of Object.values(data.mechanics[0].translations))
-    lesson.examples[4].video = 'https://www.youtube.com/watch?v=NwFX9I69uss';
-  await assert.rejects(
-    validateContent(data),
-    /example 5 longer than 3 minutes needs an exact YouTube timestamp/,
-  );
+    lesson.examples[0].video = 'https://www.youtube.com/watch?v=7pVgc-VBuPk';
+  await assert.rejects(validateContent(data), /example 1 needs an exact YouTube timestamp/);
 });

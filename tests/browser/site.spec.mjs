@@ -127,9 +127,9 @@ for (const locale of registry) {
     const videos = await page
       .locator('.game-example__link')
       .evaluateAll((links) => links.map((link) => link.href));
-    expect(videos[1]).toBe('https://www.youtube.com/watch?v=VaYY2fauQNo');
+    expect(videos[1]).toBe('https://www.youtube.com/watch?v=VaYY2fauQNo&t=66s');
     expect(videos[4]).toBe('https://www.youtube.com/watch?v=NwFX9I69uss&t=265s');
-    expect(videos[5]).toBe('https://www.youtube.com/watch?v=gzwO84ERsb8');
+    expect(videos[5]).toBe('https://www.youtube.com/watch?v=gzwO84ERsb8&t=2s');
     await expect(page.locator('.game-example__link').first()).toHaveAttribute(
       'rel',
       'noopener noreferrer',
