@@ -1,4 +1,6 @@
 import { patternFrame, PATTERN_DURATION } from './pattern-model.mjs';
+import { createCharacterAnimator } from './character-motion.mjs';
+import { createEncounterEffects } from './encounter-effects.mjs';
 
 for (const widget of document.querySelectorAll('[data-pattern-demo]')) initializePattern(widget);
 
@@ -13,6 +15,9 @@ export function initializePattern(widget) {
   const phaseTooltip = find('[data-pattern-phase-tooltip]');
   const boss = find('[data-pattern-boss]');
   const player = find('[data-pattern-player]');
+  const animateBoss = createCharacterAnimator(boss, 'kern');
+  const animatePlayer = createCharacterAnimator(player, 'tavi');
+  const animateEffects = createEncounterEffects(widget, (time) => patternFrame(kind, time));
   const bossLabel = find('[data-pattern-boss-label]');
   const playerLabel = find('[data-pattern-player-label]');
   const sweep = find('[data-pattern-sweep]');
@@ -21,6 +26,7 @@ export function initializePattern(widget) {
   const slamEdge = find('[data-pattern-slam-edge]');
   const summon = find('[data-pattern-summon]');
   const minions = [...widget.querySelectorAll('[data-pattern-minion]')];
+  const animateMinions = minions.map((minion) => createCharacterAnimator(minion, 'kern'));
   const volley = find('[data-pattern-volley]');
   const projectiles = find('[data-pattern-projectiles]');
   const status = find('[data-pattern-status]');
@@ -38,16 +44,15 @@ export function initializePattern(widget) {
     const frame = patternFrame(kind, time);
     widget.dataset.patternPhase = String(frame.phase);
     widget.dataset.patternOutcome = frame.clear ? 'safe' : 'pending';
-    const bossRotation = kind === 'sweep' ? frame.sweepRotation - 32 : 90;
-    boss.setAttribute(
-      'transform',
-      `translate(${frame.boss.x} ${frame.boss.y + frame.bossRock}) rotate(${bossRotation})`,
-    );
+    boss.setAttribute('transform', `translate(${frame.boss.x} ${frame.boss.y})`);
     player.setAttribute('transform', `translate(${frame.player.x} ${frame.player.y})`);
+    animateBoss(frame.bossMotion, frame.bossFacing);
+    animatePlayer(frame.playerMotion, frame.playerFacing);
+    animateEffects(time, frame);
     bossLabel.setAttribute('x', frame.bossLabel.x);
     bossLabel.setAttribute('y', frame.bossLabel.y);
     playerLabel.setAttribute('x', frame.player.x);
-    playerLabel.setAttribute('y', frame.player.y - 48);
+    playerLabel.setAttribute('y', frame.player.y - 62);
     sweep.setAttribute('opacity', String(frame.sweepOpacity));
     sweep.setAttribute('transform', `rotate(${frame.sweepRotation} 280 275)`);
     slam.setAttribute('opacity', String(frame.slamOpacity));
@@ -65,10 +70,19 @@ export function initializePattern(widget) {
       [420, 610],
     ];
     minions.forEach((minion, index) => {
-      const progress = Math.max(0, Math.min(1, frame.summonProgress * 1.35 - index * 0.18));
+      const progress = Math.max(0, Math.min(1, frame.summonProgress * 1.4 - index * 0.18));
       const x = starts[index][0] + (ends[index][0] - starts[index][0]) * progress;
       const y = starts[index][1] + (ends[index][1] - starts[index][1]) * progress;
-      minion.setAttribute('transform', `translate(${x} ${y}) scale(${0.55 + progress * 0.45})`);
+      minion.setAttribute('transform', `translate(${x} ${y}) scale(.38)`);
+      minion.setAttribute('opacity', Math.min(1, progress * 12));
+      animateMinions[index](
+        {
+          gait: progress * 32,
+          stride: Math.min(1, progress * 8, (1 - progress) * 10) * 0.85,
+          crouch: 1 - Math.min(1, progress * 5),
+        },
+        (Math.atan2(frame.player.y - y, frame.player.x - x) * 180) / Math.PI,
+      );
     });
     volley.setAttribute('opacity', String(frame.volleyOpacity));
     projectiles.setAttribute('transform', `translate(0 ${frame.volleyY})`);

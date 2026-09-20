@@ -1,0 +1,52 @@
+/* The encounter is a small game viewport in either surrounding site theme. */
+.charge-demo,
+.pattern-demo {
+  --surface: #162426;
+  --paper: #102023;
+  --ink: #e4ece2;
+  --muted: #a9bdb5;
+  --line: #3c5350;
+  --accent: #9de3cc;
+  --accent-soft: #203a36;
+  --signal: #f2ac7c;
+  --diagram-boss-label: #f1c4a2;
+  --diagram-player-label: #c5e5b0;
+  background: var(--surface);
+}
+.charge-demo__canvas,
+.pattern-demo__canvas {
+  padding: 0;
+}
+@media (min-width: 961px) {
+  .simulation-section .pattern-demo,
+  .simulation-section .pattern-demo__canvas,
+  .simulation-section .pattern-demo__svg {
+    height: 100%;
+  }
+}
+.charge-demo__entity-label,
+.pattern-demo__entity-label {
+  paint-order: stroke;
+  stroke: #142321;
+  stroke-width: 5px;
+  stroke-linejoin: round;
+  font-size: 15px;
+  letter-spacing: 0.4px;
+}
+.charge-demo__scene-timeline,
+.pattern-demo__scene-timeline {
+  text-shadow: 0 2px 5px #081614;
+}
+.charge-demo__phase-tooltip,
+.pattern-demo__phase-tooltip {
+  text-shadow: none;
+}
+[data-charge-lane],
+[data-charge-target],
+[data-charge-dodge],
+[data-pattern-sweep],
+[data-pattern-slam],
+[data-pattern-volley],
+[data-pattern-summon] {
+  pointer-events: none;
+}

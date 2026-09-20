@@ -169,8 +169,11 @@ test('the diagram reuses shared art and exposes one current phase above the slid
   assert.ok(markup.includes(CHARACTER_ART.tavi));
   assert.ok(thumbnail.includes(CHARACTER_ART.kern));
   assert.ok(thumbnail.includes(CHARACTER_ART.tavi));
-  assert.doesNotMatch(CHARACTER_ART.kern, /<ellipse[^>]*opacity=/);
-  assert.doesNotMatch(CHARACTER_ART.tavi, /<ellipse[^>]*opacity=/);
+  for (const art of [CHARACTER_ART.kern, CHARACTER_ART.tavi]) {
+    assert.match(art, /data-rig-part="shadow"/);
+    assert.match(art, /data-rig-part="elevation"/);
+    assert.ok(art.indexOf('data-rig-part="shadow"') < art.indexOf('data-rig-part="elevation"'));
+  }
   assert.match(CHARACTER_ART.kern, /data-character-art="kern"/);
   assert.match(CHARACTER_ART.tavi, /data-character-art="tavi"/);
   assert.match(thumbnail, /data-charge-preview-boss/);

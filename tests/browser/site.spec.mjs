@@ -445,8 +445,8 @@ for (const [id, title, activePhase] of [
     await expect(page.locator('.game-example')).toHaveCount(2);
     await expect(page.locator('.game-example__media img')).toHaveCount(2);
     await expect(page.locator('.sources li a')).toHaveCount(3);
-    await expect(page.locator('[data-character-art="kern"]')).toHaveCount(1);
-    await expect(page.locator('[data-character-art="tavi"]')).toHaveCount(1);
+    await expect(page.locator('[data-pattern-boss] [data-character-art="kern"]')).toHaveCount(1);
+    await expect(page.locator('[data-pattern-player] [data-character-art="tavi"]')).toHaveCount(1);
     await page.locator('[data-pattern-timeline]').evaluate((element) => {
       element.value = '2500';
       element.dispatchEvent(new Event('input', { bubbles: true }));

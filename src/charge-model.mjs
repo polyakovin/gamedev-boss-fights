@@ -6,6 +6,9 @@ export const DURATION = ATTACK_DURATION * 2;
 export const PLAYER_RADIUS = 34;
 export const LANE_HALF_WIDTH = 49;
 export const BOSS_LABEL_OFFSET_Y = -104;
+const DODGE_DURATION = 0.42;
+const CHARGE_DURATION = 0.62;
+const RECOIL_DISTANCE = 14;
 const clamp = (n, lo, hi) => Math.min(hi, Math.max(lo, n));
 const lerp = (a, b, t) => a + (b - a) * t;
 const smooth = (t) => {
@@ -13,6 +16,26 @@ const smooth = (t) => {
   return x * x * (3 - 2 * x);
 };
 const point = (x, y) => Object.freeze({ x, y });
+const pulse = (t) => (t <= 0 || t >= 1 ? 0 : Math.sin(Math.PI * t));
+const speed = (t) => {
+  const x = clamp(t, 0, 1);
+  return 6 * x * (1 - x);
+};
+const angleTo = (from, to) => (Math.atan2(to.y - from.y, to.x - from.x) * 180) / Math.PI;
+const turn = (from, to, amount) => from + (((((to - from) % 360) + 540) % 360) - 180) * amount;
+
+/** Gait is a distance-driven angle in radians; the other pose weights are normalized. */
+const motion = (pose = {}) => ({
+  gait: 0,
+  stride: 0,
+  lean: 0,
+  crouch: 0,
+  lift: 0,
+  attack: 0,
+  impact: 0,
+  dodge: 0,
+  ...pose,
+});
 
 /** Snapshot the target when aiming ends. Later player movement cannot steer it. */
 export function createChargePlan({
@@ -77,13 +100,13 @@ export function distanceToSegment(p, a, b) {
 /** The player stays near center while aiming, then clears the locked lane sideways. */
 export function playerPosition(localTime, plan = DEFAULT_PLAN) {
   if (localTime < PHASE_ENDS[0]) {
-    const sway = 14 * Math.sin((Math.PI * localTime) / PHASE_ENDS[0]);
+    const sway = 14 * Math.sin((Math.PI * localTime) / PHASE_ENDS[0]) ** 2;
     return {
       x: plan.target.x - plan.heading.y * sway,
       y: plan.target.y + plan.heading.x * sway,
     };
   }
-  const progress = smooth((localTime - PHASE_ENDS[0]) / (PHASE_ENDS[1] - PHASE_ENDS[0]));
+  const progress = smooth((localTime - PHASE_ENDS[0]) / DODGE_DURATION);
   const offset = { x: -plan.heading.y * 126, y: plan.heading.x * 126 };
   return {
     x: plan.target.x + offset.x * progress,
@@ -115,7 +138,13 @@ export function chargeFrame(time, explicitPlan) {
         y: lerp(dodgeTarget.y, nextPlan.target.y, transitionProgress),
       }
     : playerPosition(localTime, plan);
-  const chargeProgress = smooth((localTime - PHASE_ENDS[1]) / (PHASE_ENDS[2] - PHASE_ENDS[1]));
+  const chargeTime = (localTime - PHASE_ENDS[1]) / CHARGE_DURATION;
+  const chargeProgress = smooth(chargeTime);
+  const recoilProgress = smooth((localTime - PHASE_ENDS[0]) / 0.42);
+  const chargeStart = {
+    x: plan.origin.x - plan.heading.x * RECOIL_DISTANCE,
+    y: plan.origin.y - plan.heading.y * RECOIL_DISTANCE,
+  };
   let boss;
   if (transitioning) {
     boss = {
@@ -123,21 +152,21 @@ export function chargeFrame(time, explicitPlan) {
       y: lerp(plan.end.y, nextPlan.origin.y, transitionProgress),
     };
   } else if (phase === 0) {
-    const preparation = 14 * Math.sin((Math.PI * localTime) / PHASE_ENDS[0]);
+    const preparation = 7 * Math.sin((Math.PI * localTime) / PHASE_ENDS[0]) ** 2;
     boss = {
       x: plan.origin.x + plan.heading.x * preparation,
       y: plan.origin.y + plan.heading.y * preparation,
     };
   } else if (phase === 1) {
-    const recoil = 10 * smooth((localTime - PHASE_ENDS[0]) / 0.35);
+    const recoil = RECOIL_DISTANCE * recoilProgress;
     boss = {
       x: plan.origin.x - plan.heading.x * recoil,
       y: plan.origin.y - plan.heading.y * recoil,
     };
   } else {
     boss = {
-      x: lerp(plan.origin.x, plan.end.x, chargeProgress),
-      y: lerp(plan.origin.y, plan.end.y, chargeProgress),
+      x: lerp(chargeStart.x, plan.end.x, chargeProgress),
+      y: lerp(chargeStart.y, plan.end.y, chargeProgress),
     };
   }
   const target = phase === 0 ? player : plan.target;
@@ -160,6 +189,69 @@ export function chargeFrame(time, explicitPlan) {
   const overlayOpacity = transitioning ? 1 - transitionProgress : aimFade;
   const baseAngle = (Math.atan2(plan.heading.y, plan.heading.x) * 180) / Math.PI;
   const rotation = transitioning ? baseAngle + 180 * transitionProgress : undefined;
+  const dodgeTime = (localTime - PHASE_ENDS[0]) / DODGE_DURATION;
+  const dodge = pulse(dodgeTime);
+  const returnTime = (localTime - PHASE_ENDS[2]) / TRANSITION_DURATION;
+  const chargeStride = clamp(speed(chargeTime), 0, 1);
+  const braking = pulse((localTime - PHASE_ENDS[1] - CHARGE_DURATION + 0.12) / 0.32);
+  const recovery = smooth((localTime - PHASE_ENDS[1] - CHARGE_DURATION) / 0.58);
+  const bossMotion = motion({
+    gait: transitioning
+      ? (Math.hypot(nextPlan.origin.x - plan.end.x, nextPlan.origin.y - plan.end.y) *
+          transitionProgress) /
+        32
+      : ((plan.distance + RECOIL_DISTANCE) * chargeProgress) / 46,
+    stride: transitioning ? speed(returnTime) * 0.42 : chargeStride,
+    lean: transitioning
+      ? 0.18 * speed(returnTime)
+      : phase === 0
+        ? 0.12 * pulse(localTime / PHASE_ENDS[0])
+        : phase === 1
+          ? -0.35 * recoilProgress
+          : lerp(-0.35, 0.8, smooth(chargeTime / 0.18)) * (1 - recovery),
+    crouch: transitioning
+      ? 0
+      : phase === 1
+        ? 0.58 * recoilProgress
+        : phase === 2
+          ? 0.58 * (1 - smooth(chargeTime / 0.22)) + 0.32 * braking
+          : 0.04 * pulse(localTime / PHASE_ENDS[0]),
+    attack: phase === 2 && !transitioning ? pulse(chargeTime) : 0,
+    impact: braking,
+  });
+  const playerMotion = motion({
+    gait: transitioning
+      ? (126 * transitionProgress) / 20
+      : phase === 0
+        ? (localTime < PHASE_ENDS[0] / 2
+            ? Math.hypot(player.x - plan.target.x, player.y - plan.target.y)
+            : 28 - Math.hypot(player.x - plan.target.x, player.y - plan.target.y)) / 20
+        : (126 * smooth(dodgeTime)) / 20,
+    stride: transitioning
+      ? clamp(speed(returnTime) * 0.8, 0, 1)
+      : phase === 0
+        ? 0.22 * Math.abs(Math.sin((2 * Math.PI * localTime) / PHASE_ENDS[0]))
+        : clamp(speed(dodgeTime), 0, 1),
+    lean: transitioning ? 0.28 * speed(returnTime) : 0.75 * dodge,
+    crouch: 0.62 * dodge,
+    lift: 0.1 * dodge,
+    dodge,
+  });
+  const travelFacing = angleTo(plan.target, dodgeTarget);
+  const readyFacing = angleTo(player, boss);
+  const playerFacing = transitioning
+    ? turn(
+        angleTo(dodgeTarget, nextPlan.target),
+        angleTo(nextPlan.target, nextPlan.origin),
+        smooth((returnTime - 0.72) / 0.28),
+      )
+    : phase === 0
+      ? readyFacing
+      : turn(
+          turn(angleTo(plan.target, plan.origin), travelFacing, smooth(dodgeTime / 0.25)),
+          readyFacing,
+          smooth((dodgeTime - 0.75) / 0.6),
+        );
   const bossLabel = {
     x: boss.x,
     y: boss.y + BOSS_LABEL_OFFSET_Y,
@@ -182,5 +274,12 @@ export function chargeFrame(time, explicitPlan) {
     overlayOpacity,
     rotation,
     bossLabel,
+    bossFacing: rotation ?? angleTo({ x: 0, y: 0 }, heading),
+    playerFacing,
+    bossMotion,
+    playerMotion,
+    chargeActive: phase === 2 && chargeTime < 1 && !transitioning,
+    recovering: phase === 2 && chargeTime >= 1 && !transitioning,
+    trailOpacity: chargeStride,
   };
 }

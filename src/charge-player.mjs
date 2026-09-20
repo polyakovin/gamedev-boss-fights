@@ -1,4 +1,6 @@
 import { chargeFrame, DURATION } from './charge-model.mjs';
+import { createCharacterAnimator } from './character-motion.mjs';
+import { createEncounterEffects } from './encounter-effects.mjs';
 
 for (const widget of document.querySelectorAll('[data-charge-demo]')) initializeCharge(widget);
 
@@ -14,6 +16,9 @@ export function initializeCharge(widget) {
   const phaseTooltip = find('[data-charge-phase-tooltip]');
   const boss = find('[data-charge-boss]');
   const player = find('[data-charge-player]');
+  const animateBoss = createCharacterAnimator(boss, 'kern');
+  const animatePlayer = createCharacterAnimator(player, 'tavi');
+  const animateEffects = createEncounterEffects(widget, chargeFrame);
   const lane = find('[data-charge-lane]');
   const target = find('[data-charge-target]');
   const path = find('[data-charge-dodge]');
@@ -40,8 +45,11 @@ export function initializeCharge(widget) {
     widget.dataset.chargeAttack = String(frame.attackIndex);
     widget.dataset.chargeOutcome = frame.clear ? 'safe' : 'pending';
     widget.dataset.chargeTransition = String(frame.transitioning);
-    boss.setAttribute('transform', `translate(${frame.boss.x} ${frame.boss.y}) rotate(${angle})`);
+    boss.setAttribute('transform', `translate(${frame.boss.x} ${frame.boss.y})`);
     player.setAttribute('transform', `translate(${frame.player.x} ${frame.player.y})`);
+    animateBoss(frame.bossMotion, frame.bossFacing);
+    animatePlayer(frame.playerMotion, frame.playerFacing);
+    animateEffects(time, frame);
     const laneAngle = frame.transitioning
       ? (Math.atan2(frame.plan.heading.y, frame.plan.heading.x) * 180) / Math.PI
       : angle;
@@ -49,7 +57,10 @@ export function initializeCharge(widget) {
       'transform',
       `translate(${frame.plan.origin.x} ${frame.plan.origin.y}) rotate(${laneAngle})`,
     );
-    lane.setAttribute('opacity', String((frame.phase === 0 ? 0.5 : 1) * frame.overlayOpacity));
+    lane.setAttribute(
+      'opacity',
+      String((frame.phase === 0 ? 0.45 : frame.phase === 1 ? 1 : 0.3) * frame.overlayOpacity),
+    );
     target.setAttribute('transform', `translate(${frame.target.x} ${frame.target.y})`);
     target.setAttribute('opacity', String((frame.phase === 2 ? 0.35 : 0.8) * frame.overlayOpacity));
     const dodgeDirection = Math.sign(frame.dodgeTarget.x - frame.plan.target.x) || 1;
@@ -63,7 +74,7 @@ export function initializeCharge(widget) {
     bossLabel.setAttribute('x', frame.bossLabel.x);
     bossLabel.setAttribute('y', frame.bossLabel.y);
     playerLabel.setAttribute('x', frame.player.x);
-    playerLabel.setAttribute('y', frame.player.y - 47);
+    playerLabel.setAttribute('y', frame.player.y - 62);
     currentPhase.dataset.chargePhase = String(frame.phase);
     phaseName.textContent = text.phaseNames[frame.phase];
     phaseTooltip.textContent = text.phaseDescriptions[frame.phase];
