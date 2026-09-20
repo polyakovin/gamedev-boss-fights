@@ -212,6 +212,8 @@ test('the loop autoplays, alternates sides, shows phase tooltips, and keeps only
   expect(sceneTimelineBox.y + sceneTimelineBox.height).toBeLessThan(
     diagramBox.y + diagramBox.height,
   );
+  expect(Math.abs(simulationBox.height - (1000 - simulationBox.y - 24))).toBeLessThan(2);
+  expect(diagramBox.height).toBeGreaterThan(simulationBox.height - 10);
   await expect(page.locator('.charge-demo__phase-label')).toHaveText([
     /Прицеливание/,
     /Фиксация и уклонение/,

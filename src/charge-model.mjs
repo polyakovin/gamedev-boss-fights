@@ -16,8 +16,8 @@ const point = (x, y) => Object.freeze({ x, y });
 /** Snapshot the target when aiming ends. Later player movement cannot steer it. */
 export function createChargePlan({
   origin = { x: 280, y: 155 },
-  target = { x: 280, y: 350 },
-  distance = 350,
+  target = { x: 280, y: 480 },
+  distance = 610,
 } = {}) {
   const dx = target.x - origin.x;
   const dy = target.y - origin.y;
@@ -43,7 +43,7 @@ export function createChargePlan({
 
 export const ATTACK_PLANS = Object.freeze([
   createChargePlan(),
-  createChargePlan({ origin: { x: 280, y: 545 }, target: { x: 280, y: 350 } }),
+  createChargePlan({ origin: { x: 280, y: 805 }, target: { x: 280, y: 480 } }),
 ]);
 export const DEFAULT_PLAN = ATTACK_PLANS[0];
 

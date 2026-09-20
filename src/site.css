@@ -322,6 +322,17 @@ section[id] {
   max-width: 400px;
   justify-self: end;
 }
+@media (min-width: 961px) {
+  .simulation-section {
+    height: calc(100vh - 128px);
+    height: calc(100svh - 128px);
+  }
+  .simulation-section .charge-demo,
+  .simulation-section .charge-demo__canvas,
+  .simulation-section .charge-demo__svg {
+    height: 100%;
+  }
+}
 .lesson-category {
   display: block;
   width: 100%;
