@@ -848,12 +848,7 @@ test('the root defaults to English and localized catalogs point to real pages', 
   await expect(relatedCatalog).toContainText(
     'Boss Fight Atlas has a similar purpose, but focuses specifically on bosses',
   );
-  await expect(page.locator('.catalog-lenses .lens-card')).toHaveCount(15);
-  await expect(page.locator('.catalog-lenses .lens-visual')).toHaveCount(15);
-  await expect(page.locator('.catalog-lenses__all')).toHaveAttribute(
-    'href',
-    '/gamedev-boss-fights/en/lenses/',
-  );
+  await expect(page.locator('.catalog-lenses')).toHaveCount(0);
   await expect(page.locator('.header-nav .lenses-link')).toHaveAttribute(
     'href',
     '/gamedev-boss-fights/en/lenses/',

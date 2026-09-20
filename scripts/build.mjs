@@ -620,19 +620,6 @@ for (const locale of locales) {
         />
       </figure>
     </section>
-    <section class="catalog-lenses" aria-labelledby="catalog-lenses-title">
-      <header class="catalog-lenses__heading">
-        <div>
-          <span class="eyebrow">${e(t.concepts)}</span>
-          <h2 id="catalog-lenses-title">${e(t.conceptsTitle)}</h2>
-          <p>${e(t.conceptsIntro)}</p>
-        </div>
-        <a class="catalog-lenses__all" href="${link(`${locale.code}/lenses/`)}">
-          ${e(t.concepts)}${icon('arrow-right', { className: 'icon--directional' })}
-        </a>
-      </header>
-      <div class="lens-catalog-grid catalog-lenses__grid">${lensCards}</div>
-    </section>
     <section id="mechanics" class="catalog-contents" aria-labelledby="mechanics-title">
       <div class="catalog-contents__heading">
         <h2 id="mechanics-title">${e(t.available)}</h2>
