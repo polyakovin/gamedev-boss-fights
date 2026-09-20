@@ -3,6 +3,13 @@ import fs from 'node:fs/promises';
 const registry = JSON.parse(
   await fs.readFile(new URL('../../locales/registry.json', import.meta.url)),
 );
+const scriptFontFamilies = {
+  'zh-Hans': 'Noto+Sans+SC',
+  hi: 'Noto+Sans+Devanagari',
+  bn: 'Noto+Sans+Bengali',
+  ar: 'Noto+Sans+Arabic',
+  ja: 'Noto+Sans+JP',
+};
 for (const locale of registry) {
   test(`${locale.code}: page, language links and mobile layout`, async ({ page }) => {
     const errors = [];
@@ -15,6 +22,24 @@ for (const locale of registry) {
     await page.goto(`${locale.code}/mechanics/charge/`);
     await expect(page.locator('html')).toHaveAttribute('lang', locale.code);
     await expect(page.locator('html')).toHaveAttribute('dir', locale.dir);
+    const fontStylesheet = page.locator('link[rel="stylesheet"][href*="fonts.googleapis.com"]');
+    await expect(fontStylesheet).toHaveCount(1);
+    if (scriptFontFamilies[locale.code])
+      expect(await fontStylesheet.getAttribute('href')).toContain(scriptFontFamilies[locale.code]);
+    expect(
+      await page.locator('body').evaluate((element) => getComputedStyle(element).fontFamily),
+    ).toContain('Inter');
+    expect(
+      await page
+        .locator('.lesson-hero h1')
+        .evaluate((element) => getComputedStyle(element).fontFamily),
+    ).toContain('Manrope');
+    expect(
+      await page
+        .locator('.eyebrow')
+        .first()
+        .evaluate((element) => getComputedStyle(element).fontFamily),
+    ).toContain('IBM Plex Mono');
     await expect(page.locator('[data-theme-toggle]')).toHaveCount(1);
     await expect(page.locator('[data-charge-demo]')).toHaveAttribute('data-charge-ready', 'true');
     await expect(page.locator('[data-charge-demo]')).toHaveAttribute(

@@ -4,7 +4,7 @@
   --charge-ink: var(--ink);
   --charge-muted: var(--muted);
   --charge-border: var(--line);
-  --charge-teal: var(--green);
+  --charge-accent: var(--accent);
   overflow: hidden;
   color: var(--charge-ink);
   background: var(--surface);
@@ -82,7 +82,7 @@
 }
 .charge-demo button:focus-visible,
 .charge-demo input:focus-visible {
-  outline: 3px solid var(--green);
+  outline: 3px solid var(--accent);
   outline-offset: 3px;
 }
 .charge-demo__phase-buttons {
@@ -106,12 +106,12 @@
   border-inline-end: 0;
 }
 .charge-demo__phase-buttons button[aria-pressed='true'] {
-  color: var(--charge-teal);
-  background: color-mix(in srgb, var(--pale) 76%, transparent);
+  color: var(--charge-accent);
+  background: color-mix(in srgb, var(--accent-soft) 76%, transparent);
 }
 .charge-demo__phase-buttons button:hover {
   color: var(--charge-ink);
-  background: color-mix(in srgb, var(--pale) 58%, transparent);
+  background: color-mix(in srgb, var(--accent-soft) 58%, transparent);
 }
 .charge-demo__description {
   grid-column: 1;
@@ -144,12 +144,12 @@
 .charge-demo__play {
   min-width: 7.2rem;
   padding: 0.5rem 0.75rem;
-  border: 1px solid var(--charge-teal);
-  background: var(--charge-teal);
+  border: 1px solid var(--charge-accent);
+  background: var(--charge-accent);
   color: var(--paper);
 }
 .charge-demo__play:hover {
-  background: color-mix(in srgb, var(--green) 78%, black);
+  background: color-mix(in srgb, var(--accent) 78%, black);
 }
 .charge-demo__play svg {
   width: 1rem;
@@ -164,7 +164,7 @@
   background: transparent;
 }
 .charge-demo__restart:hover {
-  background: var(--pale);
+  background: var(--accent-soft);
 }
 .charge-demo__restart svg {
   width: 1rem;
@@ -197,7 +197,7 @@
   height: 4px;
   background: linear-gradient(
     var(--charge-progress-direction),
-    var(--charge-teal) 0 var(--charge-progress),
+    var(--charge-accent) 0 var(--charge-progress),
     var(--line) var(--charge-progress) 100%
   );
   border-radius: 999px;
@@ -207,10 +207,10 @@
   width: 12px;
   height: 12px;
   margin-top: -4px;
-  background: var(--charge-teal);
+  background: var(--charge-accent);
   border: 2px solid var(--surface);
   border-radius: 50%;
-  box-shadow: 0 0 0 1px var(--charge-teal);
+  box-shadow: 0 0 0 1px var(--charge-accent);
 }
 .charge-demo__timeline input[type='range']::-moz-range-track {
   height: 4px;
@@ -219,13 +219,13 @@
 }
 .charge-demo__timeline input[type='range']::-moz-range-progress {
   height: 4px;
-  background: var(--charge-teal);
+  background: var(--charge-accent);
   border-radius: 999px;
 }
 .charge-demo__timeline input[type='range']::-moz-range-thumb {
   width: 8px;
   height: 8px;
-  background: var(--charge-teal);
+  background: var(--charge-accent);
   border: 2px solid var(--surface);
   border-radius: 50%;
 }
@@ -240,7 +240,7 @@
   margin: 0;
   padding: 0.55rem 0.7rem;
   color: var(--charge-muted);
-  background: var(--pale);
+  background: var(--accent-soft);
   border-radius: 5px;
   font-size: 0.7rem;
   line-height: 1.45;

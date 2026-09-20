@@ -14,6 +14,7 @@
 - `lib/animations.mjs` registers each adapter’s `render`, `thumbnail`, `styles`, and `scripts`. Keep simulation rules pure in `src/*-model.mjs`; browser controllers own DOM and playback.
 - Keep localized text out of code, escape HTML and embedded JSON, preserve keyboard controls, text alternatives, static readability, Arabic RTL, and reduced-motion behavior.
 - Catalog previews reuse the same character and object SVG assets as their full lesson animations; keep shared artwork in one source fragment instead of redrawing it.
+- Maintain the semantic palette tokens and the body, display, and label font roles in `src/site.css`; check both themes and script-specific locale fonts when changing the visual system.
 - Generated `dist/`, dependencies, browser reports, credentials, and `.env` stay out of Git. PR CI must remain safe for forks and must not expose deployment privileges to untrusted PR code.
 
 ## Content and publishing

@@ -70,6 +70,26 @@ const themeHead = /* HTML */ `<meta name="color-scheme" content="light dark" />
       } catch {}
     })();
   </script>`;
+const localeFontFamily = {
+  'zh-Hans': 'Noto+Sans+SC',
+  hi: 'Noto+Sans+Devanagari',
+  bn: 'Noto+Sans+Bengali',
+  ar: 'Noto+Sans+Arabic',
+  ja: 'Noto+Sans+JP',
+};
+function fontHead(localeCode) {
+  const families = [
+    'family=IBM+Plex+Mono:wght@500;600',
+    'family=Inter:wght@400;500;600;700',
+    'family=Manrope:wght@500;600;700;800',
+  ];
+  const scriptFamily = localeFontFamily[localeCode];
+  if (scriptFamily) families.push(`family=${scriptFamily}:wght@400;500;600;700`);
+  const href = `https://fonts.googleapis.com/css2?${families.join('&amp;')}&amp;display=swap`;
+  return /* HTML */ `<link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="stylesheet" href="${href}" />`;
+}
 function shell(
   locale,
   title,
@@ -98,6 +118,7 @@ function shell(
         <meta property="og:description" content="${e(description)}" />
         <meta property="og:type" content="article" />
         <meta property="og:url" content="${canonical(route)}" />
+        ${fontHead(locale.code)}
         <link rel="icon" href="${asset('favicon.svg')}" type="image/svg+xml" />
         <link rel="stylesheet" href="${asset('site.css')}" />
         ${assets

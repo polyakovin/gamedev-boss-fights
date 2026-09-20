@@ -86,6 +86,12 @@ Use logical CSS properties for surrounding UI and test Arabic `dir="rtl"`. A spa
 
 Provide catalog artwork through the adapter’s `thumbnail` function. Reuse the same character and object SVG assets as the full lesson animation so the preview remains recognizable when the main art changes. The preview may simplify the surrounding arena and overlays, but it should depict this mechanic accurately; reusing the charge diagram for a different attack could teach the wrong shape.
 
+## Maintain the visual system
+
+Use the semantic color tokens in `src/site.css` instead of adding component-specific hex values. The neutral graphite-blue foundation keeps dense teaching material readable; teal marks links, controls, and analytical state; indigo identifies design lenses; the warm signal color is reserved for danger and alerts. Keep text and controls at WCAG AA contrast in both light and dark themes, and do not rely on hue alone to explain a mechanic.
+
+Typography has three roles: Inter for continuous reading, Manrope for headings and the atlas identity, and IBM Plex Mono for compact labels, categories, and technical metadata. Chinese, Japanese, Arabic, Devanagari, and Bengali pages load the matching Noto Sans family as a script-specific fallback. Preserve these roles when adding a component and inspect at least one Latin or Cyrillic page plus every affected script locale before publishing.
+
 ## Metadata and references
 
 Mechanic `meta.json` contains a unique `id` matching its folder, a unique positive `number`, `published`, `sourceLocale: "en"`, a positive `contentVersion`, `animation`, `lenses`, `related`, and `sources`. Lens IDs must refer to published entries under `content/lenses/`; related mechanic IDs must refer to other existing mechanics. Lens metadata follows the same publication/version pattern without an animation. Each source has a descriptive `title` and an HTTPS `url`.

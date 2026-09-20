@@ -1,39 +1,42 @@
 :root {
-  --paper: #f8f8f2;
-  --surface: #fffef9;
-  --ink: #243c35;
-  --muted: #5f6e65;
-  --line: #dce2d7;
-  --green: #176e5c;
-  --pale: #e9eedf;
-  --orange: #a95b32;
-  --header: rgba(248, 248, 242, 0.97);
-  --shadow: #243c3520;
-  --soft-ink: #5e6e62;
-  --variant-bg: #e9eddf;
-  --variant-ink: #58703c;
-  --variant-line: #d7dfc8;
-  --accent-line: #a9bb8c;
-  --panel: #f2f3ea;
-  --hover-line: #96aa91;
-  --preview: #edf1e8;
-  --diagram-arena: #f6f1e7;
-  --diagram-grid: #dfd9cb;
-  --diagram-border: #d8d0c2;
-  --diagram-corners: #c6beae;
-  --diagram-boss-label: #746249;
-  --diagram-player-label: #286b5e;
-  --diagram-preview-grid: #dbe3dd;
+  --paper: #f4f7fb;
+  --surface: #ffffff;
+  --surface-strong: #e9eef6;
+  --ink: #172033;
+  --muted: #5e6a7d;
+  --line: #d9e0ea;
+  --accent: #087b83;
+  --accent-soft: #e4f3f4;
+  --signal: #b65b32;
+  --header: rgb(244 247 251 / 0.94);
+  --shadow: #1720331f;
+  --soft-ink: #46546a;
+  --variant-bg: #eeefff;
+  --variant-ink: #4d56a5;
+  --variant-line: #ccd1f7;
+  --accent-line: #9cabbf;
+  --panel: #f0f4f9;
+  --hover-line: #9daabd;
+  --preview: #e9eff6;
+  --diagram-arena: #eef2f7;
+  --diagram-grid: #d5dde8;
+  --diagram-border: #c5cfdb;
+  --diagram-corners: #aeb9c7;
+  --diagram-boss-label: #78503a;
+  --diagram-player-label: #087b83;
+  --diagram-preview-grid: #ced8e4;
+  --font-body:
+    Inter, 'Noto Sans Arabic', 'Noto Sans Devanagari', 'Noto Sans Bengali', 'Noto Sans SC',
+    'Noto Sans JP', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-display:
+    Manrope, 'Noto Sans Arabic', 'Noto Sans Devanagari', 'Noto Sans Bengali', 'Noto Sans SC',
+    'Noto Sans JP', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-label:
+    'IBM Plex Mono', 'SFMono-Regular', Consolas, 'Liberation Mono', 'Noto Sans Arabic',
+    'Noto Sans Devanagari', 'Noto Sans Bengali', 'Noto Sans SC', 'Noto Sans JP', monospace;
   --radius: 14px;
   color-scheme: light;
-  font-family:
-    Inter,
-    -apple-system,
-    BlinkMacSystemFont,
-    'Segoe UI',
-    'Noto Sans',
-    Arial,
-    sans-serif;
+  font-family: var(--font-body);
   color: var(--ink);
   background: var(--paper);
   font-synthesis: none;
@@ -41,31 +44,32 @@
   scroll-padding-top: 110px;
 }
 :root[data-theme='dark'] {
-  --paper: #101714;
-  --surface: #18221e;
-  --ink: #e7eee9;
-  --muted: #a9b7ae;
-  --line: #34443d;
-  --green: #78d7c1;
-  --pale: #24352f;
-  --orange: #e4a47c;
-  --header: rgba(16, 23, 20, 0.96);
-  --shadow: #00000052;
-  --soft-ink: #b5c2ba;
-  --variant-bg: #21312b;
-  --variant-ink: #b7d7a6;
-  --variant-line: #3d574c;
-  --accent-line: #587d6f;
-  --panel: #1d2924;
-  --hover-line: #5b806f;
-  --preview: #202e28;
-  --diagram-arena: #1b2722;
-  --diagram-grid: #314139;
-  --diagram-border: #42544b;
-  --diagram-corners: #51665c;
-  --diagram-boss-label: #d9bd93;
-  --diagram-player-label: #86d7c0;
-  --diagram-preview-grid: #34443d;
+  --paper: #090f1c;
+  --surface: #111a2a;
+  --surface-strong: #172238;
+  --ink: #eff4fb;
+  --muted: #a4b0c4;
+  --line: #2a3850;
+  --accent: #62ddd4;
+  --accent-soft: #15303a;
+  --signal: #ffa06f;
+  --header: rgb(9 15 28 / 0.94);
+  --shadow: #00000066;
+  --soft-ink: #c1cad8;
+  --variant-bg: #202644;
+  --variant-ink: #c8cbff;
+  --variant-line: #3c4777;
+  --accent-line: #5b6d86;
+  --panel: #151f32;
+  --hover-line: #53647f;
+  --preview: #142238;
+  --diagram-arena: #131c2b;
+  --diagram-grid: #29374d;
+  --diagram-border: #3a4b64;
+  --diagram-corners: #53647b;
+  --diagram-boss-label: #f3bd86;
+  --diagram-player-label: #62ddd4;
+  --diagram-preview-grid: #34445b;
   color-scheme: dark;
 }
 * {
@@ -100,7 +104,7 @@ button:focus-visible,
 input:focus-visible,
 summary:focus-visible,
 select:focus-visible {
-  outline: 3px solid var(--green);
+  outline: 3px solid var(--accent);
   outline-offset: 4px;
 }
 p {
@@ -110,6 +114,7 @@ h1,
 h2,
 h3,
 h4 {
+  font-family: var(--font-display);
   line-height: 1.2;
   margin: 0;
   font-weight: 650;
@@ -134,6 +139,7 @@ section[id] {
 }
 .eyebrow {
   display: block;
+  font-family: var(--font-label);
   color: var(--muted);
   font-size: 11px;
   font-weight: 700;
@@ -174,6 +180,8 @@ section[id] {
   display: flex;
   align-items: center;
   gap: 13px;
+  font-family: var(--font-display);
+  font-weight: 600;
   font-size: 20px;
   letter-spacing: -0.045em;
   white-space: nowrap;
@@ -183,7 +191,7 @@ section[id] {
 }
 .brand-mark {
   font-size: 34px;
-  color: var(--green);
+  color: var(--accent);
   line-height: 1;
   display: inline-block;
 }
@@ -210,7 +218,7 @@ section[id] {
   border-radius: 50%;
 }
 .theme-toggle:hover {
-  border-color: var(--green);
+  border-color: var(--accent);
 }
 .theme-toggle span::before {
   content: '☾';
@@ -276,7 +284,7 @@ section[id] {
 }
 .language-menu nav a:hover,
 .language-menu nav [aria-current] {
-  background: var(--pale);
+  background: var(--accent-soft);
   text-decoration: none;
 }
 .lesson-layout {
@@ -301,7 +309,8 @@ section[id] {
   justify-self: end;
 }
 .lesson-category {
-  color: var(--green);
+  color: var(--accent);
+  font-family: var(--font-label);
 }
 .lesson-hero h1 {
   font-size: clamp(58px, 5.5vw, 80px);
@@ -341,8 +350,8 @@ section[id] {
 }
 .lens-chip:hover,
 .lens-chip:focus-visible {
-  border-color: var(--green);
-  color: var(--green);
+  border-color: var(--accent);
+  color: var(--accent);
   text-decoration: none;
 }
 .lens-chip__tooltip {
@@ -432,7 +441,7 @@ section[id] {
   min-width: 0;
 }
 .checklist-group > .eyebrow {
-  color: var(--green);
+  color: var(--accent);
   font-size: 9px;
 }
 .checklist-group > h3 {
@@ -442,6 +451,7 @@ section[id] {
 }
 .checklist-group > h4 {
   color: var(--muted);
+  font-family: var(--font-label);
   font-size: 9px;
   letter-spacing: 0.06em;
   line-height: 1.4;
@@ -473,7 +483,7 @@ section[id] {
 }
 .checklist-item summary:hover,
 .checklist-item summary:focus-visible {
-  color: var(--green);
+  color: var(--accent);
 }
 .checklist-mark {
   width: 11px;
@@ -492,8 +502,8 @@ section[id] {
   transform: rotate(45deg);
 }
 .checklist-item[open] .checklist-mark {
-  background: var(--pale);
-  border-color: var(--green);
+  background: var(--accent-soft);
+  border-color: var(--accent);
 }
 .checklist-item p {
   color: var(--muted);
@@ -525,7 +535,8 @@ section[id] {
 }
 .example-group > h3 {
   font-size: 13px;
-  color: var(--green);
+  color: var(--accent);
+  font-family: var(--font-label);
   letter-spacing: 0.08em;
   margin-bottom: 13px;
   text-transform: uppercase;
@@ -566,8 +577,9 @@ section[id] {
   padding: 5px 8px;
   border: 1px solid rgb(255 255 255 / 0.22);
   border-radius: 999px;
-  background: rgb(8 12 13 / 0.84);
+  background: rgb(9 15 28 / 0.88);
   color: #fff;
+  font-family: var(--font-label);
   font-size: 9px;
   font-weight: 700;
   letter-spacing: 0.03em;
@@ -581,6 +593,7 @@ section[id] {
 }
 .game-example__game {
   color: var(--muted);
+  font-family: var(--font-label);
   font-size: 10px;
   font-weight: 700;
   letter-spacing: 0.07em;
@@ -602,7 +615,7 @@ section[id] {
   align-items: center;
   gap: 8px;
   margin-top: auto;
-  color: var(--green);
+  color: var(--accent);
   font-size: 11px;
   font-weight: 700;
 }
@@ -641,7 +654,7 @@ section[id] {
   max-width: 730px;
 }
 .review-note a {
-  color: var(--green);
+  color: var(--accent);
 }
 .site-footer {
   max-width: 1352px;
@@ -716,13 +729,14 @@ section[id] {
   align-items: center;
   gap: 11px;
   color: var(--muted);
+  font-family: var(--font-label);
   font-size: 11px;
 }
 .small-dot {
   width: 7px;
   height: 7px;
   border-radius: 50%;
-  background: var(--green);
+  background: var(--accent);
 }
 .catalog-overview {
   display: grid;
@@ -776,8 +790,9 @@ section[id] {
   padding: 1px 6px;
   margin-inline-start: 4px;
   border-radius: 4px;
-  background: var(--pale);
-  color: var(--green);
+  background: var(--accent-soft);
+  color: var(--accent);
+  font-family: var(--font-label);
   font-size: 12px;
 }
 .atlas-map__link strong,
@@ -796,10 +811,11 @@ section[id] {
   line-height: 1.5;
 }
 .atlas-map__arrow {
-  color: var(--green);
+  color: var(--accent);
   font-size: 16px;
 }
 .count {
+  font-family: var(--font-label);
   font-size: 12px;
   color: var(--muted);
 }
@@ -844,7 +860,7 @@ section[id] {
 .card-copy h3 span {
   float: inline-end;
   font-size: 25px;
-  color: var(--green);
+  color: var(--accent);
 }
 .card-copy p {
   font-size: 14px;
@@ -862,7 +878,7 @@ section[id] {
 .text-link {
   font-size: 12px;
   font-weight: 650;
-  color: var(--green);
+  color: var(--accent);
 }
 .lens-catalog-main,
 .lens-main {
@@ -877,7 +893,7 @@ section[id] {
 }
 .lens-catalog-hero > .eyebrow,
 .lens-page__hero > .eyebrow {
-  color: var(--green);
+  color: var(--accent);
 }
 .lens-catalog-hero h1,
 .lens-page__hero h1 {
@@ -913,7 +929,7 @@ section[id] {
     transform 160ms ease;
 }
 .lens-card:hover {
-  border-color: var(--green);
+  border-color: var(--accent);
   text-decoration: none;
   transform: translateY(-2px);
 }
@@ -931,7 +947,7 @@ section[id] {
 }
 .lens-card h2 span,
 .lens-mechanic-card h2 span {
-  color: var(--green);
+  color: var(--accent);
   font-weight: 450;
 }
 .lens-card p {
@@ -942,7 +958,8 @@ section[id] {
 }
 .lens-card__count {
   margin-top: auto;
-  color: var(--green);
+  color: var(--accent);
+  font-family: var(--font-label);
   font-size: 10px;
   font-weight: 650;
 }
@@ -966,7 +983,7 @@ section[id] {
 }
 .lens-page__mechanics > .eyebrow,
 .lens-page__related > .eyebrow {
-  color: var(--green);
+  color: var(--accent);
 }
 .lens-page__mechanics > h2 {
   font-size: 26px;
@@ -985,7 +1002,7 @@ section[id] {
   background: var(--surface);
 }
 .lens-mechanic-card:hover {
-  border-color: var(--green);
+  border-color: var(--accent);
   text-decoration: none;
 }
 .lens-mechanic-card h2 {
@@ -1008,7 +1025,7 @@ section[id] {
   max-width: 760px;
 }
 .lens-page__review a {
-  color: var(--green);
+  color: var(--accent);
 }
 .language-home {
   padding: 65px 24px;
@@ -1033,7 +1050,7 @@ section[id] {
 }
 .language-home h1 em {
   font-style: normal;
-  color: var(--green);
+  color: var(--accent);
 }
 .language-home .lead {
   font-size: 19px;
@@ -1063,7 +1080,7 @@ section[id] {
   font-size: 1.25rem;
 }
 .language-choice:hover {
-  border-color: var(--green);
+  border-color: var(--accent);
   text-decoration: none;
 }
 [dir='rtl'] .lesson-hero h1 {
