@@ -58,6 +58,9 @@ test('boss sketch exports a portable localized mechanic snapshot', () => {
 
 test('boss sketch filenames stay readable and filesystem-safe', () => {
   assert.equal(bossSketchFilename(' Gate / Keeper '), 'Gate-Keeper.json');
-  assert.equal(bossSketchFilename('Страж шлюза'), 'Страж-шлюза.json');
+  assert.equal(
+    bossSketchFilename('\u0421\u0442\u0440\u0430\u0436 \u0448\u043b\u044e\u0437\u0430'),
+    '\u0421\u0442\u0440\u0430\u0436-\u0448\u043b\u044e\u0437\u0430.json',
+  );
   assert.equal(bossSketchFilename('///'), 'boss-sketch.json');
 });

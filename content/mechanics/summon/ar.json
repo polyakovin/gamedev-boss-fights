@@ -113,8 +113,18 @@
       "screenshot": "https://i.ytimg.com/vi/8wTLAgG3dX0/hqdefault.jpg",
       "screenshotSource": "https://www.youtube.com/watch?v=8wTLAgG3dX0&t=250s",
       "body": "يوضح المثال ثلاثي الأبعاد كيف تغيّر الكاميرا والمسافة قابلية قراءة استدعاء."
+    },
+    {
+      "dimension": "3D",
+      "game": "Bloodborne",
+      "boss": "Rom, the Vacuous Spider",
+      "video": "https://www.youtube.com/watch?v=VbN4AB4T8ho&t=62s",
+      "videoDurationSeconds": 144,
+      "screenshot": "https://i.ytimg.com/vi/VbN4AB4T8ho/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=VbN4AB4T8ho&t=62s",
+      "body": "في كل مرحلة جديدة ينتقل الزعيم ويستدعي من جديد مجموعة من العناكب الصغيرة حوله. وإعادة تشكيل الحراسة تجعل الانتقال بين المراحل مصدرًا متجددًا للضغط المكاني."
     }
   ],
   "reviewStatus": "needs-review",
-  "sourceVersion": 1
+  "sourceVersion": 2
 }

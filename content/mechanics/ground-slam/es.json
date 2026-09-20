@@ -113,8 +113,18 @@
       "screenshot": "https://i.ytimg.com/vi/U2jd1fqLpsE/hqdefault.jpg",
       "screenshotSource": "https://www.youtube.com/watch?v=U2jd1fqLpsE&t=180s",
       "body": "Los pisotones llevan presión por la arena 3D y comprueban el salto ya enseñado."
+    },
+    {
+      "dimension": "3D",
+      "game": "Elden Ring",
+      "boss": "Godrick the Grafted",
+      "video": "https://www.youtube.com/watch?v=EDoJPFDEev0&t=78s",
+      "videoDurationSeconds": 317,
+      "screenshot": "https://i.ytimg.com/vi/EDoJPFDEev0/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=EDoJPFDEev0&t=78s",
+      "body": "El golpe de hacha emite varias ondas circulares consecutivas. Escalonar los anillos prolonga un solo impacto tanto en el tiempo como por la arena."
     }
   ],
   "reviewStatus": "needs-review",
-  "sourceVersion": 1
+  "sourceVersion": 2
 }

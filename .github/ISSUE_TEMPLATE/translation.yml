@@ -13,13 +13,13 @@ body:
       label: Language
       options:
         - English (en)
-        - Русский (ru)
-        - 简体中文 (zh-Hans)
-        - हिन्दी (hi)
-        - বাংলা (bn)
-        - Español (es)
-        - العربية (ar)
-        - 日本語 (ja)
+        - Russian (ru)
+        - Simplified Chinese (zh-Hans)
+        - Hindi (hi)
+        - Bengali (bn)
+        - Spanish (es)
+        - Arabic (ar)
+        - Japanese (ja)
     validations:
       required: true
   - type: input

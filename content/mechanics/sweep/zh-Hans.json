@@ -113,8 +113,18 @@
       "screenshot": "https://i.ytimg.com/vi/vCWh1bhHNKo/hqdefault.jpg",
       "screenshotSource": "https://www.youtube.com/watch?v=vCWh1bhHNKo&t=38s",
       "body": "连续长剑横扫展示动画与场地如何共同决定覆盖。"
+    },
+    {
+      "dimension": "3D",
+      "game": "Sekiro: Shadows Die Twice",
+      "boss": "Corrupted Monk",
+      "video": "https://www.youtube.com/watch?v=bSI6RWT8WUw&t=5s",
+      "videoDurationSeconds": 74,
+      "screenshot": "https://i.ytimg.com/vi/bSI6RWT8WUw/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=bSI6RWT8WUw&t=5s",
+      "body": "长柄武器围绕首领连续划出水平弧线。按稳定节奏反复覆盖同一片宽广区域，把一次横扫延伸成持续的节奏压力。"
     }
   ],
   "reviewStatus": "needs-review",
-  "sourceVersion": 1
+  "sourceVersion": 2
 }

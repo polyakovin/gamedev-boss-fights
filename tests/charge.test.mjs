@@ -133,10 +133,10 @@ test('localized markup escapes HTML and script closers while preserving JSON con
       'safe',
       'reducedMotion',
       'diagramDescription',
-    ].map((key) => [key, 'ساحة <b> & </script>']),
+    ].map((key) => [key, '\u0633\u0627\u062d\u0629 <b> & </script>']),
   );
-  words.phaseNames = ['أ', 'ب', 'ج'];
-  words.phaseDescriptions = ['١', '٢', '٣'];
+  words.phaseNames = ['\u0623', '\u0628', '\u062c'];
+  words.phaseDescriptions = ['\u0661', '\u0662', '\u0663'];
   const markup = renderCharge(words);
   assert.ok(markup.includes('&lt;b&gt; &amp; &lt;/script&gt;'));
   assert.equal(markup.match(/<script/g)?.length, 1);

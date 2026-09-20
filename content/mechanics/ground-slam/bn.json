@@ -113,8 +113,18 @@
       "screenshot": "https://i.ytimg.com/vi/U2jd1fqLpsE/hqdefault.jpg",
       "screenshotSource": "https://www.youtube.com/watch?v=U2jd1fqLpsE&t=180s",
       "body": "3D উদাহরণে ক্যামেরা ও দূরত্ব মাটিতে আঘাত-এর পাঠযোগ্যতা বদলায়।"
+    },
+    {
+      "dimension": "3D",
+      "game": "Elden Ring",
+      "boss": "Godrick the Grafted",
+      "video": "https://www.youtube.com/watch?v=EDoJPFDEev0&t=78s",
+      "videoDurationSeconds": 317,
+      "screenshot": "https://i.ytimg.com/vi/EDoJPFDEev0/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=EDoJPFDEev0&t=78s",
+      "body": "কুঠারের আঘাত থেকে পরপর বৃত্তাকার অভিঘাত-তরঙ্গ বের হয়। বলয়গুলোর সময় আলাদা রাখায় একটি আঘাত একই সঙ্গে এরিনাজুড়ে ছড়ায় এবং সময়েও দীর্ঘ হয়।"
     }
   ],
   "reviewStatus": "needs-review",
-  "sourceVersion": 1
+  "sourceVersion": 2
 }

@@ -113,8 +113,18 @@
       "screenshot": "https://i.ytimg.com/vi/8wTLAgG3dX0/hqdefault.jpg",
       "screenshotSource": "https://www.youtube.com/watch?v=8wTLAgG3dX0&t=250s",
       "body": "Los espíritus temporales varían la amenaza y el lanzamiento expone al jefe."
+    },
+    {
+      "dimension": "3D",
+      "game": "Bloodborne",
+      "boss": "Rom, the Vacuous Spider",
+      "video": "https://www.youtube.com/watch?v=VbN4AB4T8ho&t=62s",
+      "videoDurationSeconds": 144,
+      "screenshot": "https://i.ytimg.com/vi/VbN4AB4T8ho/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=VbN4AB4T8ho&t=62s",
+      "body": "En cada fase, el jefe cambia de posición y vuelve a rodearse de un grupo de arañas pequeñas. Reconstruir la escolta convierte la transición de fase en una nueva presión espacial."
     }
   ],
   "reviewStatus": "needs-review",
-  "sourceVersion": 1
+  "sourceVersion": 2
 }

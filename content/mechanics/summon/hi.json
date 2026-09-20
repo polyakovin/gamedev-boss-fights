@@ -113,8 +113,18 @@
       "screenshot": "https://i.ytimg.com/vi/8wTLAgG3dX0/hqdefault.jpg",
       "screenshotSource": "https://www.youtube.com/watch?v=8wTLAgG3dX0&t=250s",
       "body": "3D उदाहरण दिखाता है कि कैमरा और दूरी आह्वान की पठनीयता कैसे बदलते हैं।"
+    },
+    {
+      "dimension": "3D",
+      "game": "Bloodborne",
+      "boss": "Rom, the Vacuous Spider",
+      "video": "https://www.youtube.com/watch?v=VbN4AB4T8ho&t=62s",
+      "videoDurationSeconds": 144,
+      "screenshot": "https://i.ytimg.com/vi/VbN4AB4T8ho/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=VbN4AB4T8ho&t=62s",
+      "body": "हर नए चरण में बॉस दूसरी जगह जाता है और अपने चारों ओर छोटे मकड़ों का समूह फिर से बुलाता है। पहरेदारों का दोबारा बनना चरण परिवर्तन को नए स्थानिक दबाव में बदल देता है।"
     }
   ],
   "reviewStatus": "needs-review",
-  "sourceVersion": 1
+  "sourceVersion": 2
 }

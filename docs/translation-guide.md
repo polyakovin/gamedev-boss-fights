@@ -14,7 +14,7 @@ A correction to one locale is enough for a useful PR. You can work through GitHu
 
 English (`en`) is the source locale. Supported locales are `en`, `ru`, `zh-Hans`, `hi`, `bn`, `es`, `ar`, and `ja`. Every registry entry has a two-letter regional flag emoji used by all language selectors. Arabic has `dir: "rtl"`; the others have `dir: "ltr"`. Adding a ninth locale requires coordinated changes to validation, the registry, interface strings, and published lessons; it is separate from improving an existing translation.
 
-The Russian lesson title for Charge is **«Таран»**. Keep **Boss Fight Atlas** as the brand name in every language.
+Localized lesson titles should use the established term in each language. Keep **Boss Fight Atlas** as the brand name in every language.
 
 ## Preserve the contract
 

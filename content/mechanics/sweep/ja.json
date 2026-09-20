@@ -113,8 +113,18 @@
       "screenshot": "https://i.ytimg.com/vi/vCWh1bhHNKo/hqdefault.jpg",
       "screenshotSource": "https://www.youtube.com/watch?v=vCWh1bhHNKo&t=38s",
       "body": "長い剣の連続なぎ払いは、アニメと空間が範囲を決める例です。"
+    },
+    {
+      "dimension": "3D",
+      "game": "Sekiro: Shadows Die Twice",
+      "boss": "Corrupted Monk",
+      "video": "https://www.youtube.com/watch?v=bSI6RWT8WUw&t=5s",
+      "videoDurationSeconds": 74,
+      "screenshot": "https://i.ytimg.com/vi/bSI6RWT8WUw/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=bSI6RWT8WUw&t=5s",
+      "body": "長い柄武器がボスの周囲に水平の弧を繰り返し描く。同じ広い範囲を一定の間隔で重ねることで、一度の薙ぎ払いが持続するリズムの圧力になる。"
     }
   ],
   "reviewStatus": "needs-review",
-  "sourceVersion": 1
+  "sourceVersion": 2
 }

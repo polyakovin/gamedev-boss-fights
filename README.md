@@ -1,6 +1,6 @@
 # Boss Fight Atlas
 
-An open, interactive encyclopedia of boss mechanics for game designers. Each lesson explains how to shape, communicate, tune, and test one part of a boss encounter.
+**Interactive pattern library for boss encounter designers.** Each lesson explains how to shape, communicate, tune, and test one part of a boss encounter.
 
 [Explore the atlas](https://polyakovin.github.io/gamedev-boss-fights/) · [Build a boss sketch](https://polyakovin.github.io/gamedev-boss-fights/en/builder/) · [Read in Russian](README.ru.md) · [Contribute](CONTRIBUTING.md)
 
@@ -15,7 +15,7 @@ A single wording correction, factual check, concept review, or translation impro
 - [Contribution guide](CONTRIBUTING.md): small PRs, checks, and review.
 - [Content guide](docs/content-guide.md): new mechanics, examples, animations, and sources.
 - [Translation guide](docs/translation-guide.md): language files, terminology, and review status.
-- [Russian audit of 124 boss mechanics](docs/research/boss-mechanics-audit-ru.md): normalized terms, examples, and sources.
+- [Audit of 124 boss mechanics](docs/research/boss-mechanics-audit.md): normalized terms, examples, and sources.
 - [Report a content problem or suggest a mechanic](https://github.com/polyakovin/gamedev-boss-fights/issues/new?template=content.yml).
 - [Report or review a translation](https://github.com/polyakovin/gamedev-boss-fights/issues/new?template=translation.yml).
 
@@ -39,13 +39,15 @@ npx playwright install chromium
 npm run test:browser
 ```
 
-`check` validates content, runs Node tests, and builds the static site. Browser tests cover the rendered experience; install Chromium once before running them. See [CONTRIBUTING.md](CONTRIBUTING.md) for what to inspect manually.
+`check` verifies repository hygiene, validates content, runs Node tests, and builds the static site. Browser tests cover the rendered experience; install Chromium once before running them. See [CONTRIBUTING.md](CONTRIBUTING.md) for what to inspect manually.
 
 Use `npm run format` to apply the pinned Prettier formatting, or `npm run format:check` to check it without rewriting files.
 
 ## How it is built
 
 This is a static Node generator with plain HTML, CSS, browser JavaScript modules, and original SVG illustrations. It has no frontend framework or application server in production. GitHub Pages serves the generated files.
+
+Repository documentation, code, tests, and metadata use English. Translated text belongs in localized README and research files, `locales/`, and locale-specific lesson and lens JSON. The repository check rejects non-English source text outside those locations and exact duplicate files.
 
 | Location                               | Purpose                                                            |
 | -------------------------------------- | ------------------------------------------------------------------ |
@@ -63,7 +65,9 @@ This is a static Node generator with plain HTML, CSS, browser JavaScript modules
 | `tests/`                               | Model and browser checks                                           |
 | `dist/`                                | Generated output; not committed                                    |
 
-Start a mechanic with `npm run new:mechanic -- your-mechanic` or a lens with `npm run new:lens -- your-lens`. Drafts can be merged incrementally and are excluded from the published site. Publishing requires complete content in all eight languages with each translation’s `sourceVersion` matching `meta.contentVersion` and no unresolved `TODO:` placeholders; mechanics also require a registered animation. Read the [content guide](docs/content-guide.md) before publishing.
+The compact public inventory is generated from the audit with `npm run sync:mechanics-index`. Start developing one of its WIP entries into a full lesson with `npm run new:mechanic -- its-existing-id`, or create a lens with `npm run new:lens -- your-lens`. A full mechanic remains WIP until it is complete in all eight languages, each translation’s `sourceVersion` matches `meta.contentVersion`, placeholders are resolved, and an animation is registered. Read the [content guide](docs/content-guide.md) before publishing.
+
+When the mechanics audit changes, run `npm run sync:mechanics-index` to rebuild the public inventory and its localized copy.
 
 The default URL prefix is `/gamedev-boss-fights/`. `lib/config.mjs` defines the repository, site origin, and base path. Forks that publish their own site should update those values for their destination; normal contribution forks do not need deployment credentials.
 

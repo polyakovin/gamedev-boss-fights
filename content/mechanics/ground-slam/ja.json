@@ -113,8 +113,18 @@
       "screenshot": "https://i.ytimg.com/vi/U2jd1fqLpsE/hqdefault.jpg",
       "screenshotSource": "https://www.youtube.com/watch?v=U2jd1fqLpsE&t=180s",
       "body": "連続踏みつけが3D空間へ圧力を伝え、既習のジャンプ時機を試します。"
+    },
+    {
+      "dimension": "3D",
+      "game": "Elden Ring",
+      "boss": "Godrick the Grafted",
+      "video": "https://www.youtube.com/watch?v=EDoJPFDEev0&t=78s",
+      "videoDurationSeconds": 317,
+      "screenshot": "https://i.ytimg.com/vi/EDoJPFDEev0/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=EDoJPFDEev0&t=78s",
+      "body": "斧の一撃から円形の衝撃波が連続して広がる。輪の発生をずらすことで、一度の衝撃がアリーナ全体だけでなく時間方向にも延びる。"
     }
   ],
   "reviewStatus": "needs-review",
-  "sourceVersion": 1
+  "sourceVersion": 2
 }

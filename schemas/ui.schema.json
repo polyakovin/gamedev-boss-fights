@@ -4,6 +4,28 @@
   "required": [
     "siteName",
     "tagline",
+    "about",
+    "createdBy",
+    "contactLinks",
+    "contactEmail",
+    "contactWebsite",
+    "aboutTitle",
+    "aboutDescription",
+    "aboutEyebrow",
+    "aboutIntro",
+    "aboutMotivationTitle",
+    "aboutMotivationBody",
+    "aboutApproachTitle",
+    "aboutResearchTitle",
+    "aboutResearchBody",
+    "aboutModelsTitle",
+    "aboutModelsBody",
+    "aboutReviewTitle",
+    "aboutReviewBody",
+    "aboutOpenTitle",
+    "aboutOpenBody",
+    "aboutContactTitle",
+    "aboutContactBody",
     "skip",
     "catalog",
     "contribute",
@@ -81,6 +103,94 @@
       "minLength": 1
     },
     "tagline": {
+      "type": "string",
+      "minLength": 1
+    },
+    "about": {
+      "type": "string",
+      "minLength": 1
+    },
+    "createdBy": {
+      "type": "string",
+      "minLength": 1
+    },
+    "contactLinks": {
+      "type": "string",
+      "minLength": 1
+    },
+    "contactEmail": {
+      "type": "string",
+      "minLength": 1
+    },
+    "contactWebsite": {
+      "type": "string",
+      "minLength": 1
+    },
+    "aboutTitle": {
+      "type": "string",
+      "minLength": 1
+    },
+    "aboutDescription": {
+      "type": "string",
+      "minLength": 1
+    },
+    "aboutEyebrow": {
+      "type": "string",
+      "minLength": 1
+    },
+    "aboutIntro": {
+      "type": "string",
+      "minLength": 1
+    },
+    "aboutMotivationTitle": {
+      "type": "string",
+      "minLength": 1
+    },
+    "aboutMotivationBody": {
+      "type": "string",
+      "minLength": 1
+    },
+    "aboutApproachTitle": {
+      "type": "string",
+      "minLength": 1
+    },
+    "aboutResearchTitle": {
+      "type": "string",
+      "minLength": 1
+    },
+    "aboutResearchBody": {
+      "type": "string",
+      "minLength": 1
+    },
+    "aboutModelsTitle": {
+      "type": "string",
+      "minLength": 1
+    },
+    "aboutModelsBody": {
+      "type": "string",
+      "minLength": 1
+    },
+    "aboutReviewTitle": {
+      "type": "string",
+      "minLength": 1
+    },
+    "aboutReviewBody": {
+      "type": "string",
+      "minLength": 1
+    },
+    "aboutOpenTitle": {
+      "type": "string",
+      "minLength": 1
+    },
+    "aboutOpenBody": {
+      "type": "string",
+      "minLength": 1
+    },
+    "aboutContactTitle": {
+      "type": "string",
+      "minLength": 1
+    },
+    "aboutContactBody": {
       "type": "string",
       "minLength": 1
     },

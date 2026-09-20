@@ -113,8 +113,18 @@
       "screenshot": "https://i.ytimg.com/vi/vCWh1bhHNKo/hqdefault.jpg",
       "screenshotSource": "https://www.youtube.com/watch?v=vCWh1bhHNKo&t=38s",
       "body": "3D উদাহরণে ক্যামেরা ও দূরত্ব বৃত্তাকার আঘাত-এর পাঠযোগ্যতা বদলায়।"
+    },
+    {
+      "dimension": "3D",
+      "game": "Sekiro: Shadows Die Twice",
+      "boss": "Corrupted Monk",
+      "video": "https://www.youtube.com/watch?v=bSI6RWT8WUw&t=5s",
+      "videoDurationSeconds": 74,
+      "screenshot": "https://i.ytimg.com/vi/bSI6RWT8WUw/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=bSI6RWT8WUw&t=5s",
+      "body": "লম্বা দণ্ডাস্ত্রটি বসের চারপাশে বারবার অনুভূমিক চাপ আঁকে। একই বিস্তৃত এলাকা মাপা ছন্দে পুনরাবৃত্তি করায় একটি সুইপ টানা ছন্দময় চাপে পরিণত হয়।"
     }
   ],
   "reviewStatus": "needs-review",
-  "sourceVersion": 1
+  "sourceVersion": 2
 }

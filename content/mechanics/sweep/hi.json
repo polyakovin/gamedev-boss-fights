@@ -113,8 +113,18 @@
       "screenshot": "https://i.ytimg.com/vi/vCWh1bhHNKo/hqdefault.jpg",
       "screenshotSource": "https://www.youtube.com/watch?v=vCWh1bhHNKo&t=38s",
       "body": "3D उदाहरण दिखाता है कि कैमरा और दूरी चापीय वार की पठनीयता कैसे बदलते हैं।"
+    },
+    {
+      "dimension": "3D",
+      "game": "Sekiro: Shadows Die Twice",
+      "boss": "Corrupted Monk",
+      "video": "https://www.youtube.com/watch?v=bSI6RWT8WUw&t=5s",
+      "videoDurationSeconds": 74,
+      "screenshot": "https://i.ytimg.com/vi/bSI6RWT8WUw/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=bSI6RWT8WUw&t=5s",
+      "body": "लंबा डंडेदार हथियार बॉस के चारों ओर बार-बार क्षैतिज चाप बनाता है। समान चौड़े क्षेत्र को नपी-तुली लय में दोहराने से एक स्वीप लगातार लयबद्ध दबाव बन जाता है।"
     }
   ],
   "reviewStatus": "needs-review",
-  "sourceVersion": 1
+  "sourceVersion": 2
 }

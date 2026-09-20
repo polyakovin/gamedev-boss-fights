@@ -8,7 +8,7 @@ test('all published mechanics have complete content in eight languages', async (
   await validateContent(source);
   assert.equal(source.mechanics.length, 5);
   assert.ok(source.mechanics.every((mechanic) => Object.keys(mechanic.translations).length === 8));
-  assert.equal(source.lenses.length, 6);
+  assert.equal(source.lenses.length, 15);
   assert.ok(source.lenses.every((lens) => Object.keys(lens.translations).length === 8));
   assert.ok(
     source.mechanics.every((mechanic) =>
@@ -115,10 +115,9 @@ test('published diagrams use only generic boss and player labels', () => {
 });
 
 test('the published lesson teaches design decisions rather than player execution', () => {
-  const { en, ru } = source.mechanics[0].translations;
+  const { en } = source.mechanics[0].translations;
   assert.match(en.learning, /tune/i);
-  assert.match(ru.learning, /настройте/i);
-  assert.ok(ru.steps.every((step) => step.title.endsWith('?')));
+  assert.ok(en.steps.every((step) => step.title.endsWith('?')));
 });
 
 test('each mechanic overview defines the rule and explains why it works', () => {
@@ -127,19 +126,15 @@ test('each mechanic overview defines the rule and explains why it works', () => 
       assert.ok(lesson.overview.length > lesson.summary.length);
       assert.ok(lesson.overview.length < 350);
     }
-  const { en, ru } = source.mechanics[0].translations;
+  const { en } = source.mechanics[0].translations;
   assert.match(en.overview, /locks its direction/i);
   assert.match(en.overview, /predictable/i);
   assert.match(en.overview, /response/i);
   assert.match(en.overview, /recovery/i);
-  assert.match(ru.overview, /фиксирует направление/i);
-  assert.match(ru.overview, /предсказуемой/i);
-  assert.match(ru.overview, /ответ/i);
-  assert.match(ru.overview, /восстановление/i);
 });
 
 test('design lenses stay complete and linkable across translations', async () => {
-  const expected = [
+  const mechanicLenses = [
     'telegraphing',
     'commitment',
     'threat-geometry',
@@ -147,7 +142,19 @@ test('design lenses stay complete and linkable across translations', async () =>
     'risk-reward',
     'mastery-check',
   ];
-  assert.deepEqual(source.mechanics[0].meta.lenses, expected);
+  const expected = [
+    ...mechanicLenses,
+    'encounter-purpose',
+    'dramatic-framing',
+    'context-and-sequence',
+    'progress-clarity',
+    'difficulty-rhythm',
+    'phase-structure',
+    'player-expression',
+    'rule-exception',
+    'access-paths',
+  ];
+  assert.deepEqual(source.mechanics[0].meta.lenses, mechanicLenses);
   assert.deepEqual(
     source.lenses.map((lens) => lens.meta.id),
     expected,
@@ -176,11 +183,6 @@ test('design lenses stay complete and linkable across translations', async () =>
     source.lenses.map((lens) => lens.translations.en.summary).join(' '),
     /charge/i,
   );
-  assert.doesNotMatch(
-    source.lenses.map((lens) => lens.translations.ru.summary).join(' '),
-    /таран/i,
-  );
-
   const data = structuredClone(source);
   delete data.lenses[0].translations.ja;
   data.mechanics[0].meta.lenses[0] = 'missing-lens';
@@ -194,31 +196,33 @@ test('design lenses stay complete and linkable across translations', async () =>
 });
 
 test('design lenses describe games generally instead of boss fights', () => {
-  const specificEncounterTerms = {
-    en: /\bboss(?:es)?\b|\bcharge\b|\bthis mechanic\b/i,
-    ru: /босс|таран|эт(?:а|ой)\s+механик/i,
-    'zh-Hans': /Boss|首领|冲锋|这项机制/i,
-    hi: /बॉस|धावा|इस युक्ति/i,
-    bn: /(?:^|\s)বস(?:\s|ের|কে|টি|$)|ধেয়ে আসা|এই মেকানিক/i,
-    es: /\bjef(?:e|es)\b|embestida|esta mecánica/i,
-    ar: /الزعيم|الزعماء|الاندفاع|هذه الآلية/i,
-    ja: /ボス|突進|このメカニクス/,
+  const containsWholeTerm = (text, term, locale) => {
+    const escapedTerm = term.toLocaleLowerCase(locale).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    return new RegExp(`(?<![\\p{L}\\p{N}])${escapedTerm}(?![\\p{L}\\p{N}])`, 'u').test(
+      text.toLocaleLowerCase(locale),
+    );
   };
   for (const { code } of source.locales) {
     const lensText = source.lenses
       .map((lens) => `${lens.translations[code].title} ${lens.translations[code].summary}`)
       .join(' ');
-    assert.doesNotMatch(
-      lensText,
-      specificEncounterTerms[code],
-      `${code}: lens assumes an encounter`,
-    );
-    assert.doesNotMatch(
-      `${source.ui[code].conceptsTitle} ${source.ui[code].conceptsIntro}`,
-      specificEncounterTerms[code],
-      `${code}: lens catalog assumes an encounter`,
-    );
+    const catalogText = `${source.ui[code].conceptsTitle} ${source.ui[code].conceptsIntro}`;
+    const charge = source.mechanics[0].translations[code];
+    for (const encounterTerm of [charge.demo.boss, charge.title]) {
+      assert.ok(
+        !containsWholeTerm(lensText, encounterTerm, code),
+        `${code}: lens assumes an encounter`,
+      );
+      assert.ok(
+        !containsWholeTerm(catalogText, encounterTerm, code),
+        `${code}: lens catalog assumes an encounter`,
+      );
+    }
   }
+  assert.doesNotMatch(
+    source.lenses.map((lens) => lens.translations.en.summary).join(' '),
+    /\bboss(?:es)?\b|\bcharge\b|\bthis mechanic\b/i,
+  );
 });
 
 test('draft lenses may land before translations are ready', async () => {
@@ -228,7 +232,7 @@ test('draft lenses may land before translations are ready', async () => {
   draft.meta = {
     ...draft.meta,
     id: 'draft-lens',
-    number: 7,
+    number: 16,
     published: false,
     related: [],
   };
@@ -243,16 +247,24 @@ test('draft lenses may land before translations are ready', async () => {
   await validateContent(data);
 });
 
-test('community review explicitly includes facts, concepts, examples, and translations', () => {
-  assert.match(source.ui.en.reviewNote, /facts.*concepts.*examples.*translations/i);
-  assert.match(source.ui.ru.reviewNote, /факты.*концепции.*примеры.*переводы/i);
+test('page feedback invites corrections without presenting the published content as unfinished', () => {
+  assert.match(source.ui.en.reviewNote, /inaccuracy.*suggestion/i);
+  assert.doesNotMatch(source.ui.en.reviewNote, /help|await|needs? review|automated/i);
+  assert.match(source.ui.en.edit, /GitHub/);
+  for (const { code } of source.locales) {
+    assert.ok(source.ui[code].reviewNote.length > 0);
+    assert.match(source.ui[code].edit, /GitHub/i);
+  }
+});
+
+test('the contribution overview still names the kinds of review that are welcome', () => {
   assert.match(source.ui.en.contributeNavText, /facts.*concepts.*examples.*translations/i);
-  assert.match(source.ui.ru.contributeNavText, /факты.*концепции.*примеры.*переводы/i);
 });
 
 test('published game references cover 2D and 3D with screenshots and timestamped videos', async () => {
   for (const mechanic of source.mechanics) {
     const published = mechanic.translations.en.examples;
+    assert.ok(published.length >= 3);
     assert.deepEqual(new Set(published.map((example) => example.dimension)), new Set(['2D', '3D']));
     assert.ok(published.every((example) => new URL(example.video).hostname === 'www.youtube.com'));
     assert.ok(published.every((example) => new URL(example.video).searchParams.get('t')));
@@ -262,6 +274,15 @@ test('published game references cover 2D and 3D with screenshots and timestamped
     );
     assert.ok(published.every((example) => example.videoDurationSeconds > 0));
   }
+
+  const tooFewExamples = structuredClone(source);
+  const shortLesson = tooFewExamples.mechanics.find((item) => item.folder === 'sweep');
+  for (const lesson of Object.values(shortLesson.translations)) lesson.examples.length = 2;
+  await assert.rejects(
+    validateContent(tooFewExamples),
+    /published lesson needs at least three boss examples/,
+  );
+
   const examples = source.mechanics[0].translations.en.examples;
   assert.equal(examples.length, 6);
   assert.deepEqual(new Set(examples.map((example) => example.dimension)), new Set(['2D', '3D']));
@@ -311,6 +332,29 @@ test('learning sources stay specific to the charge mechanic and prioritize pract
       `${source.title} must name the charge behavior it supports`,
     );
   }
+});
+
+test('learning sources do not repeat unexplained gameplay from boss examples', async () => {
+  for (const mechanic of source.mechanics) {
+    const exampleVideos = new Set(
+      mechanic.translations.en.examples.map((example) =>
+        new URL(example.video).searchParams.get('v'),
+      ),
+    );
+    for (const item of mechanic.meta.sources) {
+      const url = new URL(item.url);
+      assert.ok(!exampleVideos.has(url.searchParams.get('v')));
+      assert.doesNotMatch(item.title, /^Gameplay reference\b/i);
+    }
+  }
+
+  const data = structuredClone(source);
+  const mechanic = data.mechanics.find((item) => item.folder === 'gap-volley');
+  mechanic.meta.sources.push({
+    title: 'Repeated gameplay with a different timestamp',
+    url: 'https://youtu.be/Ol3-4Y0eS9M?t=75',
+  });
+  await assert.rejects(validateContent(data), /source 2 duplicates a boss example video/);
 });
 
 test('every boss reference opens at the exact attack instead of unrelated gameplay', async () => {

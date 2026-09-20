@@ -113,8 +113,18 @@
       "screenshot": "https://i.ytimg.com/vi/tGGoNmmEoXQ/hqdefault.jpg",
       "screenshotSource": "https://www.youtube.com/watch?v=tGGoNmmEoXQ&t=44s",
       "body": "Layered projectile walls use depth and color to preserve safe spacing inside a 3D arena."
+    },
+    {
+      "dimension": "2D",
+      "game": "Enter the Gungeon",
+      "boss": "High Dragun",
+      "video": "https://www.youtube.com/watch?v=aKALjUZqhXA&t=103s",
+      "videoDurationSeconds": 211,
+      "screenshot": "https://i.ytimg.com/vi/aKALjUZqhXA/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=aKALjUZqhXA&t=103s",
+      "body": "Rows of bullets sweep downward with deliberately offset openings. Alternating the gap position makes the player read each row instead of holding one safe lane."
     }
   ],
   "reviewStatus": "needs-review",
-  "sourceVersion": 1
+  "sourceVersion": 2
 }

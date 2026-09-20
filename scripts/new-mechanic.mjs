@@ -52,6 +52,16 @@ lesson.examples = [
     video: 'https://www.youtube.com/watch?v=TODO-video-3d&t=1s',
     videoDurationSeconds: 180,
   },
+  {
+    dimension: '2D',
+    game: 'TODO: game',
+    boss: 'TODO: boss',
+    screenshot: 'https://example.com/TODO-screenshot-third.jpg',
+    screenshotSource: 'https://example.com/TODO-screenshot-source-third',
+    body: 'TODO: design observation',
+    video: 'https://www.youtube.com/watch?v=TODO-video-third&t=1s',
+    videoDurationSeconds: 180,
+  },
 ];
 await fs.writeFile(path.join(directory, 'meta.json'), JSON.stringify(meta, null, 2) + '\n');
 await fs.writeFile(path.join(directory, 'en.json'), JSON.stringify(lesson, null, 2) + '\n');

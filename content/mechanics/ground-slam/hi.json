@@ -113,8 +113,18 @@
       "screenshot": "https://i.ytimg.com/vi/U2jd1fqLpsE/hqdefault.jpg",
       "screenshotSource": "https://www.youtube.com/watch?v=U2jd1fqLpsE&t=180s",
       "body": "3D उदाहरण दिखाता है कि कैमरा और दूरी ज़मीन पर प्रहार की पठनीयता कैसे बदलते हैं।"
+    },
+    {
+      "dimension": "3D",
+      "game": "Elden Ring",
+      "boss": "Godrick the Grafted",
+      "video": "https://www.youtube.com/watch?v=EDoJPFDEev0&t=78s",
+      "videoDurationSeconds": 317,
+      "screenshot": "https://i.ytimg.com/vi/EDoJPFDEev0/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=EDoJPFDEev0&t=78s",
+      "body": "कुल्हाड़ी का प्रहार लगातार गोलाकार झटके भेजता है। छल्लों के बीच अंतर रखने से एक ही प्रभाव अखाड़े में फैलने के साथ समय में भी लंबा चलता है।"
     }
   ],
   "reviewStatus": "needs-review",
-  "sourceVersion": 1
+  "sourceVersion": 2
 }

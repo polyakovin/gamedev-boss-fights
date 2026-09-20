@@ -113,8 +113,18 @@
       "screenshot": "https://i.ytimg.com/vi/U2jd1fqLpsE/hqdefault.jpg",
       "screenshotSource": "https://www.youtube.com/watch?v=U2jd1fqLpsE&t=180s",
       "body": "Repeated stomps project pressure through a 3D arena and test the jump timing taught by the game."
+    },
+    {
+      "dimension": "3D",
+      "game": "Elden Ring",
+      "boss": "Godrick the Grafted",
+      "video": "https://www.youtube.com/watch?v=EDoJPFDEev0&t=78s",
+      "videoDurationSeconds": 317,
+      "screenshot": "https://i.ytimg.com/vi/EDoJPFDEev0/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=EDoJPFDEev0&t=78s",
+      "body": "The axe strike sends out consecutive circular shockwaves. Staggering the rings extends one impact through time as well as across the arena."
     }
   ],
   "reviewStatus": "needs-review",
-  "sourceVersion": 1
+  "sourceVersion": 2
 }

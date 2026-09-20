@@ -113,8 +113,18 @@
       "screenshot": "https://i.ytimg.com/vi/tGGoNmmEoXQ/hqdefault.jpg",
       "screenshotSource": "https://www.youtube.com/watch?v=tGGoNmmEoXQ&t=44s",
       "body": "3D উদাহরণে ক্যামেরা ও দূরত্ব ফাঁকসহ গোলাবর্ষণ-এর পাঠযোগ্যতা বদলায়।"
+    },
+    {
+      "dimension": "2D",
+      "game": "Enter the Gungeon",
+      "boss": "High Dragun",
+      "video": "https://www.youtube.com/watch?v=aKALjUZqhXA&t=103s",
+      "videoDurationSeconds": 211,
+      "screenshot": "https://i.ytimg.com/vi/aKALjUZqhXA/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=aKALjUZqhXA&t=103s",
+      "body": "গুলির সারিগুলো নিচে নেমে আসে এবং ইচ্ছাকৃতভাবে ভিন্ন অবস্থানে ফাঁক রাখে। ফাঁকের অবস্থান পাল্টাতে থাকায় একটি নিরাপদ লেনে স্থির না থেকে প্রতিটি সারি নতুন করে পড়তে হয়।"
     }
   ],
   "reviewStatus": "needs-review",
-  "sourceVersion": 1
+  "sourceVersion": 2
 }

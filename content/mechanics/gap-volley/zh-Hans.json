@@ -113,8 +113,18 @@
       "screenshot": "https://i.ytimg.com/vi/tGGoNmmEoXQ/hqdefault.jpg",
       "screenshotSource": "https://www.youtube.com/watch?v=tGGoNmmEoXQ&t=44s",
       "body": "分层弹幕利用深度和色彩在 3D 场地中保留安全间距。"
+    },
+    {
+      "dimension": "2D",
+      "game": "Enter the Gungeon",
+      "boss": "High Dragun",
+      "video": "https://www.youtube.com/watch?v=aKALjUZqhXA&t=103s",
+      "videoDurationSeconds": 211,
+      "screenshot": "https://i.ytimg.com/vi/aKALjUZqhXA/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=aKALjUZqhXA&t=103s",
+      "body": "一排排子弹向下扫过，并刻意留下位置错开的缺口。缺口位置不断交替，迫使玩家逐排重新读取，而不能一直守在同一条安全线上。"
     }
   ],
   "reviewStatus": "needs-review",
-  "sourceVersion": 1
+  "sourceVersion": 2
 }

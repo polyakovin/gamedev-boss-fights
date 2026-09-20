@@ -3,19 +3,11 @@
   "number": 3,
   "published": true,
   "sourceLocale": "en",
-  "contentVersion": 1,
+  "contentVersion": 2,
   "animation": "ground-slam",
   "lenses": ["telegraphing", "threat-geometry", "counterplay", "mastery-check"],
   "related": ["sweep", "charge"],
   "sources": [
-    {
-      "title": "Gameplay reference · False Knight — impact and floor shockwave",
-      "url": "https://www.youtube.com/watch?v=rwZmf4u366o&t=151s"
-    },
-    {
-      "title": "Gameplay reference · Godfrey — stomp shockwave across a 3D arena",
-      "url": "https://www.youtube.com/watch?v=U2jd1fqLpsE&t=180s"
-    },
     {
       "title": "Attack reference · Godfrey stomp and shockwave behavior",
       "url": "https://eldenring.wiki.gg/wiki/Godfrey,_First_Elden_Lord"

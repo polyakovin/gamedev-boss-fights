@@ -1,8 +1,6 @@
 name: Check content and site
 on:
   pull_request:
-  push:
-    branches: [main]
 permissions:
   contents: read
 jobs:

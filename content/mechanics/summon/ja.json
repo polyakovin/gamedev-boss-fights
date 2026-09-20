@@ -113,8 +113,18 @@
       "screenshot": "https://i.ytimg.com/vi/8wTLAgG3dX0/hqdefault.jpg",
       "screenshotSource": "https://www.youtube.com/watch?v=8wTLAgG3dX0&t=250s",
       "body": "一時的な霊は脅威を変えて消え、詠唱中はボスに隙が生まれます。"
+    },
+    {
+      "dimension": "3D",
+      "game": "Bloodborne",
+      "boss": "Rom, the Vacuous Spider",
+      "video": "https://www.youtube.com/watch?v=VbN4AB4T8ho&t=62s",
+      "videoDurationSeconds": 144,
+      "screenshot": "https://i.ytimg.com/vi/VbN4AB4T8ho/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=VbN4AB4T8ho&t=62s",
+      "body": "新しいフェーズごとにボスが位置を変え、周囲に小グモの群れを再び呼び出す。護衛を組み直すことで、フェーズ移行そのものが新たな空間的圧力になる。"
     }
   ],
   "reviewStatus": "needs-review",
-  "sourceVersion": 1
+  "sourceVersion": 2
 }

@@ -113,8 +113,18 @@
       "screenshot": "https://i.ytimg.com/vi/8wTLAgG3dX0/hqdefault.jpg",
       "screenshotSource": "https://www.youtube.com/watch?v=8wTLAgG3dX0&t=250s",
       "body": "临时灵体改变威胁后消失，施法时间也让 首领 暴露。"
+    },
+    {
+      "dimension": "3D",
+      "game": "Bloodborne",
+      "boss": "Rom, the Vacuous Spider",
+      "video": "https://www.youtube.com/watch?v=VbN4AB4T8ho&t=62s",
+      "videoDurationSeconds": 144,
+      "screenshot": "https://i.ytimg.com/vi/VbN4AB4T8ho/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=VbN4AB4T8ho&t=62s",
+      "body": "每次进入新阶段，首领都会转移位置，并重新召来一群小蜘蛛围在身边。护卫阵容的重建让阶段转换重新带来空间压力。"
     }
   ],
   "reviewStatus": "needs-review",
-  "sourceVersion": 1
+  "sourceVersion": 2
 }

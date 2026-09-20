@@ -113,8 +113,18 @@
       "screenshot": "https://i.ytimg.com/vi/tGGoNmmEoXQ/hqdefault.jpg",
       "screenshotSource": "https://www.youtube.com/watch?v=tGGoNmmEoXQ&t=44s",
       "body": "Los muros superpuestos usan profundidad y color para conservar espacio seguro en 3D."
+    },
+    {
+      "dimension": "2D",
+      "game": "Enter the Gungeon",
+      "boss": "High Dragun",
+      "video": "https://www.youtube.com/watch?v=aKALjUZqhXA&t=103s",
+      "videoDurationSeconds": 211,
+      "screenshot": "https://i.ytimg.com/vi/aKALjUZqhXA/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=aKALjUZqhXA&t=103s",
+      "body": "Las filas de proyectiles descienden con huecos colocados deliberadamente en distintas posiciones. Alternar la abertura obliga a leer cada fila en vez de mantenerse en un solo carril seguro."
     }
   ],
   "reviewStatus": "needs-review",
-  "sourceVersion": 1
+  "sourceVersion": 2
 }

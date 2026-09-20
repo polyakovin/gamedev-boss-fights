@@ -17,12 +17,13 @@
 - Catalog previews reuse the same character and object SVG assets as their full lesson animations; keep shared artwork in one source fragment instead of redrawing it.
 - Maintain the semantic palette tokens and the body, display, and label font roles in `src/site.css`; check both themes and script-specific locale fonts when changing the visual system.
 - Generated `dist/`, dependencies, browser reports, credentials, and `.env` stay out of Git. PR CI must remain safe for forks and must not expose deployment privileges to untrusted PR code.
+- Keep documentation, code, tests, filenames, and metadata in English. Non-English text belongs only in explicit localization files. Avoid exact duplicate files; `npm run check:repo` enforces both rules.
 
 ## Content and publishing
 
 - Read `docs/content-guide.md` and `docs/translation-guide.md` when editing lessons. `npm run new:mechanic -- slug` creates an unpublished draft; partial drafts can merge.
 - Publishing requires complete lessons in `en`, `ru`, `zh-Hans`, `hi`, `bn`, `es`, `ar`, and `ja`, each with `sourceVersion === meta.contentVersion`, a registered animation, and no unresolved placeholders.
-- Published lessons require concrete examples from both 2D and 3D games, each with a verified YouTube behavior clip and a design observation. Prefer clips no longer than three minutes; longer videos require an exact `t=<seconds>s` timestamp at the mechanic. Preserve game names, boss names, dimensions, URLs, and `videoDurationSeconds` across translations.
+- Published lessons require at least three concrete boss examples, covering both 2D and 3D games, each with a verified YouTube behavior clip and a design observation. Prefer clips no longer than three minutes; longer videos require an exact `t=<seconds>s` timestamp at the mechanic. Preserve game names, boss names, dimensions, URLs, and `videoDurationSeconds` across translations.
 - Published lessons require a separate design-lens section that connects the mechanic to reusable concepts without claiming a universal taxonomy. Lens pages describe games in general; boss-specific application belongs only in a mechanic's `lensNotes`. Preserve each `concepts[].id` and its order across translations.
 - Meaning changes increment `meta.contentVersion`, synchronize published translations and their `sourceVersion` values, and reset all lesson `reviewStatus` values to `needs-review`. Never claim native or fluent review without an actual independent reviewer.
 - Address game designers. Lessons explain how to build, tune, and test mechanics; they must not read like instructions for beating a boss.

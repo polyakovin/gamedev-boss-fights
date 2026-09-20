@@ -113,8 +113,18 @@
       "screenshot": "https://i.ytimg.com/vi/tGGoNmmEoXQ/hqdefault.jpg",
       "screenshotSource": "https://www.youtube.com/watch?v=tGGoNmmEoXQ&t=44s",
       "body": "多層の弾幕壁は奥行きと色で3D空間の安全間隔を保ちます。"
+    },
+    {
+      "dimension": "2D",
+      "game": "Enter the Gungeon",
+      "boss": "High Dragun",
+      "video": "https://www.youtube.com/watch?v=aKALjUZqhXA&t=103s",
+      "videoDurationSeconds": 211,
+      "screenshot": "https://i.ytimg.com/vi/aKALjUZqhXA/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=aKALjUZqhXA&t=103s",
+      "body": "弾の列が、意図的に位置をずらした隙間を残しながら下へ流れる。隙間の位置が交互に変わるため、一つの安全なレーンに留まらず、列ごとに読み直す必要がある。"
     }
   ],
   "reviewStatus": "needs-review",
-  "sourceVersion": 1
+  "sourceVersion": 2
 }

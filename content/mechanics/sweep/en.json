@@ -113,8 +113,18 @@
       "screenshot": "https://i.ytimg.com/vi/vCWh1bhHNKo/hqdefault.jpg",
       "screenshotSource": "https://www.youtube.com/watch?v=vCWh1bhHNKo&t=38s",
       "body": "Long sword sweeps overlap into changing arcs, showing how animation and arena spacing define coverage."
+    },
+    {
+      "dimension": "3D",
+      "game": "Sekiro: Shadows Die Twice",
+      "boss": "Corrupted Monk",
+      "video": "https://www.youtube.com/watch?v=bSI6RWT8WUw&t=5s",
+      "videoDurationSeconds": 74,
+      "screenshot": "https://i.ytimg.com/vi/bSI6RWT8WUw/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=bSI6RWT8WUw&t=5s",
+      "body": "A long polearm traces repeated horizontal arcs around the boss. Reusing the same broad coverage in a measured sequence turns one sweep into sustained rhythmic pressure."
     }
   ],
   "reviewStatus": "needs-review",
-  "sourceVersion": 1
+  "sourceVersion": 2
 }

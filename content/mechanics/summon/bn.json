@@ -113,8 +113,18 @@
       "screenshot": "https://i.ytimg.com/vi/8wTLAgG3dX0/hqdefault.jpg",
       "screenshotSource": "https://www.youtube.com/watch?v=8wTLAgG3dX0&t=250s",
       "body": "3D উদাহরণে ক্যামেরা ও দূরত্ব সহায়ক ডাকা-এর পাঠযোগ্যতা বদলায়।"
+    },
+    {
+      "dimension": "3D",
+      "game": "Bloodborne",
+      "boss": "Rom, the Vacuous Spider",
+      "video": "https://www.youtube.com/watch?v=VbN4AB4T8ho&t=62s",
+      "videoDurationSeconds": 144,
+      "screenshot": "https://i.ytimg.com/vi/VbN4AB4T8ho/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=VbN4AB4T8ho&t=62s",
+      "body": "প্রতিটি নতুন পর্যায়ে বস স্থান বদলে আবার নিজের চারপাশে ছোট মাকড়সার একটি দল ডাকে। পাহারাদার দলটি নতুন করে তৈরি হওয়ায় পর্যায় বদল আবার স্থানিক চাপ সৃষ্টি করে।"
     }
   ],
   "reviewStatus": "needs-review",
-  "sourceVersion": 1
+  "sourceVersion": 2
 }

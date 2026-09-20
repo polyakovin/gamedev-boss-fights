@@ -260,7 +260,7 @@
     },
     "examples": {
       "type": "array",
-      "minItems": 2,
+      "minItems": 3,
       "maxItems": 12,
       "items": {
         "type": "object",

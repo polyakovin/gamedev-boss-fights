@@ -3,19 +3,11 @@
   "number": 2,
   "published": true,
   "sourceLocale": "en",
-  "contentVersion": 1,
+  "contentVersion": 2,
   "animation": "sweep",
   "lenses": ["telegraphing", "threat-geometry", "counterplay", "risk-reward"],
   "related": ["charge", "ground-slam", "gap-volley"],
   "sources": [
-    {
-      "title": "Gameplay reference · Mantis Lords — committed arc sweep",
-      "url": "https://www.youtube.com/watch?v=VG3h6uVtWyY&t=19s"
-    },
-    {
-      "title": "Gameplay reference · Dancer of the Boreal Valley — rotating sword sweep",
-      "url": "https://www.youtube.com/watch?v=vCWh1bhHNKo&t=38s"
-    },
     {
       "title": "Designer article · Mike Stout — readable wind-up for avoidable attacks",
       "url": "https://www.gamedeveloper.com/design/enemy-attacks-and-telegraphing"

@@ -28,11 +28,11 @@ for (const locale of registry) {
     await page.goto(`${locale.code}/mechanics/charge/`);
     await expect(page.locator('html')).toHaveAttribute('lang', locale.code);
     await expect(page.locator('html')).toHaveAttribute('dir', locale.dir);
-    const authorName = locale.code === 'ru' ? 'Игорь Поляков' : 'Igor Polyakov';
+    const authorName = 'Igor Polyakov';
     await expect(page.locator('meta[name="author"]')).toHaveAttribute('content', authorName);
     await expect(page.locator('meta[property="og:site_name"]')).toHaveAttribute(
       'content',
-      authorName,
+      `Boss Fight Atlas · ${authorName}`,
     );
     await expect(page.locator('meta[property="og:title"]')).toHaveAttribute(
       'content',
@@ -50,6 +50,12 @@ for (const locale of registry) {
       await page.locator('body').evaluate((element) => getComputedStyle(element).fontFamily),
     ).toContain('Inter');
     await page.locator('.site-header .brand').hover();
+    await expect(page.locator('.site-header .brand-mark')).toHaveCount(1);
+    await expect(page.locator('.site-header .brand-mark')).toHaveAttribute('viewBox', '0 0 48 48');
+    await expect(page.locator('.site-header .logo-mark__boss')).toHaveCount(1);
+    await expect(page.locator('.site-header .logo-mark__eye')).toHaveCount(1);
+    await expect(page.locator('.theme-toggle .icon')).toHaveCount(2);
+    await expect(page.locator('.language-menu summary .icon--chevron')).toHaveCount(1);
     expect(
       await page
         .locator('.site-header .brand')
@@ -103,16 +109,45 @@ for (const locale of registry) {
     ).toBe('right');
     await expect(page.locator('.lesson-title-line .lens-chip')).toHaveCount(6);
     await expect(page.locator('.lesson-title-line [role="tooltip"]')).toHaveCount(6);
+    await expect(page.locator('.header-nav .lenses-link')).toHaveAttribute(
+      'href',
+      `/gamedev-boss-fights/${locale.code}/lenses/`,
+    );
     await expect(page.locator('.mechanic-overview')).toHaveCount(1);
     await expect(
       page.locator('.hero-subtitle, .lesson-hero > .variant, .lesson-hero > .summary'),
     ).toHaveCount(0);
     await expect(page.locator('.game-example')).toHaveCount(6);
+    await expect(page.locator('.example-group, .example-groups')).toHaveCount(0);
+    await expect(page.locator('#examples > .example-grid')).toHaveCount(1);
     await expect(page.locator('#examples > .eyebrow, .examples-intro')).toHaveCount(0);
     await expect(page.locator('#sources > .eyebrow, #sources > p:not(.review-note)')).toHaveCount(
       0,
     );
     await expect(page.locator('.game-example__media img')).toHaveCount(6);
+    await expect(page.locator('.game-example__dimension')).toHaveText([
+      '2D',
+      '2D',
+      '2D',
+      '3D',
+      '3D',
+      '3D',
+    ]);
+    expect(
+      await page
+        .locator('.game-example__media')
+        .first()
+        .evaluate((media) => {
+          const mediaBox = media.getBoundingClientRect();
+          const badgeBox = media.querySelector('.game-example__dimension').getBoundingClientRect();
+          return (
+            badgeBox.top >= mediaBox.top &&
+            badgeBox.right <= mediaBox.right &&
+            badgeBox.bottom <= mediaBox.bottom &&
+            badgeBox.left >= mediaBox.left
+          );
+        }),
+    ).toBe(true);
     await expect(page.locator('.game-example__source')).toHaveCount(0);
     await expect(page.locator('.game-example[data-screenshot-source]')).toHaveCount(6);
     await expect(page.locator('.game-example__title')).toHaveCount(6);
@@ -227,28 +262,28 @@ test('the loop autoplays, alternates sides, shows the current phase, and keeps o
   page,
 }) => {
   await page.emulateMedia({ reducedMotion: 'no-preference' });
-  await page.goto('ru/mechanics/charge/');
+  await page.goto('en/mechanics/charge/');
   await expect(page.locator('.lesson-sidebar')).toHaveCount(0);
   await expect(
     page.locator('.lesson-toolbar, .back-link, .lesson-edit, .lesson-topline, .title-index'),
   ).toHaveCount(0);
-  await expect(page.locator('.lesson-hero h1')).toHaveText('Таран');
-  await expect(page.locator('.lesson-category')).toHaveText('Движение и пространство');
+  await expect(page.locator('.lesson-hero h1')).toHaveText('Charge');
+  await expect(page.locator('.lesson-category')).toHaveText('Movement & space');
   await page.locator('.lesson-category').click();
-  await expect(page).toHaveURL(/\/ru\/#mechanics$/);
+  await expect(page).toHaveURL(/\/en\/#mechanics$/);
   await expect(page.locator('#mechanics')).toBeVisible();
-  await page.goto('ru/mechanics/charge/');
+  await page.goto('en/mechanics/charge/');
   await expect(page.locator('.mechanic-overview')).toHaveText(
-    'Таран — скоростная атака: босс целится, фиксирует направление и мчится вперёд без возможности повернуть. Механика работает хорошо, когда фиксация делает траекторию предсказуемой, боковое движение даёт доступный ответ, а восстановление создаёт окно для контратаки.',
+    'Charge is a high-speed attack: the boss aims, locks its direction, and rushes forward without turning. The mechanic works well when the clear lock makes the path predictable, sideways movement provides a reachable response, and recovery creates an opening for a counterattack.',
   );
   await expect(page.locator('.implementation-checklist > div > h2')).toHaveText(
-    'Чеклист внедрения',
+    'Implementation checklist',
   );
   await expect(page.locator('.checklist-item summary').first()).toContainText(
-    'Когда прекращается слежение?',
+    'When does tracking stop?',
   );
-  await expect(page.locator('.lesson-hero')).not.toContainText('3 мин · урок по дизайну');
-  await expect(page.locator('.lesson-hero')).not.toContainText('МЕХАНИКА 01');
+  await expect(page.locator('.lesson-hero')).not.toContainText('3 min · design lesson');
+  await expect(page.locator('.lesson-hero')).not.toContainText('MECHANIC 01');
   await expect(
     page.locator(
       '.charge-demo__heading, .charge-demo__legend, .charge-demo__note, [data-charge-speed]',
@@ -291,7 +326,7 @@ test('the loop autoplays, alternates sides, shows the current phase, and keeps o
   });
   expect(Math.abs(simulationBox.height - (1000 - simulationBox.y - 24))).toBeLessThan(2);
   expect(diagramBox.height).toBeGreaterThan(simulationBox.height - 10);
-  await expect(page.locator('[data-charge-phase-name]')).toHaveText('Прицеливание');
+  await expect(page.locator('[data-charge-phase-name]')).toHaveText('Aim');
   await expect(page.locator('.charge-demo__description')).toHaveCount(0);
   await expect(page.locator('.charge-demo button')).toHaveCount(0);
   await expect(page.locator('.charge-demo input[type="range"]')).toHaveCount(1);
@@ -322,13 +357,13 @@ test('the loop autoplays, alternates sides, shows the current phase, and keeps o
     (PHASE_ENDS[0] + 0.1) * 1000,
   );
   await expect(demo).toHaveAttribute('data-charge-phase', '1');
-  await expect(page.locator('[data-charge-phase-name]')).toHaveText('Фиксация и уклонение');
+  await expect(page.locator('[data-charge-phase-name]')).toHaveText('Lock & dodge');
   const lockTooltip = currentPhase.locator('[role="tooltip"]');
   await expect(lockTooltip).toBeHidden();
   await currentPhase.hover();
   await expect(lockTooltip).toBeVisible();
   await expect(lockTooltip).toHaveText(
-    'Направление фиксируется, и игрок выходит из полосы обычным боковым движением.',
+    'Direction locks and the player clears the lane with ordinary sideways movement.',
   );
   const lockLabelBox = await currentPhase.boundingBox();
   const lockTooltipBox = await lockTooltip.boundingBox();
@@ -343,7 +378,7 @@ test('the loop autoplays, alternates sides, shows the current phase, and keeps o
   );
   await page.locator('.checklist-item summary').first().click();
   await expect(page.locator('.checklist-item').first().locator('p')).toHaveText(
-    'Выберите точный момент. Обозначьте его позой, звуком или эффектом.',
+    'Choose a fixed moment. Mark it with a pose, sound, or effect.',
   );
   await expect(demo).toHaveAttribute('data-charge-playing', 'true');
   await expect
@@ -356,7 +391,7 @@ test('the loop autoplays, alternates sides, shows the current phase, and keeps o
   await expect(demo).toHaveAttribute('data-charge-attack', '0');
   await expect(demo).toHaveAttribute('data-charge-phase', '2');
   await expect(demo).toHaveAttribute('data-charge-outcome', 'safe');
-  await expect(page.locator('[data-charge-phase-name]')).toHaveText('Таран');
+  await expect(page.locator('[data-charge-phase-name]')).toHaveText('Charge');
   await timeline.evaluate(
     (element, value) => {
       element.value = String(value);
@@ -386,11 +421,18 @@ test('the loop autoplays, alternates sides, shows the current phase, and keeps o
   await page.setViewportSize({ width: 375, height: 812 });
   const mobileHeroBox = await page.locator('.lesson-hero').boundingBox();
   const mobileSimulationBox = await page.locator('.simulation-section').boundingBox();
+  const mobileChecklistBox = await page.locator('.implementation-checklist').boundingBox();
   expect(mobileSimulationBox.y).toBeGreaterThan(mobileHeroBox.y + mobileHeroBox.height);
+  expect(mobileChecklistBox.y).toBeGreaterThan(mobileSimulationBox.y + mobileSimulationBox.height);
 });
-test('the lesson and language navigation work with JavaScript disabled', async ({ browser }) => {
+test('the English default and language navigation work with JavaScript disabled', async ({
+  browser,
+}) => {
   const context = await browser.newContext({ javaScriptEnabled: false });
   const page = await context.newPage();
+  await page.goto('http://127.0.0.1:4173/gamedev-boss-fights/');
+  await expect(page).toHaveURL(/\/en\/$/);
+  await expect(page.locator('html')).toHaveAttribute('lang', 'en');
   await page.goto('http://127.0.0.1:4173/gamedev-boss-fights/ar/mechanics/charge/');
   await expect(page.locator('h1')).toBeVisible();
   await expect(page.locator('[data-charge-svg]')).toBeVisible();
@@ -402,14 +444,14 @@ test('the lesson and language navigation work with JavaScript disabled', async (
 });
 
 for (const [id, title, activePhase] of [
-  ['sweep', 'Круговой удар', 'Фиксация дуги'],
-  ['ground-slam', 'Удар по земле', 'Удар'],
-  ['summon', 'Призыв', 'Появление'],
-  ['gap-volley', 'Залп с разрывом', 'Залп'],
+  ['sweep', 'Arc sweep', 'Arc commits'],
+  ['ground-slam', 'Ground slam', 'Impact'],
+  ['summon', 'Summon', 'Arrival'],
+  ['gap-volley', 'Gap volley', 'Volley'],
 ]) {
   test(`${id}: localized page animates its own pattern`, async ({ page }) => {
     await page.emulateMedia({ reducedMotion: 'no-preference' });
-    await page.goto(`ru/mechanics/${id}/`);
+    await page.goto(`en/mechanics/${id}/`);
     await expect(page.locator('.lesson-hero h1')).toHaveText(title);
     await expect(page.locator('[data-pattern-demo]')).toHaveAttribute('data-pattern-ready', 'true');
     await expect(page.locator('[data-pattern-demo]')).toHaveAttribute('data-pattern-kind', id);
@@ -456,9 +498,9 @@ for (const [id, title, activePhase] of [
       backdropFilter: 'none',
     });
     await expect(page.locator('.lesson-title-line .lens-chip')).toHaveCount(4);
-    await expect(page.locator('.game-example')).toHaveCount(2);
-    await expect(page.locator('.game-example__media img')).toHaveCount(2);
-    await expect(page.locator('.sources li a')).toHaveCount(3);
+    await expect(page.locator('.game-example')).toHaveCount(3);
+    await expect(page.locator('.game-example__media img')).toHaveCount(3);
+    await expect(page.locator('.sources li a')).toHaveCount(1);
     await expect(page.locator('[data-pattern-boss] [data-character-art="kern"]')).toHaveCount(1);
     await expect(page.locator('[data-pattern-player] [data-character-art="tavi"]')).toHaveCount(1);
     await page.locator('[data-pattern-timeline]').evaluate((element) => {
@@ -480,7 +522,7 @@ for (const [id, title, activePhase] of [
 }
 
 test('checklist progress persists locally and can be reset', async ({ page }) => {
-  await page.goto('ru/mechanics/charge/');
+  await page.goto('en/mechanics/charge/');
   const first = page.locator('[data-checklist-checkbox]').first();
   const third = page.locator('[data-checklist-checkbox]').nth(2);
   const firstDetails = page.locator('.checklist-item details').first();
@@ -503,9 +545,8 @@ test('checklist progress persists locally and can be reset', async ({ page }) =>
   await page.reload();
   await expect(first).toBeChecked();
   await expect(third).toBeChecked();
-  await page.goto('en/mechanics/charge/');
+  await page.goto('ru/mechanics/charge/');
   await expect(page.locator('[data-checklist-checkbox]').first()).toBeChecked();
-  await expect(page.locator('[data-checklist-reset]')).toHaveText('Clear checks');
 
   await page.locator('[data-checklist-reset]').click();
   await expect(page.locator('[data-checklist-checkbox]:checked')).toHaveCount(0);
@@ -516,19 +557,19 @@ test('checklist progress persists locally and can be reset', async ({ page }) =>
 });
 
 test('boss builder persists a local draft and downloads portable JSON', async ({ page }) => {
-  await page.goto('ru/builder/');
+  await page.goto('en/builder/');
   await expect(page.locator('[data-boss-builder]')).toHaveAttribute(
     'data-boss-builder-ready',
     'true',
   );
-  await expect(page.locator('.boss-builder-hero h1')).toHaveText('Конструктор босса');
+  await expect(page.locator('.boss-builder-hero h1')).toHaveText('Boss builder');
   expect(
     await page
       .locator('.boss-builder-hero h1')
       .evaluate((element) => Number.parseFloat(getComputedStyle(element).fontSize)),
   ).toBeLessThanOrEqual(60);
   await expect(page.locator('.boss-builder-storage')).toHaveText(
-    'Черновик хранится только в этом браузере.',
+    'The draft stays only in this browser.',
   );
   await expect(page.locator('.boss-builder-mechanic')).toHaveCount(124);
   await expect(page.locator('.boss-builder-mechanic--wip')).toHaveCount(119);
@@ -538,61 +579,76 @@ test('boss builder persists a local draft and downloads portable JSON', async ({
   await expect(page.locator('.boss-builder-mechanic [data-character-art="kern"]')).toHaveCount(5);
   await expect(page.locator('.boss-builder-mechanic [data-character-art="tavi"]')).toHaveCount(5);
   await expect(page.locator('.boss-builder-mechanic [data-pattern-preview]')).toHaveCount(4);
-  await page.locator('[data-boss-mechanic-search]').fill('Таран');
+  await page.locator('[data-boss-mechanic-search]').fill('Charge');
   await expect(page.locator('.boss-builder-mechanic:visible')).toHaveCount(1);
   await page.locator('[data-boss-mechanic-search]').fill('');
 
   await page.locator('[data-boss-download]').click();
-  await expect(page.locator('[data-boss-status]')).toHaveText('Введите название босса.');
+  await expect(page.locator('[data-boss-status]')).toHaveText('Enter a boss name.');
   await expect(page.locator('[data-boss-name]')).toHaveAttribute('aria-invalid', 'true');
-  await page.locator('[data-boss-name]').fill('Страж шлюза');
-  await page.locator('[data-boss-description]').fill('Охраняет переход в следующую локацию.');
+  await page.locator('[data-boss-name]').fill('Gate Warden');
+  await page.locator('[data-boss-description]').fill('Guards the passage to the next area.');
   await page.locator('[data-boss-download]').click();
-  await expect(page.locator('[data-boss-status]')).toHaveText('Выберите хотя бы одну механику.');
+  await expect(page.locator('[data-boss-status]')).toHaveText('Select at least one mechanic.');
   await page.locator('[data-boss-mechanic][value="charge"]').check();
-  await expect(page.locator('[data-boss-selected]')).toHaveText('Выбрано: 1');
+  await expect(page.locator('[data-boss-selected]')).toHaveText('Selected: 1');
+  await page.locator('[data-boss-mechanic-search]').fill('Teleport');
+  await expect(page.locator('.boss-builder-mechanic:visible')).toHaveCount(1);
+  await page.locator('[data-boss-mechanic][value="teleport"]').check();
+  await expect(page.locator('[data-boss-selected]')).toHaveText('Selected: 2');
+  await page.locator('[data-boss-mechanic-search]').fill('');
   expect(
     await page.evaluate(() => JSON.parse(localStorage.getItem('boss-fight-atlas-boss-builder'))),
   ).toEqual({
     version: 1,
-    name: 'Страж шлюза',
-    description: 'Охраняет переход в следующую локацию.',
-    mechanics: ['charge'],
+    name: 'Gate Warden',
+    description: 'Guards the passage to the next area.',
+    mechanics: ['charge', 'teleport'],
   });
 
   await page.reload();
-  await expect(page.locator('[data-boss-name]')).toHaveValue('Страж шлюза');
+  await expect(page.locator('[data-boss-name]')).toHaveValue('Gate Warden');
   await expect(page.locator('[data-boss-description]')).toHaveValue(
-    'Охраняет переход в следующую локацию.',
+    'Guards the passage to the next area.',
   );
   await expect(page.locator('[data-boss-mechanic][value="charge"]')).toBeChecked();
+  await expect(page.locator('[data-boss-mechanic][value="teleport"]')).toBeChecked();
 
   const downloadPromise = page.waitForEvent('download');
   await page.locator('[data-boss-download]').click();
   const download = await downloadPromise;
-  expect(download.suggestedFilename()).toBe('Страж-шлюза.json');
+  expect(download.suggestedFilename()).toBe('Gate-Warden.json');
   const exported = JSON.parse(await fs.readFile(await download.path(), 'utf8'));
   expect(exported).toEqual({
     format: 'boss-fight-atlas/boss-sketch',
     version: 1,
-    locale: 'ru',
-    name: 'Страж шлюза',
-    description: 'Охраняет переход в следующую локацию.',
+    locale: 'en',
+    name: 'Gate Warden',
+    description: 'Guards the passage to the next area.',
     mechanics: [
       {
         id: 'charge',
-        title: 'Таран',
-        category: 'Тело и ближний бой',
+        title: 'Charge',
+        category: 'Body and melee',
         summary:
-          'Босс целится, фиксирует направление и мчится вперёд. После фиксации он не может повернуть.',
-        url: 'https://polyakovin.github.io/gamedev-boss-fights/ru/mechanics/charge/',
+          'The boss aims, locks its direction, and charges forward. It cannot turn after the lock.',
+        url: 'https://polyakovin.github.io/gamedev-boss-fights/en/mechanics/charge/',
+      },
+      {
+        id: 'teleport',
+        title: 'Teleport',
+        category: 'Space, movement, and perception',
+        summary:
+          'Draft outline for the teleport mechanic. Rules, tuning guidance, and examples are still in progress.',
+        url: 'https://polyakovin.github.io/gamedev-boss-fights/en/mechanics/teleport/',
       },
     ],
   });
 
-  await page.goto('en/builder/');
-  await expect(page.locator('[data-boss-name]')).toHaveValue('Страж шлюза');
+  await page.goto('ru/builder/');
+  await expect(page.locator('[data-boss-name]')).toHaveValue('Gate Warden');
   await expect(page.locator('[data-boss-mechanic][value="charge"]')).toBeChecked();
+  await expect(page.locator('[data-boss-mechanic][value="teleport"]')).toBeChecked();
   await page.locator('[data-boss-reset]').click();
   await expect(page.locator('[data-boss-name]')).toHaveValue('');
   await expect(page.locator('[data-boss-mechanic]:checked')).toHaveCount(0);
@@ -601,41 +657,16 @@ test('boss builder persists a local draft and downloads portable JSON', async ({
   ).toBeNull();
 });
 
-test('WIP mechanics remain selectable and exportable in the boss builder', async ({ page }) => {
-  await page.goto('ru/builder/');
-  await page.locator('[data-boss-mechanic-search]').fill('Телепортация');
-  await expect(page.locator('.boss-builder-mechanic:visible')).toHaveCount(1);
-  await expect(page.locator('.boss-builder-mechanic--wip:visible .wip-badge')).toHaveText('WIP');
-  await page.locator('[data-boss-mechanic][value="teleport"]').check();
-  await expect(page.locator('[data-boss-selected]')).toHaveText('Выбрано: 1');
-  await page.locator('[data-boss-name]').fill('Черновик');
-
-  const downloadPromise = page.waitForEvent('download');
-  await page.locator('[data-boss-download]').click();
-  const download = await downloadPromise;
-  const exported = JSON.parse(await fs.readFile(await download.path(), 'utf8'));
-  expect(exported.mechanics).toEqual([
-    {
-      id: 'teleport',
-      title: 'Телепортация',
-      category: 'Пространство, движение и восприятие',
-      summary:
-        'Босс мгновенно меняет позицию; новая точка появления и следующая атака образуют одно читаемое действие.',
-      url: 'https://polyakovin.github.io/gamedev-boss-fights/ru/mechanics/teleport/',
-    },
-  ]);
-});
-
 test('lens chips show explanations and open localized lens pages', async ({ page, request }) => {
-  await page.goto('ru/mechanics/charge/');
+  await page.goto('en/mechanics/charge/');
   const chips = page.locator('.lesson-title-line .lens-chip');
   await expect(chips).toHaveText([
-    'ТелеграфированиеПоза, звук или эффект сообщают и о будущем таране, и о точном моменте остановки слежения. Сигнал должен совпадать с правилом.',
-    'Фиксация решенияПосле фиксации босс отказывается от поворота в обмен на скорость и дальность. Это обязательство делает атаку предсказуемой.',
-    'Геометрия угрозыАтака создаёт опасную полосу, а не точку. Сопоставьте её ширину с полным коллайдером игрока, ареной и камерой.',
-    'КонтриграХотя бы один ответ должен быть доступен с уже имеющимся движением. Дополнительные навыки расширяют выбор, но не становятся скрытым требованием.',
-    'Риск и наградаЧем сильнее и длиннее таран, тем яснее нужен сигнал и тем полезнее окно восстановления. Угроза и возможность настраиваются вместе.',
-    'Проверка освоенных навыковБосс проверяет движение и чтение сигналов, которым игра уже обучила. Улучшения меняют пространство решений, но не отменяют механику.',
+    'TelegraphingA pose, sound, or effect announces both the charge and the exact moment tracking stops. The cue and the rule must agree.',
+    'CommitmentAfter lock, the boss gives up steering in exchange for speed and reach. This commitment makes prediction possible.',
+    "Threat geometryThe attack creates a lane, not a point. Test its width against the player's full collision shape, arena space, and camera.",
+    'CounterplayAt least one response must be reachable with the movement the player already owns. Extra skills may add options without becoming silently required.',
+    'Risk and rewardA stronger, longer charge earns a clearer tell and a useful recovery window. Threat and opportunity are tuned together.',
+    'Mastery checkThe boss tests movement and cue-reading taught before the encounter. Upgrades should change the solution space without erasing the mechanic.',
   ]);
   const firstTooltip = chips.first().locator('[role="tooltip"]');
   await expect(firstTooltip).toBeHidden();
@@ -646,29 +677,30 @@ test('lens chips show explanations and open localized lens pages', async ({ page
   await expect(firstTooltip).toBeVisible();
   await page.setViewportSize({ width: 1280, height: 720 });
   await chips.first().click();
-  await expect(page).toHaveURL(/\/ru\/lenses\/telegraphing\/$/);
-  await expect(page.locator('.lens-page__hero h1')).toHaveText('Телеграфирование');
+  await expect(page).toHaveURL(/\/en\/lenses\/telegraphing\/$/);
+  await expect(page.locator('.lens-page__hero h1')).toHaveText('Telegraphing');
   expect(
     await page
       .locator('.lens-page__hero h1')
       .evaluate((element) => Number.parseFloat(getComputedStyle(element).fontSize)),
   ).toBeLessThanOrEqual(52);
   await expect(page.locator('.lens-page__hero p')).toHaveText(
-    'Игра сообщает о предстоящем действии, смене состояния или правила визуальным, звуковым или тактильным сигналом. Сигнал, тайминг и результат должны совпадать.',
+    'A game communicates an upcoming action, state change, or rule through visual, audio, or haptic cues. The cue, timing, and resulting behavior must agree.',
   );
   await expect(page.locator('.lens-page__hero [data-lens-visual="telegraphing"]')).toHaveCount(1);
   await expect(page.locator('.lens-page__hero .lens-visual__svg')).toHaveAttribute(
     'aria-label',
-    /Телеграфирование.*Игра сообщает/,
+    /Telegraphing.*A game communicates/,
   );
-  await expect(page.locator('.lens-page__hero')).not.toContainText(/босс|таран/i);
+  await expect(page.locator('.lens-page__hero')).not.toContainText(/boss|charge/i);
   await expect(page.locator('.lens-mechanic-card')).toHaveCount(4);
   await expect(page.locator('.lens-mechanic-card h2')).toHaveText([
-    'Таран →',
-    'Круговой удар →',
-    'Удар по земле →',
-    'Залп с разрывом →',
+    'Charge',
+    'Arc sweep',
+    'Ground slam',
+    'Gap volley',
   ]);
+  await expect(page.locator('.lens-mechanic-card h2 .icon--directional')).toHaveCount(4);
   await page.locator('.language-menu summary').click();
   const languageLinks = await page
     .locator('.language-menu nav a')
@@ -676,9 +708,10 @@ test('lens chips show explanations and open localized lens pages', async ({ page
   expect(languageLinks.every((href) => href.endsWith('/lenses/telegraphing/'))).toBe(true);
   await page.setViewportSize({ width: 375, height: 812 });
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
-  await page.goto('ru/lenses/');
-  await expect(page.locator('.lens-card')).toHaveCount(6);
-  await expect(page.locator('.lens-card [data-lens-visual]')).toHaveCount(6);
+  await page.goto('en/lenses/');
+  await expect(page.locator('.header-nav .lenses-link')).toHaveAttribute('aria-current', 'page');
+  await expect(page.locator('.lens-card')).toHaveCount(15);
+  await expect(page.locator('.lens-card [data-lens-visual]')).toHaveCount(15);
   expect(
     await page
       .locator('.lens-card [data-lens-visual]')
@@ -690,11 +723,20 @@ test('lens chips show explanations and open localized lens pages', async ({ page
     'counterplay',
     'risk-reward',
     'mastery-check',
+    'encounter-purpose',
+    'dramatic-framing',
+    'context-and-sequence',
+    'progress-clarity',
+    'difficulty-rhythm',
+    'phase-structure',
+    'player-expression',
+    'rule-exception',
+    'access-paths',
   ]);
   await expect(page.locator('.lens-catalog-hero p')).toHaveText(
-    'Эти практические призмы помогают анализировать решения, обратную связь, испытания, пространство и обучение в любых играх. Это рабочие инструменты, а не универсальная классификация.',
+    'These practical lenses examine decisions, feedback, challenge, space, and learning across games. They are working tools, not a universal classification.',
   );
-  await expect(page.locator('.lens-catalog-main')).not.toContainText(/босс|таран/i);
+  await expect(page.locator('.lens-catalog-grid')).not.toContainText(/boss|charge/i);
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
   const firstCard = await page.locator('.lens-card').first().boundingBox();
   const secondCard = await page.locator('.lens-card').nth(1).boundingBox();
@@ -713,9 +755,18 @@ test('every design lens has its own visual explanation', async ({ page }) => {
     'counterplay',
     'risk-reward',
     'mastery-check',
+    'encounter-purpose',
+    'dramatic-framing',
+    'context-and-sequence',
+    'progress-clarity',
+    'difficulty-rhythm',
+    'phase-structure',
+    'player-expression',
+    'rule-exception',
+    'access-paths',
   ];
   for (const lensId of lensIds) {
-    await page.goto(`ru/lenses/${lensId}/`);
+    await page.goto(`en/lenses/${lensId}/`);
     const visual = page.locator(`.lens-page__hero [data-lens-visual="${lensId}"]`);
     await expect(visual).toBeVisible();
     await expect(visual.locator('svg[role="img"]')).toHaveCount(1);
@@ -732,7 +783,7 @@ test('theme follows the system and a saved choice persists across pages', async 
   const context = await browser.newContext({ colorScheme: 'dark' });
   const page = await context.newPage();
   const base = 'http://127.0.0.1:4173/gamedev-boss-fights/';
-  await page.goto(`${base}ru/`);
+  await page.goto(`${base}en/`);
   await expect(page.locator('link[href*="site.css"]')).toHaveAttribute(
     'href',
     /assets\/site\.css\?v=[0-9a-f]{10}$/,
@@ -740,14 +791,14 @@ test('theme follows the system and a saved choice persists across pages', async 
   await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
   await expect(page.locator('[data-theme-toggle]')).toHaveAttribute(
     'aria-label',
-    'Включить светлую тему',
+    'Switch to light theme',
   );
   const darkBackground = await page.evaluate(() => getComputedStyle(document.body).backgroundColor);
   await page.locator('[data-theme-toggle]').click();
   await expect(page.locator('html')).toHaveAttribute('data-theme', 'light');
   await expect(page.locator('[data-theme-toggle]')).toHaveAttribute(
     'aria-label',
-    'Включить тёмную тему',
+    'Switch to dark theme',
   );
   const lightBackground = await page.evaluate(
     () => getComputedStyle(document.body).backgroundColor,
@@ -763,22 +814,20 @@ test('theme follows the system and a saved choice persists across pages', async 
   await expect(page.locator('html')).toHaveAttribute('data-theme', 'light');
   await context.close();
 });
-test('catalog and language gateway point to real pages', async ({ page, request }) => {
+test('the root defaults to English and localized catalogs point to real pages', async ({
+  page,
+  request,
+}) => {
   await page.goto('./');
+  await expect(page).toHaveURL(/\/en\/$/);
   await expect(page.locator('meta[name="author"]')).toHaveAttribute('content', 'Igor Polyakov');
   await expect(page.locator('meta[property="og:site_name"]')).toHaveAttribute(
     'content',
-    'Igor Polyakov',
+    'Boss Fight Atlas · Igor Polyakov',
   );
-  expect(
-    await page
-      .locator('.language-home h1')
-      .evaluate((element) => Number.parseFloat(getComputedStyle(element).fontSize)),
-  ).toBeLessThanOrEqual(72);
-  await expect(page.locator('.language-choices a')).toHaveCount(8);
-  await expect(page.locator('.language-choice .language-flag')).toHaveText(
-    registry.map((locale) => locale.flag),
-  );
+  await expect(page.locator('html')).toHaveAttribute('lang', 'en');
+  await expect(page.locator('.language-menu summary')).toContainText('English');
+  await expect(page.locator('.language-choices')).toHaveCount(0);
   for (const locale of registry) {
     const response = await request.get(`${locale.code}/`);
     expect(response.status()).toBe(200);
@@ -787,8 +836,20 @@ test('catalog and language gateway point to real pages', async ({ page, request 
     expect(builder.status()).toBe(200);
     expect(await builder.text()).toContain('data-boss-builder');
   }
-  await page.goto('ru/');
-  await expect(page.locator('.catalog-hero h1')).toHaveText('Тави и Керн приветствуют вас');
+  await expect(page.locator('.site-footer')).toContainText(
+    'Interactive pattern library for boss encounter designers',
+  );
+  await expect(page.locator('.catalog-hero h1')).toHaveText('Tavi and Kern welcome you');
+  await expect(page.locator('.catalog-lenses .lens-card')).toHaveCount(15);
+  await expect(page.locator('.catalog-lenses .lens-visual')).toHaveCount(15);
+  await expect(page.locator('.catalog-lenses__all')).toHaveAttribute(
+    'href',
+    '/gamedev-boss-fights/en/lenses/',
+  );
+  await expect(page.locator('.header-nav .lenses-link')).toHaveAttribute(
+    'href',
+    '/gamedev-boss-fights/en/lenses/',
+  );
   await expect(page.locator('.catalog-meta, .small-dot')).toHaveCount(0);
   await expect(page.locator('.catalog-hero__art img')).toHaveAttribute(
     'src',
@@ -808,10 +869,22 @@ test('catalog and language gateway point to real pages', async ({ page, request 
   ).toBeLessThanOrEqual(36);
   await expect(page.locator('.atlas-map')).toHaveCount(0);
   await expect(page.locator('.catalog-part-nav__link')).toHaveCount(14);
-  await expect(page.locator('.catalog-part-nav__link').first()).toContainText('Тело и ближний бой');
-  await expect(page.locator('.catalog-part-nav__link').last()).toContainText(
-    'Кооперативная координация',
-  );
+  await expect(page.locator('.catalog-part-nav__link')).toHaveText([
+    /01\s+Body and melee/,
+    /02\s+Projectiles/,
+    /03\s+Beams/,
+    /04\s+Zones and traps/,
+    /05\s+Arena/,
+    /06\s+Additional targets/,
+    /07\s+Targeting and rhythm/,
+    /08\s+Defense/,
+    /09\s+Structure and readability/,
+    /10\s+Space, movement, and perception/,
+    /11\s+Encounter goals and vulnerability/,
+    /12\s+States, resources, and scaling/,
+    /13\s+Multi-boss relationships/,
+    /14\s+Cooperative coordination/,
+  ]);
   await expect(page.locator('.catalog-part')).toHaveCount(14);
   await expect(page.locator('.catalog-lesson')).toHaveCount(124);
   await expect(page.locator('.catalog-lesson--wip')).toHaveCount(119);
@@ -821,18 +894,45 @@ test('catalog and language gateway point to real pages', async ({ page, request 
   await expect(page.locator('.catalog-lesson__preview [data-character-art="kern"]')).toHaveCount(5);
   await expect(page.locator('.catalog-lesson__preview [data-character-art="tavi"]')).toHaveCount(5);
   await expect(page.locator('.catalog-lesson__preview [data-pattern-preview]')).toHaveCount(4);
-  const draftPage = await request.get('ru/mechanics/teleport/');
+  const draftPage = await request.get('en/mechanics/wide-swing/');
   expect(draftPage.status()).toBe(200);
   expect(await draftPage.text()).toContain('class="wip-badge"');
-  await page.goto('ru/mechanics/teleport/');
-  await expect(page.locator('.wip-mechanic-title h1')).toHaveText('Телепортация');
+  await page.goto('en/mechanics/wide-swing/');
+  await expect(page.locator('.wip-mechanic-title h1')).toHaveText('Wide swing');
   await expect(page.locator('.wip-mechanic-title .wip-badge')).toHaveText('WIP');
   await expect(page.locator('.wip-builder-link')).toHaveAttribute(
     'href',
-    '/gamedev-boss-fights/ru/builder/',
+    '/gamedev-boss-fights/en/builder/',
   );
   await page.setViewportSize({ width: 375, height: 812 });
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+});
+
+test('lesson footer keeps the same responsive gutters as the page content', async ({ page }) => {
+  await page.goto('en/mechanics/gap-volley/');
+  for (const [width, gutter] of [
+    [1280, 44],
+    [1151, 44],
+    [1150, 28],
+    [375, 18],
+  ]) {
+    await page.setViewportSize({ width, height: 800 });
+    const layout = await page.locator('.site-footer').evaluate((footer) => {
+      const box = footer.getBoundingClientRect();
+      const children = [...footer.children].map((child) => child.getBoundingClientRect());
+      return {
+        left: box.left,
+        right: box.right,
+        viewportWidth: window.innerWidth,
+        childrenFit: children.every(
+          (child) => child.width === 0 || (child.left >= box.left && child.right <= box.right),
+        ),
+      };
+    });
+    expect(layout.left).toBeCloseTo(gutter, 0);
+    expect(layout.viewportWidth - layout.right).toBeCloseTo(gutter, 0);
+    expect(layout.childrenFit).toBe(true);
+  }
 });
 
 test('homepages fit their hero on a laptop and reflow on mobile', async ({ page }) => {

@@ -62,7 +62,7 @@ A mechanic connects to published lenses through the stable kebab-case IDs in `me
 
 ### Add game references
 
-Every published lesson must include at least one 2D and one 3D boss that uses the mechanic. Name the game and boss, explain one useful design observation, show a clear in-game screenshot of that boss, and link directly to a YouTube demonstration of the behavior. Verify the screenshot, its source page, and the video before submitting the PR.
+Every published lesson must include at least three bosses that use the mechanic, with at least one 2D and one 3D example. Name the game and boss, explain one useful design observation, show a clear in-game screenshot of that boss, and link directly to a YouTube demonstration of the behavior. Verify the screenshot, its source page, and the video before submitting the PR.
 
 Keep the screenshot externally hosted: record its direct HTTPS URL in `screenshot` and the page that published it in `screenshotSource`. The frame should make the named boss easy to recognize at card size; avoid key art, logos, unrelated enemies, strategy diagrams, and thumbnails dominated by added text. The source remains in the card metadata instead of appearing as a separate button. Preserve both fields across translations. Externally hosted screenshots retain their owners’ rights and are not covered by the atlas’s CC BY license; do not copy them into the repository.
 
@@ -106,6 +106,8 @@ Typography has three roles: Inter for continuous reading, Manrope for headings a
 Mechanic `meta.json` contains a unique `id` matching its folder, a unique positive `number`, `published`, `sourceLocale: "en"`, a positive `contentVersion`, `animation`, `lenses`, `related`, and `sources`. Lens IDs must refer to published entries under `content/lenses/`; related mechanic IDs must refer to other existing mechanics. Lens metadata follows the same publication/version pattern without an animation. Each source has a descriptive `title` and an HTTPS `url`.
 
 Every source must directly explain the mechanic in a boss encounter or one of the exact design decisions taught by the lesson. For Charge, that means material about its tell, direction commitment, danger lane, impact, interruption, or recovery window. Do not add general animation, accessibility, engine, physics, AI, or broad boss-design material merely as background. A shorter list of precise sources is better than a padded bibliography.
+
+Keep raw gameplay in `examples`, where every clip is paired with a focused design observation. Do not repeat those clips in `sources`, even with a different timestamp, and do not use a separate gameplay video as a learning source unless the linked material itself explains the relevant design decision.
 
 Prefer primary material from the people who made or designed the game: developer and studio articles, postmortems, official conference talks, and focused YouTube or Instagram videos by developers or game designers. Use a secondary analysis only when it closely studies the exact mechanic and no stronger primary explanation covers the same point. Verify the link and the relevant passage or timestamp. In the PR, name the exact part of the mechanic that each source supports.
 
