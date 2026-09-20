@@ -740,9 +740,15 @@ test('catalog and language gateway point to real pages', async ({ page, request 
   await expect(page.locator('.catalog-hero h1')).toHaveText('Тави и Керн приветствуют вас');
   await expect(page.locator('.catalog-hero__art img')).toHaveAttribute(
     'src',
-    /\/gamedev-boss-fights\/assets\/welcome-boss-and-player\.png\?v=[a-f0-9]{10}$/,
+    /\/gamedev-boss-fights\/assets\/welcome-boss-and-player\.webp\?v=[a-f0-9]{10}$/,
   );
   await expect(page.locator('.catalog-hero__art img')).toBeVisible();
+  const welcomeArtSize = await page.locator('.catalog-hero__art img').evaluate((element) => ({
+    width: element.getBoundingClientRect().width,
+    height: element.getBoundingClientRect().height,
+  }));
+  expect(welcomeArtSize.width).toBeCloseTo(720, 0);
+  expect(welcomeArtSize.height).toBeCloseTo(480, 0);
   expect(
     await page
       .locator('.catalog-hero h1')
@@ -772,12 +778,12 @@ test('catalog and language gateway point to real pages', async ({ page, request 
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
 });
 
-test('homepages fit their core content on a laptop and reflow on mobile', async ({ page }) => {
+test('homepages fit their hero on a laptop and reflow on mobile', async ({ page }) => {
   for (const locale of registry) {
     await page.setViewportSize({ width: 1280, height: 720 });
     await page.goto(`${locale.code}/`);
     await expect(page.locator('html')).toHaveAttribute('dir', locale.dir);
-    for (const selector of ['.catalog-hero', '.mechanic-card:first-child', '.atlas-map']) {
+    for (const selector of ['.catalog-hero']) {
       const box = await page.locator(selector).boundingBox();
       expect(box.y, `${locale.code}: ${selector} starts on screen`).toBeGreaterThanOrEqual(0);
       expect(

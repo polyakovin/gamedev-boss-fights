@@ -345,7 +345,7 @@ for (const locale of locales) {
       </div>
       <figure class="catalog-hero__art" aria-hidden="true">
         <img
-          src="${asset('welcome-boss-and-player.png')}"
+          src="${asset('welcome-boss-and-player.webp')}"
           alt=""
           width="1536"
           height="1024"
