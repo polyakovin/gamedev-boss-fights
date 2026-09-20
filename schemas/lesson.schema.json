@@ -60,9 +60,6 @@
       "additionalProperties": false,
       "required": [
         "title",
-        "play",
-        "pause",
-        "restart",
         "timeline",
         "step",
         "phaseNames",
@@ -70,7 +67,6 @@
         "boss",
         "player",
         "danger",
-        "path",
         "locked",
         "safe",
         "reducedMotion",
@@ -78,18 +74,6 @@
       ],
       "properties": {
         "title": {
-          "type": "string",
-          "minLength": 1
-        },
-        "play": {
-          "type": "string",
-          "minLength": 1
-        },
-        "pause": {
-          "type": "string",
-          "minLength": 1
-        },
-        "restart": {
           "type": "string",
           "minLength": 1
         },
@@ -103,8 +87,8 @@
         },
         "phaseNames": {
           "type": "array",
-          "minItems": 4,
-          "maxItems": 4,
+          "minItems": 3,
+          "maxItems": 3,
           "items": {
             "type": "string",
             "minLength": 1
@@ -112,8 +96,8 @@
         },
         "phaseDescriptions": {
           "type": "array",
-          "minItems": 4,
-          "maxItems": 4,
+          "minItems": 3,
+          "maxItems": 3,
           "items": {
             "type": "string",
             "minLength": 1
@@ -128,10 +112,6 @@
           "minLength": 1
         },
         "danger": {
-          "type": "string",
-          "minLength": 1
-        },
-        "path": {
           "type": "string",
           "minLength": 1
         },

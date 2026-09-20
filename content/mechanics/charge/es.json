@@ -9,26 +9,21 @@
   "readTime": "3 min · lección de diseño",
   "demo": {
     "title": "Prueba el ataque",
-    "play": "Reproducir",
-    "pause": "Pausar",
-    "restart": "Reiniciar",
     "timeline": "Línea de tiempo del ataque",
     "step": "Fases del ataque",
-    "phaseNames": ["Apuntar", "Fijar", "Embestir", "Recuperarse"],
+    "phaseNames": ["Apuntar", "Fijar y esquivar", "Embestir"],
     "phaseDescriptions": [
-      "Define cuánto tiempo sigue el jefe al jugador. Haz visible esta fase.",
-      "Señala con claridad el momento exacto en que termina el seguimiento.",
-      "Mantén la colisión dentro de la franja visible. Pruébala con movimiento normal.",
-      "Deja tiempo para volver al alcance y atacar."
+      "El jefe prepara la embestida y sigue la posición del jugador.",
+      "La dirección se fija y el jugador sale de la franja con movimiento lateral normal.",
+      "El jefe cruza la arena por la trayectoria fijada; la siguiente embestida empieza desde el otro lado."
     ],
     "boss": "Jefe",
     "player": "Jugador",
     "danger": "Franja de peligro",
-    "path": "Movimiento",
     "locked": "Dirección fijada",
     "safe": "Fuera de la franja",
-    "reducedMotion": "La animación comienza en pausa. Usa los botones de las fases o la línea de tiempo para explorar sin reproducirla.",
-    "diagramDescription": "Diagrama de una embestida. Tras fijarse la dirección, el jugador se desplaza de lado y sale de la franja de peligro."
+    "reducedMotion": "La configuración de movimiento reducido desactiva la reproducción automática. Usa el control deslizante de la línea de tiempo para revisar el ciclo.",
+    "diagramDescription": "Diagrama cíclico de una embestida. El jefe alterna ataques desde arriba y abajo mientras el jugador siempre se aparta lateralmente de la franja."
   },
   "steps": [
     {
@@ -169,5 +164,5 @@
     }
   ],
   "reviewStatus": "needs-review",
-  "sourceVersion": 8
+  "sourceVersion": 9
 }

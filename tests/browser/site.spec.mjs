@@ -54,6 +54,11 @@ for (const locale of registry) {
         ),
     ).toBe(locale.dir === 'rtl' ? 'to left' : 'to right');
     await expect(page.locator('[data-charge-motion-note]')).toBeVisible();
+    await expect(page.locator('.charge-demo__phase-label')).toHaveCount(3);
+    await expect(page.locator('.charge-demo__phase-tooltip')).toHaveCount(3);
+    await expect(page.locator('.charge-demo button')).toHaveCount(0);
+    await expect(page.locator('.charge-demo input')).toHaveCount(1);
+    await expect(page.locator('.charge-demo input')).toHaveAttribute('type', 'range');
     await expect(page.locator('.lesson-category')).toHaveAttribute(
       'href',
       `/gamedev-boss-fights/${locale.code}/#mechanics`,
@@ -118,14 +123,20 @@ for (const locale of registry) {
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(
       true,
     );
-    await page.locator('[data-charge-phase="3"]').click();
+    await page.locator('[data-charge-timeline]').evaluate((element) => {
+      element.value = '2400';
+      element.dispatchEvent(new Event('input', { bubbles: true }));
+    });
     await expect(page.locator('[data-charge-demo]')).toHaveAttribute('data-charge-outcome', 'safe');
     await expect(page.locator('[data-charge-scenario], .charge-demo__scenarios')).toHaveCount(0);
     await expect(page.locator('[data-charge-dodge]')).toHaveCount(1);
     expect(errors).toEqual([]);
   });
 }
-test('controls work by keyboard; play advances; seeking pauses', async ({ page }) => {
+test('the loop autoplays, alternates sides, shows phase tooltips, and keeps only the slider', async ({
+  page,
+}) => {
+  await page.emulateMedia({ reducedMotion: 'no-preference' });
   await page.goto('ru/mechanics/charge/');
   await expect(page.locator('.lesson-sidebar')).toHaveCount(0);
   await expect(
@@ -164,10 +175,21 @@ test('controls work by keyboard; play advances; seeking pauses', async ({ page }
   expect(sceneTimelineBox.y + sceneTimelineBox.height).toBeLessThan(
     diagramBox.y + diagramBox.height,
   );
-  await expect(page.locator('.charge-demo__interaction .charge-demo__phase-buttons')).toHaveCount(
-    0,
+  await expect(page.locator('.charge-demo__phase-label')).toHaveText([
+    /Прицеливание/,
+    /Фиксация и уклонение/,
+    /Таран/,
+  ]);
+  await expect(page.locator('.charge-demo__description')).toHaveCount(0);
+  await expect(page.locator('.charge-demo button')).toHaveCount(0);
+  await expect(page.locator('.charge-demo input[type="range"]')).toHaveCount(1);
+  const lockTooltip = page.locator('.charge-demo__phase-label').nth(1).locator('[role="tooltip"]');
+  await expect(lockTooltip).toBeHidden();
+  await page.locator('.charge-demo__phase-label').nth(1).hover();
+  await expect(lockTooltip).toBeVisible();
+  await expect(lockTooltip).toHaveText(
+    'Направление фиксируется, и игрок выходит из полосы обычным боковым движением.',
   );
-  await expect(page.locator('.charge-demo__interaction .charge-demo__timeline')).toHaveCount(0);
   expect(Math.abs(simulationBox.y - heroBox.y)).toBeLessThan(2);
   expect(Math.max(heroBox.y + heroBox.height, simulationBox.y + simulationBox.height)).toBeLessThan(
     1000,
@@ -177,24 +199,30 @@ test('controls work by keyboard; play advances; seeking pauses', async ({ page }
     'Выберите точный момент. Обозначьте его позой, звуком или эффектом.',
   );
   const demo = page.locator('[data-charge-demo]');
-  await page.locator('[data-charge-play]').click();
-  await expect
-    .poll(async () => Number(await page.locator('[data-charge-timeline]').inputValue()))
-    .toBeLessThan(1500);
-  await page.locator('[data-charge-restart]').click();
-  await page.locator('[data-charge-play]').focus();
-  await page.keyboard.press('Space');
   await expect(demo).toHaveAttribute('data-charge-playing', 'true');
   await expect
     .poll(async () => Number(await page.locator('[data-charge-timeline]').inputValue()))
-    .toBeGreaterThan(150);
-  await page.locator('[data-charge-timeline]').focus();
-  await page.keyboard.press('End');
-  await expect(demo).toHaveAttribute('data-charge-playing', 'false');
-  await expect(demo).toHaveAttribute('data-charge-phase', '3');
-  expect(
-    await demo.evaluate((element) => element.style.getPropertyValue('--charge-progress')),
-  ).toBe('100%');
+    .toBeGreaterThan(200);
+  const timeline = page.locator('[data-charge-timeline]');
+  await timeline.evaluate((element) => {
+    element.value = '2400';
+    element.dispatchEvent(new Event('input', { bubbles: true }));
+  });
+  await expect(demo).toHaveAttribute('data-charge-attack', '0');
+  await expect(demo).toHaveAttribute('data-charge-phase', '2');
+  await expect(demo).toHaveAttribute('data-charge-outcome', 'safe');
+  await timeline.evaluate((element) => {
+    element.value = '5600';
+    element.dispatchEvent(new Event('input', { bubbles: true }));
+  });
+  await expect(demo).toHaveAttribute('data-charge-attack', '1');
+  await expect(demo).toHaveAttribute('data-charge-phase', '2');
+  await timeline.evaluate((element) => {
+    element.value = '6300';
+    element.dispatchEvent(new Event('input', { bubbles: true }));
+  });
+  await expect.poll(async () => Number(await timeline.inputValue())).toBeLessThan(1000);
+  await expect(demo).toHaveAttribute('data-charge-playing', 'true');
   await page.setViewportSize({ width: 375, height: 812 });
   const mobileHeroBox = await page.locator('.lesson-hero').boundingBox();
   const mobileSimulationBox = await page.locator('.simulation-section').boundingBox();

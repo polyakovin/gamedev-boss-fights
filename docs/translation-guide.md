@@ -20,6 +20,8 @@ The Russian lesson title for Charge is **«Таран»**. Keep **Boss Fight Atl
 
 Translate displayed strings naturally, including SVG descriptions, control labels, and status messages. Keep UTF-8 text and ordinary JSON syntax: double quotes, no trailing commas, and no comments.
 
+For animation phases, translate both the compact label and its tooltip as one pair. The Charge demo has three active phases and loops between attacks from opposite sides; its reduced-motion message should direct the reader to the timeline slider because there are no playback or phase buttons.
+
 - Preserve keys, object structure, array lengths, and array order relative to the English source.
 - Keep `sourceVersion` as an integer identifying the `meta.contentVersion` reflected by the text. Every published locale, including English, must match that version; update the number only after updating the translation’s meaning.
 - Keep machine values such as `reviewStatus` in their defined English form. Do not translate IDs, locale codes, filenames, or URL paths.

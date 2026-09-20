@@ -1,5 +1,5 @@
 .charge-demo {
-  --charge-progress: 49.3%;
+  --charge-progress: 0%;
   --charge-progress-direction: to right;
   --charge-ink: var(--ink);
   --charge-muted: var(--muted);
@@ -39,7 +39,7 @@
   position: absolute;
   z-index: 2;
   inset: 0.9rem 0.9rem auto;
-  overflow: hidden;
+  overflow: visible;
   padding: 0.25rem 0.4rem 0.35rem;
   background: color-mix(in srgb, var(--surface) 88%, transparent);
   border: 1px solid var(--charge-border);
@@ -64,116 +64,98 @@
 .charge-demo__entity-label--player {
   fill: var(--diagram-player-label);
 }
-.charge-demo__interaction {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 0.65rem;
-  padding: 0.85rem;
-  border-top: 1px solid var(--line);
-}
-.charge-demo button,
 .charge-demo input {
   font: inherit;
 }
-.charge-demo button {
-  min-height: 44px;
-  cursor: pointer;
-  touch-action: manipulation;
-}
-.charge-demo button:focus-visible,
+.charge-demo__phase-label:focus-visible,
 .charge-demo input:focus-visible {
   outline: 3px solid var(--accent);
   outline-offset: 3px;
 }
-.charge-demo__phase-buttons {
+.charge-demo__phase-labels {
   display: grid;
-  grid-template-columns: 24fr 12fr 16fr 18fr;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.25rem;
 }
-.charge-demo__phase-buttons button {
+.charge-demo__phase-label {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   min-width: 0;
-  min-height: 40px;
+  min-height: 32px;
   padding: 0.35rem 0.2rem;
   color: var(--muted);
   background: transparent;
-  border: 0;
-  border-inline-end: 1px solid var(--line);
+  border: 1px solid transparent;
   border-radius: 4px;
   font-size: 0.62rem;
   line-height: 1.15;
   font-weight: 650;
+  text-align: center;
+  cursor: help;
 }
-.charge-demo__phase-buttons button:last-child {
-  border-inline-end: 0;
-}
-.charge-demo__phase-buttons button[aria-pressed='true'] {
+.charge-demo__phase-label[aria-current='step'] {
   color: var(--charge-accent);
+  border-color: color-mix(in srgb, var(--accent) 35%, transparent);
   background: color-mix(in srgb, var(--accent-soft) 76%, transparent);
 }
-.charge-demo__phase-buttons button:hover {
+.charge-demo__phase-label:hover,
+.charge-demo__phase-label:focus-visible {
   color: var(--charge-ink);
   background: color-mix(in srgb, var(--accent-soft) 58%, transparent);
 }
-.charge-demo__description {
-  grid-column: 1;
-  min-height: 2.8em;
-  margin: 0.1rem 0;
-  color: var(--charge-muted);
-  font-size: 0.8rem;
-  line-height: 1.45;
-}
-.charge-demo__description strong {
-  color: var(--charge-ink);
-}
-.charge-demo__transport {
-  grid-column: 1;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-.charge-demo__play,
-.charge-demo__restart {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.45rem;
-  flex: 0 0 auto;
-  border-radius: 7px;
-  line-height: 1.2;
-  font-size: 0.76rem !important;
-}
-.charge-demo__play {
-  min-width: 7.2rem;
-  padding: 0.5rem 0.75rem;
-  border: 1px solid var(--charge-accent);
-  background: var(--charge-accent);
+.charge-demo__phase-tooltip {
+  position: absolute;
+  z-index: 5;
+  inset-block-start: calc(100% + 7px);
+  inset-inline-start: 50%;
+  width: 220px;
+  max-width: calc(100vw - 64px);
+  padding: 0.55rem 0.65rem;
   color: var(--paper);
+  background: var(--ink);
+  border: 1px solid var(--line);
+  border-radius: 7px;
+  box-shadow: 0 8px 24px var(--shadow);
+  font-size: 0.68rem;
+  font-weight: 450;
+  line-height: 1.45;
+  text-align: start;
+  opacity: 0;
+  pointer-events: none;
+  transform: translate(-50%, -4px);
+  transition:
+    opacity 130ms ease,
+    transform 130ms ease;
+  visibility: hidden;
 }
-.charge-demo__play:hover {
-  background: color-mix(in srgb, var(--accent) 78%, black);
+[dir='rtl'] .charge-demo__phase-tooltip {
+  transform: translate(50%, -4px);
 }
-.charge-demo__play svg {
-  width: 1rem;
-  height: 1rem;
-  fill: currentColor;
+.charge-demo__phase-label:first-child .charge-demo__phase-tooltip {
+  inset-inline-start: 0;
+  transform: translateY(-4px);
 }
-.charge-demo__restart {
-  width: 44px;
-  padding: 0;
-  border: 1px solid var(--charge-border);
-  color: var(--muted);
-  background: transparent;
+.charge-demo__phase-label:last-child .charge-demo__phase-tooltip {
+  inset-inline: auto 0;
+  transform: translateY(-4px);
 }
-.charge-demo__restart:hover {
-  background: var(--accent-soft);
+.charge-demo__phase-label:hover .charge-demo__phase-tooltip,
+.charge-demo__phase-label:focus-visible .charge-demo__phase-tooltip {
+  opacity: 1;
+  transform: translate(-50%, 0);
+  visibility: visible;
 }
-.charge-demo__restart svg {
-  width: 1rem;
-  height: 1rem;
-  fill: none;
-  stroke: currentColor;
-  stroke-width: 1.8;
-  stroke-linecap: round;
-  stroke-linejoin: round;
+[dir='rtl'] .charge-demo__phase-label:hover .charge-demo__phase-tooltip,
+[dir='rtl'] .charge-demo__phase-label:focus-visible .charge-demo__phase-tooltip {
+  transform: translate(50%, 0);
+}
+.charge-demo__phase-label:first-child:hover .charge-demo__phase-tooltip,
+.charge-demo__phase-label:first-child:focus-visible .charge-demo__phase-tooltip,
+.charge-demo__phase-label:last-child:hover .charge-demo__phase-tooltip,
+.charge-demo__phase-label:last-child:focus-visible .charge-demo__phase-tooltip {
+  transform: translateY(0);
 }
 .charge-demo__timeline {
   display: grid;
@@ -236,8 +218,7 @@
   white-space: nowrap;
 }
 .charge-demo__motion-note {
-  grid-column: 1 / -1;
-  margin: 0;
+  margin: 0.5rem;
   padding: 0.55rem 0.7rem;
   color: var(--charge-muted);
   background: var(--accent-soft);
@@ -258,15 +239,6 @@
   .charge-demo__entity-label {
     font-size: 19px;
   }
-  .charge-demo__interaction {
-    grid-template-columns: 1fr;
-    padding: 0.75rem;
-  }
-  .charge-demo__description,
-  .charge-demo__transport,
-  .charge-demo__motion-note {
-    grid-column: 1;
-  }
 }
 @media (prefers-reduced-motion: reduce) {
   .charge-demo *,
@@ -277,6 +249,6 @@
     transition: none;
   }
 }
-.charge-demo:not([data-charge-ready]) :is(.charge-demo__scene-timeline, .charge-demo__transport) {
+.charge-demo:not([data-charge-ready]) .charge-demo__scene-timeline {
   display: none;
 }

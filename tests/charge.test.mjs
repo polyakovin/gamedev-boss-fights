@@ -1,6 +1,8 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {
+  ATTACK_DURATION,
+  ATTACK_PLANS,
   chargeFrame,
   createChargePlan,
   DEFAULT_PLAN,
@@ -9,23 +11,23 @@ import {
   LANE_HALF_WIDTH,
   PHASE_ENDS,
   PLAYER_RADIUS,
-  PREVIEW_TIME,
 } from '../src/charge-model.mjs';
 import { CHARGE_ART, renderCharge, renderChargeThumbnail } from '../lib/charge-view.mjs';
 
-test('aim follows movement, then the target and direction stay frozen while the player sidesteps', () => {
-  assert.deepEqual(DEFAULT_PLAN.heading, { x: 0, y: -1 });
-  const aim = chargeFrame(1.2);
-  assert.notEqual(aim.heading.y, 0);
-  assert.deepEqual(aim.target, aim.player);
-  for (const time of [2.4, PREVIEW_TIME, 4.5, DURATION]) {
-    const frame = chargeFrame(time);
-    assert.deepEqual(frame.heading, DEFAULT_PLAN.heading);
-    assert.deepEqual(frame.target, DEFAULT_PLAN.target);
+test('aim follows movement, then each attack locks its direction before the dodge', () => {
+  assert.deepEqual(ATTACK_PLANS[0].heading, { x: 0, y: 1 });
+  assert.deepEqual(ATTACK_PLANS[1].heading, { x: 0, y: -1 });
+  for (const offset of [0, ATTACK_DURATION]) {
+    const aim = chargeFrame(offset + 0.45);
+    assert.equal(aim.phase, 0);
+    assert.deepEqual(aim.target, aim.player);
+    assert.notEqual(aim.heading.x, 0);
+    const locked = chargeFrame(offset + 1.3);
+    assert.equal(locked.phase, 1);
+    assert.deepEqual(locked.heading, ATTACK_PLANS[locked.attackIndex].heading);
+    assert.deepEqual(locked.target, ATTACK_PLANS[locked.attackIndex].target);
+    assert.notDeepEqual(locked.player, locked.target);
   }
-  const locked = chargeFrame(PREVIEW_TIME);
-  assert.notDeepEqual(locked.player, locked.target);
-  assert.equal(locked.phase, 1);
 });
 
 test('a captured plan owns its coordinates and preserves a diagonal heading', () => {
@@ -36,27 +38,38 @@ test('a captured plan owns its coordinates and preserves a diagonal heading', ()
   assert.deepEqual(plan.target, { x: 300, y: 400 });
   assert.deepEqual(plan.end, { x: 600, y: 800 });
   assert.ok(Object.isFrozen(plan.heading));
-  assert.deepEqual(chargeFrame(5, plan).heading, { x: 0.6, y: 0.8 });
+  assert.deepEqual(chargeFrame(1.8, plan).heading, { x: 0.6, y: 0.8 });
 });
 
-test('the sideways dodge clears the entire body before charge and remains clear', () => {
-  const locked = chargeFrame(PREVIEW_TIME);
-  assert.ok(
-    distanceToSegment(locked.player, DEFAULT_PLAN.origin, DEFAULT_PLAN.end) >
-      LANE_HALF_WIDTH + PLAYER_RADIUS,
-  );
-  assert.equal(locked.clear, true);
-  for (let time = PHASE_ENDS[1]; time <= DURATION; time += 0.025)
-    assert.equal(chargeFrame(time).clear, true);
-});
-
-test('boss stops at its endpoint and remains still during recovery', () => {
-  for (const time of [PHASE_ENDS[2], 6, DURATION, 500]) {
-    const frame = chargeFrame(time);
-    assert.equal(frame.phase, 3);
-    assert.deepEqual(frame.boss, DEFAULT_PLAN.end);
+test('the sideways dodge clears the entire body before both charges', () => {
+  for (const attackOffset of [0, ATTACK_DURATION]) {
+    const firstChargeFrame = chargeFrame(attackOffset + PHASE_ENDS[1]);
+    assert.ok(
+      distanceToSegment(
+        firstChargeFrame.player,
+        firstChargeFrame.plan.origin,
+        firstChargeFrame.plan.end,
+      ) >
+        LANE_HALF_WIDTH + PLAYER_RADIUS,
+    );
+    for (let localTime = PHASE_ENDS[1]; localTime < ATTACK_DURATION; localTime += 0.025)
+      assert.equal(chargeFrame(attackOffset + localTime).clear, true);
   }
-  assert.equal(chargeFrame(500).time, DURATION);
+});
+
+test('the loop alternates sides and every displayed phase contains motion', () => {
+  const firstCharge = chargeFrame(2.4);
+  const secondCharge = chargeFrame(ATTACK_DURATION + 2.4);
+  assert.equal(firstCharge.attackIndex, 0);
+  assert.equal(secondCharge.attackIndex, 1);
+  assert.ok(firstCharge.boss.y > DEFAULT_PLAN.origin.y);
+  assert.ok(secondCharge.boss.y < ATTACK_PLANS[1].origin.y);
+  assert.notDeepEqual(chargeFrame(0.1).boss, chargeFrame(0.7).boss);
+  assert.notDeepEqual(chargeFrame(1).player, chargeFrame(1.5).player);
+  assert.notDeepEqual(chargeFrame(1.8).boss, chargeFrame(2.8).boss);
+  assert.equal(chargeFrame(DURATION).attackIndex, 0);
+  assert.equal(chargeFrame(DURATION).phase, 0);
+  assert.equal(chargeFrame(DURATION).time, DURATION);
   assert.equal(chargeFrame(-100).time, 0);
 });
 
@@ -73,23 +86,19 @@ test('localized markup escapes HTML and script closers while preserving JSON con
   const words = Object.fromEntries(
     [
       'title',
-      'play',
-      'pause',
-      'restart',
       'timeline',
       'step',
       'boss',
       'player',
       'danger',
-      'path',
       'locked',
       'safe',
       'reducedMotion',
       'diagramDescription',
     ].map((key) => [key, 'ساحة <b> & </script>']),
   );
-  words.phaseNames = ['أ', 'ب', 'ج', 'د'];
-  words.phaseDescriptions = ['١', '٢', '٣', '٤'];
+  words.phaseNames = ['أ', 'ب', 'ج'];
+  words.phaseDescriptions = ['١', '٢', '٣'];
   const markup = renderCharge(words);
   assert.ok(markup.includes('&lt;b&gt; &amp; &lt;/script&gt;'));
   assert.equal(markup.match(/<script/g)?.length, 1);
@@ -101,24 +110,20 @@ test('localized markup escapes HTML and script closers while preserving JSON con
   assert.ok(markup.includes('direction="ltr"'));
 });
 
-test('the charge diagram and catalog preview reuse the same tank and monster assets', () => {
+test('the diagram reuses shared art and exposes only a slider plus phase tooltips', () => {
   const demo = {
     title: 'Charge',
-    play: 'Play',
-    pause: 'Pause',
-    restart: 'Restart',
     timeline: 'Timeline',
     step: 'Phases',
     boss: 'Boss',
     player: 'Player',
     danger: 'Danger',
-    path: 'Path',
     locked: 'Locked',
     safe: 'Safe',
-    reducedMotion: 'Paused',
+    reducedMotion: 'Autoplay disabled',
     diagramDescription: 'Diagram',
-    phaseNames: ['Aim', 'Lock', 'Charge', 'Recover'],
-    phaseDescriptions: ['Aim', 'Lock', 'Charge', 'Recover'],
+    phaseNames: ['Aim', 'Lock & dodge', 'Charge'],
+    phaseDescriptions: ['Aim', 'Lock', 'Charge'],
   };
   const markup = renderCharge(demo);
   const thumbnail = renderChargeThumbnail('charge');
@@ -128,12 +133,8 @@ test('the charge diagram and catalog preview reuse the same tank and monster ass
   assert.ok(thumbnail.includes(CHARGE_ART.monster));
   assert.match(thumbnail, /data-charge-preview-boss/);
   assert.match(thumbnail, /data-charge-preview-player/);
-  assert.doesNotMatch(markup, /charge-demo__heading|charge-demo__legend|data-charge-speed/);
-  assert.doesNotMatch(markup, /data-charge-scenario|charge-demo__scenarios/);
-  assert.match(
-    markup,
-    /charge-demo__canvas">\s*<div class="charge-demo__scene-timeline">[\s\S]*data-charge-timeline/,
-  );
-  assert.doesNotMatch(markup, /data-charge-status transform|charge-demo__status-label/);
+  assert.doesNotMatch(markup, /<button|data-charge-play(?:\s|=|>)|data-charge-restart/);
+  assert.equal(markup.match(/class="charge-demo__phase-tooltip"/g)?.length, 3);
+  assert.equal(markup.match(/type="range"/g)?.length, 1);
   assert.equal(markup.match(/data-charge-dodge/g)?.length, 1);
 });

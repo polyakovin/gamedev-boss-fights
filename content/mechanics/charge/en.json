@@ -9,26 +9,21 @@
   "readTime": "3 min · design lesson",
   "demo": {
     "title": "Test the attack",
-    "play": "Play",
-    "pause": "Pause",
-    "restart": "Restart",
     "timeline": "Attack timeline",
     "step": "Attack phases",
-    "phaseNames": ["Aim", "Lock", "Charge", "Recover"],
+    "phaseNames": ["Aim", "Lock & dodge", "Charge"],
     "phaseDescriptions": [
-      "Set how long the boss tracks the player. Make this phase visible.",
-      "Show the exact moment tracking stops with a clear cue.",
-      "Keep the hitbox inside the shown lane. Test it against normal movement.",
-      "Leave enough time for the player to return to range and attack."
+      "The boss prepares the charge and tracks the player's position.",
+      "Direction locks and the player clears the lane with ordinary sideways movement.",
+      "The boss crosses the arena on the locked path; the next charge begins from the other side."
     ],
     "boss": "Boss",
     "player": "Player",
     "danger": "Danger lane",
-    "path": "Movement",
     "locked": "Direction locked",
     "safe": "Outside the lane",
-    "reducedMotion": "Animation starts paused. Use the phase buttons or timeline to explore without playback.",
-    "diagramDescription": "A charge attack diagram. After direction lock, the player moves sideways and clears the danger lane."
+    "reducedMotion": "Autoplay is disabled by the reduced-motion setting. Use the timeline slider to inspect the loop.",
+    "diagramDescription": "A looping charge diagram. The boss alternates attacks from above and below while the player always moves sideways out of the lane."
   },
   "steps": [
     {
@@ -169,5 +164,5 @@
     }
   ],
   "reviewStatus": "needs-review",
-  "sourceVersion": 8
+  "sourceVersion": 9
 }

@@ -34,7 +34,7 @@ Use `content/mechanics/charge/en.json` as a structural example and `schemas/less
 | `examples`                    | Compare 2D and 3D bosses with a sourced screenshot and focused video       |
 | `reviewStatus`                | Record `needs-review` until independent fluent review is complete          |
 
-The current template requires exactly three steps, matching the localized “Three questions” heading. Its demo contract has four phase names and four descriptions. Do not force a mechanic into misleading phases to fit it. If another mechanic needs a different structure, update the schema, renderer, translations, and tests together. Shared headings live in `locales/*.json`; check that they still fit when extending the lesson structure.
+The current template requires exactly three steps, matching the localized “Three questions” heading. Its demo contract has three active phase names and three descriptions. Do not add an idle phase merely to fill time. If another mechanic needs a different structure, update the schema, renderer, translations, and tests together. Shared headings live in `locales/*.json`; check that they still fit when extending the lesson structure.
 
 Address the game designer, not a player looking for a walkthrough. Prefer concrete design variables and checks: what becomes fixed, what can still change, which signal communicates the change, and how much space the player must be able to clear. Distinguish an attack’s visual telegraph from a teaching overlay. Test optional dashes, jumps, and invulnerability states without making them silently mandatory for a basic escape.
 
@@ -83,7 +83,7 @@ Use `lib/charge-view.mjs`, `src/charge-model.mjs`, `src/charge-player.mjs`, and 
 3. A small browser module handles playback, seeking, and status updates.
 4. Tests check the rule itself as well as the visible controls.
 
-Keep prose and control labels in the locale JSON. Escape text inserted into markup, and safely encode JSON embedded in HTML. Pause on initial load and when the page becomes hidden. Provide phase selection and a timeline so readers can learn without continuous motion. Do not rely on color alone to distinguish danger and safety.
+Keep prose and control labels in the locale JSON. Escape text inserted into markup, and safely encode JSON embedded in HTML. Charge autoplays as a continuous two-direction loop, pauses while its page is hidden, and exposes only a timeline slider. Its phase labels are explanations with hover and keyboard-focus tooltips, not playback controls. Respect the system reduced-motion preference by disabling autoplay while keeping the slider available. Do not rely on color alone to distinguish danger and safety.
 
 Use logical CSS properties for surrounding UI and test Arabic `dir="rtl"`. A spatial diagram may keep a stable coordinate direction, as Charge does, while labels and controls follow the page language. Preserve accessible names, keyboard operation, visible focus, and understandable static output with JavaScript disabled.
 
