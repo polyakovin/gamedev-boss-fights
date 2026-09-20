@@ -6,11 +6,17 @@ import { animations } from '../lib/animations.mjs';
 import { escape as e, jsonForHtml } from '../lib/html.mjs';
 import { renderLensVisual } from '../lib/lens-view.mjs';
 import { link, canonical, REPOSITORY } from '../lib/config.mjs';
-const { locales, ui, mechanicsIndex, mechanics, lenses } = await validateContent(
+const { locales, ui, mechanicsIndex, mechanicsExamples, mechanics, lenses } = await validateContent(
   await loadContent(),
 );
 const published = mechanics.filter((m) => m.meta.published);
 const publishedById = new Map(published.map((mechanic) => [mechanic.meta.id, mechanic]));
+const mechanicsExamplesById = new Map();
+for (const example of mechanicsExamples.examples) {
+  const entries = mechanicsExamplesById.get(example.mechanicId) ?? [];
+  entries.push(example);
+  mechanicsExamplesById.set(example.mechanicId, entries);
+}
 const publishedLenses = lenses.filter((lens) => lens.meta.published);
 const lensById = new Map(publishedLenses.map((lens) => [lens.meta.id, lens]));
 for (const m of published)
@@ -271,6 +277,43 @@ function exampleGroup(dimension, label, items, t) {
     <div class="example-grid">${cards}</div>
   </section>`;
 }
+function draftExampleSection(items, locale, t) {
+  if (items.length === 0) return '';
+  const fallbackAttributes =
+    locale.code === 'ru' || locale.code === 'en' ? '' : ' lang="en" dir="ltr"';
+  const cards = items
+    .map((item) => {
+      const copy = item.translations[locale.code] ?? item.translations.en;
+      const videoLink =
+        item.videoUrl && item.videoUrl !== item.sourceUrl
+          ? `<a href="${e(item.videoUrl)}" target="_blank" rel="noopener noreferrer">${e(t.watchVideo)} <span aria-hidden="true">↗</span></a>`
+          : '';
+      return /* HTML */ `<article class="wip-example-card" ${fallbackAttributes}>
+        <span class="eyebrow">${e(copy.kind)}</span>
+        <h3>${e(item.encounter)}</h3>
+        <p class="wip-example-card__game">${e(item.game)}</p>
+        <p>${e(copy.observation)}</p>
+        <footer>
+          <a
+            href="${e(item.sourceUrl)}"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="${e(`${t.sources}: ${item.sourceTitle}`)}"
+            >${e(t.sources)} <span aria-hidden="true">↗</span></a
+          >
+          ${videoLink}
+        </footer>
+      </article>`;
+    })
+    .join('');
+  return /* HTML */ `<section class="wip-examples" aria-labelledby="ori-examples-title">
+    <header>
+      <span class="eyebrow">Ori</span>
+      <h2 id="ori-examples-title">${e(t.examplesTitle)}</h2>
+    </header>
+    <div class="wip-example-grid">${cards}</div>
+  </section>`;
+}
 for (const locale of locales) {
   const t = ui[locale.code];
   const catalogEntries = mechanicsIndex.mechanics.map((outline) => {
@@ -284,6 +327,7 @@ for (const locale of locales) {
       title: lesson?.title ?? outlineContent.title,
       summary: lesson?.summary ?? outlineContent.summary,
       mechanic,
+      examples: mechanicsExamplesById.get(outline.id) ?? [],
       isWip: !mechanic,
     };
   });
@@ -614,6 +658,7 @@ for (const locale of locales) {
         </div>
         <p>${e(entry.summary)}</p>
       </header>
+      ${draftExampleSection(entry.examples, locale, t)}
       <section class="wip-mechanic-panel" aria-label="WIP">
         <div class="wip-mechanic-placeholder" aria-hidden="true">
           <span>WIP</span>

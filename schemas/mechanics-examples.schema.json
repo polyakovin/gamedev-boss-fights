@@ -1,0 +1,54 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["version", "examples"],
+  "properties": {
+    "version": { "const": 1 },
+    "examples": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "mechanicId",
+          "game",
+          "encounter",
+          "sourceTitle",
+          "sourceUrl",
+          "translations"
+        ],
+        "properties": {
+          "id": { "type": "string", "pattern": "^[a-z0-9-]+$" },
+          "mechanicId": { "type": "string", "pattern": "^[a-z0-9-]+$" },
+          "game": { "type": "string", "minLength": 1 },
+          "encounter": { "type": "string", "minLength": 1 },
+          "sourceTitle": { "type": "string", "minLength": 1 },
+          "sourceUrl": { "type": "string", "format": "https-url" },
+          "videoUrl": { "type": "string", "format": "https-url" },
+          "translations": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["en", "ru"],
+            "properties": {
+              "en": { "$ref": "#/$defs/copy" },
+              "ru": { "$ref": "#/$defs/copy" }
+            }
+          }
+        }
+      }
+    }
+  },
+  "$defs": {
+    "copy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "observation"],
+      "properties": {
+        "kind": { "type": "string", "minLength": 1 },
+        "observation": { "type": "string", "minLength": 1 }
+      }
+    }
+  }
+}

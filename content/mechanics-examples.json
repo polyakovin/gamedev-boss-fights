@@ -1,0 +1,214 @@
+{
+  "version": 1,
+  "examples": [
+    {
+      "id": "ginso-tree-forced-scrolling",
+      "mechanicId": "forced-scrolling",
+      "game": "Ori and the Blind Forest",
+      "encounter": "Ginso Tree escape",
+      "sourceTitle": "Xbox Wire — Escape from the Ginso Tree",
+      "sourceUrl": "https://news.xbox.com/en-us/2014/08/14/gamescom-ori-preview/",
+      "translations": {
+        "en": {
+          "kind": "Boss-like escape sequence",
+          "observation": "Rising water turns the route into a forced upward scroll: the player must keep climbing and use Bash before the lower part of the screen is flooded."
+        }
+      }
+    },
+    {
+      "id": "kuro-finale-survival",
+      "mechanicId": "survival-phase",
+      "game": "Ori and the Blind Forest",
+      "encounter": "Kuro finale",
+      "sourceTitle": "Xbox Wire — Escape Kuro’s Clutches",
+      "sourceUrl": "https://news.xbox.com/en-us/2019/09/20/pre-purchase-ori-and-the-blind-forest-definitive-edition-for-nintendo-switch/",
+      "videoUrl": "https://www.youtube.com/watch?v=Kx9DPTIDB_0&t=1s",
+      "translations": {
+        "en": {
+          "kind": "Boss-like escape sequence",
+          "observation": "The finale is won by surviving Kuro’s passes and completing the burning route; forward progress replaces damage to a health bar."
+        }
+      }
+    },
+    {
+      "id": "kuro-finale-boundary",
+      "mechanicId": "boundary-attack",
+      "game": "Ori and the Blind Forest",
+      "encounter": "Kuro finale",
+      "sourceTitle": "Xbox Wire — Escape Kuro’s Clutches",
+      "sourceUrl": "https://news.xbox.com/en-us/2019/09/20/pre-purchase-ori-and-the-blind-forest-definitive-edition-for-nintendo-switch/",
+      "videoUrl": "https://www.youtube.com/watch?v=Kx9DPTIDB_0&t=1s",
+      "translations": {
+        "en": {
+          "kind": "Boss-like escape sequence",
+          "observation": "Kuro repeatedly enters the route from outside the playable lane, making the edge of the screen an attack origin instead of a neutral border."
+        }
+      }
+    },
+    {
+      "id": "howl-lunge",
+      "mechanicId": "lunge",
+      "game": "Ori and the Will of the Wisps",
+      "encounter": "Howl",
+      "sourceTitle": "Ori and the Will of the Wisps — All Bosses",
+      "sourceUrl": "https://www.youtube.com/watch?v=DvuB8cImPIg&t=1s",
+      "videoUrl": "https://www.youtube.com/watch?v=DvuB8cImPIg&t=1s",
+      "translations": {
+        "en": {
+          "kind": "Boss fight",
+          "observation": "Howl’s full-body pounce crosses horizontal space and commits the boss to a readable line, giving the player a clear dodge decision."
+        }
+      }
+    },
+    {
+      "id": "horn-beetle-shockwave",
+      "mechanicId": "shockwave",
+      "game": "Ori and the Will of the Wisps",
+      "encounter": "Horn Beetle",
+      "sourceTitle": "GameFAQs — Horn Beetle",
+      "sourceUrl": "https://gamefaqs.gamespot.com/xboxone/211254-ori-and-the-will-of-the-wisps/faqs/78217/kwoloks-hollow",
+      "videoUrl": "https://www.youtube.com/watch?v=DvuB8cImPIg&t=61s",
+      "translations": {
+        "en": {
+          "kind": "Boss fight",
+          "observation": "A ground pound sends a wave along the floor, separating the boss’s impact point from the threat that travels toward the player."
+        }
+      }
+    },
+    {
+      "id": "horn-beetle-attack-lock",
+      "mechanicId": "attack-lock",
+      "game": "Ori and the Will of the Wisps",
+      "encounter": "Horn Beetle",
+      "sourceTitle": "GameFAQs — Horn Beetle",
+      "sourceUrl": "https://gamefaqs.gamespot.com/xboxone/211254-ori-and-the-will-of-the-wisps/faqs/78217/kwoloks-hollow",
+      "videoUrl": "https://www.youtube.com/watch?v=DvuB8cImPIg&t=61s",
+      "translations": {
+        "en": {
+          "kind": "Boss fight",
+          "observation": "The beetle commits to its charge and follow-up head impact, creating a stable trajectory that the player can read and route around."
+        }
+      }
+    },
+    {
+      "id": "horn-beetle-weak-point",
+      "mechanicId": "weak-point",
+      "game": "Ori and the Will of the Wisps",
+      "encounter": "Horn Beetle",
+      "sourceTitle": "GameFAQs — Horn Beetle",
+      "sourceUrl": "https://gamefaqs.gamespot.com/xboxone/211254-ori-and-the-will-of-the-wisps/faqs/78217/kwoloks-hollow",
+      "videoUrl": "https://www.youtube.com/watch?v=DvuB8cImPIg&t=61s",
+      "translations": {
+        "en": {
+          "kind": "Boss fight",
+          "observation": "The vulnerable glowing rear concentrates the damage window behind the boss and makes crossing through or over it part of the attack puzzle."
+        }
+      }
+    },
+    {
+      "id": "horn-beetle-recovery",
+      "mechanicId": "recovery",
+      "game": "Ori and the Will of the Wisps",
+      "encounter": "Horn Beetle",
+      "sourceTitle": "GameFAQs — Horn Beetle",
+      "sourceUrl": "https://gamefaqs.gamespot.com/xboxone/211254-ori-and-the-will-of-the-wisps/faqs/78217/kwoloks-hollow",
+      "videoUrl": "https://www.youtube.com/watch?v=DvuB8cImPIg&t=61s",
+      "translations": {
+        "en": {
+          "kind": "Boss fight",
+          "observation": "After a charge or heavy landing, the beetle is briefly stunned, turning the end of its attack into a bounded counterattack window."
+        }
+      }
+    },
+    {
+      "id": "mora-fight-phase",
+      "mechanicId": "fight-phase",
+      "game": "Ori and the Will of the Wisps",
+      "encounter": "Mora",
+      "sourceTitle": "Game Developer — Crafting Mora’s multi-phase score",
+      "sourceUrl": "https://www.gamedeveloper.com/audio/behind-the-music-crafting-the-score-for-ori-and-the-will-of-the-wisps---part-1",
+      "videoUrl": "https://www.youtube.com/watch?v=DvuB8cImPIg&t=233s",
+      "translations": {
+        "en": {
+          "kind": "Boss fight",
+          "observation": "The encounter changes from a first arena phase into a chase transition and then a final arena, so the phase boundary also changes the player’s immediate objective."
+        }
+      }
+    },
+    {
+      "id": "shriek-projectile-fan",
+      "mechanicId": "projectile-fan",
+      "game": "Ori and the Will of the Wisps",
+      "encounter": "Shriek",
+      "sourceTitle": "GameFAQs — Shriek",
+      "sourceUrl": "https://gamefaqs.gamespot.com/xboxone/211254-ori-and-the-will-of-the-wisps/faqs/78217/willows-end",
+      "videoUrl": "https://www.youtube.com/watch?v=DvuB8cImPIg&t=1165s",
+      "translations": {
+        "en": {
+          "kind": "Boss fight",
+          "observation": "Shriek fires a spread of projectiles whose gaps are both dodge lanes and potential launch directions for Bash."
+        }
+      }
+    },
+    {
+      "id": "shriek-projectile-rally",
+      "mechanicId": "projectile-rally",
+      "game": "Ori and the Will of the Wisps",
+      "encounter": "Shriek",
+      "sourceTitle": "Neoseeker — Shriek",
+      "sourceUrl": "https://www.neoseeker.com/ori-and-the-will-of-the-wisps/Shriek",
+      "videoUrl": "https://www.youtube.com/watch?v=DvuB8cImPIg&t=1165s",
+      "translations": {
+        "en": {
+          "kind": "Boss fight",
+          "observation": "Bash turns an incoming projectile into movement and a redirected shot, so the same object alternates between threat and counterattack resource."
+        }
+      }
+    },
+    {
+      "id": "shriek-boundary",
+      "mechanicId": "boundary-attack",
+      "game": "Ori and the Will of the Wisps",
+      "encounter": "Shriek",
+      "sourceTitle": "GameFAQs — Shriek",
+      "sourceUrl": "https://gamefaqs.gamespot.com/xboxone/211254-ori-and-the-will-of-the-wisps/faqs/78217/willows-end",
+      "videoUrl": "https://www.youtube.com/watch?v=DvuB8cImPIg&t=1165s",
+      "translations": {
+        "en": {
+          "kind": "Boss fight",
+          "observation": "Shriek can leave the arena and return in a horizontal pass, turning an off-screen side into the origin of the next attack."
+        }
+      }
+    },
+    {
+      "id": "shriek-telegraph",
+      "mechanicId": "telegraph",
+      "game": "Ori and the Will of the Wisps",
+      "encounter": "Shriek",
+      "sourceTitle": "GameFAQs — Shriek",
+      "sourceUrl": "https://gamefaqs.gamespot.com/xboxone/211254-ori-and-the-will-of-the-wisps/faqs/78217/willows-end",
+      "videoUrl": "https://www.youtube.com/watch?v=DvuB8cImPIg&t=1165s",
+      "translations": {
+        "en": {
+          "kind": "Boss fight",
+          "observation": "A mark at the side of the screen warns where Shriek’s horizontal pass will enter, communicating direction before the boss becomes visible."
+        }
+      }
+    },
+    {
+      "id": "shriek-platform-destruction",
+      "mechanicId": "platform-destruction",
+      "game": "Ori and the Will of the Wisps",
+      "encounter": "Shriek",
+      "sourceTitle": "XboxAchievements — Shriek boss guide",
+      "sourceUrl": "https://www.xboxachievements.com/game/ori-and-the-will-of-the-wisps/guide/",
+      "videoUrl": "https://www.youtube.com/watch?v=DvuB8cImPIg&t=1165s",
+      "translations": {
+        "en": {
+          "kind": "Boss fight",
+          "observation": "Later attacks destroy the ground and force Ori to stay airborne, converting a stable arena into a movement system built from falling projectiles."
+        }
+      }
+    }
+  ]
+}

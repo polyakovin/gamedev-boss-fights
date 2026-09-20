@@ -1790,6 +1790,62 @@ section[id] {
   font-size: clamp(17px, 2vw, 21px);
   line-height: 1.65;
 }
+.wip-examples {
+  margin-top: clamp(48px, 7vw, 84px);
+  padding-top: 32px;
+  border-top: 1px solid var(--line);
+}
+.wip-examples > header {
+  display: flex;
+  gap: 14px;
+  align-items: baseline;
+  margin-bottom: 22px;
+}
+.wip-examples h2 {
+  margin: 0;
+  font-size: clamp(26px, 3vw, 36px);
+}
+.wip-example-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+.wip-example-card {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  padding: clamp(20px, 3vw, 28px);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--surface);
+}
+.wip-example-card h3 {
+  margin: 9px 0 2px;
+  font-size: 22px;
+}
+.wip-example-card__game {
+  margin: 0 0 18px;
+  color: var(--accent);
+  font-size: 13px;
+  font-weight: 700;
+}
+.wip-example-card > p:last-of-type {
+  margin: 0;
+  color: var(--soft-ink);
+  line-height: 1.65;
+}
+.wip-example-card footer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 18px;
+  margin-top: auto;
+  padding-top: 22px;
+}
+.wip-example-card footer a {
+  color: var(--accent);
+  font-size: 12px;
+  font-weight: 700;
+}
 .wip-mechanic-panel {
   display: grid;
   grid-template-columns: minmax(240px, 0.7fr) minmax(300px, 1.3fr);
@@ -2162,6 +2218,9 @@ section[id] {
   .wip-mechanic-panel {
     grid-template-columns: 1fr;
     gap: 24px;
+  }
+  .wip-example-grid {
+    grid-template-columns: 1fr;
   }
   .wip-mechanic-placeholder {
     min-height: 180px;
