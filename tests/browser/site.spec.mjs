@@ -442,9 +442,9 @@ for (const [id, title, activePhase] of [
       backdropFilter: 'none',
     });
     await expect(page.locator('.lesson-title-line .lens-chip')).toHaveCount(4);
-    await expect(page.locator('.game-example')).toHaveCount(3);
-    await expect(page.locator('.game-example__media img')).toHaveCount(3);
-    await expect(page.locator('.sources li a')).toHaveCount(1);
+    await expect(page.locator('.game-example')).toHaveCount(2);
+    await expect(page.locator('.game-example__media img')).toHaveCount(2);
+    await expect(page.locator('.sources li a')).toHaveCount(3);
     await expect(page.locator('[data-character-art="kern"]')).toHaveCount(1);
     await expect(page.locator('[data-character-art="tavi"]')).toHaveCount(1);
     await page.locator('[data-pattern-timeline]').evaluate((element) => {
