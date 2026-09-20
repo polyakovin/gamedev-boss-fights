@@ -445,8 +445,8 @@ for (const [id, title, activePhase] of [
     await expect(page.locator('.game-example')).toHaveCount(2);
     await expect(page.locator('.game-example__media img')).toHaveCount(2);
     await expect(page.locator('.sources li a')).toHaveCount(3);
-    await expect(page.locator('[data-charge-art="tank"]')).toHaveCount(1);
-    await expect(page.locator('[data-charge-art="monster"]')).toHaveCount(1);
+    await expect(page.locator('[data-character-art="kern"]')).toHaveCount(1);
+    await expect(page.locator('[data-character-art="tavi"]')).toHaveCount(1);
     await page.locator('[data-pattern-timeline]').evaluate((element) => {
       element.value = '2500';
       element.dispatchEvent(new Event('input', { bubbles: true }));
@@ -517,8 +517,8 @@ test('boss builder persists a local draft and downloads portable JSON', async ({
     'Черновик хранится только в этом браузере.',
   );
   await expect(page.locator('.boss-builder-mechanic')).toHaveCount(5);
-  await expect(page.locator('.boss-builder-mechanic [data-charge-art="tank"]')).toHaveCount(5);
-  await expect(page.locator('.boss-builder-mechanic [data-charge-art="monster"]')).toHaveCount(5);
+  await expect(page.locator('.boss-builder-mechanic [data-character-art="kern"]')).toHaveCount(5);
+  await expect(page.locator('.boss-builder-mechanic [data-character-art="tavi"]')).toHaveCount(5);
   await expect(page.locator('.boss-builder-mechanic [data-pattern-preview]')).toHaveCount(4);
 
   await page.locator('[data-boss-download]').click();
@@ -764,8 +764,8 @@ test('catalog and language gateway point to real pages', async ({ page, request 
     'https://github.com/polyakovin/gamedev-boss-fights/blob/main/CONTRIBUTING.md',
   ]);
   await expect(page.locator('.mechanic-card')).toHaveCount(5);
-  await expect(page.locator('.card-diagram [data-charge-art="tank"]')).toHaveCount(5);
-  await expect(page.locator('.card-diagram [data-charge-art="monster"]')).toHaveCount(5);
+  await expect(page.locator('.card-diagram [data-character-art="kern"]')).toHaveCount(5);
+  await expect(page.locator('.card-diagram [data-character-art="tavi"]')).toHaveCount(5);
   await expect(page.locator('.card-diagram [data-pattern-preview]')).toHaveCount(4);
   await expect(page.locator('.card-number')).toHaveCount(0);
   await page.setViewportSize({ width: 375, height: 812 });

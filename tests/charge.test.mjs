@@ -14,7 +14,8 @@ import {
   PLAYER_RADIUS,
   TRANSITION_DURATION,
 } from '../src/charge-model.mjs';
-import { CHARGE_ART, renderCharge, renderChargeThumbnail } from '../lib/charge-view.mjs';
+import { CHARACTER_ART } from '../lib/character-art.mjs';
+import { renderCharge, renderChargeThumbnail } from '../lib/charge-view.mjs';
 
 test('aim follows movement, then each attack locks its direction before the dodge', () => {
   assert.deepEqual(ATTACK_PLANS[0].heading, { x: 0, y: 1 });
@@ -164,12 +165,14 @@ test('the diagram reuses shared art and exposes one current phase above the slid
   };
   const markup = renderCharge(demo);
   const thumbnail = renderChargeThumbnail('charge');
-  assert.ok(markup.includes(CHARGE_ART.tank));
-  assert.ok(markup.includes(CHARGE_ART.monster));
-  assert.ok(thumbnail.includes(CHARGE_ART.tank));
-  assert.ok(thumbnail.includes(CHARGE_ART.monster));
-  assert.doesNotMatch(CHARGE_ART.tank, /<ellipse[^>]*opacity=/);
-  assert.doesNotMatch(CHARGE_ART.monster, /<ellipse[^>]*opacity=/);
+  assert.ok(markup.includes(CHARACTER_ART.kern));
+  assert.ok(markup.includes(CHARACTER_ART.tavi));
+  assert.ok(thumbnail.includes(CHARACTER_ART.kern));
+  assert.ok(thumbnail.includes(CHARACTER_ART.tavi));
+  assert.doesNotMatch(CHARACTER_ART.kern, /<ellipse[^>]*opacity=/);
+  assert.doesNotMatch(CHARACTER_ART.tavi, /<ellipse[^>]*opacity=/);
+  assert.match(CHARACTER_ART.kern, /data-character-art="kern"/);
+  assert.match(CHARACTER_ART.tavi, /data-character-art="tavi"/);
   assert.match(thumbnail, /data-charge-preview-boss/);
   assert.match(thumbnail, /data-charge-preview-player/);
   assert.doesNotMatch(markup, /<button|data-charge-play(?:\s|=|>)|data-charge-restart/);
