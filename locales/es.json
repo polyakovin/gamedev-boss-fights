@@ -84,6 +84,8 @@
   "builderDescription": "Descripción (opcional)",
   "builderDescriptionPlaceholder": "Papel, ubicación, motivo narrativo, fases y otras notas",
   "builderMechanicsIntro": "Selecciona las mecánicas que definen el comportamiento del jefe.",
+  "builderUseMechanic": "Usar para el jefe actual",
+  "builderOpen": "Abrir el constructor de jefes",
   "builderSelected": "Seleccionadas",
   "builderDownload": "Descargar JSON",
   "builderSupportTitle": "Apoya el proyecto",

@@ -75,6 +75,8 @@
     "builderDescription",
     "builderDescriptionPlaceholder",
     "builderMechanicsIntro",
+    "builderUseMechanic",
+    "builderOpen",
     "builderSelected",
     "builderDownload",
     "builderSupportTitle",
@@ -429,6 +431,14 @@
       "minLength": 1
     },
     "builderMechanicsIntro": {
+      "type": "string",
+      "minLength": 1
+    },
+    "builderUseMechanic": {
+      "type": "string",
+      "minLength": 1
+    },
+    "builderOpen": {
       "type": "string",
       "minLength": 1
     },

@@ -84,6 +84,8 @@
   "builderDescription": "説明（任意）",
   "builderDescriptionPlaceholder": "役割、場所、物語上の理由、フェーズ、その他のメモ",
   "builderMechanicsIntro": "ボスの行動を形作るメカニクスを選択してください。",
+  "builderUseMechanic": "現在のボスで使う",
+  "builderOpen": "ボスビルダーを開く",
   "builderSelected": "選択数",
   "builderDownload": "JSONをダウンロード",
   "builderSupportTitle": "プロジェクトを支援",

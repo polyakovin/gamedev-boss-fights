@@ -5,6 +5,7 @@ import {
   bossSketchFilename,
   createBossSketch,
   normalizeBossDraft,
+  setBossDraftMechanic,
 } from '../src/boss-builder-model.mjs';
 
 const mechanics = [
@@ -74,6 +75,28 @@ test('boss drafts normalize phase ids, assignments, and combinations', () => {
       ],
     },
   );
+});
+
+test('a mechanic page adds to the first phase and can remove the mechanic again', () => {
+  const draft = {
+    version: 2,
+    name: 'Gatekeeper',
+    description: '',
+    phases: [
+      { id: 'phase-1', name: '', goal: '' },
+      { id: 'phase-2', name: 'Finale', goal: '' },
+    ],
+    assignments: [{ mechanicId: 'teleport', phaseId: 'phase-1', combo: 'a' }],
+  };
+
+  const selected = setBossDraftMechanic(draft, 'charge', true);
+  assert.deepEqual(selected.assignments, [
+    { mechanicId: 'teleport', phaseId: 'phase-1', combo: 'a' },
+    { mechanicId: 'charge', phaseId: 'phase-1', combo: 'solo' },
+  ]);
+  assert.deepEqual(setBossDraftMechanic(selected, 'charge', false).assignments, [
+    { mechanicId: 'teleport', phaseId: 'phase-1', combo: 'a' },
+  ]);
 });
 
 test('boss sketch exports a portable localized mechanic snapshot', () => {

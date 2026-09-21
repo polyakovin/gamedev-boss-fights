@@ -84,6 +84,8 @@
   "builderDescription": "描述（可选）",
   "builderDescriptionPlaceholder": "角色、地点、剧情原因、阶段和其他备注",
   "builderMechanicsIntro": "选择定义首领行为的机制。",
+  "builderUseMechanic": "用于当前首领",
+  "builderOpen": "打开首领构建器",
   "builderSelected": "已选择",
   "builderDownload": "下载 JSON",
   "builderSupportTitle": "支持项目",

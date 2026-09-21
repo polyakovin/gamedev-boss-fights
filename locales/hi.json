@@ -84,6 +84,8 @@
   "builderDescription": "विवरण (वैकल्पिक)",
   "builderDescriptionPlaceholder": "भूमिका, स्थान, कहानी का कारण, चरण और अन्य टिप्पणियाँ",
   "builderMechanicsIntro": "वे युक्तियाँ चुनें जो बॉस के व्यवहार को परिभाषित करती हैं।",
+  "builderUseMechanic": "मौजूदा बॉस में उपयोग करें",
+  "builderOpen": "बॉस बिल्डर खोलें",
   "builderSelected": "चुनी गईं",
   "builderDownload": "JSON डाउनलोड करें",
   "builderSupportTitle": "परियोजना को सहयोग दें",

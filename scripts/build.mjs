@@ -346,6 +346,31 @@ function exampleCards(items, t) {
     )
     .join('');
 }
+function mechanicBuilderAction(locale, t, mechanicId) {
+  return /* HTML */ `<div
+    class="mechanic-builder-action"
+    data-mechanic-builder-action
+    data-mechanic-id="${e(mechanicId)}"
+    data-saved-label="${e(t.builderSaved)}"
+    lang="${locale.code}"
+    dir="${locale.dir}"
+  >
+    <label class="mechanic-builder-action__toggle">
+      <input type="checkbox" data-mechanic-builder-toggle />
+      <span class="mechanic-builder-action__check" aria-hidden="true">${icon('check')}</span>
+      <span>${e(t.builderUseMechanic)}</span>
+    </label>
+    <a href="${link(`${locale.code}/builder/`)}">
+      ${e(t.builderOpen)}${icon('arrow-right', { className: 'icon--directional' })}
+    </a>
+    <span
+      class="visually-hidden"
+      role="status"
+      aria-live="polite"
+      data-mechanic-builder-status
+    ></span>
+  </div>`;
+}
 function renderLessonBody(
   locale,
   t,
@@ -369,6 +394,7 @@ function renderLessonBody(
             ${lensChips(locale.code, mechanic.meta.lenses, content.lensNotes, contentLocale)}
           </div>
           <p class="mechanic-overview">${e(content.overview)}</p>
+          ${mechanicBuilderAction(locale, t, mechanic.meta.id)}
         </section>
         <div id="simulation" class="simulation-section">${animation.render(content.demo)}</div>
         <section
@@ -1172,7 +1198,7 @@ for (const locale of locales) {
       `${locale.code}/mechanics/${m.meta.id}/`,
       shell(locale, c.title, c.summary, body, {
         route: `mechanics/${m.meta.id}/`,
-        assets: [...a.styles, ...a.scripts],
+        assets: [...a.styles, ...a.scripts, 'mechanic-builder-action.mjs'],
       }),
     );
   }
@@ -1190,7 +1216,7 @@ for (const locale of locales) {
         shell(locale, content.title, content.summary, body, {
           route: `mechanics/${entry.id}/`,
           pageClass: 'lesson-page--wip',
-          assets: [...animation.styles, ...animation.scripts],
+          assets: [...animation.styles, ...animation.scripts, 'mechanic-builder-action.mjs'],
         }),
       );
       continue;
@@ -1207,6 +1233,7 @@ for (const locale of locales) {
           <span class="wip-badge">WIP</span>
         </div>
         <p>${e(entry.summary)}</p>
+        ${mechanicBuilderAction(locale, t, entry.id)}
       </header>
       ${draftAnimationSection(entry, locale)} ${draftProfileSection(entry.profile, locale)}
       ${draftExampleSection(entry.examples, locale, t)}
@@ -1229,7 +1256,10 @@ for (const locale of locales) {
       shell(locale, entry.title, entry.summary, body, {
         route: `mechanics/${entry.id}/`,
         pageClass: 'wip-mechanic-page',
-        assets: entry.profile ? ['blueprint.css', 'encounter.css', 'blueprint-player.mjs'] : [],
+        assets: [
+          ...(entry.profile ? ['blueprint.css', 'encounter.css', 'blueprint-player.mjs'] : []),
+          'mechanic-builder-action.mjs',
+        ],
       }),
     );
   }

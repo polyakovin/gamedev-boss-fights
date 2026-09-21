@@ -67,6 +67,27 @@ export function normalizeBossDraft(value, validMechanicIds) {
   };
 }
 
+function localMechanicIds(value, mechanicId) {
+  const ids = new Set([mechanicId]);
+  if (Array.isArray(value?.mechanics))
+    for (const id of value.mechanics) if (typeof id === 'string') ids.add(id);
+  if (Array.isArray(value?.assignments))
+    for (const assignment of value.assignments)
+      if (typeof assignment?.mechanicId === 'string') ids.add(assignment.mechanicId);
+  return [...ids];
+}
+
+export function setBossDraftMechanic(value, mechanicId, selected) {
+  const draft = normalizeBossDraft(value, localMechanicIds(value, mechanicId));
+  draft.assignments = draft.assignments.filter(
+    (assignment) => assignment.mechanicId !== mechanicId,
+  );
+  if (selected) {
+    draft.assignments.push({ mechanicId, phaseId: draft.phases[0].id, combo: 'solo' });
+  }
+  return draft;
+}
+
 export function createBossSketch(draft, mechanics, locale, labels = {}) {
   const normalized = normalizeBossDraft(
     draft,

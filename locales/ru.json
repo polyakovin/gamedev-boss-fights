@@ -84,6 +84,8 @@
   "builderDescription": "Описание (необязательно)",
   "builderDescriptionPlaceholder": "Роль, локация, сюжетная причина, фазы и другие заметки",
   "builderMechanicsIntro": "Выберите механики, которые определяют поведение босса.",
+  "builderUseMechanic": "Использовать для текущего босса",
+  "builderOpen": "Открыть конструктор босса",
   "builderSelected": "Выбрано",
   "builderDownload": "Скачать JSON",
   "builderSupportTitle": "Поддержать проект",

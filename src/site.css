@@ -429,6 +429,73 @@ section[id] {
 .lesson-title-line h1 {
   margin: 0;
 }
+.mechanic-builder-action {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 9px 18px;
+  width: fit-content;
+  max-width: 100%;
+  padding: 10px 12px;
+  margin-top: 22px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--surface);
+}
+.mechanic-builder-action__toggle {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 700;
+}
+.mechanic-builder-action__toggle input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+}
+.mechanic-builder-action__check {
+  display: grid;
+  flex: 0 0 auto;
+  width: 20px;
+  height: 20px;
+  place-items: center;
+  border: 1px solid var(--accent-line);
+  border-radius: 5px;
+  color: transparent;
+  background: var(--paper);
+}
+.mechanic-builder-action__check .icon {
+  width: 13px;
+  height: 13px;
+}
+.mechanic-builder-action__toggle input:checked + .mechanic-builder-action__check {
+  border-color: var(--accent);
+  color: var(--paper);
+  background: var(--accent);
+}
+.mechanic-builder-action__toggle:has(input:focus-visible) {
+  outline: 2px solid var(--accent);
+  outline-offset: 4px;
+  border-radius: 3px;
+}
+.mechanic-builder-action > a {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-inline-start: auto;
+  color: var(--accent);
+  font-size: 11px;
+  font-weight: 700;
+}
+.mechanic-builder-action > a .icon {
+  width: 14px;
+  height: 14px;
+}
 .lens-chips {
   display: flex;
   flex-basis: 100%;
@@ -3353,6 +3420,14 @@ section[id] {
   .lesson-category {
     margin-inline-start: auto;
   }
+  .mechanic-builder-action {
+    align-items: stretch;
+    width: 100%;
+    flex-direction: column;
+  }
+  .mechanic-builder-action > a {
+    margin-inline-start: 28px;
+  }
   .lesson-title-line .lens-chip {
     position: static;
   }
@@ -3687,6 +3762,7 @@ section[id] {
 @media print {
   .site-header,
   .site-footer,
+  .mechanic-builder-action,
   .charge-demo button,
   .charge-demo input,
   .charge-demo select {

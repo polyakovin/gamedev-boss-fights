@@ -84,6 +84,8 @@
   "builderDescription": "الوصف (اختياري)",
   "builderDescriptionPlaceholder": "الدور والموقع والسبب القصصي والمراحل والملاحظات الأخرى",
   "builderMechanicsIntro": "اختر الآليات التي تحدد سلوك الزعيم.",
+  "builderUseMechanic": "استخدامها للزعيم الحالي",
+  "builderOpen": "فتح منشئ الزعيم",
   "builderSelected": "المحدد",
   "builderDownload": "تنزيل JSON",
   "builderSupportTitle": "ادعم المشروع",

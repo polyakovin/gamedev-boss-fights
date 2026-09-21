@@ -84,6 +84,8 @@
   "builderDescription": "বিবরণ (ঐচ্ছিক)",
   "builderDescriptionPlaceholder": "ভূমিকা, স্থান, গল্পের কারণ, পর্যায় এবং অন্যান্য নোট",
   "builderMechanicsIntro": "বসের আচরণ নির্ধারণ করে এমন মেকানিক বেছে নিন।",
+  "builderUseMechanic": "বর্তমান বসের জন্য ব্যবহার করুন",
+  "builderOpen": "বস নির্মাতা খুলুন",
   "builderSelected": "নির্বাচিত",
   "builderDownload": "JSON ডাউনলোড করুন",
   "builderSupportTitle": "প্রকল্পকে সহায়তা করুন",

@@ -84,6 +84,8 @@
   "builderDescription": "Description (optional)",
   "builderDescriptionPlaceholder": "Role, location, story reason, phases, and other notes",
   "builderMechanicsIntro": "Select the mechanics that define the boss's behavior.",
+  "builderUseMechanic": "Use for current boss",
+  "builderOpen": "Open boss builder",
   "builderSelected": "Selected",
   "builderDownload": "Download JSON",
   "builderSupportTitle": "Support the project",
