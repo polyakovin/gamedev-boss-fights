@@ -34,10 +34,10 @@ test('blueprints autoplay only when motion is allowed', async ({ page }) => {
 });
 
 test('mine arms its visible circle, keeps the player safe, and fits on mobile', async ({ page }) => {
-  await page.goto('ru/mechanics/mine/');
+  await page.goto('en/mechanics/mine/');
   const widget = page.locator('[data-blueprint-demo]');
   const timeline = widget.locator('[data-blueprint-timeline]');
-  await expect(page.locator('.lesson-title-line h1')).toHaveText('Мина');
+  await expect(page.locator('.lesson-title-line h1')).toHaveText('Mine');
   await expect(page.locator('.wip-badge, .draft-profile')).toHaveCount(0);
   await expect(widget).toHaveAttribute('data-blueprint-ready', 'true');
   await expect(page.locator('.game-example')).toHaveCount(3);
@@ -49,7 +49,7 @@ test('mine arms its visible circle, keeps the player safe, and fits on mobile', 
   await expect(widget).toHaveAttribute('data-blueprint-phase', '1');
   await expect(widget).toHaveAttribute('data-blueprint-outcome', 'safe');
   await expect(widget.locator('[data-blueprint-phase-name]')).toHaveText(
-    'Уважать вооружённый радиус',
+    'Respect the armed radius',
   );
   await expect(widget.locator('[data-blueprint-primitive="2"] circle')).toBeVisible();
 
