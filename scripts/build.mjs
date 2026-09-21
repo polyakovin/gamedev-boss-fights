@@ -1007,6 +1007,10 @@ for (const locale of locales) {
       </article>`;
     })
     .join('');
+  const builderSupportUrl =
+    locale.code === 'ru'
+      ? 'https://boosty.to/polyakovin/posts/ae29ea63-2930-4aa9-8ff8-fab08219ffa8'
+      : 'https://boosty.to/polyakovin/posts/6207f647-55a4-4a30-accd-d52d0f1097a6?locale=en_US';
   const builderConfig = {
     locale: locale.code,
     mechanics: builderMechanics,
@@ -1125,6 +1129,29 @@ for (const locale of locales) {
         <div class="boss-builder-mechanics__grid">${builderCards}</div>
       </section>
     </div>
+    <dialog
+      class="boss-builder-support"
+      aria-labelledby="boss-builder-support-title"
+      data-boss-support
+    >
+      <div class="boss-builder-support__card">
+        <span class="eyebrow">Boss Fight Atlas</span>
+        <h2 id="boss-builder-support-title">${e(t.builderSupportTitle)}</h2>
+        <p>${e(t.builderSupportBody)}</p>
+        <form method="dialog" class="boss-builder-support__actions">
+          <button type="submit" value="cancel">${e(t.builderSupportDismiss)}</button>
+          <a
+            href="${e(builderSupportUrl)}"
+            target="_blank"
+            rel="noopener noreferrer"
+            data-boss-support-link
+            >${e(t.builderSupportAction)}${icon('external-link', {
+              className: 'icon--external',
+            })}</a
+          >
+        </form>
+      </div>
+    </dialog>
     <script type="application/json" data-boss-builder-config>
       ${jsonForHtml(builderConfig)}
     </script>

@@ -77,6 +77,10 @@
     "builderMechanicsIntro",
     "builderSelected",
     "builderDownload",
+    "builderSupportTitle",
+    "builderSupportBody",
+    "builderSupportAction",
+    "builderSupportDismiss",
     "builderReset",
     "builderSaved",
     "builderCleared",
@@ -433,6 +437,22 @@
       "minLength": 1
     },
     "builderDownload": {
+      "type": "string",
+      "minLength": 1
+    },
+    "builderSupportTitle": {
+      "type": "string",
+      "minLength": 1
+    },
+    "builderSupportBody": {
+      "type": "string",
+      "minLength": 1
+    },
+    "builderSupportAction": {
+      "type": "string",
+      "minLength": 1
+    },
+    "builderSupportDismiss": {
       "type": "string",
       "minLength": 1
     },

@@ -12,6 +12,9 @@ import {
   rankCompatibleMechanics,
 } from './mechanic-relations.mjs';
 
+const BOSS_DOWNLOAD_COUNT_STORAGE_KEY = 'boss-fight-atlas-boss-builder-download-count';
+const SUPPORT_PROMPT_DOWNLOAD_COUNT = 3;
+
 const builder = document.querySelector('[data-boss-builder]');
 
 if (builder) {
@@ -37,6 +40,29 @@ if (builder) {
   const compatibleList = builder.querySelector('[data-boss-compatible]');
   const conflictList = builder.querySelector('[data-boss-conflicts]');
   const suggestionList = builder.querySelector('[data-boss-suggestions]');
+  const supportPrompt = builder.querySelector('[data-boss-support]');
+  const supportLink = builder.querySelector('[data-boss-support-link]');
+
+  const readDownloadCount = () => {
+    try {
+      const value = Number.parseInt(localStorage.getItem(BOSS_DOWNLOAD_COUNT_STORAGE_KEY), 10);
+      return Number.isSafeInteger(value) && value >= 0 ? value : 0;
+    } catch {
+      return 0;
+    }
+  };
+
+  let downloadCount = readDownloadCount();
+
+  const recordDownload = () => {
+    downloadCount += 1;
+    try {
+      localStorage.setItem(BOSS_DOWNLOAD_COUNT_STORAGE_KEY, String(downloadCount));
+    } catch {}
+    if (downloadCount !== SUPPORT_PROMPT_DOWNLOAD_COUNT || !supportPrompt) return;
+    if (typeof supportPrompt.showModal === 'function') supportPrompt.showModal();
+    else supportPrompt.setAttribute('open', '');
+  };
 
   const readStored = () => {
     try {
@@ -506,7 +532,10 @@ if (builder) {
     anchor.download = bossSketchFilename(sketch.name);
     anchor.click();
     setTimeout(() => URL.revokeObjectURL(url), 0);
+    recordDownload();
   });
+
+  supportLink?.addEventListener('click', () => supportPrompt.close?.());
 
   window.addEventListener('storage', (event) => {
     if (event.key !== BOSS_DRAFT_STORAGE_KEY && event.key !== null) return;
