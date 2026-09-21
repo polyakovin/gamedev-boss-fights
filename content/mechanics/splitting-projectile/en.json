@@ -1,0 +1,142 @@
+{
+  "title": "Splitting projectile",
+  "subtitle": "Show where one projectile becomes many, lock the fragment routes, and leave a response that clears the spread.",
+  "variant": "Marked three-way projectile split",
+  "summary": "One projectile reaches a readable trigger, disappears, and releases several committed fragments.",
+  "overview": "A splitting projectile changes from one moving threat into several at a defined trigger. It works when the split point or condition is announced before it happens, the parent and fragments have distinct silhouettes, every fragment route commits at the split, and the player has enough space to clear the complete spread.",
+  "learning": "Design the parent path, split trigger, fragment pattern, response window, and recovery as one continuous promise.",
+  "category": "Projectiles",
+  "readTime": "5 min",
+  "demo": {
+    "title": "Test the splitting projectile",
+    "timeline": "Attack timeline",
+    "step": "Attack phases",
+    "phaseNames": ["Preview the split", "Split and evade", "Clear and recover"],
+    "phaseDescriptions": [
+      "Kern charges one large projectile and marks both its split point and the three fragment routes.",
+      "The parent reaches the fixed marker, disappears, and releases three fragments while Tavi moves beyond the spread.",
+      "All fragments leave the arena before Kern removes the marker and selects another attack."
+    ],
+    "boss": "Boss",
+    "player": "Player",
+    "danger": "Parent or fragments are active",
+    "locked": "Split point and fragment routes are locked",
+    "safe": "The route clears every fragment",
+    "reducedMotion": "Autoplay is disabled by the reduced-motion setting. Use the timeline slider to inspect the split.",
+    "diagramDescription": "A looping diagram of a splitting projectile. One large shot follows a previewed path to a marked point, disappears, and releases three smaller shots along fixed routes while the player moves outside the spread."
+  },
+  "steps": [
+    {
+      "title": "Can the split be predicted before the parent arrives?",
+      "body": "Signal the trigger through a marker, timer, boundary, impact surface, or vulnerable state. Preview the fragment count and broad directions early enough that the split reads as the promised second part of one attack."
+    },
+    {
+      "title": "Do the fragments inherit one stable plan?",
+      "body": "Create every fragment from the same split event and lock its angle, speed, radius, and lifetime there. Test the complete player body against the expanding pattern, not only against the parent projectile."
+    },
+    {
+      "title": "Is there time to confirm the new geometry?",
+      "body": "Keep the fragment pattern visible until it passes the intended response route. Begin recovery only after every child projectile has cleared, so the player can connect the cue, split, and safe result."
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "The parent hides an unannounced fan",
+      "body": "A large projectile that suddenly fills the arena with fragments creates memorization rather than anticipation. Reveal the split rule before the first dangerous transformation."
+    },
+    {
+      "title": "Fragments retarget after the split",
+      "body": "Late steering invalidates the announced gaps. If fragments home, treat tracking as a separate communicated rule with its own cutoff instead of silently adding it to the split."
+    },
+    {
+      "title": "The parent and fragments overlap as double damage",
+      "body": "Destroy or clearly deactivate the parent at the split frame. Overlapping collision volumes turn a readable transformation into an accidental damage spike."
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "Author one transformation event",
+      "body": "Store the parent route, trigger, split position, fragment definitions, and collision handoff in one immutable plan. Visuals, audio, damage, and previews should all consume that same event."
+    },
+    {
+      "title": "Separate the two silhouettes",
+      "body": "Make the parent larger, slower, or differently colored than its fragments. A short flash or collapse at the marker helps the eye understand that one object ended and several new ones began."
+    },
+    {
+      "title": "Measure gaps where the player crosses",
+      "body": "Angular spacing grows with distance. Tune fragment count and collision radii at the expected crossing depth, including camera projection and the slowest supported movement verb."
+    },
+    {
+      "title": "Escalate by changing one split variable",
+      "body": "Later versions can move the marker, delay one branch, or add a second generation. Preserve the base transformation and change one readable variable at a time."
+    }
+  ],
+  "story": {
+    "title": "What the mechanic communicates",
+    "body": "The split lets one deliberate action unfold into a wider consequence. Kern appears to seed the arena with stored energy, while the visible transformation gives Tavi a moment of recognition instead of presenting unexplained density."
+  },
+  "adaptation": {
+    "title": "Adapt it to the player verbs",
+    "body": "Ordinary movement needs a gap wide enough for the complete body. A block may stop the parent before it splits, a reflect may return the whole payload, and a destroy verb can intentionally trigger or cancel the fragments; choose one consequence and communicate it."
+  },
+  "distinction": {
+    "title": "Keep the mechanic distinct",
+    "body": "A splitting projectile begins as one projectile and transforms at a specific event. A projectile fan launches many shots directly from one source, a volley repeats releases over time, and an explosion may create area damage without persistent child projectiles. Preserve the parent-to-fragment handoff."
+  },
+  "lensNotes": [
+    {
+      "id": "telegraphing",
+      "body": "The trigger and broad fragment directions are visible before the parent transforms."
+    },
+    {
+      "id": "commitment",
+      "body": "At the split event, the parent ends and every fragment route becomes fixed."
+    },
+    {
+      "id": "threat-geometry",
+      "body": "Safety is tested against the moving parent before the split and every fragment radius after it."
+    },
+    {
+      "id": "counterplay",
+      "body": "Movement clears the spread, while block, reflect, or destruction gets one explicit effect on the transformation."
+    },
+    {
+      "id": "context-and-sequence",
+      "body": "Arena depth and the attacks around the split determine whether the advertised fragment gaps remain reachable."
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "Cuphead",
+      "boss": "Wally Warbles",
+      "screenshot": "https://i.ytimg.com/vi/Ol3-4Y0eS9M/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=Ol3-4Y0eS9M&t=12s",
+      "body": "Wally fires a large egg across the screen; at the far boundary it breaks into smaller shell pieces with stable directions. The edge trigger makes the second geometry predictable before the fragments return through the play space.",
+      "video": "https://www.youtube.com/watch?v=Ol3-4Y0eS9M&t=12s",
+      "videoDurationSeconds": 266
+    },
+    {
+      "dimension": "2D",
+      "game": "Cuphead",
+      "boss": "Grim Matchstick",
+      "screenshot": "https://i.ytimg.com/vi/26SJdJjeiYY/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=26SJdJjeiYY&t=84s",
+      "body": "Grim’s final phase sends fire bubbles that split into four shots when struck. The player-controlled trigger shows why collision feedback and fragment directions must be especially clear when counterplay can create the danger.",
+      "video": "https://www.youtube.com/watch?v=26SJdJjeiYY&t=84s",
+      "videoDurationSeconds": 123
+    },
+    {
+      "dimension": "3D",
+      "game": "Elden Ring",
+      "boss": "Elden Beast",
+      "screenshot": "https://i.ytimg.com/vi/M_UdSooCrJ0/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=M_UdSooCrJ0&t=172s",
+      "body": "Elden Stars uses one prominent parent orb that emits many smaller tracking stars over time. It is a useful 3D variant: parent and children need separate silhouettes, depth cues, and lifetimes when the transformation is continuous rather than instantaneous.",
+      "video": "https://www.youtube.com/watch?v=M_UdSooCrJ0&t=172s",
+      "videoDurationSeconds": 287
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

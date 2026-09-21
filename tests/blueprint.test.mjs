@@ -13,8 +13,8 @@ import {
   renderBlueprintThumbnail,
 } from '../lib/blueprint-view.mjs';
 
-test('all 27 promoted lesson animations have distinct rule modes and complete moving frames', () => {
-  assert.equal(BLUEPRINT_MECHANIC_IDS.length, 27);
+test('all 28 promoted lesson animations have distinct rule modes and complete moving frames', () => {
+  assert.equal(BLUEPRINT_MECHANIC_IDS.length, 28);
   const modes = new Set();
   for (const id of BLUEPRINT_MECHANIC_IDS) {
     for (let time = 0; time <= BLUEPRINT_DURATION; time += 0.1) {
@@ -35,7 +35,7 @@ test('all 27 promoted lesson animations have distinct rule modes and complete mo
           assert.ok(Number.isFinite(value), `${id} has an invalid ${primitive.type}`);
     }
   }
-  assert.equal(modes.size, 27);
+  assert.equal(modes.size, 28);
 });
 
 test('every blueprint exposes signal, committed action, and recovery without player teleports', () => {
@@ -62,6 +62,7 @@ test('every promoted animation derives safety from its own active geometry', () 
     'landing-jump': { x: 365, y: 600 },
     'single-shot': null,
     crossfire: null,
+    'splitting-projectile': null,
     'wide-swing': { x: 280, y: 515 },
     lunge: { x: 300, y: 440 },
     grab: { x: 390, y: 485 },
@@ -99,6 +100,11 @@ test('every promoted animation derives safety from its own active geometry', () 
       point = { x: projectile.x, y: projectile.y };
     } else if (!point && id === 'crossfire') {
       const projectile = frame.primitives[4];
+      point = { x: projectile.x, y: projectile.y };
+    } else if (!point && id === 'splitting-projectile') {
+      const projectile = frame.primitives.find(
+        (primitive, index) => index >= 5 && primitive.type === 'circle' && primitive.opacity > 0.15,
+      );
       point = { x: projectile.x, y: projectile.y };
     } else if (!point && ['scanning-beam', 'rotating-beams'].includes(id)) {
       const beam = frame.primitives.find(
@@ -246,6 +252,30 @@ test('crossfire commits two opposing sources and clears their shared intersectio
     false,
   );
   assert.equal(intersection.playerSafe, true);
+});
+
+test('splitting projectile commits one parent, one split point, and three fragment routes', () => {
+  const signal = blueprintFrame('splitting-projectile', 1.59);
+  const parentFlight = blueprintFrame('splitting-projectile', 2.3);
+  const split = blueprintFrame('splitting-projectile', 2.9);
+  const fragments = blueprintFrame('splitting-projectile', 3.7);
+
+  assert.deepEqual(signal.player, blueprintFrame('splitting-projectile', 0).player);
+  assert.equal(signal.primitives[4].x, split.primitives[4].x);
+  assert.equal(signal.primitives[4].y, split.primitives[4].y);
+  assert.ok(parentFlight.primitives[5].opacity > 0.9);
+  assert.ok(parentFlight.primitives.slice(6).every((projectile) => projectile.opacity === 0));
+  assert.equal(fragments.primitives[5].opacity, 0);
+  assert.ok(fragments.primitives.slice(6).every((projectile) => projectile.opacity > 0.9));
+  assert.equal(new Set(fragments.primitives.slice(6).map((projectile) => projectile.x)).size, 3);
+  assert.equal(
+    blueprintPointSafe('splitting-projectile', 3.7, {
+      x: fragments.primitives[7].x,
+      y: fragments.primitives[7].y,
+    }),
+    false,
+  );
+  assert.equal(fragments.playerSafe, true);
 });
 
 test('blueprint pages and previews reuse Tavi and Kern with accessible localized data', () => {

@@ -1,0 +1,127 @@
+{
+  "title": "分裂弹体",
+  "subtitle": "展示单个弹体在哪里变成多个，锁定碎片路线，并保留能避开整个扩散面的应对。",
+  "variant": "带标记的三向分裂",
+  "summary": "一个弹体到达可读的触发点后消失，并释放多个已锁定的碎片。",
+  "overview": "分裂弹体会在明确触发条件下把一个移动威胁变成多个。只有分裂点或条件提前公布、母弹与碎片轮廓不同、每条碎片路线在分裂时锁定，并且玩家有空间完全离开扩散范围时，这条规则才可靠。",
+  "learning": "把母弹路径、分裂触发、碎片图案、应对窗口和恢复设计成一个连续承诺。",
+  "category": "弹体",
+  "readTime": "5 分钟",
+  "demo": {
+    "title": "测试分裂弹体",
+    "timeline": "攻击时间轴",
+    "step": "攻击阶段",
+    "phaseNames": ["预告分裂", "分裂并闪避", "清场并恢复"],
+    "phaseDescriptions": [
+      "Kern 为一个大型弹体蓄力，同时标出分裂点和三条碎片路线。",
+      "母弹到达固定标记后消失并释放三个碎片，Tavi 移出扩散范围。",
+      "所有碎片离开场地后，Kern 才移除标记并选择下一次攻击。"
+    ],
+    "boss": "Boss",
+    "player": "玩家",
+    "danger": "母弹或碎片正在生效",
+    "locked": "分裂点和碎片路线已锁定",
+    "safe": "路线避开了所有碎片",
+    "reducedMotion": "系统的减少动态效果设置已关闭自动播放。请使用时间轴滑块检查分裂过程。",
+    "diagramDescription": "循环演示分裂弹体：一个大型弹体沿预告路径到达标记后消失，并沿固定路线释放三个小弹体，玩家则移出扩散范围。"
+  },
+  "steps": [
+    {
+      "title": "母弹到达前能预测分裂吗？",
+      "body": "用标记、计时、边界、碰撞表面或脆弱状态说明触发条件。提前展示碎片数量和大致方向，让分裂成为同一次攻击中已承诺的第二部分。"
+    },
+    {
+      "title": "碎片是否继承同一个稳定计划？",
+      "body": "从同一分裂事件生成所有碎片，并在此锁定角度、速度、半径和寿命。用玩家完整身体检查扩张图案，而不只检查母弹。"
+    },
+    {
+      "title": "是否有时间确认新几何？",
+      "body": "让碎片图案保持可见，直到越过预期应对路线。所有子弹体清场后才进入恢复，让信号、分裂和安全结果能够互相对应。"
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "母弹藏着未预告的扇形",
+      "body": "大型弹体突然用碎片填满场地只会要求背板。第一次危险变形前就应展示分裂规则。"
+    },
+    {
+      "title": "碎片在分裂后重新瞄准",
+      "body": "迟到的转向会让预告间隙失效。若碎片追踪目标，应把追踪作为有截止信号的独立规则。"
+    },
+    {
+      "title": "母弹与碎片造成双重伤害",
+      "body": "在分裂帧销毁或明确停用母弹。重叠碰撞体会把可读的变形变成意外伤害峰值。"
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "只创作一个变形事件",
+      "body": "把母弹路线、触发器、分裂位置、碎片定义和碰撞交接存入同一不可变计划。画面、音效、伤害和预览都读取该事件。"
+    },
+    {
+      "title": "区分两种轮廓",
+      "body": "让母弹更大、更慢或颜色不同。标记处的短暂闪光或收缩可说明一个对象已经结束，多个新对象开始。"
+    },
+    {
+      "title": "在穿越位置测量间隙",
+      "body": "角度间距会随距离增大。应在预期穿越深度调整碎片数量和碰撞半径，并考虑镜头投影与最慢移动方式。"
+    },
+    {
+      "title": "每次只升级一个分裂变量",
+      "body": "后续版本可移动标记、延迟一条分支或增加第二代碎片。保留基础变形，每次只改变一个可读变量。"
+    }
+  ],
+  "story": {
+    "title": "机制传达了什么",
+    "body": "分裂让一个明确动作展开成更广的后果。Kern 像是在场地里播下储存的能量，而可见变形给 Tavi 留出识别时刻，不会只剩无来由的密度。"
+  },
+  "adaptation": {
+    "title": "适配玩家动作",
+    "body": "普通移动需要比完整身体更宽的间隙。格挡可在分裂前挡住母弹，反射可返还整个载荷，摧毁可触发或取消碎片；选择一种结果并清楚传达。"
+  },
+  "distinction": {
+    "title": "保持机制区别",
+    "body": "分裂弹体起初只有一个，并在特定事件中变形。扇形弹幕从源头直接发射多个弹体，齐射随时间重复发射，爆炸则可能只有范围伤害而没有持续子弹体。保留母弹到碎片的交接。"
+  },
+  "lensNotes": [
+    { "id": "telegraphing", "body": "母弹变形前就显示触发条件和碎片大致方向。" },
+    { "id": "commitment", "body": "分裂发生时母弹结束，每条碎片路线同时锁定。" },
+    { "id": "threat-geometry", "body": "分裂前检查移动母弹，分裂后检查每个碎片半径。" },
+    { "id": "counterplay", "body": "移动可离开扩散面，格挡、反射或摧毁对变形只有一种明确作用。" },
+    { "id": "context-and-sequence", "body": "场地深度和前后攻击决定预告间隙是否仍可到达。" }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "Cuphead",
+      "boss": "Wally Warbles",
+      "screenshot": "https://i.ytimg.com/vi/Ol3-4Y0eS9M/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=Ol3-4Y0eS9M&t=12s",
+      "body": "Wally 发射一枚横穿屏幕的大蛋；它在远端边界碎成方向固定的小蛋壳。边界触发使第二段几何在碎片返回游戏空间前即可预测。",
+      "video": "https://www.youtube.com/watch?v=Ol3-4Y0eS9M&t=12s",
+      "videoDurationSeconds": 266
+    },
+    {
+      "dimension": "2D",
+      "game": "Cuphead",
+      "boss": "Grim Matchstick",
+      "screenshot": "https://i.ytimg.com/vi/26SJdJjeiYY/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=26SJdJjeiYY&t=84s",
+      "body": "Grim 最终阶段的火焰泡在被击中时会分成四发。由玩家触发的分裂说明：当反制本身会制造危险时，碰撞反馈与碎片方向必须格外清楚。",
+      "video": "https://www.youtube.com/watch?v=26SJdJjeiYY&t=84s",
+      "videoDurationSeconds": 123
+    },
+    {
+      "dimension": "3D",
+      "game": "Elden Ring",
+      "boss": "Elden Beast",
+      "screenshot": "https://i.ytimg.com/vi/M_UdSooCrJ0/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=M_UdSooCrJ0&t=172s",
+      "body": "Elden Stars 以一个醒目的母体光球持续放出许多追踪小星。连续变形的 3D 版本需要为母体和子弹体提供不同轮廓、深度提示和寿命。",
+      "video": "https://www.youtube.com/watch?v=M_UdSooCrJ0&t=172s",
+      "videoDurationSeconds": 287
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

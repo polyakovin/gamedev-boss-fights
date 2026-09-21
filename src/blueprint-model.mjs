@@ -32,6 +32,18 @@ const SPECS = {
       [90, 840],
     ],
   },
+  'splitting-projectile': {
+    mode: 'splitting-projectile',
+    boss: [155, 260],
+    player: [380, 610],
+    target: [505, 700],
+    split: [300, 455],
+    fragmentEnds: [
+      [85, 850],
+      [285, 885],
+      [465, 850],
+    ],
+  },
   'wide-swing': { mode: 'arc', boss: [280, 310], player: [410, 470], target: [470, 650] },
   lunge: { mode: 'lunge', boss: [170, 290], player: [390, 590], target: [470, 660] },
   grab: { mode: 'grab', boss: [280, 300], player: [390, 485], target: [470, 610] },
@@ -365,6 +377,61 @@ function primitivesFor(spec, frame) {
       ...heads.map((head) => circle(head.x, head.y, 19, phase === 1 ? 1 : 0, 'signal', 6, 0.48)),
     ];
   }
+  if (mode === 'splitting-projectile') {
+    const start = point(spec.boss);
+    const split = point(spec.split);
+    const fragmentEnds = spec.fragmentEnds.map(point);
+    const splitAt = 0.42;
+    const parentProgress = clamp(action / splitAt);
+    const fragmentProgress = clamp((action - splitAt) / (1 - splitAt));
+    const parent = {
+      x: mix(start.x, split.x, parentProgress),
+      y: mix(start.y, split.y, parentProgress),
+    };
+    const fragments = fragmentEnds.map((end) => ({
+      x: mix(split.x, end.x, fragmentProgress),
+      y: mix(split.y, end.y, fragmentProgress),
+    }));
+    const parentVisible = phase === 0 ? 0.72 : phase === 1 && action < splitAt ? 1 : 0;
+    const fragmentsVisible = phase === 1 && action >= splitAt ? 1 : 0;
+    return [
+      line(
+        start.x,
+        start.y,
+        split.x,
+        split.y,
+        phase === 0 ? 0.36 + prepare * 0.34 : phase === 1 ? 0.14 * (1 - parentProgress) : 0,
+        'accent',
+        7,
+        '12 12',
+      ),
+      ...fragmentEnds.map((end) =>
+        line(
+          split.x,
+          split.y,
+          end.x,
+          end.y,
+          phase === 0 ? 0.22 + prepare * 0.34 : phase === 1 ? 0.1 * (1 - fragmentProgress) : 0,
+          'accent',
+          6,
+          '10 12',
+        ),
+      ),
+      circle(
+        split.x,
+        split.y,
+        mix(26, 42, phase === 0 ? prepare : pulse(clamp((action - 0.3) / 0.24))),
+        phase === 0 ? 0.5 + prepare * 0.34 : phase === 1 ? 0.65 * (1 - fragmentProgress) : 0,
+        'safe',
+        5,
+        0.08,
+      ),
+      circle(parent.x, parent.y, 22, parentVisible, 'signal', 6, 0.48),
+      ...fragments.map((fragment) =>
+        circle(fragment.x, fragment.y, 16, fragmentsVisible, 'signal', 5, 0.42),
+      ),
+    ];
+  }
   if (mode === 'arc')
     return [
       path(arcPath(boss, 205, -1.15, 2.25), preview, 'accent', 20, 0, '12 10'),
@@ -662,6 +729,14 @@ function pointClearsThreat(spec, frame, value, radius = BLUEPRINT_PLAYER_RADIUS)
         (projectile) =>
           Math.hypot(value.x - projectile.x, value.y - projectile.y) > projectile.radius + radius,
       );
+  if (mode === 'splitting-projectile')
+    return frame.primitives
+      .slice(5)
+      .filter((projectile) => projectile.opacity > 0.15)
+      .every(
+        (projectile) =>
+          Math.hypot(value.x - projectile.x, value.y - projectile.y) > projectile.radius + radius,
+      );
   if (mode === 'spiral')
     return (
       distanceFromBoss > 52 + radius &&
@@ -811,6 +886,8 @@ export function blueprintFrame(id, time) {
     responseProgress = phase === 0 ? 0 : phase === 1 ? smooth(action / 0.42) : 1;
   else if (spec.mode === 'crossfire')
     responseProgress = phase === 0 ? 0 : phase === 1 ? smooth(action / 0.38) : 1;
+  else if (spec.mode === 'splitting-projectile')
+    responseProgress = phase === 0 ? 0 : phase === 1 ? smooth((action - 0.24) / 0.34) : 1;
   else if (spec.mode === 'knockback')
     responseProgress = phase === 0 ? 0 : phase === 1 ? smooth(action) : 1;
   else if (spec.mode === 'target-lock')

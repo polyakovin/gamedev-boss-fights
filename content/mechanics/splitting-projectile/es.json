@@ -1,0 +1,142 @@
+{
+  "title": "Proyectil divisible",
+  "subtitle": "Muestra dónde un proyectil se convierte en varios, fija las rutas de los fragmentos y conserva una respuesta que despeje la expansión.",
+  "variant": "División marcada en tres proyectiles",
+  "summary": "Un proyectil alcanza un disparador legible, desaparece y libera varios fragmentos comprometidos.",
+  "overview": "Un proyectil divisible transforma una amenaza móvil en varias al llegar a un disparador definido. Funciona cuando el punto o la condición de división se anuncia antes, el proyectil padre y los fragmentos tienen siluetas distintas, todas las rutas se comprometen al dividirse y hay espacio para despejar la expansión completa.",
+  "learning": "Diseña la ruta del proyectil padre, el disparador, el patrón de fragmentos, la ventana de respuesta y la recuperación como una sola promesa continua.",
+  "category": "Proyectiles",
+  "readTime": "5 min",
+  "demo": {
+    "title": "Prueba el proyectil divisible",
+    "timeline": "Línea temporal del ataque",
+    "step": "Fases del ataque",
+    "phaseNames": ["Previsualizar la división", "Dividir y evadir", "Despejar y recuperar"],
+    "phaseDescriptions": [
+      "Kern carga un proyectil grande y marca tanto el punto de división como las tres rutas de los fragmentos.",
+      "El proyectil padre alcanza la marca fija, desaparece y libera tres fragmentos mientras Tavi sale de la expansión.",
+      "Todos los fragmentos abandonan la arena antes de que Kern retire la marca y elija otro ataque."
+    ],
+    "boss": "Jefe",
+    "player": "Jugador",
+    "danger": "El proyectil padre o los fragmentos están activos",
+    "locked": "El punto de división y las rutas están fijados",
+    "safe": "La ruta despeja todos los fragmentos",
+    "reducedMotion": "La reproducción automática está desactivada por la preferencia de movimiento reducido. Usa el control temporal para inspeccionar la división.",
+    "diagramDescription": "Diagrama en bucle de un proyectil divisible. Un disparo grande sigue una ruta anunciada hasta una marca, desaparece y libera tres disparos menores por rutas fijas mientras el jugador sale de la expansión."
+  },
+  "steps": [
+    {
+      "title": "¿Puede predecirse la división antes de que llegue el proyectil padre?",
+      "body": "Comunica el disparador con una marca, temporizador, límite, superficie de impacto o estado vulnerable. Muestra con antelación la cantidad y las direcciones generales para que la división sea la segunda parte prometida del ataque."
+    },
+    {
+      "title": "¿Los fragmentos heredan un único plan estable?",
+      "body": "Crea todos los fragmentos desde el mismo evento y fija allí su ángulo, velocidad, radio y duración. Comprueba el cuerpo completo del jugador contra el patrón creciente, no solo contra el proyectil padre."
+    },
+    {
+      "title": "¿Hay tiempo para confirmar la nueva geometría?",
+      "body": "Mantén visible el patrón hasta que cruce la ruta de respuesta prevista. Inicia la recuperación solo después de que todos los fragmentos salgan, para conectar señal, división y resultado seguro."
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "El proyectil padre oculta un abanico no anunciado",
+      "body": "Un proyectil grande que llena la arena de repente exige memorización. Revela la regla de división antes de la primera transformación peligrosa."
+    },
+    {
+      "title": "Los fragmentos vuelven a apuntar tras dividirse",
+      "body": "El giro tardío invalida los huecos anunciados. Si los fragmentos persiguen, trátalo como una regla aparte con un corte visible."
+    },
+    {
+      "title": "El proyectil padre y los fragmentos causan daño doble",
+      "body": "Destruye o desactiva claramente el proyectil padre en el fotograma de división. Los volúmenes superpuestos convierten una transformación legible en un pico accidental."
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "Crea un solo evento de transformación",
+      "body": "Guarda la ruta del padre, el disparador, la posición, las definiciones de fragmentos y el relevo de colisión en un plan inmutable. Imagen, audio, daño y vista previa deben consumir ese evento."
+    },
+    {
+      "title": "Separa las dos siluetas",
+      "body": "Haz el proyectil padre mayor, más lento o de otro color. Un destello o colapso breve en la marca ayuda a ver que un objeto terminó y comenzaron varios."
+    },
+    {
+      "title": "Mide los huecos donde se cruzan",
+      "body": "La separación angular crece con la distancia. Ajusta cantidad y radios en la profundidad de cruce prevista, incluida la proyección de cámara y el movimiento más lento."
+    },
+    {
+      "title": "Escala cambiando una variable de división",
+      "body": "Las variantes posteriores pueden mover la marca, retrasar una rama o añadir otra generación. Conserva la transformación base y cambia una variable legible cada vez."
+    }
+  ],
+  "story": {
+    "title": "Qué comunica la mecánica",
+    "body": "La división deja que una acción deliberada se convierta en una consecuencia más amplia. Kern parece sembrar energía almacenada en la arena y la transformación visible da a Tavi un instante de reconocimiento."
+  },
+  "adaptation": {
+    "title": "Adáptala a los verbos del jugador",
+    "body": "El movimiento normal necesita un hueco mayor que el cuerpo completo. Un bloqueo puede detener al padre, un reflejo devolver toda la carga y la destrucción activar o cancelar los fragmentos; elige una consecuencia y comunícala."
+  },
+  "distinction": {
+    "title": "Mantén la mecánica diferenciada",
+    "body": "Un proyectil divisible empieza como uno y se transforma en un evento concreto. Un abanico lanza muchos desde el origen, una descarga repite lanzamientos y una explosión puede crear área sin hijos persistentes. Conserva el relevo de padre a fragmentos."
+  },
+  "lensNotes": [
+    {
+      "id": "telegraphing",
+      "body": "El disparador y las direcciones generales aparecen antes de la transformación."
+    },
+    {
+      "id": "commitment",
+      "body": "En la división termina el proyectil padre y queda fijada cada ruta hija."
+    },
+    {
+      "id": "threat-geometry",
+      "body": "La seguridad se prueba contra el padre antes de dividirse y contra todos los radios después."
+    },
+    {
+      "id": "counterplay",
+      "body": "El movimiento despeja la expansión; bloqueo, reflejo o destrucción reciben un efecto explícito."
+    },
+    {
+      "id": "context-and-sequence",
+      "body": "La profundidad de la arena y los ataques vecinos deciden si los huecos siguen siendo alcanzables."
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "Cuphead",
+      "boss": "Wally Warbles",
+      "screenshot": "https://i.ytimg.com/vi/Ol3-4Y0eS9M/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=Ol3-4Y0eS9M&t=12s",
+      "body": "Wally lanza un huevo grande que se rompe en el límite lejano y devuelve fragmentos con direcciones estables. El límite permite anticipar la segunda geometría antes de que vuelva al espacio de juego.",
+      "video": "https://www.youtube.com/watch?v=Ol3-4Y0eS9M&t=12s",
+      "videoDurationSeconds": 266
+    },
+    {
+      "dimension": "2D",
+      "game": "Cuphead",
+      "boss": "Grim Matchstick",
+      "screenshot": "https://i.ytimg.com/vi/26SJdJjeiYY/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=26SJdJjeiYY&t=84s",
+      "body": "La fase final de Grim envía burbujas de fuego que se dividen en cuatro disparos al recibir un impacto. El disparador controlado por el jugador exige una respuesta visual clara cuando el contrajuego crea el peligro.",
+      "video": "https://www.youtube.com/watch?v=26SJdJjeiYY&t=84s",
+      "videoDurationSeconds": 123
+    },
+    {
+      "dimension": "3D",
+      "game": "Elden Ring",
+      "boss": "Elden Beast",
+      "screenshot": "https://i.ytimg.com/vi/M_UdSooCrJ0/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=M_UdSooCrJ0&t=172s",
+      "body": "Elden Stars usa un orbe padre destacado que emite muchas estrellas perseguidoras. Es una variante 3D útil: padre e hijos necesitan siluetas, profundidad y duraciones distintas cuando la transformación es continua.",
+      "video": "https://www.youtube.com/watch?v=M_UdSooCrJ0&t=172s",
+      "videoDurationSeconds": 287
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}
