@@ -52,6 +52,16 @@ const SPECS = {
     turn: [485, 455],
     returnControl: [430, 785],
   },
+  'orbiting-projectiles': {
+    mode: 'orbiting-projectiles',
+    boss: [280, 420],
+    player: [376, 651],
+    target: [185, 480],
+    orbitRadius: 170,
+    projectileCount: 5,
+    startAngle: 0.55,
+    rotation: 1.4,
+  },
   'wide-swing': { mode: 'arc', boss: [280, 310], player: [410, 470], target: [470, 650] },
   lunge: { mode: 'lunge', boss: [170, 290], player: [390, 590], target: [470, 660] },
   grab: { mode: 'grab', boss: [280, 300], player: [390, 485], target: [470, 610] },
@@ -485,6 +495,30 @@ function primitivesFor(spec, frame) {
       circle(projectile.x, projectile.y, 21, phase === 1 ? 1 : 0.7, 'signal', 6, 0.48),
     ];
   }
+  if (mode === 'orbiting-projectiles') {
+    const orbitRadius = phase === 2 ? mix(spec.orbitRadius, 78, recover) : spec.orbitRadius;
+    const rotation = spec.startAngle + spec.rotation * action + (phase === 2 ? recover * 0.4 : 0);
+    const orbitOpacity =
+      phase === 0 ? 0.38 + prepare * 0.38 : phase === 1 ? 0.22 : 0.22 * (1 - recover);
+    const projectileOpacity = phase === 0 ? 0.54 + prepare * 0.34 : phase === 1 ? 1 : 1 - recover;
+    const projectiles = Array.from({ length: spec.projectileCount }, (_, index) =>
+      polar(boss, orbitRadius, rotation + (index * Math.PI * 2) / spec.projectileCount),
+    );
+    return [
+      circle(boss.x, boss.y, spec.orbitRadius, orbitOpacity, 'accent', 6, 0),
+      path(
+        arcPath(boss, spec.orbitRadius + 24, rotation - 0.55, rotation + 0.15),
+        phase === 0 ? 0.5 + prepare * 0.34 : phase === 1 ? 0.24 : 0,
+        'safe',
+        6,
+        0,
+        '10 9',
+      ),
+      ...projectiles.map((projectile) =>
+        circle(projectile.x, projectile.y, 18, projectileOpacity, 'signal', 6, 0.48),
+      ),
+    ];
+  }
   if (mode === 'arc')
     return [
       path(arcPath(boss, 205, -1.15, 2.25), preview, 'accent', 20, 0, '12 10'),
@@ -794,6 +828,13 @@ function pointClearsThreat(spec, frame, value, radius = BLUEPRINT_PLAYER_RADIUS)
     const projectile = frame.primitives[3];
     return Math.hypot(value.x - projectile.x, value.y - projectile.y) > projectile.radius + radius;
   }
+  if (mode === 'orbiting-projectiles')
+    return frame.primitives
+      .slice(2)
+      .every(
+        (projectile) =>
+          Math.hypot(value.x - projectile.x, value.y - projectile.y) > projectile.radius + radius,
+      );
   if (mode === 'spiral')
     return (
       distanceFromBoss > 52 + radius &&
@@ -947,6 +988,8 @@ export function blueprintFrame(id, time) {
     responseProgress = phase === 0 ? 0 : phase === 1 ? smooth((action - 0.24) / 0.34) : 1;
   else if (spec.mode === 'returning-projectile')
     responseProgress = phase === 0 ? 0 : phase === 1 ? smooth((action - 0.2) / 0.34) : 1;
+  else if (spec.mode === 'orbiting-projectiles')
+    responseProgress = phase === 0 ? 0 : phase === 1 ? smooth((action - 0.1) / 0.55) : 1;
   else if (spec.mode === 'knockback')
     responseProgress = phase === 0 ? 0 : phase === 1 ? smooth(action) : 1;
   else if (spec.mode === 'target-lock')
@@ -973,6 +1016,20 @@ export function blueprintFrame(id, time) {
       x: mix(finalPosition.x, startPlayer.x, returnProgress),
       y: mix(finalPosition.y, startPlayer.y, returnProgress),
     };
+  } else if (spec.mode === 'orbiting-projectiles') {
+    const gapOffset = Math.PI / spec.projectileCount;
+    const finalAngle = spec.startAngle + spec.rotation + gapOffset;
+    const finalPosition = polar(boss, 112, finalAngle);
+    if (phase === 0) player = startPlayer;
+    else if (phase === 1) {
+      const angle = spec.startAngle + spec.rotation * action + gapOffset;
+      player = polar(boss, mix(250, 112, responseProgress), angle);
+    } else {
+      player = {
+        x: mix(finalPosition.x, startPlayer.x, returnProgress),
+        y: mix(finalPosition.y, startPlayer.y, returnProgress),
+      };
+    }
   }
   const route = Math.hypot(targetPlayer.x - startPlayer.x, targetPlayer.y - startPlayer.y);
   const stride = pulse(responseProgress) + pulse(returnProgress) * 0.8;

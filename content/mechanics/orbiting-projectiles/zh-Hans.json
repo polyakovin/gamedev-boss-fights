@@ -1,0 +1,142 @@
+{
+  "title": "环绕弹体",
+  "subtitle": "在移动边界造成危险前，先呈现锚点、半径、方向和间距。",
+  "variant": "五枚等距绑定弹体",
+  "summary": "弹体绑定在同一中心，并以有间隔的移动边界旋转。",
+  "overview": "环绕弹体绑定在同一中心，位置随旋转改变。只有当锚点、半径、方向、角速度和间距在接触前清晰可读，每枚弹体保持锁定队形，并始终留下可到达的缺口或内侧安全区时，这条规则才成立。",
+  "learning": "把轨道、间距、进入路线、主动旋转和回收设计成一条连续的空间规则。",
+  "category": "弹体",
+  "readTime": "5 分钟",
+  "demo": {
+    "title": "测试环绕弹体",
+    "timeline": "攻击时间轴",
+    "step": "攻击阶段",
+    "phaseNames": ["标出轨道", "旋转并穿越", "回收并恢复"],
+    "phaseDescriptions": [
+      "Kern 在碰撞启用前展示五枚弹体、统一半径、等距排列和顺时针方向。",
+      "锁定的队形开始旋转，Tavi 跟随移动缺口，从边界外穿入内侧安全区。",
+      "Kern 将全部弹体收回锚点，随队形淡出一同关闭碰撞，并保持恢复窗口。"
+    ],
+    "boss": "Boss",
+    "player": "玩家",
+    "danger": "环绕弹体的实体碰撞已启用",
+    "locked": "锚点、半径、方向、速度和间距已锁定",
+    "safe": "移动缺口让玩家完整碰撞体通过",
+    "reducedMotion": "减少动态效果设置已关闭自动播放。请用时间轴检查轨道与穿越过程。",
+    "diagramDescription": "五枚等距弹体围绕 Boss 循环旋转的示意图。先显示轨道与方向，再让队形旋转，玩家穿过移动缺口进入中心，最后弹体被回收。"
+  },
+  "steps": [
+    {
+      "title": "接触前能读懂完整轨道吗？",
+      "body": "同时展示锚点、完整半径、方向、弹体数量和间距。玩家应能预测每个占用位置，而不是等后半圈到达时才发现它。"
+    },
+    {
+      "title": "锁定后队形保持一致吗？",
+      "body": "碰撞启用时锁定半径、角速度、方向和相对间距。分别检查每枚弹体的实体，让信号显示的缺口与实际碰撞缺口一致。"
+    },
+    {
+      "title": "移动中应对路线仍可到达吗？",
+      "body": "沿时间轴扫过玩家完整碰撞体。保留足够的角向和径向余量，使玩家能跟随缺口、进入内侧或留在外侧，而无需未说明的冲刺或无敌帧。"
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "后半圈没有信号就出现",
+      "body": "只显示最近的弹体会隐藏数量和间距。在主动旋转前展示完整队形，或保留持续可见的轨道引导。"
+    },
+    {
+      "title": "闪避时轨道改变半径",
+      "body": "未预告的收缩或扩张会抹掉已规划的安全区。把半径变化当作新的信号和锁定，而不是暗中修改当前规则。"
+    },
+    {
+      "title": "实际碰撞缺口小于视觉缺口",
+      "body": "过大的隐藏碰撞体会把可读开口变成陷阱。用弹体半径加玩家完整碰撞体测试，并避免特效遮住真实余量。"
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "只存一份队形状态",
+      "body": "统一记录锚点、半径、基础角、角速度、方向、数量、弹体半径和启用时间。渲染与碰撞都从同一状态推导。"
+    },
+    {
+      "title": "测量最窄缺口",
+      "body": "计算相邻弹体边缘之间的净空，而不只比较中心角。把它与玩家直径和穿越窗口内的移动距离对照。"
+    },
+    {
+      "title": "保持锚点清晰",
+      "body": "Boss 移动时，明确队形是刚性跟随、延迟跟随还是固定在世界坐标。用信号说明关系，因为它会改变所有未来位置。"
+    },
+    {
+      "title": "一次只升级一个轨道变量",
+      "body": "后续变体可反转方向、加入第二半径或释放部分弹体。给每种变化独立提示，让已学会的基础轨道仍能支持预测。"
+    }
+  ],
+  "story": {
+    "title": "机制传达什么",
+    "body": "轨道让 Kern 像符文系统的稳定中心，而不是一次性射击源。有序队形为 Tavi 提供一条可见的移动边界，在必须穿越前就能理解。"
+  },
+  "adaptation": {
+    "title": "适配玩家动作",
+    "body": "普通移动可以跟随宽缺口或留在边界之外。冲刺能穿过更窄开口，格挡、招架或摧毁弹体可移除一个实体；要明确剩余队形会合拢缺口还是保持原间距。"
+  },
+  "distinction": {
+    "title": "保持机制区别",
+    "body": "环绕弹体绑定在锚点上，同时位置持续旋转。环形齐射向外发射，螺旋弹幕沿路径扩张，旋转光束则形成连续径向线段。保留持续锚点和离散间距。"
+  },
+  "lensNotes": [
+    {
+      "id": "telegraphing",
+      "body": "碰撞启用前展示完整轨道、方向、数量和间距。"
+    },
+    {
+      "id": "commitment",
+      "body": "启用时锁定锚点关系、半径、角速度、方向和队形。"
+    },
+    {
+      "id": "threat-geometry",
+      "body": "安全性由每枚弹体半径、玩家碰撞体和随时间变化的位置共同决定。"
+    },
+    {
+      "id": "counterplay",
+      "body": "队形为玩家支持的动作保留可到达缺口、内侧安全区或外侧路线。"
+    },
+    {
+      "id": "context-and-sequence",
+      "body": "场地边缘、锚点移动和相邻攻击决定移动开口是否仍可使用。"
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "Hollow Knight",
+      "boss": "Soul Master",
+      "screenshot": "https://i.ytimg.com/vi/POpz58ucJwA/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=POpz58ucJwA&t=53s",
+      "body": "Soul Master 横穿场地时，四枚等距光球围绕他旋转，随后队形返回。固定间距把 Boss 位移与轨道运动组合成可学习的移动门。",
+      "video": "https://www.youtube.com/watch?v=POpz58ucJwA&t=53s",
+      "videoDurationSeconds": 404
+    },
+    {
+      "dimension": "2D",
+      "game": "Terraria: Calamity Mod",
+      "boss": "Ceaseless Void",
+      "screenshot": "https://i.ytimg.com/vi/ihgR1Tf_WGY/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=ihgR1Tf_WGY&t=20s",
+      "body": "Dark Energies 在 Ceaseless Void 周围形成旋转臂。重复间距与稳定中心展示了大型轨道队形如何建立整段阶段的移动节奏，而不是像无关弹体。",
+      "video": "https://www.youtube.com/watch?v=ihgR1Tf_WGY&t=20s",
+      "videoDurationSeconds": 151
+    },
+    {
+      "dimension": "3D",
+      "game": "ULTRAKILL",
+      "boss": "Gabriel, Judge of Hell",
+      "screenshot": "https://i.ytimg.com/vi/h6e0-whg6EA/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=h6e0-whg6EA&t=104s",
+      "body": "Gabriel 生成围绕自身旋转的光剑，暂时作为护盾。第一人称视角说明 3D 轨道为何需要强锚点和清晰轮廓：景深与镜头运动会隐藏远侧间距。",
+      "video": "https://www.youtube.com/watch?v=h6e0-whg6EA&t=104s",
+      "videoDurationSeconds": 146
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

@@ -1,0 +1,26 @@
+{
+  "id": "orbiting-projectiles",
+  "number": 36,
+  "published": true,
+  "sourceLocale": "en",
+  "contentVersion": 1,
+  "animation": "orbiting-projectiles",
+  "lenses": [
+    "telegraphing",
+    "commitment",
+    "threat-geometry",
+    "counterplay",
+    "context-and-sequence"
+  ],
+  "related": ["ring-volley", "spiral-barrage", "rotating-beams"],
+  "sources": [
+    {
+      "title": "Enemy Attacks and Telegraphing · Mike Stout",
+      "url": "https://www.gamedeveloper.com/design/enemy-attacks-and-telegraphing"
+    },
+    {
+      "title": "Boss Up: Boss Battle Design · GDC Vault",
+      "url": "https://www.gdcvault.com/play/1024921/Boss-Up-Boss-Battle-Design"
+    }
+  ]
+}

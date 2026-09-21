@@ -1,0 +1,142 @@
+{
+  "title": "Orbiting projectiles",
+  "subtitle": "Expose the anchor, radius, direction, and spacing before a moving perimeter becomes dangerous.",
+  "variant": "Five evenly spaced bound projectiles",
+  "summary": "Projectiles remain attached to one center and rotate as a spaced moving perimeter.",
+  "overview": "Orbiting projectiles remain bound to one center while their positions rotate. The rule works when the anchor, radius, direction, angular speed, and spacing are readable before contact, every projectile keeps the committed formation, and a reachable gap or inner pocket remains available.",
+  "learning": "Design the orbit, spacing, entry route, active rotation, and recall as one continuous spatial rule.",
+  "category": "Projectiles",
+  "readTime": "5 min",
+  "demo": {
+    "title": "Test orbiting projectiles",
+    "timeline": "Attack timeline",
+    "step": "Attack phases",
+    "phaseNames": ["Map the orbit", "Rotate and cross", "Recall and recover"],
+    "phaseDescriptions": [
+      "Kern reveals five projectiles, one fixed radius, equal spacing, and the clockwise direction before collision activates.",
+      "The committed formation rotates while Tavi follows the moving gap and crosses from outside the perimeter into its inner pocket.",
+      "Kern recalls every projectile toward the anchor, removes collision with the fading formation, and holds recovery."
+    ],
+    "boss": "Boss",
+    "player": "Player",
+    "danger": "The orbiting projectile bodies are active",
+    "locked": "Anchor, radius, direction, speed, and spacing are locked",
+    "safe": "The moving gap clears the player’s full body",
+    "reducedMotion": "Autoplay is disabled by the reduced-motion setting. Use the timeline slider to inspect the orbit and crossing.",
+    "diagramDescription": "A looping diagram of five evenly spaced projectiles orbiting a boss. Their path and direction appear first, then the formation rotates while the player crosses through a moving gap into the center before the projectiles are recalled."
+  },
+  "steps": [
+    {
+      "title": "Can the whole orbit be read before contact?",
+      "body": "Show the anchor, complete radius, direction, projectile count, and spacing together. A player should be able to predict every occupied position rather than infer the rear half after it arrives."
+    },
+    {
+      "title": "Does commitment preserve the formation?",
+      "body": "Lock radius, angular speed, direction, and relative spacing when collision begins. Check each projectile body separately so the safe gap shown by the signal matches the gap used by collision."
+    },
+    {
+      "title": "Does the response stay reachable through motion?",
+      "body": "Sweep the full player body through the intended route over time. Leave enough angular and radial clearance to follow a gap, enter a pocket, or remain outside without requiring an unstated dash or invulnerability window."
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "The back half appears without a signal",
+      "body": "Showing only the nearest projectiles hides count and spacing. Reveal the entire formation or use a persistent orbit guide before the active rotation."
+    },
+    {
+      "title": "The orbit changes radius during the dodge",
+      "body": "Unannounced contraction or expansion erases a planned pocket. Treat a radius change as a new signal and commitment instead of silently modifying the active rule."
+    },
+    {
+      "title": "The visual gap is smaller in collision",
+      "body": "Large hidden hitboxes turn a readable opening into a trap. Test projectile radius plus the player’s full body and keep effects from obscuring the true clearance."
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "Store one formation state",
+      "body": "Represent anchor, radius, base angle, angular speed, direction, count, projectile radius, and activation time once. Derive rendering and collision from that same state."
+    },
+    {
+      "title": "Measure the narrowest gap",
+      "body": "Compute edge-to-edge clearance between neighboring projectiles, not only their center angles. Compare it with the player diameter and movement available during the crossing window."
+    },
+    {
+      "title": "Keep the anchor legible",
+      "body": "If the boss moves, decide whether the formation follows rigidly, lags, or remains world-anchored. Signal that relationship because it changes every future projectile position."
+    },
+    {
+      "title": "Escalate one orbital variable at a time",
+      "body": "Later variants can reverse direction, add a second radius, or release selected projectiles. Give each change its own cue so the learned base orbit still supports prediction."
+    }
+  ],
+  "story": {
+    "title": "What the mechanic communicates",
+    "body": "An orbit makes Kern feel like the stable center of a rune system rather than a source of disposable shots. The ordered formation gives Tavi a visible moving boundary that can be understood before it must be crossed."
+  },
+  "adaptation": {
+    "title": "Adapt it to the player verbs",
+    "body": "Basic movement can follow a wide gap or stay beyond the perimeter. A dash can cross a narrower opening, while block, parry, or projectile destruction may remove one body; state whether the remaining formation closes the gap or preserves its spacing."
+  },
+  "distinction": {
+    "title": "Keep the mechanic distinct",
+    "body": "Orbiting projectiles stay bound to an anchor while their positions rotate. A ring volley launches outward, a spiral barrage expands along a path, and rotating beams create continuous radial segments. Preserve the persistent anchor and discrete spacing."
+  },
+  "lensNotes": [
+    {
+      "id": "telegraphing",
+      "body": "The full orbit, direction, count, and spacing appear before collision activates."
+    },
+    {
+      "id": "commitment",
+      "body": "Activation locks the anchor relationship, radius, angular speed, direction, and formation."
+    },
+    {
+      "id": "threat-geometry",
+      "body": "Safety derives from each projectile radius, the player body, and their positions through time."
+    },
+    {
+      "id": "counterplay",
+      "body": "The formation preserves a reachable gap, inner pocket, or outside route for supported player verbs."
+    },
+    {
+      "id": "context-and-sequence",
+      "body": "Arena edges, anchor motion, and adjacent attacks determine whether the moving opening remains usable."
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "Hollow Knight",
+      "boss": "Soul Master",
+      "screenshot": "https://i.ytimg.com/vi/POpz58ucJwA/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=POpz58ucJwA&t=53s",
+      "body": "Soul Master crosses the arena with four evenly spaced orbs rotating around him, then the pattern returns. The fixed spacing turns boss translation and orbital motion into one learnable moving gate.",
+      "video": "https://www.youtube.com/watch?v=POpz58ucJwA&t=53s",
+      "videoDurationSeconds": 404
+    },
+    {
+      "dimension": "2D",
+      "game": "Terraria: Calamity Mod",
+      "boss": "Ceaseless Void",
+      "screenshot": "https://i.ytimg.com/vi/ihgR1Tf_WGY/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=ihgR1Tf_WGY&t=20s",
+      "body": "Dark Energies form rotating arms around Ceaseless Void. Repeated spacing and a stable center show how a larger orbital formation can establish a phase-wide movement rhythm instead of reading as unrelated bullets.",
+      "video": "https://www.youtube.com/watch?v=ihgR1Tf_WGY&t=20s",
+      "videoDurationSeconds": 151
+    },
+    {
+      "dimension": "3D",
+      "game": "ULTRAKILL",
+      "boss": "Gabriel, Judge of Hell",
+      "screenshot": "https://i.ytimg.com/vi/h6e0-whg6EA/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=h6e0-whg6EA&t=104s",
+      "body": "Gabriel materializes light swords that orbit him as a temporary shield. The first-person view shows why a 3D orbit needs a strong anchor and silhouette: depth and camera motion can otherwise hide the spacing on the far side.",
+      "video": "https://www.youtube.com/watch?v=h6e0-whg6EA&t=104s",
+      "videoDurationSeconds": 146
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

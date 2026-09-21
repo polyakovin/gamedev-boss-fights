@@ -1,0 +1,142 @@
+{
+  "title": "Proyectiles orbitales",
+  "subtitle": "Muestra el ancla, el radio, la dirección y el espaciado antes de que el perímetro móvil sea peligroso.",
+  "variant": "Cinco proyectiles enlazados y equidistantes",
+  "summary": "Los proyectiles siguen ligados a un centro y giran como un perímetro móvil espaciado.",
+  "overview": "Los proyectiles orbitales permanecen ligados a un centro mientras sus posiciones giran. La regla funciona cuando el ancla, radio, dirección, velocidad angular y espaciado se leen antes del contacto, cada proyectil conserva la formación comprometida y queda disponible un hueco o bolsillo interior alcanzable.",
+  "learning": "Diseña la órbita, el espaciado, la ruta de entrada, la rotación activa y la retirada como una sola regla espacial continua.",
+  "category": "Proyectiles",
+  "readTime": "5 min",
+  "demo": {
+    "title": "Prueba los proyectiles orbitales",
+    "timeline": "Cronología del ataque",
+    "step": "Fases del ataque",
+    "phaseNames": ["Trazar la órbita", "Girar y cruzar", "Retirar y recuperar"],
+    "phaseDescriptions": [
+      "Kern revela cinco proyectiles, un radio fijo, separación uniforme y el sentido horario antes de activar la colisión.",
+      "La formación comprometida gira mientras Tavi sigue el hueco móvil y cruza del exterior del perímetro al bolsillo interior.",
+      "Kern retira todos los proyectiles hacia el ancla, elimina la colisión junto con la formación y mantiene la recuperación."
+    ],
+    "boss": "Jefe",
+    "player": "Jugador",
+    "danger": "Los cuerpos de los proyectiles orbitales están activos",
+    "locked": "Ancla, radio, dirección, velocidad y espaciado están fijados",
+    "safe": "El hueco móvil deja pasar todo el cuerpo del jugador",
+    "reducedMotion": "La reproducción automática está desactivada por el movimiento reducido. Usa el control temporal para revisar la órbita y el cruce.",
+    "diagramDescription": "Diagrama en bucle de cinco proyectiles equidistantes que orbitan a un jefe. Primero aparecen la ruta y dirección; después la formación gira mientras el jugador cruza un hueco móvil hacia el centro, antes de que los proyectiles se retiren."
+  },
+  "steps": [
+    {
+      "title": "¿Se entiende toda la órbita antes del contacto?",
+      "body": "Muestra juntos el ancla, el radio completo, la dirección, el número de proyectiles y el espaciado. El jugador debe poder predecir cada posición ocupada sin descubrir la mitad trasera cuando ya llega."
+    },
+    {
+      "title": "¿El compromiso conserva la formación?",
+      "body": "Fija radio, velocidad angular, dirección y separación relativa cuando comienza la colisión. Comprueba cada cuerpo por separado para que el hueco señalado coincida con el hueco real."
+    },
+    {
+      "title": "¿La respuesta sigue siendo alcanzable en movimiento?",
+      "body": "Barre todo el cuerpo del jugador por la ruta prevista a lo largo del tiempo. Deja margen angular y radial para seguir un hueco, entrar en un bolsillo o quedarse fuera sin exigir un impulso o invulnerabilidad no anunciados."
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "La mitad trasera aparece sin señal",
+      "body": "Mostrar solo los proyectiles cercanos oculta el número y la separación. Revela toda la formación o conserva una guía de órbita antes de la rotación activa."
+    },
+    {
+      "title": "La órbita cambia de radio durante la evasión",
+      "body": "Una contracción o expansión sin aviso elimina un bolsillo previsto. Trata el cambio de radio como una señal y compromiso nuevos, no como una modificación oculta."
+    },
+    {
+      "title": "El hueco visual es mayor que el de colisión",
+      "body": "Las cajas ocultas grandes convierten una abertura legible en trampa. Prueba el radio del proyectil más todo el cuerpo del jugador y evita que los efectos tapen el margen real."
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "Guarda un único estado de formación",
+      "body": "Representa una sola vez ancla, radio, ángulo base, velocidad angular, dirección, cantidad, radio del proyectil y momento de activación. Deriva de ahí dibujo y colisión."
+    },
+    {
+      "title": "Mide el hueco más estrecho",
+      "body": "Calcula el espacio entre bordes vecinos, no solo los ángulos centrales. Compáralo con el diámetro del jugador y el movimiento disponible durante la ventana de cruce."
+    },
+    {
+      "title": "Mantén legible el ancla",
+      "body": "Si el jefe se mueve, decide si la formación lo sigue rígidamente, con retraso o queda anclada al mundo. Señala esa relación porque cambia todas las posiciones futuras."
+    },
+    {
+      "title": "Escala una variable orbital cada vez",
+      "body": "Las variantes posteriores pueden invertir la dirección, añadir otro radio o liberar proyectiles concretos. Da una señal propia a cada cambio para que la órbita aprendida siga permitiendo predecir."
+    }
+  ],
+  "story": {
+    "title": "Qué comunica la mecánica",
+    "body": "La órbita hace que Kern parezca el centro estable de un sistema de runas, no una fuente de disparos desechables. La formación ordenada da a Tavi un límite móvil visible que puede entender antes de cruzarlo."
+  },
+  "adaptation": {
+    "title": "Adáptala a las acciones del jugador",
+    "body": "El movimiento básico puede seguir un hueco amplio o quedarse fuera. Un impulso cruza una abertura más estrecha, y bloquear, desviar o destruir puede retirar un cuerpo; define si la formación restante cierra el hueco o mantiene la separación."
+  },
+  "distinction": {
+    "title": "Mantén distinta la mecánica",
+    "body": "Los proyectiles orbitales siguen ligados a un ancla mientras giran sus posiciones. Una descarga circular sale hacia fuera, una ráfaga espiral se expande por una ruta y los rayos giratorios forman segmentos radiales continuos. Conserva el ancla persistente y el espaciado discreto."
+  },
+  "lensNotes": [
+    {
+      "id": "telegraphing",
+      "body": "La órbita completa, dirección, cantidad y separación aparecen antes de activar la colisión."
+    },
+    {
+      "id": "commitment",
+      "body": "La activación fija relación con el ancla, radio, velocidad angular, dirección y formación."
+    },
+    {
+      "id": "threat-geometry",
+      "body": "La seguridad deriva del radio de cada proyectil, el cuerpo del jugador y sus posiciones en el tiempo."
+    },
+    {
+      "id": "counterplay",
+      "body": "La formación conserva un hueco, bolsillo interior o ruta exterior alcanzable para las acciones disponibles."
+    },
+    {
+      "id": "context-and-sequence",
+      "body": "Los bordes, el movimiento del ancla y los ataques cercanos deciden si la abertura móvil sigue siendo útil."
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "Hollow Knight",
+      "boss": "Soul Master",
+      "screenshot": "https://i.ytimg.com/vi/POpz58ucJwA/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=POpz58ucJwA&t=53s",
+      "body": "Soul Master cruza la arena con cuatro orbes equidistantes girando a su alrededor y después el patrón vuelve. El espaciado fijo une el traslado del jefe y la órbita en una puerta móvil aprendible.",
+      "video": "https://www.youtube.com/watch?v=POpz58ucJwA&t=53s",
+      "videoDurationSeconds": 404
+    },
+    {
+      "dimension": "2D",
+      "game": "Terraria: Calamity Mod",
+      "boss": "Ceaseless Void",
+      "screenshot": "https://i.ytimg.com/vi/ihgR1Tf_WGY/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=ihgR1Tf_WGY&t=20s",
+      "body": "Dark Energies forma brazos giratorios alrededor de Ceaseless Void. La separación repetida y el centro estable muestran cómo una formación grande establece el ritmo de movimiento de toda una fase en vez de parecer balas independientes.",
+      "video": "https://www.youtube.com/watch?v=ihgR1Tf_WGY&t=20s",
+      "videoDurationSeconds": 151
+    },
+    {
+      "dimension": "3D",
+      "game": "ULTRAKILL",
+      "boss": "Gabriel, Judge of Hell",
+      "screenshot": "https://i.ytimg.com/vi/h6e0-whg6EA/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=h6e0-whg6EA&t=104s",
+      "body": "Gabriel materializa espadas de luz que lo orbitan como escudo temporal. La vista en primera persona muestra por qué una órbita 3D necesita un ancla y silueta claras: la profundidad y la cámara pueden ocultar la separación del fondo.",
+      "video": "https://www.youtube.com/watch?v=h6e0-whg6EA&t=104s",
+      "videoDurationSeconds": 146
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

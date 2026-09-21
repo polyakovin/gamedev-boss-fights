@@ -13,8 +13,8 @@ import {
   renderBlueprintThumbnail,
 } from '../lib/blueprint-view.mjs';
 
-test('all 29 promoted lesson animations have distinct rule modes and complete moving frames', () => {
-  assert.equal(BLUEPRINT_MECHANIC_IDS.length, 29);
+test('all 30 promoted lesson animations have distinct rule modes and complete moving frames', () => {
+  assert.equal(BLUEPRINT_MECHANIC_IDS.length, 30);
   const modes = new Set();
   for (const id of BLUEPRINT_MECHANIC_IDS) {
     for (let time = 0; time <= BLUEPRINT_DURATION; time += 0.1) {
@@ -35,7 +35,7 @@ test('all 29 promoted lesson animations have distinct rule modes and complete mo
           assert.ok(Number.isFinite(value), `${id} has an invalid ${primitive.type}`);
     }
   }
-  assert.equal(modes.size, 29);
+  assert.equal(modes.size, 30);
 });
 
 test('every blueprint exposes signal, committed action, and recovery without player teleports', () => {
@@ -64,6 +64,7 @@ test('every promoted animation derives safety from its own active geometry', () 
     crossfire: null,
     'splitting-projectile': null,
     'returning-projectile': null,
+    'orbiting-projectiles': null,
     'wide-swing': { x: 280, y: 515 },
     lunge: { x: 300, y: 440 },
     grab: { x: 390, y: 485 },
@@ -109,6 +110,9 @@ test('every promoted animation derives safety from its own active geometry', () 
       point = { x: projectile.x, y: projectile.y };
     } else if (!point && id === 'returning-projectile') {
       const projectile = frame.primitives[3];
+      point = { x: projectile.x, y: projectile.y };
+    } else if (!point && id === 'orbiting-projectiles') {
+      const projectile = frame.primitives[2];
       point = { x: projectile.x, y: projectile.y };
     } else if (!point && ['scanning-beam', 'rotating-beams'].includes(id)) {
       const beam = frame.primitives.find(
@@ -305,6 +309,38 @@ test('returning projectile announces an outbound leg and a distinct committed re
     false,
   );
   assert.equal(returning.playerSafe, true);
+});
+
+test('orbiting projectiles preserve radius, spacing, and a moving gap through commitment', () => {
+  const signal = blueprintFrame('orbiting-projectiles', 1.59);
+  const early = blueprintFrame('orbiting-projectiles', 2.2);
+  const active = blueprintFrame('orbiting-projectiles', 3);
+  const late = blueprintFrame('orbiting-projectiles', 4.1);
+
+  assert.deepEqual(signal.player, blueprintFrame('orbiting-projectiles', 0).player);
+  for (const frame of [signal, early, active, late]) {
+    const distances = frame.primitives
+      .slice(2)
+      .map((projectile) => Math.hypot(projectile.x - frame.boss.x, projectile.y - frame.boss.y));
+    assert.ok(distances.every((distance) => Math.abs(distance - 170) < 0.001));
+  }
+  const angles = active.primitives
+    .slice(2)
+    .map((projectile) => Math.atan2(projectile.y - active.boss.y, projectile.x - active.boss.x));
+  const wrappedSteps = angles.map((angle, index) => {
+    const next = angles[(index + 1) % angles.length];
+    return (next - angle + Math.PI * 2) % (Math.PI * 2);
+  });
+  assert.ok(wrappedSteps.every((step) => Math.abs(step - (Math.PI * 2) / 5) < 0.001));
+  assert.notDeepEqual(early.player, active.player);
+  assert.equal(
+    blueprintPointSafe('orbiting-projectiles', 3, {
+      x: active.primitives[2].x,
+      y: active.primitives[2].y,
+    }),
+    false,
+  );
+  assert.equal(active.playerSafe, true);
 });
 
 test('blueprint pages and previews reuse Tavi and Kern with accessible localized data', () => {
