@@ -44,6 +44,7 @@
     "edit",
     "license",
     "reviewNote",
+    "lastUpdated",
     "indexTitle",
     "indexSubtitle",
     "indexGuidesTitle",
@@ -307,6 +308,10 @@
       "minLength": 1
     },
     "reviewNote": {
+      "type": "string",
+      "minLength": 1
+    },
+    "lastUpdated": {
       "type": "string",
       "minLength": 1
     },

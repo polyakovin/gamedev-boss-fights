@@ -8,6 +8,7 @@ import { escape as e, jsonForHtml } from '../lib/html.mjs';
 import { icon } from '../lib/icons.mjs';
 import { renderLensVisual } from '../lib/lens-view.mjs';
 import { link, canonical, REPOSITORY, AUTHOR } from '../lib/config.mjs';
+import { loadPageHistory } from '../lib/page-history.mjs';
 import { MECHANIC_TAXONOMY, createMechanicProfile } from '../src/mechanic-relations.mjs';
 const {
   locales,
@@ -20,6 +21,7 @@ const {
   mechanics,
   lenses,
 } = await validateContent(await loadContent());
+const pageHistory = await loadPageHistory(ROOT);
 const published = mechanics.filter((m) => m.meta.published);
 const mechanicsById = new Map(mechanics.map((mechanic) => [mechanic.meta.id, mechanic]));
 const mechanicsExamplesById = new Map();
@@ -372,13 +374,45 @@ function mechanicBuilderAction(locale, t, mechanicId) {
     ></span>
   </div>`;
 }
+function lastUpdated(locale, t, history) {
+  if (!history) throw new Error('Missing Git history for page update date.');
+  const date = new Intl.DateTimeFormat(locale.code, {
+    dateStyle: 'long',
+    timeZone: 'UTC',
+  }).format(new Date(`${history.date}T00:00:00Z`));
+  return /* HTML */ `<div class="page-updated">
+    ${e(t.lastUpdated)}
+    <a href="${REPOSITORY}/commit/${history.hash}">
+      <time datetime="${history.date}">${e(date)}</time>
+      ${icon('external-link', { className: 'icon--external' })}
+    </a>
+  </div>`;
+}
+function mechanicHistory(mechanicId, contentLocale) {
+  return (
+    pageHistory.latest([
+      `content/mechanics/${mechanicId}/meta.json`,
+      `content/mechanics/${mechanicId}/${contentLocale}.json`,
+    ]) ??
+    pageHistory.latest([
+      'content/mechanics-index.json',
+      `content/mechanics-index-locales/${contentLocale}.json`,
+    ])
+  );
+}
+function lensHistory(lensId, localeCode) {
+  return pageHistory.latest([
+    `content/lenses/${lensId}/meta.json`,
+    `content/lenses/${lensId}/${localeCode}.json`,
+  ]);
+}
 function renderLessonBody(
   locale,
   t,
   mechanic,
   content,
   animation,
-  { isWip = false, contentLocale = locale.code, catalogEntry } = {},
+  { isWip = false, contentLocale = locale.code, catalogEntry, history } = {},
 ) {
   const fallbackAttributes =
     contentLocale === locale.code ? '' : ` lang="${contentLocale}" dir="ltr"`;
@@ -397,7 +431,7 @@ function renderLessonBody(
             ${lensChips(locale.code, mechanic.meta.lenses, content.lensNotes, contentLocale)}
           </div>
           <p class="mechanic-overview">${e(content.overview)}</p>
-          ${mechanicBuilderAction(locale, t, mechanic.meta.id)}
+          ${lastUpdated(locale, t, history)} ${mechanicBuilderAction(locale, t, mechanic.meta.id)}
         </section>
         <div id="simulation" class="simulation-section">${animation.render(content.demo)}</div>
         <section
@@ -1213,6 +1247,7 @@ for (const locale of locales) {
       a = animations[m.meta.animation];
     const body = renderLessonBody(locale, t, m, c, a, {
       catalogEntry: catalogEntriesById.get(m.meta.id),
+      history: mechanicHistory(m.meta.id, locale.code),
     });
     await write(
       `${locale.code}/mechanics/${m.meta.id}/`,
@@ -1231,6 +1266,7 @@ for (const locale of locales) {
         isWip: true,
         contentLocale,
         catalogEntry: entry,
+        history: mechanicHistory(entry.id, contentLocale),
       });
       await write(
         `${locale.code}/mechanics/${entry.id}/`,
@@ -1256,6 +1292,7 @@ for (const locale of locales) {
           <span class="wip-badge">WIP</span>
         </div>
         <p>${e(entry.summary)}</p>
+        ${lastUpdated(locale, t, mechanicHistory(entry.id, locale.code))}
         ${mechanicBuilderAction(locale, t, entry.id)}
       </header>
       ${draftAnimationSection(entry, locale)} ${draftProfileSection(entry.profile, locale)}
@@ -1337,6 +1374,7 @@ for (const locale of locales) {
             <span class="eyebrow">${e(t.lensLabel)}</span>
             <h1>${e(content.title)}</h1>
             <p>${e(content.summary)}</p>
+            ${lastUpdated(locale, t, lensHistory(lens.meta.id, locale.code))}
           </div>
           ${renderLensVisual(lens.meta.id, content)}
         </header>

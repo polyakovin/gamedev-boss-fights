@@ -902,6 +902,25 @@ section[id] {
   gap: 0.35em;
   color: var(--accent);
 }
+.page-updated {
+  color: var(--muted);
+  font-family: var(--font-label);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.025em;
+  line-height: 1.4;
+  margin: 14px 0 0;
+}
+.page-updated a {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3em;
+  color: var(--ink);
+}
+.page-updated .icon {
+  width: 0.9em;
+  height: 0.9em;
+}
 .sources li a .icon {
   width: 13px;
   height: 13px;
@@ -2132,6 +2151,13 @@ section[id] {
 }
 .lens-page__copy p {
   font-size: 21px;
+}
+.lens-page__copy .page-updated,
+.wip-mechanic-hero > .page-updated {
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.4;
+  margin: 14px 0 0;
 }
 .lens-page__mechanics,
 .lens-page__framework,
