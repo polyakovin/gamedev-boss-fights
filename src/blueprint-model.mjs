@@ -62,6 +62,14 @@ const SPECS = {
     startAngle: 0.55,
     rotation: 1.4,
   },
+  'pulse-beam': {
+    mode: 'pulse-beam',
+    boss: [150, 340],
+    player: [455, 590],
+    target: [270, 660],
+    beamStart: [150, 340],
+    beamEnd: [500, 700],
+  },
   'wide-swing': { mode: 'arc', boss: [280, 310], player: [410, 470], target: [470, 650] },
   lunge: { mode: 'lunge', boss: [170, 290], player: [390, 590], target: [470, 660] },
   grab: { mode: 'grab', boss: [280, 300], player: [390, 485], target: [470, 610] },
@@ -187,6 +195,13 @@ const smooth = (value) => {
   return t * t * (3 - 2 * t);
 };
 const pulse = (value) => (value <= 0 || value >= 1 ? 0 : Math.sin(value * Math.PI));
+const PULSE_BEAM_WINDOWS = Object.freeze([
+  [0.08, 0.24],
+  [0.48, 0.64],
+  [0.78, 0.92],
+]);
+const pulseBeamIndex = (action) =>
+  PULSE_BEAM_WINDOWS.findIndex(([start, end]) => action >= start && action <= end);
 const localTime = (time) => {
   const remainder = (Number.isFinite(time) ? time : 0) % BLUEPRINT_DURATION;
   return remainder < 0 ? remainder + BLUEPRINT_DURATION : remainder;
@@ -519,6 +534,40 @@ function primitivesFor(spec, frame) {
       ),
     ];
   }
+  if (mode === 'pulse-beam') {
+    const beamStart = point(spec.beamStart);
+    const beamEnd = point(spec.beamEnd);
+    const activePulse = phase === 1 ? pulseBeamIndex(action) : -1;
+    const beamOpacity = activePulse >= 0 ? 1 : 0;
+    const guideOpacity =
+      phase === 0 ? 0.35 + prepare * 0.5 : phase === 1 ? 0.24 : 0.24 * (1 - recover);
+    return [
+      line(beamStart.x, beamStart.y, beamEnd.x, beamEnd.y, guideOpacity, 'accent', 8, '13 11'),
+      line(beamStart.x, beamStart.y, beamEnd.x, beamEnd.y, beamOpacity, 'signal', 34),
+      circle(
+        beamStart.x,
+        beamStart.y,
+        mix(28, 46, phase === 0 ? prepare : activePulse >= 0 ? 1 : 0.35),
+        phase === 2 ? 1 - recover : 0.64 + beamOpacity * 0.3,
+        activePulse >= 0 ? 'signal' : 'accent',
+        7,
+        activePulse >= 0 ? 0.34 : 0.08,
+      ),
+      ...PULSE_BEAM_WINDOWS.map(([start, end], index) => {
+        const elapsed = phase === 1 && action > end;
+        const current = index === activePulse;
+        return circle(
+          214 + index * 66,
+          230,
+          current ? 18 : 13,
+          phase === 2 ? 0.28 * (1 - recover) : 0.46 + (current ? 0.5 : elapsed ? 0.22 : 0),
+          current ? 'signal' : elapsed ? 'safe' : 'accent',
+          5,
+          current ? 0.42 : elapsed ? 0.18 : 0.06,
+        );
+      }),
+    ];
+  }
   if (mode === 'arc')
     return [
       path(arcPath(boss, 205, -1.15, 2.25), preview, 'accent', 20, 0, '12 10'),
@@ -835,6 +884,8 @@ function pointClearsThreat(spec, frame, value, radius = BLUEPRINT_PLAYER_RADIUS)
         (projectile) =>
           Math.hypot(value.x - projectile.x, value.y - projectile.y) > projectile.radius + radius,
       );
+  if (mode === 'pulse-beam')
+    return distanceToSegment(value, point(spec.beamStart), point(spec.beamEnd)) > 17 + radius;
   if (mode === 'spiral')
     return (
       distanceFromBoss > 52 + radius &&
@@ -990,6 +1041,8 @@ export function blueprintFrame(id, time) {
     responseProgress = phase === 0 ? 0 : phase === 1 ? smooth((action - 0.2) / 0.34) : 1;
   else if (spec.mode === 'orbiting-projectiles')
     responseProgress = phase === 0 ? 0 : phase === 1 ? smooth((action - 0.1) / 0.55) : 1;
+  else if (spec.mode === 'pulse-beam')
+    responseProgress = phase === 0 ? 0 : phase === 1 ? smooth((action - 0.25) / 0.2) : 1;
   else if (spec.mode === 'knockback')
     responseProgress = phase === 0 ? 0 : phase === 1 ? smooth(action) : 1;
   else if (spec.mode === 'target-lock')
@@ -1036,7 +1089,11 @@ export function blueprintFrame(id, time) {
   const bossVisible = spec.mode === 'burrow' && phase === 1 && action < 0.68 ? 0 : 1;
   const committed = t >= BLUEPRINT_PHASE_ENDS[0];
   const dangerActive =
-    spec.mode === 'landing' ? phase === 1 && action >= 0.32 && action <= 0.72 : phase === 1;
+    spec.mode === 'landing'
+      ? phase === 1 && action >= 0.32 && action <= 0.72
+      : spec.mode === 'pulse-beam'
+        ? phase === 1 && pulseBeamIndex(action) >= 0
+        : phase === 1;
   const frame = {
     id,
     mode: spec.mode,

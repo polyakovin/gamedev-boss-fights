@@ -1,0 +1,142 @@
+{
+  "title": "Haz pulsante",
+  "subtitle": "Señala un carril fijo y haz fiables sus pulsos activos y sus pausas.",
+  "variant": "Tres pulsos en un único carril fijado",
+  "summary": "Un carril de haz fijo alterna pulsos peligrosos y pausas seguras con una cadencia legible.",
+  "overview": "Un haz pulsante se activa y desactiva repetidamente sobre una misma línea comprometida. La regla funciona cuando el carril completo, el número de pulsos, la cadencia, el ancho y el primer tiempo activo se leen antes del contacto, la colisión se apaga con el haz y cada pausa permite completar la respuesta prevista.",
+  "learning": "Diseña la señal del carril, el calendario de pulsos, la ventana de cruce, la colisión y la recuperación como una sola regla temporal.",
+  "category": "Haces",
+  "readTime": "5 min",
+  "demo": {
+    "title": "Probar un haz pulsante",
+    "timeline": "Cronología del ataque",
+    "step": "Fases del ataque",
+    "phaseNames": ["Mostrar carril y tiempos", "Pulsar y cruzar", "Descargar y recuperar"],
+    "phaseDescriptions": [
+      "Kern muestra un carril diagonal, tres marcas de tiempo, el ancho y el primer pulso antes de activar la colisión.",
+      "El mismo carril dispara tres veces. Tavi espera el primer pulso, cruza durante la pausa anunciada y sale antes del segundo.",
+      "Kern descarga la fuente, elimina la colisión junto con la señal que se desvanece y mantiene la recuperación."
+    ],
+    "boss": "Jefe",
+    "player": "Jugador",
+    "danger": "Solo un pulso visiblemente activo tiene colisión",
+    "locked": "Carril, ancho, número de pulsos, cadencia y fase están fijados",
+    "safe": "El tiempo inactivo despeja la ruta completa del jugador",
+    "reducedMotion": "La reproducción automática está desactivada por la preferencia de movimiento reducido. Usa el control temporal para revisar cada pulso y pausa.",
+    "diagramDescription": "Diagrama en bucle de un jefe que anuncia un carril diagonal y tres tiempos. El carril dispara, se apaga mientras el jugador cruza, dispara dos veces más y se desvanece en la recuperación."
+  },
+  "steps": [
+    {
+      "title": "¿Se leen el carril y el ritmo antes del primer pulso?",
+      "body": "Muestra ambos extremos, todo el ancho, el número de pulsos, los tiempos activo e inactivo y la primera activación. La cuenta atrás, los destellos o el audio deben compartir fase con la colisión."
+    },
+    {
+      "title": "¿El haz se apaga de verdad entre pulsos?",
+      "body": "Controla luz, sonido, daño y colisión desde un único calendario. Un haz tenue o ausente no debe conservar daño oculto y cada pulso debe ocupar el carril anunciado."
+    },
+    {
+      "title": "¿La respuesta prevista cabe dentro de una pausa?",
+      "body": "Mide el cuerpo completo del jugador al atravesar el carril, incluida la aceleración y la latencia. Deja tiempo para cruzar, bloquear o recolocarse sin exigir una carrera o invulnerabilidad no declarada."
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "El ritmo empieza antes de poder aprenderlo",
+      "body": "Un primer pulso inmediato convierte la cadencia en reflejos. Muestra al menos un tiempo completo o una señal de inicio distinta antes de activar la colisión."
+    },
+    {
+      "title": "La pausa visual sigue siendo peligrosa",
+      "body": "Mantener colisión durante un tiempo oscuro rompe la promesa central. Termina el daño en el mismo fotograma en que desaparece el haz, salvo que exista un efecto residual señalado aparte."
+    },
+    {
+      "title": "Cada pulso cambia el carril sin avisar",
+      "body": "Reapuntar entre tiempos convierte un problema de ritmo en seguimiento repetido. Fija el carril para toda la secuencia o anuncia cada cambio como un compromiso nuevo."
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "Guarda un único calendario de pulsos",
+      "body": "Representa una vez extremos, ancho, inicio, número de pulsos, duración activa, pausa y recuperación. Deriva de ahí animación, audio, colisión e interfaz."
+    },
+    {
+      "title": "Prueba la cadencia a velocidad real",
+      "body": "Un fotograma legible no demuestra que el ritmo funcione. Registra los cruces seguro más temprano y más tardío y pruébalos con la tasa de fotogramas, cámara y latencia objetivo."
+    },
+    {
+      "title": "Conserva la fase en todos los canales",
+      "body": "Picos de luz, acentos sonoros, vibración y daño deben marcar el mismo tiempo activo. Un desfase crea aperturas falsas aunque cada canal sea bueno por separado."
+    },
+    {
+      "title": "Escala una variable temporal cada vez",
+      "body": "Las variantes pueden añadir un pulso, acortar pausas o alternar dos carriles. Conserva la cadencia aprendida o presenta otra claramente, sin cambiar a la vez cantidad, fase y geometría."
+    }
+  ],
+  "story": {
+    "title": "Qué comunica la mecánica",
+    "body": "La descarga repetida hace que Kern parezca una máquina rúnica que almacena y libera energía en ciclos deliberados. Tavi lee esa cadencia y convierte una línea peligrosa en un cruce temporal."
+  },
+  "adaptation": {
+    "title": "Adáptala a los verbos del jugador",
+    "body": "El movimiento básico necesita una pausa suficiente para cruzar el ancho. Una carrera admite huecos menores; bloqueo, reflejo o fase pueden responder al pulso activo. Aclara si detienen un tiempo o toda la secuencia."
+  },
+  "distinction": {
+    "title": "Mantén distinta la mecánica",
+    "body": "Un haz pulsante alterna estados activos e inactivos en un carril fijo. Un haz recto es una emisión continua, uno de barrido mueve el carril y los haces giratorios cambian de ángulo continuamente. Conserva la línea fija y la cadencia legible."
+  },
+  "lensNotes": [
+    {
+      "id": "telegraphing",
+      "body": "El carril, el ancho, la cantidad, la cadencia y el primer tiempo activo aparecen antes de la colisión."
+    },
+    {
+      "id": "commitment",
+      "body": "El carril y el calendario quedan fijados para toda la secuencia en vez de reapuntar entre tiempos."
+    },
+    {
+      "id": "threat-geometry",
+      "body": "La seguridad deriva de la distancia al segmento, el ancho y el cuerpo completo, pero solo durante tiempos activos."
+    },
+    {
+      "id": "counterplay",
+      "body": "Cada tiempo inactivo deja margen para al menos un cruce o una defensa compatibles."
+    },
+    {
+      "id": "difficulty-rhythm",
+      "body": "Cantidad, tiempos activo e inactivo y fase ajustan la dificultad sin ocultar el ritmo base."
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "Terraria: Calamity Mod",
+      "boss": "Ares",
+      "screenshot": "https://i.ytimg.com/vi/kcZ1Con5__k/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=kcZ1Con5__k&t=50s",
+      "body": "Ares dispara Red Exo Pulse Lasers sucesivos por líneas anunciadas. La ráfaga muestra cómo la activación repetida conserva el compromiso espacial y cambia la presión mediante el número de pulsos.",
+      "video": "https://www.youtube.com/watch?v=kcZ1Con5__k&t=50s",
+      "videoDurationSeconds": 63
+    },
+    {
+      "dimension": "2D",
+      "game": "Hollow Knight",
+      "boss": "Crystal Guardian",
+      "screenshot": "https://i.ytimg.com/vi/ZU03wr272AA/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=ZU03wr272AA&t=11s",
+      "body": "Crystal Guardian marca una línea con luz fina antes del breve haz dañino. El contraste entre la guía persistente y la ventana activa enseña por qué imagen y colisión deben coincidir.",
+      "video": "https://www.youtube.com/watch?v=ZU03wr272AA&t=11s",
+      "videoDurationSeconds": 31
+    },
+    {
+      "dimension": "3D",
+      "game": "Metroid Prime 3: Corruption",
+      "boss": "Meta Ridley",
+      "screenshot": "https://i.ytimg.com/vi/DkOIqOWGBwM/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=DkOIqOWGBwM&t=45s",
+      "body": "Meta Ridley envía un láser pulsante por el pozo mientras Samus dirige la caída. La vista en primera persona exige una referencia espacial estable y un contraste fuerte del estado activo durante el movimiento.",
+      "video": "https://www.youtube.com/watch?v=DkOIqOWGBwM&t=45s",
+      "videoDurationSeconds": 195
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

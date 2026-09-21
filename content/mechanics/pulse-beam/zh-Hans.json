@@ -1,0 +1,133 @@
+{
+  "title": "脉冲光束",
+  "subtitle": "先标明一条锁定的光束通道，再让开启与关闭节拍始终可信。",
+  "variant": "同一锁定通道上的三次脉冲",
+  "summary": "固定光束通道以可读节奏在危险脉冲和安全间歇之间切换。",
+  "overview": "脉冲光束会沿同一条已锁定直线反复开启和关闭。完整通道、脉冲次数、节奏、宽度和首次开启必须在接触前可读；视觉关闭时碰撞也必须关闭；每个间歇都要足以完成支持的应对动作。",
+  "learning": "把通道预警、脉冲时序、穿越窗口、碰撞状态和恢复设计成一条统一的时间规则。",
+  "category": "光束",
+  "readTime": "5 分钟",
+  "demo": {
+    "title": "测试脉冲光束",
+    "timeline": "攻击时间轴",
+    "step": "攻击阶段",
+    "phaseNames": ["标明通道与节拍", "脉冲并穿越", "放电并恢复"],
+    "phaseDescriptions": [
+      "Kern 在碰撞启用前展示一条斜向通道、三个节拍标记、光束宽度和首次开启时刻。",
+      "同一通道连续触发三次。Tavi 等过第一束，在已告知的间歇中穿越，并在第二束前完全离开。",
+      "Kern 释放残余能量，让碰撞与渐隐信号同时消失，并保持恢复阶段。"
+    ],
+    "boss": "首领",
+    "player": "玩家",
+    "danger": "只有清晰亮起的脉冲拥有碰撞",
+    "locked": "通道、宽度、次数、节奏与相位均已锁定",
+    "safe": "关闭节拍为玩家完整身体留出穿越路线",
+    "reducedMotion": "减少动态效果设置已关闭自动播放。可用时间轴滑块检查每次脉冲和间歇。",
+    "diagramDescription": "循环图示：首领预告一条斜向光束通道和三个节拍。通道触发一次，在玩家穿越时关闭，再触发两次，最后在恢复阶段渐隐。"
+  },
+  "steps": [
+    {
+      "title": "首次脉冲前能读懂通道与节奏吗？",
+      "body": "同时展示两个端点、完整宽度、脉冲次数、开启与关闭时长以及首次开启。倒计时、闪光或声音节拍必须与碰撞处于同一相位。"
+    },
+    {
+      "title": "光束在脉冲之间真的关闭了吗？",
+      "body": "让光线、声音、伤害和碰撞都由同一时序驱动。暗淡或消失的光束不能保留隐藏伤害，每次新脉冲也必须占据已预告的通道。"
+    },
+    {
+      "title": "预期应对能在间歇内完成吗？",
+      "body": "用玩家完整身体测试穿越整条通道，并计入加速和输入延迟。间歇应足以移动、格挡或调整位置，不依赖未说明的冲刺或无敌帧。"
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "节奏还没学会就已开始",
+      "body": "立即出现第一束会把节奏题变成反应测试。碰撞启用前至少预演一个完整节拍，或提供清晰独立的开始提示。"
+    },
+    {
+      "title": "视觉间歇仍然危险",
+      "body": "暗拍中残留碰撞会破坏核心承诺。主动光束消失的同一帧就应结束伤害，除非余波被另行预告。"
+    },
+    {
+      "title": "每次脉冲都暗中换线",
+      "body": "节拍间重新瞄准会把节奏问题变成反复追踪。整段序列锁定通道，或把每次换线作为新的承诺重新预告。"
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "只保存一份脉冲时序",
+      "body": "统一存储端点、宽度、开始时间、次数、开启时长、关闭时长和恢复，并从中派生动画、音效、碰撞与界面。"
+    },
+    {
+      "title": "以实际游戏速度测试节奏",
+      "body": "静帧可读不代表节奏成立。记录最早和最晚安全穿越时刻，并在目标帧率、镜头距离和输入延迟下验证。"
+    },
+    {
+      "title": "让所有反馈渠道保持同相",
+      "body": "光峰、声音重音、控制器反馈和伤害应指向同一主动节拍。错相会制造虚假的提前或延后窗口。"
+    },
+    {
+      "title": "每次只提高一个时间变量",
+      "body": "后续可增加脉冲、缩短间歇或交替两条通道。保留已学节奏，或清楚引入新节奏，不要同时改变次数、相位和几何。"
+    }
+  ],
+  "story": {
+    "title": "这项机制传达什么",
+    "body": "反复放电让 Kern 像一台按周期蓄积并释放能量的符文机器。Tavi 读取机械节奏，把危险直线变成一次定时穿越。"
+  },
+  "adaptation": {
+    "title": "适配玩家动作",
+    "body": "基础移动需要足够长的间歇来跨过光束宽度；冲刺可支持更短空档；格挡、反射或相位移动也许能处理主动脉冲。需明确它们只停止一拍还是整段序列。"
+  },
+  "distinction": {
+    "title": "保持机制差异",
+    "body": "脉冲光束在同一锁定通道上交替开启与关闭。直线光束是一次持续发射，扫描光束会移动通道，旋转光束则持续改变角度。应保留固定通道和可读节奏。"
+  },
+  "lensNotes": [
+    { "id": "telegraphing", "body": "碰撞前展示完整通道、宽度、次数、节奏和首次主动节拍。" },
+    { "id": "commitment", "body": "通道和脉冲时序在整段序列中锁定，不在节拍间重新瞄准。" },
+    {
+      "id": "threat-geometry",
+      "body": "安全性由到固定线段的距离、光束宽度和玩家完整身体决定，但只在主动节拍计算。"
+    },
+    { "id": "counterplay", "body": "每个关闭节拍都为至少一种受支持的穿越或防御回应留出时间。" },
+    {
+      "id": "difficulty-rhythm",
+      "body": "次数、开启时长、关闭时长和相位在不隐藏基础节奏的前提下调节难度。"
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "Terraria: Calamity Mod",
+      "boss": "Ares",
+      "screenshot": "https://i.ytimg.com/vi/kcZ1Con5__k/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=kcZ1Con5__k&t=50s",
+      "body": "Ares 会沿预告直线连续发射 Red Exo Pulse Lasers。短促连射说明重复开启如何保持通道承诺，并通过次数改变时间压力。",
+      "video": "https://www.youtube.com/watch?v=kcZ1Con5__k&t=50s",
+      "videoDurationSeconds": 63
+    },
+    {
+      "dimension": "2D",
+      "game": "Hollow Knight",
+      "boss": "Crystal Guardian",
+      "screenshot": "https://i.ytimg.com/vi/ZU03wr272AA/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=ZU03wr272AA&t=11s",
+      "body": "Crystal Guardian 先用细光标出直线，再短暂生成伤害光束。持续瞄准提示与短主动窗口的对比说明视觉状态必须与碰撞时机一致。",
+      "video": "https://www.youtube.com/watch?v=ZU03wr272AA&t=11s",
+      "videoDurationSeconds": 31
+    },
+    {
+      "dimension": "3D",
+      "game": "Metroid Prime 3: Corruption",
+      "boss": "Meta Ridley",
+      "screenshot": "https://i.ytimg.com/vi/DkOIqOWGBwM/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=DkOIqOWGBwM&t=45s",
+      "body": "Meta Ridley 在 Samus 控制坠落时让脉冲激光沿竖井上冲。第一人称视角说明三维脉冲在镜头和玩家移动中需要稳定空间参照与鲜明主动状态。",
+      "video": "https://www.youtube.com/watch?v=DkOIqOWGBwM&t=45s",
+      "videoDurationSeconds": 195
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

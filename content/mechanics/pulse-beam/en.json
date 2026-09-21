@@ -1,0 +1,142 @@
+{
+  "title": "Pulse beam",
+  "subtitle": "Signal one committed lane, then make its active and inactive beats trustworthy.",
+  "variant": "Three pulses on one locked beam lane",
+  "summary": "A fixed beam lane switches between dangerous pulses and safe pauses on a readable cadence.",
+  "overview": "A pulse beam repeatedly activates and deactivates along one committed line. The rule works when the complete lane, pulse count, cadence, beam width, and first active beat are readable before contact, collision turns off whenever the beam appears off, and every pause is long enough for the supported response.",
+  "learning": "Design the lane telegraph, pulse schedule, crossing window, collision state, and recovery as one timed rule.",
+  "category": "Beams",
+  "readTime": "5 min",
+  "demo": {
+    "title": "Test a pulse beam",
+    "timeline": "Attack timeline",
+    "step": "Attack phases",
+    "phaseNames": ["Map the lane and beats", "Pulse and cross", "Discharge and recover"],
+    "phaseDescriptions": [
+      "Kern reveals one diagonal lane, three timing marks, the beam width, and the first active beat before collision begins.",
+      "The same lane fires three times. Tavi waits through the first pulse, crosses during the announced pause, and is clear before the second pulse.",
+      "Kern discharges the source, removes beam collision with the fading signal, and holds recovery."
+    ],
+    "boss": "Boss",
+    "player": "Player",
+    "danger": "Only a visibly active pulse has collision",
+    "locked": "Lane, width, pulse count, cadence, and phase are locked",
+    "safe": "The inactive beat clears the player’s full crossing route",
+    "reducedMotion": "Autoplay is disabled by the reduced-motion setting. Use the timeline slider to inspect each pulse and pause.",
+    "diagramDescription": "A looping diagram of a boss telegraphing one diagonal beam lane and three beats. The lane fires, switches off while the player crosses it, fires twice more, then fades during recovery."
+  },
+  "steps": [
+    {
+      "title": "Can the lane and rhythm be read before the first pulse?",
+      "body": "Show both endpoints, the complete width, pulse count, on time, off time, and first activation together. Use a countdown, repeated flashes, or audio beats that share the same phase as collision."
+    },
+    {
+      "title": "Does the beam truly switch off between pulses?",
+      "body": "Drive light, sound, damage, and collision from one pulse schedule. A dim or absent beam must not retain a hidden damaging segment, and each new pulse must occupy the lane that was announced."
+    },
+    {
+      "title": "Can the intended response finish inside a pause?",
+      "body": "Measure the player’s full body across the complete lane, including acceleration and input latency. Leave enough inactive time to cross, block, or reposition without requiring an unstated dash or invulnerability window."
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "The rhythm starts before it can be learned",
+      "body": "An immediate first pulse turns cadence into a reaction check. Preview at least one complete beat or provide a distinct start cue before collision activates."
+    },
+    {
+      "title": "The visual pause is still dangerous",
+      "body": "Lingering collision during a dark beat breaks the mechanic’s central promise. End damage on the same frame the active beam disappears, apart from any separately signalled aftereffect."
+    },
+    {
+      "title": "Every pulse silently changes the lane",
+      "body": "Retargeting between beats converts a rhythm problem into repeated aim tracking. Lock the lane for the sequence or telegraph each changed lane as a new commitment."
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "Store one pulse schedule",
+      "body": "Represent lane endpoints, width, start time, pulse count, on duration, off duration, and recovery once. Derive animation, audio, collision, and UI timing from that shared state."
+    },
+    {
+      "title": "Test cadence at gameplay speed",
+      "body": "A readable still frame does not prove the rhythm works. Record earliest and latest safe crossing times, then test them at target frame rate, camera distance, and input latency."
+    },
+    {
+      "title": "Preserve phase across feedback channels",
+      "body": "Light peaks, sound accents, controller feedback, and damage should identify the same active beat. Offset feedback creates false early or late openings even when each channel looks polished alone."
+    },
+    {
+      "title": "Escalate one timing variable at a time",
+      "body": "Later variants can add a pulse, shorten pauses, or alternate two lanes. Keep the learned cadence or clearly introduce a new one instead of changing count, phase, and geometry simultaneously."
+    }
+  ],
+  "story": {
+    "title": "What the mechanic communicates",
+    "body": "The repeated discharge makes Kern feel like a runic machine that stores and releases energy in deliberate cycles. Tavi reads that machine-like cadence and turns a dangerous line into a timed crossing."
+  },
+  "adaptation": {
+    "title": "Adapt it to the player verbs",
+    "body": "Basic movement needs a pause long enough to cross the beam width. A dash can support shorter gaps, while block, reflect, or phase abilities may answer an active pulse; state whether those verbs stop one beat or the whole sequence."
+  },
+  "distinction": {
+    "title": "Keep the mechanic distinct",
+    "body": "A pulse beam alternates active and inactive states on one committed lane. A straight beam is one continuous emission, a scanning beam moves its lane across the arena, and rotating beams continuously change angle. Preserve the fixed lane and readable cadence."
+  },
+  "lensNotes": [
+    {
+      "id": "telegraphing",
+      "body": "The full lane, width, pulse count, cadence, and first active beat appear before collision."
+    },
+    {
+      "id": "commitment",
+      "body": "The lane and pulse schedule lock for the complete sequence instead of retargeting between beats."
+    },
+    {
+      "id": "threat-geometry",
+      "body": "Safety derives from distance to the fixed segment plus beam width and the player’s full body, but only during active beats."
+    },
+    {
+      "id": "counterplay",
+      "body": "Each inactive beat preserves enough time for at least one supported crossing or defensive response."
+    },
+    {
+      "id": "difficulty-rhythm",
+      "body": "Pulse count, on time, off time, and phase create the difficulty curve without hiding the underlying rhythm."
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "Terraria: Calamity Mod",
+      "boss": "Ares",
+      "screenshot": "https://i.ytimg.com/vi/kcZ1Con5__k/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=kcZ1Con5__k&t=50s",
+      "body": "Ares can fire successive Red Exo Pulse Lasers along pre-telegraphed lines. The short burst shows how repeated activation can preserve a lane commitment while changing the timing pressure through pulse count.",
+      "video": "https://www.youtube.com/watch?v=kcZ1Con5__k&t=50s",
+      "videoDurationSeconds": 63
+    },
+    {
+      "dimension": "2D",
+      "game": "Hollow Knight",
+      "boss": "Crystal Guardian",
+      "screenshot": "https://i.ytimg.com/vi/ZU03wr272AA/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=ZU03wr272AA&t=11s",
+      "body": "Crystal Guardian marks a line with thin light before the damaging beam appears briefly. The contrast between the persistent aim cue and the short active window demonstrates why visual state and collision timing must agree.",
+      "video": "https://www.youtube.com/watch?v=ZU03wr272AA&t=11s",
+      "videoDurationSeconds": 31
+    },
+    {
+      "dimension": "3D",
+      "game": "Metroid Prime 3: Corruption",
+      "boss": "Meta Ridley",
+      "screenshot": "https://i.ytimg.com/vi/DkOIqOWGBwM/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=DkOIqOWGBwM&t=45s",
+      "body": "Meta Ridley sends a pulsing laser up the falling shaft while Samus steers around it. The first-person view shows why a 3D pulse needs a stable spatial reference and strong active-state contrast during camera and player motion.",
+      "video": "https://www.youtube.com/watch?v=DkOIqOWGBwM&t=45s",
+      "videoDurationSeconds": 195
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

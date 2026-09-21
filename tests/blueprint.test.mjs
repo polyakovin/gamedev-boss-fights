@@ -13,8 +13,8 @@ import {
   renderBlueprintThumbnail,
 } from '../lib/blueprint-view.mjs';
 
-test('all 30 promoted lesson animations have distinct rule modes and complete moving frames', () => {
-  assert.equal(BLUEPRINT_MECHANIC_IDS.length, 30);
+test('all 31 promoted lesson animations have distinct rule modes and complete moving frames', () => {
+  assert.equal(BLUEPRINT_MECHANIC_IDS.length, 31);
   const modes = new Set();
   for (const id of BLUEPRINT_MECHANIC_IDS) {
     for (let time = 0; time <= BLUEPRINT_DURATION; time += 0.1) {
@@ -35,7 +35,7 @@ test('all 30 promoted lesson animations have distinct rule modes and complete mo
           assert.ok(Number.isFinite(value), `${id} has an invalid ${primitive.type}`);
     }
   }
-  assert.equal(modes.size, 30);
+  assert.equal(modes.size, 31);
 });
 
 test('every blueprint exposes signal, committed action, and recovery without player teleports', () => {
@@ -65,6 +65,7 @@ test('every promoted animation derives safety from its own active geometry', () 
     'splitting-projectile': null,
     'returning-projectile': null,
     'orbiting-projectiles': null,
+    'pulse-beam': null,
     'wide-swing': { x: 280, y: 515 },
     lunge: { x: 300, y: 440 },
     grab: { x: 390, y: 485 },
@@ -114,6 +115,9 @@ test('every promoted animation derives safety from its own active geometry', () 
     } else if (!point && id === 'orbiting-projectiles') {
       const projectile = frame.primitives[2];
       point = { x: projectile.x, y: projectile.y };
+    } else if (!point && id === 'pulse-beam') {
+      const beam = frame.primitives[1];
+      point = { x: (beam.x1 + beam.x2) / 2, y: (beam.y1 + beam.y2) / 2 };
     } else if (!point && ['scanning-beam', 'rotating-beams'].includes(id)) {
       const beam = frame.primitives.find(
         (primitive) => primitive.type === 'line' && primitive.tone === 'signal',
@@ -341,6 +345,32 @@ test('orbiting projectiles preserve radius, spacing, and a moving gap through co
     false,
   );
   assert.equal(active.playerSafe, true);
+});
+
+test('pulse beam keeps one lane, synchronizes collision, and crosses only during a pause', () => {
+  const signal = blueprintFrame('pulse-beam', 1.59);
+  const firstPulse = blueprintFrame('pulse-beam', 2);
+  const pause = blueprintFrame('pulse-beam', 2.45);
+  const secondPulse = blueprintFrame('pulse-beam', 3);
+  const thirdPulse = blueprintFrame('pulse-beam', 3.85);
+
+  assert.deepEqual(signal.player, blueprintFrame('pulse-beam', 0).player);
+  for (const frame of [signal, firstPulse, pause, secondPulse, thirdPulse]) {
+    assert.equal(frame.primitives[0].x1, 150);
+    assert.equal(frame.primitives[0].y1, 340);
+    assert.equal(frame.primitives[0].x2, 500);
+    assert.equal(frame.primitives[0].y2, 700);
+  }
+  assert.equal(firstPulse.dangerActive, true);
+  assert.equal(firstPulse.primitives[1].opacity, 1);
+  assert.equal(pause.dangerActive, false);
+  assert.equal(pause.primitives[1].opacity, 0);
+  assert.notDeepEqual(pause.player, signal.player);
+  assert.equal(secondPulse.dangerActive, true);
+  assert.equal(secondPulse.primitives[1].opacity, 1);
+  assert.equal(thirdPulse.dangerActive, true);
+  assert.equal(blueprintPointSafe('pulse-beam', 3, { x: 325, y: 520 }), false);
+  assert.equal(secondPulse.playerSafe, true);
 });
 
 test('blueprint pages and previews reuse Tavi and Kern with accessible localized data', () => {
