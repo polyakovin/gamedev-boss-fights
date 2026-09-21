@@ -6,7 +6,11 @@ import {
   createBossSketch,
   normalizeBossDraft,
 } from './boss-builder-model.mjs';
-import { mechanicRelationship, rankCompatibleMechanics } from './mechanic-relations.mjs';
+import {
+  buildRandomMechanicSet,
+  mechanicRelationship,
+  rankCompatibleMechanics,
+} from './mechanic-relations.mjs';
 
 const builder = document.querySelector('[data-boss-builder]');
 
@@ -26,6 +30,7 @@ if (builder) {
   const phases = builder.querySelector('[data-boss-phases]');
   const selected = builder.querySelector('[data-boss-selected]');
   const status = builder.querySelector('[data-boss-status]');
+  const randomBoss = builder.querySelector('[data-boss-random]');
   const download = builder.querySelector('[data-boss-download]');
   const reset = builder.querySelector('[data-boss-reset]');
   const addPhase = builder.querySelector('[data-boss-add-phase]');
@@ -430,6 +435,37 @@ if (builder) {
     });
     storeDraft();
     renderDraft();
+  });
+
+  randomBoss.addEventListener('click', () => {
+    const randomMechanics = buildRandomMechanicSet(config.mechanics, { count: 5 });
+    const randomNames = config.messages.randomNames;
+    const randomName = randomNames[Math.floor(Math.random() * randomNames.length)];
+    const secondPhaseStart = Math.ceil(randomMechanics.length / 2);
+    draft = normalizeBossDraft(
+      {
+        name: randomName,
+        description: draft.description,
+        phases: [
+          { id: 'phase-1', name: '', goal: '' },
+          { id: 'phase-2', name: '', goal: '' },
+        ],
+        assignments: randomMechanics.map((mechanic, index) => ({
+          mechanicId: mechanic.id,
+          phaseId: index < secondPhaseStart ? 'phase-1' : 'phase-2',
+          combo: index === 0 ? 'solo' : 'a',
+        })),
+      },
+      mechanicIds,
+    );
+    activePhaseId = draft.phases[0].id;
+    name.value = draft.name;
+    mechanicSearch.value = '';
+    for (const input of filterInputs) input.value = '';
+    storeDraft();
+    renderDraft();
+    applyFilters();
+    status.textContent = config.messages.randomized;
   });
 
   reset.addEventListener('click', () => {

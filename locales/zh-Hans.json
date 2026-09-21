@@ -145,7 +145,23 @@
     "conflictsTitle": "潜在冲突",
     "suggestionsTitle": "推荐下一项",
     "none": "暂无内容",
-    "addSuggestion": "添加"
+    "addSuggestion": "添加",
+    "randomBoss": "随机首领",
+    "randomized": "已生成一个随机首领。",
+    "randomNames": [
+      "灰烬守望者",
+      "符文巨像",
+      "琉璃神谕者",
+      "空壳摄政王",
+      "风暴牧者",
+      "钢铁朝圣者",
+      "余烬哨兵",
+      "月缚守护者",
+      "翠林暴君",
+      "回声君王",
+      "沉默建筑师",
+      "潮汐审判者"
+    ]
   },
   "stepsTitle": "关于机制的三个问题",
   "mistakesTitle": "设计错误",

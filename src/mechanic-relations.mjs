@@ -317,3 +317,44 @@ export function rankCompatibleMechanics(mechanics, selectedIds) {
       (left, right) => right.score - left.score || left.mechanic.number - right.mechanic.number,
     );
 }
+
+const pickIndex = (length, random) => {
+  const sample = Number(random());
+  const normalized = Number.isFinite(sample) ? Math.min(Math.max(sample, 0), 0.999999999999) : 0;
+  return Math.floor(normalized * length);
+};
+
+export function buildRandomMechanicSet(mechanics, { count = 5, random = Math.random } = {}) {
+  const targetCount = Math.min(
+    mechanics.length,
+    Math.max(0, Number.isFinite(count) ? Math.trunc(count) : 0),
+  );
+  if (!targetCount) return [];
+
+  const remaining = [...mechanics];
+  const selected = [remaining.splice(pickIndex(remaining.length, random), 1)[0]];
+
+  while (selected.length < targetCount && remaining.length) {
+    const candidates = remaining
+      .map((mechanic, index) => {
+        const relations = selected.map((item) => mechanicRelationship(item, mechanic));
+        const knownGeometry = new Set(selected.flatMap((item) => item.profile.geometry));
+        const knownResponses = new Set(selected.flatMap((item) => item.profile.response));
+        const score =
+          relations.filter((relation) => relation === 'compatible').length * 10 +
+          Number(!selected.some((item) => item.categoryKey === mechanic.categoryKey)) * 2 +
+          Number(mechanic.profile.geometry.some((value) => !knownGeometry.has(value))) +
+          Number(mechanic.profile.response.some((value) => !knownResponses.has(value)));
+        return { mechanic, index, score, conflict: relations.includes('conflict') };
+      })
+      .filter(({ conflict }) => !conflict);
+    if (!candidates.length) break;
+    const bestScore = Math.max(...candidates.map(({ score }) => score));
+    const best = candidates.filter(({ score }) => score === bestScore);
+    const chosen = best[pickIndex(best.length, random)];
+    selected.push(chosen.mechanic);
+    remaining.splice(chosen.index, 1);
+  }
+
+  return selected;
+}

@@ -509,7 +509,10 @@
         "conflictsTitle",
         "suggestionsTitle",
         "none",
-        "addSuggestion"
+        "addSuggestion",
+        "randomBoss",
+        "randomized",
+        "randomNames"
       ],
       "properties": {
         "explorerTitle": { "$ref": "#/definitions/nonEmptyString" },
@@ -566,7 +569,15 @@
         "conflictsTitle": { "$ref": "#/definitions/nonEmptyString" },
         "suggestionsTitle": { "$ref": "#/definitions/nonEmptyString" },
         "none": { "$ref": "#/definitions/nonEmptyString" },
-        "addSuggestion": { "$ref": "#/definitions/nonEmptyString" }
+        "addSuggestion": { "$ref": "#/definitions/nonEmptyString" },
+        "randomBoss": { "$ref": "#/definitions/nonEmptyString" },
+        "randomized": { "$ref": "#/definitions/nonEmptyString" },
+        "randomNames": {
+          "type": "array",
+          "minItems": 8,
+          "uniqueItems": true,
+          "items": { "$ref": "#/definitions/nonEmptyString" }
+        }
       }
     },
     "stepsTitle": {

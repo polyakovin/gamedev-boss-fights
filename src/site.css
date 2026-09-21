@@ -2059,6 +2059,15 @@ section[id] {
   width: 15px;
   height: 15px;
 }
+.boss-builder-random {
+  flex: 1 0 100%;
+  border-color: color-mix(in srgb, var(--accent) 45%, var(--line)) !important;
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+.boss-builder-random:hover {
+  border-color: var(--accent) !important;
+}
 .boss-builder-download {
   flex: 1 1 135px;
   border-color: var(--accent) !important;

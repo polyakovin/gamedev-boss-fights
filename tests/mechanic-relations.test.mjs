@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import { loadContent } from '../lib/content.mjs';
 import {
   MECHANIC_TAXONOMY,
+  buildRandomMechanicSet,
   createMechanicProfile,
   mechanicRelationship,
   rankCompatibleMechanics,
@@ -54,4 +55,25 @@ test('curated relationships identify useful combinations and response conflicts'
   const suggestions = rankCompatibleMechanics(mechanics, ['attack-lock']);
   assert.ok(suggestions.some(({ mechanic }) => mechanic.id === 'charge'));
   assert.ok(suggestions.every(({ mechanic }) => mechanic.id !== 'attack-lock'));
+});
+
+test('random mechanic sets are varied, unique, and free of known conflicts', () => {
+  const samples = [0.37, 0.12, 0.82, 0.44, 0.63, 0.21];
+  let sample = 0;
+  const selection = buildRandomMechanicSet(mechanics, {
+    count: 5,
+    random: () => samples[sample++ % samples.length],
+  });
+
+  assert.equal(selection.length, 5);
+  assert.equal(new Set(selection.map(({ id }) => id)).size, 5);
+  assert.ok(new Set(selection.map(({ categoryKey }) => categoryKey)).size > 1);
+  for (let left = 0; left < selection.length; left += 1)
+    for (let right = left + 1; right < selection.length; right += 1)
+      assert.notEqual(mechanicRelationship(selection[left], selection[right]), 'conflict');
+});
+
+test('random mechanic set handles empty and invalid sizes', () => {
+  assert.deepEqual(buildRandomMechanicSet([], { count: 5, random: () => 0 }), []);
+  assert.deepEqual(buildRandomMechanicSet(mechanics, { count: -1, random: () => 0 }), []);
 });

@@ -145,7 +145,23 @@
     "conflictsTitle": "Potential conflicts",
     "suggestionsTitle": "Suggested next",
     "none": "Nothing to show yet",
-    "addSuggestion": "Add"
+    "addSuggestion": "Add",
+    "randomBoss": "Random boss",
+    "randomized": "A random boss was generated.",
+    "randomNames": [
+      "The Ashen Warden",
+      "The Rune Colossus",
+      "The Glass Oracle",
+      "The Hollow Regent",
+      "The Storm Shepherd",
+      "The Iron Pilgrim",
+      "The Ember Sentinel",
+      "The Moonbound Keeper",
+      "The Verdant Tyrant",
+      "The Echo Sovereign",
+      "The Silent Architect",
+      "The Tidal Judge"
+    ]
   },
   "stepsTitle": "Three questions for the mechanic",
   "mistakesTitle": "Design mistakes",

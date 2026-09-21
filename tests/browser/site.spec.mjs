@@ -703,6 +703,50 @@ test('boss builder surfaces compatible and conflicting mechanics in the active p
   );
 });
 
+test('boss builder generates a localized random boss with a conflict-free phase plan', async ({
+  page,
+}) => {
+  await page.addInitScript(() => {
+    Math.random = () => 0.25;
+  });
+  await page.goto('en/builder/');
+  await expect(page.locator('[data-boss-random]')).toHaveText('Random boss');
+  await page.locator('[data-boss-description]').fill('Keep this encounter premise.');
+  await page.locator('[data-boss-filter="geometry"]').selectOption('radial');
+  await page.locator('[data-boss-mechanic-search]').fill('Charge');
+  await page.locator('[data-boss-random]').click();
+
+  await expect(page.locator('[data-boss-name]')).toHaveValue('The Hollow Regent');
+  await expect(page.locator('[data-boss-description]')).toHaveValue('Keep this encounter premise.');
+  await expect(page.locator('[data-boss-status]')).toHaveText('A random boss was generated.');
+  await expect(page.locator('[data-boss-selected]')).toHaveText('Selected: 5');
+  await expect(page.locator('.boss-builder-phase')).toHaveCount(2);
+  await expect(page.locator('[data-boss-mechanic-search]')).toHaveValue('');
+  await expect(page.locator('[data-boss-filter="geometry"]')).toHaveValue('');
+  await expect(page.locator('[data-boss-conflicts]')).toHaveText('Nothing to show yet');
+
+  const stored = await page.evaluate(() =>
+    JSON.parse(localStorage.getItem('boss-fight-atlas-boss-builder')),
+  );
+  expect(stored).toMatchObject({
+    version: 2,
+    name: 'The Hollow Regent',
+    description: 'Keep this encounter premise.',
+    phases: [
+      { id: 'phase-1', name: '', goal: '' },
+      { id: 'phase-2', name: '', goal: '' },
+    ],
+  });
+  expect(stored.assignments).toHaveLength(5);
+  expect(new Set(stored.assignments.map(({ mechanicId }) => mechanicId)).size).toBe(5);
+  expect(stored.assignments.filter(({ phaseId }) => phaseId === 'phase-1')).toHaveLength(3);
+  expect(stored.assignments.filter(({ phaseId }) => phaseId === 'phase-2')).toHaveLength(2);
+
+  await page.reload();
+  await expect(page.locator('[data-boss-name]')).toHaveValue('The Hollow Regent');
+  await expect(page.locator('[data-boss-selected]')).toHaveText('Selected: 5');
+});
+
 test('lens chips show explanations and open localized lens pages', async ({ page, request }) => {
   await page.goto('en/mechanics/charge/');
   const chips = page.locator('.lesson-title-line .lens-chip');
@@ -892,7 +936,7 @@ test('the root defaults to English and localized catalogs point to real pages', 
     'https://gamemechanics.org/',
   );
   await expect(relatedCatalog).toContainText(
-    'Boss Fight Atlas has a similar purpose, but focuses specifically on bosses',
+    'is another useful resource: a catalog of video game mechanics with examples from real games',
   );
   await expect(page.locator('.catalog-lenses')).toHaveCount(0);
   await expect(page.locator('.header-nav .lenses-link')).toHaveAttribute(

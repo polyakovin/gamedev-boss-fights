@@ -862,6 +862,9 @@ for (const locale of locales) {
             ></textarea>
           </label>
           <div class="boss-builder-actions">
+            <button type="button" class="boss-builder-random" data-boss-random>
+              ${icon('shuffle')}${e(connectionCopy.randomBoss)}
+            </button>
             <button type="button" class="boss-builder-download" data-boss-download>
               ${icon('download')}${e(t.builderDownload)}
             </button>
