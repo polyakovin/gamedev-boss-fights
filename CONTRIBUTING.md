@@ -40,7 +40,7 @@ Use `npm run format` to apply the pinned Prettier formatting, then inspect your 
 
 Commit only your source changes, push your branch to your fork, and open a PR against `polyakovin/gamedev-boss-fights`. Do not commit `dist/`, `node_modules/`, test reports, secrets, or editor-specific files.
 
-Keep documentation, code, tests, filenames, and metadata in English. Non-English text belongs only in explicit localization files: localized README and research documents, `locales/`, and locale-specific lesson and lens JSON. Do not add byte-for-byte duplicate files; reuse or reference the existing source instead.
+Keep documentation, code, tests, filenames, and metadata in English. Non-English text belongs only in JSON localization files under `locales/`, `content/mechanics-index-locales/`, and locale-specific lesson and lens paths. Do not add translated copies of repository documentation or byte-for-byte duplicate files; reuse or reference the English source instead.
 
 ## Choose the right scope
 

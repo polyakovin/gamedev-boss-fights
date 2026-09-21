@@ -16,7 +16,7 @@ A draft PR can contain just the proposed explanation and open questions. It does
 
 All 124 indexed mechanics are available in the localized boss builder. Complete lessons reuse their localized title and summary plus their registered thumbnail; WIP mechanics use the compact English or Russian index copy and a neutral placeholder. The index ID is the stable builder and export ID and must match the lesson folder when the outline becomes a full lesson.
 
-`content/mechanics-index.json` is generated from `docs/research/boss-mechanics-audit-ru.md` with `node scripts/sync-mechanics-index.mjs`. It intentionally contains only an ID, order, category, title, and short summary in English and Russian. Update the audit and regeneration script together instead of hand-editing generated entries.
+`content/mechanics-index.json` is generated from `docs/research/boss-mechanics-audit.md` with `npm run sync:mechanics-index`. It intentionally contains only an ID, order, category, title, and short summary in English and Russian. The generator derives English entries from the audit and preserves localized entries already stored in the index. Update the audit and regeneration script together instead of hand-editing English entries.
 
 ## Write the lesson
 

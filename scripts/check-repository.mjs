@@ -1,6 +1,6 @@
 import { createHash } from 'node:crypto';
 import { execFileSync } from 'node:child_process';
-import { readFileSync, statSync } from 'node:fs';
+import { existsSync, readFileSync, statSync } from 'node:fs';
 import path from 'node:path';
 
 const root = execFileSync('git', ['rev-parse', '--show-toplevel'], {
@@ -17,8 +17,6 @@ const files = execFileSync(
   .sort();
 
 const localizedPathPatterns = [
-  /^README\.(?:ar|bn|es|hi|ja|ru|zh-Hans)\.md$/,
-  /^docs\/.+-(?:ar|bn|es|hi|ja|ru|zh-Hans)\.md$/,
   /^locales\/(?:ar|bn|en|es|hi|ja|registry|ru|zh-Hans)\.json$/,
   /^content\/(?:lenses|mechanics)\/[^/]+\/(?:ar|bn|es|hi|ja|ru|zh-Hans)\.json$/,
   /^content\/mechanics-index\.json$/,
@@ -46,6 +44,7 @@ const nonEnglishFilenames = [];
 
 for (const file of files) {
   const absolutePath = path.join(root, file);
+  if (!existsSync(absolutePath)) continue;
   if (!statSync(absolutePath).isFile()) continue;
   if (nonLatinLetterPattern.test(file)) nonEnglishFilenames.push(file);
 

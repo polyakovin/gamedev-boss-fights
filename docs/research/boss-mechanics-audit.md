@@ -2,8 +2,6 @@
 
 Last reviewed: September 20, 2026.
 
-[Russian version](boss-mechanics-audit-ru.md)
-
 ## What “complete” means here
 
 This is a normalized vocabulary of mechanics found in a selected corpus of games. It does not list every named attack. Similar moves are reduced to reusable rules a designer can apply. Malenia's Waterfowl Dance, for example, does not require a separate term because it can already be described as an attack combination with target tracking, sweeping strikes, and short recovery windows.

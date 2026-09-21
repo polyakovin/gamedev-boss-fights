@@ -6,7 +6,7 @@
   "required": ["version", "source", "mechanics"],
   "properties": {
     "version": { "const": 1 },
-    "source": { "const": "docs/research/boss-mechanics-audit-ru.md" },
+    "source": { "const": "docs/research/boss-mechanics-audit.md" },
     "mechanics": {
       "type": "array",
       "minItems": 124,

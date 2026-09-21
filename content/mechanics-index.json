@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "source": "docs/research/boss-mechanics-audit-ru.md",
+  "source": "docs/research/boss-mechanics-audit.md",
   "mechanics": [
     {
       "id": "wide-swing",

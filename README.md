@@ -2,7 +2,7 @@
 
 **Interactive pattern library for boss encounter designers.** Each lesson explains how to shape, communicate, tune, and test one part of a boss encounter.
 
-[Explore the atlas](https://polyakovin.github.io/gamedev-boss-fights/) · [Build a boss sketch](https://polyakovin.github.io/gamedev-boss-fights/en/builder/) · [Read in Russian](README.ru.md) · [Contribute](CONTRIBUTING.md)
+[Explore the atlas](https://polyakovin.github.io/gamedev-boss-fights/) · [Build a boss sketch](https://polyakovin.github.io/gamedev-boss-fights/en/builder/) · [Contribute](CONTRIBUTING.md)
 
 The atlas indexes all **124 mechanics** from the research audit. Five are complete lessons—**Charge**, **Arc sweep**, **Ground slam**, **Summon**, and **Gap volley**—with interactive diagrams, implementation checklists, design lenses, sources, and boss references. The other 119 have lightweight public pages marked **WIP** while their detailed material is developed. The **Boss builder** can combine any of the 124 mechanics and download the resulting sketch as JSON; its draft stays in your browser.
 
@@ -47,7 +47,7 @@ Use `npm run format` to apply the pinned Prettier formatting, or `npm run format
 
 This is a static Node generator with plain HTML, CSS, browser JavaScript modules, and original SVG illustrations. It has no frontend framework or application server in production. GitHub Pages serves the generated files.
 
-Repository documentation, code, tests, and metadata use English. Translated text belongs in localized README and research files, `locales/`, and locale-specific lesson and lens JSON. The repository check rejects non-English source text outside those locations and exact duplicate files.
+Repository documentation, code, tests, and metadata use English. Translated text belongs in `locales/`, `content/mechanics-index-locales/`, and locale-specific lesson and lens JSON. The repository check rejects non-English text outside those locations and exact duplicate files.
 
 | Location                               | Purpose                                                            |
 | -------------------------------------- | ------------------------------------------------------------------ |

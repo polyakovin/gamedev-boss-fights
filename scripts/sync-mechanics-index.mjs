@@ -2,8 +2,7 @@ import fs from 'node:fs/promises';
 import path from 'node:path';
 
 const ROOT = path.resolve(import.meta.dirname, '..');
-const AUDIT = path.join(ROOT, 'docs/research/boss-mechanics-audit-ru.md');
-const RUSSIAN_STRINGS = path.join(ROOT, 'content/mechanics-index-locales/ru.json');
+const AUDIT = path.join(ROOT, 'docs/research/boss-mechanics-audit.md');
 const OUTPUT = path.join(ROOT, 'content/mechanics-index.json');
 
 const categoryEnglishTitles = [
@@ -181,16 +180,16 @@ const parseOriginal = (source) => {
   return entries;
 };
 
-const parseAdditions = (source, strings) => {
+const parseAdditions = (source) => {
   const entries = [];
   let inAdditions = false;
   let category = '';
   for (const line of source.split(/\r?\n/)) {
-    if (line === strings.additionsHeading) {
+    if (line === '## Added mechanics: 58 terms') {
       inAdditions = true;
       continue;
     }
-    if (line.startsWith(strings.stopHeading)) break;
+    if (line.startsWith('## Candidates that did not become new mechanics')) break;
     if (!inAdditions) continue;
     if (entries.length === 58) break;
     if (line.startsWith('### ')) {
@@ -205,67 +204,69 @@ const parseAdditions = (source, strings) => {
   return entries;
 };
 
-const [russianSource, russianStringsSource] = await Promise.all([
+const [auditSource, existingIndexSource] = await Promise.all([
   fs.readFile(AUDIT, 'utf8'),
-  fs.readFile(RUSSIAN_STRINGS, 'utf8'),
+  fs.readFile(OUTPUT, 'utf8'),
 ]);
-const russianStrings = JSON.parse(russianStringsSource);
-const originalRu = parseOriginal(russianSource);
-const additionsRu = parseAdditions(russianSource, russianStrings);
+const existingIndex = JSON.parse(existingIndexSource);
+const russianById = new Map(
+  existingIndex.mechanics.map((mechanic) => [mechanic.id, mechanic.translations.ru]),
+);
+const original = parseOriginal(auditSource);
+const additions = parseAdditions(auditSource);
 
-if (originalRu.length !== 66 || originalEnglishTitles.length !== 66) {
-  throw new Error(`Expected 66 original mechanics; found ${originalRu.length}.`);
+if (original.length !== 66 || originalEnglishTitles.length !== 66) {
+  throw new Error(`Expected 66 original mechanics; found ${original.length}.`);
 }
-if (additionsRu.length !== 58 || newIds.length !== 58) {
-  throw new Error(`Expected 58 additional mechanics; found ${additionsRu.length}.`);
+if (additions.length !== 58 || newIds.length !== 58) {
+  throw new Error(`Expected 58 additional mechanics; found ${additions.length}.`);
 }
-const categoryNamesRu = [
-  ...new Set([...originalRu, ...additionsRu].map(({ category }) => category)),
+const sourceCategoryNames = [
+  ...new Set([...original, ...additions].map(({ category }) => category)),
 ];
-if (categoryNamesRu.length !== categoryEnglishTitles.length) {
-  throw new Error(`Expected 14 mechanic categories; found ${categoryNamesRu.length}.`);
+if (sourceCategoryNames.length !== categoryEnglishTitles.length) {
+  throw new Error(`Expected 14 mechanic categories; found ${sourceCategoryNames.length}.`);
 }
 const categoryEnglish = new Map(
-  categoryNamesRu.map((category, index) => [category, categoryEnglishTitles[index]]),
+  sourceCategoryNames.map((category, index) => [category, categoryEnglishTitles[index]]),
 );
+
+const localizedRussian = (id) => {
+  const translation = russianById.get(id);
+  if (!translation) throw new Error(`Missing Russian index translation for ${id}.`);
+  return translation;
+};
 
 const mechanics = [
   ...originalEnglishTitles.map((titleEn, index) => {
-    const russianEntry = originalRu[index];
-    const titleRu = russianEntry.title[0].toUpperCase() + russianEntry.title.slice(1);
+    const sourceEntry = original[index];
+    const id = publishedIdOverrides.get(titleEn) ?? slugify(titleEn);
     return {
-      id: publishedIdOverrides.get(titleEn) ?? slugify(titleEn),
+      id,
       number: index + 1,
       translations: {
         en: {
           title: titleEn,
-          category: categoryEnglish.get(russianEntry.category),
+          category: categoryEnglish.get(sourceEntry.category),
           summary: genericSummary(titleEn),
         },
-        ru: {
-          title: titleRu,
-          category: russianEntry.category,
-          summary: russianStrings.draftSummary.replace('{title}', russianEntry.title),
-        },
+        ru: localizedRussian(id),
       },
     };
   }),
-  ...additionsRu.map((russianEntry, index) => {
-    const compactTitleEn = russianEntry.alternateTitle.split(' / ')[0].trim();
+  ...additions.map((sourceEntry, index) => {
+    const compactTitleEn = sourceEntry.title.split(' / ')[0].trim();
+    const id = newIds[index];
     return {
-      id: newIds[index],
-      number: originalRu.length + index + 1,
+      id,
+      number: original.length + index + 1,
       translations: {
         en: {
           title: compactTitleEn,
-          category: categoryEnglish.get(russianEntry.category),
+          category: categoryEnglish.get(sourceEntry.category),
           summary: genericSummary(compactTitleEn),
         },
-        ru: {
-          title: russianEntry.title,
-          category: russianEntry.category,
-          summary: russianEntry.summary,
-        },
+        ru: localizedRussian(id),
       },
     };
   }),
@@ -281,7 +282,7 @@ await fs.writeFile(
   `${JSON.stringify(
     {
       version: 1,
-      source: 'docs/research/boss-mechanics-audit-ru.md',
+      source: 'docs/research/boss-mechanics-audit.md',
       mechanics,
     },
     null,
