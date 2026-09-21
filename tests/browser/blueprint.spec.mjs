@@ -33,9 +33,9 @@ test('blueprints autoplay only when motion is allowed', async ({ page }) => {
     .toBeGreaterThan(150);
 });
 
-test('catalog and builder reuse the 26 promoted rule-specific previews', async ({ page }) => {
+test('catalog and builder reuse the 27 promoted rule-specific previews', async ({ page }) => {
   await page.goto('en/');
-  await expect(page.locator('[data-blueprint-preview]')).toHaveCount(26);
+  await expect(page.locator('[data-blueprint-preview]')).toHaveCount(27);
   const catalogLayouts = await page.locator('[data-blueprint-preview]').evaluateAll((previews) =>
     previews.map((preview) => {
       const boss = preview.querySelector('[data-character-art-preview="kern"]');
@@ -59,7 +59,7 @@ test('catalog and builder reuse the 26 promoted rule-specific previews', async (
   expect(new Set(catalogLayouts.map(({ layout }) => layout)).size).toBeGreaterThanOrEqual(18);
 
   await page.goto('en/builder/');
-  await expect(page.locator('[data-blueprint-preview]')).toHaveCount(26);
+  await expect(page.locator('[data-blueprint-preview]')).toHaveCount(27);
   const builderLayouts = await page.locator('[data-blueprint-preview]').evaluateAll((previews) =>
     previews.map((preview) => {
       const boss = preview.querySelector('[data-character-art-preview="kern"]');

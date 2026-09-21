@@ -1,0 +1,142 @@
+{
+  "title": "Crossfire",
+  "subtitle": "Announce two opposing sources, lock their intersection, and preserve a route that clears both shots.",
+  "variant": "Synchronized two-source crossfire",
+  "summary": "Two independent sources fire through the arena so their projectile paths intersect.",
+  "overview": "Crossfire combines two projectile lines whose timing and geometry matter together. It works when both origins and the shared intersection are visible before release, neither line retargets after commitment, the player can clear both complete projectile bodies, and the recovery confirms that the intersection has passed.",
+  "learning": "Design the two sources, synchronized release, crossing point, response route, and recovery as one compound spatial rule.",
+  "category": "Projectiles",
+  "readTime": "5 min",
+  "demo": {
+    "title": "Test the crossfire",
+    "timeline": "Attack timeline",
+    "step": "Attack phases",
+    "phaseNames": ["Expose both sources", "Cross and escape", "Clear and recover"],
+    "phaseDescriptions": [
+      "Kern activates two opposite emitters and previews both complete lines before either projectile is released.",
+      "Both projectiles travel on their locked lines and cross at the announced point while Tavi leaves the overlap diagonally.",
+      "Both shots pass the crossing point and leave the arena before Kern selects another attack."
+    ],
+    "boss": "Boss",
+    "player": "Player",
+    "danger": "Both projectiles are active",
+    "locked": "Both trajectories are locked",
+    "safe": "The route clears both shots",
+    "reducedMotion": "Autoplay is disabled by the reduced-motion setting. Use the timeline slider to inspect the crossfire.",
+    "diagramDescription": "A looping diagram of crossfire. Two opposing emitters preview intersecting lines, release one projectile each, and recover after the player moves fully away from both collision volumes."
+  },
+  "steps": [
+    {
+      "title": "Are both sources visible before release?",
+      "body": "Expose the two origins together and distinguish them from decoration. Show complete guide lines or a shared marker early enough that the player can understand one compound attack rather than discovering the second shot late."
+    },
+    {
+      "title": "Does the response clear both projectile bodies?",
+      "body": "Test the route against both projectile radii plus the full player radius. A point that leaves one line can enter the other, so sample the complete path through the overlap instead of checking only the destination."
+    },
+    {
+      "title": "Does the intersection pass before the next decision?",
+      "body": "Keep both trajectories fixed until the shots cross and exit. Recovery should begin only after the moving overlap no longer constrains the player, leaving the successful route observable and reusable."
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "The second source appears after the response begins",
+      "body": "A late reveal converts spatial planning into an ambush. If sources enter at different times, announce their order and timing as an explicit sequence rather than calling it simultaneous crossfire."
+    },
+    {
+      "title": "Each line is fair alone but their overlap has no route",
+      "body": "Independent clearance tests miss the combined geometry. Verify the whole player path across time, including close crossings where the two projectile radii nearly merge."
+    },
+    {
+      "title": "One source retargets after commitment",
+      "body": "Late steering moves the intersection and invalidates both previews. If one projectile tracks, separate that behavior and communicate its cutoff before combining the rules."
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "Use one crossing plan",
+      "body": "Store both source points, both locked directions, speed, radius, and release time in a single plan. Render guides, projectiles, safety checks, and the preview from that plan so the crossing cannot drift."
+    },
+    {
+      "title": "Tune synchrony against travel distance",
+      "body": "Different source distances require different speeds or release offsets to meet at the intended point. Test actual arrival times rather than assuming simultaneous launch creates simultaneous crossing."
+    },
+    {
+      "title": "Protect the diagonal escape",
+      "body": "Crossfire often removes the obvious horizontal and vertical choices. Measure the remaining diagonal path against arena edges, camera projection, and the player’s slowest supported movement."
+    },
+    {
+      "title": "Escalate with sequence, not hidden density",
+      "body": "Later variants can move the crossing point or alternate source pairs. Keep each pair readable and preserve a gap between crossings before adding another layer."
+    }
+  ],
+  "story": {
+    "title": "What the mechanic communicates",
+    "body": "Crossfire makes Kern feel as though the arena itself is coordinated against Tavi. The threat comes from the relationship between sources, so the encounter can express control and planning without filling every space with projectiles."
+  },
+  "adaptation": {
+    "title": "Adapt it to the player verbs",
+    "body": "For ordinary movement, preserve a diagonal route wide enough for the complete body. If the player can block, reflect, or destroy a projectile, decide whether neutralizing one source intentionally opens the other route and communicate that consequence."
+  },
+  "distinction": {
+    "title": "Keep the mechanic distinct",
+    "body": "Crossfire requires at least two spatially distinct sources whose paths intersect. A fan spreads lines from one origin, a volley repeats shots over time, and converging threats may use non-projectile geometry. Preserve the two-source relationship."
+  },
+  "lensNotes": [
+    {
+      "id": "telegraphing",
+      "body": "Both origins and their complete crossing lines appear before either projectile launches."
+    },
+    {
+      "id": "commitment",
+      "body": "After release, neither source retargets and the announced intersection remains fixed."
+    },
+    {
+      "id": "threat-geometry",
+      "body": "The safe route must clear both moving projectile radii with the complete player body."
+    },
+    {
+      "id": "counterplay",
+      "body": "A diagonal move clears the overlap; supported reflection or destruction can explicitly remove one branch."
+    },
+    {
+      "id": "context-and-sequence",
+      "body": "Source placement, arena edges, and the attacks before and after crossfire determine whether its remaining route stays usable."
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "Hollow Knight",
+      "boss": "Mantis Lords",
+      "screenshot": "https://i.ytimg.com/vi/VG3h6uVtWyY/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=VG3h6uVtWyY&t=65s",
+      "body": "The paired Mantis Lords can occupy opposite sides and send visible attacks through the same side-view space. Their symmetry makes source identity and the remaining central route easy to compare.",
+      "video": "https://www.youtube.com/watch?v=VG3h6uVtWyY&t=65s",
+      "videoDurationSeconds": 148
+    },
+    {
+      "dimension": "2D",
+      "game": "Cuphead",
+      "boss": "Wally Warbles",
+      "screenshot": "https://i.ytimg.com/vi/Ol3-4Y0eS9M/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=Ol3-4Y0eS9M&t=58s",
+      "body": "Wally’s encounter layers threats from the boss and arena-side sources. The example shows why each origin needs a distinct cue when projectile lines share a compact scrolling space.",
+      "video": "https://www.youtube.com/watch?v=Ol3-4Y0eS9M&t=58s",
+      "videoDurationSeconds": 199
+    },
+    {
+      "dimension": "3D",
+      "game": "Returnal",
+      "boss": "Nemesis",
+      "screenshot": "https://i.ytimg.com/vi/J8BTbUNDknI/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=J8BTbUNDknI&t=100s",
+      "body": "Nemesis coordinates the central boss with distant side entities, creating intersecting fire across depth. Strong color and long sightlines keep multiple origins legible through a moving 3D camera.",
+      "video": "https://www.youtube.com/watch?v=J8BTbUNDknI&t=100s",
+      "videoDurationSeconds": 370
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

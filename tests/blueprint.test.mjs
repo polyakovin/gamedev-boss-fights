@@ -13,8 +13,8 @@ import {
   renderBlueprintThumbnail,
 } from '../lib/blueprint-view.mjs';
 
-test('all 26 promoted lesson animations have distinct rule modes and complete moving frames', () => {
-  assert.equal(BLUEPRINT_MECHANIC_IDS.length, 26);
+test('all 27 promoted lesson animations have distinct rule modes and complete moving frames', () => {
+  assert.equal(BLUEPRINT_MECHANIC_IDS.length, 27);
   const modes = new Set();
   for (const id of BLUEPRINT_MECHANIC_IDS) {
     for (let time = 0; time <= BLUEPRINT_DURATION; time += 0.1) {
@@ -35,7 +35,7 @@ test('all 26 promoted lesson animations have distinct rule modes and complete mo
           assert.ok(Number.isFinite(value), `${id} has an invalid ${primitive.type}`);
     }
   }
-  assert.equal(modes.size, 26);
+  assert.equal(modes.size, 27);
 });
 
 test('every blueprint exposes signal, committed action, and recovery without player teleports', () => {
@@ -61,6 +61,7 @@ test('every promoted animation derives safety from its own active geometry', () 
   const unsafePoints = {
     'landing-jump': { x: 365, y: 600 },
     'single-shot': null,
+    crossfire: null,
     'wide-swing': { x: 280, y: 515 },
     lunge: { x: 300, y: 440 },
     grab: { x: 390, y: 485 },
@@ -95,6 +96,9 @@ test('every promoted animation derives safety from its own active geometry', () 
       point = { x: projectile.x, y: projectile.y };
     } else if (!point && id === 'single-shot') {
       const projectile = frame.primitives[2];
+      point = { x: projectile.x, y: projectile.y };
+    } else if (!point && id === 'crossfire') {
+      const projectile = frame.primitives[4];
       point = { x: projectile.x, y: projectile.y };
     } else if (!point && ['scanning-beam', 'rotating-beams'].includes(id)) {
       const beam = frame.primitives.find(
@@ -220,6 +224,28 @@ test('single shot locks one straight trajectory and lets the full player body si
     false,
   );
   assert.equal(flight.playerSafe, true);
+});
+
+test('crossfire commits two opposing sources and clears their shared intersection', () => {
+  const signal = blueprintFrame('crossfire', 1.59);
+  const beforeCross = blueprintFrame('crossfire', 2.4);
+  const intersection = blueprintFrame('crossfire', 3);
+  const afterCross = blueprintFrame('crossfire', 3.6);
+
+  assert.deepEqual(signal.player, blueprintFrame('crossfire', 0).player);
+  assert.equal(signal.primitives[2].x2, intersection.primitives[2].x2);
+  assert.equal(signal.primitives[3].x2, intersection.primitives[3].x2);
+  const separation = (frame) => Math.abs(frame.primitives[4].x - frame.primitives[5].x);
+  assert.ok(separation(intersection) < separation(beforeCross));
+  assert.ok(separation(intersection) < separation(afterCross));
+  assert.equal(
+    blueprintPointSafe('crossfire', 3, {
+      x: intersection.primitives[4].x,
+      y: intersection.primitives[4].y,
+    }),
+    false,
+  );
+  assert.equal(intersection.playerSafe, true);
 });
 
 test('blueprint pages and previews reuse Tavi and Kern with accessible localized data', () => {

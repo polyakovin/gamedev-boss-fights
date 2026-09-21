@@ -18,6 +18,20 @@ const SPECS = {
     target: [500, 520],
     shotEnd: [572, 872],
   },
+  crossfire: {
+    mode: 'crossfire',
+    boss: [280, 235],
+    player: [280, 595],
+    target: [445, 735],
+    sources: [
+      [90, 315],
+      [470, 315],
+    ],
+    shotEnds: [
+      [470, 840],
+      [90, 840],
+    ],
+  },
   'wide-swing': { mode: 'arc', boss: [280, 310], player: [410, 470], target: [470, 650] },
   lunge: { mode: 'lunge', boss: [170, 290], player: [390, 590], target: [470, 660] },
   grab: { mode: 'grab', boss: [280, 300], player: [390, 485], target: [470, 610] },
@@ -317,6 +331,40 @@ function primitivesFor(spec, frame) {
       circle(head.x, head.y, 20, phase === 1 ? 1 : 0, 'signal', 6, 0.48),
     ];
   }
+  if (mode === 'crossfire') {
+    const sources = spec.sources.map(point);
+    const ends = spec.shotEnds.map(point);
+    const heads = sources.map((source, index) => ({
+      x: mix(source.x, ends[index].x, action),
+      y: mix(source.y, ends[index].y, action),
+    }));
+    return [
+      ...sources.map((source) =>
+        circle(
+          source.x,
+          source.y,
+          24,
+          phase === 0 ? 0.45 + prepare * 0.4 : phase === 1 ? 0.34 : 0,
+          'accent',
+          5,
+          0.14,
+        ),
+      ),
+      ...sources.map((source, index) =>
+        line(
+          source.x,
+          source.y,
+          ends[index].x,
+          ends[index].y,
+          phase === 0 ? 0.28 + prepare * 0.42 : phase === 1 ? 0.12 * (1 - action) : 0,
+          'accent',
+          7,
+          '12 12',
+        ),
+      ),
+      ...heads.map((head) => circle(head.x, head.y, 19, phase === 1 ? 1 : 0, 'signal', 6, 0.48)),
+    ];
+  }
   if (mode === 'arc')
     return [
       path(arcPath(boss, 205, -1.15, 2.25), preview, 'accent', 20, 0, '12 10'),
@@ -607,6 +655,13 @@ function pointClearsThreat(spec, frame, value, radius = BLUEPRINT_PLAYER_RADIUS)
       0.24
     );
   }
+  if (mode === 'crossfire')
+    return frame.primitives
+      .slice(4)
+      .every(
+        (projectile) =>
+          Math.hypot(value.x - projectile.x, value.y - projectile.y) > projectile.radius + radius,
+      );
   if (mode === 'spiral')
     return (
       distanceFromBoss > 52 + radius &&
@@ -754,6 +809,8 @@ export function blueprintFrame(id, time) {
     responseProgress = phase === 0 ? 0 : phase === 1 ? smooth(action / 0.4) : 1;
   else if (spec.mode === 'single-shot')
     responseProgress = phase === 0 ? 0 : phase === 1 ? smooth(action / 0.42) : 1;
+  else if (spec.mode === 'crossfire')
+    responseProgress = phase === 0 ? 0 : phase === 1 ? smooth(action / 0.38) : 1;
   else if (spec.mode === 'knockback')
     responseProgress = phase === 0 ? 0 : phase === 1 ? smooth(action) : 1;
   else if (spec.mode === 'target-lock')

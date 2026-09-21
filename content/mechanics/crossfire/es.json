@@ -1,0 +1,142 @@
+{
+  "title": "Fuego cruzado",
+  "subtitle": "Anuncia dos fuentes opuestas, fija su cruce y conserva una ruta que despeje ambos disparos.",
+  "variant": "Fuego cruzado sincronizado de dos fuentes",
+  "summary": "Dos fuentes independientes disparan por la arena y sus trayectorias se cruzan.",
+  "overview": "El fuego cruzado combina dos líneas de proyectil cuyo tiempo y geometría importan juntos. Funciona cuando ambos orígenes y el cruce son visibles antes del lanzamiento, ninguna línea vuelve a apuntar, todo el cuerpo puede despejar ambos proyectiles y la recuperación confirma que el cruce pasó.",
+  "learning": "Diseña las dos fuentes, el lanzamiento sincronizado, el cruce, la ruta y la recuperación como una regla espacial compuesta.",
+  "category": "Proyectiles",
+  "readTime": "5 min",
+  "demo": {
+    "title": "Prueba el fuego cruzado",
+    "timeline": "Cronología del ataque",
+    "step": "Fases del ataque",
+    "phaseNames": ["Mostrar ambas fuentes", "Cruzar y escapar", "Despejar y recuperarse"],
+    "phaseDescriptions": [
+      "Kern activa dos emisores opuestos y anticipa ambas líneas completas antes de lanzar.",
+      "Los proyectiles avanzan por líneas fijadas y se cruzan donde se anunció mientras Tavi sale en diagonal.",
+      "Ambos disparos pasan el cruce y abandonan la arena antes del siguiente ataque."
+    ],
+    "boss": "Jefe",
+    "player": "Jugador",
+    "danger": "Ambos proyectiles están activos",
+    "locked": "Ambas trayectorias están fijadas",
+    "safe": "La ruta despeja ambos disparos",
+    "reducedMotion": "La reproducción automática está desactivada por el movimiento reducido. Usa el control temporal para estudiar el cruce.",
+    "diagramDescription": "Diagrama en bucle de fuego cruzado. Dos emisores opuestos muestran líneas cruzadas, lanzan un proyectil cada uno y se recuperan cuando el jugador sale por completo de ambos volúmenes."
+  },
+  "steps": [
+    {
+      "title": "¿Se ven ambas fuentes antes del lanzamiento?",
+      "body": "Muestra los dos orígenes juntos y sepáralos del decorado. Las guías completas o un marcador común deben aparecer pronto para leer un ataque compuesto, no descubrir tarde el segundo disparo."
+    },
+    {
+      "title": "¿La respuesta despeja ambos proyectiles?",
+      "body": "Prueba la ruta con los dos radios y el cuerpo completo. Un punto fuera de una línea puede entrar en la otra; examina todo el recorrido por el solapamiento, no solo el destino."
+    },
+    {
+      "title": "¿El cruce pasa antes de la siguiente decisión?",
+      "body": "Mantén fijas ambas trayectorias hasta que crucen y salgan. La recuperación empieza cuando el solapamiento deja de limitar al jugador y la ruta puede verificarse."
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "La segunda fuente aparece tarde",
+      "body": "La revelación tardía convierte planificación en emboscada. Si las fuentes entran en momentos distintos, anuncia orden y tiempo como secuencia explícita."
+    },
+    {
+      "title": "Cada línea es justa sola, pero juntas no dejan ruta",
+      "body": "Las pruebas independientes no detectan la geometría combinada. Verifica todo el camino a través del tiempo, especialmente cuando los radios casi se unen."
+    },
+    {
+      "title": "Una fuente vuelve a apuntar",
+      "body": "La orientación tardía mueve el cruce e invalida las guías. Si un proyectil sigue, separa esa conducta y anuncia su corte."
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "Usa un solo plan de cruce",
+      "body": "Guarda las dos fuentes, direcciones, velocidad, radio y momento de lanzamiento en un plan. Deriva de él guías, proyectiles, seguridad y vista previa."
+    },
+    {
+      "title": "Ajusta sincronía según distancia",
+      "body": "Distancias distintas exigen velocidades o retrasos distintos. Comprueba tiempos reales de llegada en vez de asumir que lanzar a la vez cruza a la vez."
+    },
+    {
+      "title": "Protege la salida diagonal",
+      "body": "El fuego cruzado suele quitar salidas horizontales y verticales. Mide la diagonal contra bordes, cámara y el movimiento compatible más lento."
+    },
+    {
+      "title": "Escala con secuencia, no densidad oculta",
+      "body": "Las variantes pueden mover el cruce o alternar pares. Mantén cada par legible y deja un intervalo entre cruces."
+    }
+  ],
+  "story": {
+    "title": "Qué comunica la mecánica",
+    "body": "El fuego cruzado hace sentir que la arena se coordina contra Tavi. La amenaza nace de la relación entre fuentes y expresa control sin llenar todo el espacio de proyectiles."
+  },
+  "adaptation": {
+    "title": "Adáptala a las acciones del jugador",
+    "body": "Para movimiento normal, conserva una ruta diagonal del ancho del cuerpo completo. Si se puede bloquear, reflejar o destruir, decide si eliminar una fuente abre intencionalmente la otra ruta."
+  },
+  "distinction": {
+    "title": "Mantén distinta la mecánica",
+    "body": "El fuego cruzado requiere dos fuentes separadas con rutas que se intersectan. Un abanico parte de un origen, una volea repite en el tiempo y las amenazas convergentes pueden no ser proyectiles."
+  },
+  "lensNotes": [
+    {
+      "id": "telegraphing",
+      "body": "Ambos orígenes y sus líneas completas aparecen antes de lanzar."
+    },
+    {
+      "id": "commitment",
+      "body": "Tras el lanzamiento no se reorientan y el cruce anunciado permanece fijo."
+    },
+    {
+      "id": "threat-geometry",
+      "body": "La ruta segura despeja ambos radios móviles con todo el cuerpo."
+    },
+    {
+      "id": "counterplay",
+      "body": "Un movimiento diagonal sale del solapamiento; reflejar o destruir puede retirar una rama."
+    },
+    {
+      "id": "context-and-sequence",
+      "body": "Fuentes, bordes y ataques vecinos determinan si la ruta sigue disponible."
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "Hollow Knight",
+      "boss": "Mantis Lords",
+      "screenshot": "https://i.ytimg.com/vi/VG3h6uVtWyY/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=VG3h6uVtWyY&t=65s",
+      "body": "Las Mantis Lords ocupan lados opuestos y envían ataques por el mismo espacio lateral. La simetría hace legibles las fuentes y la ruta central restante.",
+      "video": "https://www.youtube.com/watch?v=VG3h6uVtWyY&t=65s",
+      "videoDurationSeconds": 148
+    },
+    {
+      "dimension": "2D",
+      "game": "Cuphead",
+      "boss": "Wally Warbles",
+      "screenshot": "https://i.ytimg.com/vi/Ol3-4Y0eS9M/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=Ol3-4Y0eS9M&t=58s",
+      "body": "El encuentro de Wally superpone amenazas del jefe y de los bordes. Muestra por qué cada origen necesita una señal propia en un espacio compacto y móvil.",
+      "video": "https://www.youtube.com/watch?v=Ol3-4Y0eS9M&t=58s",
+      "videoDurationSeconds": 199
+    },
+    {
+      "dimension": "3D",
+      "game": "Returnal",
+      "boss": "Nemesis",
+      "screenshot": "https://i.ytimg.com/vi/J8BTbUNDknI/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=J8BTbUNDknI&t=100s",
+      "body": "Nemesis coordina el jefe central con entidades laterales lejanas y crea fuego cruzado en profundidad. Color y visibilidad mantienen los orígenes legibles en 3D.",
+      "video": "https://www.youtube.com/watch?v=J8BTbUNDknI&t=100s",
+      "videoDurationSeconds": 370
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

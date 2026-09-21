@@ -1,0 +1,127 @@
+{
+  "title": "クロスファイア",
+  "subtitle": "向かい合う二つの射出口と交点を予告し、両方を抜ける経路を残します。",
+  "variant": "二射点同期クロスファイア",
+  "summary": "独立した二つの射出口から、交差する軌道へ投射物を放ちます。",
+  "overview": "クロスファイアは時間と形を同時に読む二本の投射線を組み合わせます。発射前に両起点と交点が見え、固定後に旋回せず、プレイヤー全身が両弾を抜け、回復が交差通過を確定すれば機能します。",
+  "learning": "二つの射出口、同期発射、交点、応答経路、回復を一つの複合空間ルールとして設計します。",
+  "category": "投射物",
+  "readTime": "5分",
+  "demo": {
+    "title": "クロスファイアを検証",
+    "timeline": "攻撃タイムライン",
+    "step": "攻撃フェーズ",
+    "phaseNames": ["両射出口を示す", "交差して退避", "通過と回復"],
+    "phaseDescriptions": [
+      "ケルンが向かい合う二射出口を起動し、発射前に二本の完全な線を示します。",
+      "両弾が固定線を進んで予告点で交差し、タヴィは重なりから斜めに退避します。",
+      "二発とも交点を通過して闘技場を離れてから次の攻撃を選びます。"
+    ],
+    "boss": "ボス",
+    "player": "プレイヤー",
+    "danger": "両方の投射物が有効",
+    "locked": "両軌道を固定",
+    "safe": "経路が両弾を回避",
+    "reducedMotion": "視差効果を減らす設定により自動再生は無効です。タイムラインで確認してください。",
+    "diagramDescription": "クロスファイアのループ図。向かい合う射出口が交差線を示して各一発を放ち、プレイヤー全身が両判定を離れた後に回復します。"
+  },
+  "steps": [
+    {
+      "title": "発射前に両方の射出口が見えるか？",
+      "body": "二つの起点を同時に示し、装飾と区別します。完全なガイドか共通マーカーを早く出し、遅い二発目ではなく一つの複合攻撃として読ませます。"
+    },
+    {
+      "title": "応答が両方の弾を抜けるか？",
+      "body": "二つの弾半径とプレイヤー全身で経路を試します。一方を出た地点が他方へ入るため、終点だけでなく重なりを通る全経路を検証します。"
+    },
+    {
+      "title": "次の判断前に交点が通過するか？",
+      "body": "弾が交差し退出するまで軌道を固定します。動く重なりが制約を止めてから回復し、成功経路を確認可能にします。"
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "二つ目の射出口が遅れて現れる",
+      "body": "遅い表示は空間計画を奇襲へ変えます。別時刻なら順序と時機を明示的なシーケンスにします。"
+    },
+    {
+      "title": "各線は公平でも重なりに経路がない",
+      "body": "独立試験は複合形状を見落とします。特に半径が合流する近い交点で、時間を含む全経路を試します。"
+    },
+    {
+      "title": "固定後に片方が旋回する",
+      "body": "遅い追尾が交点を動かし両ガイドを無効にします。追尾は分離し終了合図を示します。"
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "一つの交差計画を使う",
+      "body": "二起点、二方向、速度、半径、発射時刻を一計画に保存し、ガイド、弾、安全判定、プレビューをそこから作ります。"
+    },
+    {
+      "title": "距離に合わせて同期を調整",
+      "body": "距離が違えば速度や発射差が必要です。同時発射ではなく実際の到着時刻を試します。"
+    },
+    {
+      "title": "斜めの退避を守る",
+      "body": "水平と垂直を塞ぎやすいため、端、カメラ、最も遅い移動で残る斜線を測ります。"
+    },
+    {
+      "title": "隠れた密度でなく順序で発展",
+      "body": "交点移動や射出口ペア交替は可能ですが、各ペアを読みやすくし交差間に空白を残します。"
+    }
+  ],
+  "story": {
+    "title": "メカニクスが伝えること",
+    "body": "クロスファイアは闘技場そのものがタヴィへ協調する感覚を作ります。射出口間の関係が脅威なので、空間を弾で埋めずに統制を表現できます。"
+  },
+  "adaptation": {
+    "title": "プレイヤーの動詞へ適応",
+    "body": "通常移動には全身幅の斜め経路を残します。防御、反射、破壊があるなら、一方を消すことで他方の経路が開くかを明示します。"
+  },
+  "distinction": {
+    "title": "メカニクスの違いを保つ",
+    "body": "クロスファイアには交差軌道を持つ空間的に別の二起点が必要です。扇は一起点、ボレーは反復、収束脅威は非投射物でも成立します。"
+  },
+  "lensNotes": [
+    { "id": "telegraphing", "body": "発射前に両起点と完全な交差線を示します。" },
+    { "id": "commitment", "body": "発射後は旋回せず交点を固定します。" },
+    { "id": "threat-geometry", "body": "安全経路は全身で二つの移動半径を抜けます。" },
+    { "id": "counterplay", "body": "斜め移動が重なりを抜け、反射や破壊が一方を除けます。" },
+    { "id": "context-and-sequence", "body": "射出口、端、前後の攻撃が経路の有用性を決めます。" }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "Hollow Knight",
+      "boss": "Mantis Lords",
+      "screenshot": "https://i.ytimg.com/vi/VG3h6uVtWyY/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=VG3h6uVtWyY&t=65s",
+      "body": "対の Mantis Lords は左右を取り、同じ横視点空間へ攻撃を通します。対称性で射出口と残る中央経路を比較できます。",
+      "video": "https://www.youtube.com/watch?v=VG3h6uVtWyY&t=65s",
+      "videoDurationSeconds": 148
+    },
+    {
+      "dimension": "2D",
+      "game": "Cuphead",
+      "boss": "Wally Warbles",
+      "screenshot": "https://i.ytimg.com/vi/Ol3-4Y0eS9M/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=Ol3-4Y0eS9M&t=58s",
+      "body": "Wally 戦はボスと画面端の脅威を重ねます。狭いスクロール空間で各起点に独自の合図が必要な例です。",
+      "video": "https://www.youtube.com/watch?v=Ol3-4Y0eS9M&t=58s",
+      "videoDurationSeconds": 199
+    },
+    {
+      "dimension": "3D",
+      "game": "Returnal",
+      "boss": "Nemesis",
+      "screenshot": "https://i.ytimg.com/vi/J8BTbUNDknI/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=J8BTbUNDknI&t=100s",
+      "body": "Nemesis は中央と遠い側面存在を連携させ、奥行きを横切る射撃を作ります。色と長い視線で複数起点が3Dでも読めます。",
+      "video": "https://www.youtube.com/watch?v=J8BTbUNDknI&t=100s",
+      "videoDurationSeconds": 370
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}
