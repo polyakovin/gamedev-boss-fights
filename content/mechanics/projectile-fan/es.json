@@ -1,0 +1,134 @@
+{
+  "title": "Abanico de proyectiles",
+  "subtitle": "Convierte abanico de proyectiles en una regla legible, con respuesta alcanzable y recuperación útil.",
+  "variant": "Patrón comprometido de abanico de proyectiles",
+  "summary": "El jefe dispara varios proyectiles desde un origen por rayos fijos que se separan con la distancia y dejan huecos atravesables.",
+  "overview": "El jefe dispara varios proyectiles desde un origen por rayos fijos que se separan con la distancia y dejan huecos atravesables. La legibilidad nace de la coherencia entre aviso, compromiso, colisión real y resultado verificable.",
+  "learning": "Ajusta señal, compromiso, geometría, respuesta y recuperación de abanico de proyectiles como una sola regla.",
+  "category": "Proyectiles",
+  "readTime": "4 min",
+  "demo": {
+    "title": "Prueba abanico de proyectiles",
+    "timeline": "Línea temporal del ataque",
+    "step": "Fases del ataque",
+    "phaseNames": ["Señal", "Respuesta", "Recuperación"],
+    "phaseDescriptions": [
+      "El jefe muestra el tiempo, la dirección y toda el área de abanico de proyectiles antes de comprometerse.",
+      "El jugador completa la respuesta de abanico de proyectiles con las acciones normales disponibles.",
+      "Cuando termina toda la amenaza de abanico de proyectiles, el jefe mantiene una recuperación clara y aprovechable."
+    ],
+    "boss": "Jefe",
+    "player": "Jugador",
+    "danger": "La amenaza completa es visible",
+    "locked": "La regla está comprometida",
+    "safe": "La respuesta ha terminado",
+    "reducedMotion": "La preferencia de movimiento reducido desactiva la reproducción automática. Usa el control temporal para revisar el ciclo.",
+    "diagramDescription": "Diagrama cíclico de abanico de proyectiles: el jefe anuncia y compromete la regla, el jugador responde y la escena muestra la recuperación antes de reiniciarse."
+  },
+  "steps": [
+    {
+      "title": "¿Puede el jugador leer la regla completa?",
+      "body": "El jefe muestra el tiempo, la dirección y toda el área de abanico de proyectiles antes de comprometerse."
+    },
+    {
+      "title": "¿Es alcanzable la respuesta prevista?",
+      "body": "Prueba el cuerpo completo desde el peor punto inicial válido y con las capacidades disponibles en ese momento."
+    },
+    {
+      "title": "¿La recuperación produce un resultado útil?",
+      "body": "Cuando termina toda la amenaza de abanico de proyectiles, el jefe mantiene una recuperación clara y aprovechable."
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "La señal no coincide con la amenaza",
+      "body": "El jefe muestra el tiempo, la dirección y toda el área de abanico de proyectiles antes de comprometerse. La legibilidad nace de la coherencia entre aviso, compromiso, colisión real y resultado verificable."
+    },
+    {
+      "title": "La respuesta solo funciona en condiciones ideales",
+      "body": "Prueba el cuerpo completo desde el peor punto inicial válido y con las capacidades disponibles en ese momento."
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "Ajusta la regla completa",
+      "body": "El jefe dispara varios proyectiles desde un origen por rayos fijos que se separan con la distancia y dejan huecos atravesables. La legibilidad nace de la coherencia entre aviso, compromiso, colisión real y resultado verificable."
+    },
+    {
+      "title": "Escala una variable cada vez",
+      "body": "El jugador completa la respuesta de abanico de proyectiles con las acciones normales disponibles. Prueba el cuerpo completo desde el peor punto inicial válido y con las capacidades disponibles en ese momento."
+    },
+    {
+      "title": "Demuestra la recuperación en el ciclo",
+      "body": "El peligro residual termina antes del siguiente apuntado para que la ventana de decisión sea real."
+    },
+    {
+      "title": "Demuestra la recuperación en el ciclo",
+      "body": "Cuando termina toda la amenaza de abanico de proyectiles, el jefe mantiene una recuperación clara y aprovechable. El peligro residual termina antes del siguiente apuntado para que la ventana de decisión sea real."
+    }
+  ],
+  "story": {
+    "title": "Qué comunica la mecánica",
+    "body": "El jefe dispara varios proyectiles desde un origen por rayos fijos que se separan con la distancia y dejan huecos atravesables. La legibilidad nace de la coherencia entre aviso, compromiso, colisión real y resultado verificable."
+  },
+  "adaptation": {
+    "title": "Adáptala a las acciones del jugador",
+    "body": "El jugador completa la respuesta de abanico de proyectiles con las acciones normales disponibles. Prueba el cuerpo completo desde el peor punto inicial válido y con las capacidades disponibles en ese momento."
+  },
+  "distinction": {
+    "title": "Mantén clara la diferencia",
+    "body": "El jefe muestra el tiempo, la dirección y toda el área de abanico de proyectiles antes de comprometerse. El peligro residual termina antes del siguiente apuntado para que la ventana de decisión sea real."
+  },
+  "lensNotes": [
+    {
+      "id": "telegraphing",
+      "body": "Esta perspectiva comprueba cómo la mecánica une señal, espacio y respuesta en una decisión legible. El jefe dispara varios proyectiles desde un origen por rayos fijos que se separan con la distancia y dejan huecos atravesables."
+    },
+    {
+      "id": "threat-geometry",
+      "body": "Esta perspectiva comprueba cómo la mecánica une señal, espacio y respuesta en una decisión legible. El jefe dispara varios proyectiles desde un origen por rayos fijos que se separan con la distancia y dejan huecos atravesables."
+    },
+    {
+      "id": "counterplay",
+      "body": "Esta perspectiva comprueba cómo la mecánica une señal, espacio y respuesta en una decisión legible. El jefe dispara varios proyectiles desde un origen por rayos fijos que se separan con la distancia y dejan huecos atravesables."
+    },
+    {
+      "id": "risk-reward",
+      "body": "Esta perspectiva comprueba cómo la mecánica une señal, espacio y respuesta en una decisión legible. El jefe dispara varios proyectiles desde un origen por rayos fijos que se separan con la distancia y dejan huecos atravesables."
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "Ori and the Will of the Wisps",
+      "boss": "Shriek",
+      "video": "https://www.youtube.com/watch?v=DvuB8cImPIg&t=1165s",
+      "videoDurationSeconds": 2062,
+      "screenshot": "https://i.ytimg.com/vi/DvuB8cImPIg/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=DvuB8cImPIg&t=1165s",
+      "body": "Shriek muestra abanico de proyectiles en un combate 2D; señal, compromiso y resultado hacen que la regla pueda analizarse y reutilizarse."
+    },
+    {
+      "dimension": "2D",
+      "game": "Enter the Gungeon",
+      "boss": "Bullet King",
+      "video": "https://www.youtube.com/watch?v=ynVmgUSV7Bc&t=26s",
+      "videoDurationSeconds": 135,
+      "screenshot": "https://i.ytimg.com/vi/ynVmgUSV7Bc/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=ynVmgUSV7Bc&t=26s",
+      "body": "Bullet King muestra abanico de proyectiles en un combate 2D; señal, compromiso y resultado hacen que la regla pueda analizarse y reutilizarse."
+    },
+    {
+      "dimension": "3D",
+      "game": "Returnal",
+      "boss": "Phrike",
+      "video": "https://www.youtube.com/watch?v=UdBbTMFLFIo&t=32s",
+      "videoDurationSeconds": 175,
+      "screenshot": "https://i.ytimg.com/vi/UdBbTMFLFIo/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=UdBbTMFLFIo&t=32s",
+      "body": "Phrike muestra abanico de proyectiles en un combate 3D; señal, compromiso y resultado hacen que la regla pueda analizarse y reutilizarse."
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

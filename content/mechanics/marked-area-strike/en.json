@@ -1,0 +1,130 @@
+{
+  "title": "Marked-area strike",
+  "subtitle": "Build a readable marked-area strike with a reachable response and a useful recovery.",
+  "variant": "Committed marked-area strike pattern",
+  "summary": "The boss marks a region first and damages it after a delay.",
+  "overview": "The boss marks a region first and damages it after a delay, testing whether the player can interpret shape, timing, and overlap before detonation.",
+  "learning": "Tune the signal, commitment, geometry, response, and recovery of a marked-area strike as one rule.",
+  "category": "Zones and traps",
+  "readTime": "4 min",
+  "demo": {
+    "title": "Test the marked-area strike",
+    "timeline": "Attack timeline",
+    "step": "Attack phases",
+    "phaseNames": ["Signal", "Response", "Recovery"],
+    "phaseDescriptions": [
+      "The marker must match the final damage footprint and communicate countdown through fill, pulse, sound, or another redundant channel.",
+      "Players leave the shape, choose a safe overlap, bait the mark away from useful space, or use a clearly supported defensive action.",
+      "The detonation clears its promised footprint promptly, and the boss leaves enough delay for the player to use the position chosen during the warning."
+    ],
+    "boss": "Boss",
+    "player": "Player",
+    "danger": "The active threat is visible",
+    "locked": "The rule is committed",
+    "safe": "The response is complete",
+    "reducedMotion": "Autoplay is disabled by the reduced-motion setting. Use the timeline slider to inspect the loop.",
+    "diagramDescription": "A looping diagram of marked-area strike. The boss signals and commits the rule, the player uses the intended response, and the scene holds a readable recovery before resetting."
+  },
+  "steps": [
+    {
+      "title": "Can the player read the complete rule?",
+      "body": "The marker must match the final damage footprint and communicate countdown through fill, pulse, sound, or another redundant channel."
+    },
+    {
+      "title": "Is the intended response reachable?",
+      "body": "Players leave the shape, choose a safe overlap, bait the mark away from useful space, or use a clearly supported defensive action."
+    },
+    {
+      "title": "Does recovery create a useful outcome?",
+      "body": "The detonation clears its promised footprint promptly, and the boss leaves enough delay for the player to use the position chosen during the warning."
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "A decorative marker that is smaller than the real hitbox makes careful positioning less reliable than panic movement",
+      "body": "A decorative marker that is smaller than the real hitbox makes careful positioning less reliable than panic movement."
+    },
+    {
+      "title": "The cue and active geometry disagree",
+      "body": "If the visible marked-area strike cue promises a different area or timing, the player cannot carry the learned rule into the next cycle."
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "Tune the complete rule",
+      "body": "Tune delay, footprint, placement rule, persistence, and simultaneous mark count against the player’s ordinary travel distance."
+    },
+    {
+      "title": "Escalate one variable at a time",
+      "body": "Layer shapes with different delays or let old marks persist briefly, but keep their detonation order unmistakable."
+    },
+    {
+      "title": "Prove the recovery",
+      "body": "The detonation clears its promised footprint promptly, and the boss leaves enough delay for the player to use the position chosen during the warning."
+    }
+  ],
+  "story": {
+    "title": "What the mechanic communicates",
+    "body": "The boss marks a region first and damages it after a delay, testing whether the player can interpret shape, timing, and overlap before detonation. The encounter uses that rule as a short promise: a visible signal, a committed action, and a result the player can verify."
+  },
+  "adaptation": {
+    "title": "Adapt it to the player verbs",
+    "body": "Players leave the shape, choose a safe overlap, bait the mark away from useful space, or use a clearly supported defensive action. Tune delay, footprint, placement rule, persistence, and simultaneous mark count against the player’s ordinary travel distance."
+  },
+  "distinction": {
+    "title": "Keep the mechanic distinct",
+    "body": "A decorative marker that is smaller than the real hitbox makes careful positioning less reliable than panic movement. Do not hide that distinction behind extra effects or tracking that the announced rule does not contain."
+  },
+  "lensNotes": [
+    {
+      "id": "telegraphing",
+      "body": "The signal must reveal the relevant timing and geometry before commitment."
+    },
+    {
+      "id": "threat-geometry",
+      "body": "The complete player extent and the active region determine whether the route is real."
+    },
+    {
+      "id": "counterplay",
+      "body": "The response uses an ordinary supported verb and produces an observable result."
+    },
+    {
+      "id": "access-paths",
+      "body": "At least one route remains reachable with the movement options available at this point."
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "Ori and the Will of the Wisps",
+      "boss": "Shriek",
+      "screenshot": "https://i.ytimg.com/vi/DvuB8cImPIg/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=DvuB8cImPIg&t=1165s",
+      "body": "Shriek demonstrates marked-area strike in a 2D encounter. The marker must match the final damage footprint and communicate countdown through fill, pulse, sound, or another redundant channel.",
+      "video": "https://www.youtube.com/watch?v=DvuB8cImPIg&t=1165s",
+      "videoDurationSeconds": 2062
+    },
+    {
+      "dimension": "2D",
+      "game": "Hollow Knight",
+      "boss": "Absolute Radiance",
+      "screenshot": "https://i.ytimg.com/vi/bgh04-wCRyk/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=bgh04-wCRyk&t=20s",
+      "body": "Absolute Radiance demonstrates marked-area strike in a 2D encounter. Players leave the shape, choose a safe overlap, bait the mark away from useful space, or use a clearly supported defensive action.",
+      "video": "https://www.youtube.com/watch?v=bgh04-wCRyk&t=20s",
+      "videoDurationSeconds": 484
+    },
+    {
+      "dimension": "3D",
+      "game": "Elden Ring",
+      "boss": "Godfrey, First Elden Lord",
+      "screenshot": "https://i.ytimg.com/vi/U2jd1fqLpsE/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=U2jd1fqLpsE&t=180s",
+      "body": "Godfrey, First Elden Lord demonstrates marked-area strike in a 3D encounter. Tune delay, footprint, placement rule, persistence, and simultaneous mark count against the player’s ordinary travel distance.",
+      "video": "https://www.youtube.com/watch?v=U2jd1fqLpsE&t=180s",
+      "videoDurationSeconds": 480
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

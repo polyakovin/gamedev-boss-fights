@@ -1,0 +1,20 @@
+{
+  "id": "homing-projectile",
+  "number": 14,
+  "published": true,
+  "sourceLocale": "en",
+  "contentVersion": 1,
+  "animation": "homing-projectile",
+  "lenses": ["telegraphing", "commitment", "difficulty-rhythm", "counterplay"],
+  "related": ["target-lock", "ricochet-projectile"],
+  "sources": [
+    {
+      "title": "V Rising developers on Ziva the Engineer · PlayStation Blog",
+      "url": "https://blog.playstation.com/2024/06/03/v-rising-devs-deep-drive-into-boss-encounters-coming-to-ps5-june-11/"
+    },
+    {
+      "title": "Boss Up: Boss Battle Design · GDC Vault",
+      "url": "https://www.gdcvault.com/play/1024921/Boss-Up-Boss-Battle-Design"
+    }
+  ]
+}

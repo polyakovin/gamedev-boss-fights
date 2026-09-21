@@ -4,43 +4,44 @@ import { loadContent, validateContent } from '../lib/content.mjs';
 
 const source = await loadContent();
 
-test('every selected mechanic has either a full lesson or a detailed blueprint', async () => {
+test('all 30 selected mechanics are complete published lessons', async () => {
   await validateContent(source);
 
   const selected = new Set(source.popularMechanics.mechanicIds);
-  const lessons = new Set(source.mechanics.map(({ meta }) => meta.id));
-  const profiles = new Set(source.popularMechanics.profiles.map(({ id }) => id));
+  const lessons = source.mechanics.filter(({ meta }) => selected.has(meta.id));
 
   assert.equal(selected.size, 30);
-  assert.equal(profiles.size, 24);
-  assert.equal([...selected].filter((id) => lessons.has(id)).length, 6);
-  assert.deepEqual([...selected].filter((id) => !lessons.has(id)).sort(), [...profiles].sort());
+  assert.equal(source.popularMechanics.profiles.length, 0);
+  assert.equal(lessons.length, 30);
+  assert.ok(lessons.every(({ meta }) => meta.published));
+  assert.ok(lessons.every(({ translations }) => Object.keys(translations).length === 8));
   assert.equal(
     source.mechanics.find(({ meta }) => meta.id === 'projectile-fan').meta.published,
-    false,
+    true,
   );
 });
 
-test('each expanded draft explains signal, response, recovery, tuning, failure, and escalation', () => {
-  const fields = ['overview', 'signal', 'response', 'recovery', 'tuning', 'pitfall', 'escalation'];
-
-  for (const profile of source.popularMechanics.profiles)
-    for (const locale of ['en', 'ru']) {
-      const copy = profile.translations[locale];
-      assert.ok(copy, `${profile.id} is missing ${locale}`);
-      for (const field of fields) {
-        assert.ok(copy[field].length >= 70, `${profile.id}.${locale}.${field} is too shallow`);
-        assert.doesNotMatch(copy[field], /TODO:/);
-      }
+test('each promoted lesson preserves the complete teaching contract', () => {
+  for (const mechanic of source.mechanics) {
+    assert.ok(mechanic.meta.animation, `${mechanic.meta.id} has no animation`);
+    assert.ok(mechanic.meta.lenses.length >= 4, `${mechanic.meta.id} has too few lenses`);
+    assert.ok(mechanic.meta.sources.length >= 1, `${mechanic.meta.id} has no sources`);
+    for (const [locale, lesson] of Object.entries(mechanic.translations)) {
+      assert.equal(lesson.steps.length, 3, `${mechanic.meta.id}.${locale} steps`);
+      assert.ok(lesson.mistakes.length >= 2, `${mechanic.meta.id}.${locale} mistakes`);
+      assert.ok(lesson.designNotes.length >= 3, `${mechanic.meta.id}.${locale} notes`);
+      assert.ok(lesson.examples.length >= 3, `${mechanic.meta.id}.${locale} examples`);
+      assert.doesNotMatch(JSON.stringify(lesson), /TODO:/);
     }
+  }
 });
 
-test('popular mechanic profiles reject unknown or unselected ids', async () => {
+test('the selected set rejects unknown ids and missing full lessons', async () => {
   const unknown = structuredClone(source);
   unknown.popularMechanics.mechanicIds[0] = 'not-in-the-index';
   await assert.rejects(validateContent(unknown), /unknown mechanic id not-in-the-index/);
 
-  const unselected = structuredClone(source);
-  unselected.popularMechanics.profiles[0].id = 'landing-jump';
-  await assert.rejects(validateContent(unselected), /is not in the top 30/);
+  const missing = structuredClone(source);
+  missing.mechanics = missing.mechanics.filter(({ meta }) => meta.id !== 'wide-swing');
+  await assert.rejects(validateContent(missing), /wide-swing must have either one lesson/);
 });

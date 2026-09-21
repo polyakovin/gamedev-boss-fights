@@ -1,0 +1,130 @@
+{
+  "title": "Spiral barrage",
+  "subtitle": "Build a readable spiral barrage with a reachable response and a useful recovery.",
+  "variant": "Committed spiral barrage pattern",
+  "summary": "A rotating emitter releases a stream that traces a spiral.",
+  "overview": "A rotating emitter releases a stream that traces a spiral, turning projectile timing into a moving lane the player can follow or cross.",
+  "learning": "Tune the signal, commitment, geometry, response, and recovery of a spiral barrage as one rule.",
+  "category": "Projectiles",
+  "readTime": "4 min",
+  "demo": {
+    "title": "Test the spiral barrage",
+    "timeline": "Attack timeline",
+    "step": "Attack phases",
+    "phaseNames": ["Signal", "Response", "Recovery"],
+    "phaseDescriptions": [
+      "Show rotation direction, emission rhythm, and the first arm of the spiral before the pattern fills the arena.",
+      "The player can move with the rotation, cross one arm during a wide interval, or reposition toward a region where lane spacing is larger.",
+      "The emitter stops while the mature spiral arms continue leaving the arena, preventing a new pattern from overlapping an unreadable residue."
+    ],
+    "boss": "Boss",
+    "player": "Player",
+    "danger": "The active threat is visible",
+    "locked": "The rule is committed",
+    "safe": "The response is complete",
+    "reducedMotion": "Autoplay is disabled by the reduced-motion setting. Use the timeline slider to inspect the loop.",
+    "diagramDescription": "A looping diagram of spiral barrage. The boss signals and commits the rule, the player uses the intended response, and the scene holds a readable recovery before resetting."
+  },
+  "steps": [
+    {
+      "title": "Can the player read the complete rule?",
+      "body": "Show rotation direction, emission rhythm, and the first arm of the spiral before the pattern fills the arena."
+    },
+    {
+      "title": "Is the intended response reachable?",
+      "body": "The player can move with the rotation, cross one arm during a wide interval, or reposition toward a region where lane spacing is larger."
+    },
+    {
+      "title": "Does recovery create a useful outcome?",
+      "body": "The emitter stops while the mature spiral arms continue leaving the arena, preventing a new pattern from overlapping an unreadable residue."
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "Tuning only the first second misses delayed overlaps that make the mature spiral impossible to navigate",
+      "body": "Tuning only the first second misses delayed overlaps that make the mature spiral impossible to navigate."
+    },
+    {
+      "title": "The cue and active geometry disagree",
+      "body": "If the visible spiral barrage cue promises a different area or timing, the player cannot carry the learned rule into the next cycle."
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "Tune the complete rule",
+      "body": "Coordinate angular velocity, fire interval, projectile speed, and duration; small changes can close every lane several seconds later."
+    },
+    {
+      "title": "Escalate one variable at a time",
+      "body": "Reverse rotation, add a second offset arm, or pulse the fire rate after the player has learned the base lane motion."
+    },
+    {
+      "title": "Prove the recovery",
+      "body": "The emitter stops while the mature spiral arms continue leaving the arena, preventing a new pattern from overlapping an unreadable residue."
+    }
+  ],
+  "story": {
+    "title": "What the mechanic communicates",
+    "body": "A rotating emitter releases a stream that traces a spiral, turning projectile timing into a moving lane the player can follow or cross. The encounter uses that rule as a short promise: a visible signal, a committed action, and a result the player can verify."
+  },
+  "adaptation": {
+    "title": "Adapt it to the player verbs",
+    "body": "The player can move with the rotation, cross one arm during a wide interval, or reposition toward a region where lane spacing is larger. Coordinate angular velocity, fire interval, projectile speed, and duration; small changes can close every lane several seconds later."
+  },
+  "distinction": {
+    "title": "Keep the mechanic distinct",
+    "body": "Tuning only the first second misses delayed overlaps that make the mature spiral impossible to navigate. Do not hide that distinction behind extra effects or tracking that the announced rule does not contain."
+  },
+  "lensNotes": [
+    {
+      "id": "telegraphing",
+      "body": "The signal must reveal the relevant timing and geometry before commitment."
+    },
+    {
+      "id": "threat-geometry",
+      "body": "The complete player extent and the active region determine whether the route is real."
+    },
+    {
+      "id": "counterplay",
+      "body": "The response uses an ordinary supported verb and produces an observable result."
+    },
+    {
+      "id": "mastery-check",
+      "body": "Escalation asks the player to apply the same learned rule under tighter constraints."
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "Enter the Gungeon",
+      "boss": "Bullet King",
+      "screenshot": "https://i.ytimg.com/vi/ynVmgUSV7Bc/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=ynVmgUSV7Bc&t=26s",
+      "body": "Bullet King demonstrates spiral barrage in a 2D encounter. Show rotation direction, emission rhythm, and the first arm of the spiral before the pattern fills the arena.",
+      "video": "https://www.youtube.com/watch?v=ynVmgUSV7Bc&t=26s",
+      "videoDurationSeconds": 135
+    },
+    {
+      "dimension": "2D",
+      "game": "Enter the Gungeon",
+      "boss": "High Dragun",
+      "screenshot": "https://i.ytimg.com/vi/aKALjUZqhXA/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=aKALjUZqhXA&t=103s",
+      "body": "High Dragun demonstrates spiral barrage in a 2D encounter. The player can move with the rotation, cross one arm during a wide interval, or reposition toward a region where lane spacing is larger.",
+      "video": "https://www.youtube.com/watch?v=aKALjUZqhXA&t=103s",
+      "videoDurationSeconds": 211
+    },
+    {
+      "dimension": "3D",
+      "game": "Returnal",
+      "boss": "Phrike",
+      "screenshot": "https://i.ytimg.com/vi/UdBbTMFLFIo/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=UdBbTMFLFIo&t=32s",
+      "body": "Phrike demonstrates spiral barrage in a 3D encounter. Coordinate angular velocity, fire interval, projectile speed, and duration; small changes can close every lane several seconds later.",
+      "video": "https://www.youtube.com/watch?v=UdBbTMFLFIo&t=32s",
+      "videoDurationSeconds": 175
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

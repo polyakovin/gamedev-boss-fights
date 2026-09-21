@@ -1,0 +1,130 @@
+{
+  "title": "Shockwave",
+  "subtitle": "Build a readable shockwave with a reachable response and a useful recovery.",
+  "variant": "Committed shockwave pattern",
+  "summary": "An impact creates a threat that travels across a surface.",
+  "overview": "An impact creates a threat that travels across a surface, separating the boss’s strike location from the later line the player must clear.",
+  "learning": "Tune the signal, commitment, geometry, response, and recovery of a shockwave as one rule.",
+  "category": "Zones and traps",
+  "readTime": "4 min",
+  "demo": {
+    "title": "Test the shockwave",
+    "timeline": "Attack timeline",
+    "step": "Attack phases",
+    "phaseNames": ["Signal", "Response", "Recovery"],
+    "phaseDescriptions": [
+      "Emphasize the source impact and the surface that will carry the wave; height and travel direction should be visible at release.",
+      "The player jumps, changes elevation, blocks, moves beyond the wave’s reach, or exploits a deliberate break in the surface.",
+      "The wave must pass the player’s complete body before it dissipates, while the impact pose holds a short recovery that rewards a correctly timed crossing."
+    ],
+    "boss": "Boss",
+    "player": "Player",
+    "danger": "The active threat is visible",
+    "locked": "The rule is committed",
+    "safe": "The response is complete",
+    "reducedMotion": "Autoplay is disabled by the reduced-motion setting. Use the timeline slider to inspect the loop.",
+    "diagramDescription": "A looping diagram of shockwave. The boss signals and commits the rule, the player uses the intended response, and the scene holds a readable recovery before resetting."
+  },
+  "steps": [
+    {
+      "title": "Can the player read the complete rule?",
+      "body": "Emphasize the source impact and the surface that will carry the wave; height and travel direction should be visible at release."
+    },
+    {
+      "title": "Is the intended response reachable?",
+      "body": "The player jumps, changes elevation, blocks, moves beyond the wave’s reach, or exploits a deliberate break in the surface."
+    },
+    {
+      "title": "Does recovery create a useful outcome?",
+      "body": "The wave must pass the player’s complete body before it dissipates, while the impact pose holds a short recovery that rewards a correctly timed crossing."
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "A wave hidden by floor art or camera effects becomes a reaction test to an unreadable hazard",
+      "body": "A wave hidden by floor art or camera effects becomes a reaction test to an unreadable hazard."
+    },
+    {
+      "title": "The cue and active geometry disagree",
+      "body": "If the visible shockwave cue promises a different area or timing, the player cannot carry the learned rule into the next cycle."
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "Tune the complete rule",
+      "body": "Tune travel speed, height, lifetime, surface coverage, and repeated spacing against jump airtime and landing control."
+    },
+    {
+      "title": "Escalate one variable at a time",
+      "body": "Alternate low and high waves, split them at obstacles, or repeat them in a learnable rhythm after the base traversal is clear."
+    },
+    {
+      "title": "Prove the recovery",
+      "body": "The wave must pass the player’s complete body before it dissipates, while the impact pose holds a short recovery that rewards a correctly timed crossing."
+    }
+  ],
+  "story": {
+    "title": "What the mechanic communicates",
+    "body": "An impact creates a threat that travels across a surface, separating the boss’s strike location from the later line the player must clear. The encounter uses that rule as a short promise: a visible signal, a committed action, and a result the player can verify."
+  },
+  "adaptation": {
+    "title": "Adapt it to the player verbs",
+    "body": "The player jumps, changes elevation, blocks, moves beyond the wave’s reach, or exploits a deliberate break in the surface. Tune travel speed, height, lifetime, surface coverage, and repeated spacing against jump airtime and landing control."
+  },
+  "distinction": {
+    "title": "Keep the mechanic distinct",
+    "body": "A wave hidden by floor art or camera effects becomes a reaction test to an unreadable hazard. Do not hide that distinction behind extra effects or tracking that the announced rule does not contain."
+  },
+  "lensNotes": [
+    {
+      "id": "telegraphing",
+      "body": "The signal must reveal the relevant timing and geometry before commitment."
+    },
+    {
+      "id": "threat-geometry",
+      "body": "The complete player extent and the active region determine whether the route is real."
+    },
+    {
+      "id": "counterplay",
+      "body": "The response uses an ordinary supported verb and produces an observable result."
+    },
+    {
+      "id": "access-paths",
+      "body": "At least one route remains reachable with the movement options available at this point."
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "Ori and the Will of the Wisps",
+      "boss": "Horn Beetle",
+      "screenshot": "https://i.ytimg.com/vi/DvuB8cImPIg/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=DvuB8cImPIg&t=61s",
+      "body": "Horn Beetle demonstrates shockwave in a 2D encounter. Emphasize the source impact and the surface that will carry the wave; height and travel direction should be visible at release.",
+      "video": "https://www.youtube.com/watch?v=DvuB8cImPIg&t=61s",
+      "videoDurationSeconds": 2062
+    },
+    {
+      "dimension": "2D",
+      "game": "Hollow Knight",
+      "boss": "False Knight",
+      "screenshot": "https://i.ytimg.com/vi/rwZmf4u366o/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=rwZmf4u366o&t=151s",
+      "body": "False Knight demonstrates shockwave in a 2D encounter. The player jumps, changes elevation, blocks, moves beyond the wave’s reach, or exploits a deliberate break in the surface.",
+      "video": "https://www.youtube.com/watch?v=rwZmf4u366o&t=151s",
+      "videoDurationSeconds": 2630
+    },
+    {
+      "dimension": "3D",
+      "game": "Elden Ring",
+      "boss": "Godfrey, First Elden Lord",
+      "screenshot": "https://i.ytimg.com/vi/U2jd1fqLpsE/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=U2jd1fqLpsE&t=180s",
+      "body": "Godfrey, First Elden Lord demonstrates shockwave in a 3D encounter. Tune travel speed, height, lifetime, surface coverage, and repeated spacing against jump airtime and landing control.",
+      "video": "https://www.youtube.com/watch?v=U2jd1fqLpsE&t=180s",
+      "videoDurationSeconds": 480
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

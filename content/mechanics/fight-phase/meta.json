@@ -1,0 +1,16 @@
+{
+  "id": "fight-phase",
+  "number": 29,
+  "published": true,
+  "sourceLocale": "en",
+  "contentVersion": 1,
+  "animation": "fight-phase",
+  "lenses": ["phase-structure", "progress-clarity", "difficulty-rhythm", "context-and-sequence"],
+  "related": ["enrage", "attack-combination"],
+  "sources": [
+    {
+      "title": "Boss Up: Boss Battle Design · GDC Vault",
+      "url": "https://www.gdcvault.com/play/1024921/Boss-Up-Boss-Battle-Design"
+    }
+  ]
+}

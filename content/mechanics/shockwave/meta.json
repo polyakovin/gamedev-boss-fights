@@ -1,0 +1,20 @@
+{
+  "id": "shockwave",
+  "number": 19,
+  "published": true,
+  "sourceLocale": "en",
+  "contentVersion": 1,
+  "animation": "shockwave",
+  "lenses": ["telegraphing", "threat-geometry", "counterplay", "access-paths"],
+  "related": ["ground-slam", "knockback"],
+  "sources": [
+    {
+      "title": "Enemy Attacks and Telegraphing · Mike Stout",
+      "url": "https://www.gamedeveloper.com/design/enemy-attacks-and-telegraphing"
+    },
+    {
+      "title": "Boss Up: Boss Battle Design · GDC Vault",
+      "url": "https://www.gdcvault.com/play/1024921/Boss-Up-Boss-Battle-Design"
+    }
+  ]
+}

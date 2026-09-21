@@ -1,7 +1,7 @@
 {
   "id": "projectile-fan",
-  "number": 10,
-  "published": false,
+  "number": 6,
+  "published": true,
   "sourceLocale": "en",
   "contentVersion": 1,
   "animation": "projectile-fan",

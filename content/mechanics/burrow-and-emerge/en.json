@@ -1,0 +1,130 @@
+{
+  "title": "Burrow and emerge",
+  "subtitle": "Build a readable burrow and emerge with a reachable response and a useful recovery.",
+  "variant": "Committed burrow and emerge pattern",
+  "summary": "The boss leaves direct interaction.",
+  "overview": "The boss leaves direct interaction, relocates beneath or outside the arena, and returns through a marked emergence that reshapes positioning.",
+  "learning": "Tune the signal, commitment, geometry, response, and recovery of a burrow and emerge as one rule.",
+  "category": "Body and melee",
+  "readTime": "4 min",
+  "demo": {
+    "title": "Test the burrow and emerge",
+    "timeline": "Attack timeline",
+    "step": "Attack phases",
+    "phaseNames": ["Signal", "Response", "Recovery"],
+    "phaseDescriptions": [
+      "Keep an exit cue and a destination cue visible: disturbed ground, a moving trail, particles, or an arena marker should bridge the hidden interval.",
+      "The player should relocate away from the emergence zone, prepare an intercept, or use the hidden interval for a different objective.",
+      "After emergence, the ground marker dissipates and the boss finishes turning above the surface, creating a brief readable interval before tracking resumes."
+    ],
+    "boss": "Boss",
+    "player": "Player",
+    "danger": "The active threat is visible",
+    "locked": "The rule is committed",
+    "safe": "The response is complete",
+    "reducedMotion": "Autoplay is disabled by the reduced-motion setting. Use the timeline slider to inspect the loop.",
+    "diagramDescription": "A looping diagram of burrow and emerge. The boss signals and commits the rule, the player uses the intended response, and the scene holds a readable recovery before resetting."
+  },
+  "steps": [
+    {
+      "title": "Can the player read the complete rule?",
+      "body": "Keep an exit cue and a destination cue visible: disturbed ground, a moving trail, particles, or an arena marker should bridge the hidden interval."
+    },
+    {
+      "title": "Is the intended response reachable?",
+      "body": "The player should relocate away from the emergence zone, prepare an intercept, or use the hidden interval for a different objective."
+    },
+    {
+      "title": "Does recovery create a useful outcome?",
+      "body": "After emergence, the ground marker dissipates and the boss finishes turning above the surface, creating a brief readable interval before tracking resumes."
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "A random reappearance under the player with no trackable cue makes movement irrelevant and rewards guessing",
+      "body": "A random reappearance under the player with no trackable cue makes movement irrelevant and rewards guessing."
+    },
+    {
+      "title": "The cue and active geometry disagree",
+      "body": "If the visible burrow and emerge cue promises a different area or timing, the player cannot carry the learned rule into the next cycle."
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "Tune the complete rule",
+      "body": "Tune hidden duration, destination lock time, emergence radius, and recovery so relocation creates tension without becoming dead time."
+    },
+    {
+      "title": "Escalate one variable at a time",
+      "body": "Add false trails, several possible exits, or hazards left behind while keeping the final committed destination identifiable."
+    },
+    {
+      "title": "Prove the recovery",
+      "body": "After emergence, the ground marker dissipates and the boss finishes turning above the surface, creating a brief readable interval before tracking resumes."
+    }
+  ],
+  "story": {
+    "title": "What the mechanic communicates",
+    "body": "The boss leaves direct interaction, relocates beneath or outside the arena, and returns through a marked emergence that reshapes positioning. The encounter uses that rule as a short promise: a visible signal, a committed action, and a result the player can verify."
+  },
+  "adaptation": {
+    "title": "Adapt it to the player verbs",
+    "body": "The player should relocate away from the emergence zone, prepare an intercept, or use the hidden interval for a different objective. Tune hidden duration, destination lock time, emergence radius, and recovery so relocation creates tension without becoming dead time."
+  },
+  "distinction": {
+    "title": "Keep the mechanic distinct",
+    "body": "A random reappearance under the player with no trackable cue makes movement irrelevant and rewards guessing. Do not hide that distinction behind extra effects or tracking that the announced rule does not contain."
+  },
+  "lensNotes": [
+    {
+      "id": "telegraphing",
+      "body": "The signal must reveal the relevant timing and geometry before commitment."
+    },
+    {
+      "id": "commitment",
+      "body": "After commitment, the rule stops changing in ways the signal did not announce."
+    },
+    {
+      "id": "threat-geometry",
+      "body": "The complete player extent and the active region determine whether the route is real."
+    },
+    {
+      "id": "counterplay",
+      "body": "The response uses an ordinary supported verb and produces an observable result."
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "Terraria",
+      "boss": "Eater of Worlds",
+      "screenshot": "https://i.ytimg.com/vi/9KWIRuR5BnQ/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=9KWIRuR5BnQ&t=12s",
+      "body": "Eater of Worlds demonstrates burrow and emerge in a 2D encounter. Keep an exit cue and a destination cue visible: disturbed ground, a moving trail, particles, or an arena marker should bridge the hidden interval.",
+      "video": "https://www.youtube.com/watch?v=9KWIRuR5BnQ&t=12s",
+      "videoDurationSeconds": 145
+    },
+    {
+      "dimension": "2D",
+      "game": "Hollow Knight",
+      "boss": "Dung Defender",
+      "screenshot": "https://i.ytimg.com/vi/xJzK50Cb24s/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=xJzK50Cb24s&t=14s",
+      "body": "Dung Defender demonstrates burrow and emerge in a 2D encounter. The player should relocate away from the emergence zone, prepare an intercept, or use the hidden interval for a different objective.",
+      "video": "https://www.youtube.com/watch?v=xJzK50Cb24s&t=14s",
+      "videoDurationSeconds": 165
+    },
+    {
+      "dimension": "3D",
+      "game": "Monster Hunter: World",
+      "boss": "Diablos",
+      "screenshot": "https://i.ytimg.com/vi/NwFX9I69uss/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=NwFX9I69uss&t=265s",
+      "body": "Diablos demonstrates burrow and emerge in a 3D encounter. Tune hidden duration, destination lock time, emergence radius, and recovery so relocation creates tension without becoming dead time.",
+      "video": "https://www.youtube.com/watch?v=NwFX9I69uss&t=265s",
+      "videoDurationSeconds": 1358
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

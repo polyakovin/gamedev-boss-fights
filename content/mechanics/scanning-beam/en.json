@@ -1,0 +1,130 @@
+{
+  "title": "Scanning beam",
+  "subtitle": "Build a readable scanning beam with a reachable response and a useful recovery.",
+  "variant": "Committed scanning beam pattern",
+  "summary": "A sustained beam sweeps across space from one side to another.",
+  "overview": "A sustained beam sweeps across space from one side to another, turning a line hazard into a timed crossing or pacing challenge.",
+  "learning": "Tune the signal, commitment, geometry, response, and recovery of a scanning beam as one rule.",
+  "category": "Beams",
+  "readTime": "4 min",
+  "demo": {
+    "title": "Test the scanning beam",
+    "timeline": "Attack timeline",
+    "step": "Attack phases",
+    "phaseNames": ["Signal", "Response", "Recovery"],
+    "phaseDescriptions": [
+      "Reveal the pivot, sweep direction, start angle, and movement speed before activation so the player can plan where to cross.",
+      "Players can move ahead of the sweep, cross through a permitted gap, use cover, or rotate around the pivot at a safer radius.",
+      "The sweep pauses at its final angle and powers down before the pivot resets, avoiding an invisible damaging snap back to the start."
+    ],
+    "boss": "Boss",
+    "player": "Player",
+    "danger": "The active threat is visible",
+    "locked": "The rule is committed",
+    "safe": "The response is complete",
+    "reducedMotion": "Autoplay is disabled by the reduced-motion setting. Use the timeline slider to inspect the loop.",
+    "diagramDescription": "A looping diagram of scanning beam. The boss signals and commits the rule, the player uses the intended response, and the scene holds a readable recovery before resetting."
+  },
+  "steps": [
+    {
+      "title": "Can the player read the complete rule?",
+      "body": "Reveal the pivot, sweep direction, start angle, and movement speed before activation so the player can plan where to cross."
+    },
+    {
+      "title": "Is the intended response reachable?",
+      "body": "Players can move ahead of the sweep, cross through a permitted gap, use cover, or rotate around the pivot at a safer radius."
+    },
+    {
+      "title": "Does recovery create a useful outcome?",
+      "body": "The sweep pauses at its final angle and powers down before the pivot resets, avoiding an invisible damaging snap back to the start."
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "Changing sweep speed mid-attack without a cue invalidates the timing learned from the beam’s earlier movement",
+      "body": "Changing sweep speed mid-attack without a cue invalidates the timing learned from the beam’s earlier movement."
+    },
+    {
+      "title": "The cue and active geometry disagree",
+      "body": "If the visible scanning beam cue promises a different area or timing, the player cannot carry the learned rule into the next cycle."
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "Tune the complete rule",
+      "body": "Tune angular speed, beam width, pivot position, sweep range, and arena obstructions; test inner and outer routes separately."
+    },
+    {
+      "title": "Escalate one variable at a time",
+      "body": "Reverse after a pause, move the pivot, or pair two scanners with offset timing while maintaining visible paths."
+    },
+    {
+      "title": "Prove the recovery",
+      "body": "The sweep pauses at its final angle and powers down before the pivot resets, avoiding an invisible damaging snap back to the start."
+    }
+  ],
+  "story": {
+    "title": "What the mechanic communicates",
+    "body": "A sustained beam sweeps across space from one side to another, turning a line hazard into a timed crossing or pacing challenge. The encounter uses that rule as a short promise: a visible signal, a committed action, and a result the player can verify."
+  },
+  "adaptation": {
+    "title": "Adapt it to the player verbs",
+    "body": "Players can move ahead of the sweep, cross through a permitted gap, use cover, or rotate around the pivot at a safer radius. Tune angular speed, beam width, pivot position, sweep range, and arena obstructions; test inner and outer routes separately."
+  },
+  "distinction": {
+    "title": "Keep the mechanic distinct",
+    "body": "Changing sweep speed mid-attack without a cue invalidates the timing learned from the beam’s earlier movement. Do not hide that distinction behind extra effects or tracking that the announced rule does not contain."
+  },
+  "lensNotes": [
+    {
+      "id": "telegraphing",
+      "body": "The signal must reveal the relevant timing and geometry before commitment."
+    },
+    {
+      "id": "commitment",
+      "body": "After commitment, the rule stops changing in ways the signal did not announce."
+    },
+    {
+      "id": "threat-geometry",
+      "body": "The complete player extent and the active region determine whether the route is real."
+    },
+    {
+      "id": "counterplay",
+      "body": "The response uses an ordinary supported verb and produces an observable result."
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "Hollow Knight",
+      "boss": "Absolute Radiance",
+      "screenshot": "https://i.ytimg.com/vi/bgh04-wCRyk/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=bgh04-wCRyk&t=20s",
+      "body": "Absolute Radiance demonstrates scanning beam in a 2D encounter. Reveal the pivot, sweep direction, start angle, and movement speed before activation so the player can plan where to cross.",
+      "video": "https://www.youtube.com/watch?v=bgh04-wCRyk&t=20s",
+      "videoDurationSeconds": 484
+    },
+    {
+      "dimension": "3D",
+      "game": "Returnal",
+      "boss": "Phrike",
+      "screenshot": "https://i.ytimg.com/vi/UdBbTMFLFIo/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=UdBbTMFLFIo&t=32s",
+      "body": "Phrike demonstrates scanning beam in a 3D encounter. Players can move ahead of the sweep, cross through a permitted gap, use cover, or rotate around the pivot at a safer radius.",
+      "video": "https://www.youtube.com/watch?v=UdBbTMFLFIo&t=32s",
+      "videoDurationSeconds": 175
+    },
+    {
+      "dimension": "3D",
+      "game": "V Rising",
+      "boss": "Ziva the Engineer",
+      "screenshot": "https://i.ytimg.com/vi/2FaqtlB36V8/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=2FaqtlB36V8&t=24s",
+      "body": "Ziva the Engineer demonstrates scanning beam in a 3D encounter. Tune angular speed, beam width, pivot position, sweep range, and arena obstructions; test inner and outer routes separately.",
+      "video": "https://www.youtube.com/watch?v=2FaqtlB36V8&t=24s",
+      "videoDurationSeconds": 303
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

@@ -79,7 +79,7 @@ const SPECS = {
     mode: 'shrink',
     boss: [280, 390],
     player: [430, 650],
-    target: [350, 570],
+    target: [348, 568],
   },
   knockback: {
     mode: 'knockback',
@@ -109,13 +109,13 @@ const SPECS = {
     mode: 'telegraph',
     boss: [190, 270],
     player: [390, 630],
-    target: [470, 720],
+    target: [505, 770],
   },
   'fight-phase': {
     mode: 'phase',
     boss: [280, 350],
     player: [400, 650],
-    target: [365, 720],
+    target: [365, 750],
   },
   enrage: { mode: 'enrage', boss: [280, 350], player: [400, 650], target: [455, 735] },
 };
@@ -207,13 +207,34 @@ const arcPath = (center, radius, from, to) => {
   const end = polar(center, radius, to);
   return `M ${start.x} ${start.y} A ${radius} ${radius} 0 ${Math.abs(to - from) > Math.PI ? 1 : 0} 1 ${end.x} ${end.y}`;
 };
-const spiralPath = (center, amount) => {
-  const points = Array.from({ length: 34 }, (_, index) => {
+const spiralPoints = (center, amount) =>
+  Array.from({ length: 34 }, (_, index) => {
     const t = index / 33;
     const angle = t * Math.PI * 4.5 + amount * Math.PI * 1.2;
     return polar(center, 22 + t * 260, angle);
   });
+const spiralPath = (center, amount) => {
+  const points = spiralPoints(center, amount);
   return points.map((item, index) => `${index ? 'L' : 'M'} ${item.x} ${item.y}`).join(' ');
+};
+
+const distanceToPolyline = (value, points) =>
+  Math.min(...points.slice(1).map((end, index) => distanceToSegment(value, points[index], end)));
+
+const angleDifference = (from, to) => Math.atan2(Math.sin(from - to), Math.cos(from - to));
+
+const pointInPolygon = (value, points) => {
+  let inside = false;
+  for (let index = 0, previous = points.length - 1; index < points.length; previous = index++) {
+    const start = points[index];
+    const end = points[previous];
+    if (
+      start.y > value.y !== end.y > value.y &&
+      value.x < ((end.x - start.x) * (value.y - start.y)) / (end.y - start.y) + start.x
+    )
+      inside = !inside;
+  }
+  return inside;
 };
 const quadraticPoint = (start, control, end, amount) => {
   const t = clamp(amount);
@@ -496,6 +517,139 @@ export function blueprintSpec(id) {
   return Object.freeze({ id, ...spec });
 }
 
+function pointClearsThreat(spec, frame, value, radius = BLUEPRINT_PLAYER_RADIUS) {
+  if (!frame.dangerActive) return true;
+  const distanceFromBoss = Math.hypot(value.x - frame.boss.x, value.y - frame.boss.y);
+  const { mode } = spec;
+  if (mode === 'arc') return distanceFromBoss > 205 + radius;
+  if (mode === 'lunge')
+    return distanceToSegment(value, { x: 170, y: 290 }, { x: 430, y: 590 }) > 27 + radius;
+  if (mode === 'grab') return Math.hypot(value.x - 390, value.y - 485) > 60 + radius;
+  if (mode === 'burrow') return Math.hypot(value.x - 420, value.y - 590) > 78 + radius;
+  if (mode === 'ring') {
+    const ringRadius = mix(70, 390, frame.action);
+    if (Math.abs(distanceFromBoss - ringRadius) > 9 + radius) return true;
+    const gapCenter = Math.atan2(690 - frame.boss.y, 440 - frame.boss.x);
+    const bodyHalfAngle = Math.asin(clamp(radius / Math.max(distanceFromBoss, radius), -1, 1));
+    return (
+      Math.abs(
+        angleDifference(Math.atan2(value.y - frame.boss.y, value.x - frame.boss.x), gapCenter),
+      ) +
+        bodyHalfAngle <
+      0.24
+    );
+  }
+  if (mode === 'spiral')
+    return (
+      distanceFromBoss > 52 + radius &&
+      distanceToPolyline(value, spiralPoints(frame.boss, frame.action)) > 7 + radius
+    );
+  if (mode === 'ricochet')
+    return (
+      distanceToPolyline(value, [
+        { x: 160, y: 250 },
+        { x: 500, y: 420 },
+        { x: 110, y: 610 },
+        { x: 430, y: 790 },
+      ]) >
+      6 + radius
+    );
+  if (mode === 'homing') {
+    const head = frame.primitives[2];
+    return Math.hypot(value.x - head.x, value.y - head.y) > head.radius + radius;
+  }
+  if (mode === 'beam') return Math.abs(value.x - frame.boss.x) > 36 + radius;
+  if (mode === 'scanning' || mode === 'rotating')
+    return frame.primitives
+      .filter((primitive) => primitive.type === 'line' && primitive.tone === 'signal')
+      .every(
+        (primitive) =>
+          distanceToSegment(
+            value,
+            { x: primitive.x1, y: primitive.y1 },
+            { x: primitive.x2, y: primitive.y2 },
+          ) >
+          primitive.width / 2 + radius,
+      );
+  if (mode === 'marked') return Math.hypot(value.x - 380, value.y - 620) > 58 + radius;
+  if (mode === 'shockwave') {
+    const wave = frame.primitives[0];
+    return (
+      Math.abs(Math.hypot(value.x - wave.x, value.y - wave.y) - wave.radius) >
+      wave.width / 2 + radius
+    );
+  }
+  if (mode === 'lingering') return Math.hypot(value.x - 360, value.y - 620) > 105 + radius;
+  if (mode === 'trail')
+    return frame.primitives
+      .filter((primitive) => primitive.type === 'circle' && primitive.opacity > 0.15)
+      .every(
+        (primitive) =>
+          Math.hypot(value.x - primitive.x, value.y - primitive.y) > primitive.radius + radius,
+      );
+  if (mode === 'platforms')
+    return frame.primitives
+      .filter((primitive) => primitive.type === 'rect' && primitive.tone === 'safe')
+      .some(
+        (platform) =>
+          value.x - radius >= platform.x &&
+          value.x + radius <= platform.x + platform.rectWidth &&
+          value.y >= platform.y - 70 &&
+          value.y <= platform.y + platform.rectHeight + radius,
+      );
+  if (mode === 'shrink') {
+    const safeRadius = frame.primitives[1].radius;
+    return Math.hypot(value.x - 280, value.y - 500) <= safeRadius - radius;
+  }
+  if (mode === 'knockback')
+    return value.x >= 24 + radius && value.x <= 536 - radius && value.y <= 910 - radius;
+  if (mode === 'target-lock') return Math.hypot(value.x - 390, value.y - 620) > 45 + radius;
+  if (mode === 'combo') {
+    const wave = frame.primitives[1];
+    return (
+      Math.abs(distanceFromBoss - 190) > 12.5 + radius &&
+      Math.abs(distanceFromBoss - wave.radius) > wave.width / 2 + radius
+    );
+  }
+  if (mode === 'weak-point')
+    return Math.hypot(value.x - (frame.boss.x + 58), value.y - (frame.boss.y - 12)) <= 170;
+  if (mode === 'telegraph') {
+    const danger = [
+      { x: 190, y: 270 },
+      { x: 485, y: 690 },
+      { x: 410, y: 735 },
+    ];
+    return (
+      !pointInPolygon(value, danger) && distanceToPolyline(value, [...danger, danger[0]]) > radius
+    );
+  }
+  if (mode === 'phase') {
+    const boundary = frame.primitives[1];
+    return (
+      value.x + radius < boundary.x ||
+      value.x - radius > boundary.x + boundary.rectWidth ||
+      value.y + radius < boundary.y ||
+      value.y - radius > boundary.y + boundary.rectHeight
+    );
+  }
+  if (mode === 'enrage')
+    return (
+      distanceFromBoss > 90 + radius &&
+      frame.primitives
+        .filter((primitive) => primitive.type === 'line')
+        .every(
+          (primitive) =>
+            distanceToSegment(
+              value,
+              { x: primitive.x1, y: primitive.y1 },
+              { x: primitive.x2, y: primitive.y2 },
+            ) >
+            primitive.width / 2 + radius,
+        )
+    );
+  throw new Error(`Missing safety rule for blueprint mode: ${mode}`);
+}
+
 export function blueprintFrame(id, time) {
   const spec = blueprintSpec(id);
   const t = localTime(time);
@@ -555,19 +709,6 @@ export function blueprintFrame(id, time) {
   const bossVisible = spec.mode === 'burrow' && phase === 1 && action < 0.68 ? 0 : 1;
   const committed = t >= BLUEPRINT_PHASE_ENDS[0];
   const dangerActive = phase === 1;
-  const safeChecks = {
-    arc: Math.hypot(player.x - boss.x, player.y - boss.y) > 205 + BLUEPRINT_PLAYER_RADIUS,
-    lunge:
-      distanceToSegment(player, { x: 170, y: 290 }, { x: 430, y: 590 }) >
-      27 + BLUEPRINT_PLAYER_RADIUS,
-    grab: Math.hypot(player.x - 390, player.y - 485) > 60 + BLUEPRINT_PLAYER_RADIUS,
-    beam: Math.abs(player.x - boss.x) > 36 + BLUEPRINT_PLAYER_RADIUS,
-    marked: Math.hypot(player.x - 380, player.y - 620) > 58 + BLUEPRINT_PLAYER_RADIUS,
-    lingering: Math.hypot(player.x - 360, player.y - 620) > 105 + BLUEPRINT_PLAYER_RADIUS,
-    'target-lock': Math.hypot(player.x - 390, player.y - 620) > 45 + BLUEPRINT_PLAYER_RADIUS,
-    telegraph: player.x > 430,
-  };
-  const playerSafe = !dangerActive || safeChecks[spec.mode] !== false;
   const frame = {
     id,
     mode: spec.mode,
@@ -578,7 +719,7 @@ export function blueprintFrame(id, time) {
     recover,
     committed,
     dangerActive,
-    playerSafe,
+    playerSafe: true,
     boss,
     player,
     bossVisible,
@@ -608,9 +749,15 @@ export function blueprintFrame(id, time) {
     }),
   };
   frame.primitives = primitivesFor(spec, frame);
+  frame.playerSafe = pointClearsThreat(spec, frame, player);
   frame.bossLabel = {
     x: boss.x,
     y: boss.y + BLUEPRINT_BOSS_LABEL_OFFSET_Y * frame.bossScale,
   };
   return Object.freeze(frame);
+}
+
+export function blueprintPointSafe(id, time, value, radius = BLUEPRINT_PLAYER_RADIUS) {
+  const frame = blueprintFrame(id, time);
+  return pointClearsThreat(blueprintSpec(id), frame, value, radius);
 }

@@ -1,0 +1,130 @@
+{
+  "title": "Wide swing",
+  "subtitle": "Build a readable wide swing with a reachable response and a useful recovery.",
+  "variant": "Committed wide swing pattern",
+  "summary": "A broad melee arc denies the space beside and in front of the boss.",
+  "overview": "A broad melee arc denies the space beside and in front of the boss, asking the player to leave the arc, pass through it, or exploit the unprotected side.",
+  "learning": "Tune the signal, commitment, geometry, response, and recovery of a wide swing as one rule.",
+  "category": "Body and melee",
+  "readTime": "4 min",
+  "demo": {
+    "title": "Test the wide swing",
+    "timeline": "Attack timeline",
+    "step": "Attack phases",
+    "phaseNames": ["Signal", "Response", "Recovery"],
+    "phaseDescriptions": [
+      "Show the weapon’s start side, shoulder rotation, and intended arc before the hitbox becomes active; the pose should reveal whether the swing is high, low, or full-height.",
+      "Support at least one ordinary escape such as stepping out, moving behind the boss, or timing a dodge through the active edge, then leave a short punish window.",
+      "The weapon completes its arc and the boss holds the follow-through long enough for the unprotected side to become a real approach route before the stance resets."
+    ],
+    "boss": "Boss",
+    "player": "Player",
+    "danger": "The active threat is visible",
+    "locked": "The rule is committed",
+    "safe": "The response is complete",
+    "reducedMotion": "Autoplay is disabled by the reduced-motion setting. Use the timeline slider to inspect the loop.",
+    "diagramDescription": "A looping diagram of wide swing. The boss signals and commits the rule, the player uses the intended response, and the scene holds a readable recovery before resetting."
+  },
+  "steps": [
+    {
+      "title": "Can the player read the complete rule?",
+      "body": "Show the weapon’s start side, shoulder rotation, and intended arc before the hitbox becomes active; the pose should reveal whether the swing is high, low, or full-height."
+    },
+    {
+      "title": "Is the intended response reachable?",
+      "body": "Support at least one ordinary escape such as stepping out, moving behind the boss, or timing a dodge through the active edge, then leave a short punish window."
+    },
+    {
+      "title": "Does recovery create a useful outcome?",
+      "body": "The weapon completes its arc and the boss holds the follow-through long enough for the unprotected side to become a real approach route before the stance resets."
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "If the hitbox leads the weapon or extends far beyond it, the player learns to distrust the animation instead of reading the arc",
+      "body": "If the hitbox leads the weapon or extends far beyond it, the player learns to distrust the animation instead of reading the arc."
+    },
+    {
+      "title": "The cue and active geometry disagree",
+      "body": "If the visible wide swing cue promises a different area or timing, the player cannot carry the learned rule into the next cycle."
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "Tune the complete rule",
+      "body": "Tune reach, angular speed, active duration, and boss rotation together; test the slowest legal movement option at several starting distances."
+    },
+    {
+      "title": "Escalate one variable at a time",
+      "body": "Add a delayed reverse swing or a second height only after the base arc and its safe side are readable on their own."
+    },
+    {
+      "title": "Prove the recovery",
+      "body": "The weapon completes its arc and the boss holds the follow-through long enough for the unprotected side to become a real approach route before the stance resets."
+    }
+  ],
+  "story": {
+    "title": "What the mechanic communicates",
+    "body": "A broad melee arc denies the space beside and in front of the boss, asking the player to leave the arc, pass through it, or exploit the unprotected side. The encounter uses that rule as a short promise: a visible signal, a committed action, and a result the player can verify."
+  },
+  "adaptation": {
+    "title": "Adapt it to the player verbs",
+    "body": "Support at least one ordinary escape such as stepping out, moving behind the boss, or timing a dodge through the active edge, then leave a short punish window. Tune reach, angular speed, active duration, and boss rotation together; test the slowest legal movement option at several starting distances."
+  },
+  "distinction": {
+    "title": "Keep the mechanic distinct",
+    "body": "If the hitbox leads the weapon or extends far beyond it, the player learns to distrust the animation instead of reading the arc. Do not hide that distinction behind extra effects or tracking that the announced rule does not contain."
+  },
+  "lensNotes": [
+    {
+      "id": "telegraphing",
+      "body": "The signal must reveal the relevant timing and geometry before commitment."
+    },
+    {
+      "id": "commitment",
+      "body": "After commitment, the rule stops changing in ways the signal did not announce."
+    },
+    {
+      "id": "threat-geometry",
+      "body": "The complete player extent and the active region determine whether the route is real."
+    },
+    {
+      "id": "counterplay",
+      "body": "The response uses an ordinary supported verb and produces an observable result."
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "Hollow Knight",
+      "boss": "Mantis Lords",
+      "screenshot": "https://i.ytimg.com/vi/VG3h6uVtWyY/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=VG3h6uVtWyY&t=19s",
+      "body": "Mantis Lords demonstrates wide swing in a 2D encounter. Show the weapon’s start side, shoulder rotation, and intended arc before the hitbox becomes active; the pose should reveal whether the swing is high, low, or full-height.",
+      "video": "https://www.youtube.com/watch?v=VG3h6uVtWyY&t=19s",
+      "videoDurationSeconds": 148
+    },
+    {
+      "dimension": "3D",
+      "game": "Dark Souls III",
+      "boss": "Dancer of the Boreal Valley",
+      "screenshot": "https://i.ytimg.com/vi/vCWh1bhHNKo/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=vCWh1bhHNKo&t=38s",
+      "body": "Dancer of the Boreal Valley demonstrates wide swing in a 3D encounter. Support at least one ordinary escape such as stepping out, moving behind the boss, or timing a dodge through the active edge, then leave a short punish window.",
+      "video": "https://www.youtube.com/watch?v=vCWh1bhHNKo&t=38s",
+      "videoDurationSeconds": 190
+    },
+    {
+      "dimension": "3D",
+      "game": "Sekiro: Shadows Die Twice",
+      "boss": "Corrupted Monk",
+      "screenshot": "https://i.ytimg.com/vi/bSI6RWT8WUw/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=bSI6RWT8WUw&t=5s",
+      "body": "Corrupted Monk demonstrates wide swing in a 3D encounter. Tune reach, angular speed, active duration, and boss rotation together; test the slowest legal movement option at several starting distances.",
+      "video": "https://www.youtube.com/watch?v=bSI6RWT8WUw&t=5s",
+      "videoDurationSeconds": 74
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

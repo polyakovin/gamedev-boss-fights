@@ -1,0 +1,130 @@
+{
+  "title": "Lingering hazard",
+  "subtitle": "Build a readable lingering hazard with a reachable response and a useful recovery.",
+  "variant": "Committed lingering hazard pattern",
+  "summary": "An attack leaves danger active after the initial hit.",
+  "overview": "An attack leaves danger active after the initial hit, converting a momentary threat into temporary arena control and future route planning.",
+  "learning": "Tune the signal, commitment, geometry, response, and recovery of a lingering hazard as one rule.",
+  "category": "Zones and traps",
+  "readTime": "4 min",
+  "demo": {
+    "title": "Test the lingering hazard",
+    "timeline": "Attack timeline",
+    "step": "Attack phases",
+    "phaseNames": ["Signal", "Response", "Recovery"],
+    "phaseDescriptions": [
+      "Distinguish the initial impact, active hazard, and expiration states so the player knows when entering the area is unsafe and when it clears.",
+      "Players route around the zone, bait it toward low-value space, remove it with a supported tool, or accept a clearly priced tradeoff.",
+      "The zone cools, shrinks, or fades through an unmistakable expiration state before its space becomes safe again."
+    ],
+    "boss": "Boss",
+    "player": "Player",
+    "danger": "The active threat is visible",
+    "locked": "The rule is committed",
+    "safe": "The response is complete",
+    "reducedMotion": "Autoplay is disabled by the reduced-motion setting. Use the timeline slider to inspect the loop.",
+    "diagramDescription": "A looping diagram of lingering hazard. The boss signals and commits the rule, the player uses the intended response, and the scene holds a readable recovery before resetting."
+  },
+  "steps": [
+    {
+      "title": "Can the player read the complete rule?",
+      "body": "Distinguish the initial impact, active hazard, and expiration states so the player knows when entering the area is unsafe and when it clears."
+    },
+    {
+      "title": "Is the intended response reachable?",
+      "body": "Players route around the zone, bait it toward low-value space, remove it with a supported tool, or accept a clearly priced tradeoff."
+    },
+    {
+      "title": "Does recovery create a useful outcome?",
+      "body": "The zone cools, shrinks, or fades through an unmistakable expiration state before its space becomes safe again."
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "Hazards that outlive their readable visuals create invisible damage and make the arena state impossible to audit",
+      "body": "Hazards that outlive their readable visuals create invisible damage and make the arena state impossible to audit."
+    },
+    {
+      "title": "The cue and active geometry disagree",
+      "body": "If the visible lingering hazard cue promises a different area or timing, the player cannot carry the learned rule into the next cycle."
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "Tune the complete rule",
+      "body": "Tune footprint, lifetime, placement frequency, damage cadence, and maximum simultaneous coverage as one arena budget."
+    },
+    {
+      "title": "Escalate one variable at a time",
+      "body": "Let zones grow, drift, or react to other attacks while enforcing a cap that preserves at least one viable route."
+    },
+    {
+      "title": "Prove the recovery",
+      "body": "The zone cools, shrinks, or fades through an unmistakable expiration state before its space becomes safe again."
+    }
+  ],
+  "story": {
+    "title": "What the mechanic communicates",
+    "body": "An attack leaves danger active after the initial hit, converting a momentary threat into temporary arena control and future route planning. The encounter uses that rule as a short promise: a visible signal, a committed action, and a result the player can verify."
+  },
+  "adaptation": {
+    "title": "Adapt it to the player verbs",
+    "body": "Players route around the zone, bait it toward low-value space, remove it with a supported tool, or accept a clearly priced tradeoff. Tune footprint, lifetime, placement frequency, damage cadence, and maximum simultaneous coverage as one arena budget."
+  },
+  "distinction": {
+    "title": "Keep the mechanic distinct",
+    "body": "Hazards that outlive their readable visuals create invisible damage and make the arena state impossible to audit. Do not hide that distinction behind extra effects or tracking that the announced rule does not contain."
+  },
+  "lensNotes": [
+    {
+      "id": "telegraphing",
+      "body": "The signal must reveal the relevant timing and geometry before commitment."
+    },
+    {
+      "id": "threat-geometry",
+      "body": "The complete player extent and the active region determine whether the route is real."
+    },
+    {
+      "id": "counterplay",
+      "body": "The response uses an ordinary supported verb and produces an observable result."
+    },
+    {
+      "id": "access-paths",
+      "body": "At least one route remains reachable with the movement options available at this point."
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "Enter the Gungeon",
+      "boss": "High Dragun",
+      "screenshot": "https://i.ytimg.com/vi/aKALjUZqhXA/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=aKALjUZqhXA&t=103s",
+      "body": "High Dragun demonstrates lingering hazard in a 2D encounter. Distinguish the initial impact, active hazard, and expiration states so the player knows when entering the area is unsafe and when it clears.",
+      "video": "https://www.youtube.com/watch?v=aKALjUZqhXA&t=103s",
+      "videoDurationSeconds": 211
+    },
+    {
+      "dimension": "2D",
+      "game": "Ori and the Will of the Wisps",
+      "boss": "Shriek",
+      "screenshot": "https://i.ytimg.com/vi/DvuB8cImPIg/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=DvuB8cImPIg&t=1165s",
+      "body": "Shriek demonstrates lingering hazard in a 2D encounter. Players route around the zone, bait it toward low-value space, remove it with a supported tool, or accept a clearly priced tradeoff.",
+      "video": "https://www.youtube.com/watch?v=DvuB8cImPIg&t=1165s",
+      "videoDurationSeconds": 2062
+    },
+    {
+      "dimension": "3D",
+      "game": "V Rising",
+      "boss": "Ziva the Engineer",
+      "screenshot": "https://i.ytimg.com/vi/2FaqtlB36V8/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=2FaqtlB36V8&t=24s",
+      "body": "Ziva the Engineer demonstrates lingering hazard in a 3D encounter. Tune footprint, lifetime, placement frequency, damage cadence, and maximum simultaneous coverage as one arena budget.",
+      "video": "https://www.youtube.com/watch?v=2FaqtlB36V8&t=24s",
+      "videoDurationSeconds": 303
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

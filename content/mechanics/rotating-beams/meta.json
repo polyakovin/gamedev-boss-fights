@@ -1,0 +1,20 @@
+{
+  "id": "rotating-beams",
+  "number": 17,
+  "published": true,
+  "sourceLocale": "en",
+  "contentVersion": 1,
+  "animation": "rotating-beams",
+  "lenses": ["telegraphing", "commitment", "threat-geometry", "counterplay"],
+  "related": ["scanning-beam", "spiral-barrage"],
+  "sources": [
+    {
+      "title": "V Rising developers on Ziva the Engineer · PlayStation Blog",
+      "url": "https://blog.playstation.com/2024/06/03/v-rising-devs-deep-drive-into-boss-encounters-coming-to-ps5-june-11/"
+    },
+    {
+      "title": "Boss Up: Boss Battle Design · GDC Vault",
+      "url": "https://www.gdcvault.com/play/1024921/Boss-Up-Boss-Battle-Design"
+    }
+  ]
+}

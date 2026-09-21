@@ -1,0 +1,130 @@
+{
+  "title": "Fight phase",
+  "subtitle": "Build a readable fight phase with a reachable response and a useful recovery.",
+  "variant": "Committed fight phase pattern",
+  "summary": "A health.",
+  "overview": "A health, time, or objective threshold changes the encounter’s rules, moves, arena, or goals to create a distinct stage of the same fight.",
+  "learning": "Tune the signal, commitment, geometry, response, and recovery of a fight phase as one rule.",
+  "category": "Structure and readability",
+  "readTime": "4 min",
+  "demo": {
+    "title": "Test the fight phase",
+    "timeline": "Attack timeline",
+    "step": "Attack phases",
+    "phaseNames": ["Signal", "Response", "Recovery"],
+    "phaseDescriptions": [
+      "Mark the transition with a pause, animation, music change, camera beat, or environment shift that clearly separates old and new rules.",
+      "Give the player a moment to read the new state, reposition, or change priorities before the first unfamiliar threat fully resolves.",
+      "The transition ends only after the new arena, objective, and boss state are stable, with a short onboarding beat before the next full-pressure action."
+    ],
+    "boss": "Boss",
+    "player": "Player",
+    "danger": "The active threat is visible",
+    "locked": "The rule is committed",
+    "safe": "The response is complete",
+    "reducedMotion": "Autoplay is disabled by the reduced-motion setting. Use the timeline slider to inspect the loop.",
+    "diagramDescription": "A looping diagram of fight phase. The boss signals and commits the rule, the player uses the intended response, and the scene holds a readable recovery before resetting."
+  },
+  "steps": [
+    {
+      "title": "Can the player read the complete rule?",
+      "body": "Mark the transition with a pause, animation, music change, camera beat, or environment shift that clearly separates old and new rules."
+    },
+    {
+      "title": "Is the intended response reachable?",
+      "body": "Give the player a moment to read the new state, reposition, or change priorities before the first unfamiliar threat fully resolves."
+    },
+    {
+      "title": "Does recovery create a useful outcome?",
+      "body": "The transition ends only after the new arena, objective, and boss state are stable, with a short onboarding beat before the next full-pressure action."
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "Changing several rules during an unprotected attack can make the first failure feel like missing information rather than a design challenge",
+      "body": "Changing several rules during an unprotected attack can make the first failure feel like missing information rather than a design challenge."
+    },
+    {
+      "title": "The cue and active geometry disagree",
+      "body": "If the visible fight phase cue promises a different area or timing, the player cannot carry the learned rule into the next cycle."
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "Tune the complete rule",
+      "body": "Balance phase length, transition safety, retained hazards, resource state, checkpoints, and how quickly the new rule is introduced."
+    },
+    {
+      "title": "Escalate one variable at a time",
+      "body": "Recombine mastered mechanics or change the immediate objective in later phases instead of only increasing health and damage."
+    },
+    {
+      "title": "Prove the recovery",
+      "body": "The transition ends only after the new arena, objective, and boss state are stable, with a short onboarding beat before the next full-pressure action."
+    }
+  ],
+  "story": {
+    "title": "What the mechanic communicates",
+    "body": "A health, time, or objective threshold changes the encounter’s rules, moves, arena, or goals to create a distinct stage of the same fight. The encounter uses that rule as a short promise: a visible signal, a committed action, and a result the player can verify."
+  },
+  "adaptation": {
+    "title": "Adapt it to the player verbs",
+    "body": "Give the player a moment to read the new state, reposition, or change priorities before the first unfamiliar threat fully resolves. Balance phase length, transition safety, retained hazards, resource state, checkpoints, and how quickly the new rule is introduced."
+  },
+  "distinction": {
+    "title": "Keep the mechanic distinct",
+    "body": "Changing several rules during an unprotected attack can make the first failure feel like missing information rather than a design challenge. Do not hide that distinction behind extra effects or tracking that the announced rule does not contain."
+  },
+  "lensNotes": [
+    {
+      "id": "phase-structure",
+      "body": "The phase boundary changes a rule or objective and communicates that change explicitly."
+    },
+    {
+      "id": "progress-clarity",
+      "body": "State changes are shown clearly enough to tell when the objective has advanced."
+    },
+    {
+      "id": "difficulty-rhythm",
+      "body": "Preparation, action, and recovery create a legible cycle of pressure and release."
+    },
+    {
+      "id": "context-and-sequence",
+      "body": "The mechanic earns its place by preparing, combining, or resolving nearby decisions."
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "Ori and the Will of the Wisps",
+      "boss": "Mora",
+      "screenshot": "https://i.ytimg.com/vi/DvuB8cImPIg/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=DvuB8cImPIg&t=233s",
+      "body": "Mora demonstrates fight phase in a 2D encounter. Mark the transition with a pause, animation, music change, camera beat, or environment shift that clearly separates old and new rules.",
+      "video": "https://www.youtube.com/watch?v=DvuB8cImPIg&t=233s",
+      "videoDurationSeconds": 2062
+    },
+    {
+      "dimension": "2D",
+      "game": "Cuphead",
+      "boss": "Wally Warbles",
+      "screenshot": "https://i.ytimg.com/vi/Ol3-4Y0eS9M/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=Ol3-4Y0eS9M&t=58s",
+      "body": "Wally Warbles demonstrates fight phase in a 2D encounter. Give the player a moment to read the new state, reposition, or change priorities before the first unfamiliar threat fully resolves.",
+      "video": "https://www.youtube.com/watch?v=Ol3-4Y0eS9M&t=58s",
+      "videoDurationSeconds": 199
+    },
+    {
+      "dimension": "3D",
+      "game": "Elden Ring",
+      "boss": "Rennala, Queen of the Full Moon",
+      "screenshot": "https://i.ytimg.com/vi/8wTLAgG3dX0/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=8wTLAgG3dX0&t=250s",
+      "body": "Rennala, Queen of the Full Moon demonstrates fight phase in a 3D encounter. Balance phase length, transition safety, retained hazards, resource state, checkpoints, and how quickly the new rule is introduced.",
+      "video": "https://www.youtube.com/watch?v=8wTLAgG3dX0&t=250s",
+      "videoDurationSeconds": 500
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

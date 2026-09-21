@@ -1,0 +1,130 @@
+{
+  "title": "Ring volley",
+  "subtitle": "Build a readable ring volley with a reachable response and a useful recovery.",
+  "variant": "Committed ring volley pattern",
+  "summary": "Projectiles expand from the boss in every direction.",
+  "overview": "Projectiles expand from the boss in every direction, testing radial spacing and the player’s ability to find or create a route through a closing circle.",
+  "learning": "Tune the signal, commitment, geometry, response, and recovery of a ring volley as one rule.",
+  "category": "Projectiles",
+  "readTime": "4 min",
+  "demo": {
+    "title": "Test the ring volley",
+    "timeline": "Attack timeline",
+    "step": "Attack phases",
+    "phaseNames": ["Signal", "Response", "Recovery"],
+    "phaseDescriptions": [
+      "Charge energy around the complete emitter and show any deliberate gap before launch so the player reads a ring rather than unrelated shots.",
+      "Let the player pass through a gap, move with the expanding ring, block a limited section, or interrupt the charge if that counter is intended.",
+      "Once the expanding ring has crossed the playable route, emission stops and the boss pauses before producing another radial pattern."
+    ],
+    "boss": "Boss",
+    "player": "Player",
+    "danger": "The active threat is visible",
+    "locked": "The rule is committed",
+    "safe": "The response is complete",
+    "reducedMotion": "Autoplay is disabled by the reduced-motion setting. Use the timeline slider to inspect the loop.",
+    "diagramDescription": "A looping diagram of ring volley. The boss signals and commits the rule, the player uses the intended response, and the scene holds a readable recovery before resetting."
+  },
+  "steps": [
+    {
+      "title": "Can the player read the complete rule?",
+      "body": "Charge energy around the complete emitter and show any deliberate gap before launch so the player reads a ring rather than unrelated shots."
+    },
+    {
+      "title": "Is the intended response reachable?",
+      "body": "Let the player pass through a gap, move with the expanding ring, block a limited section, or interrupt the charge if that counter is intended."
+    },
+    {
+      "title": "Does recovery create a useful outcome?",
+      "body": "Once the expanding ring has crossed the playable route, emission stops and the boss pauses before producing another radial pattern."
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "A ring spawned directly on the player tests reaction latency instead of radial planning",
+      "body": "A ring spawned directly on the player tests reaction latency instead of radial planning."
+    },
+    {
+      "title": "The cue and active geometry disagree",
+      "body": "If the visible ring volley cue promises a different area or timing, the player cannot carry the learned rule into the next cycle."
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "Tune the complete rule",
+      "body": "Tune projectile count and radius growth against arena size; gaps must remain wide enough at the distance where the player is expected to cross."
+    },
+    {
+      "title": "Escalate one variable at a time",
+      "body": "Offset consecutive rings, rotate their gaps, or vary expansion speed without hiding where each safe route begins."
+    },
+    {
+      "title": "Prove the recovery",
+      "body": "Once the expanding ring has crossed the playable route, emission stops and the boss pauses before producing another radial pattern."
+    }
+  ],
+  "story": {
+    "title": "What the mechanic communicates",
+    "body": "Projectiles expand from the boss in every direction, testing radial spacing and the player’s ability to find or create a route through a closing circle. The encounter uses that rule as a short promise: a visible signal, a committed action, and a result the player can verify."
+  },
+  "adaptation": {
+    "title": "Adapt it to the player verbs",
+    "body": "Let the player pass through a gap, move with the expanding ring, block a limited section, or interrupt the charge if that counter is intended. Tune projectile count and radius growth against arena size; gaps must remain wide enough at the distance where the player is expected to cross."
+  },
+  "distinction": {
+    "title": "Keep the mechanic distinct",
+    "body": "A ring spawned directly on the player tests reaction latency instead of radial planning. Do not hide that distinction behind extra effects or tracking that the announced rule does not contain."
+  },
+  "lensNotes": [
+    {
+      "id": "telegraphing",
+      "body": "The signal must reveal the relevant timing and geometry before commitment."
+    },
+    {
+      "id": "threat-geometry",
+      "body": "The complete player extent and the active region determine whether the route is real."
+    },
+    {
+      "id": "counterplay",
+      "body": "The response uses an ordinary supported verb and produces an observable result."
+    },
+    {
+      "id": "mastery-check",
+      "body": "Escalation asks the player to apply the same learned rule under tighter constraints."
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "Enter the Gungeon",
+      "boss": "Bullet King",
+      "screenshot": "https://i.ytimg.com/vi/ynVmgUSV7Bc/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=ynVmgUSV7Bc&t=26s",
+      "body": "Bullet King demonstrates ring volley in a 2D encounter. Charge energy around the complete emitter and show any deliberate gap before launch so the player reads a ring rather than unrelated shots.",
+      "video": "https://www.youtube.com/watch?v=ynVmgUSV7Bc&t=26s",
+      "videoDurationSeconds": 135
+    },
+    {
+      "dimension": "2D",
+      "game": "Cuphead",
+      "boss": "Wally Warbles",
+      "screenshot": "https://i.ytimg.com/vi/Ol3-4Y0eS9M/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=Ol3-4Y0eS9M&t=58s",
+      "body": "Wally Warbles demonstrates ring volley in a 2D encounter. Let the player pass through a gap, move with the expanding ring, block a limited section, or interrupt the charge if that counter is intended.",
+      "video": "https://www.youtube.com/watch?v=Ol3-4Y0eS9M&t=58s",
+      "videoDurationSeconds": 199
+    },
+    {
+      "dimension": "3D",
+      "game": "Returnal",
+      "boss": "Phrike",
+      "screenshot": "https://i.ytimg.com/vi/UdBbTMFLFIo/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=UdBbTMFLFIo&t=32s",
+      "body": "Phrike demonstrates ring volley in a 3D encounter. Tune projectile count and radius growth against arena size; gaps must remain wide enough at the distance where the player is expected to cross.",
+      "video": "https://www.youtube.com/watch?v=UdBbTMFLFIo&t=32s",
+      "videoDurationSeconds": 175
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

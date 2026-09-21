@@ -17,8 +17,8 @@ test('a reduced-motion blueprint stays still and remains fully seekable', async 
   await expect(widget).toHaveAttribute('data-blueprint-phase', '1');
   await expect(widget).toHaveAttribute('data-blueprint-committed', 'true');
   await expect(widget).toHaveAttribute('data-blueprint-outcome', 'safe');
-  await expect(widget.locator('[data-blueprint-phase-name]')).toHaveText('Player response');
-  await expect(timeline).toHaveAttribute('aria-valuetext', 'Player response');
+  await expect(widget.locator('[data-blueprint-phase-name]')).toHaveText('Response');
+  await expect(timeline).toHaveAttribute('aria-valuetext', 'Response');
 });
 
 test('blueprints autoplay only when motion is allowed', async ({ page }) => {
@@ -33,7 +33,7 @@ test('blueprints autoplay only when motion is allowed', async ({ page }) => {
     .toBeGreaterThan(150);
 });
 
-test('catalog and builder reuse the 24 compact rule-specific previews', async ({ page }) => {
+test('catalog and builder reuse the 24 promoted rule-specific previews', async ({ page }) => {
   await page.goto('en/');
   await expect(page.locator('[data-blueprint-preview]')).toHaveCount(24);
 

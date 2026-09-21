@@ -1,0 +1,130 @@
+{
+  "title": "Weak point",
+  "subtitle": "Build a readable weak point with a reachable response and a useful recovery.",
+  "variant": "Committed weak point pattern",
+  "summary": "Damage is concentrated on a specific body part.",
+  "overview": "Damage is concentrated on a specific body part, state, or facing, turning access to the target into a positioning and timing objective.",
+  "learning": "Tune the signal, commitment, geometry, response, and recovery of a weak point as one rule.",
+  "category": "Defense",
+  "readTime": "4 min",
+  "demo": {
+    "title": "Test the weak point",
+    "timeline": "Attack timeline",
+    "step": "Attack phases",
+    "phaseNames": ["Signal", "Response", "Recovery"],
+    "phaseDescriptions": [
+      "Use shape, material, animation, and hit feedback to distinguish the vulnerable region and show when it opens or closes.",
+      "Players reposition, provoke an exposing attack, break protection, or reserve high-value actions for the vulnerability window.",
+      "The exposed point closes with a visible guard or state change, and the boss does not accept hidden weak-point hits after the window ends."
+    ],
+    "boss": "Boss",
+    "player": "Player",
+    "danger": "The active threat is visible",
+    "locked": "The rule is committed",
+    "safe": "The response is complete",
+    "reducedMotion": "Autoplay is disabled by the reduced-motion setting. Use the timeline slider to inspect the loop.",
+    "diagramDescription": "A looping diagram of weak point. The boss signals and commits the rule, the player uses the intended response, and the scene holds a readable recovery before resetting."
+  },
+  "steps": [
+    {
+      "title": "Can the player read the complete rule?",
+      "body": "Use shape, material, animation, and hit feedback to distinguish the vulnerable region and show when it opens or closes."
+    },
+    {
+      "title": "Is the intended response reachable?",
+      "body": "Players reposition, provoke an exposing attack, break protection, or reserve high-value actions for the vulnerability window."
+    },
+    {
+      "title": "Does recovery create a useful outcome?",
+      "body": "The exposed point closes with a visible guard or state change, and the boss does not accept hidden weak-point hits after the window ends."
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "A weak point that visually reads as exposed but rejects valid hits makes the vulnerability rule feel inconsistent",
+      "body": "A weak point that visually reads as exposed but rejects valid hits makes the vulnerability rule feel inconsistent."
+    },
+    {
+      "title": "The cue and active geometry disagree",
+      "body": "If the visible weak point cue promises a different area or timing, the player cannot carry the learned rule into the next cycle."
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "Tune the complete rule",
+      "body": "Tune access frequency, window length, damage multiplier, target size, camera visibility, and support for different attack ranges."
+    },
+    {
+      "title": "Escalate one variable at a time",
+      "body": "Move the weak point, link it to a breakable part, or require alternating access routes while preserving clear open and closed feedback."
+    },
+    {
+      "title": "Prove the recovery",
+      "body": "The exposed point closes with a visible guard or state change, and the boss does not accept hidden weak-point hits after the window ends."
+    }
+  ],
+  "story": {
+    "title": "What the mechanic communicates",
+    "body": "Damage is concentrated on a specific body part, state, or facing, turning access to the target into a positioning and timing objective. The encounter uses that rule as a short promise: a visible signal, a committed action, and a result the player can verify."
+  },
+  "adaptation": {
+    "title": "Adapt it to the player verbs",
+    "body": "Players reposition, provoke an exposing attack, break protection, or reserve high-value actions for the vulnerability window. Tune access frequency, window length, damage multiplier, target size, camera visibility, and support for different attack ranges."
+  },
+  "distinction": {
+    "title": "Keep the mechanic distinct",
+    "body": "A weak point that visually reads as exposed but rejects valid hits makes the vulnerability rule feel inconsistent. Do not hide that distinction behind extra effects or tracking that the announced rule does not contain."
+  },
+  "lensNotes": [
+    {
+      "id": "progress-clarity",
+      "body": "State changes are shown clearly enough to tell when the objective has advanced."
+    },
+    {
+      "id": "risk-reward",
+      "body": "Position and timing trade easier clearance against a better recovery opportunity."
+    },
+    {
+      "id": "counterplay",
+      "body": "The response uses an ordinary supported verb and produces an observable result."
+    },
+    {
+      "id": "player-expression",
+      "body": "More than one supported response can remain useful without obscuring the core rule."
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "Ori and the Will of the Wisps",
+      "boss": "Horn Beetle",
+      "screenshot": "https://i.ytimg.com/vi/DvuB8cImPIg/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=DvuB8cImPIg&t=61s",
+      "body": "Horn Beetle demonstrates weak point in a 2D encounter. Use shape, material, animation, and hit feedback to distinguish the vulnerable region and show when it opens or closes.",
+      "video": "https://www.youtube.com/watch?v=DvuB8cImPIg&t=61s",
+      "videoDurationSeconds": 2062
+    },
+    {
+      "dimension": "2D",
+      "game": "Hollow Knight",
+      "boss": "False Knight",
+      "screenshot": "https://i.ytimg.com/vi/rwZmf4u366o/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=rwZmf4u366o&t=151s",
+      "body": "False Knight demonstrates weak point in a 2D encounter. Players reposition, provoke an exposing attack, break protection, or reserve high-value actions for the vulnerability window.",
+      "video": "https://www.youtube.com/watch?v=rwZmf4u366o&t=151s",
+      "videoDurationSeconds": 2630
+    },
+    {
+      "dimension": "3D",
+      "game": "Demon's Souls",
+      "boss": "Tower Knight",
+      "screenshot": "https://i.ytimg.com/vi/oXJJDrastpw/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=oXJJDrastpw&t=20s",
+      "body": "Tower Knight demonstrates weak point in a 3D encounter. Tune access frequency, window length, damage multiplier, target size, camera visibility, and support for different attack ranges.",
+      "video": "https://www.youtube.com/watch?v=oXJJDrastpw&t=20s",
+      "videoDurationSeconds": 217
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

@@ -1,0 +1,130 @@
+{
+  "title": "Target lock",
+  "subtitle": "Build a readable target lock with a reachable response and a useful recovery.",
+  "variant": "Committed target lock pattern",
+  "summary": "The boss selects a player or position.",
+  "overview": "The boss selects a player or position, communicates that selection, and commits a later attack to it, creating a window for deliberate placement.",
+  "learning": "Tune the signal, commitment, geometry, response, and recovery of a target lock as one rule.",
+  "category": "Targeting and rhythm",
+  "readTime": "4 min",
+  "demo": {
+    "title": "Test the target lock",
+    "timeline": "Attack timeline",
+    "step": "Attack phases",
+    "phaseNames": ["Signal", "Response", "Recovery"],
+    "phaseDescriptions": [
+      "Use a persistent marker and a clear lock moment that distinguishes tracking before commitment from the fixed target after commitment.",
+      "The marked player moves the attack away, shares or transfers responsibility if supported, or waits for commitment before leaving the area.",
+      "The marker is consumed at the committed location and cannot follow the player after lock; a short reset separates that resolution from the next selection."
+    ],
+    "boss": "Boss",
+    "player": "Player",
+    "danger": "The active threat is visible",
+    "locked": "The rule is committed",
+    "safe": "The response is complete",
+    "reducedMotion": "Autoplay is disabled by the reduced-motion setting. Use the timeline slider to inspect the loop.",
+    "diagramDescription": "A looping diagram of target lock. The boss signals and commits the rule, the player uses the intended response, and the scene holds a readable recovery before resetting."
+  },
+  "steps": [
+    {
+      "title": "Can the player read the complete rule?",
+      "body": "Use a persistent marker and a clear lock moment that distinguishes tracking before commitment from the fixed target after commitment."
+    },
+    {
+      "title": "Is the intended response reachable?",
+      "body": "The marked player moves the attack away, shares or transfers responsibility if supported, or waits for commitment before leaving the area."
+    },
+    {
+      "title": "Does recovery create a useful outcome?",
+      "body": "The marker is consumed at the committed location and cannot follow the player after lock; a short reset separates that resolution from the next selection."
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "Continuing to retarget after the lock cue teaches players that the marker has no dependable meaning",
+      "body": "Continuing to retarget after the lock cue teaches players that the marker has no dependable meaning."
+    },
+    {
+      "title": "The cue and active geometry disagree",
+      "body": "If the visible target lock cue promises a different area or timing, the player cannot carry the learned rule into the next cycle."
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "Tune the complete rule",
+      "body": "Tune selection range, tracking duration, lock delay, attack delay, and multiplayer priority rules so responsibility remains legible."
+    },
+    {
+      "title": "Escalate one variable at a time",
+      "body": "Lock several targets, attach different outcomes to markers, or shorten the placement window while keeping commitment explicit."
+    },
+    {
+      "title": "Prove the recovery",
+      "body": "The marker is consumed at the committed location and cannot follow the player after lock; a short reset separates that resolution from the next selection."
+    }
+  ],
+  "story": {
+    "title": "What the mechanic communicates",
+    "body": "The boss selects a player or position, communicates that selection, and commits a later attack to it, creating a window for deliberate placement. The encounter uses that rule as a short promise: a visible signal, a committed action, and a result the player can verify."
+  },
+  "adaptation": {
+    "title": "Adapt it to the player verbs",
+    "body": "The marked player moves the attack away, shares or transfers responsibility if supported, or waits for commitment before leaving the area. Tune selection range, tracking duration, lock delay, attack delay, and multiplayer priority rules so responsibility remains legible."
+  },
+  "distinction": {
+    "title": "Keep the mechanic distinct",
+    "body": "Continuing to retarget after the lock cue teaches players that the marker has no dependable meaning. Do not hide that distinction behind extra effects or tracking that the announced rule does not contain."
+  },
+  "lensNotes": [
+    {
+      "id": "telegraphing",
+      "body": "The signal must reveal the relevant timing and geometry before commitment."
+    },
+    {
+      "id": "commitment",
+      "body": "After commitment, the rule stops changing in ways the signal did not announce."
+    },
+    {
+      "id": "difficulty-rhythm",
+      "body": "Preparation, action, and recovery create a legible cycle of pressure and release."
+    },
+    {
+      "id": "counterplay",
+      "body": "The response uses an ordinary supported verb and produces an observable result."
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "Ori and the Will of the Wisps",
+      "boss": "Shriek",
+      "screenshot": "https://i.ytimg.com/vi/DvuB8cImPIg/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=DvuB8cImPIg&t=1165s",
+      "body": "Shriek demonstrates target lock in a 2D encounter. Use a persistent marker and a clear lock moment that distinguishes tracking before commitment from the fixed target after commitment.",
+      "video": "https://www.youtube.com/watch?v=DvuB8cImPIg&t=1165s",
+      "videoDurationSeconds": 2062
+    },
+    {
+      "dimension": "2D",
+      "game": "Hollow Knight",
+      "boss": "Absolute Radiance",
+      "screenshot": "https://i.ytimg.com/vi/bgh04-wCRyk/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=bgh04-wCRyk&t=20s",
+      "body": "Absolute Radiance demonstrates target lock in a 2D encounter. The marked player moves the attack away, shares or transfers responsibility if supported, or waits for commitment before leaving the area.",
+      "video": "https://www.youtube.com/watch?v=bgh04-wCRyk&t=20s",
+      "videoDurationSeconds": 484
+    },
+    {
+      "dimension": "3D",
+      "game": "Returnal",
+      "boss": "Phrike",
+      "screenshot": "https://i.ytimg.com/vi/UdBbTMFLFIo/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=UdBbTMFLFIo&t=32s",
+      "body": "Phrike demonstrates target lock in a 3D encounter. Tune selection range, tracking duration, lock delay, attack delay, and multiplayer priority rules so responsibility remains legible.",
+      "video": "https://www.youtube.com/watch?v=UdBbTMFLFIo&t=32s",
+      "videoDurationSeconds": 175
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

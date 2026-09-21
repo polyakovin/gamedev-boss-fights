@@ -1,0 +1,130 @@
+{
+  "title": "Attack combination",
+  "subtitle": "Build a readable attack combination with a reachable response and a useful recovery.",
+  "variant": "Committed attack combination pattern",
+  "summary": "Two or more familiar attacks are sequenced so the first response changes the starting conditions for the next.",
+  "overview": "Two or more familiar attacks are sequenced so the first response changes the starting conditions for the next, creating a composite decision.",
+  "learning": "Tune the signal, commitment, geometry, response, and recovery of a attack combination as one rule.",
+  "category": "Targeting and rhythm",
+  "readTime": "4 min",
+  "demo": {
+    "title": "Test the attack combination",
+    "timeline": "Attack timeline",
+    "step": "Attack phases",
+    "phaseNames": ["Signal", "Response", "Recovery"],
+    "phaseDescriptions": [
+      "Preserve the tells of each component and add a rhythm or stance that communicates whether the sequence will continue.",
+      "The player chooses a first answer that also leaves space, resources, and facing for the known follow-up rather than solving each hit in isolation.",
+      "After the final component, the boss enters a recovery proportional to the combined coverage instead of chaining immediately into a fresh sequence."
+    ],
+    "boss": "Boss",
+    "player": "Player",
+    "danger": "The active threat is visible",
+    "locked": "The rule is committed",
+    "safe": "The response is complete",
+    "reducedMotion": "Autoplay is disabled by the reduced-motion setting. Use the timeline slider to inspect the loop.",
+    "diagramDescription": "A looping diagram of attack combination. The boss signals and commits the rule, the player uses the intended response, and the scene holds a readable recovery before resetting."
+  },
+  "steps": [
+    {
+      "title": "Can the player read the complete rule?",
+      "body": "Preserve the tells of each component and add a rhythm or stance that communicates whether the sequence will continue."
+    },
+    {
+      "title": "Is the intended response reachable?",
+      "body": "The player chooses a first answer that also leaves space, resources, and facing for the known follow-up rather than solving each hit in isolation."
+    },
+    {
+      "title": "Does recovery create a useful outcome?",
+      "body": "After the final component, the boss enters a recovery proportional to the combined coverage instead of chaining immediately into a fresh sequence."
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "Combining individually fair attacks can still create an unavoidable follow-up if the first recovery ends in the second danger zone",
+      "body": "Combining individually fair attacks can still create an unavoidable follow-up if the first recovery ends in the second danger zone."
+    },
+    {
+      "title": "The cue and active geometry disagree",
+      "body": "If the visible attack combination cue promises a different area or timing, the player cannot carry the learned rule into the next cycle."
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "Tune the complete rule",
+      "body": "Tune transition gaps, positional carryover, cancellation rules, and total sequence duration; test every legal response to the opening move."
+    },
+    {
+      "title": "Escalate one variable at a time",
+      "body": "Branch the final move from a small set of clearly signaled options after the fixed opening sequence is learned."
+    },
+    {
+      "title": "Prove the recovery",
+      "body": "After the final component, the boss enters a recovery proportional to the combined coverage instead of chaining immediately into a fresh sequence."
+    }
+  ],
+  "story": {
+    "title": "What the mechanic communicates",
+    "body": "Two or more familiar attacks are sequenced so the first response changes the starting conditions for the next, creating a composite decision. The encounter uses that rule as a short promise: a visible signal, a committed action, and a result the player can verify."
+  },
+  "adaptation": {
+    "title": "Adapt it to the player verbs",
+    "body": "The player chooses a first answer that also leaves space, resources, and facing for the known follow-up rather than solving each hit in isolation. Tune transition gaps, positional carryover, cancellation rules, and total sequence duration; test every legal response to the opening move."
+  },
+  "distinction": {
+    "title": "Keep the mechanic distinct",
+    "body": "Combining individually fair attacks can still create an unavoidable follow-up if the first recovery ends in the second danger zone. Do not hide that distinction behind extra effects or tracking that the announced rule does not contain."
+  },
+  "lensNotes": [
+    {
+      "id": "telegraphing",
+      "body": "The signal must reveal the relevant timing and geometry before commitment."
+    },
+    {
+      "id": "commitment",
+      "body": "After commitment, the rule stops changing in ways the signal did not announce."
+    },
+    {
+      "id": "difficulty-rhythm",
+      "body": "Preparation, action, and recovery create a legible cycle of pressure and release."
+    },
+    {
+      "id": "counterplay",
+      "body": "The response uses an ordinary supported verb and produces an observable result."
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "Hollow Knight",
+      "boss": "Mantis Lords",
+      "screenshot": "https://i.ytimg.com/vi/VG3h6uVtWyY/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=VG3h6uVtWyY&t=19s",
+      "body": "Mantis Lords demonstrates attack combination in a 2D encounter. Preserve the tells of each component and add a rhythm or stance that communicates whether the sequence will continue.",
+      "video": "https://www.youtube.com/watch?v=VG3h6uVtWyY&t=19s",
+      "videoDurationSeconds": 148
+    },
+    {
+      "dimension": "3D",
+      "game": "Sekiro: Shadows Die Twice",
+      "boss": "Corrupted Monk",
+      "screenshot": "https://i.ytimg.com/vi/bSI6RWT8WUw/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=bSI6RWT8WUw&t=5s",
+      "body": "Corrupted Monk demonstrates attack combination in a 3D encounter. The player chooses a first answer that also leaves space, resources, and facing for the known follow-up rather than solving each hit in isolation.",
+      "video": "https://www.youtube.com/watch?v=bSI6RWT8WUw&t=5s",
+      "videoDurationSeconds": 74
+    },
+    {
+      "dimension": "3D",
+      "game": "Elden Ring",
+      "boss": "Godfrey, First Elden Lord",
+      "screenshot": "https://i.ytimg.com/vi/U2jd1fqLpsE/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=U2jd1fqLpsE&t=180s",
+      "body": "Godfrey, First Elden Lord demonstrates attack combination in a 3D encounter. Tune transition gaps, positional carryover, cancellation rules, and total sequence duration; test every legal response to the opening move.",
+      "video": "https://www.youtube.com/watch?v=U2jd1fqLpsE&t=180s",
+      "videoDurationSeconds": 480
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

@@ -1,0 +1,130 @@
+{
+  "title": "Enrage",
+  "subtitle": "Build a readable enrage with a reachable response and a useful recovery.",
+  "variant": "Committed enrage pattern",
+  "summary": "The boss enters a more demanding state after a threshold or time limit.",
+  "overview": "The boss enters a more demanding state after a threshold or time limit, raising pressure and establishing a clear late-fight climax.",
+  "learning": "Tune the signal, commitment, geometry, response, and recovery of a enrage as one rule.",
+  "category": "Structure and readability",
+  "readTime": "4 min",
+  "demo": {
+    "title": "Test the enrage",
+    "timeline": "Attack timeline",
+    "step": "Attack phases",
+    "phaseNames": ["Signal", "Response", "Recovery"],
+    "phaseDescriptions": [
+      "Use a distinct transition and persistent state cue so players know which speeds, sequences, or recovery rules have changed.",
+      "The player adapts positioning and resource use to the announced changes while retaining at least one dependable answer to every attack.",
+      "The transformation finishes with a readable reset before the accelerated cycle begins; the stronger state persists instead of flickering between attacks."
+    ],
+    "boss": "Boss",
+    "player": "Player",
+    "danger": "The active threat is visible",
+    "locked": "The rule is committed",
+    "safe": "The response is complete",
+    "reducedMotion": "Autoplay is disabled by the reduced-motion setting. Use the timeline slider to inspect the loop.",
+    "diagramDescription": "A looping diagram of enrage. The boss signals and commits the rule, the player uses the intended response, and the scene holds a readable recovery before resetting."
+  },
+  "steps": [
+    {
+      "title": "Can the player read the complete rule?",
+      "body": "Use a distinct transition and persistent state cue so players know which speeds, sequences, or recovery rules have changed."
+    },
+    {
+      "title": "Is the intended response reachable?",
+      "body": "The player adapts positioning and resource use to the announced changes while retaining at least one dependable answer to every attack."
+    },
+    {
+      "title": "Does recovery create a useful outcome?",
+      "body": "The transformation finishes with a readable reset before the accelerated cycle begins; the stronger state persists instead of flickering between attacks."
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "Removing all punish windows during enrage turns mastery into attrition and can invalidate builds that rely on deliberate counterattacks",
+      "body": "Removing all punish windows during enrage turns mastery into attrition and can invalidate builds that rely on deliberate counterattacks."
+    },
+    {
+      "title": "The cue and active geometry disagree",
+      "body": "If the visible enrage cue promises a different area or timing, the player cannot carry the learned rule into the next cycle."
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "Tune the complete rule",
+      "body": "Choose the trigger, speed increase, damage change, new moves, and recovery reduction independently; avoid multiplying every value at once."
+    },
+    {
+      "title": "Escalate one variable at a time",
+      "body": "Add one new rule or compress selected timings, then preserve the visual grammar learned earlier so the climax remains readable."
+    },
+    {
+      "title": "Prove the recovery",
+      "body": "The transformation finishes with a readable reset before the accelerated cycle begins; the stronger state persists instead of flickering between attacks."
+    }
+  ],
+  "story": {
+    "title": "What the mechanic communicates",
+    "body": "The boss enters a more demanding state after a threshold or time limit, raising pressure and establishing a clear late-fight climax. The encounter uses that rule as a short promise: a visible signal, a committed action, and a result the player can verify."
+  },
+  "adaptation": {
+    "title": "Adapt it to the player verbs",
+    "body": "The player adapts positioning and resource use to the announced changes while retaining at least one dependable answer to every attack. Choose the trigger, speed increase, damage change, new moves, and recovery reduction independently; avoid multiplying every value at once."
+  },
+  "distinction": {
+    "title": "Keep the mechanic distinct",
+    "body": "Removing all punish windows during enrage turns mastery into attrition and can invalidate builds that rely on deliberate counterattacks. Do not hide that distinction behind extra effects or tracking that the announced rule does not contain."
+  },
+  "lensNotes": [
+    {
+      "id": "phase-structure",
+      "body": "The phase boundary changes a rule or objective and communicates that change explicitly."
+    },
+    {
+      "id": "difficulty-rhythm",
+      "body": "Preparation, action, and recovery create a legible cycle of pressure and release."
+    },
+    {
+      "id": "progress-clarity",
+      "body": "State changes are shown clearly enough to tell when the objective has advanced."
+    },
+    {
+      "id": "risk-reward",
+      "body": "Position and timing trade easier clearance against a better recovery opportunity."
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "Terraria",
+      "boss": "Eye of Cthulhu",
+      "screenshot": "https://i.ytimg.com/vi/VaYY2fauQNo/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=VaYY2fauQNo&t=66s",
+      "body": "Eye of Cthulhu demonstrates enrage in a 2D encounter. Use a distinct transition and persistent state cue so players know which speeds, sequences, or recovery rules have changed.",
+      "video": "https://www.youtube.com/watch?v=VaYY2fauQNo&t=66s",
+      "videoDurationSeconds": 109
+    },
+    {
+      "dimension": "2D",
+      "game": "Hollow Knight",
+      "boss": "Absolute Radiance",
+      "screenshot": "https://i.ytimg.com/vi/bgh04-wCRyk/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=bgh04-wCRyk&t=20s",
+      "body": "Absolute Radiance demonstrates enrage in a 2D encounter. The player adapts positioning and resource use to the announced changes while retaining at least one dependable answer to every attack.",
+      "video": "https://www.youtube.com/watch?v=bgh04-wCRyk&t=20s",
+      "videoDurationSeconds": 484
+    },
+    {
+      "dimension": "3D",
+      "game": "Monster Hunter: World",
+      "boss": "Diablos",
+      "screenshot": "https://i.ytimg.com/vi/NwFX9I69uss/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=NwFX9I69uss&t=265s",
+      "body": "Diablos demonstrates enrage in a 3D encounter. Choose the trigger, speed increase, damage change, new moves, and recovery reduction independently; avoid multiplying every value at once.",
+      "video": "https://www.youtube.com/watch?v=NwFX9I69uss&t=265s",
+      "videoDurationSeconds": 1358
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

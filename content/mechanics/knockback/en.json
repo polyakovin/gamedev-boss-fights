@@ -1,0 +1,130 @@
+{
+  "title": "Knockback",
+  "subtitle": "Build a readable knockback with a reachable response and a useful recovery.",
+  "variant": "Committed knockback pattern",
+  "summary": "A hit displaces the player.",
+  "overview": "A hit displaces the player, so its real danger depends on nearby walls, ledges, hazards, and the loss of a chosen position.",
+  "learning": "Tune the signal, commitment, geometry, response, and recovery of a knockback as one rule.",
+  "category": "Arena",
+  "readTime": "4 min",
+  "demo": {
+    "title": "Test the knockback",
+    "timeline": "Attack timeline",
+    "step": "Attack phases",
+    "phaseNames": ["Signal", "Response", "Recovery"],
+    "phaseDescriptions": [
+      "Communicate push direction and strength through the boss pose, impact line, and arena context before the force resolves.",
+      "Players brace, move away from dangerous boundaries, steer during displacement, use immunity, or deliberately take a safe push for repositioning.",
+      "The player regains control before the next unavoidable threat while the boss completes its follow-through, preserving recovery from a safe landing."
+    ],
+    "boss": "Boss",
+    "player": "Player",
+    "danger": "The active threat is visible",
+    "locked": "The rule is committed",
+    "safe": "The response is complete",
+    "reducedMotion": "Autoplay is disabled by the reduced-motion setting. Use the timeline slider to inspect the loop.",
+    "diagramDescription": "A looping diagram of knockback. The boss signals and commits the rule, the player uses the intended response, and the scene holds a readable recovery before resetting."
+  },
+  "steps": [
+    {
+      "title": "Can the player read the complete rule?",
+      "body": "Communicate push direction and strength through the boss pose, impact line, and arena context before the force resolves."
+    },
+    {
+      "title": "Is the intended response reachable?",
+      "body": "Players brace, move away from dangerous boundaries, steer during displacement, use immunity, or deliberately take a safe push for repositioning."
+    },
+    {
+      "title": "Does recovery create a useful outcome?",
+      "body": "The player regains control before the next unavoidable threat while the boss completes its follow-through, preserving recovery from a safe landing."
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "A small-looking hit that launches the player farther than the arena reads makes environmental deaths feel arbitrary",
+      "body": "A small-looking hit that launches the player farther than the arena reads makes environmental deaths feel arbitrary."
+    },
+    {
+      "title": "The cue and active geometry disagree",
+      "body": "If the visible knockback cue promises a different area or timing, the player cannot carry the learned rule into the next cycle."
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "Tune the complete rule",
+      "body": "Evaluate force, stun time, air control, collision behavior, and every possible landing zone rather than balancing damage alone."
+    },
+    {
+      "title": "Escalate one variable at a time",
+      "body": "Combine moderate push with changing boundary hazards or directional choices instead of scaling force until recovery is impossible."
+    },
+    {
+      "title": "Prove the recovery",
+      "body": "The player regains control before the next unavoidable threat while the boss completes its follow-through, preserving recovery from a safe landing."
+    }
+  ],
+  "story": {
+    "title": "What the mechanic communicates",
+    "body": "A hit displaces the player, so its real danger depends on nearby walls, ledges, hazards, and the loss of a chosen position. The encounter uses that rule as a short promise: a visible signal, a committed action, and a result the player can verify."
+  },
+  "adaptation": {
+    "title": "Adapt it to the player verbs",
+    "body": "Players brace, move away from dangerous boundaries, steer during displacement, use immunity, or deliberately take a safe push for repositioning. Evaluate force, stun time, air control, collision behavior, and every possible landing zone rather than balancing damage alone."
+  },
+  "distinction": {
+    "title": "Keep the mechanic distinct",
+    "body": "A small-looking hit that launches the player farther than the arena reads makes environmental deaths feel arbitrary. Do not hide that distinction behind extra effects or tracking that the announced rule does not contain."
+  },
+  "lensNotes": [
+    {
+      "id": "threat-geometry",
+      "body": "The complete player extent and the active region determine whether the route is real."
+    },
+    {
+      "id": "counterplay",
+      "body": "The response uses an ordinary supported verb and produces an observable result."
+    },
+    {
+      "id": "access-paths",
+      "body": "At least one route remains reachable with the movement options available at this point."
+    },
+    {
+      "id": "risk-reward",
+      "body": "Position and timing trade easier clearance against a better recovery opportunity."
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "Hollow Knight",
+      "boss": "False Knight",
+      "screenshot": "https://i.ytimg.com/vi/rwZmf4u366o/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=rwZmf4u366o&t=151s",
+      "body": "False Knight demonstrates knockback in a 2D encounter. Communicate push direction and strength through the boss pose, impact line, and arena context before the force resolves.",
+      "video": "https://www.youtube.com/watch?v=rwZmf4u366o&t=151s",
+      "videoDurationSeconds": 2630
+    },
+    {
+      "dimension": "2D",
+      "game": "Ori and the Will of the Wisps",
+      "boss": "Horn Beetle",
+      "screenshot": "https://i.ytimg.com/vi/DvuB8cImPIg/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=DvuB8cImPIg&t=61s",
+      "body": "Horn Beetle demonstrates knockback in a 2D encounter. Players brace, move away from dangerous boundaries, steer during displacement, use immunity, or deliberately take a safe push for repositioning.",
+      "video": "https://www.youtube.com/watch?v=DvuB8cImPIg&t=61s",
+      "videoDurationSeconds": 2062
+    },
+    {
+      "dimension": "3D",
+      "game": "Elden Ring",
+      "boss": "Godfrey, First Elden Lord",
+      "screenshot": "https://i.ytimg.com/vi/U2jd1fqLpsE/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=U2jd1fqLpsE&t=180s",
+      "body": "Godfrey, First Elden Lord demonstrates knockback in a 3D encounter. Evaluate force, stun time, air control, collision behavior, and every possible landing zone rather than balancing damage alone.",
+      "video": "https://www.youtube.com/watch?v=U2jd1fqLpsE&t=180s",
+      "videoDurationSeconds": 480
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

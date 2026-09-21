@@ -1,0 +1,130 @@
+{
+  "title": "Grab",
+  "subtitle": "Build a readable grab with a reachable response and a useful recovery.",
+  "variant": "Committed grab pattern",
+  "summary": "A grab replaces ordinary damage with capture.",
+  "overview": "A grab replaces ordinary damage with capture, displacement, or a special follow-up, so it needs stronger communication than a routine strike.",
+  "learning": "Tune the signal, commitment, geometry, response, and recovery of a grab as one rule.",
+  "category": "Body and melee",
+  "readTime": "4 min",
+  "demo": {
+    "title": "Test the grab",
+    "timeline": "Attack timeline",
+    "step": "Attack phases",
+    "phaseNames": ["Signal", "Response", "Recovery"],
+    "phaseDescriptions": [
+      "Give the grab a unique hand pose, sound, and reach preview that cannot be confused with a blockable or low-damage melee attack.",
+      "Define whether spacing, dodging, interruption, or an escape input works, and keep that rule consistent across player states and camera angles.",
+      "A missed grab reaches full extension and retracts visibly before another action; a successful capture uses its own explicit outcome instead of hiding the recovery."
+    ],
+    "boss": "Boss",
+    "player": "Player",
+    "danger": "The active threat is visible",
+    "locked": "The rule is committed",
+    "safe": "The response is complete",
+    "reducedMotion": "Autoplay is disabled by the reduced-motion setting. Use the timeline slider to inspect the loop.",
+    "diagramDescription": "A looping diagram of grab. The boss signals and commits the rule, the player uses the intended response, and the scene holds a readable recovery before resetting."
+  },
+  "steps": [
+    {
+      "title": "Can the player read the complete rule?",
+      "body": "Give the grab a unique hand pose, sound, and reach preview that cannot be confused with a blockable or low-damage melee attack."
+    },
+    {
+      "title": "Is the intended response reachable?",
+      "body": "Define whether spacing, dodging, interruption, or an escape input works, and keep that rule consistent across player states and camera angles."
+    },
+    {
+      "title": "Does recovery create a useful outcome?",
+      "body": "A missed grab reaches full extension and retracts visibly before another action; a successful capture uses its own explicit outcome instead of hiding the recovery."
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "A grab that visually misses but snaps the player into place feels like broken collision, especially when its consequence is severe",
+      "body": "A grab that visually misses but snaps the player into place feels like broken collision, especially when its consequence is severe."
+    },
+    {
+      "title": "The cue and active geometry disagree",
+      "body": "If the visible grab cue promises a different area or timing, the player cannot carry the learned rule into the next cycle."
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "Tune the complete rule",
+      "body": "Measure acquisition width, forward reach, tracking cutoff, escape timing, and the total consequence of failure as one package."
+    },
+    {
+      "title": "Escalate one variable at a time",
+      "body": "Change what happens after capture or combine the grab with arena displacement instead of quietly increasing invisible reach."
+    },
+    {
+      "title": "Prove the recovery",
+      "body": "A missed grab reaches full extension and retracts visibly before another action; a successful capture uses its own explicit outcome instead of hiding the recovery."
+    }
+  ],
+  "story": {
+    "title": "What the mechanic communicates",
+    "body": "A grab replaces ordinary damage with capture, displacement, or a special follow-up, so it needs stronger communication than a routine strike. The encounter uses that rule as a short promise: a visible signal, a committed action, and a result the player can verify."
+  },
+  "adaptation": {
+    "title": "Adapt it to the player verbs",
+    "body": "Define whether spacing, dodging, interruption, or an escape input works, and keep that rule consistent across player states and camera angles. Measure acquisition width, forward reach, tracking cutoff, escape timing, and the total consequence of failure as one package."
+  },
+  "distinction": {
+    "title": "Keep the mechanic distinct",
+    "body": "A grab that visually misses but snaps the player into place feels like broken collision, especially when its consequence is severe. Do not hide that distinction behind extra effects or tracking that the announced rule does not contain."
+  },
+  "lensNotes": [
+    {
+      "id": "telegraphing",
+      "body": "The signal must reveal the relevant timing and geometry before commitment."
+    },
+    {
+      "id": "commitment",
+      "body": "After commitment, the rule stops changing in ways the signal did not announce."
+    },
+    {
+      "id": "threat-geometry",
+      "body": "The complete player extent and the active region determine whether the route is real."
+    },
+    {
+      "id": "counterplay",
+      "body": "The response uses an ordinary supported verb and produces an observable result."
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "Metroid Dread",
+      "boss": "Raven Beak",
+      "screenshot": "https://i.ytimg.com/vi/xKjd8I4XTzs/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=xKjd8I4XTzs&t=60s",
+      "body": "Raven Beak demonstrates grab in a 2D encounter. Give the grab a unique hand pose, sound, and reach preview that cannot be confused with a blockable or low-damage melee attack.",
+      "video": "https://www.youtube.com/watch?v=xKjd8I4XTzs&t=60s",
+      "videoDurationSeconds": 451
+    },
+    {
+      "dimension": "3D",
+      "game": "Sekiro: Shadows Die Twice",
+      "boss": "Guardian Ape",
+      "screenshot": "https://i.ytimg.com/vi/V1HIzA6O4Rw/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=V1HIzA6O4Rw&t=55s",
+      "body": "Guardian Ape demonstrates grab in a 3D encounter. Define whether spacing, dodging, interruption, or an escape input works, and keep that rule consistent across player states and camera angles.",
+      "video": "https://www.youtube.com/watch?v=V1HIzA6O4Rw&t=55s",
+      "videoDurationSeconds": 460
+    },
+    {
+      "dimension": "3D",
+      "game": "Elden Ring",
+      "boss": "Godfrey, First Elden Lord",
+      "screenshot": "https://i.ytimg.com/vi/U2jd1fqLpsE/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=U2jd1fqLpsE&t=180s",
+      "body": "Godfrey, First Elden Lord demonstrates grab in a 3D encounter. Measure acquisition width, forward reach, tracking cutoff, escape timing, and the total consequence of failure as one package.",
+      "video": "https://www.youtube.com/watch?v=U2jd1fqLpsE&t=180s",
+      "videoDurationSeconds": 480
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

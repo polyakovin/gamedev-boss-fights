@@ -5,10 +5,11 @@ import {
   BLUEPRINT_MECHANIC_IDS,
   blueprintFrame,
   blueprintPhaseAt,
+  blueprintPointSafe,
 } from '../src/blueprint-model.mjs';
 import { renderBlueprint, renderBlueprintThumbnail } from '../lib/blueprint-view.mjs';
 
-test('all 24 compact WIP mechanics have distinct rule modes and complete moving frames', () => {
+test('all 24 promoted lesson animations have distinct rule modes and complete moving frames', () => {
   assert.equal(BLUEPRINT_MECHANIC_IDS.length, 24);
   const modes = new Set();
   for (const id of BLUEPRINT_MECHANIC_IDS) {
@@ -49,6 +50,57 @@ test('every blueprint exposes signal, committed action, and recovery without pla
       assert.ok(Math.hypot(player.x - previous.x, player.y - previous.y) < 18, `${id} teleports`);
       previous = player;
     }
+  }
+});
+
+test('every promoted animation derives safety from its own active geometry', () => {
+  const unsafePoints = {
+    'wide-swing': { x: 280, y: 515 },
+    lunge: { x: 300, y: 440 },
+    grab: { x: 390, y: 485 },
+    'burrow-and-emerge': { x: 420, y: 590 },
+    'ring-volley': { x: 516, y: 400 },
+    'spiral-barrage': { x: 280, y: 390 },
+    'ricochet-projectile': { x: 330, y: 335 },
+    'homing-projectile': null,
+    'straight-beam': { x: 280, y: 600 },
+    'scanning-beam': null,
+    'rotating-beams': null,
+    'marked-area-strike': { x: 380, y: 620 },
+    shockwave: null,
+    'lingering-hazard': { x: 360, y: 620 },
+    'hazard-trail': { x: 190, y: 290 },
+    'platform-destruction': { x: 189, y: 690 },
+    'shrinking-safe-area': { x: 520, y: 850 },
+    knockback: { x: 530, y: 900 },
+    'target-lock': { x: 390, y: 620 },
+    'attack-combination': null,
+    'weak-point': { x: 500, y: 800 },
+    telegraph: { x: 300, y: 500 },
+    'fight-phase': { x: 280, y: 695 },
+    enrage: { x: 280, y: 350 },
+  };
+
+  for (const id of BLUEPRINT_MECHANIC_IDS) {
+    const frame = blueprintFrame(id, 3);
+    let point = unsafePoints[id];
+    if (!point && id === 'homing-projectile') {
+      const projectile = frame.primitives[2];
+      point = { x: projectile.x, y: projectile.y };
+    } else if (!point && ['scanning-beam', 'rotating-beams'].includes(id)) {
+      const beam = frame.primitives.find(
+        (primitive) => primitive.type === 'line' && primitive.tone === 'signal',
+      );
+      point = { x: (beam.x1 + beam.x2) / 2, y: (beam.y1 + beam.y2) / 2 };
+    } else if (!point && id === 'shockwave') {
+      const wave = frame.primitives[0];
+      point = { x: wave.x + wave.radius, y: wave.y };
+    } else if (!point && id === 'attack-combination') {
+      const wave = frame.primitives[1];
+      point = { x: frame.boss.x + wave.radius, y: frame.boss.y };
+    }
+    assert.equal(blueprintPointSafe(id, 3, point), false, `${id} accepts an unsafe point`);
+    assert.equal(frame.playerSafe, true, `${id} does not clear its own active geometry`);
   }
 });
 

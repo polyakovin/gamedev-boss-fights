@@ -1,0 +1,16 @@
+{
+  "id": "attack-combination",
+  "number": 26,
+  "published": true,
+  "sourceLocale": "en",
+  "contentVersion": 1,
+  "animation": "attack-combination",
+  "lenses": ["telegraphing", "commitment", "difficulty-rhythm", "counterplay"],
+  "related": ["fight-phase", "telegraph"],
+  "sources": [
+    {
+      "title": "Boss Up: Boss Battle Design · GDC Vault",
+      "url": "https://www.gdcvault.com/play/1024921/Boss-Up-Boss-Battle-Design"
+    }
+  ]
+}

@@ -1,0 +1,130 @@
+{
+  "title": "Combinación de ataques",
+  "subtitle": "Convierte combinación de ataques en una regla legible, con respuesta alcanzable y recuperación útil.",
+  "variant": "Patrón comprometido de combinación de ataques",
+  "summary": "Dos ataques ya aprendidos se enlazan en un orden claro y el segundo aprovecha la posición que deja el primero.",
+  "overview": "Dos ataques ya aprendidos se enlazan en un orden claro y el segundo aprovecha la posición que deja el primero. La legibilidad nace de la coherencia entre aviso, compromiso, colisión real y resultado verificable.",
+  "learning": "Ajusta señal, compromiso, geometría, respuesta y recuperación de combinación de ataques como una sola regla.",
+  "category": "Apuntado y ritmo",
+  "readTime": "4 min",
+  "demo": {
+    "title": "Prueba combinación de ataques",
+    "timeline": "Línea temporal del ataque",
+    "step": "Fases del ataque",
+    "phaseNames": ["Señal", "Respuesta", "Recuperación"],
+    "phaseDescriptions": [
+      "El jefe muestra el tiempo, la dirección y toda el área de combinación de ataques antes de comprometerse.",
+      "El jugador completa la respuesta de combinación de ataques con las acciones normales disponibles.",
+      "Cuando termina toda la amenaza de combinación de ataques, el jefe mantiene una recuperación clara y aprovechable."
+    ],
+    "boss": "Jefe",
+    "player": "Jugador",
+    "danger": "La amenaza completa es visible",
+    "locked": "La regla está comprometida",
+    "safe": "La respuesta ha terminado",
+    "reducedMotion": "La preferencia de movimiento reducido desactiva la reproducción automática. Usa el control temporal para revisar el ciclo.",
+    "diagramDescription": "Diagrama cíclico de combinación de ataques: el jefe anuncia y compromete la regla, el jugador responde y la escena muestra la recuperación antes de reiniciarse."
+  },
+  "steps": [
+    {
+      "title": "¿Puede el jugador leer la regla completa?",
+      "body": "El jefe muestra el tiempo, la dirección y toda el área de combinación de ataques antes de comprometerse."
+    },
+    {
+      "title": "¿Es alcanzable la respuesta prevista?",
+      "body": "Prueba el cuerpo completo desde el peor punto inicial válido y con las capacidades disponibles en ese momento."
+    },
+    {
+      "title": "¿La recuperación produce un resultado útil?",
+      "body": "Cuando termina toda la amenaza de combinación de ataques, el jefe mantiene una recuperación clara y aprovechable."
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "La señal no coincide con la amenaza",
+      "body": "El jefe muestra el tiempo, la dirección y toda el área de combinación de ataques antes de comprometerse. La legibilidad nace de la coherencia entre aviso, compromiso, colisión real y resultado verificable."
+    },
+    {
+      "title": "La respuesta solo funciona en condiciones ideales",
+      "body": "Prueba el cuerpo completo desde el peor punto inicial válido y con las capacidades disponibles en ese momento."
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "Ajusta la regla completa",
+      "body": "Dos ataques ya aprendidos se enlazan en un orden claro y el segundo aprovecha la posición que deja el primero. La legibilidad nace de la coherencia entre aviso, compromiso, colisión real y resultado verificable."
+    },
+    {
+      "title": "Escala una variable cada vez",
+      "body": "El jugador completa la respuesta de combinación de ataques con las acciones normales disponibles. Prueba el cuerpo completo desde el peor punto inicial válido y con las capacidades disponibles en ese momento."
+    },
+    {
+      "title": "Demuestra la recuperación en el ciclo",
+      "body": "El peligro residual termina antes del siguiente apuntado para que la ventana de decisión sea real."
+    }
+  ],
+  "story": {
+    "title": "Qué comunica la mecánica",
+    "body": "Dos ataques ya aprendidos se enlazan en un orden claro y el segundo aprovecha la posición que deja el primero. La legibilidad nace de la coherencia entre aviso, compromiso, colisión real y resultado verificable."
+  },
+  "adaptation": {
+    "title": "Adáptala a las acciones del jugador",
+    "body": "El jugador completa la respuesta de combinación de ataques con las acciones normales disponibles. Prueba el cuerpo completo desde el peor punto inicial válido y con las capacidades disponibles en ese momento."
+  },
+  "distinction": {
+    "title": "Mantén clara la diferencia",
+    "body": "El jefe muestra el tiempo, la dirección y toda el área de combinación de ataques antes de comprometerse. El peligro residual termina antes del siguiente apuntado para que la ventana de decisión sea real."
+  },
+  "lensNotes": [
+    {
+      "id": "telegraphing",
+      "body": "Esta perspectiva comprueba cómo la mecánica une señal, espacio y respuesta en una decisión legible. Dos ataques ya aprendidos se enlazan en un orden claro y el segundo aprovecha la posición que deja el primero."
+    },
+    {
+      "id": "commitment",
+      "body": "Esta perspectiva comprueba cómo la mecánica une señal, espacio y respuesta en una decisión legible. Dos ataques ya aprendidos se enlazan en un orden claro y el segundo aprovecha la posición que deja el primero."
+    },
+    {
+      "id": "difficulty-rhythm",
+      "body": "Esta perspectiva comprueba cómo la mecánica une señal, espacio y respuesta en una decisión legible. Dos ataques ya aprendidos se enlazan en un orden claro y el segundo aprovecha la posición que deja el primero."
+    },
+    {
+      "id": "counterplay",
+      "body": "Esta perspectiva comprueba cómo la mecánica une señal, espacio y respuesta en una decisión legible. Dos ataques ya aprendidos se enlazan en un orden claro y el segundo aprovecha la posición que deja el primero."
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "Hollow Knight",
+      "boss": "Mantis Lords",
+      "screenshot": "https://i.ytimg.com/vi/VG3h6uVtWyY/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=VG3h6uVtWyY&t=19s",
+      "body": "Mantis Lords muestra combinación de ataques en un combate 2D; señal, compromiso y resultado hacen que la regla pueda analizarse y reutilizarse.",
+      "video": "https://www.youtube.com/watch?v=VG3h6uVtWyY&t=19s",
+      "videoDurationSeconds": 148
+    },
+    {
+      "dimension": "3D",
+      "game": "Sekiro: Shadows Die Twice",
+      "boss": "Corrupted Monk",
+      "screenshot": "https://i.ytimg.com/vi/bSI6RWT8WUw/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=bSI6RWT8WUw&t=5s",
+      "body": "Corrupted Monk muestra combinación de ataques en un combate 3D; señal, compromiso y resultado hacen que la regla pueda analizarse y reutilizarse.",
+      "video": "https://www.youtube.com/watch?v=bSI6RWT8WUw&t=5s",
+      "videoDurationSeconds": 74
+    },
+    {
+      "dimension": "3D",
+      "game": "Elden Ring",
+      "boss": "Godfrey, First Elden Lord",
+      "screenshot": "https://i.ytimg.com/vi/U2jd1fqLpsE/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=U2jd1fqLpsE&t=180s",
+      "body": "Godfrey, First Elden Lord muestra combinación de ataques en un combate 3D; señal, compromiso y resultado hacen que la regla pueda analizarse y reutilizarse.",
+      "video": "https://www.youtube.com/watch?v=U2jd1fqLpsE&t=180s",
+      "videoDurationSeconds": 480
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

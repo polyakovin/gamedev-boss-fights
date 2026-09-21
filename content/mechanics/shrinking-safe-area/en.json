@@ -1,0 +1,130 @@
+{
+  "title": "Shrinking safe area",
+  "subtitle": "Build a readable shrinking safe area with a reachable response and a useful recovery.",
+  "variant": "Committed shrinking safe area pattern",
+  "summary": "Danger advances inward or outward to reduce usable space.",
+  "overview": "Danger advances inward or outward to reduce usable space, increasing contact pressure and forcing the encounter toward a tighter final layout.",
+  "learning": "Tune the signal, commitment, geometry, response, and recovery of a shrinking safe area as one rule.",
+  "category": "Arena",
+  "readTime": "4 min",
+  "demo": {
+    "title": "Test the shrinking safe area",
+    "timeline": "Attack timeline",
+    "step": "Attack phases",
+    "phaseNames": ["Signal", "Response", "Recovery"],
+    "phaseDescriptions": [
+      "Show the future boundary, direction of travel, and final stopping point before it moves; the safe side must remain unambiguous.",
+      "The player repositions early, finishes a task before compression, controls where other hazards land, or uses a temporary opening to cross.",
+      "The boundary stops at the announced minimum size and holds a stable interval so the player can understand and use the compressed arena."
+    ],
+    "boss": "Boss",
+    "player": "Player",
+    "danger": "The active threat is visible",
+    "locked": "The rule is committed",
+    "safe": "The response is complete",
+    "reducedMotion": "Autoplay is disabled by the reduced-motion setting. Use the timeline slider to inspect the loop.",
+    "diagramDescription": "A looping diagram of shrinking safe area. The boss signals and commits the rule, the player uses the intended response, and the scene holds a readable recovery before resetting."
+  },
+  "steps": [
+    {
+      "title": "Can the player read the complete rule?",
+      "body": "Show the future boundary, direction of travel, and final stopping point before it moves; the safe side must remain unambiguous."
+    },
+    {
+      "title": "Is the intended response reachable?",
+      "body": "The player repositions early, finishes a task before compression, controls where other hazards land, or uses a temporary opening to cross."
+    },
+    {
+      "title": "Does recovery create a useful outcome?",
+      "body": "The boundary stops at the announced minimum size and holds a stable interval so the player can understand and use the compressed arena."
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "Continuous compression with no stable interval denies the player time to understand or use the new arena state",
+      "body": "Continuous compression with no stable interval denies the player time to understand or use the new arena state."
+    },
+    {
+      "title": "The cue and active geometry disagree",
+      "body": "If the visible shrinking safe area cue promises a different area or timing, the player cannot carry the learned rule into the next cycle."
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "Tune the complete rule",
+      "body": "Tune boundary speed, minimum safe area, pause intervals, other attack footprints, and camera framing at every shrink stage."
+    },
+    {
+      "title": "Escalate one variable at a time",
+      "body": "Shrink in discrete, signaled steps or shift the safe center while preserving enough space for the next required response."
+    },
+    {
+      "title": "Prove the recovery",
+      "body": "The boundary stops at the announced minimum size and holds a stable interval so the player can understand and use the compressed arena."
+    }
+  ],
+  "story": {
+    "title": "What the mechanic communicates",
+    "body": "Danger advances inward or outward to reduce usable space, increasing contact pressure and forcing the encounter toward a tighter final layout. The encounter uses that rule as a short promise: a visible signal, a committed action, and a result the player can verify."
+  },
+  "adaptation": {
+    "title": "Adapt it to the player verbs",
+    "body": "The player repositions early, finishes a task before compression, controls where other hazards land, or uses a temporary opening to cross. Tune boundary speed, minimum safe area, pause intervals, other attack footprints, and camera framing at every shrink stage."
+  },
+  "distinction": {
+    "title": "Keep the mechanic distinct",
+    "body": "Continuous compression with no stable interval denies the player time to understand or use the new arena state. Do not hide that distinction behind extra effects or tracking that the announced rule does not contain."
+  },
+  "lensNotes": [
+    {
+      "id": "threat-geometry",
+      "body": "The complete player extent and the active region determine whether the route is real."
+    },
+    {
+      "id": "counterplay",
+      "body": "The response uses an ordinary supported verb and produces an observable result."
+    },
+    {
+      "id": "access-paths",
+      "body": "At least one route remains reachable with the movement options available at this point."
+    },
+    {
+      "id": "risk-reward",
+      "body": "Position and timing trade easier clearance against a better recovery opportunity."
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "Enter the Gungeon",
+      "boss": "High Dragun",
+      "screenshot": "https://i.ytimg.com/vi/aKALjUZqhXA/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=aKALjUZqhXA&t=103s",
+      "body": "High Dragun demonstrates shrinking safe area in a 2D encounter. Show the future boundary, direction of travel, and final stopping point before it moves; the safe side must remain unambiguous.",
+      "video": "https://www.youtube.com/watch?v=aKALjUZqhXA&t=103s",
+      "videoDurationSeconds": 211
+    },
+    {
+      "dimension": "2D",
+      "game": "Hollow Knight",
+      "boss": "Absolute Radiance",
+      "screenshot": "https://i.ytimg.com/vi/bgh04-wCRyk/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=bgh04-wCRyk&t=20s",
+      "body": "Absolute Radiance demonstrates shrinking safe area in a 2D encounter. The player repositions early, finishes a task before compression, controls where other hazards land, or uses a temporary opening to cross.",
+      "video": "https://www.youtube.com/watch?v=bgh04-wCRyk&t=20s",
+      "videoDurationSeconds": 484
+    },
+    {
+      "dimension": "3D",
+      "game": "Returnal",
+      "boss": "Nemesis",
+      "screenshot": "https://i.ytimg.com/vi/J8BTbUNDknI/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=J8BTbUNDknI&t=100s",
+      "body": "Nemesis demonstrates shrinking safe area in a 3D encounter. Tune boundary speed, minimum safe area, pause intervals, other attack footprints, and camera framing at every shrink stage.",
+      "video": "https://www.youtube.com/watch?v=J8BTbUNDknI&t=100s",
+      "videoDurationSeconds": 370
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

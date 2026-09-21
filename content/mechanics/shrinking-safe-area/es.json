@@ -1,0 +1,130 @@
+{
+  "title": "Zona segura menguante",
+  "subtitle": "Convierte zona segura menguante en una regla legible, con respuesta alcanzable y recuperación útil.",
+  "variant": "Patrón comprometido de zona segura menguante",
+  "summary": "Un límite peligroso avanza hacia dentro y reduce el espacio disponible sin ocultar la ruta central restante.",
+  "overview": "Un límite peligroso avanza hacia dentro y reduce el espacio disponible sin ocultar la ruta central restante. La legibilidad nace de la coherencia entre aviso, compromiso, colisión real y resultado verificable.",
+  "learning": "Ajusta señal, compromiso, geometría, respuesta y recuperación de zona segura menguante como una sola regla.",
+  "category": "Arena",
+  "readTime": "4 min",
+  "demo": {
+    "title": "Prueba zona segura menguante",
+    "timeline": "Línea temporal del ataque",
+    "step": "Fases del ataque",
+    "phaseNames": ["Señal", "Respuesta", "Recuperación"],
+    "phaseDescriptions": [
+      "El jefe muestra el tiempo, la dirección y toda el área de zona segura menguante antes de comprometerse.",
+      "El jugador completa la respuesta de zona segura menguante con las acciones normales disponibles.",
+      "Cuando termina toda la amenaza de zona segura menguante, el jefe mantiene una recuperación clara y aprovechable."
+    ],
+    "boss": "Jefe",
+    "player": "Jugador",
+    "danger": "La amenaza completa es visible",
+    "locked": "La regla está comprometida",
+    "safe": "La respuesta ha terminado",
+    "reducedMotion": "La preferencia de movimiento reducido desactiva la reproducción automática. Usa el control temporal para revisar el ciclo.",
+    "diagramDescription": "Diagrama cíclico de zona segura menguante: el jefe anuncia y compromete la regla, el jugador responde y la escena muestra la recuperación antes de reiniciarse."
+  },
+  "steps": [
+    {
+      "title": "¿Puede el jugador leer la regla completa?",
+      "body": "El jefe muestra el tiempo, la dirección y toda el área de zona segura menguante antes de comprometerse."
+    },
+    {
+      "title": "¿Es alcanzable la respuesta prevista?",
+      "body": "Prueba el cuerpo completo desde el peor punto inicial válido y con las capacidades disponibles en ese momento."
+    },
+    {
+      "title": "¿La recuperación produce un resultado útil?",
+      "body": "Cuando termina toda la amenaza de zona segura menguante, el jefe mantiene una recuperación clara y aprovechable."
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "La señal no coincide con la amenaza",
+      "body": "El jefe muestra el tiempo, la dirección y toda el área de zona segura menguante antes de comprometerse. La legibilidad nace de la coherencia entre aviso, compromiso, colisión real y resultado verificable."
+    },
+    {
+      "title": "La respuesta solo funciona en condiciones ideales",
+      "body": "Prueba el cuerpo completo desde el peor punto inicial válido y con las capacidades disponibles en ese momento."
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "Ajusta la regla completa",
+      "body": "Un límite peligroso avanza hacia dentro y reduce el espacio disponible sin ocultar la ruta central restante. La legibilidad nace de la coherencia entre aviso, compromiso, colisión real y resultado verificable."
+    },
+    {
+      "title": "Escala una variable cada vez",
+      "body": "El jugador completa la respuesta de zona segura menguante con las acciones normales disponibles. Prueba el cuerpo completo desde el peor punto inicial válido y con las capacidades disponibles en ese momento."
+    },
+    {
+      "title": "Demuestra la recuperación en el ciclo",
+      "body": "El peligro residual termina antes del siguiente apuntado para que la ventana de decisión sea real."
+    }
+  ],
+  "story": {
+    "title": "Qué comunica la mecánica",
+    "body": "Un límite peligroso avanza hacia dentro y reduce el espacio disponible sin ocultar la ruta central restante. La legibilidad nace de la coherencia entre aviso, compromiso, colisión real y resultado verificable."
+  },
+  "adaptation": {
+    "title": "Adáptala a las acciones del jugador",
+    "body": "El jugador completa la respuesta de zona segura menguante con las acciones normales disponibles. Prueba el cuerpo completo desde el peor punto inicial válido y con las capacidades disponibles en ese momento."
+  },
+  "distinction": {
+    "title": "Mantén clara la diferencia",
+    "body": "El jefe muestra el tiempo, la dirección y toda el área de zona segura menguante antes de comprometerse. El peligro residual termina antes del siguiente apuntado para que la ventana de decisión sea real."
+  },
+  "lensNotes": [
+    {
+      "id": "threat-geometry",
+      "body": "Esta perspectiva comprueba cómo la mecánica une señal, espacio y respuesta en una decisión legible. Un límite peligroso avanza hacia dentro y reduce el espacio disponible sin ocultar la ruta central restante."
+    },
+    {
+      "id": "counterplay",
+      "body": "Esta perspectiva comprueba cómo la mecánica une señal, espacio y respuesta en una decisión legible. Un límite peligroso avanza hacia dentro y reduce el espacio disponible sin ocultar la ruta central restante."
+    },
+    {
+      "id": "access-paths",
+      "body": "Esta perspectiva comprueba cómo la mecánica une señal, espacio y respuesta en una decisión legible. Un límite peligroso avanza hacia dentro y reduce el espacio disponible sin ocultar la ruta central restante."
+    },
+    {
+      "id": "risk-reward",
+      "body": "Esta perspectiva comprueba cómo la mecánica une señal, espacio y respuesta en una decisión legible. Un límite peligroso avanza hacia dentro y reduce el espacio disponible sin ocultar la ruta central restante."
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "Enter the Gungeon",
+      "boss": "High Dragun",
+      "screenshot": "https://i.ytimg.com/vi/aKALjUZqhXA/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=aKALjUZqhXA&t=103s",
+      "body": "High Dragun muestra zona segura menguante en un combate 2D; señal, compromiso y resultado hacen que la regla pueda analizarse y reutilizarse.",
+      "video": "https://www.youtube.com/watch?v=aKALjUZqhXA&t=103s",
+      "videoDurationSeconds": 211
+    },
+    {
+      "dimension": "2D",
+      "game": "Hollow Knight",
+      "boss": "Absolute Radiance",
+      "screenshot": "https://i.ytimg.com/vi/bgh04-wCRyk/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=bgh04-wCRyk&t=20s",
+      "body": "Absolute Radiance muestra zona segura menguante en un combate 2D; señal, compromiso y resultado hacen que la regla pueda analizarse y reutilizarse.",
+      "video": "https://www.youtube.com/watch?v=bgh04-wCRyk&t=20s",
+      "videoDurationSeconds": 484
+    },
+    {
+      "dimension": "3D",
+      "game": "Returnal",
+      "boss": "Nemesis",
+      "screenshot": "https://i.ytimg.com/vi/J8BTbUNDknI/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=J8BTbUNDknI&t=100s",
+      "body": "Nemesis muestra zona segura menguante en un combate 3D; señal, compromiso y resultado hacen que la regla pueda analizarse y reutilizarse.",
+      "video": "https://www.youtube.com/watch?v=J8BTbUNDknI&t=100s",
+      "videoDurationSeconds": 370
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

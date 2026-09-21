@@ -573,9 +573,9 @@ test('boss builder persists a local draft and downloads portable JSON', async ({
     'The draft stays only in this browser.',
   );
   await expect(page.locator('.boss-builder-mechanic')).toHaveCount(124);
-  await expect(page.locator('.boss-builder-mechanic--wip')).toHaveCount(119);
+  await expect(page.locator('.boss-builder-mechanic--wip')).toHaveCount(94);
   await expect(page.locator('.boss-builder-mechanic:not(.boss-builder-mechanic--wip)')).toHaveCount(
-    5,
+    30,
   );
   await expect(page.locator('.boss-builder-mechanic [data-character-art="kern"]')).toHaveCount(30);
   await expect(page.locator('.boss-builder-mechanic [data-character-art="tavi"]')).toHaveCount(30);
@@ -785,14 +785,33 @@ test('lens chips show explanations and open localized lens pages', async ({ page
     /Telegraphing.*A game communicates/,
   );
   await expect(page.locator('.lens-page__hero')).not.toContainText(/boss|charge/i);
-  await expect(page.locator('.lens-mechanic-card')).toHaveCount(4);
+  await expect(page.locator('.lens-mechanic-card')).toHaveCount(23);
   await expect(page.locator('.lens-mechanic-card h2')).toHaveText([
     'Charge',
     'Arc sweep',
     'Ground slam',
     'Gap volley',
+    'Projectile fan',
+    'Wide swing',
+    'Lunge',
+    'Grab',
+    'Burrow and emerge',
+    'Ring volley',
+    'Spiral barrage',
+    'Ricochet projectile',
+    'Homing projectile',
+    'Straight beam',
+    'Scanning beam',
+    'Rotating beams',
+    'Marked-area strike',
+    'Shockwave',
+    'Lingering hazard',
+    'Hazard trail',
+    'Target lock',
+    'Attack combination',
+    'Telegraph',
   ]);
-  await expect(page.locator('.lens-mechanic-card h2 .icon--directional')).toHaveCount(4);
+  await expect(page.locator('.lens-mechanic-card h2 .icon--directional')).toHaveCount(23);
   await page.locator('.language-menu summary').click();
   const languageLinks = await page
     .locator('.language-menu nav a')
@@ -981,8 +1000,8 @@ test('the root defaults to English and localized catalogs point to real pages', 
   ]);
   await expect(page.locator('.catalog-part')).toHaveCount(14);
   await expect(page.locator('.catalog-lesson')).toHaveCount(124);
-  await expect(page.locator('.catalog-lesson--wip')).toHaveCount(119);
-  await expect(page.locator('.catalog-lesson:not(.catalog-lesson--wip)')).toHaveCount(5);
+  await expect(page.locator('.catalog-lesson--wip')).toHaveCount(94);
+  await expect(page.locator('.catalog-lesson:not(.catalog-lesson--wip)')).toHaveCount(30);
   await expect(page.locator('.catalog-lesson__number').first()).toHaveText('1.1');
   await expect(page.locator('.catalog-lesson__number').last()).toHaveText('14.11');
   await expect(page.locator('.catalog-lesson__preview [data-character-art="kern"]')).toHaveCount(
@@ -993,11 +1012,11 @@ test('the root defaults to English and localized catalogs point to real pages', 
   );
   await expect(page.locator('.catalog-lesson__preview [data-blueprint-preview]')).toHaveCount(24);
   await expect(page.locator('.catalog-lesson__preview [data-pattern-preview]')).toHaveCount(5);
-  const draftPage = await request.get('en/mechanics/wide-swing/');
+  const draftPage = await request.get('en/mechanics/boundary-attack/');
   expect(draftPage.status()).toBe(200);
   expect(await draftPage.text()).toContain('class="wip-badge"');
-  await page.goto('en/mechanics/wide-swing/');
-  await expect(page.locator('.wip-mechanic-title h1')).toHaveText('Wide swing');
+  await page.goto('en/mechanics/boundary-attack/');
+  await expect(page.locator('.wip-mechanic-title h1')).toHaveText('Boundary');
   await expect(page.locator('.wip-mechanic-title .wip-badge')).toHaveText('WIP');
   await expect(page.locator('.wip-builder-link')).toHaveAttribute(
     'href',

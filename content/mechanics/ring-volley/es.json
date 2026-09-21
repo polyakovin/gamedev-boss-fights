@@ -1,0 +1,130 @@
+{
+  "title": "Salva anular",
+  "subtitle": "Convierte salva anular en una regla legible, con respuesta alcanzable y recuperación útil.",
+  "variant": "Patrón comprometido de salva anular",
+  "summary": "Los proyectiles se expanden desde el jefe en todas direcciones como un anillo con una abertura visible antes del disparo.",
+  "overview": "Los proyectiles se expanden desde el jefe en todas direcciones como un anillo con una abertura visible antes del disparo. La legibilidad nace de la coherencia entre aviso, compromiso, colisión real y resultado verificable.",
+  "learning": "Ajusta señal, compromiso, geometría, respuesta y recuperación de salva anular como una sola regla.",
+  "category": "Proyectiles",
+  "readTime": "4 min",
+  "demo": {
+    "title": "Prueba salva anular",
+    "timeline": "Línea temporal del ataque",
+    "step": "Fases del ataque",
+    "phaseNames": ["Señal", "Respuesta", "Recuperación"],
+    "phaseDescriptions": [
+      "El jefe muestra el tiempo, la dirección y toda el área de salva anular antes de comprometerse.",
+      "El jugador completa la respuesta de salva anular con las acciones normales disponibles.",
+      "Cuando termina toda la amenaza de salva anular, el jefe mantiene una recuperación clara y aprovechable."
+    ],
+    "boss": "Jefe",
+    "player": "Jugador",
+    "danger": "La amenaza completa es visible",
+    "locked": "La regla está comprometida",
+    "safe": "La respuesta ha terminado",
+    "reducedMotion": "La preferencia de movimiento reducido desactiva la reproducción automática. Usa el control temporal para revisar el ciclo.",
+    "diagramDescription": "Diagrama cíclico de salva anular: el jefe anuncia y compromete la regla, el jugador responde y la escena muestra la recuperación antes de reiniciarse."
+  },
+  "steps": [
+    {
+      "title": "¿Puede el jugador leer la regla completa?",
+      "body": "El jefe muestra el tiempo, la dirección y toda el área de salva anular antes de comprometerse."
+    },
+    {
+      "title": "¿Es alcanzable la respuesta prevista?",
+      "body": "Prueba el cuerpo completo desde el peor punto inicial válido y con las capacidades disponibles en ese momento."
+    },
+    {
+      "title": "¿La recuperación produce un resultado útil?",
+      "body": "Cuando termina toda la amenaza de salva anular, el jefe mantiene una recuperación clara y aprovechable."
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "La señal no coincide con la amenaza",
+      "body": "El jefe muestra el tiempo, la dirección y toda el área de salva anular antes de comprometerse. La legibilidad nace de la coherencia entre aviso, compromiso, colisión real y resultado verificable."
+    },
+    {
+      "title": "La respuesta solo funciona en condiciones ideales",
+      "body": "Prueba el cuerpo completo desde el peor punto inicial válido y con las capacidades disponibles en ese momento."
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "Ajusta la regla completa",
+      "body": "Los proyectiles se expanden desde el jefe en todas direcciones como un anillo con una abertura visible antes del disparo. La legibilidad nace de la coherencia entre aviso, compromiso, colisión real y resultado verificable."
+    },
+    {
+      "title": "Escala una variable cada vez",
+      "body": "El jugador completa la respuesta de salva anular con las acciones normales disponibles. Prueba el cuerpo completo desde el peor punto inicial válido y con las capacidades disponibles en ese momento."
+    },
+    {
+      "title": "Demuestra la recuperación en el ciclo",
+      "body": "El peligro residual termina antes del siguiente apuntado para que la ventana de decisión sea real."
+    }
+  ],
+  "story": {
+    "title": "Qué comunica la mecánica",
+    "body": "Los proyectiles se expanden desde el jefe en todas direcciones como un anillo con una abertura visible antes del disparo. La legibilidad nace de la coherencia entre aviso, compromiso, colisión real y resultado verificable."
+  },
+  "adaptation": {
+    "title": "Adáptala a las acciones del jugador",
+    "body": "El jugador completa la respuesta de salva anular con las acciones normales disponibles. Prueba el cuerpo completo desde el peor punto inicial válido y con las capacidades disponibles en ese momento."
+  },
+  "distinction": {
+    "title": "Mantén clara la diferencia",
+    "body": "El jefe muestra el tiempo, la dirección y toda el área de salva anular antes de comprometerse. El peligro residual termina antes del siguiente apuntado para que la ventana de decisión sea real."
+  },
+  "lensNotes": [
+    {
+      "id": "telegraphing",
+      "body": "Esta perspectiva comprueba cómo la mecánica une señal, espacio y respuesta en una decisión legible. Los proyectiles se expanden desde el jefe en todas direcciones como un anillo con una abertura visible antes del disparo."
+    },
+    {
+      "id": "threat-geometry",
+      "body": "Esta perspectiva comprueba cómo la mecánica une señal, espacio y respuesta en una decisión legible. Los proyectiles se expanden desde el jefe en todas direcciones como un anillo con una abertura visible antes del disparo."
+    },
+    {
+      "id": "counterplay",
+      "body": "Esta perspectiva comprueba cómo la mecánica une señal, espacio y respuesta en una decisión legible. Los proyectiles se expanden desde el jefe en todas direcciones como un anillo con una abertura visible antes del disparo."
+    },
+    {
+      "id": "mastery-check",
+      "body": "Esta perspectiva comprueba cómo la mecánica une señal, espacio y respuesta en una decisión legible. Los proyectiles se expanden desde el jefe en todas direcciones como un anillo con una abertura visible antes del disparo."
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "Enter the Gungeon",
+      "boss": "Bullet King",
+      "screenshot": "https://i.ytimg.com/vi/ynVmgUSV7Bc/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=ynVmgUSV7Bc&t=26s",
+      "body": "Bullet King muestra salva anular en un combate 2D; señal, compromiso y resultado hacen que la regla pueda analizarse y reutilizarse.",
+      "video": "https://www.youtube.com/watch?v=ynVmgUSV7Bc&t=26s",
+      "videoDurationSeconds": 135
+    },
+    {
+      "dimension": "2D",
+      "game": "Cuphead",
+      "boss": "Wally Warbles",
+      "screenshot": "https://i.ytimg.com/vi/Ol3-4Y0eS9M/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=Ol3-4Y0eS9M&t=58s",
+      "body": "Wally Warbles muestra salva anular en un combate 2D; señal, compromiso y resultado hacen que la regla pueda analizarse y reutilizarse.",
+      "video": "https://www.youtube.com/watch?v=Ol3-4Y0eS9M&t=58s",
+      "videoDurationSeconds": 199
+    },
+    {
+      "dimension": "3D",
+      "game": "Returnal",
+      "boss": "Phrike",
+      "screenshot": "https://i.ytimg.com/vi/UdBbTMFLFIo/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=UdBbTMFLFIo&t=32s",
+      "body": "Phrike muestra salva anular en un combate 3D; señal, compromiso y resultado hacen que la regla pueda analizarse y reutilizarse.",
+      "video": "https://www.youtube.com/watch?v=UdBbTMFLFIo&t=32s",
+      "videoDurationSeconds": 175
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

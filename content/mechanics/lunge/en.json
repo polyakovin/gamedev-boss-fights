@@ -1,0 +1,130 @@
+{
+  "title": "Lunge",
+  "subtitle": "Build a readable lunge with a reachable response and a useful recovery.",
+  "variant": "Committed lunge pattern",
+  "summary": "The boss commits its body along a short line to close distance.",
+  "overview": "The boss commits its body along a short line to close distance, converting open space into immediate contact danger and a new final position.",
+  "learning": "Tune the signal, commitment, geometry, response, and recovery of a lunge as one rule.",
+  "category": "Body and melee",
+  "readTime": "4 min",
+  "demo": {
+    "title": "Test the lunge",
+    "timeline": "Attack timeline",
+    "step": "Attack phases",
+    "phaseNames": ["Signal", "Response", "Recovery"],
+    "phaseDescriptions": [
+      "Use a compressed stance, fixed facing, and a clear line from the boss to the destination; lock the direction before the damaging movement begins.",
+      "Let the player sidestep the line, cross over it, interrupt the preparation, or bait the destination, depending on the game’s movement verbs.",
+      "The boss brakes at the committed destination and cannot immediately steer into another hit, giving a player who cleared the body line time to re-engage."
+    ],
+    "boss": "Boss",
+    "player": "Player",
+    "danger": "The active threat is visible",
+    "locked": "The rule is committed",
+    "safe": "The response is complete",
+    "reducedMotion": "Autoplay is disabled by the reduced-motion setting. Use the timeline slider to inspect the loop.",
+    "diagramDescription": "A looping diagram of lunge. The boss signals and commits the rule, the player uses the intended response, and the scene holds a readable recovery before resetting."
+  },
+  "steps": [
+    {
+      "title": "Can the player read the complete rule?",
+      "body": "Use a compressed stance, fixed facing, and a clear line from the boss to the destination; lock the direction before the damaging movement begins."
+    },
+    {
+      "title": "Is the intended response reachable?",
+      "body": "Let the player sidestep the line, cross over it, interrupt the preparation, or bait the destination, depending on the game’s movement verbs."
+    },
+    {
+      "title": "Does recovery create a useful outcome?",
+      "body": "The boss brakes at the committed destination and cannot immediately steer into another hit, giving a player who cleared the body line time to re-engage."
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "Late homing turns a readable lunge into a tracking hit and invalidates the position chosen during the tell",
+      "body": "Late homing turns a readable lunge into a tracking hit and invalidates the position chosen during the tell."
+    },
+    {
+      "title": "The cue and active geometry disagree",
+      "body": "If the visible lunge cue promises a different area or timing, the player cannot carry the learned rule into the next cycle."
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "Tune the complete rule",
+      "body": "Balance travel distance against preparation time and recovery; verify that the player can clear the boss’s full body, not only its center line."
+    },
+    {
+      "title": "Escalate one variable at a time",
+      "body": "Chain a second lunge toward the new position or vary the travel distance while preserving the same commitment cue."
+    },
+    {
+      "title": "Prove the recovery",
+      "body": "The boss brakes at the committed destination and cannot immediately steer into another hit, giving a player who cleared the body line time to re-engage."
+    }
+  ],
+  "story": {
+    "title": "What the mechanic communicates",
+    "body": "The boss commits its body along a short line to close distance, converting open space into immediate contact danger and a new final position. The encounter uses that rule as a short promise: a visible signal, a committed action, and a result the player can verify."
+  },
+  "adaptation": {
+    "title": "Adapt it to the player verbs",
+    "body": "Let the player sidestep the line, cross over it, interrupt the preparation, or bait the destination, depending on the game’s movement verbs. Balance travel distance against preparation time and recovery; verify that the player can clear the boss’s full body, not only its center line."
+  },
+  "distinction": {
+    "title": "Keep the mechanic distinct",
+    "body": "Late homing turns a readable lunge into a tracking hit and invalidates the position chosen during the tell. Do not hide that distinction behind extra effects or tracking that the announced rule does not contain."
+  },
+  "lensNotes": [
+    {
+      "id": "telegraphing",
+      "body": "The signal must reveal the relevant timing and geometry before commitment."
+    },
+    {
+      "id": "commitment",
+      "body": "After commitment, the rule stops changing in ways the signal did not announce."
+    },
+    {
+      "id": "threat-geometry",
+      "body": "The complete player extent and the active region determine whether the route is real."
+    },
+    {
+      "id": "counterplay",
+      "body": "The response uses an ordinary supported verb and produces an observable result."
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "Ori and the Will of the Wisps",
+      "boss": "Howl",
+      "screenshot": "https://i.ytimg.com/vi/DvuB8cImPIg/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=DvuB8cImPIg&t=1s",
+      "body": "Howl demonstrates lunge in a 2D encounter. Use a compressed stance, fixed facing, and a clear line from the boss to the destination; lock the direction before the damaging movement begins.",
+      "video": "https://www.youtube.com/watch?v=DvuB8cImPIg&t=1s",
+      "videoDurationSeconds": 2062
+    },
+    {
+      "dimension": "2D",
+      "game": "Hollow Knight",
+      "boss": "Traitor Lord",
+      "screenshot": "https://i.ytimg.com/vi/f62A5eOtLzI/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=f62A5eOtLzI&t=7s",
+      "body": "Traitor Lord demonstrates lunge in a 2D encounter. Let the player sidestep the line, cross over it, interrupt the preparation, or bait the destination, depending on the game’s movement verbs.",
+      "video": "https://www.youtube.com/watch?v=f62A5eOtLzI&t=7s",
+      "videoDurationSeconds": 87
+    },
+    {
+      "dimension": "3D",
+      "game": "Sekiro: Shadows Die Twice",
+      "boss": "Blazing Bull",
+      "screenshot": "https://i.ytimg.com/vi/KXeOFXIpOC0/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=KXeOFXIpOC0&t=15s",
+      "body": "Blazing Bull demonstrates lunge in a 3D encounter. Balance travel distance against preparation time and recovery; verify that the player can clear the boss’s full body, not only its center line.",
+      "video": "https://www.youtube.com/watch?v=KXeOFXIpOC0&t=15s",
+      "videoDurationSeconds": 177
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

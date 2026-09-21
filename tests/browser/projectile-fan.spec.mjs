@@ -73,7 +73,7 @@ test('projectile fan supports reduced motion, backward seeking, and canonical le
   await seek(page, 3000);
   expect(await page.locator('[data-pattern-svg]').innerHTML()).toBe(frozen);
 
-  await expect(page.locator('.lesson-title-line .wip-badge')).toHaveText('WIP');
+  await expect(page.locator('.lesson-title-line .wip-badge')).toHaveCount(0);
   await expect(page.locator('.lens-chip')).toHaveCount(4);
   await expect(page.locator('.checklist-items').first().locator('.checklist-item')).toHaveCount(3);
   await expect(page.locator('.example-grid .game-example')).toHaveCount(3);

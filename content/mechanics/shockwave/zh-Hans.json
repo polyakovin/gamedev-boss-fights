@@ -1,0 +1,130 @@
+{
+  "title": "冲击波",
+  "subtitle": "把“冲击波”做成信号清楚、应对可达、收招有意义的规则。",
+  "variant": "锁定式冲击波",
+  "summary": "地面接触后，危险边缘从撞击点向外传播，并与撞击本身分开。",
+  "overview": "地面接触后，危险边缘从撞击点向外传播，并与撞击本身分开。 可读性来自预告、锁定、真实碰撞几何和可验证结果之间的一致。",
+  "learning": "把冲击波的信号、锁定、几何、应对和收招作为一条规则共同调校。",
+  "category": "区域与陷阱",
+  "readTime": "4 分钟",
+  "demo": {
+    "title": "检验冲击波",
+    "timeline": "攻击时间轴",
+    "step": "攻击阶段",
+    "phaseNames": ["信号", "应对", "收招"],
+    "phaseDescriptions": [
+      "首领在锁定前显示冲击波的时间、方向和完整作用区域。",
+      "玩家用当前已有的常规动作完成冲击波所要求的应对。",
+      "冲击波的威胁完全结束后，首领保留清楚且可利用的收招。"
+    ],
+    "boss": "首领",
+    "player": "玩家",
+    "danger": "完整威胁可见",
+    "locked": "规则已经锁定",
+    "safe": "应对已经完成",
+    "reducedMotion": "减少动态效果已关闭自动播放。请用时间轴滑块检查整个循环。",
+    "diagramDescription": "冲击波的循环示意图：首领预告并锁定规则，玩家执行应对，场景在重置前显示明确收招。"
+  },
+  "steps": [
+    {
+      "title": "玩家能读懂完整规则吗？",
+      "body": "首领在锁定前显示冲击波的时间、方向和完整作用区域。"
+    },
+    {
+      "title": "预期应对真的可达吗？",
+      "body": "必须用玩家此时已有的能力，在最不利的合法起点测试完整身体的路线。"
+    },
+    {
+      "title": "收招会产生有用结果吗？",
+      "body": "冲击波的威胁完全结束后，首领保留清楚且可利用的收招。"
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "信号与实际威胁不一致",
+      "body": "首领在锁定前显示冲击波的时间、方向和完整作用区域。 可读性来自预告、锁定、真实碰撞几何和可验证结果之间的一致。"
+    },
+    {
+      "title": "应对只在理想条件下成立",
+      "body": "必须用玩家此时已有的能力，在最不利的合法起点测试完整身体的路线。"
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "共同调校整条规则",
+      "body": "地面接触后，危险边缘从撞击点向外传播，并与撞击本身分开。 可读性来自预告、锁定、真实碰撞几何和可验证结果之间的一致。"
+    },
+    {
+      "title": "一次只增加一个变量",
+      "body": "玩家用当前已有的常规动作完成冲击波所要求的应对。 必须用玩家此时已有的能力，在最不利的合法起点测试完整身体的路线。"
+    },
+    {
+      "title": "用完整循环验证收招",
+      "body": "残留危险先结束，下一次瞄准后开始，玩家才会得到真实的决策窗口。"
+    }
+  ],
+  "story": {
+    "title": "机制传达什么",
+    "body": "地面接触后，危险边缘从撞击点向外传播，并与撞击本身分开。 可读性来自预告、锁定、真实碰撞几何和可验证结果之间的一致。"
+  },
+  "adaptation": {
+    "title": "适配玩家动作",
+    "body": "玩家用当前已有的常规动作完成冲击波所要求的应对。 必须用玩家此时已有的能力，在最不利的合法起点测试完整身体的路线。"
+  },
+  "distinction": {
+    "title": "保持机制边界",
+    "body": "首领在锁定前显示冲击波的时间、方向和完整作用区域。 残留危险先结束，下一次瞄准后开始，玩家才会得到真实的决策窗口。"
+  },
+  "lensNotes": [
+    {
+      "id": "telegraphing",
+      "body": "这个视角检验机制如何把信号、空间和玩家应对连成一条可读决定。 地面接触后，危险边缘从撞击点向外传播，并与撞击本身分开。"
+    },
+    {
+      "id": "threat-geometry",
+      "body": "这个视角检验机制如何把信号、空间和玩家应对连成一条可读决定。 地面接触后，危险边缘从撞击点向外传播，并与撞击本身分开。"
+    },
+    {
+      "id": "counterplay",
+      "body": "这个视角检验机制如何把信号、空间和玩家应对连成一条可读决定。 地面接触后，危险边缘从撞击点向外传播，并与撞击本身分开。"
+    },
+    {
+      "id": "access-paths",
+      "body": "这个视角检验机制如何把信号、空间和玩家应对连成一条可读决定。 地面接触后，危险边缘从撞击点向外传播，并与撞击本身分开。"
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "Ori and the Will of the Wisps",
+      "boss": "Horn Beetle",
+      "screenshot": "https://i.ytimg.com/vi/DvuB8cImPIg/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=DvuB8cImPIg&t=61s",
+      "body": "Horn Beetle在2D战斗中展示冲击波；明确的信号、锁定和结果让这条规则可以被分析和复用。",
+      "video": "https://www.youtube.com/watch?v=DvuB8cImPIg&t=61s",
+      "videoDurationSeconds": 2062
+    },
+    {
+      "dimension": "2D",
+      "game": "Hollow Knight",
+      "boss": "False Knight",
+      "screenshot": "https://i.ytimg.com/vi/rwZmf4u366o/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=rwZmf4u366o&t=151s",
+      "body": "False Knight在2D战斗中展示冲击波；明确的信号、锁定和结果让这条规则可以被分析和复用。",
+      "video": "https://www.youtube.com/watch?v=rwZmf4u366o&t=151s",
+      "videoDurationSeconds": 2630
+    },
+    {
+      "dimension": "3D",
+      "game": "Elden Ring",
+      "boss": "Godfrey, First Elden Lord",
+      "screenshot": "https://i.ytimg.com/vi/U2jd1fqLpsE/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=U2jd1fqLpsE&t=180s",
+      "body": "Godfrey, First Elden Lord在3D战斗中展示冲击波；明确的信号、锁定和结果让这条规则可以被分析和复用。",
+      "video": "https://www.youtube.com/watch?v=U2jd1fqLpsE&t=180s",
+      "videoDurationSeconds": 480
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

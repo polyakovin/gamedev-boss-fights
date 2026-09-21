@@ -1,0 +1,130 @@
+{
+  "title": "持续危险区",
+  "subtitle": "把“持续危险区”做成信号清楚、应对可达、收招有意义的规则。",
+  "variant": "锁定式持续危险区",
+  "summary": "初次攻击结束后区域仍保持危险，并通过明确的激活、持续和消退状态占用空间。",
+  "overview": "初次攻击结束后区域仍保持危险，并通过明确的激活、持续和消退状态占用空间。 可读性来自预告、锁定、真实碰撞几何和可验证结果之间的一致。",
+  "learning": "把持续危险区的信号、锁定、几何、应对和收招作为一条规则共同调校。",
+  "category": "区域与陷阱",
+  "readTime": "4 分钟",
+  "demo": {
+    "title": "检验持续危险区",
+    "timeline": "攻击时间轴",
+    "step": "攻击阶段",
+    "phaseNames": ["信号", "应对", "收招"],
+    "phaseDescriptions": [
+      "首领在锁定前显示持续危险区的时间、方向和完整作用区域。",
+      "玩家用当前已有的常规动作完成持续危险区所要求的应对。",
+      "持续危险区的威胁完全结束后，首领保留清楚且可利用的收招。"
+    ],
+    "boss": "首领",
+    "player": "玩家",
+    "danger": "完整威胁可见",
+    "locked": "规则已经锁定",
+    "safe": "应对已经完成",
+    "reducedMotion": "减少动态效果已关闭自动播放。请用时间轴滑块检查整个循环。",
+    "diagramDescription": "持续危险区的循环示意图：首领预告并锁定规则，玩家执行应对，场景在重置前显示明确收招。"
+  },
+  "steps": [
+    {
+      "title": "玩家能读懂完整规则吗？",
+      "body": "首领在锁定前显示持续危险区的时间、方向和完整作用区域。"
+    },
+    {
+      "title": "预期应对真的可达吗？",
+      "body": "必须用玩家此时已有的能力，在最不利的合法起点测试完整身体的路线。"
+    },
+    {
+      "title": "收招会产生有用结果吗？",
+      "body": "持续危险区的威胁完全结束后，首领保留清楚且可利用的收招。"
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "信号与实际威胁不一致",
+      "body": "首领在锁定前显示持续危险区的时间、方向和完整作用区域。 可读性来自预告、锁定、真实碰撞几何和可验证结果之间的一致。"
+    },
+    {
+      "title": "应对只在理想条件下成立",
+      "body": "必须用玩家此时已有的能力，在最不利的合法起点测试完整身体的路线。"
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "共同调校整条规则",
+      "body": "初次攻击结束后区域仍保持危险，并通过明确的激活、持续和消退状态占用空间。 可读性来自预告、锁定、真实碰撞几何和可验证结果之间的一致。"
+    },
+    {
+      "title": "一次只增加一个变量",
+      "body": "玩家用当前已有的常规动作完成持续危险区所要求的应对。 必须用玩家此时已有的能力，在最不利的合法起点测试完整身体的路线。"
+    },
+    {
+      "title": "用完整循环验证收招",
+      "body": "残留危险先结束，下一次瞄准后开始，玩家才会得到真实的决策窗口。"
+    }
+  ],
+  "story": {
+    "title": "机制传达什么",
+    "body": "初次攻击结束后区域仍保持危险，并通过明确的激活、持续和消退状态占用空间。 可读性来自预告、锁定、真实碰撞几何和可验证结果之间的一致。"
+  },
+  "adaptation": {
+    "title": "适配玩家动作",
+    "body": "玩家用当前已有的常规动作完成持续危险区所要求的应对。 必须用玩家此时已有的能力，在最不利的合法起点测试完整身体的路线。"
+  },
+  "distinction": {
+    "title": "保持机制边界",
+    "body": "首领在锁定前显示持续危险区的时间、方向和完整作用区域。 残留危险先结束，下一次瞄准后开始，玩家才会得到真实的决策窗口。"
+  },
+  "lensNotes": [
+    {
+      "id": "telegraphing",
+      "body": "这个视角检验机制如何把信号、空间和玩家应对连成一条可读决定。 初次攻击结束后区域仍保持危险，并通过明确的激活、持续和消退状态占用空间。"
+    },
+    {
+      "id": "threat-geometry",
+      "body": "这个视角检验机制如何把信号、空间和玩家应对连成一条可读决定。 初次攻击结束后区域仍保持危险，并通过明确的激活、持续和消退状态占用空间。"
+    },
+    {
+      "id": "counterplay",
+      "body": "这个视角检验机制如何把信号、空间和玩家应对连成一条可读决定。 初次攻击结束后区域仍保持危险，并通过明确的激活、持续和消退状态占用空间。"
+    },
+    {
+      "id": "access-paths",
+      "body": "这个视角检验机制如何把信号、空间和玩家应对连成一条可读决定。 初次攻击结束后区域仍保持危险，并通过明确的激活、持续和消退状态占用空间。"
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "Enter the Gungeon",
+      "boss": "High Dragun",
+      "screenshot": "https://i.ytimg.com/vi/aKALjUZqhXA/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=aKALjUZqhXA&t=103s",
+      "body": "High Dragun在2D战斗中展示持续危险区；明确的信号、锁定和结果让这条规则可以被分析和复用。",
+      "video": "https://www.youtube.com/watch?v=aKALjUZqhXA&t=103s",
+      "videoDurationSeconds": 211
+    },
+    {
+      "dimension": "2D",
+      "game": "Ori and the Will of the Wisps",
+      "boss": "Shriek",
+      "screenshot": "https://i.ytimg.com/vi/DvuB8cImPIg/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=DvuB8cImPIg&t=1165s",
+      "body": "Shriek在2D战斗中展示持续危险区；明确的信号、锁定和结果让这条规则可以被分析和复用。",
+      "video": "https://www.youtube.com/watch?v=DvuB8cImPIg&t=1165s",
+      "videoDurationSeconds": 2062
+    },
+    {
+      "dimension": "3D",
+      "game": "V Rising",
+      "boss": "Ziva the Engineer",
+      "screenshot": "https://i.ytimg.com/vi/2FaqtlB36V8/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=2FaqtlB36V8&t=24s",
+      "body": "Ziva the Engineer在3D战斗中展示持续危险区；明确的信号、锁定和结果让这条规则可以被分析和复用。",
+      "video": "https://www.youtube.com/watch?v=2FaqtlB36V8&t=24s",
+      "videoDurationSeconds": 303
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

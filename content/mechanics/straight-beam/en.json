@@ -1,0 +1,130 @@
+{
+  "title": "Straight beam",
+  "subtitle": "Build a readable straight beam with a reachable response and a useful recovery.",
+  "variant": "Committed straight beam pattern",
+  "summary": "The boss projects a sustained line of danger that controls a corridor and separates warning.",
+  "overview": "The boss projects a sustained line of danger that controls a corridor and separates warning, activation, and recovery into clear timing phases.",
+  "learning": "Tune the signal, commitment, geometry, response, and recovery of a straight beam as one rule.",
+  "category": "Beams",
+  "readTime": "4 min",
+  "demo": {
+    "title": "Test the straight beam",
+    "timeline": "Attack timeline",
+    "step": "Attack phases",
+    "phaseNames": ["Signal", "Response", "Recovery"],
+    "phaseDescriptions": [
+      "Draw the future line with aiming posture, light, particles, or a harmless guide before the damaging beam appears.",
+      "The player leaves the corridor, crosses before activation, uses cover, interrupts the cast, or exploits the boss’s fixed facing.",
+      "The beam shuts down along the same corridor that was previewed, and the boss keeps its facing locked for a short punish window before aiming again."
+    ],
+    "boss": "Boss",
+    "player": "Player",
+    "danger": "The active threat is visible",
+    "locked": "The rule is committed",
+    "safe": "The response is complete",
+    "reducedMotion": "Autoplay is disabled by the reduced-motion setting. Use the timeline slider to inspect the loop.",
+    "diagramDescription": "A looping diagram of straight beam. The boss signals and commits the rule, the player uses the intended response, and the scene holds a readable recovery before resetting."
+  },
+  "steps": [
+    {
+      "title": "Can the player read the complete rule?",
+      "body": "Draw the future line with aiming posture, light, particles, or a harmless guide before the damaging beam appears."
+    },
+    {
+      "title": "Is the intended response reachable?",
+      "body": "The player leaves the corridor, crosses before activation, uses cover, interrupts the cast, or exploits the boss’s fixed facing."
+    },
+    {
+      "title": "Does recovery create a useful outcome?",
+      "body": "The beam shuts down along the same corridor that was previewed, and the boss keeps its facing locked for a short punish window before aiming again."
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "If the damaging width exceeds the preview or the beam snaps after the warning, the telegraph teaches the wrong rule",
+      "body": "If the damaging width exceeds the preview or the beam snaps after the warning, the telegraph teaches the wrong rule."
+    },
+    {
+      "title": "The cue and active geometry disagree",
+      "body": "If the visible straight beam cue promises a different area or timing, the player cannot carry the learned rule into the next cycle."
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "Tune the complete rule",
+      "body": "Measure warning time, beam width, active duration, rotation tolerance, and recovery against the distance needed to clear the whole player body."
+    },
+    {
+      "title": "Escalate one variable at a time",
+      "body": "Add multiple fixed lines or shorten the warning after mastery while preserving the exact relationship between preview and damage."
+    },
+    {
+      "title": "Prove the recovery",
+      "body": "The beam shuts down along the same corridor that was previewed, and the boss keeps its facing locked for a short punish window before aiming again."
+    }
+  ],
+  "story": {
+    "title": "What the mechanic communicates",
+    "body": "The boss projects a sustained line of danger that controls a corridor and separates warning, activation, and recovery into clear timing phases. The encounter uses that rule as a short promise: a visible signal, a committed action, and a result the player can verify."
+  },
+  "adaptation": {
+    "title": "Adapt it to the player verbs",
+    "body": "The player leaves the corridor, crosses before activation, uses cover, interrupts the cast, or exploits the boss’s fixed facing. Measure warning time, beam width, active duration, rotation tolerance, and recovery against the distance needed to clear the whole player body."
+  },
+  "distinction": {
+    "title": "Keep the mechanic distinct",
+    "body": "If the damaging width exceeds the preview or the beam snaps after the warning, the telegraph teaches the wrong rule. Do not hide that distinction behind extra effects or tracking that the announced rule does not contain."
+  },
+  "lensNotes": [
+    {
+      "id": "telegraphing",
+      "body": "The signal must reveal the relevant timing and geometry before commitment."
+    },
+    {
+      "id": "commitment",
+      "body": "After commitment, the rule stops changing in ways the signal did not announce."
+    },
+    {
+      "id": "threat-geometry",
+      "body": "The complete player extent and the active region determine whether the route is real."
+    },
+    {
+      "id": "counterplay",
+      "body": "The response uses an ordinary supported verb and produces an observable result."
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "Hollow Knight",
+      "boss": "Absolute Radiance",
+      "screenshot": "https://i.ytimg.com/vi/bgh04-wCRyk/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=bgh04-wCRyk&t=20s",
+      "body": "Absolute Radiance demonstrates straight beam in a 2D encounter. Draw the future line with aiming posture, light, particles, or a harmless guide before the damaging beam appears.",
+      "video": "https://www.youtube.com/watch?v=bgh04-wCRyk&t=20s",
+      "videoDurationSeconds": 484
+    },
+    {
+      "dimension": "3D",
+      "game": "Returnal",
+      "boss": "Phrike",
+      "screenshot": "https://i.ytimg.com/vi/UdBbTMFLFIo/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=UdBbTMFLFIo&t=32s",
+      "body": "Phrike demonstrates straight beam in a 3D encounter. The player leaves the corridor, crosses before activation, uses cover, interrupts the cast, or exploits the boss’s fixed facing.",
+      "video": "https://www.youtube.com/watch?v=UdBbTMFLFIo&t=32s",
+      "videoDurationSeconds": 175
+    },
+    {
+      "dimension": "3D",
+      "game": "V Rising",
+      "boss": "Ziva the Engineer",
+      "screenshot": "https://i.ytimg.com/vi/2FaqtlB36V8/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=2FaqtlB36V8&t=24s",
+      "body": "Ziva the Engineer demonstrates straight beam in a 3D encounter. Measure warning time, beam width, active duration, rotation tolerance, and recovery against the distance needed to clear the whole player body.",
+      "video": "https://www.youtube.com/watch?v=2FaqtlB36V8&t=24s",
+      "videoDurationSeconds": 303
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

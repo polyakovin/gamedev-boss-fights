@@ -1,0 +1,130 @@
+{
+  "title": "Homing projectile",
+  "subtitle": "Build a readable homing projectile with a reachable response and a useful recovery.",
+  "variant": "Committed homing projectile pattern",
+  "summary": "A projectile adjusts its heading toward the player after launch.",
+  "overview": "A projectile adjusts its heading toward the player after launch, creating a moving pursuit problem instead of a single predicted line.",
+  "learning": "Tune the signal, commitment, geometry, response, and recovery of a homing projectile as one rule.",
+  "category": "Targeting and rhythm",
+  "readTime": "4 min",
+  "demo": {
+    "title": "Test the homing projectile",
+    "timeline": "Attack timeline",
+    "step": "Attack phases",
+    "phaseNames": ["Signal", "Response", "Recovery"],
+    "phaseDescriptions": [
+      "Identify lock-on and tracking strength through a marker, curved trail, or turning pose before the projectile reaches close range.",
+      "Allow sharp direction changes, cover, interception, outrunning, or redirection according to the game’s verbs, and establish when tracking stops.",
+      "Tracking ends at a communicated cutoff and the projectile expires or travels straight, ensuring the pursuit creates a finite response window."
+    ],
+    "boss": "Boss",
+    "player": "Player",
+    "danger": "The active threat is visible",
+    "locked": "The rule is committed",
+    "safe": "The response is complete",
+    "reducedMotion": "Autoplay is disabled by the reduced-motion setting. Use the timeline slider to inspect the loop.",
+    "diagramDescription": "A looping diagram of homing projectile. The boss signals and commits the rule, the player uses the intended response, and the scene holds a readable recovery before resetting."
+  },
+  "steps": [
+    {
+      "title": "Can the player read the complete rule?",
+      "body": "Identify lock-on and tracking strength through a marker, curved trail, or turning pose before the projectile reaches close range."
+    },
+    {
+      "title": "Is the intended response reachable?",
+      "body": "Allow sharp direction changes, cover, interception, outrunning, or redirection according to the game’s verbs, and establish when tracking stops."
+    },
+    {
+      "title": "Does recovery create a useful outcome?",
+      "body": "Tracking ends at a communicated cutoff and the projectile expires or travels straight, ensuring the pursuit creates a finite response window."
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "Perfect turning with no lifetime or cutoff forces a specific exploit instead of supporting readable movement",
+      "body": "Perfect turning with no lifetime or cutoff forces a specific exploit instead of supporting readable movement."
+    },
+    {
+      "title": "The cue and active geometry disagree",
+      "body": "If the visible homing projectile cue promises a different area or timing, the player cannot carry the learned rule into the next cycle."
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "Tune the complete rule",
+      "body": "Tune speed, turn rate, tracking delay, lifetime, and collision size together; a slower projectile can still be inescapable with unlimited turning."
+    },
+    {
+      "title": "Escalate one variable at a time",
+      "body": "Combine weak homing with obstacles or stagger several lock times rather than simply raising turn rate to perfect tracking."
+    },
+    {
+      "title": "Prove the recovery",
+      "body": "Tracking ends at a communicated cutoff and the projectile expires or travels straight, ensuring the pursuit creates a finite response window."
+    }
+  ],
+  "story": {
+    "title": "What the mechanic communicates",
+    "body": "A projectile adjusts its heading toward the player after launch, creating a moving pursuit problem instead of a single predicted line. The encounter uses that rule as a short promise: a visible signal, a committed action, and a result the player can verify."
+  },
+  "adaptation": {
+    "title": "Adapt it to the player verbs",
+    "body": "Allow sharp direction changes, cover, interception, outrunning, or redirection according to the game’s verbs, and establish when tracking stops. Tune speed, turn rate, tracking delay, lifetime, and collision size together; a slower projectile can still be inescapable with unlimited turning."
+  },
+  "distinction": {
+    "title": "Keep the mechanic distinct",
+    "body": "Perfect turning with no lifetime or cutoff forces a specific exploit instead of supporting readable movement. Do not hide that distinction behind extra effects or tracking that the announced rule does not contain."
+  },
+  "lensNotes": [
+    {
+      "id": "telegraphing",
+      "body": "The signal must reveal the relevant timing and geometry before commitment."
+    },
+    {
+      "id": "commitment",
+      "body": "After commitment, the rule stops changing in ways the signal did not announce."
+    },
+    {
+      "id": "difficulty-rhythm",
+      "body": "Preparation, action, and recovery create a legible cycle of pressure and release."
+    },
+    {
+      "id": "counterplay",
+      "body": "The response uses an ordinary supported verb and produces an observable result."
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "Hollow Knight",
+      "boss": "Absolute Radiance",
+      "screenshot": "https://i.ytimg.com/vi/bgh04-wCRyk/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=bgh04-wCRyk&t=20s",
+      "body": "Absolute Radiance demonstrates homing projectile in a 2D encounter. Identify lock-on and tracking strength through a marker, curved trail, or turning pose before the projectile reaches close range.",
+      "video": "https://www.youtube.com/watch?v=bgh04-wCRyk&t=20s",
+      "videoDurationSeconds": 484
+    },
+    {
+      "dimension": "2D",
+      "game": "Ori and the Will of the Wisps",
+      "boss": "Shriek",
+      "screenshot": "https://i.ytimg.com/vi/DvuB8cImPIg/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=DvuB8cImPIg&t=1165s",
+      "body": "Shriek demonstrates homing projectile in a 2D encounter. Allow sharp direction changes, cover, interception, outrunning, or redirection according to the game’s verbs, and establish when tracking stops.",
+      "video": "https://www.youtube.com/watch?v=DvuB8cImPIg&t=1165s",
+      "videoDurationSeconds": 2062
+    },
+    {
+      "dimension": "3D",
+      "game": "V Rising",
+      "boss": "Ziva the Engineer",
+      "screenshot": "https://i.ytimg.com/vi/2FaqtlB36V8/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=2FaqtlB36V8&t=24s",
+      "body": "Ziva the Engineer demonstrates homing projectile in a 3D encounter. Tune speed, turn rate, tracking delay, lifetime, and collision size together; a slower projectile can still be inescapable with unlimited turning.",
+      "video": "https://www.youtube.com/watch?v=2FaqtlB36V8&t=24s",
+      "videoDurationSeconds": 303
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

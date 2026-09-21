@@ -1,0 +1,20 @@
+{
+  "id": "shrinking-safe-area",
+  "number": 23,
+  "published": true,
+  "sourceLocale": "en",
+  "contentVersion": 1,
+  "animation": "shrinking-safe-area",
+  "lenses": ["threat-geometry", "counterplay", "access-paths", "risk-reward"],
+  "related": ["platform-destruction", "lingering-hazard"],
+  "sources": [
+    {
+      "title": "Enemy Attacks and Telegraphing · Mike Stout",
+      "url": "https://www.gamedeveloper.com/design/enemy-attacks-and-telegraphing"
+    },
+    {
+      "title": "Boss Up: Boss Battle Design · GDC Vault",
+      "url": "https://www.gdcvault.com/play/1024921/Boss-Up-Boss-Battle-Design"
+    }
+  ]
+}

@@ -1,0 +1,130 @@
+{
+  "title": "Platform destruction",
+  "subtitle": "Build a readable platform destruction with a reachable response and a useful recovery.",
+  "variant": "Committed platform destruction pattern",
+  "summary": "The boss removes or disables pieces of traversable space.",
+  "overview": "The boss removes or disables pieces of traversable space, making arena geometry a changing resource rather than a fixed backdrop.",
+  "learning": "Tune the signal, commitment, geometry, response, and recovery of a platform destruction as one rule.",
+  "category": "Arena",
+  "readTime": "4 min",
+  "demo": {
+    "title": "Test the platform destruction",
+    "timeline": "Attack timeline",
+    "step": "Attack phases",
+    "phaseNames": ["Signal", "Response", "Recovery"],
+    "phaseDescriptions": [
+      "Cracks, deformation, targeted highlights, and sound should identify the exact platform and whether its loss is temporary or permanent.",
+      "Players relocate before collapse, choose which space to sacrifice, use alternate traversal, or complete an objective before the route disappears.",
+      "The surviving layout stabilizes before the next attack; if platforms return, restoration is signaled and finishes before they become required routes."
+    ],
+    "boss": "Boss",
+    "player": "Player",
+    "danger": "The active threat is visible",
+    "locked": "The rule is committed",
+    "safe": "The response is complete",
+    "reducedMotion": "Autoplay is disabled by the reduced-motion setting. Use the timeline slider to inspect the loop.",
+    "diagramDescription": "A looping diagram of platform destruction. The boss signals and commits the rule, the player uses the intended response, and the scene holds a readable recovery before resetting."
+  },
+  "steps": [
+    {
+      "title": "Can the player read the complete rule?",
+      "body": "Cracks, deformation, targeted highlights, and sound should identify the exact platform and whether its loss is temporary or permanent."
+    },
+    {
+      "title": "Is the intended response reachable?",
+      "body": "Players relocate before collapse, choose which space to sacrifice, use alternate traversal, or complete an objective before the route disappears."
+    },
+    {
+      "title": "Does recovery create a useful outcome?",
+      "body": "The surviving layout stabilizes before the next attack; if platforms return, restoration is signaled and finishes before they become required routes."
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "Removing the only reachable platform after an earlier irreversible choice creates a soft lock instead of meaningful pressure",
+      "body": "Removing the only reachable platform after an earlier irreversible choice creates a soft lock instead of meaningful pressure."
+    },
+    {
+      "title": "The cue and active geometry disagree",
+      "body": "If the visible platform destruction cue promises a different area or timing, the player cannot carry the learned rule into the next cycle."
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "Tune the complete rule",
+      "body": "Track remaining safe area, route connectivity, destruction order, recovery options, and the abilities required to survive each layout."
+    },
+    {
+      "title": "Escalate one variable at a time",
+      "body": "Destroy space in authored stages or allow restoration between cycles, ensuring every state has a tested route for the intended loadout."
+    },
+    {
+      "title": "Prove the recovery",
+      "body": "The surviving layout stabilizes before the next attack; if platforms return, restoration is signaled and finishes before they become required routes."
+    }
+  ],
+  "story": {
+    "title": "What the mechanic communicates",
+    "body": "The boss removes or disables pieces of traversable space, making arena geometry a changing resource rather than a fixed backdrop. The encounter uses that rule as a short promise: a visible signal, a committed action, and a result the player can verify."
+  },
+  "adaptation": {
+    "title": "Adapt it to the player verbs",
+    "body": "Players relocate before collapse, choose which space to sacrifice, use alternate traversal, or complete an objective before the route disappears. Track remaining safe area, route connectivity, destruction order, recovery options, and the abilities required to survive each layout."
+  },
+  "distinction": {
+    "title": "Keep the mechanic distinct",
+    "body": "Removing the only reachable platform after an earlier irreversible choice creates a soft lock instead of meaningful pressure. Do not hide that distinction behind extra effects or tracking that the announced rule does not contain."
+  },
+  "lensNotes": [
+    {
+      "id": "threat-geometry",
+      "body": "The complete player extent and the active region determine whether the route is real."
+    },
+    {
+      "id": "counterplay",
+      "body": "The response uses an ordinary supported verb and produces an observable result."
+    },
+    {
+      "id": "access-paths",
+      "body": "At least one route remains reachable with the movement options available at this point."
+    },
+    {
+      "id": "risk-reward",
+      "body": "Position and timing trade easier clearance against a better recovery opportunity."
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "Ori and the Will of the Wisps",
+      "boss": "Shriek",
+      "screenshot": "https://i.ytimg.com/vi/DvuB8cImPIg/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=DvuB8cImPIg&t=1165s",
+      "body": "Shriek demonstrates platform destruction in a 2D encounter. Cracks, deformation, targeted highlights, and sound should identify the exact platform and whether its loss is temporary or permanent.",
+      "video": "https://www.youtube.com/watch?v=DvuB8cImPIg&t=1165s",
+      "videoDurationSeconds": 2062
+    },
+    {
+      "dimension": "2D",
+      "game": "Hollow Knight",
+      "boss": "Absolute Radiance",
+      "screenshot": "https://i.ytimg.com/vi/bgh04-wCRyk/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=bgh04-wCRyk&t=20s",
+      "body": "Absolute Radiance demonstrates platform destruction in a 2D encounter. Players relocate before collapse, choose which space to sacrifice, use alternate traversal, or complete an objective before the route disappears.",
+      "video": "https://www.youtube.com/watch?v=bgh04-wCRyk&t=20s",
+      "videoDurationSeconds": 484
+    },
+    {
+      "dimension": "3D",
+      "game": "Returnal",
+      "boss": "Nemesis",
+      "screenshot": "https://i.ytimg.com/vi/J8BTbUNDknI/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=J8BTbUNDknI&t=100s",
+      "body": "Nemesis demonstrates platform destruction in a 3D encounter. Track remaining safe area, route connectivity, destruction order, recovery options, and the abilities required to survive each layout.",
+      "video": "https://www.youtube.com/watch?v=J8BTbUNDknI&t=100s",
+      "videoDurationSeconds": 370
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

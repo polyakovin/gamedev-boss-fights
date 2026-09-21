@@ -1,0 +1,130 @@
+{
+  "title": "ターゲット固定",
+  "subtitle": "「ターゲット固定」を、読める予告・到達可能な対応・有効な隙を持つルールにする。",
+  "variant": "方向と範囲を確定するターゲット固定",
+  "summary": "印がプレイヤーを追い、明確な時点で位置を固定し、その地点だけに攻撃する。",
+  "overview": "印がプレイヤーを追い、明確な時点で位置を固定し、その地点だけに攻撃する。 読みやすさは、予告、確定、実際の当たり判定、確認できる結果の一致から生まれる。",
+  "learning": "ターゲット固定の予告、確定、形状、対応、隙を一つのルールとして調整する。",
+  "category": "照準とリズム",
+  "readTime": "4分",
+  "demo": {
+    "title": "ターゲット固定を検証",
+    "timeline": "攻撃タイムライン",
+    "step": "攻撃フェーズ",
+    "phaseNames": ["予告", "対応", "隙"],
+    "phaseDescriptions": [
+      "ボスは確定前にターゲット固定の時刻、方向、作用範囲をすべて示す。",
+      "プレイヤーはその時点で使える通常行動でターゲット固定への対応を完了する。",
+      "ターゲット固定の脅威が完全に消えた後、ボスは利用できる明確な隙を残す。"
+    ],
+    "boss": "ボス",
+    "player": "プレイヤー",
+    "danger": "脅威全体が見えている",
+    "locked": "ルールが確定した",
+    "safe": "対応が完了した",
+    "reducedMotion": "視差効果を減らす設定により自動再生は停止しています。スライダーでループを確認してください。",
+    "diagramDescription": "ターゲット固定のループ図。ボスがルールを予告して確定し、プレイヤーが対応し、リセット前に隙が示される。"
+  },
+  "steps": [
+    {
+      "title": "ルール全体を読み取れるか？",
+      "body": "ボスは確定前にターゲット固定の時刻、方向、作用範囲をすべて示す。"
+    },
+    {
+      "title": "想定した対応は到達可能か？",
+      "body": "その時点の能力だけを使い、最も不利な有効開始位置から全身の経路を検証する。"
+    },
+    {
+      "title": "隙は有効な結果を生むか？",
+      "body": "ターゲット固定の脅威が完全に消えた後、ボスは利用できる明確な隙を残す。"
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "予告と実際の脅威が一致しない",
+      "body": "ボスは確定前にターゲット固定の時刻、方向、作用範囲をすべて示す。 読みやすさは、予告、確定、実際の当たり判定、確認できる結果の一致から生まれる。"
+    },
+    {
+      "title": "理想条件でしか対応できない",
+      "body": "その時点の能力だけを使い、最も不利な有効開始位置から全身の経路を検証する。"
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "ルール全体を同時に調整する",
+      "body": "印がプレイヤーを追い、明確な時点で位置を固定し、その地点だけに攻撃する。 読みやすさは、予告、確定、実際の当たり判定、確認できる結果の一致から生まれる。"
+    },
+    {
+      "title": "一度に一変数だけ強める",
+      "body": "プレイヤーはその時点で使える通常行動でターゲット固定への対応を完了する。 その時点の能力だけを使い、最も不利な有効開始位置から全身の経路を検証する。"
+    },
+    {
+      "title": "ループ全体で隙を証明する",
+      "body": "残留する危険を次の照準より先に終わらせ、判断の隙を実在させる。"
+    }
+  ],
+  "story": {
+    "title": "仕組みが伝えること",
+    "body": "印がプレイヤーを追い、明確な時点で位置を固定し、その地点だけに攻撃する。 読みやすさは、予告、確定、実際の当たり判定、確認できる結果の一致から生まれる。"
+  },
+  "adaptation": {
+    "title": "プレイヤーの行動に合わせる",
+    "body": "プレイヤーはその時点で使える通常行動でターゲット固定への対応を完了する。 その時点の能力だけを使い、最も不利な有効開始位置から全身の経路を検証する。"
+  },
+  "distinction": {
+    "title": "仕組みの境界を保つ",
+    "body": "ボスは確定前にターゲット固定の時刻、方向、作用範囲をすべて示す。 残留する危険を次の照準より先に終わらせ、判断の隙を実在させる。"
+  },
+  "lensNotes": [
+    {
+      "id": "telegraphing",
+      "body": "この視点は、予告、空間、対応が一つの読める判断につながっているかを検証する。 印がプレイヤーを追い、明確な時点で位置を固定し、その地点だけに攻撃する。"
+    },
+    {
+      "id": "commitment",
+      "body": "この視点は、予告、空間、対応が一つの読める判断につながっているかを検証する。 印がプレイヤーを追い、明確な時点で位置を固定し、その地点だけに攻撃する。"
+    },
+    {
+      "id": "difficulty-rhythm",
+      "body": "この視点は、予告、空間、対応が一つの読める判断につながっているかを検証する。 印がプレイヤーを追い、明確な時点で位置を固定し、その地点だけに攻撃する。"
+    },
+    {
+      "id": "counterplay",
+      "body": "この視点は、予告、空間、対応が一つの読める判断につながっているかを検証する。 印がプレイヤーを追い、明確な時点で位置を固定し、その地点だけに攻撃する。"
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "Ori and the Will of the Wisps",
+      "boss": "Shriek",
+      "screenshot": "https://i.ytimg.com/vi/DvuB8cImPIg/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=DvuB8cImPIg&t=1165s",
+      "body": "Shriekは2Dの戦闘でターゲット固定を示す。予告、確定、結果が明瞭なのでルールを分析して再利用できる。",
+      "video": "https://www.youtube.com/watch?v=DvuB8cImPIg&t=1165s",
+      "videoDurationSeconds": 2062
+    },
+    {
+      "dimension": "2D",
+      "game": "Hollow Knight",
+      "boss": "Absolute Radiance",
+      "screenshot": "https://i.ytimg.com/vi/bgh04-wCRyk/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=bgh04-wCRyk&t=20s",
+      "body": "Absolute Radianceは2Dの戦闘でターゲット固定を示す。予告、確定、結果が明瞭なのでルールを分析して再利用できる。",
+      "video": "https://www.youtube.com/watch?v=bgh04-wCRyk&t=20s",
+      "videoDurationSeconds": 484
+    },
+    {
+      "dimension": "3D",
+      "game": "Returnal",
+      "boss": "Phrike",
+      "screenshot": "https://i.ytimg.com/vi/UdBbTMFLFIo/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=UdBbTMFLFIo&t=32s",
+      "body": "Phrikeは3Dの戦闘でターゲット固定を示す。予告、確定、結果が明瞭なのでルールを分析して再利用できる。",
+      "video": "https://www.youtube.com/watch?v=UdBbTMFLFIo&t=32s",
+      "videoDurationSeconds": 175
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

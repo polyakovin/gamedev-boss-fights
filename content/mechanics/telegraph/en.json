@@ -1,0 +1,130 @@
+{
+  "title": "Telegraph",
+  "subtitle": "Build a readable telegraph with a reachable response and a useful recovery.",
+  "variant": "Committed telegraph pattern",
+  "summary": "A telegraph communicates an upcoming attack’s timing.",
+  "overview": "A telegraph communicates an upcoming attack’s timing, origin, direction, and footprint early enough for a meaningful response.",
+  "learning": "Tune the signal, commitment, geometry, response, and recovery of a telegraph as one rule.",
+  "category": "Structure and readability",
+  "readTime": "4 min",
+  "demo": {
+    "title": "Test the telegraph",
+    "timeline": "Attack timeline",
+    "step": "Attack phases",
+    "phaseNames": ["Signal", "Response", "Recovery"],
+    "phaseDescriptions": [
+      "Coordinate pose, motion, sound, effects, and arena markers so at least two channels identify the same future event without visual clutter.",
+      "The player should be able to convert the cue into a specific action—move, wait, interrupt, guard, or prepare—before commitment removes that choice.",
+      "The damaging action resolves in exactly the promised shape, then a clear cooldown separates its result from the next warning."
+    ],
+    "boss": "Boss",
+    "player": "Player",
+    "danger": "The active threat is visible",
+    "locked": "The rule is committed",
+    "safe": "The response is complete",
+    "reducedMotion": "Autoplay is disabled by the reduced-motion setting. Use the timeline slider to inspect the loop.",
+    "diagramDescription": "A looping diagram of telegraph. The boss signals and commits the rule, the player uses the intended response, and the scene holds a readable recovery before resetting."
+  },
+  "steps": [
+    {
+      "title": "Can the player read the complete rule?",
+      "body": "Coordinate pose, motion, sound, effects, and arena markers so at least two channels identify the same future event without visual clutter."
+    },
+    {
+      "title": "Is the intended response reachable?",
+      "body": "The player should be able to convert the cue into a specific action—move, wait, interrupt, guard, or prepare—before commitment removes that choice."
+    },
+    {
+      "title": "Does recovery create a useful outcome?",
+      "body": "The damaging action resolves in exactly the promised shape, then a clear cooldown separates its result from the next warning."
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "A long animation is not a useful telegraph if it does not reveal what space becomes dangerous or when commitment occurs",
+      "body": "A long animation is not a useful telegraph if it does not reveal what space becomes dangerous or when commitment occurs."
+    },
+    {
+      "title": "The cue and active geometry disagree",
+      "body": "If the visible telegraph cue promises a different area or timing, the player cannot carry the learned rule into the next cycle."
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "Tune the complete rule",
+      "body": "Tune recognition time separately from movement time, then test cue visibility at combat distance, under effects, and with reduced audio or color perception."
+    },
+    {
+      "title": "Escalate one variable at a time",
+      "body": "Shorten or partially share tells only after the base vocabulary is established, preserving one reliable discriminator for each outcome."
+    },
+    {
+      "title": "Prove the recovery",
+      "body": "The damaging action resolves in exactly the promised shape, then a clear cooldown separates its result from the next warning."
+    }
+  ],
+  "story": {
+    "title": "What the mechanic communicates",
+    "body": "A telegraph communicates an upcoming attack’s timing, origin, direction, and footprint early enough for a meaningful response. The encounter uses that rule as a short promise: a visible signal, a committed action, and a result the player can verify."
+  },
+  "adaptation": {
+    "title": "Adapt it to the player verbs",
+    "body": "The player should be able to convert the cue into a specific action—move, wait, interrupt, guard, or prepare—before commitment removes that choice. Tune recognition time separately from movement time, then test cue visibility at combat distance, under effects, and with reduced audio or color perception."
+  },
+  "distinction": {
+    "title": "Keep the mechanic distinct",
+    "body": "A long animation is not a useful telegraph if it does not reveal what space becomes dangerous or when commitment occurs. Do not hide that distinction behind extra effects or tracking that the announced rule does not contain."
+  },
+  "lensNotes": [
+    {
+      "id": "telegraphing",
+      "body": "The signal must reveal the relevant timing and geometry before commitment."
+    },
+    {
+      "id": "progress-clarity",
+      "body": "State changes are shown clearly enough to tell when the objective has advanced."
+    },
+    {
+      "id": "difficulty-rhythm",
+      "body": "Preparation, action, and recovery create a legible cycle of pressure and release."
+    },
+    {
+      "id": "context-and-sequence",
+      "body": "The mechanic earns its place by preparing, combining, or resolving nearby decisions."
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "Ori and the Will of the Wisps",
+      "boss": "Shriek",
+      "screenshot": "https://i.ytimg.com/vi/DvuB8cImPIg/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=DvuB8cImPIg&t=1165s",
+      "body": "Shriek demonstrates telegraph in a 2D encounter. Coordinate pose, motion, sound, effects, and arena markers so at least two channels identify the same future event without visual clutter.",
+      "video": "https://www.youtube.com/watch?v=DvuB8cImPIg&t=1165s",
+      "videoDurationSeconds": 2062
+    },
+    {
+      "dimension": "2D",
+      "game": "Hollow Knight",
+      "boss": "Mantis Lords",
+      "screenshot": "https://i.ytimg.com/vi/VG3h6uVtWyY/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=VG3h6uVtWyY&t=19s",
+      "body": "Mantis Lords demonstrates telegraph in a 2D encounter. The player should be able to convert the cue into a specific action—move, wait, interrupt, guard, or prepare—before commitment removes that choice.",
+      "video": "https://www.youtube.com/watch?v=VG3h6uVtWyY&t=19s",
+      "videoDurationSeconds": 148
+    },
+    {
+      "dimension": "3D",
+      "game": "Dark Souls III",
+      "boss": "Dancer of the Boreal Valley",
+      "screenshot": "https://i.ytimg.com/vi/vCWh1bhHNKo/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=vCWh1bhHNKo&t=38s",
+      "body": "Dancer of the Boreal Valley demonstrates telegraph in a 3D encounter. Tune recognition time separately from movement time, then test cue visibility at combat distance, under effects, and with reduced audio or color perception.",
+      "video": "https://www.youtube.com/watch?v=vCWh1bhHNKo&t=38s",
+      "videoDurationSeconds": 190
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

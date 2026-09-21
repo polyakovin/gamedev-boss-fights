@@ -1,0 +1,130 @@
+{
+  "title": "Ricochet projectile",
+  "subtitle": "Build a readable ricochet projectile with a reachable response and a useful recovery.",
+  "variant": "Committed ricochet projectile pattern",
+  "summary": "A projectile changes direction after contacting arena boundaries.",
+  "overview": "A projectile changes direction after contacting arena boundaries, making walls part of its future trajectory and extending the threat beyond the initial shot.",
+  "learning": "Tune the signal, commitment, geometry, response, and recovery of a ricochet projectile as one rule.",
+  "category": "Projectiles",
+  "readTime": "4 min",
+  "demo": {
+    "title": "Test the ricochet projectile",
+    "timeline": "Attack timeline",
+    "step": "Attack phases",
+    "phaseNames": ["Signal", "Response", "Recovery"],
+    "phaseDescriptions": [
+      "Use a stable reflection rule and a visible impact cue so the next segment can be predicted from the incoming angle and surface.",
+      "Players should anticipate the bounce, move to a region the reflected line will miss, or manipulate the impact point when the system permits it.",
+      "The projectile expires after its advertised bounce count or lifetime with a visible fade, so reflected paths cannot remain as unbounded background danger."
+    ],
+    "boss": "Boss",
+    "player": "Player",
+    "danger": "The active threat is visible",
+    "locked": "The rule is committed",
+    "safe": "The response is complete",
+    "reducedMotion": "Autoplay is disabled by the reduced-motion setting. Use the timeline slider to inspect the loop.",
+    "diagramDescription": "A looping diagram of ricochet projectile. The boss signals and commits the rule, the player uses the intended response, and the scene holds a readable recovery before resetting."
+  },
+  "steps": [
+    {
+      "title": "Can the player read the complete rule?",
+      "body": "Use a stable reflection rule and a visible impact cue so the next segment can be predicted from the incoming angle and surface."
+    },
+    {
+      "title": "Is the intended response reachable?",
+      "body": "Players should anticipate the bounce, move to a region the reflected line will miss, or manipulate the impact point when the system permits it."
+    },
+    {
+      "title": "Does recovery create a useful outcome?",
+      "body": "The projectile expires after its advertised bounce count or lifetime with a visible fade, so reflected paths cannot remain as unbounded background danger."
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "Random reflection angles remove the spatial reasoning that distinguishes a ricochet from an ordinary erratic projectile",
+      "body": "Random reflection angles remove the spatial reasoning that distinguishes a ricochet from an ordinary erratic projectile."
+    },
+    {
+      "title": "The cue and active geometry disagree",
+      "body": "If the visible ricochet projectile cue promises a different area or timing, the player cannot carry the learned rule into the next cycle."
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "Tune the complete rule",
+      "body": "Limit lifetime or bounce count, then test speed, collision radius, wall angles, and camera framing across every supported arena shape."
+    },
+    {
+      "title": "Escalate one variable at a time",
+      "body": "Increase bounce count or add destructible reflectors while keeping the reflection law and projectile lifetime visible."
+    },
+    {
+      "title": "Prove the recovery",
+      "body": "The projectile expires after its advertised bounce count or lifetime with a visible fade, so reflected paths cannot remain as unbounded background danger."
+    }
+  ],
+  "story": {
+    "title": "What the mechanic communicates",
+    "body": "A projectile changes direction after contacting arena boundaries, making walls part of its future trajectory and extending the threat beyond the initial shot. The encounter uses that rule as a short promise: a visible signal, a committed action, and a result the player can verify."
+  },
+  "adaptation": {
+    "title": "Adapt it to the player verbs",
+    "body": "Players should anticipate the bounce, move to a region the reflected line will miss, or manipulate the impact point when the system permits it. Limit lifetime or bounce count, then test speed, collision radius, wall angles, and camera framing across every supported arena shape."
+  },
+  "distinction": {
+    "title": "Keep the mechanic distinct",
+    "body": "Random reflection angles remove the spatial reasoning that distinguishes a ricochet from an ordinary erratic projectile. Do not hide that distinction behind extra effects or tracking that the announced rule does not contain."
+  },
+  "lensNotes": [
+    {
+      "id": "telegraphing",
+      "body": "The signal must reveal the relevant timing and geometry before commitment."
+    },
+    {
+      "id": "threat-geometry",
+      "body": "The complete player extent and the active region determine whether the route is real."
+    },
+    {
+      "id": "counterplay",
+      "body": "The response uses an ordinary supported verb and produces an observable result."
+    },
+    {
+      "id": "mastery-check",
+      "body": "Escalation asks the player to apply the same learned rule under tighter constraints."
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "Hollow Knight",
+      "boss": "Dung Defender",
+      "screenshot": "https://i.ytimg.com/vi/xJzK50Cb24s/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=xJzK50Cb24s&t=14s",
+      "body": "Dung Defender demonstrates ricochet projectile in a 2D encounter. Use a stable reflection rule and a visible impact cue so the next segment can be predicted from the incoming angle and surface.",
+      "video": "https://www.youtube.com/watch?v=xJzK50Cb24s&t=14s",
+      "videoDurationSeconds": 165
+    },
+    {
+      "dimension": "2D",
+      "game": "Cuphead",
+      "boss": "Wally Warbles",
+      "screenshot": "https://i.ytimg.com/vi/Ol3-4Y0eS9M/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=Ol3-4Y0eS9M&t=58s",
+      "body": "Wally Warbles demonstrates ricochet projectile in a 2D encounter. Players should anticipate the bounce, move to a region the reflected line will miss, or manipulate the impact point when the system permits it.",
+      "video": "https://www.youtube.com/watch?v=Ol3-4Y0eS9M&t=58s",
+      "videoDurationSeconds": 199
+    },
+    {
+      "dimension": "3D",
+      "game": "V Rising",
+      "boss": "Ziva the Engineer",
+      "screenshot": "https://i.ytimg.com/vi/2FaqtlB36V8/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=2FaqtlB36V8&t=24s",
+      "body": "Ziva the Engineer demonstrates ricochet projectile in a 3D encounter. Limit lifetime or bounce count, then test speed, collision radius, wall angles, and camera framing across every supported arena shape.",
+      "video": "https://www.youtube.com/watch?v=2FaqtlB36V8&t=24s",
+      "videoDurationSeconds": 303
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

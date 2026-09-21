@@ -1,0 +1,130 @@
+{
+  "title": "安全区收缩",
+  "subtitle": "把“安全区收缩”做成信号清楚、应对可达、收招有意义的规则。",
+  "variant": "锁定式安全区收缩",
+  "summary": "危险边界逐步向内移动，持续减少可用空间，同时保留可预测的中心路线。",
+  "overview": "危险边界逐步向内移动，持续减少可用空间，同时保留可预测的中心路线。 可读性来自预告、锁定、真实碰撞几何和可验证结果之间的一致。",
+  "learning": "把安全区收缩的信号、锁定、几何、应对和收招作为一条规则共同调校。",
+  "category": "场地",
+  "readTime": "4 分钟",
+  "demo": {
+    "title": "检验安全区收缩",
+    "timeline": "攻击时间轴",
+    "step": "攻击阶段",
+    "phaseNames": ["信号", "应对", "收招"],
+    "phaseDescriptions": [
+      "首领在锁定前显示安全区收缩的时间、方向和完整作用区域。",
+      "玩家用当前已有的常规动作完成安全区收缩所要求的应对。",
+      "安全区收缩的威胁完全结束后，首领保留清楚且可利用的收招。"
+    ],
+    "boss": "首领",
+    "player": "玩家",
+    "danger": "完整威胁可见",
+    "locked": "规则已经锁定",
+    "safe": "应对已经完成",
+    "reducedMotion": "减少动态效果已关闭自动播放。请用时间轴滑块检查整个循环。",
+    "diagramDescription": "安全区收缩的循环示意图：首领预告并锁定规则，玩家执行应对，场景在重置前显示明确收招。"
+  },
+  "steps": [
+    {
+      "title": "玩家能读懂完整规则吗？",
+      "body": "首领在锁定前显示安全区收缩的时间、方向和完整作用区域。"
+    },
+    {
+      "title": "预期应对真的可达吗？",
+      "body": "必须用玩家此时已有的能力，在最不利的合法起点测试完整身体的路线。"
+    },
+    {
+      "title": "收招会产生有用结果吗？",
+      "body": "安全区收缩的威胁完全结束后，首领保留清楚且可利用的收招。"
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "信号与实际威胁不一致",
+      "body": "首领在锁定前显示安全区收缩的时间、方向和完整作用区域。 可读性来自预告、锁定、真实碰撞几何和可验证结果之间的一致。"
+    },
+    {
+      "title": "应对只在理想条件下成立",
+      "body": "必须用玩家此时已有的能力，在最不利的合法起点测试完整身体的路线。"
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "共同调校整条规则",
+      "body": "危险边界逐步向内移动，持续减少可用空间，同时保留可预测的中心路线。 可读性来自预告、锁定、真实碰撞几何和可验证结果之间的一致。"
+    },
+    {
+      "title": "一次只增加一个变量",
+      "body": "玩家用当前已有的常规动作完成安全区收缩所要求的应对。 必须用玩家此时已有的能力，在最不利的合法起点测试完整身体的路线。"
+    },
+    {
+      "title": "用完整循环验证收招",
+      "body": "残留危险先结束，下一次瞄准后开始，玩家才会得到真实的决策窗口。"
+    }
+  ],
+  "story": {
+    "title": "机制传达什么",
+    "body": "危险边界逐步向内移动，持续减少可用空间，同时保留可预测的中心路线。 可读性来自预告、锁定、真实碰撞几何和可验证结果之间的一致。"
+  },
+  "adaptation": {
+    "title": "适配玩家动作",
+    "body": "玩家用当前已有的常规动作完成安全区收缩所要求的应对。 必须用玩家此时已有的能力，在最不利的合法起点测试完整身体的路线。"
+  },
+  "distinction": {
+    "title": "保持机制边界",
+    "body": "首领在锁定前显示安全区收缩的时间、方向和完整作用区域。 残留危险先结束，下一次瞄准后开始，玩家才会得到真实的决策窗口。"
+  },
+  "lensNotes": [
+    {
+      "id": "threat-geometry",
+      "body": "这个视角检验机制如何把信号、空间和玩家应对连成一条可读决定。 危险边界逐步向内移动，持续减少可用空间，同时保留可预测的中心路线。"
+    },
+    {
+      "id": "counterplay",
+      "body": "这个视角检验机制如何把信号、空间和玩家应对连成一条可读决定。 危险边界逐步向内移动，持续减少可用空间，同时保留可预测的中心路线。"
+    },
+    {
+      "id": "access-paths",
+      "body": "这个视角检验机制如何把信号、空间和玩家应对连成一条可读决定。 危险边界逐步向内移动，持续减少可用空间，同时保留可预测的中心路线。"
+    },
+    {
+      "id": "risk-reward",
+      "body": "这个视角检验机制如何把信号、空间和玩家应对连成一条可读决定。 危险边界逐步向内移动，持续减少可用空间，同时保留可预测的中心路线。"
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "Enter the Gungeon",
+      "boss": "High Dragun",
+      "screenshot": "https://i.ytimg.com/vi/aKALjUZqhXA/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=aKALjUZqhXA&t=103s",
+      "body": "High Dragun在2D战斗中展示安全区收缩；明确的信号、锁定和结果让这条规则可以被分析和复用。",
+      "video": "https://www.youtube.com/watch?v=aKALjUZqhXA&t=103s",
+      "videoDurationSeconds": 211
+    },
+    {
+      "dimension": "2D",
+      "game": "Hollow Knight",
+      "boss": "Absolute Radiance",
+      "screenshot": "https://i.ytimg.com/vi/bgh04-wCRyk/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=bgh04-wCRyk&t=20s",
+      "body": "Absolute Radiance在2D战斗中展示安全区收缩；明确的信号、锁定和结果让这条规则可以被分析和复用。",
+      "video": "https://www.youtube.com/watch?v=bgh04-wCRyk&t=20s",
+      "videoDurationSeconds": 484
+    },
+    {
+      "dimension": "3D",
+      "game": "Returnal",
+      "boss": "Nemesis",
+      "screenshot": "https://i.ytimg.com/vi/J8BTbUNDknI/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=J8BTbUNDknI&t=100s",
+      "body": "Nemesis在3D战斗中展示安全区收缩；明确的信号、锁定和结果让这条规则可以被分析和复用。",
+      "video": "https://www.youtube.com/watch?v=J8BTbUNDknI&t=100s",
+      "videoDurationSeconds": 370
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

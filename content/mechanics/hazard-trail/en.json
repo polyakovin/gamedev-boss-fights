@@ -1,0 +1,130 @@
+{
+  "title": "Hazard trail",
+  "subtitle": "Build a readable hazard trail with a reachable response and a useful recovery.",
+  "variant": "Committed hazard trail pattern",
+  "summary": "Movement leaves a temporary dangerous path behind the boss or player.",
+  "overview": "Movement leaves a temporary dangerous path behind the boss or player, making recent trajectories constrain the next route through the arena.",
+  "learning": "Tune the signal, commitment, geometry, response, and recovery of a hazard trail as one rule.",
+  "category": "Zones and traps",
+  "readTime": "4 min",
+  "demo": {
+    "title": "Test the hazard trail",
+    "timeline": "Attack timeline",
+    "step": "Attack phases",
+    "phaseNames": ["Signal", "Response", "Recovery"],
+    "phaseDescriptions": [
+      "Show where the trail begins, its exact width, and how it expires; the moving source and persistent residue need distinct visual states.",
+      "The player curves movement to place the trail safely, crosses behind its expiration edge, or uses open space before routes close.",
+      "Trail segments expire in placement order and reopen the route from oldest to newest, making recovery of arena space predictable."
+    ],
+    "boss": "Boss",
+    "player": "Player",
+    "danger": "The active threat is visible",
+    "locked": "The rule is committed",
+    "safe": "The response is complete",
+    "reducedMotion": "Autoplay is disabled by the reduced-motion setting. Use the timeline slider to inspect the loop.",
+    "diagramDescription": "A looping diagram of hazard trail. The boss signals and commits the rule, the player uses the intended response, and the scene holds a readable recovery before resetting."
+  },
+  "steps": [
+    {
+      "title": "Can the player read the complete rule?",
+      "body": "Show where the trail begins, its exact width, and how it expires; the moving source and persistent residue need distinct visual states."
+    },
+    {
+      "title": "Is the intended response reachable?",
+      "body": "The player curves movement to place the trail safely, crosses behind its expiration edge, or uses open space before routes close."
+    },
+    {
+      "title": "Does recovery create a useful outcome?",
+      "body": "Trail segments expire in placement order and reopen the route from oldest to newest, making recovery of arena space predictable."
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "A trail that appears behind the visual source with no placement preview punishes movement the player has already committed to",
+      "body": "A trail that appears behind the visual source with no placement preview punishes movement the player has already committed to."
+    },
+    {
+      "title": "The cue and active geometry disagree",
+      "body": "If the visible hazard trail cue promises a different area or timing, the player cannot carry the learned rule into the next cycle."
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "Tune the complete rule",
+      "body": "Balance trail lifetime, width, source speed, turn radius, and arena area so route choices matter without sealing every exit."
+    },
+    {
+      "title": "Escalate one variable at a time",
+      "body": "Increase persistence or add a second trail source, then cap overlap and preserve a readable expiration order."
+    },
+    {
+      "title": "Prove the recovery",
+      "body": "Trail segments expire in placement order and reopen the route from oldest to newest, making recovery of arena space predictable."
+    }
+  ],
+  "story": {
+    "title": "What the mechanic communicates",
+    "body": "Movement leaves a temporary dangerous path behind the boss or player, making recent trajectories constrain the next route through the arena. The encounter uses that rule as a short promise: a visible signal, a committed action, and a result the player can verify."
+  },
+  "adaptation": {
+    "title": "Adapt it to the player verbs",
+    "body": "The player curves movement to place the trail safely, crosses behind its expiration edge, or uses open space before routes close. Balance trail lifetime, width, source speed, turn radius, and arena area so route choices matter without sealing every exit."
+  },
+  "distinction": {
+    "title": "Keep the mechanic distinct",
+    "body": "A trail that appears behind the visual source with no placement preview punishes movement the player has already committed to. Do not hide that distinction behind extra effects or tracking that the announced rule does not contain."
+  },
+  "lensNotes": [
+    {
+      "id": "telegraphing",
+      "body": "The signal must reveal the relevant timing and geometry before commitment."
+    },
+    {
+      "id": "threat-geometry",
+      "body": "The complete player extent and the active region determine whether the route is real."
+    },
+    {
+      "id": "counterplay",
+      "body": "The response uses an ordinary supported verb and produces an observable result."
+    },
+    {
+      "id": "access-paths",
+      "body": "At least one route remains reachable with the movement options available at this point."
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "Ori and the Will of the Wisps",
+      "boss": "Shriek",
+      "screenshot": "https://i.ytimg.com/vi/DvuB8cImPIg/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=DvuB8cImPIg&t=1165s",
+      "body": "Shriek demonstrates hazard trail in a 2D encounter. Show where the trail begins, its exact width, and how it expires; the moving source and persistent residue need distinct visual states.",
+      "video": "https://www.youtube.com/watch?v=DvuB8cImPIg&t=1165s",
+      "videoDurationSeconds": 2062
+    },
+    {
+      "dimension": "3D",
+      "game": "Dark Souls III",
+      "boss": "Dancer of the Boreal Valley",
+      "screenshot": "https://i.ytimg.com/vi/vCWh1bhHNKo/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=vCWh1bhHNKo&t=38s",
+      "body": "Dancer of the Boreal Valley demonstrates hazard trail in a 3D encounter. The player curves movement to place the trail safely, crosses behind its expiration edge, or uses open space before routes close.",
+      "video": "https://www.youtube.com/watch?v=vCWh1bhHNKo&t=38s",
+      "videoDurationSeconds": 190
+    },
+    {
+      "dimension": "3D",
+      "game": "V Rising",
+      "boss": "Ziva the Engineer",
+      "screenshot": "https://i.ytimg.com/vi/2FaqtlB36V8/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=2FaqtlB36V8&t=24s",
+      "body": "Ziva the Engineer demonstrates hazard trail in a 3D encounter. Balance trail lifetime, width, source speed, turn radius, and arena area so route choices matter without sealing every exit.",
+      "video": "https://www.youtube.com/watch?v=2FaqtlB36V8&t=24s",
+      "videoDurationSeconds": 303
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

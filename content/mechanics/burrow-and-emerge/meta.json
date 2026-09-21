@@ -1,0 +1,20 @@
+{
+  "id": "burrow-and-emerge",
+  "number": 10,
+  "published": true,
+  "sourceLocale": "en",
+  "contentVersion": 1,
+  "animation": "burrow-and-emerge",
+  "lenses": ["telegraphing", "commitment", "threat-geometry", "counterplay"],
+  "related": ["marked-area-strike", "target-lock"],
+  "sources": [
+    {
+      "title": "Enemy Attacks and Telegraphing · Mike Stout",
+      "url": "https://www.gamedeveloper.com/design/enemy-attacks-and-telegraphing"
+    },
+    {
+      "title": "Boss Up: Boss Battle Design · GDC Vault",
+      "url": "https://www.gdcvault.com/play/1024921/Boss-Up-Boss-Battle-Design"
+    }
+  ]
+}

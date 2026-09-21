@@ -1,0 +1,130 @@
+{
+  "title": "Rayos giratorios",
+  "subtitle": "Convierte rayos giratorios en una regla legible, con respuesta alcanzable y recuperación útil.",
+  "variant": "Patrón comprometido de rayos giratorios",
+  "summary": "Varios rayos rotan alrededor de un centro común y conservan huecos angulares que el jugador puede seguir.",
+  "overview": "Varios rayos rotan alrededor de un centro común y conservan huecos angulares que el jugador puede seguir. La legibilidad nace de la coherencia entre aviso, compromiso, colisión real y resultado verificable.",
+  "learning": "Ajusta señal, compromiso, geometría, respuesta y recuperación de rayos giratorios como una sola regla.",
+  "category": "Rayos",
+  "readTime": "4 min",
+  "demo": {
+    "title": "Prueba rayos giratorios",
+    "timeline": "Línea temporal del ataque",
+    "step": "Fases del ataque",
+    "phaseNames": ["Señal", "Respuesta", "Recuperación"],
+    "phaseDescriptions": [
+      "El jefe muestra el tiempo, la dirección y toda el área de rayos giratorios antes de comprometerse.",
+      "El jugador completa la respuesta de rayos giratorios con las acciones normales disponibles.",
+      "Cuando termina toda la amenaza de rayos giratorios, el jefe mantiene una recuperación clara y aprovechable."
+    ],
+    "boss": "Jefe",
+    "player": "Jugador",
+    "danger": "La amenaza completa es visible",
+    "locked": "La regla está comprometida",
+    "safe": "La respuesta ha terminado",
+    "reducedMotion": "La preferencia de movimiento reducido desactiva la reproducción automática. Usa el control temporal para revisar el ciclo.",
+    "diagramDescription": "Diagrama cíclico de rayos giratorios: el jefe anuncia y compromete la regla, el jugador responde y la escena muestra la recuperación antes de reiniciarse."
+  },
+  "steps": [
+    {
+      "title": "¿Puede el jugador leer la regla completa?",
+      "body": "El jefe muestra el tiempo, la dirección y toda el área de rayos giratorios antes de comprometerse."
+    },
+    {
+      "title": "¿Es alcanzable la respuesta prevista?",
+      "body": "Prueba el cuerpo completo desde el peor punto inicial válido y con las capacidades disponibles en ese momento."
+    },
+    {
+      "title": "¿La recuperación produce un resultado útil?",
+      "body": "Cuando termina toda la amenaza de rayos giratorios, el jefe mantiene una recuperación clara y aprovechable."
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "La señal no coincide con la amenaza",
+      "body": "El jefe muestra el tiempo, la dirección y toda el área de rayos giratorios antes de comprometerse. La legibilidad nace de la coherencia entre aviso, compromiso, colisión real y resultado verificable."
+    },
+    {
+      "title": "La respuesta solo funciona en condiciones ideales",
+      "body": "Prueba el cuerpo completo desde el peor punto inicial válido y con las capacidades disponibles en ese momento."
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "Ajusta la regla completa",
+      "body": "Varios rayos rotan alrededor de un centro común y conservan huecos angulares que el jugador puede seguir. La legibilidad nace de la coherencia entre aviso, compromiso, colisión real y resultado verificable."
+    },
+    {
+      "title": "Escala una variable cada vez",
+      "body": "El jugador completa la respuesta de rayos giratorios con las acciones normales disponibles. Prueba el cuerpo completo desde el peor punto inicial válido y con las capacidades disponibles en ese momento."
+    },
+    {
+      "title": "Demuestra la recuperación en el ciclo",
+      "body": "El peligro residual termina antes del siguiente apuntado para que la ventana de decisión sea real."
+    }
+  ],
+  "story": {
+    "title": "Qué comunica la mecánica",
+    "body": "Varios rayos rotan alrededor de un centro común y conservan huecos angulares que el jugador puede seguir. La legibilidad nace de la coherencia entre aviso, compromiso, colisión real y resultado verificable."
+  },
+  "adaptation": {
+    "title": "Adáptala a las acciones del jugador",
+    "body": "El jugador completa la respuesta de rayos giratorios con las acciones normales disponibles. Prueba el cuerpo completo desde el peor punto inicial válido y con las capacidades disponibles en ese momento."
+  },
+  "distinction": {
+    "title": "Mantén clara la diferencia",
+    "body": "El jefe muestra el tiempo, la dirección y toda el área de rayos giratorios antes de comprometerse. El peligro residual termina antes del siguiente apuntado para que la ventana de decisión sea real."
+  },
+  "lensNotes": [
+    {
+      "id": "telegraphing",
+      "body": "Esta perspectiva comprueba cómo la mecánica une señal, espacio y respuesta en una decisión legible. Varios rayos rotan alrededor de un centro común y conservan huecos angulares que el jugador puede seguir."
+    },
+    {
+      "id": "commitment",
+      "body": "Esta perspectiva comprueba cómo la mecánica une señal, espacio y respuesta en una decisión legible. Varios rayos rotan alrededor de un centro común y conservan huecos angulares que el jugador puede seguir."
+    },
+    {
+      "id": "threat-geometry",
+      "body": "Esta perspectiva comprueba cómo la mecánica une señal, espacio y respuesta en una decisión legible. Varios rayos rotan alrededor de un centro común y conservan huecos angulares que el jugador puede seguir."
+    },
+    {
+      "id": "counterplay",
+      "body": "Esta perspectiva comprueba cómo la mecánica une señal, espacio y respuesta en una decisión legible. Varios rayos rotan alrededor de un centro común y conservan huecos angulares que el jugador puede seguir."
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "Hollow Knight",
+      "boss": "Absolute Radiance",
+      "screenshot": "https://i.ytimg.com/vi/bgh04-wCRyk/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=bgh04-wCRyk&t=20s",
+      "body": "Absolute Radiance muestra rayos giratorios en un combate 2D; señal, compromiso y resultado hacen que la regla pueda analizarse y reutilizarse.",
+      "video": "https://www.youtube.com/watch?v=bgh04-wCRyk&t=20s",
+      "videoDurationSeconds": 484
+    },
+    {
+      "dimension": "3D",
+      "game": "Returnal",
+      "boss": "Phrike",
+      "screenshot": "https://i.ytimg.com/vi/UdBbTMFLFIo/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=UdBbTMFLFIo&t=32s",
+      "body": "Phrike muestra rayos giratorios en un combate 3D; señal, compromiso y resultado hacen que la regla pueda analizarse y reutilizarse.",
+      "video": "https://www.youtube.com/watch?v=UdBbTMFLFIo&t=32s",
+      "videoDurationSeconds": 175
+    },
+    {
+      "dimension": "3D",
+      "game": "V Rising",
+      "boss": "Ziva the Engineer",
+      "screenshot": "https://i.ytimg.com/vi/2FaqtlB36V8/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=2FaqtlB36V8&t=24s",
+      "body": "Ziva the Engineer muestra rayos giratorios en un combate 3D; señal, compromiso y resultado hacen que la regla pueda analizarse y reutilizarse.",
+      "video": "https://www.youtube.com/watch?v=2FaqtlB36V8&t=24s",
+      "videoDurationSeconds": 303
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}
