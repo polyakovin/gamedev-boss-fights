@@ -178,7 +178,8 @@
     },
     "aboutReviewBody": {
       "type": "string",
-      "minLength": 1
+      "minLength": 1,
+      "pattern": "\\{localeCount\\}"
     },
     "aboutOpenTitle": {
       "type": "string",
@@ -213,8 +214,16 @@
         "feedbackLabel"
       ],
       "properties": {
-        "atlasBody": { "type": "string", "minLength": 1 },
-        "communityBody": { "type": "string", "minLength": 1 },
+        "atlasBody": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "\\{count\\}"
+        },
+        "communityBody": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "\\{localeCount\\}"
+        },
         "prototypeTitle": { "type": "string", "minLength": 1 },
         "prototypeIntro": { "type": "string", "minLength": 1 },
         "beforeLabel": { "type": "string", "minLength": 1 },

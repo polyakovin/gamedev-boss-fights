@@ -441,8 +441,12 @@ function renderLensCards(localeCode, t) {
 }
 function renderAbout(locale, t) {
   const story = t.aboutStory;
-  const atlasBody = story.atlasBody.replace('{count}', String(mechanicsIndex.mechanics.length));
-  const communityBody = story.communityBody.replace('{localeCount}', String(locales.length));
+  const formatAboutText = (text) =>
+    text
+      .replaceAll('{count}', String(mechanicsIndex.mechanics.length))
+      .replaceAll('{localeCount}', String(locales.length));
+  const atlasBody = formatAboutText(story.atlasBody);
+  const communityBody = formatAboutText(story.communityBody);
   const bossBriefExample = JSON.stringify(
     {
       name: 'Gatekeeper',
@@ -463,7 +467,7 @@ function renderAbout(locale, t) {
   const principles = [
     [t.aboutResearchTitle, t.aboutResearchBody],
     [t.aboutModelsTitle, t.aboutModelsBody],
-    [t.aboutReviewTitle, t.aboutReviewBody],
+    [t.aboutReviewTitle, formatAboutText(t.aboutReviewBody)],
     [t.aboutOpenTitle, t.aboutOpenBody],
   ];
   return /* HTML */ `<main id="main" class="about-main">
