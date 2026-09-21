@@ -1,0 +1,130 @@
+{
+  "title": "移动危险区",
+  "subtitle": "让持续危险范围沿预告路径移动，并使碰撞与可见边缘同步。",
+  "variant": "沿固定通道漂移的单个圆形区域",
+  "summary": "一个持续危险范围穿过场地，要求玩家根据未来位置而非起点规划路线。",
+  "overview": "移动危险区是一块随时间改变位置的活动危险范围。路径、方向、速度、大小和终点必须在边缘抵达前清晰可读；碰撞跟随当前可见范围，正常移动也必须来得及抵达安全通道。",
+  "learning": "将路径、速度、全身净空、可读移动边缘和清理调整为一条连续规则。",
+  "category": "场地",
+  "readTime": "5 分钟",
+  "demo": {
+    "title": "观察移动危险区",
+    "timeline": "攻击时间线",
+    "step": "攻击阶段",
+    "phaseNames": ["预告移动通道", "跟踪活动范围", "清除区域并恢复"],
+    "phaseDescriptions": [
+      "克恩展示固定的水平路径及起点的圆形区域。伤害生效前就能看清完整半径和方向。",
+      "区域从左向右行进，不会转向追踪。可见圆和碰撞共用中心；塔维在它抵达之前移动到整个半径上方。",
+      "区域到达预告终点，同时淡出并失去碰撞。克恩恢复时，塔维从清空的通道返回。"
+    ],
+    "boss": "首领",
+    "player": "玩家",
+    "danger": "只有当前可见范围会造成伤害",
+    "locked": "路径、方向、半径、速度和终点已锁定",
+    "safe": "全身位于移动圆圈之外即为安全",
+    "reducedMotion": "减少动态效果时自动播放关闭。请用时间线观察移动边缘与安全通道。",
+    "diagramDescription": "循环示意：首领先标出水平路径。大型圆形危险区从左向右移动，玩家上移避开完整半径；它在终点消失，首领恢复。"
+  },
+  "steps": [
+    {
+      "title": "玩家能预测下一处危险范围吗？",
+      "body": "提前展示入口、完整路径、方向、半径、速度及出口。移动边缘或重复提示应比起点上的静态标记更能说明未来危险。"
+    },
+    {
+      "title": "碰撞是否跟随可见区域？",
+      "body": "每个时刻用同一个中心和半径绘制并检测碰撞。只检查玩家全身与当前范围，而非整条未来路径或落后于画面的隐形副本。"
+    },
+    {
+      "title": "预期移动能赶在交叉前脱离吗？",
+      "body": "测量移动前缘抵达每条路线的时间。保留正常加速即可到达的通道，并结合镜头、墙壁与其他攻击复测。"
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "路径尚未可读就开始移动",
+      "body": "突发漂移使预测变成碰运气。激活碰撞前展示来源、方向和范围；反向移动须作为新的锁定行为预告。"
+    },
+    {
+      "title": "过去或未来位置仍造成伤害",
+      "body": "清晰可见的区域不应留下隐形伤害，预告线路也不该伤人。持续残留属于另一个危险轨迹规则。"
+    },
+    {
+      "title": "覆盖所有可达通道",
+      "body": "看似有效的空隙可能关闭得太快。依据真实加速与身体尺寸调整宽度、速度、预告时间及场地边界。"
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "统一移动时钟",
+      "body": "保存路径点、开始时刻、时长、半径和活动区间，并由此得出中心、预告、边缘、碰撞及消失。"
+    },
+    {
+      "title": "检测帧间扫过的空间",
+      "body": "高速移动时，大范围可能在两次采样间跨过玩家。实际游戏模拟应检测相邻中心之间扫过的体积，而不只看端点。"
+    },
+    {
+      "title": "区分移动区域与发射物",
+      "body": "宽阔区域在持续经过时封锁通道。弹体则是有来源和命中规则的独立发射物，不能悄悄改成连续危险带。"
+    },
+    {
+      "title": "一次只升级一项路径属性",
+      "body": "分别改变速度、宽度、曲率、方向或并行压力。若区域反转或追踪玩家，增加新的提示并重新检验安全路线。"
+    }
+  ],
+  "story": {
+    "title": "机制传达什么",
+    "body": "克恩让符文能量沿已知石路流动。光芒只占据当前位置，塔维能读懂下一道边界，并在它通过后重新利用通道。"
+  },
+  "adaptation": {
+    "title": "适配玩家动作",
+    "body": "普通移动需要可达的侧面通道及充足预告。跳跃仅在建模垂直碰撞时能越过低矮区域；冲刺无敌、防御和传送与移动范围的关系必须明确。"
+  },
+  "distinction": {
+    "title": "保持机制的区别",
+    "body": "移动危险区沿路径携带一块持续活动范围。地雷在触发点等待，残留危险留在原地，危险轨迹则在移动后留下伤害。这里原位置在区域通过后变安全。"
+  },
+  "lensNotes": [
+    { "id": "telegraphing", "body": "起点、路径、方向、完整范围、速度和出口先于移动碰撞出现。" },
+    { "id": "commitment", "body": "移动前锁定路径和速度；反转或重新瞄准需要新的预告。" },
+    { "id": "threat-geometry", "body": "只有当前圆圈检测玩家全身；预告线路及已通过区域不伤人。" },
+    { "id": "counterplay", "body": "移动范围之外留有可达通道，危险通过后通道重新开放。" },
+    {
+      "id": "difficulty-rhythm",
+      "body": "半径、速度、距离、入场时刻、反转和并行威胁提高压力，但不改变碰撞的真实性。"
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "Cuphead",
+      "boss": "Grim Matchstick",
+      "screenshot": "https://i.ytimg.com/vi/u6JY7Hrz3RY/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=u6JY7Hrz3RY&t=52s",
+      "body": "Grim Matchstick 第二阶段的小火焰沿舌头列队前进。地面危险随之移动，蹲伏则另行预告跳跃路线；移动和改道需要不同的提示。",
+      "video": "https://www.youtube.com/watch?v=u6JY7Hrz3RY&t=52s",
+      "videoDurationSeconds": 123
+    },
+    {
+      "dimension": "2D",
+      "game": "Cuphead",
+      "boss": "Rumor Honeybottoms",
+      "screenshot": "https://i.ytimg.com/vi/p2t41tygfe4/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=p2t41tygfe4&t=12s",
+      "body": "Rumor Honeybottoms 下方的沸腾蜂蜜随着平台场景向上推进。它的移动边缘不是紧凑圆圈，而是宽阔边界；平台与上升速度决定应对窗口。",
+      "video": "https://www.youtube.com/watch?v=p2t41tygfe4&t=12s",
+      "videoDurationSeconds": 100
+    },
+    {
+      "dimension": "3D",
+      "game": "Final Fantasy XIV",
+      "boss": "Caustic Grebuloff",
+      "screenshot": "https://i.ytimg.com/vi/R_58Gv6TFfI/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=R_58Gv6TFfI&t=30s",
+      "body": "风向先于 Caustic Grebuloff 的 Miasmata 球体与圆形标记在场地中漂移而被预告。规划未来通道比盯着每个球体的起点更有用。",
+      "video": "https://www.youtube.com/watch?v=R_58Gv6TFfI&t=30s",
+      "videoDurationSeconds": 270
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

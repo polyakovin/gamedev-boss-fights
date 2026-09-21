@@ -1,0 +1,28 @@
+{
+  "id": "moving-hazard",
+  "number": 40,
+  "published": true,
+  "sourceLocale": "en",
+  "contentVersion": 1,
+  "animation": "moving-hazard",
+  "lenses": ["telegraphing", "commitment", "threat-geometry", "counterplay", "difficulty-rhythm"],
+  "related": ["mine", "hazard-trail", "lingering-hazard"],
+  "sources": [
+    {
+      "title": "Enemy Attacks and Telegraphing · Mike Stout",
+      "url": "https://www.gamedeveloper.com/design/enemy-attacks-and-telegraphing"
+    },
+    {
+      "title": "Grim Matchstick · Cuphead Wiki",
+      "url": "https://cuphead.wiki.gg/wiki/Grim_Matchstick"
+    },
+    {
+      "title": "Rumor Honeybottoms · Cuphead Wiki",
+      "url": "https://cuphead.wiki.gg/wiki/Rumor_Honeybottoms"
+    },
+    {
+      "title": "The Dead Ends · Final Fantasy XIV Guide",
+      "url": "https://www.thonky.com/final-fantasy-xiv/duties/the-dead-ends"
+    }
+  ]
+}

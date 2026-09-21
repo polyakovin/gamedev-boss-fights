@@ -13,8 +13,8 @@ import {
   renderBlueprintThumbnail,
 } from '../lib/blueprint-view.mjs';
 
-test('all 33 promoted lesson animations have distinct rule modes and complete moving frames', () => {
-  assert.equal(BLUEPRINT_MECHANIC_IDS.length, 33);
+test('all 34 promoted lesson animations have distinct rule modes and complete moving frames', () => {
+  assert.equal(BLUEPRINT_MECHANIC_IDS.length, 34);
   const modes = new Set();
   for (const id of BLUEPRINT_MECHANIC_IDS) {
     for (let time = 0; time <= BLUEPRINT_DURATION; time += 0.1) {
@@ -35,7 +35,7 @@ test('all 33 promoted lesson animations have distinct rule modes and complete mo
           assert.ok(Number.isFinite(value), `${id} has an invalid ${primitive.type}`);
     }
   }
-  assert.equal(modes.size, 33);
+  assert.equal(modes.size, 34);
 });
 
 test('every blueprint exposes signal, committed action, and recovery without player teleports', () => {
@@ -68,6 +68,7 @@ test('every promoted animation derives safety from its own active geometry', () 
     'pulse-beam': null,
     'chain-explosions': null,
     mine: { x: 320, y: 610 },
+    'moving-hazard': null,
     'wide-swing': { x: 280, y: 515 },
     lunge: { x: 300, y: 440 },
     grab: { x: 390, y: 485 },
@@ -125,6 +126,9 @@ test('every promoted animation derives safety from its own active geometry', () 
         (primitive) => primitive.type === 'circle' && primitive.tone === 'signal',
       );
       point = { x: blast.x, y: blast.y };
+    } else if (!point && id === 'moving-hazard') {
+      const hazard = frame.primitives[1];
+      point = { x: hazard.x, y: hazard.y };
     } else if (!point && ['scanning-beam', 'rotating-beams'].includes(id)) {
       const beam = frame.primitives.find(
         (primitive) => primitive.type === 'line' && primitive.tone === 'signal',
@@ -436,6 +440,30 @@ test('mine keeps one fixed radius, arms with collision, and lets the player rout
   assert.equal(recovery.dangerActive, false);
   assert.equal(blueprintPointSafe('mine', 5.2, { x: 320, y: 610 }), true);
   assert.ok(armed.primitives[1].opacity > 0, 'armed mine should show the safe response route');
+});
+
+test('moving hazard carries its visible radius along a fixed lane while the player clears it', () => {
+  const signal = blueprintFrame('moving-hazard', 1.59);
+  const early = blueprintFrame('moving-hazard', 2.1);
+  const middle = blueprintFrame('moving-hazard', 3);
+  const late = blueprintFrame('moving-hazard', 3.9);
+  const recovery = blueprintFrame('moving-hazard', 5.2);
+  const circles = [signal, early, middle, late, recovery].map((frame) => frame.primitives[1]);
+
+  assert.deepEqual(
+    circles.map(({ radius }) => radius),
+    [72, 72, 72, 72, 72],
+  );
+  assert.equal(circles[0].x, 105);
+  assert.ok(circles[0].x < circles[1].x && circles[1].x < circles[2].x);
+  assert.ok(circles[2].x < circles[3].x && circles[3].x <= circles[4].x);
+  assert.ok(circles.every(({ y }) => y === 620));
+  assert.equal(blueprintPointSafe('moving-hazard', 1.59, { x: 105, y: 620 }), true);
+  assert.equal(blueprintPointSafe('moving-hazard', 3, { x: circles[2].x, y: 620 }), false);
+  assert.equal(blueprintPointSafe('moving-hazard', 3, { x: circles[2].x, y: 503 }), true);
+  assert.equal(middle.playerSafe, true);
+  assert.equal(blueprintPointSafe('moving-hazard', 5.2, { x: 485, y: 620 }), true);
+  assert.ok(middle.player.y < signal.player.y, 'player must move out of the moving lane');
 });
 
 test('blueprint pages and previews reuse Tavi and Kern with accessible localized data', () => {

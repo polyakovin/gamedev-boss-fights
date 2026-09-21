@@ -10,6 +10,7 @@ const promotedBlueprints = [
   'pulse-beam',
   'chain-explosions',
   'mine',
+  'moving-hazard',
   'wide-swing',
   'lunge',
   'grab',
@@ -59,13 +60,13 @@ test('a promoted mechanic uses the complete canonical lesson architecture', asyn
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
 });
 
-test('all 33 promoted blueprint mechanics expose a full lesson without WIP', async ({
+test('all 34 promoted blueprint mechanics expose a full lesson without WIP', async ({
   request,
 }) => {
   const index = await request.get('en/');
   const catalog = await index.text();
 
-  expect(promotedBlueprints).toHaveLength(33);
+  expect(promotedBlueprints).toHaveLength(34);
   for (const id of promotedBlueprints) {
     expect(catalog).toContain(`en/mechanics/${id}/`);
     const response = await request.get(`en/mechanics/${id}/`);

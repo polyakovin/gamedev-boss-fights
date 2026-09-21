@@ -99,6 +99,15 @@ const SPECS = {
       [170, 820],
     ],
   },
+  'moving-hazard': {
+    mode: 'moving-hazard',
+    boss: [280, 260],
+    player: [365, 690],
+    target: [365, 455],
+    hazardStart: [105, 620],
+    hazardEnd: [485, 620],
+    hazardRadius: 72,
+  },
   'wide-swing': { mode: 'arc', boss: [280, 310], player: [410, 470], target: [470, 650] },
   lunge: { mode: 'lunge', boss: [170, 290], player: [390, 590], target: [470, 660] },
   grab: { mode: 'grab', boss: [280, 300], player: [390, 485], target: [470, 610] },
@@ -714,6 +723,48 @@ function primitivesFor(spec, frame) {
       line(mine.x, mine.y - 17, mine.x, mine.y + 17, deviceOpacity, 'accent', 5),
     ];
   }
+  if (mode === 'moving-hazard') {
+    const start = point(spec.hazardStart);
+    const end = point(spec.hazardEnd);
+    const travel = phase === 0 ? 0 : phase === 1 ? smooth(action) : 1;
+    const center = { x: mix(start.x, end.x, travel), y: mix(start.y, end.y, travel) };
+    const opacity = phase === 0 ? 0.42 + prepare * 0.3 : phase === 1 ? 0.93 : 0.68 * (1 - recover);
+    const tone = phase === 1 ? 'signal' : phase === 2 ? 'safe' : 'accent';
+    return [
+      line(
+        start.x,
+        start.y,
+        end.x,
+        end.y,
+        phase === 2 ? 0.25 * (1 - recover) : 0.48,
+        'accent',
+        7,
+        '13 10',
+      ),
+      circle(
+        center.x,
+        center.y,
+        spec.hazardRadius,
+        opacity,
+        tone,
+        phase === 1 ? 12 : 7,
+        phase === 1 ? 0.25 : 0.06,
+      ),
+      path(
+        `M ${center.x - 42} ${center.y - 22} Q ${center.x - 15} ${center.y - 55} ${center.x + 27} ${center.y - 24}`,
+        opacity,
+        tone,
+        8,
+      ),
+      path(
+        `M ${center.x - 30} ${center.y + 21} Q ${center.x + 4} ${center.y - 12} ${center.x + 44} ${center.y + 17}`,
+        opacity,
+        tone,
+        8,
+      ),
+      line(center.x + 49, center.y - 7, center.x + 64, center.y - 7, opacity, tone, 6),
+    ];
+  }
   if (mode === 'arc')
     return [
       path(arcPath(boss, 205, -1.15, 2.25), preview, 'accent', 20, 0, '12 10'),
@@ -1042,6 +1093,10 @@ function pointClearsThreat(spec, frame, value, radius = BLUEPRINT_PLAYER_RADIUS)
     const mine = point(spec.mine);
     return Math.hypot(value.x - mine.x, value.y - mine.y) > spec.triggerRadius + radius;
   }
+  if (mode === 'moving-hazard') {
+    const hazard = frame.primitives[1];
+    return Math.hypot(value.x - hazard.x, value.y - hazard.y) > hazard.radius + radius;
+  }
   if (mode === 'spiral')
     return (
       distanceFromBoss > 52 + radius &&
@@ -1203,6 +1258,8 @@ export function blueprintFrame(id, time) {
     responseProgress = phase === 0 ? 0 : phase === 1 ? smooth((action - 0.2) / 0.7) : 1;
   else if (spec.mode === 'mine')
     responseProgress = phase === 0 ? 0 : phase === 1 ? smooth((action - 0.06) / 0.8) : 1;
+  else if (spec.mode === 'moving-hazard')
+    responseProgress = phase === 0 ? 0 : phase === 1 ? smooth(action / 0.5) : 1;
   else if (spec.mode === 'knockback')
     responseProgress = phase === 0 ? 0 : phase === 1 ? smooth(action) : 1;
   else if (spec.mode === 'target-lock')

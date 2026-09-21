@@ -1,0 +1,146 @@
+{
+  "title": "Moving hazard",
+  "subtitle": "Move one persistent danger footprint along an announced route while its collision travels with the visible edge.",
+  "variant": "One drifting circular field on a committed lane",
+  "summary": "A persistent dangerous area travels through the arena, making the player plan against its future footprint rather than its starting position.",
+  "overview": "A moving hazard is one active danger footprint whose position changes over time. It works when the path, direction, speed, size, and end condition are legible before the moving edge arrives, collision follows the current visible footprint, and an ordinary response can reach a safe corridor in time.",
+  "learning": "Tune the path, speed, full-body clearance, readable moving edge, and cleanup as one continuous rule.",
+  "category": "Arena",
+  "readTime": "5 min",
+  "demo": {
+    "title": "Inspect a moving hazard",
+    "timeline": "Attack timeline",
+    "step": "Attack phases",
+    "phaseNames": [
+      "Announce the moving lane",
+      "Track the live footprint",
+      "Clear the field and recover"
+    ],
+    "phaseDescriptions": [
+      "Kern reveals a fixed horizontal route and one circular field at its starting point. The whole radius and direction are readable before it can hurt.",
+      "The field moves from left to right without steering. Its visible circle and collision share one center; Tavi moves above its full-body clearance before it reaches that column.",
+      "The field reaches the announced endpoint, fades, and loses collision together. Kern recovers while Tavi returns through the cleared lane."
+    ],
+    "boss": "Boss",
+    "player": "Player",
+    "danger": "Only the field's current visible footprint can hurt",
+    "locked": "Route, direction, radius, speed, and endpoint are committed",
+    "safe": "Outside the moving circle with full-body clearance stays safe",
+    "reducedMotion": "Autoplay is disabled by reduced-motion settings. Use the timeline to inspect the moving edge and safe corridor.",
+    "diagramDescription": "A looping diagram: the boss previews a horizontal route. A large circular hazard travels left to right along it while the player moves above its full radius; at the endpoint the field fades and the boss recovers."
+  },
+  "steps": [
+    {
+      "title": "Can the player predict the next footprint?",
+      "body": "Preview the entry, complete route, direction, radius, travel speed, and exit. A moving edge or repeated cues should make future danger easier to read than a static marker at the starting point."
+    },
+    {
+      "title": "Does collision travel with the visible field?",
+      "body": "Sample one center and radius for rendering and hit testing at every time. Check the player's full body against the current footprint, not the entire future path or a delayed invisible copy."
+    },
+    {
+      "title": "Can the intended movement clear the crossing?",
+      "body": "Measure the time until the moving front reaches each possible route. Leave a corridor reachable with ordinary acceleration, and retest it with the camera, walls, and concurrent attacks."
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "The danger moves before its route is readable",
+      "body": "A sudden drifting field asks for luck rather than route prediction. Show its origin, direction, and footprint before activating collision; signal a reversal as a new commitment."
+    },
+    {
+      "title": "Old or future positions still damage",
+      "body": "A visually clear patch must not leave hidden collision behind or hurt along its preview track. Reserve a persistent residue for an explicitly separate hazard-trail rule."
+    },
+    {
+      "title": "The field covers every reachable corridor",
+      "body": "A valid-looking gap can close faster than normal movement can reach it. Tune width, speed, warning time, and arena boundaries against the player's actual acceleration and body size."
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "Keep one motion clock",
+      "body": "Store path control points, start time, duration, radius, and active interval. Derive the current center, warning, visual edge, collision, and disappearance from that clock."
+    },
+    {
+      "title": "Test swept clearance between frames",
+      "body": "At high speed, a large field can leap across the player between samples. Sweep its footprint along the segment between consecutive centers instead of checking only endpoints in the game simulation."
+    },
+    {
+      "title": "Separate a moving area from a launched projectile",
+      "body": "A broad field denies an arena corridor over a sustained passage. A projectile is a discrete launched object with its own origin and impact; do not silently change its hit rule into a continuous lane."
+    },
+    {
+      "title": "Escalate one path property at a time",
+      "body": "Change speed, width, curvature, direction, or concurrent pressure separately. If the field reverses or follows the player, introduce a new tell and re-evaluate the safe route."
+    }
+  ],
+  "story": {
+    "title": "What the mechanic communicates",
+    "body": "Kern sends a runic current across a known strip of stone. The moving glow claims space only where it is now, so Tavi can read the next boundary and use the lane again after it passes."
+  },
+  "adaptation": {
+    "title": "Adapt it to the player verbs",
+    "body": "Basic movement needs a reachable side corridor and enough advance warning. A jump can clear a low field only if its vertical collision is modeled; dash invulnerability, block, or teleport must have explicit interactions with the moving footprint."
+  },
+  "distinction": {
+    "title": "Keep the mechanic distinct",
+    "body": "A moving hazard carries one persistent active footprint along a path. A mine waits at a trigger point, a lingering hazard stays in one place, and a hazard trail leaves dangerous residue behind motion. Here the old position becomes safe when the field passes."
+  },
+  "lensNotes": [
+    {
+      "id": "telegraphing",
+      "body": "The start, route, direction, full footprint, speed, and exit precede the moving collision."
+    },
+    {
+      "id": "commitment",
+      "body": "The path and speed lock before travel; a reversal or retargeting requires its own announced rule."
+    },
+    {
+      "id": "threat-geometry",
+      "body": "Only the current circle tests the player's full body, while the preview track and cleared wake remain harmless."
+    },
+    {
+      "id": "counterplay",
+      "body": "A reachable corridor remains outside the moving footprint and is reopened after passage."
+    },
+    {
+      "id": "difficulty-rhythm",
+      "body": "Radius, velocity, route length, entry timing, reversals, and concurrent threats set pressure without changing collision honesty."
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "Cuphead",
+      "boss": "Grim Matchstick",
+      "screenshot": "https://i.ytimg.com/vi/u6JY7Hrz3RY/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=u6JY7Hrz3RY&t=52s",
+      "body": "During Grim Matchstick's second phase, marching flame creatures traverse his tongue. The ground-level danger occupies a moving position while their crouch warns of a different jumping path, showing why motion and a changed path need separate cues.",
+      "video": "https://www.youtube.com/watch?v=u6JY7Hrz3RY&t=52s",
+      "videoDurationSeconds": 123
+    },
+    {
+      "dimension": "2D",
+      "game": "Cuphead",
+      "boss": "Rumor Honeybottoms",
+      "screenshot": "https://i.ytimg.com/vi/p2t41tygfe4/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=p2t41tygfe4&t=12s",
+      "body": "Bubbling honey rises under Rumor Honeybottoms as the platforming space scrolls upward. Unlike a compact circle, its moving edge is a broad arena boundary; the reachable platforms and its climb rate determine the response window.",
+      "video": "https://www.youtube.com/watch?v=p2t41tygfe4&t=12s",
+      "videoDurationSeconds": 100
+    },
+    {
+      "dimension": "3D",
+      "game": "Final Fantasy XIV",
+      "boss": "Caustic Grebuloff",
+      "screenshot": "https://i.ytimg.com/vi/R_58Gv6TFfI/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=R_58Gv6TFfI&t=30s",
+      "body": "Wind announces the direction before Caustic Grebuloff's Miasmata orbs drift across the arena with circular attack markers. The moving footprints make the future corridor, rather than each orb's original position, the useful planning target.",
+      "video": "https://www.youtube.com/watch?v=R_58Gv6TFfI&t=30s",
+      "videoDurationSeconds": 270
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

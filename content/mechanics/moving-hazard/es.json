@@ -1,0 +1,146 @@
+{
+  "title": "Peligro móvil",
+  "subtitle": "Desplaza una zona de peligro persistente por una ruta anunciada, con la colisión unida al borde visible.",
+  "variant": "Un campo circular que deriva por un carril comprometido",
+  "summary": "Una zona peligrosa persistente recorre la arena y obliga a planear según su posición futura, no su inicio.",
+  "overview": "Un peligro móvil es una única huella activa cuya posición cambia con el tiempo. Funciona si ruta, dirección, velocidad, tamaño y final se leen antes de que llegue el borde, la colisión sigue la huella visible actual y el movimiento normal puede alcanzar un corredor seguro.",
+  "learning": "Ajusta ruta, velocidad, espacio para todo el cuerpo, borde móvil legible y retirada como una regla continua.",
+  "category": "Arena",
+  "readTime": "5 min",
+  "demo": {
+    "title": "Analiza un peligro móvil",
+    "timeline": "Cronología del ataque",
+    "step": "Fases del ataque",
+    "phaseNames": [
+      "Anunciar el carril móvil",
+      "Seguir la huella activa",
+      "Retirar el campo y recuperarse"
+    ],
+    "phaseDescriptions": [
+      "Kern revela una ruta horizontal fija y un campo circular en su origen. El radio y la dirección completos se leen antes del daño.",
+      "El campo viaja de izquierda a derecha sin corregirse. Círculo visible y colisión comparten centro; Tavi sale por arriba con todo el cuerpo antes del cruce.",
+      "El campo llega al final anunciado, se desvanece y pierde colisión a la vez. Kern se recupera mientras Tavi vuelve por el carril despejado."
+    ],
+    "boss": "Jefe",
+    "player": "Jugador",
+    "danger": "Solo daña la huella visible actual",
+    "locked": "Ruta, dirección, radio, velocidad y final están comprometidos",
+    "safe": "Fuera del círculo móvil con todo el cuerpo permanece seguro",
+    "reducedMotion": "Con movimiento reducido se desactiva la reproducción automática. Usa la cronología para ver el borde móvil y el corredor seguro.",
+    "diagramDescription": "Diagrama en bucle: el jefe señala una ruta horizontal; un campo circular grande cruza de izquierda a derecha mientras el jugador sale por encima de su radio. Al final desaparece y el jefe se recupera."
+  },
+  "steps": [
+    {
+      "title": "¿Se puede anticipar la próxima huella?",
+      "body": "Muestra entrada, ruta completa, dirección, radio, velocidad y salida. Un borde móvil o señales repetidas deben comunicar mejor el peligro futuro que una marca inmóvil en el origen."
+    },
+    {
+      "title": "¿Viaja la colisión con el campo visible?",
+      "body": "Calcula un centro y radio por instante para imagen e impacto. Comprueba todo el cuerpo contra la huella actual, no contra la ruta futura ni una copia invisible retrasada."
+    },
+    {
+      "title": "¿El movimiento previsto despeja el cruce?",
+      "body": "Mide cuánto tarda el frente en alcanzar cada ruta. Deja un corredor accesible con aceleración normal y vuelve a probarlo con cámara, paredes y ataques simultáneos."
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "El peligro se mueve antes de mostrar la ruta",
+      "body": "Un campo que deriva por sorpresa exige suerte. Enseña origen, dirección y huella antes de activar colisión y anuncia una inversión como nuevo compromiso."
+    },
+    {
+      "title": "Posiciones pasadas o futuras aún dañan",
+      "body": "Una mancha clara no debe dejar daño invisible atrás ni golpear sobre la línea previa. El residuo persistente pertenece a otra regla de rastro peligroso."
+    },
+    {
+      "title": "El campo tapa todos los corredores alcanzables",
+      "body": "Un hueco visible puede cerrarse demasiado rápido. Ajusta anchura, velocidad, aviso y límites según aceleración y tamaño reales del jugador."
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "Usa un solo reloj de movimiento",
+      "body": "Guarda puntos de ruta, inicio, duración, radio e intervalo activo. Deriva centro, aviso, borde, colisión y desaparición del mismo reloj."
+    },
+    {
+      "title": "Prueba el barrido entre fotogramas",
+      "body": "A alta velocidad el campo puede saltar sobre el jugador entre muestras. En la simulación comprueba el volumen barrido entre centros consecutivos, no solo los extremos."
+    },
+    {
+      "title": "Distingue área móvil y proyectil lanzado",
+      "body": "Un campo amplio niega un corredor durante su paso. Un proyectil es un objeto discreto con origen e impacto propios; no conviertas sin avisar su regla en un carril continuo."
+    },
+    {
+      "title": "Escala una propiedad cada vez",
+      "body": "Cambia por separado velocidad, anchura, curva, dirección o presión simultánea. Si el campo gira o persigue, introduce aviso nuevo y revisa la ruta segura."
+    }
+  ],
+  "story": {
+    "title": "Qué comunica la mecánica",
+    "body": "Kern envía una corriente rúnica por una franja de piedra conocida. El brillo ocupa solo su posición actual, así Tavi lee el siguiente borde y recupera el carril después."
+  },
+  "adaptation": {
+    "title": "Adáptala a los verbos del jugador",
+    "body": "Moverse normalmente requiere un corredor lateral alcanzable y aviso suficiente. Un salto solo cruza un campo bajo si se modela la colisión vertical; impulso, bloqueo y teletransporte necesitan interacciones explícitas."
+  },
+  "distinction": {
+    "title": "Mantén distinta la mecánica",
+    "body": "El peligro móvil transporta una huella activa persistente. Una mina espera en un punto de activación, un peligro persistente queda quieto y un rastro peligroso deja residuo detrás. Aquí la posición anterior queda segura al pasar."
+  },
+  "lensNotes": [
+    {
+      "id": "telegraphing",
+      "body": "Origen, ruta, dirección, huella, velocidad y salida aparecen antes de la colisión móvil."
+    },
+    {
+      "id": "commitment",
+      "body": "Ruta y velocidad se fijan antes del recorrido; giro o nuevo objetivo requieren otro aviso."
+    },
+    {
+      "id": "threat-geometry",
+      "body": "Solo el círculo actual prueba el cuerpo completo; línea previa y estela despejada no dañan."
+    },
+    {
+      "id": "counterplay",
+      "body": "Permanece un corredor alcanzable fuera de la huella que vuelve a abrirse tras el paso."
+    },
+    {
+      "id": "difficulty-rhythm",
+      "body": "Radio, velocidad, longitud, entrada, giros y amenazas simultáneas suben la presión sin falsear colisión."
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "Cuphead",
+      "boss": "Grim Matchstick",
+      "screenshot": "https://i.ytimg.com/vi/u6JY7Hrz3RY/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=u6JY7Hrz3RY&t=52s",
+      "body": "En la segunda fase de Grim Matchstick, pequeñas llamas marchan por su lengua. El peligro a ras de suelo cambia de posición; agacharse señala otro salto, por lo que movimiento y cambio de ruta exigen señales distintas.",
+      "video": "https://www.youtube.com/watch?v=u6JY7Hrz3RY&t=52s",
+      "videoDurationSeconds": 123
+    },
+    {
+      "dimension": "2D",
+      "game": "Cuphead",
+      "boss": "Rumor Honeybottoms",
+      "screenshot": "https://i.ytimg.com/vi/p2t41tygfe4/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=p2t41tygfe4&t=12s",
+      "body": "La miel burbujeante sube bajo Rumor Honeybottoms mientras se desplazan las plataformas. A diferencia de un círculo compacto, su borde móvil es un límite amplio; plataformas y velocidad de subida definen la ventana de respuesta.",
+      "video": "https://www.youtube.com/watch?v=p2t41tygfe4&t=12s",
+      "videoDurationSeconds": 100
+    },
+    {
+      "dimension": "3D",
+      "game": "Final Fantasy XIV",
+      "boss": "Caustic Grebuloff",
+      "screenshot": "https://i.ytimg.com/vi/R_58Gv6TFfI/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=R_58Gv6TFfI&t=30s",
+      "body": "El viento anuncia la dirección antes de que las esferas Miasmata de Caustic Grebuloff deriven con marcadores circulares. Importa planear el corredor futuro, no el punto inicial de cada esfera.",
+      "video": "https://www.youtube.com/watch?v=R_58Gv6TFfI&t=30s",
+      "videoDurationSeconds": 270
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}
