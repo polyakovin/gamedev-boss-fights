@@ -1570,7 +1570,8 @@ section[id] {
 }
 .catalog-lesson {
   display: grid;
-  grid-template-columns: 56px minmax(0, 1fr) 150px 24px;
+  grid-template-areas: 'number preview copy arrow';
+  grid-template-columns: 56px 150px minmax(0, 1fr) 24px;
   align-items: center;
   gap: 18px;
   min-height: 108px;
@@ -1587,12 +1588,14 @@ section[id] {
   text-decoration: none;
 }
 .catalog-lesson__number {
+  grid-area: number;
   align-self: start;
   padding-top: 8px;
   font-size: 13px;
 }
 .catalog-lesson__copy {
   display: grid;
+  grid-area: copy;
   gap: 7px;
   min-width: 0;
 }
@@ -1628,6 +1631,7 @@ section[id] {
 }
 .catalog-lesson__preview {
   display: block;
+  grid-area: preview;
   height: 72px;
   overflow: hidden;
   border: 1px solid var(--line);
@@ -1659,6 +1663,7 @@ section[id] {
   letter-spacing: 0.14em;
 }
 .catalog-lesson__arrow {
+  grid-area: arrow;
   color: var(--accent);
   transition: transform 0.18s;
 }
@@ -3191,7 +3196,7 @@ section[id] {
     padding: 32px 0 32px 28px;
   }
   .catalog-lesson {
-    grid-template-columns: 48px minmax(0, 1fr) 132px 20px;
+    grid-template-columns: 48px 132px minmax(0, 1fr) 20px;
     gap: 14px;
   }
   .catalog-page .site-footer {
@@ -3628,6 +3633,7 @@ section[id] {
     gap: 10px;
   }
   .catalog-lesson {
+    grid-template-areas: 'number copy arrow';
     grid-template-columns: 42px minmax(0, 1fr) 20px;
     gap: 10px;
     min-height: 94px;
