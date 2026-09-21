@@ -930,8 +930,15 @@ test('the root defaults to English and localized catalogs point to real pages', 
   await expect(page.locator('.site-footer')).toContainText(
     'Interactive pattern library for boss encounter designers',
   );
-  await expect(page.locator('.catalog-hero h1')).toHaveText('Tavi and Kern welcome you');
-  const relatedCatalog = page.locator('.catalog-hero__reference');
+  await expect(page.locator('.catalog-hero h1')).toHaveText(
+    'Turn a boss idea into a fight players can read and master',
+  );
+  await expect(page.locator('.catalog-hero')).not.toContainText('Game Mechanics');
+  await expect(page.locator('.catalog-hero__lesson h2')).toHaveText('Charge');
+  await expect(page.locator('.catalog-hero__questions li')).toHaveCount(3);
+  await expect(page.locator('.catalog-workflow__steps li')).toHaveCount(5);
+  await expect(page.locator('.catalog-guides h2')).toHaveText('Meet Tavi and Kern');
+  const relatedCatalog = page.locator('.catalog-guides .catalog-hero__reference');
   await expect(relatedCatalog.getByRole('link', { name: 'Game Mechanics' })).toHaveAttribute(
     'href',
     'https://gamemechanics.org/',
@@ -945,22 +952,21 @@ test('the root defaults to English and localized catalogs point to real pages', 
     '/gamedev-boss-fights/en/lenses/',
   );
   await expect(page.locator('.catalog-meta, .small-dot')).toHaveCount(0);
-  await expect(page.locator('.catalog-hero__art img')).toHaveAttribute(
+  await expect(page.locator('.catalog-guides__art img')).toHaveAttribute(
     'src',
     /\/gamedev-boss-fights\/assets\/welcome-boss-and-player\.webp\?v=[a-f0-9]{10}$/,
   );
-  await expect(page.locator('.catalog-hero__art img')).toBeVisible();
-  const welcomeArtSize = await page.locator('.catalog-hero__art img').evaluate((element) => ({
-    width: element.getBoundingClientRect().width,
-    height: element.getBoundingClientRect().height,
-  }));
-  expect(welcomeArtSize.width).toBeCloseTo(720, 0);
-  expect(welcomeArtSize.height).toBeCloseTo(480, 0);
+  await expect(page.locator('.catalog-guides__art img')).toBeVisible();
+  await expect(page.locator('.catalog-guides__art img')).toHaveAttribute('loading', 'lazy');
   expect(
     await page
       .locator('.catalog-hero h1')
       .evaluate((element) => Number.parseFloat(getComputedStyle(element).fontSize)),
-  ).toBeLessThanOrEqual(36);
+  ).toBeGreaterThanOrEqual(40);
+  const homeSections = await page
+    .locator('.catalog-hero, .catalog-workflow, .catalog-guides, .catalog-contents')
+    .evaluateAll((sections) => sections.map((section) => section.getBoundingClientRect().top));
+  expect(homeSections).toEqual([...homeSections].sort((a, b) => a - b));
   await expect(page.locator('.atlas-map')).toHaveCount(0);
   await expect(page.locator('.catalog-part-nav__link')).toHaveCount(14);
   await expect(page.locator('.catalog-part-nav__link')).toHaveText([

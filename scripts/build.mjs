@@ -708,28 +708,104 @@ for (const locale of locales) {
     )
     .join('');
   const lensCards = renderLensCards(locale.code, t);
+  const featuredMechanic = catalogEntries.find((entry) => entry.id === 'charge');
+  const featuredLesson = featuredMechanic?.mechanic?.translations[locale.code];
+  if (!featuredMechanic?.mechanic || !featuredLesson) {
+    throw new Error(`Missing published charge lesson for ${locale.code}`);
+  }
+  const workflowCards = [
+    [t.catalog, t.mechanicsNavText],
+    [t.simulationNavTitle, t.simulationNavText],
+    [t.concepts, t.conceptsNavText],
+    [t.examples, t.examplesNavText],
+    [t.builder, t.builderNavText],
+  ];
   const body = /* HTML */ `<main id="main" class="catalog-main">
     <section class="catalog-hero">
       <div class="catalog-hero__copy">
+        <span class="eyebrow">${e(t.tagline)}</span>
         <h1>${e(t.indexTitle)}</h1>
         <p class="lead">${e(t.indexSubtitle)}</p>
-        <p class="catalog-hero__reference">
-          <a href="https://gamemechanics.org/" target="_blank" rel="noopener noreferrer"
-            >Game Mechanics</a
+        <div class="catalog-hero__actions">
+          <a class="catalog-hero__primary" href="${link(`${locale.code}/mechanics/charge/`)}"
+            >${e(t.readLesson)}${icon('arrow-right', { className: 'icon--directional' })}</a
           >
-          ${e(t.indexReference)}
-        </p>
+          <a class="catalog-hero__secondary" href="${link(`${locale.code}/builder/`)}"
+            >${e(t.builder)}</a
+          >
+        </div>
+        <ul class="catalog-hero__features" aria-label="${e(t.siteMapTitle)}">
+          <li>${e(t.simulationNavTitle)}</li>
+          <li>${e(t.concepts)}</li>
+          <li>${e(t.examples)}</li>
+        </ul>
       </div>
-      <figure class="catalog-hero__art" aria-hidden="true">
+      <a
+        class="catalog-hero__lesson"
+        href="${link(`${locale.code}/mechanics/charge/`)}"
+        aria-label="${e(`${t.readLesson}: ${featuredLesson.title}`)}"
+      >
+        <span class="catalog-hero__lesson-label"
+          >${e(t.mechanicLabel)} · ${e(featuredMechanic.number)}</span
+        >
+        <div class="catalog-hero__lesson-heading">
+          <div>
+            <h2>${e(featuredLesson.title)}</h2>
+            <p>${e(featuredLesson.summary)}</p>
+          </div>
+          <span class="catalog-hero__lesson-arrow"
+            >${icon('arrow-right', { className: 'icon--directional' })}</span
+          >
+        </div>
+        <div class="catalog-hero__preview" aria-hidden="true">
+          ${animations[featuredMechanic.mechanic.meta.animation].thumbnail('catalog-featured-charge')}
+        </div>
+        <ol class="catalog-hero__questions">
+          ${featuredLesson.steps.map((step) => `<li>${e(step.title)}</li>`).join('')}
+        </ol>
+      </a>
+    </section>
+    <section class="catalog-workflow" aria-labelledby="catalog-workflow-title">
+      <header class="catalog-workflow__heading">
+        <span class="eyebrow">Boss Fight Atlas</span>
+        <h2 id="catalog-workflow-title">${e(t.siteMapTitle)}</h2>
+        <p>${e(t.siteMapIntro)}</p>
+      </header>
+      <ol class="catalog-workflow__steps">
+        ${workflowCards
+          .map(
+            ([title, text], index) =>
+              /* HTML */ `<li>
+                <span>${String(index + 1).padStart(2, '0')}</span>
+                <h3>${e(title)}</h3>
+                <p>${e(text)}</p>
+              </li>`,
+          )
+          .join('')}
+      </ol>
+    </section>
+    <section class="catalog-guides" aria-labelledby="catalog-guides-title">
+      <figure class="catalog-guides__art" aria-hidden="true">
         <img
           src="${asset('welcome-boss-and-player.webp')}"
           alt=""
           width="1536"
           height="1024"
+          loading="lazy"
           decoding="async"
-          fetchpriority="high"
         />
       </figure>
+      <div class="catalog-guides__copy">
+        <span class="eyebrow">Tavi &amp; Kern</span>
+        <h2 id="catalog-guides-title">${e(t.indexGuidesTitle)}</h2>
+        <p>${e(t.indexGuidesBody)}</p>
+        <p class="catalog-hero__reference">
+          <a href="https://gamemechanics.org/" target="_blank" rel="noopener noreferrer"
+            >Game Mechanics${icon('external-link', { className: 'icon--external' })}</a
+          >
+          ${e(t.indexReference)}
+        </p>
+      </div>
     </section>
     <section id="mechanics" class="catalog-contents" aria-labelledby="mechanics-title">
       <div class="catalog-contents__heading">
