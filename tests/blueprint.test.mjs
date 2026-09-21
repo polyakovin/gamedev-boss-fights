@@ -13,8 +13,8 @@ import {
   renderBlueprintThumbnail,
 } from '../lib/blueprint-view.mjs';
 
-test('all 25 promoted lesson animations have distinct rule modes and complete moving frames', () => {
-  assert.equal(BLUEPRINT_MECHANIC_IDS.length, 25);
+test('all 26 promoted lesson animations have distinct rule modes and complete moving frames', () => {
+  assert.equal(BLUEPRINT_MECHANIC_IDS.length, 26);
   const modes = new Set();
   for (const id of BLUEPRINT_MECHANIC_IDS) {
     for (let time = 0; time <= BLUEPRINT_DURATION; time += 0.1) {
@@ -35,7 +35,7 @@ test('all 25 promoted lesson animations have distinct rule modes and complete mo
           assert.ok(Number.isFinite(value), `${id} has an invalid ${primitive.type}`);
     }
   }
-  assert.equal(modes.size, 25);
+  assert.equal(modes.size, 26);
 });
 
 test('every blueprint exposes signal, committed action, and recovery without player teleports', () => {
@@ -60,6 +60,7 @@ test('every blueprint exposes signal, committed action, and recovery without pla
 test('every promoted animation derives safety from its own active geometry', () => {
   const unsafePoints = {
     'landing-jump': { x: 365, y: 600 },
+    'single-shot': null,
     'wide-swing': { x: 280, y: 515 },
     lunge: { x: 300, y: 440 },
     grab: { x: 390, y: 485 },
@@ -90,6 +91,9 @@ test('every promoted animation derives safety from its own active geometry', () 
     const frame = blueprintFrame(id, 3);
     let point = unsafePoints[id];
     if (!point && id === 'homing-projectile') {
+      const projectile = frame.primitives[2];
+      point = { x: projectile.x, y: projectile.y };
+    } else if (!point && id === 'single-shot') {
       const projectile = frame.primitives[2];
       point = { x: projectile.x, y: projectile.y };
     } else if (!point && ['scanning-beam', 'rotating-beams'].includes(id)) {
@@ -194,6 +198,28 @@ test('landing jump locks its destination before takeoff and resolves the marked 
   assert.equal(impact.playerSafe, true);
   assert.equal(recovery.dangerActive, false);
   assert.ok(recovery.boss.x < impact.boss.x);
+});
+
+test('single shot locks one straight trajectory and lets the full player body sidestep it', () => {
+  const signal = blueprintFrame('single-shot', 1.59);
+  const release = blueprintFrame('single-shot', 1.6);
+  const flight = blueprintFrame('single-shot', 3);
+  const laterFlight = blueprintFrame('single-shot', 3.6);
+
+  assert.deepEqual(signal.player, blueprintFrame('single-shot', 0).player);
+  assert.deepEqual(release.player, signal.player);
+  assert.equal(signal.primitives[0].x2, flight.primitives[0].x2);
+  assert.equal(signal.primitives[0].y2, flight.primitives[0].y2);
+  assert.ok(laterFlight.primitives[2].x > flight.primitives[2].x);
+  assert.ok(laterFlight.primitives[2].y > flight.primitives[2].y);
+  assert.equal(
+    blueprintPointSafe('single-shot', 3, {
+      x: flight.primitives[2].x,
+      y: flight.primitives[2].y,
+    }),
+    false,
+  );
+  assert.equal(flight.playerSafe, true);
 });
 
 test('blueprint pages and previews reuse Tavi and Kern with accessible localized data', () => {

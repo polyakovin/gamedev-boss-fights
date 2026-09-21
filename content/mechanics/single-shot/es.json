@@ -1,0 +1,142 @@
+{
+  "title": "Disparo único",
+  "subtitle": "Anuncia un proyectil, fija su ruta recta al lanzarlo y conserva una respuesta para todo el cuerpo.",
+  "variant": "Disparo recto comprometido",
+  "summary": "El jefe lanza un proyectil aislado por una línea fijada.",
+  "overview": "El disparo único es la regla de proyectil reutilizable más pequeña: un emisor legible, un lanzamiento y un volumen de colisión móvil. Funciona cuando la puntería deja de cambiar al lanzar, la imagen coincide con el impacto, todo el cuerpo puede despejar la ruta con una acción normal y el disparo abandona la arena antes de la siguiente decisión.",
+  "learning": "Ajusta puntería, lanzamiento, velocidad, tamaño, margen y recuperación como una promesa antes de crear voleas o seguimiento.",
+  "category": "Proyectiles",
+  "readTime": "5 min",
+  "demo": {
+    "title": "Prueba el disparo único",
+    "timeline": "Cronología del ataque",
+    "step": "Fases del ataque",
+    "phaseNames": ["Apuntar y cargar", "Lanzar y apartarse", "Despejar y recuperarse"],
+    "phaseDescriptions": [
+      "Kern muestra el emisor y una línea hacia Tavi; la línea deja de rotar al lanzar.",
+      "El proyectil avanza recto por la línea fijada mientras Tavi despeja todo su radio con un paso perpendicular.",
+      "El proyectil sale de la arena antes de que Kern se reinicie y deja un intervalo visible para leer el resultado."
+    ],
+    "boss": "Jefe",
+    "player": "Jugador",
+    "danger": "El proyectil está activo",
+    "locked": "La trayectoria está fijada",
+    "safe": "Todo el cuerpo despeja el disparo",
+    "reducedMotion": "La reproducción automática está desactivada por el ajuste de movimiento reducido. Usa el control temporal para estudiar el disparo.",
+    "diagramDescription": "Diagrama en bucle de un proyectil. El jefe anticipa y fija una línea recta, lanza un disparo visible y se recupera después de que el jugador salga por completo de su radio."
+  },
+  "steps": [
+    {
+      "title": "¿Qué se fija al lanzar?",
+      "body": "Captura origen y dirección al lanzar y deja de orientar. La pose, guía, velocidad y consulta de colisión deben usar el mismo rayo para que la respuesta anunciada siga siendo válida."
+    },
+    {
+      "title": "¿Puede todo el cuerpo despejar el disparo?",
+      "body": "Compara aviso y viaje con el paso lateral previsto más lento. Prueba la suma de los radios a corta, media y larga distancia; cruzar solo la línea central no basta."
+    },
+    {
+      "title": "¿Un disparo deja un intervalo legible?",
+      "body": "Deja que el proyectil salga antes de que Kern elija otro ataque. El intervalo confirma la evasión y permite recolocarse, reflejar o castigar brevemente si esas respuestas existen."
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "El disparo corrige su dirección tras salir",
+      "body": "La orientación tardía convierte una línea recta en seguimiento oculto e invalida la guía. Si debe seguir, anuncia fuerza y corte como otra mecánica."
+    },
+    {
+      "title": "La colisión es mayor que el proyectil",
+      "body": "Una chispa pequeña con un radio invisible amplio castiga un paso visualmente limpio. Resplandor y estela solo deben cubrir la extensión dañina real."
+    },
+    {
+      "title": "La cadencia elimina la respuesta",
+      "body": "Los disparos repetidos sin intervalo forman una volea o patrón rítmico. Define primero un ciclo completo y después expresa la repetición."
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "Deriva imagen y colisión de una trayectoria",
+      "body": "Guarda origen, dirección normalizada, velocidad y radio. Úsalos para sprite, estela, impacto, vista previa y miniatura en vez de reconstruir la línea en sistemas separados."
+    },
+    {
+      "title": "Calcula el tiempo según la distancia",
+      "body": "Un tiro lejano añade viaje; uno cercano puede necesitar más preparación o menos velocidad. Prueba la distancia legal mínima, no solo la composición predeterminada."
+    },
+    {
+      "title": "Mantén legible el emisor",
+      "body": "Crea el proyectil fuera de la silueta de Kern y acompaña el lanzamiento con pose o destello. El origen debe verse antes de quedar oculto por efectos o escenario."
+    },
+    {
+      "title": "Escala una propiedad cada vez",
+      "body": "Velocidad, tamaño, repetición, reflexión y seguimiento cambian la respuesta. Añade una sola después de leer el disparo base y repite la prueba de cuerpo completo."
+    }
+  ],
+  "story": {
+    "title": "Qué comunica la mecánica",
+    "body": "Un disparo deliberado hace que Kern parezca preciso, no abrumador. Su línea limpia enseña puntería, lanzamiento, viaje y evasión, relación que otros patrones pueden reutilizar o romper."
+  },
+  "adaptation": {
+    "title": "Adáptala a las acciones del jugador",
+    "body": "Para caminar o impulsarse, conserva distancia perpendicular para ambos radios. Si hay bloqueo, parada, reflexión o destrucción, muestra la interacción de forma constante y decide si sustituye el movimiento o crea una ruta de mayor riesgo y recompensa."
+  },
+  "distinction": {
+    "title": "Mantén distinta la mecánica",
+    "body": "Un disparo único tiene un proyectil y una trayectoria fijada. Un abanico anuncia varias líneas, una volea convierte la repetición en regla y un proyectil guiado sigue girando. No ocultes esas exigencias dentro de la lección base."
+  },
+  "lensNotes": [
+    {
+      "id": "telegraphing",
+      "body": "Emisor, pose y guía revelan origen y dirección antes del lanzamiento."
+    },
+    {
+      "id": "commitment",
+      "body": "Origen y dirección se fijan al lanzar; el proyectil no gira tras la respuesta."
+    },
+    {
+      "id": "threat-geometry",
+      "body": "La seguridad depende de la suma de los radios, no solo de sus líneas centrales."
+    },
+    {
+      "id": "counterplay",
+      "body": "Un paso normal despeja la línea; bloqueo o reflexión compatibles siguen siendo alternativas explícitas."
+    },
+    {
+      "id": "risk-reward",
+      "body": "Un paso tardío y estrecho conserva posición para castigar, pero su límite debe ser fiable."
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "Hollow Knight",
+      "boss": "Hornet Protector",
+      "screenshot": "https://i.ytimg.com/vi/rwZmf4u366o/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=rwZmf4u366o&t=276s",
+      "body": "El lanzamiento de aguja de Hornet aísla un proyectil grande con preparación, ruta horizontal y retorno claros. El viaje de ida muestra cómo silueta y línea permiten saltar o apartarse con todo el cuerpo.",
+      "video": "https://www.youtube.com/watch?v=rwZmf4u366o&t=276s",
+      "videoDurationSeconds": 2832
+    },
+    {
+      "dimension": "2D",
+      "game": "Cuphead",
+      "boss": "Wally Warbles",
+      "screenshot": "https://i.ytimg.com/vi/Ol3-4Y0eS9M/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=Ol3-4Y0eS9M&t=12s",
+      "body": "El gran huevo de Wally empieza como un tiro de silueta fuerte antes de su conducta secundaria. Muestra por qué lanzamiento y ruta deben leerse antes de dividirse o rebotar.",
+      "video": "https://www.youtube.com/watch?v=Ol3-4Y0eS9M&t=12s",
+      "videoDurationSeconds": 199
+    },
+    {
+      "dimension": "3D",
+      "game": "Returnal",
+      "boss": "Phrike",
+      "screenshot": "https://i.ytimg.com/vi/L1GZvUb5uoY/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=L1GZvUb5uoY&t=30s",
+      "body": "Los primeros ataques a distancia de Phrike usan orígenes luminosos y viajes aislados que siguen legibles con cámara 3D móvil. La profundidad muestra cómo cambia el tiempo para desplazarse.",
+      "video": "https://www.youtube.com/watch?v=L1GZvUb5uoY&t=30s",
+      "videoDurationSeconds": 310
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

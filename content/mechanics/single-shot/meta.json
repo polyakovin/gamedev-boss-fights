@@ -1,0 +1,20 @@
+{
+  "id": "single-shot",
+  "number": 32,
+  "published": true,
+  "sourceLocale": "en",
+  "contentVersion": 1,
+  "animation": "single-shot",
+  "lenses": ["telegraphing", "commitment", "threat-geometry", "counterplay", "risk-reward"],
+  "related": ["projectile-fan", "homing-projectile", "ricochet-projectile"],
+  "sources": [
+    {
+      "title": "Enemy Attacks and Telegraphing · Mike Stout",
+      "url": "https://www.gamedeveloper.com/design/enemy-attacks-and-telegraphing"
+    },
+    {
+      "title": "Boss Fight Design · GD Creator School",
+      "url": "https://www.gdcreatorschool.com/docs/guides/gameplay-2/bossfight-design/"
+    }
+  ]
+}

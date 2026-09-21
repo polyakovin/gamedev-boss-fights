@@ -1,0 +1,142 @@
+{
+  "title": "Single shot",
+  "subtitle": "Announce one projectile, lock its straight path at release, and preserve a full-body response window.",
+  "variant": "Committed straight single shot",
+  "summary": "The boss releases one discrete projectile along a locked line.",
+  "overview": "A single shot is the smallest reusable projectile rule: one readable emitter, one release, and one moving hitbox. It works when aim locks at release, the visible projectile matches its hitbox, the whole player body can clear the path with an ordinary verb, and the shot leaves before the next decision.",
+  "learning": "Tune aim, release, speed, size, clearance, and recovery as one projectile promise before building volleys or homing variants.",
+  "category": "Projectiles",
+  "readTime": "5 min",
+  "demo": {
+    "title": "Test the single shot",
+    "timeline": "Attack timeline",
+    "step": "Attack phases",
+    "phaseNames": ["Aim and charge", "Release and sidestep", "Clear and recover"],
+    "phaseDescriptions": [
+      "Kern exposes the emitter and previews one line toward Tavi; the line stops rotating when the shot is released.",
+      "The projectile travels straight along the locked line while Tavi clears its complete radius with a perpendicular step.",
+      "The projectile exits the arena before Kern resets, leaving a visible gap in which the outcome can be read."
+    ],
+    "boss": "Boss",
+    "player": "Player",
+    "danger": "The projectile is active",
+    "locked": "The trajectory is locked",
+    "safe": "The whole body clears the shot",
+    "reducedMotion": "Autoplay is disabled by the reduced-motion setting. Use the timeline slider to inspect the shot.",
+    "diagramDescription": "A looping diagram of one projectile. The boss previews and locks a straight line, releases one visible shot, and recovers after the player moves fully outside its radius."
+  },
+  "steps": [
+    {
+      "title": "What locks when the shot is released?",
+      "body": "Capture the origin and direction at release, then stop steering. The pose, guide line, projectile velocity, and collision query should all use that same locked ray so the announced response remains valid."
+    },
+    {
+      "title": "Can the complete player body clear the shot?",
+      "body": "Compare warning time and projectile travel time with the slowest intended sidestep. Test projectile radius plus player radius at close, middle, and long range; crossing the center line alone is not enough."
+    },
+    {
+      "title": "Does one shot leave a readable gap?",
+      "body": "Let the projectile clear the play space before Kern selects another attack. The gap confirms that the shot was avoided and gives room for repositioning, reflection, or a brief punish if those responses are supported."
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "The shot corrects its direction after release",
+      "body": "Late steering turns a straight single shot into hidden homing and invalidates the previewed line. If tracking is intended, show its strength and cutoff as a separate mechanic."
+    },
+    {
+      "title": "The hitbox is larger than the projectile",
+      "body": "A small spark with a wide invisible collision radius punishes a visibly clean sidestep. Include glow and trail only when they communicate the real damaging extent."
+    },
+    {
+      "title": "Fire rate removes the response window",
+      "body": "Repeated shots without a readable interval become a volley or rhythm pattern. Establish one complete shot and its gap first, then define repetition explicitly."
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "Derive presentation and collision from one trajectory",
+      "body": "Store a release origin, normalized direction, speed, and radius. Drive the sprite, trail, hit query, preview, and static thumbnail from those values rather than recreating the line in separate systems."
+    },
+    {
+      "title": "Budget response time by distance",
+      "body": "A distant shot naturally adds travel time while a close shot may require a longer wind-up or lower speed. Test the shortest legal distance instead of balancing only from the default camera composition."
+    },
+    {
+      "title": "Keep the emitter readable",
+      "body": "Spawn the projectile outside Kern’s silhouette and give the release a visible pose or flash. The player should identify the origin before effects, scenery, or the boss body conceal it."
+    },
+    {
+      "title": "Escalate one projectile property at a time",
+      "body": "Speed, size, repetition, reflection, and tracking each change the response. Add only one after the base locked shot is readable, then re-test the full-body clearance."
+    }
+  ],
+  "story": {
+    "title": "What the mechanic communicates",
+    "body": "One deliberate shot makes Kern feel precise rather than overwhelming. Its uncluttered line teaches the relationship between aim, release, travel, and evasion, which later projectile patterns can reuse or intentionally break."
+  },
+  "adaptation": {
+    "title": "Adapt it to the player verbs",
+    "body": "For walking or dashing, preserve enough perpendicular distance to clear both radii. If blocking, parrying, reflecting, or destroying the shot is supported, expose that interaction consistently and decide whether it replaces movement or creates a riskier reward path."
+  },
+  "distinction": {
+    "title": "Keep the mechanic distinct",
+    "body": "A single shot has one projectile and one locked trajectory. A fan announces several diverging lines, a volley makes repetition part of the rule, and a homing projectile continues changing direction. Do not hide those added demands inside the base lesson."
+  },
+  "lensNotes": [
+    {
+      "id": "telegraphing",
+      "body": "The emitter, pose, and guide line reveal origin and direction before release."
+    },
+    {
+      "id": "commitment",
+      "body": "At release, origin and direction lock; the projectile does not steer after the player responds."
+    },
+    {
+      "id": "threat-geometry",
+      "body": "Safety depends on the sum of projectile and player radii, not only their center lines."
+    },
+    {
+      "id": "counterplay",
+      "body": "A normal sidestep clears the line, while supported block or reflection verbs remain explicit alternatives."
+    },
+    {
+      "id": "risk-reward",
+      "body": "A late, narrow sidestep can preserve position for a stronger punish, but its boundary must remain reliable."
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "Hollow Knight",
+      "boss": "Hornet Protector",
+      "screenshot": "https://i.ytimg.com/vi/rwZmf4u366o/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=rwZmf4u366o&t=276s",
+      "body": "Hornet’s needle throw isolates one large projectile with a clear wind-up, horizontal route, and return. The outward trip demonstrates how silhouette and line support a simple full-body jump or sidestep response.",
+      "video": "https://www.youtube.com/watch?v=rwZmf4u366o&t=276s",
+      "videoDurationSeconds": 2832
+    },
+    {
+      "dimension": "2D",
+      "game": "Cuphead",
+      "boss": "Wally Warbles",
+      "screenshot": "https://i.ytimg.com/vi/Ol3-4Y0eS9M/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=Ol3-4Y0eS9M&t=12s",
+      "body": "Wally’s large egg begins as one strongly silhouetted shot before its later secondary behavior. It shows why the base release and path must read on their own before a projectile splits or ricochets.",
+      "video": "https://www.youtube.com/watch?v=Ol3-4Y0eS9M&t=12s",
+      "videoDurationSeconds": 199
+    },
+    {
+      "dimension": "3D",
+      "game": "Returnal",
+      "boss": "Phrike",
+      "screenshot": "https://i.ytimg.com/vi/L1GZvUb5uoY/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=L1GZvUb5uoY&t=30s",
+      "body": "Phrike’s early ranged attacks use luminous origins and slow, isolated travel that remain legible through a moving 3D camera. The spacing illustrates how strafing time changes with depth and distance.",
+      "video": "https://www.youtube.com/watch?v=L1GZvUb5uoY&t=30s",
+      "videoDurationSeconds": 310
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

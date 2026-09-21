@@ -11,6 +11,13 @@ const SPECS = {
     target: [470, 720],
     landing: [365, 600],
   },
+  'single-shot': {
+    mode: 'single-shot',
+    boss: [165, 280],
+    player: [385, 600],
+    target: [500, 520],
+    shotEnd: [572, 872],
+  },
   'wide-swing': { mode: 'arc', boss: [280, 310], player: [410, 470], target: [470, 650] },
   lunge: { mode: 'lunge', boss: [170, 290], player: [390, 590], target: [470, 660] },
   grab: { mode: 'grab', boss: [280, 300], player: [390, 485], target: [470, 610] },
@@ -288,6 +295,28 @@ function primitivesFor(spec, frame) {
       circle(landing.x, landing.y, 88, contact, 'signal', 18, 0.24),
     ];
   }
+  if (mode === 'single-shot') {
+    const start = point(spec.boss);
+    const end = point(spec.shotEnd);
+    const head = {
+      x: mix(start.x, end.x, action),
+      y: mix(start.y, end.y, action),
+    };
+    return [
+      line(
+        start.x,
+        start.y,
+        end.x,
+        end.y,
+        phase === 0 ? 0.36 + prepare * 0.34 : phase === 1 ? 0.16 * (1 - action) : 0,
+        'accent',
+        7,
+        '12 12',
+      ),
+      line(start.x, start.y, head.x, head.y, phase === 1 ? 0.42 : 0, 'signal', 8),
+      circle(head.x, head.y, 20, phase === 1 ? 1 : 0, 'signal', 6, 0.48),
+    ];
+  }
   if (mode === 'arc')
     return [
       path(arcPath(boss, 205, -1.15, 2.25), preview, 'accent', 20, 0, '12 10'),
@@ -556,6 +585,10 @@ function pointClearsThreat(spec, frame, value, radius = BLUEPRINT_PLAYER_RADIUS)
     const landing = point(spec.landing);
     return Math.hypot(value.x - landing.x, value.y - landing.y) > 88 + radius;
   }
+  if (mode === 'single-shot') {
+    const projectile = frame.primitives[2];
+    return Math.hypot(value.x - projectile.x, value.y - projectile.y) > projectile.radius + radius;
+  }
   if (mode === 'arc') return distanceFromBoss > 205 + radius;
   if (mode === 'lunge')
     return distanceToSegment(value, { x: 170, y: 290 }, { x: 430, y: 590 }) > 27 + radius;
@@ -719,6 +752,8 @@ export function blueprintFrame(id, time) {
   let responseProgress = response;
   if (spec.mode === 'landing')
     responseProgress = phase === 0 ? 0 : phase === 1 ? smooth(action / 0.4) : 1;
+  else if (spec.mode === 'single-shot')
+    responseProgress = phase === 0 ? 0 : phase === 1 ? smooth(action / 0.42) : 1;
   else if (spec.mode === 'knockback')
     responseProgress = phase === 0 ? 0 : phase === 1 ? smooth(action) : 1;
   else if (spec.mode === 'target-lock')

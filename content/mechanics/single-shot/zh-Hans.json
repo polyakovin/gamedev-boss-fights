@@ -1,0 +1,127 @@
+{
+  "title": "单发射击",
+  "subtitle": "预告一个弹体，在发射时锁定直线路径，并保留全身可用的应对窗口。",
+  "variant": "锁定直线的单发射击",
+  "summary": "首领沿锁定直线发射一个独立弹体。",
+  "overview": "单发射击是最小的可复用弹体规则：一个清晰发射器、一次发射、一个移动碰撞体。瞄准在发射时停止变化，视觉与判定一致，玩家全身能用普通动作离开路径，并且弹体在下一次决策前离场时，它才成立。",
+  "learning": "先把瞄准、发射、速度、尺寸、净空与恢复调成一个承诺，再扩展齐射或追踪。",
+  "category": "弹体",
+  "readTime": "5 分钟",
+  "demo": {
+    "title": "测试单发射击",
+    "timeline": "攻击时间轴",
+    "step": "攻击阶段",
+    "phaseNames": ["瞄准与蓄力", "发射与侧移", "离场与恢复"],
+    "phaseDescriptions": [
+      "凯恩展示发射器和一条指向塔维的线；发射时这条线停止旋转。",
+      "弹体沿锁定直线飞行，塔维垂直侧移，让全身离开弹体半径。",
+      "弹体在凯恩重置前离开场地，留下可确认结果的清晰间隔。"
+    ],
+    "boss": "首领",
+    "player": "玩家",
+    "danger": "弹体已激活",
+    "locked": "轨迹已锁定",
+    "safe": "全身已离开射击范围",
+    "reducedMotion": "减少动态效果设置已关闭自动播放。使用时间轴滑块检查射击。",
+    "diagramDescription": "单个弹体的循环示意。首领预告并锁定直线，发射可见弹体，在玩家全身离开半径后恢复。"
+  },
+  "steps": [
+    {
+      "title": "发射时锁定什么？",
+      "body": "在发射时记录起点和方向，然后停止转向。姿势、引导线、弹速与碰撞查询应共享同一条射线，让已宣告的应对始终有效。"
+    },
+    {
+      "title": "玩家全身能避开弹体吗？",
+      "body": "以最慢的预期侧移比较预警和飞行时间。在近中远距离测试弹体半径与玩家半径之和；只跨过中心线并不够。"
+    },
+    {
+      "title": "一发是否留下清晰间隔？",
+      "body": "让弹体离开游戏空间后凯恩再选招。这个间隔确认躲避成功，也给重新站位、反射或短暂反击留下空间。"
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "发射后仍修正方向",
+      "body": "后续转向把直射变成隐藏追踪，使预告线失效。若追踪是刻意设计，应以独立机制展示强度和截止。"
+    },
+    {
+      "title": "判定大于可见弹体",
+      "body": "小火花配大块不可见碰撞会惩罚视觉上干净的侧移。光晕与拖尾只有在表达真实危险范围时才应计入。"
+    },
+    {
+      "title": "射速消除了应对窗口",
+      "body": "没有间隔的重复射击会成为齐射或节奏模式。先建立一发的完整循环与空档，再明确重复规则。"
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "表现与碰撞共用一条轨迹",
+      "body": "保存发射起点、单位方向、速度和半径，用它们驱动图像、拖尾、命中、预览和缩略图，不要在多个系统重建直线。"
+    },
+    {
+      "title": "按距离预算应对时间",
+      "body": "远射自然增加飞行时间，近射可能需要更长前摇或更低速度。测试最短合法距离，而不只看默认镜头构图。"
+    },
+    {
+      "title": "保持发射器清晰",
+      "body": "在凯恩轮廓之外生成弹体，并让姿势或闪光标记发射。玩家应在特效、场景或身体遮挡前识别起点。"
+    },
+    {
+      "title": "一次只升级一个属性",
+      "body": "速度、尺寸、重复、反射和追踪都会改变应对。基础直射清晰后只增加一项，再测试全身净空。"
+    }
+  ],
+  "story": {
+    "title": "机制传达什么",
+    "body": "一次有意图的射击让凯恩显得精准而非压迫。清晰直线教授瞄准、发射、飞行与闪避的关系，后续弹幕可复用或有意打破它。"
+  },
+  "adaptation": {
+    "title": "适配玩家动作",
+    "body": "对步行与冲刺，保留足够的垂直距离清除两个半径。若支持格挡、招架、反射或摧毁，要稳定展示互动，并决定它是替代移动还是更高风险收益路线。"
+  },
+  "distinction": {
+    "title": "保持机制区别",
+    "body": "单发只有一个弹体和一条锁定轨迹。扇形预告多条发散线，齐射把重复变为规则，追踪弹会继续转向。不要把这些额外要求藏在基础课中。"
+  },
+  "lensNotes": [
+    { "id": "telegraphing", "body": "发射器、姿势与引导线在发射前揭示起点和方向。" },
+    { "id": "commitment", "body": "发射时锁定起点和方向；玩家应对后弹体不再转向。" },
+    { "id": "threat-geometry", "body": "安全取决于弹体与玩家半径之和，而不仅是两条中心线。" },
+    { "id": "counterplay", "body": "普通侧移清除直线，支持的格挡或反射仍是明确替代。" },
+    { "id": "risk-reward", "body": "更晚更窄的侧移可保留反击位置，但边界必须可靠。" }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "Hollow Knight",
+      "boss": "Hornet Protector",
+      "screenshot": "https://i.ytimg.com/vi/rwZmf4u366o/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=rwZmf4u366o&t=276s",
+      "body": "Hornet 的针投掷以清晰前摇、水平路径和回程突出一个大弹体。去程说明轮廓和直线如何支持全身跳跃或侧移。",
+      "video": "https://www.youtube.com/watch?v=rwZmf4u366o&t=276s",
+      "videoDurationSeconds": 2832
+    },
+    {
+      "dimension": "2D",
+      "game": "Cuphead",
+      "boss": "Wally Warbles",
+      "screenshot": "https://i.ytimg.com/vi/Ol3-4Y0eS9M/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=Ol3-4Y0eS9M&t=12s",
+      "body": "Wally 的大蛋在产生后续行为前先是一个轮廓鲜明的单发。它说明弹体分裂或反弹前，基础发射与路径必须独立可读。",
+      "video": "https://www.youtube.com/watch?v=Ol3-4Y0eS9M&t=12s",
+      "videoDurationSeconds": 199
+    },
+    {
+      "dimension": "3D",
+      "game": "Returnal",
+      "boss": "Phrike",
+      "screenshot": "https://i.ytimg.com/vi/L1GZvUb5uoY/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=L1GZvUb5uoY&t=30s",
+      "body": "Phrike 的早期远程攻击用明亮起点和缓慢独立飞行，在移动的 3D 镜头中仍然清楚。深度和距离直接改变横移时间。",
+      "video": "https://www.youtube.com/watch?v=L1GZvUb5uoY&t=30s",
+      "videoDurationSeconds": 310
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}
