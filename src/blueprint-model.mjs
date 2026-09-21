@@ -119,6 +119,14 @@ const SPECS = {
     entryWidth: 90,
     convergence: 280,
   },
+  pull: {
+    mode: 'pull',
+    boss: [280, 300],
+    player: [350, 660],
+    target: [480, 575],
+    pullRadius: 445,
+    dangerRadius: 82,
+  },
   'wide-swing': { mode: 'arc', boss: [280, 310], player: [410, 470], target: [470, 650] },
   lunge: { mode: 'lunge', boss: [170, 290], player: [390, 590], target: [470, 660] },
   grab: { mode: 'grab', boss: [280, 300], player: [390, 485], target: [470, 610] },
@@ -833,6 +841,67 @@ function primitivesFor(spec, frame) {
       ),
     ];
   }
+  if (mode === 'pull') {
+    const ringOpacity =
+      phase === 0 ? 0.42 + prepare * 0.33 : phase === 1 ? 0.54 : 0.4 * (1 - recover);
+    const forceOpacity =
+      phase === 0 ? 0.25 + prepare * 0.28 : phase === 1 ? 0.82 : 0.35 * (1 - recover);
+    const angleOffset = phase === 1 ? action * 0.42 : 0;
+    const arrows = [0.32, 1.12, 1.92, 2.72].flatMap((angle) => {
+      const outer = polar(boss, 255, angle + angleOffset);
+      const inner = polar(boss, 178, angle + angleOffset);
+      const wingA = polar(inner, 18, angle + angleOffset - 0.57);
+      const wingB = polar(inner, 18, angle + angleOffset + 0.57);
+      return [
+        line(outer.x, outer.y, inner.x, inner.y, forceOpacity, 'accent', 7),
+        path(
+          `M ${wingA.x} ${wingA.y} L ${inner.x} ${inner.y} L ${wingB.x} ${wingB.y}`,
+          forceOpacity,
+          'accent',
+          6,
+        ),
+      ];
+    });
+    return [
+      circle(boss.x, boss.y, spec.pullRadius, ringOpacity * 0.65, 'accent', 5, 0),
+      circle(
+        boss.x,
+        boss.y,
+        spec.dangerRadius,
+        phase === 1 ? 0.96 : ringOpacity,
+        phase === 1 ? 'signal' : 'accent',
+        phase === 1 ? 12 : 6,
+        phase === 1 ? 0.35 : 0.08,
+      ),
+      circle(
+        boss.x,
+        boss.y,
+        31,
+        phase === 2 ? 0.65 * (1 - recover) : 0.9,
+        phase === 1 ? 'signal' : 'accent',
+        7,
+        0.3,
+      ),
+      ...arrows,
+      path(
+        `M 350 660 Q 398 586 ${spec.target[0]} ${spec.target[1]}`,
+        phase === 0 ? 0.32 + prepare * 0.25 : phase === 1 ? 0.54 : 0.2 * (1 - recover),
+        'safe',
+        6,
+        0,
+        '12 10',
+      ),
+      circle(
+        spec.target[0],
+        spec.target[1],
+        27,
+        phase === 0 ? 0.38 + prepare * 0.24 : phase === 1 ? 0.7 : 0.25 * (1 - recover),
+        'safe',
+        5,
+        0.07,
+      ),
+    ];
+  }
   if (mode === 'arc')
     return [
       path(arcPath(boss, 205, -1.15, 2.25), preview, 'accent', 20, 0, '12 10'),
@@ -1175,6 +1244,8 @@ function pointClearsThreat(spec, frame, value, radius = BLUEPRINT_PLAYER_RADIUS)
           value.y + radius <= threat.y ||
           value.y - radius >= threat.y + threat.rectHeight,
       );
+  if (mode === 'pull')
+    return Math.hypot(value.x - frame.boss.x, value.y - frame.boss.y) > spec.dangerRadius + radius;
   if (mode === 'spiral')
     return (
       distanceFromBoss > 52 + radius &&
@@ -1340,6 +1411,8 @@ export function blueprintFrame(id, time) {
     responseProgress = phase === 0 ? 0 : phase === 1 ? smooth(action / 0.5) : 1;
   else if (spec.mode === 'converging-threats')
     responseProgress = phase === 0 ? 0 : phase === 1 ? smooth(action / 0.53) : 1;
+  else if (spec.mode === 'pull')
+    responseProgress = phase === 0 ? 0 : phase === 1 ? smooth((action - 0.15) / 0.77) : 1;
   else if (spec.mode === 'knockback')
     responseProgress = phase === 0 ? 0 : phase === 1 ? smooth(action) : 1;
   else if (spec.mode === 'target-lock')
@@ -1350,6 +1423,19 @@ export function blueprintFrame(id, time) {
     x: mix(mix(startPlayer.x, targetPlayer.x, responseProgress), startPlayer.x, returnProgress),
     y: mix(mix(startPlayer.y, targetPlayer.y, responseProgress), startPlayer.y, returnProgress),
   };
+  if (spec.mode === 'pull' && phase === 1) {
+    const dragged = smooth(action);
+    player = {
+      x:
+        startPlayer.x +
+        (spec.boss[0] - startPlayer.x) * 0.23 * dragged +
+        (spec.target[0] - startPlayer.x + 16.1) * responseProgress,
+      y:
+        startPlayer.y +
+        (spec.boss[1] - startPlayer.y) * 0.23 * dragged +
+        (spec.target[1] - startPlayer.y + 82.8) * responseProgress,
+    };
+  }
   if (spec.mode === 'rotating' && phase === 0) {
     const initialPosition = polar(boss, 255, Math.PI / 3);
     player = {

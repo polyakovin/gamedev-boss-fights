@@ -1,0 +1,146 @@
+{
+  "title": "Pull",
+  "subtitle": "Show the source and direction of a force that displaces the player toward danger.",
+  "variant": "A sustained inward current around Kern's rune core",
+  "summary": "An announced inward force changes the player's movement and can draw their body into a dangerous center.",
+  "overview": "Pull is a force that moves the player toward a source while they can still steer. Kern announces an inward current around a rune core, then keeps it active long enough for Tavi to be displaced. The ring marks the reach of the force; only the smaller bright core hurts, so a reachable sideways route remains meaningful.",
+  "learning": "Tune the pull strength, effective radius, safe route, and release as one movement problem.",
+  "category": "Arena",
+  "readTime": "5 min",
+  "demo": {
+    "title": "Inspect the pull",
+    "timeline": "Attack timeline",
+    "step": "Attack phases",
+    "phaseNames": [
+      "Announce the inward current",
+      "Steer across the current",
+      "Release the force and recover"
+    ],
+    "phaseDescriptions": [
+      "Kern's outer ring and inward arrows preview the force's reach and direction. The smaller rune core is the future collision hazard; neither the arrows nor outer ring deals damage.",
+      "The pull draws Tavi toward Kern while ordinary sideways input carries them across the current. The active core is dangerous; the large ring describes displacement, not a second damaging hitbox.",
+      "Kern's force and core collision end together. Tavi can re-enter the cleared center during a distinct recovery interval."
+    ],
+    "boss": "Boss",
+    "player": "Player",
+    "danger": "The bright core hurts during the active pull",
+    "locked": "Source, reach, strength, core radius, and duration are committed",
+    "safe": "Sideways steering keeps the full body outside the core",
+    "reducedMotion": "Autoplay is disabled by reduced-motion settings. Use the timeline to inspect the current, the player's drift, and the safe steering path.",
+    "diagramDescription": "Kern charges a rune core with a wide, non-damaging force ring and inward arrows. During the attack, the current drags Tavi toward the bright dangerous core, but ordinary sideways steering carries Tavi around it. The current and core fade before recovery."
+  },
+  "steps": [
+    {
+      "title": "Can the source and direction be predicted?",
+      "body": "Show the origin, inward direction, range, and dangerous center before the force begins. Distinguish the displacement field from the smaller collision hazard without relying only on color."
+    },
+    {
+      "title": "Can ordinary steering overcome the drift?",
+      "body": "Integrate the force with player acceleration and input, then sweep the full collision body along the resulting path. Test the worst starting position, wall pressure, and whether the sideways route clears the core in time."
+    },
+    {
+      "title": "Does the force stop when the signal stops?",
+      "body": "Lock strength, duration, and radius before activation. End displacement and core damage when their visuals fade, and leave a useful recovery window before the next attack."
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "The force has no visible source",
+      "body": "A sudden invisible slide looks like lost control. Show the center, arrows, and onset before changing velocity."
+    },
+    {
+      "title": "The safe-looking arc still clips the core",
+      "body": "A center-point path may miss a broad collision body or trap it against a wall. Include body radius and acceleration when testing the route."
+    },
+    {
+      "title": "The whole force ring is treated as damage",
+      "body": "Conflating influence with collision invalidates the shown counterplay. Use one clear hitbox for the core and a distinct visual language for the non-damaging current."
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "Model a vector field and a separate hitbox",
+      "body": "Within the announced radius, add an inward velocity or acceleration toward the source. Test damage only against the visible core and the player's full body; arrows and range rings are teaching cues."
+    },
+    {
+      "title": "Balance player input against the force",
+      "body": "Measure net velocity at near, middle, and far distances, especially when input is partly aligned with the pull. Preserve enough steering authority to reach a safe lateral arc without a mandatory dash."
+    },
+    {
+      "title": "Account for boundaries and motion steps",
+      "body": "A wall can remove the intended counter-direction. Sweep motion between frames, clamp or resolve contact deliberately, and test the worst start and strongest pull with actual acceleration."
+    },
+    {
+      "title": "Vary one parameter after the base rule",
+      "body": "Change reach, ramp-up, source placement, or active duration individually. If a later phase adds a pulse or second source, announce the changed rule rather than reusing an unreliable cue."
+    }
+  ],
+  "story": {
+    "title": "What the mechanic communicates",
+    "body": "Kern lights a central rune and draws loose stone dust inward. Tavi's path bends under the current but remains steerable around the dangerous core."
+  },
+  "adaptation": {
+    "title": "Adapt it to the player verbs",
+    "body": "Basic movement must retain a viable sideways route. A dash, anchor, or resistance ability may be optional alternatives; test their interactions explicitly rather than requiring an unannounced upgrade or invulnerability."
+  },
+  "distinction": {
+    "title": "Keep the mechanic distinct",
+    "body": "Pull modifies the player's trajectory toward a source over time. Knockback is a brief outward impulse, moving hazard carries its own damaging footprint, and shrinking safe area reduces available space without necessarily exerting force."
+  },
+  "lensNotes": [
+    {
+      "id": "telegraphing",
+      "body": "A charged core, inward arrows, and a reach ring identify direction and onset before movement changes."
+    },
+    {
+      "id": "commitment",
+      "body": "Source, strength, reach, and duration remain fixed during this demonstration; a new source needs a new cue."
+    },
+    {
+      "id": "threat-geometry",
+      "body": "The wide field displaces; only the visibly bright core collides with the full player body."
+    },
+    {
+      "id": "counterplay",
+      "body": "Ordinary lateral steering offsets the inward drift and routes the player around the core."
+    },
+    {
+      "id": "difficulty-rhythm",
+      "body": "Reach, force magnitude, startup, safe arc width, and clean recovery set the pressure."
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "Hollow Knight: Silksong",
+      "boss": "Groal the Great",
+      "screenshot": "https://i.ytimg.com/vi/3tcg2IJrcEw/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=3tcg2IJrcEw&t=2s",
+      "body": "Groal opens its mouth and sucks Hornet toward it before swallowing or spitting. The mouth is a readable source and the sustained horizontal draw differs from this diagram's radial rune field.",
+      "video": "https://www.youtube.com/watch?v=3tcg2IJrcEw&t=2s",
+      "videoDurationSeconds": 15
+    },
+    {
+      "dimension": "3D",
+      "game": "Final Fantasy XIV",
+      "boss": "Kelpie",
+      "screenshot": "https://i.ytimg.com/vi/hG1GYi2kk44/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=hG1GYi2kk44&t=45s",
+      "body": "Hydro Pull draws combatants toward Kelpie and makes their position relative to the outer arena matter. This is a cast-driven displacement, not the diagram's continuous steering field.",
+      "video": "https://www.youtube.com/watch?v=hG1GYi2kk44&t=45s",
+      "videoDurationSeconds": 230
+    },
+    {
+      "dimension": "3D",
+      "game": "Final Fantasy XIV",
+      "boss": "Rafflesia",
+      "screenshot": "https://i.ytimg.com/vi/y9eaPwf3Dbo/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=y9eaPwf3Dbo&t=73s",
+      "body": "Floral Trap marks a target before Rafflesia inhales players in a frontal cone and follows with Devour. Facing and the marked target define this pull's geometry, unlike an omnidirectional field.",
+      "video": "https://www.youtube.com/watch?v=y9eaPwf3Dbo&t=73s",
+      "videoDurationSeconds": 345
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

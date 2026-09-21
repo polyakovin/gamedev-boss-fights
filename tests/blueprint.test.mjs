@@ -13,8 +13,8 @@ import {
   renderBlueprintThumbnail,
 } from '../lib/blueprint-view.mjs';
 
-test('all 35 promoted lesson animations have distinct rule modes and complete moving frames', () => {
-  assert.equal(BLUEPRINT_MECHANIC_IDS.length, 35);
+test('all 36 promoted lesson animations have distinct rule modes and complete moving frames', () => {
+  assert.equal(BLUEPRINT_MECHANIC_IDS.length, 36);
   const modes = new Set();
   for (const id of BLUEPRINT_MECHANIC_IDS) {
     for (let time = 0; time <= BLUEPRINT_DURATION; time += 0.1) {
@@ -35,7 +35,7 @@ test('all 35 promoted lesson animations have distinct rule modes and complete mo
           assert.ok(Number.isFinite(value), `${id} has an invalid ${primitive.type}`);
     }
   }
-  assert.equal(modes.size, 35);
+  assert.equal(modes.size, 36);
 });
 
 test('every blueprint exposes signal, committed action, and recovery without player teleports', () => {
@@ -70,6 +70,7 @@ test('every promoted animation derives safety from its own active geometry', () 
     mine: { x: 320, y: 610 },
     'moving-hazard': null,
     'converging-threats': { x: 100, y: 650 },
+    pull: { x: 280, y: 310 },
     'wide-swing': { x: 280, y: 515 },
     lunge: { x: 300, y: 440 },
     grab: { x: 390, y: 485 },
@@ -498,6 +499,28 @@ test('two converging fronts close the lower corridor while the ordinary upper ex
   assert.equal(late.playerSafe, true);
   assert.ok(late.player.y < signal.player.y);
   assert.equal(blueprintPointSafe('converging-threats', 5.2, { x: 280, y: 650 }), true);
+});
+
+test('pull displaces the player toward its source but only the visible core deals damage', () => {
+  const signal = blueprintFrame('pull', 1.59);
+  const early = blueprintFrame('pull', 2);
+  const middle = blueprintFrame('pull', 3);
+  const late = blueprintFrame('pull', 4.29);
+  const recovery = blueprintFrame('pull', 5.2);
+  assert.equal(signal.primitives[0].radius, 445);
+  assert.equal(middle.primitives[0].fill, 0);
+  assert.equal(middle.primitives[1].radius, 82);
+  assert.equal(middle.primitives[1].tone, 'signal');
+  assert.ok(early.player.y < signal.player.y, 'pull must visibly displace Tavi toward Kern');
+  assert.ok(late.player.x > middle.player.x, 'ordinary lateral steering must remain useful');
+  assert.equal(blueprintPointSafe('pull', 1.59, { x: 280, y: 300 }), true);
+  assert.equal(blueprintPointSafe('pull', 3, { x: 280, y: 360 }), false);
+  assert.equal(blueprintPointSafe('pull', 3, { x: 280, y: 420 }), true);
+  assert.equal(blueprintPointSafe('pull', 3, { x: 280, y: 420 }, 60), false);
+  assert.equal(middle.playerSafe, true);
+  assert.equal(late.playerSafe, true);
+  assert.equal(blueprintPointSafe('pull', 5.2, { x: 280, y: 300 }), true);
+  assert.ok(recovery.primitives[1].opacity < late.primitives[1].opacity);
 });
 
 test('blueprint pages and previews reuse Tavi and Kern with accessible localized data', () => {

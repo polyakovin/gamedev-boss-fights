@@ -1,0 +1,142 @@
+{
+  "title": "牵引",
+  "subtitle": "明确展示把玩家拖向危险区域的力量来源和方向。",
+  "variant": "持续流向克恩符文核心的引力",
+  "summary": "预告后的内向力量改变玩家轨迹，可能将其拖进危险中心。",
+  "overview": "牵引是一种将玩家移向源头、但仍允许玩家操控的力量。克恩先展示符文核心周围的内向气流，再维持足够长的时间使塔维偏移。外圈只标示作用范围；造成伤害的是较小的发光核心，因此侧向绕行依然有效。",
+  "learning": "把牵引强度、作用范围、安全路径与结束时机作为同一个移动问题来调校。",
+  "category": "场地",
+  "readTime": "5 分钟",
+  "demo": {
+    "title": "观察牵引",
+    "timeline": "攻击时间轴",
+    "step": "攻击阶段",
+    "phaseNames": ["预告向内的气流", "横穿气流并转向", "解除力量并恢复"],
+    "phaseDescriptions": [
+      "克恩的外圈和向内箭头预示力量范围及方向。较小的符文核心随后会造成碰撞伤害；箭头和外圈本身不会伤人。",
+      "牵引将塔维拖向克恩，普通的侧向输入则让塔维横穿气流。只有激活的核心危险；大圈表示位移，并非第二个伤害判定。",
+      "力量和核心碰撞同步结束。恢复期间，塔维可以重新进入已清空的中央区域。"
+    ],
+    "boss": "首领",
+    "player": "玩家",
+    "danger": "牵引激活时发光核心造成伤害",
+    "locked": "源头、范围、强度、核心半径及持续时间已锁定",
+    "safe": "侧向移动使整个身体避开核心",
+    "reducedMotion": "减少动态效果时不会自动播放。使用时间轴观察气流、玩家偏移和安全路线。",
+    "diagramDescription": "克恩为符文核心充能；宽大的无伤害力场环和向内箭头预告牵引。攻击期间塔维被拖向危险核心，但普通侧向移动使其绕行。力量和核心在恢复前消失。"
+  },
+  "steps": [
+    {
+      "title": "能否预判源头和方向？",
+      "body": "力量启动前展示源头、方向、范围和危险核心。用形状而非仅靠颜色区分位移力场与碰撞区域。"
+    },
+    {
+      "title": "普通移动能否抵消拖拽？",
+      "body": "将力量与玩家加速度和输入相加，以完整碰撞体检查路径。测试最糟起点、墙壁限制及绕开核心的剩余时间。"
+    },
+    {
+      "title": "提示结束后力量是否停止？",
+      "body": "激活前锁定强度、持续时间和半径。视觉消退时同步停止位移与伤害，并留下有效的恢复窗口。"
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "看不到力量来源",
+      "body": "突然的无形滑移看似失去控制。改变速度前先展示中心、箭头与启动时机。"
+    },
+    {
+      "title": "看似安全的弧线擦到核心",
+      "body": "点状路径忽略角色宽度或墙壁。检查整个身体半径和加速度。"
+    },
+    {
+      "title": "把整个力场环都算作伤害",
+      "body": "混淆影响范围与碰撞会否定已展示的应对方式。核心使用清晰的伤害判定，气流使用不同的视觉语言。"
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "分离向量场和伤害判定",
+      "body": "在预告范围内向源头施加速度或加速度。仅以可见核心和玩家全身检测伤害；箭头与圆环是说明线索。"
+    },
+    {
+      "title": "比较玩家输入和力量",
+      "body": "在近处、中段与远端测量合成速度，包括输入部分顺着牵引时。侧向路线不应强制要求冲刺。"
+    },
+    {
+      "title": "考虑边界和模拟步长",
+      "body": "墙壁可能封住预期的反向路径。逐帧扫掠移动、明确处理碰撞，并测试最差起点及最大力量。"
+    },
+    {
+      "title": "每次只升级一个参数",
+      "body": "分别改变范围、增强速度、源头位置或持续时间。新增脉冲或第二源头时要给出新提示。"
+    }
+  ],
+  "story": {
+    "title": "这项机制传达什么",
+    "body": "克恩点亮中央符文，将石屑向内吸。塔维的路径因此弯曲，却仍能绕开危险核心。"
+  },
+  "adaptation": {
+    "title": "配合玩家的动作能力",
+    "body": "基础移动必须保留可行的侧向路线。冲刺、锚定或抗性可以成为替代方式，但不能悄悄变成必需升级。"
+  },
+  "distinction": {
+    "title": "区分相近机制",
+    "body": "牵引持续改变玩家向源头的轨迹。击退是短暂的向外冲量；移动危险携带自身伤害区域；安全区缩小不一定施加力量。"
+  },
+  "lensNotes": [
+    {
+      "id": "telegraphing",
+      "body": "蓄能核心、向内箭头及范围环在位移前标出方向与启动时机。"
+    },
+    {
+      "id": "commitment",
+      "body": "本例中源头、强度、范围与持续时间固定；新源头需要新提示。"
+    },
+    {
+      "id": "threat-geometry",
+      "body": "宽大的场只造成位移；可见发光核心才与玩家全身碰撞。"
+    },
+    {
+      "id": "counterplay",
+      "body": "普通侧向操控抵消内向漂移并绕开核心。"
+    },
+    {
+      "id": "difficulty-rhythm",
+      "body": "范围、强度、前摇、绕行宽度及恢复窗口决定压力。"
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "Hollow Knight: Silksong",
+      "boss": "Groal the Great",
+      "screenshot": "https://i.ytimg.com/vi/3tcg2IJrcEw/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=3tcg2IJrcEw&t=2s",
+      "body": "格罗尔张嘴吸引霍妮特，随后可能吞下或吐出。嘴部明确标出来源；持续的水平拖拽不同于图中的径向力场。",
+      "video": "https://www.youtube.com/watch?v=3tcg2IJrcEw&t=2s",
+      "videoDurationSeconds": 15
+    },
+    {
+      "dimension": "3D",
+      "game": "Final Fantasy XIV",
+      "boss": "Kelpie",
+      "screenshot": "https://i.ytimg.com/vi/hG1GYi2kk44/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=hG1GYi2kk44&t=45s",
+      "body": "Hydro Pull 将队员拉向凯尔皮，使他们与场地外缘的相对位置变得关键。这是咏唱结束时的位移，而非持续可操控的气流。",
+      "video": "https://www.youtube.com/watch?v=hG1GYi2kk44&t=45s",
+      "videoDurationSeconds": 230
+    },
+    {
+      "dimension": "3D",
+      "game": "Final Fantasy XIV",
+      "boss": "Rafflesia",
+      "screenshot": "https://i.ytimg.com/vi/y9eaPwf3Dbo/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=y9eaPwf3Dbo&t=73s",
+      "body": "Floral Trap 先标记目标，莱佛西亚随后在前方锥形区域吸入玩家并施放 Devour。朝向和标记决定几何，而不是全向力场。",
+      "video": "https://www.youtube.com/watch?v=y9eaPwf3Dbo&t=73s",
+      "videoDurationSeconds": 345
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

@@ -1,0 +1,142 @@
+{
+  "title": "Atracción",
+  "subtitle": "Muestra la fuente y dirección de la fuerza que arrastra al jugador hacia el peligro.",
+  "variant": "Corriente sostenida hacia el núcleo rúnico de Kern",
+  "summary": "Una fuerza anunciada altera la trayectoria del jugador y puede llevarlo al centro peligroso.",
+  "overview": "La atracción desplaza al jugador hacia una fuente mientras aún puede dirigir su movimiento. Kern anuncia una corriente hacia su núcleo rúnico y la mantiene para desviar a Tavi. El anillo indica el alcance; solo el núcleo brillante daña, por lo que una ruta lateral sigue siendo viable.",
+  "learning": "Ajusta fuerza, alcance, ruta segura y liberación como un solo problema de movimiento.",
+  "category": "Arena",
+  "readTime": "5 min",
+  "demo": {
+    "title": "Examina la atracción",
+    "timeline": "Cronología del ataque",
+    "step": "Fases del ataque",
+    "phaseNames": ["Anunciar la corriente", "Cruzar la corriente", "Liberar y recuperarse"],
+    "phaseDescriptions": [
+      "El anillo y las flechas de Kern anticipan alcance y dirección. El núcleo pequeño será peligroso; las flechas y el anillo no dañan.",
+      "La corriente arrastra a Tavi hacia Kern mientras el movimiento lateral normal lo conduce a través de ella. Solo el núcleo activo daña; el anillo indica desplazamiento.",
+      "La fuerza y la colisión del núcleo cesan juntas. Tavi puede volver al centro durante una recuperación diferenciada."
+    ],
+    "boss": "Jefe",
+    "player": "Jugador",
+    "danger": "El núcleo brillante daña durante la atracción",
+    "locked": "Fuente, alcance, fuerza, radio y duración fijados",
+    "safe": "El movimiento lateral mantiene todo el cuerpo fuera del núcleo",
+    "reducedMotion": "La reproducción automática está desactivada con movimiento reducido. Usa la cronología para examinar corriente, desvío y ruta segura.",
+    "diagramDescription": "Kern carga un núcleo con anillo de fuerza no dañino y flechas hacia dentro. La corriente arrastra a Tavi hacia el núcleo peligroso, pero el movimiento lateral normal lo rodea. La fuerza desaparece antes de la recuperación."
+  },
+  "steps": [
+    {
+      "title": "¿Se prevén la fuente y dirección?",
+      "body": "Muestra origen, dirección, alcance y centro peligroso antes del inicio. Diferencia desplazamiento y daño sin depender solo del color."
+    },
+    {
+      "title": "¿Supera el control normal el arrastre?",
+      "body": "Integra fuerza, aceleración y control; prueba la trayectoria con todo el cuerpo. Comprueba la peor posición inicial, muros y tiempo para rodear el núcleo."
+    },
+    {
+      "title": "¿Cesa la fuerza con su señal?",
+      "body": "Fija fuerza, duración y radio antes de activarla. Termina desplazamiento y daño cuando desaparece la imagen; deja una recuperación útil."
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "Fuente invisible",
+      "body": "Un deslizamiento repentino parece pérdida de control. Muestra centro, flechas e inicio antes de alterar velocidad."
+    },
+    {
+      "title": "El arco seguro toca el núcleo",
+      "body": "La ruta de un punto ignora el ancho del personaje o un muro. Incluye radio corporal y aceleración."
+    },
+    {
+      "title": "Todo el anillo daña",
+      "body": "Confundir influencia y colisión invalida la respuesta. Usa un hitbox claro para el núcleo y otra representación para la corriente."
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "Separa campo y colisión",
+      "body": "Dentro del alcance anunciado, añade velocidad o aceleración hacia la fuente. Comprueba daño solo contra núcleo visible y cuerpo entero; flechas y anillo son pistas."
+    },
+    {
+      "title": "Compara control y fuerza",
+      "body": "Mide velocidad resultante cerca, a media distancia y lejos, incluso con el control parcialmente alineado. Conserva la ruta lateral sin exigir impulso."
+    },
+    {
+      "title": "Considera muros y pasos",
+      "body": "Un muro puede bloquear la respuesta. Barre entre fotogramas, resuelve contactos y prueba el peor inicio con fuerza máxima."
+    },
+    {
+      "title": "Varía un parámetro",
+      "body": "Cambia alcance, aumento, ubicación o duración por separado. Un pulso u otra fuente precisa una señal nueva."
+    }
+  ],
+  "story": {
+    "title": "Qué comunica",
+    "body": "Kern enciende la runa central y atrae polvo de piedra. Tavi se desvía, pero aún puede rodear el núcleo."
+  },
+  "adaptation": {
+    "title": "Adáptala a las acciones",
+    "body": "El movimiento básico debe permitir salida lateral. Impulso, anclaje o resistencia pueden ser alternativas; no exijas una mejora no anunciada."
+  },
+  "distinction": {
+    "title": "Distingue mecánicas cercanas",
+    "body": "La atracción modifica gradualmente la trayectoria hacia una fuente. El retroceso impulsa hacia fuera; un peligro móvil lleva su colisión; reducir una zona segura no implica fuerza."
+  },
+  "lensNotes": [
+    {
+      "id": "telegraphing",
+      "body": "Núcleo cargado, flechas y anillo indican dirección e inicio antes de mover al jugador."
+    },
+    {
+      "id": "commitment",
+      "body": "Fuente, fuerza, alcance y duración quedan fijos; otra fuente exige otra señal."
+    },
+    {
+      "id": "threat-geometry",
+      "body": "El campo desplaza; solo el núcleo brillante colisiona con el cuerpo."
+    },
+    {
+      "id": "counterplay",
+      "body": "El control lateral normal compensa el arrastre y rodea el núcleo."
+    },
+    {
+      "id": "difficulty-rhythm",
+      "body": "Alcance, fuerza, preparación, ancho de ruta y recuperación regulan presión."
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "Hollow Knight: Silksong",
+      "boss": "Groal the Great",
+      "screenshot": "https://i.ytimg.com/vi/3tcg2IJrcEw/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=3tcg2IJrcEw&t=2s",
+      "body": "Groal abre la boca y succiona a Hornet antes de tragarla o escupirla. La boca identifica la fuente; el arrastre horizontal difiere del campo radial.",
+      "video": "https://www.youtube.com/watch?v=3tcg2IJrcEw&t=2s",
+      "videoDurationSeconds": 15
+    },
+    {
+      "dimension": "3D",
+      "game": "Final Fantasy XIV",
+      "boss": "Kelpie",
+      "screenshot": "https://i.ytimg.com/vi/hG1GYi2kk44/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=hG1GYi2kk44&t=45s",
+      "body": "Hydro Pull atrae combatientes hacia Kelpie y hace importante el borde de arena. Es desplazamiento al resolver un lanzamiento, no corriente continua.",
+      "video": "https://www.youtube.com/watch?v=hG1GYi2kk44&t=45s",
+      "videoDurationSeconds": 230
+    },
+    {
+      "dimension": "3D",
+      "game": "Final Fantasy XIV",
+      "boss": "Rafflesia",
+      "screenshot": "https://i.ytimg.com/vi/y9eaPwf3Dbo/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=y9eaPwf3Dbo&t=73s",
+      "body": "Floral Trap marca un objetivo antes de que Rafflesia inhale en un cono frontal y continúe con Devour. Orientación y marca definen la geometría, no un campo omnidireccional.",
+      "video": "https://www.youtube.com/watch?v=y9eaPwf3Dbo&t=73s",
+      "videoDurationSeconds": 345
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

@@ -1,0 +1,28 @@
+{
+  "id": "pull",
+  "number": 42,
+  "published": true,
+  "sourceLocale": "en",
+  "contentVersion": 1,
+  "animation": "pull",
+  "lenses": ["telegraphing", "commitment", "threat-geometry", "counterplay", "difficulty-rhythm"],
+  "related": ["knockback", "moving-hazard", "shrinking-safe-area"],
+  "sources": [
+    {
+      "title": "Enemy Attacks and Telegraphing · Mike Stout",
+      "url": "https://www.gamedeveloper.com/design/enemy-attacks-and-telegraphing"
+    },
+    {
+      "title": "Groal the Great · Neoseeker",
+      "url": "https://www.neoseeker.com/hollow-knight-silksong/Groal_The_Great"
+    },
+    {
+      "title": "The Second Coil of Bahamut – Turn 1 · FFXIV Wiki",
+      "url": "https://ffxiv.consolegameswiki.com/wiki/The_Second_Coil_of_Bahamut_-_Turn_1"
+    },
+    {
+      "title": "The Drowned City of Skalla · FFXIV Wiki",
+      "url": "https://ffxiv.consolegameswiki.com/wiki/The_Drowned_City_of_Skalla"
+    }
+  ]
+}
