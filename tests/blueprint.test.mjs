@@ -13,8 +13,8 @@ import {
   renderBlueprintThumbnail,
 } from '../lib/blueprint-view.mjs';
 
-test('all 31 promoted lesson animations have distinct rule modes and complete moving frames', () => {
-  assert.equal(BLUEPRINT_MECHANIC_IDS.length, 31);
+test('all 32 promoted lesson animations have distinct rule modes and complete moving frames', () => {
+  assert.equal(BLUEPRINT_MECHANIC_IDS.length, 32);
   const modes = new Set();
   for (const id of BLUEPRINT_MECHANIC_IDS) {
     for (let time = 0; time <= BLUEPRINT_DURATION; time += 0.1) {
@@ -35,7 +35,7 @@ test('all 31 promoted lesson animations have distinct rule modes and complete mo
           assert.ok(Number.isFinite(value), `${id} has an invalid ${primitive.type}`);
     }
   }
-  assert.equal(modes.size, 31);
+  assert.equal(modes.size, 32);
 });
 
 test('every blueprint exposes signal, committed action, and recovery without player teleports', () => {
@@ -66,6 +66,7 @@ test('every promoted animation derives safety from its own active geometry', () 
     'returning-projectile': null,
     'orbiting-projectiles': null,
     'pulse-beam': null,
+    'chain-explosions': null,
     'wide-swing': { x: 280, y: 515 },
     lunge: { x: 300, y: 440 },
     grab: { x: 390, y: 485 },
@@ -118,6 +119,11 @@ test('every promoted animation derives safety from its own active geometry', () 
     } else if (!point && id === 'pulse-beam') {
       const beam = frame.primitives[1];
       point = { x: (beam.x1 + beam.x2) / 2, y: (beam.y1 + beam.y2) / 2 };
+    } else if (!point && id === 'chain-explosions') {
+      const blast = frame.primitives.find(
+        (primitive) => primitive.type === 'circle' && primitive.tone === 'signal',
+      );
+      point = { x: blast.x, y: blast.y };
     } else if (!point && ['scanning-beam', 'rotating-beams'].includes(id)) {
       const beam = frame.primitives.find(
         (primitive) => primitive.type === 'line' && primitive.tone === 'signal',
@@ -371,6 +377,39 @@ test('pulse beam keeps one lane, synchronizes collision, and crosses only during
   assert.equal(thirdPulse.dangerActive, true);
   assert.equal(blueprintPointSafe('pulse-beam', 3, { x: 325, y: 520 }), false);
   assert.equal(secondPulse.playerSafe, true);
+});
+
+test('chain explosions keep a fixed order, damage one live node, and let the player follow the wake', () => {
+  const signal = blueprintFrame('chain-explosions', 1.59);
+  const first = blueprintFrame('chain-explosions', 1.85);
+  const gap = blueprintFrame('chain-explosions', 2.15);
+  const third = blueprintFrame('chain-explosions', 3);
+  const fifth = blueprintFrame('chain-explosions', 3.85);
+  const expectedCenters = [
+    [455, 650],
+    [365, 560],
+    [275, 650],
+    [185, 560],
+    [95, 650],
+  ];
+
+  assert.deepEqual(signal.player, blueprintFrame('chain-explosions', 0).player);
+  for (const frame of [signal, first, gap, third, fifth])
+    assert.deepEqual(
+      frame.primitives.slice(1, 6).map(({ x, y }) => [x, y]),
+      expectedCenters,
+    );
+  assert.equal(first.dangerActive, true);
+  assert.equal(gap.dangerActive, false);
+  assert.equal(third.dangerActive, true);
+  assert.equal(
+    third.primitives.slice(1, 6).filter((primitive) => primitive.tone === 'signal').length,
+    1,
+  );
+  assert.equal(blueprintPointSafe('chain-explosions', 3, { x: 275, y: 650 }), false);
+  assert.equal(blueprintPointSafe('chain-explosions', 3, { x: 455, y: 650 }), true);
+  assert.equal(third.playerSafe, true);
+  assert.ok(third.player.x > third.primitives[3].x, 'player should trail the live blast');
 });
 
 test('blueprint pages and previews reuse Tavi and Kern with accessible localized data', () => {

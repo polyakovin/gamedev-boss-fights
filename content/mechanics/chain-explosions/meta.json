@@ -1,0 +1,32 @@
+{
+  "id": "chain-explosions",
+  "number": 38,
+  "published": true,
+  "sourceLocale": "en",
+  "contentVersion": 1,
+  "animation": "chain-explosions",
+  "lenses": ["telegraphing", "commitment", "threat-geometry", "counterplay", "difficulty-rhythm"],
+  "related": ["marked-area-strike", "lingering-hazard", "shockwave"],
+  "sources": [
+    {
+      "title": "Enemy Attacks and Telegraphing · Mike Stout",
+      "url": "https://www.gamedeveloper.com/design/enemy-attacks-and-telegraphing"
+    },
+    {
+      "title": "Boss Up: Boss Battle Design · GDC Vault",
+      "url": "https://www.gdcvault.com/play/1024921/Boss-Up-Boss-Battle-Design"
+    },
+    {
+      "title": "Dr. Kahl's Robot · Cuphead Wiki",
+      "url": "https://cuphead.wiki.gg/wiki/Dr._Kahl%27s_Robot"
+    },
+    {
+      "title": "One Step From Eden walkthrough · Neoseeker",
+      "url": "https://www.neoseeker.com/one-step-from-eden/guides/Eden"
+    },
+    {
+      "title": "The Unending Coil of Bahamut · FFXIV Wiki",
+      "url": "https://ffxiv.consolegameswiki.com/wiki/The_Unending_Coil_of_Bahamut"
+    }
+  ]
+}

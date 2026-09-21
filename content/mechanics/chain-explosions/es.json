@@ -1,0 +1,146 @@
+{
+  "title": "Explosiones en cadena",
+  "subtitle": "Compromete una ruta visible de nodos explosivos y deja que cada detonación entregue el ritmo a la siguiente.",
+  "variant": "Cinco explosiones enlazadas con un único nodo de peligro móvil",
+  "summary": "Una fila anunciada de zonas explota en orden y cada zona despejada se convierte en el siguiente apoyo seguro.",
+  "overview": "Las explosiones en cadena resuelven varias zonas discretas en un orden fijo. La regla funciona cuando toda la ruta, el orden, el radio, el intervalo y el primer encendido se leen antes del contacto, solo la explosión actual tiene colisión y cada zona despejada sigue segura el tiempo suficiente para el movimiento previsto.",
+  "learning": "Diseña la ruta anunciada, el reloj de detonación, el nodo de colisión activo, la respuesta que sigue la estela y la recuperación como una sola máquina de estados ordenada.",
+  "category": "Control de zona",
+  "readTime": "5 min",
+  "demo": {
+    "title": "Examinar explosiones en cadena",
+    "timeline": "Línea temporal del ataque",
+    "step": "Fases del ataque",
+    "phaseNames": [
+      "Anunciar la cadena completa",
+      "Detonar y seguir la estela",
+      "Despejar la ruta y recuperarse"
+    ],
+    "phaseDescriptions": [
+      "Kern marca cinco círculos enlazados, su dirección, radio común, intervalo y primer encendido antes de que exista colisión.",
+      "Un nodo explota cada vez, de derecha a izquierda. Tavi espera la primera explosión y avanza por las zonas ya apagadas.",
+      "La última explosión termina, todos los nodos quedan inofensivos y Kern mantiene una recuperación legible."
+    ],
+    "boss": "Boss",
+    "player": "Player",
+    "danger": "La colisión pertenece solo al nodo explosivo visible actual",
+    "locked": "Ruta, orden, radio, intervalo y encendido están comprometidos",
+    "safe": "Cada nodo despejado permanece seguro para entrar en su estela",
+    "reducedMotion": "La reproducción automática está desactivada por la preferencia de movimiento reducido. Usa la línea temporal para revisar cada explosión y su estela segura.",
+    "diagramDescription": "Diagrama en bucle: el Boss marca cinco círculos enlazados. Explotan de uno en uno de derecha a izquierda mientras el Player avanza por los ya despejados; después el Boss se recupera."
+  },
+  "steps": [
+    {
+      "title": "¿Puede el jugador leer todo el orden antes de la primera explosión?",
+      "body": "Muestra cada centro, el radio completo, la dirección de propagación, el intervalo y el primer encendido. Números, una runa viajera o sonido escalonado pueden expresar el orden, pero todos los canales deben coincidir con la colisión."
+    },
+    {
+      "title": "¿Se mueve la colisión con la detonación visible?",
+      "body": "Controla luz, sonido, daño y detección desde un único índice de nodo activo. Un marcador futuro no debe dañar antes de tiempo y un nodo apagado no debe conservar un círculo peligroso invisible."
+    },
+    {
+      "title": "¿Es la estela un espacio de respuesta fiable?",
+      "body": "Prueba el cuerpo completo, la aceleración y la latencia entre radios vecinos. Deja separación o demora suficiente para que el verbo previsto entre en el nodo anterior antes de que la cadena lo alcance."
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "El orden se revela explosión por explosión",
+      "body": "Los marcadores tardíos convierten la lectura de ruta en sorpresas repetidas. Previsualiza la cadena completa o declara con claridad que las ramas posteriores son otra regla."
+    },
+    {
+      "title": "Varios nodos invisibles siguen dañando",
+      "body": "La superposición oculta rompe la promesa de la estela segura. Si dos explosiones se solapan a propósito, muestra ambos volúmenes y prueba el hueco con el cuerpo completo."
+    },
+    {
+      "title": "La cadena supera toda respuesta compatible",
+      "body": "Una secuencia clara aún puede ser imposible. Ajusta intervalo, separación y radio para el movimiento normal antes de crear variantes exclusivas de carrera o invulnerabilidad."
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "Guarda la cadena como nodos ordenados",
+      "body": "Asigna a cada nodo centro, radio, desfase inicial, duración activa y estado. Deriva de esa lista la ruta, explosión actual, colisión, audio y recuperación."
+    },
+    {
+      "title": "Separa el ritmo de viaje de la duración",
+      "body": "El intervalo controla el avance del peligro y la duración activa controla el solapamiento. Ajústalos por separado para acelerar sin ensanchar en secreto la huella peligrosa."
+    },
+    {
+      "title": "Prueba cada relevo",
+      "body": "Mide el paso del nodo cero al uno con tanto cuidado como el último. La cámara, el borde de arena u otra mecánica pueden invalidar un relevo seguro aislado."
+    },
+    {
+      "title": "Escala cambiando la forma de la ruta",
+      "body": "Las variantes posteriores pueden curvar, bifurcar, invertir o acelerar una cadena aprendida. Cambia una propiedad cada vez y anuncia cualquier rama antes del compromiso."
+    }
+  ],
+  "story": {
+    "title": "Qué comunica la mecánica",
+    "body": "Kern parece transferir fuerza rúnica de piedra en piedra y convierte la arena en una mecha deliberada. Tavi sobrevive leyendo esa transferencia y entrando en la estela que se enfría."
+  },
+  "adaptation": {
+    "title": "Adáptala a los verbos del jugador",
+    "body": "El movimiento básico necesita separación e intervalos generosos. Una carrera permite relevos más estrechos; bloqueo, parada o teletransporte pueden interrumpir o saltar un nodo. Aclara si afectan una explosión o toda la cadena restante."
+  },
+  "distinction": {
+    "title": "Mantén distinta la mecánica",
+    "body": "Las explosiones en cadena son zonas discretas con orden comprometido. Un golpe de área marcada resuelve una zona, una onda de choque avanza como frente continuo y una mina espera como objeto persistente. Conserva el relevo ordenado entre explosiones separadas."
+  },
+  "lensNotes": [
+    {
+      "id": "telegraphing",
+      "body": "Cada nodo, su radio, dirección, intervalo y primer encendido aparecen antes de la colisión."
+    },
+    {
+      "id": "commitment",
+      "body": "La ruta ordenada se bloquea antes de detonar y no vuelve a apuntar al jugador a mitad de cadena."
+    },
+    {
+      "id": "threat-geometry",
+      "body": "Solo el nodo actual comprueba su radio contra el cuerpo completo; los nodos terminados y futuros no dañan."
+    },
+    {
+      "id": "counterplay",
+      "body": "La estela apagada queda abierta para al menos un movimiento o defensa compatible."
+    },
+    {
+      "id": "difficulty-rhythm",
+      "body": "Cantidad, intervalo, duración, separación y solapamiento cambian la presión sin ocultar el orden."
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "Cuphead",
+      "boss": "Dr. Kahl's Robot",
+      "screenshot": "https://i.ytimg.com/vi/6anMOwVo7tc/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=6anMOwVo7tc&t=31s",
+      "body": "Las bombas voladoras de Dr. Kahl pueden chocar y producir una gran reacción en cadena. El combate muestra por qué los explosivos enlazados necesitan propiedad clara, separación legible y un momento evidente de relevo.",
+      "video": "https://www.youtube.com/watch?v=6anMOwVo7tc&t=31s",
+      "videoDurationSeconds": 137
+    },
+    {
+      "dimension": "2D",
+      "game": "One Step From Eden",
+      "boss": "Shopkeeper",
+      "screenshot": "https://i.ytimg.com/vi/YOhPQTOkOlI/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=YOhPQTOkOlI&t=80s",
+      "body": "Shopkeeper llena la cuadrícula con casillas marcadas y resuelve patrones explosivos en secuencia. La cuadrícula fija vuelve legibles el orden y los relevos seguros, aunque castiga los errores de tiempo.",
+      "video": "https://www.youtube.com/watch?v=YOhPQTOkOlI&t=80s",
+      "videoDurationSeconds": 134
+    },
+    {
+      "dimension": "3D",
+      "game": "Final Fantasy XIV",
+      "boss": "Golden Bahamut",
+      "screenshot": "https://i.ytimg.com/vi/E0cBisPLbq8/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=E0cBisPLbq8&t=982s",
+      "body": "Exaflare de Golden Bahamut avanza mediante explosiones repetidas en el suelo. La arena tridimensional muestra el valor de comprometer las rutas pronto y permitir entrar en espacios recién resueltos.",
+      "video": "https://www.youtube.com/watch?v=E0cBisPLbq8&t=982s",
+      "videoDurationSeconds": 1179
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

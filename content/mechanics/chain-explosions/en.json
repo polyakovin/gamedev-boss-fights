@@ -1,0 +1,146 @@
+{
+  "title": "Chain explosions",
+  "subtitle": "Commit a visible route of blast nodes, then let each detonation hand its timing to the next.",
+  "variant": "Five linked blasts with one moving danger node",
+  "summary": "A pre-announced row of blast zones detonates in order, turning each cleared zone into the next safe foothold.",
+  "overview": "Chain explosions resolve several discrete blast zones in a fixed order. The rule works when the whole route, order, radius, interval, and first ignition are readable before contact, only the current blast owns collision, and each cleared zone remains safe long enough to support the intended movement.",
+  "learning": "Design the announced route, detonation clock, active collision node, wake-following response, and recovery as one ordered state machine.",
+  "category": "Area control",
+  "readTime": "5 min",
+  "demo": {
+    "title": "Inspect chain explosions",
+    "timeline": "Attack timeline",
+    "step": "Attack phases",
+    "phaseNames": [
+      "Announce the complete chain",
+      "Detonate and follow the wake",
+      "Clear the route and recover"
+    ],
+    "phaseDescriptions": [
+      "Kern marks five linked blast circles, their direction, shared radius, interval, and first ignition before any collision appears.",
+      "One node detonates at a time from right to left. Tavi waits for the first blast, then follows through zones that have already gone dark.",
+      "The last blast ends, every node becomes harmless, and Kern holds a readable recovery before the route can be reused."
+    ],
+    "boss": "Boss",
+    "player": "Player",
+    "danger": "Collision belongs only to the currently visible blast node",
+    "locked": "Route, order, radius, interval, and ignition time are committed",
+    "safe": "Every cleared node stays safe long enough to enter its wake",
+    "reducedMotion": "Autoplay is disabled by reduced-motion settings. Use the timeline to inspect each blast and safe wake.",
+    "diagramDescription": "A looping diagram: the boss marks five linked circles. They explode one at a time from right to left while the player advances through circles that have already cleared, then the boss recovers."
+  },
+  "steps": [
+    {
+      "title": "Can the player read the whole order before the first blast?",
+      "body": "Show every center, full radius, propagation direction, interval, and first ignition. Numbering, a traveling rune, or staged audio can express order, but all channels must agree with the collision schedule."
+    },
+    {
+      "title": "Does collision move with the visible detonation?",
+      "body": "Drive light, sound, damage, and hit testing from one active-node index. An upcoming marker must not hurt early, and a dark completed node must not retain an invisible damaging circle."
+    },
+    {
+      "title": "Is the wake a reliable response space?",
+      "body": "Test the player’s full body, acceleration, and input latency between adjacent radii. Keep enough separation or delay for the intended movement verb to enter the previous node before the chain catches it."
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "The order is revealed one explosion at a time",
+      "body": "Late markers turn a route-reading problem into repeated surprise reactions. Preview the complete chain or clearly declare that later branches are a different mechanic."
+    },
+    {
+      "title": "Several invisible nodes remain dangerous",
+      "body": "Hidden overlap makes the safe wake dishonest. If two blasts intentionally overlap, show both active volumes and test the resulting gap with the player’s full body."
+    },
+    {
+      "title": "The chain outruns every supported response",
+      "body": "A visually clear sequence can still be impossible. Tune interval, spacing, and radius against ordinary movement before offering dash-only or invulnerability-based variants."
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "Store the chain as ordered nodes",
+      "body": "Give each node a center, radius, start offset, active duration, and completion state. Derive the preview path, current blast, collision, audio, and recovery from that single list."
+    },
+    {
+      "title": "Separate travel rhythm from blast duration",
+      "body": "The interval controls how quickly danger advances; active duration controls overlap. Tune them independently so cadence can accelerate without silently widening the dangerous footprint."
+    },
+    {
+      "title": "Test every handoff",
+      "body": "Measure the route from node zero to one as carefully as the final transition. Camera framing, arena edges, or another mechanic may invalidate a handoff that is safe in isolation."
+    },
+    {
+      "title": "Escalate by reshaping the route",
+      "body": "Later variants can bend, fork, reverse, or accelerate a learned chain. Change one property at a time and announce any branch before the player commits to following the wake."
+    }
+  ],
+  "story": {
+    "title": "What the mechanic communicates",
+    "body": "Kern appears to pass runic force from stone to stone, making the arena behave like a deliberate fuse. Tavi survives by reading that transfer and stepping into the cooling wake."
+  },
+  "adaptation": {
+    "title": "Adapt it to the player verbs",
+    "body": "Basic movement needs generous spacing and intervals. A dash permits tighter handoffs, while block, parry, or teleport can interrupt or skip a node; state whether that response affects one blast or the remaining chain."
+  },
+  "distinction": {
+    "title": "Keep the mechanic distinct",
+    "body": "Chain explosions are discrete zones with a committed order. A marked-area strike resolves one zone, a shockwave moves as one continuous front, and a mine waits as a persistent triggerable object. Preserve the ordered handoff between separate blasts."
+  },
+  "lensNotes": [
+    {
+      "id": "telegraphing",
+      "body": "Every node, its radius, propagation direction, interval, and first ignition appear before collision."
+    },
+    {
+      "id": "commitment",
+      "body": "The ordered route locks before detonation and does not retarget around the player mid-chain."
+    },
+    {
+      "id": "threat-geometry",
+      "body": "Only the current node tests its radius against the player’s full body; completed and upcoming nodes are non-damaging."
+    },
+    {
+      "id": "counterplay",
+      "body": "The extinguished wake remains open long enough for at least one supported movement or defensive verb."
+    },
+    {
+      "id": "difficulty-rhythm",
+      "body": "Node count, interval, active duration, spacing, and overlap change pressure without hiding the order."
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "Cuphead",
+      "boss": "Dr. Kahl's Robot",
+      "screenshot": "https://i.ytimg.com/vi/6anMOwVo7tc/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=6anMOwVo7tc&t=31s",
+      "body": "Dr. Kahl's flying bombs can collide and produce a large chain-reaction blast. The encounter shows why linked explosives need strong ownership, readable spacing, and an obvious moment when one blast causes the next.",
+      "video": "https://www.youtube.com/watch?v=6anMOwVo7tc&t=31s",
+      "videoDurationSeconds": 137
+    },
+    {
+      "dimension": "2D",
+      "game": "One Step From Eden",
+      "boss": "Shopkeeper",
+      "screenshot": "https://i.ytimg.com/vi/YOhPQTOkOlI/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=YOhPQTOkOlI&t=80s",
+      "body": "Shopkeeper fills the combat grid with marked cells and resolves explosive patterns in sequence. The fixed grid makes order and safe handoffs legible, while small timing errors remain costly.",
+      "video": "https://www.youtube.com/watch?v=YOhPQTOkOlI&t=80s",
+      "videoDurationSeconds": 134
+    },
+    {
+      "dimension": "3D",
+      "game": "Final Fantasy XIV",
+      "boss": "Golden Bahamut",
+      "screenshot": "https://i.ytimg.com/vi/E0cBisPLbq8/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=E0cBisPLbq8&t=982s",
+      "body": "Golden Bahamut's Exaflare advances through repeated ground explosions. The three-dimensional arena demonstrates the value of committing propagation lanes early and letting players move into spaces that have just resolved.",
+      "video": "https://www.youtube.com/watch?v=E0cBisPLbq8&t=982s",
+      "videoDurationSeconds": 1179
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

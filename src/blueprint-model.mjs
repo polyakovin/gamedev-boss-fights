@@ -70,6 +70,20 @@ const SPECS = {
     beamStart: [150, 340],
     beamEnd: [500, 700],
   },
+  'chain-explosions': {
+    mode: 'chain-explosions',
+    boss: [280, 270],
+    player: [500, 800],
+    target: [185, 560],
+    blastRadius: 58,
+    blastCenters: [
+      [455, 650],
+      [365, 560],
+      [275, 650],
+      [185, 560],
+      [95, 650],
+    ],
+  },
   'wide-swing': { mode: 'arc', boss: [280, 310], player: [410, 470], target: [470, 650] },
   lunge: { mode: 'lunge', boss: [170, 290], player: [390, 590], target: [470, 660] },
   grab: { mode: 'grab', boss: [280, 300], player: [390, 485], target: [470, 610] },
@@ -202,6 +216,15 @@ const PULSE_BEAM_WINDOWS = Object.freeze([
 ]);
 const pulseBeamIndex = (action) =>
   PULSE_BEAM_WINDOWS.findIndex(([start, end]) => action >= start && action <= end);
+const CHAIN_EXPLOSION_WINDOWS = Object.freeze([
+  [0.04, 0.18],
+  [0.22, 0.36],
+  [0.4, 0.54],
+  [0.58, 0.72],
+  [0.76, 0.9],
+]);
+const chainExplosionIndex = (action) =>
+  CHAIN_EXPLOSION_WINDOWS.findIndex(([start, end]) => action >= start && action <= end);
 const localTime = (time) => {
   const remainder = (Number.isFinite(time) ? time : 0) % BLUEPRINT_DURATION;
   return remainder < 0 ? remainder + BLUEPRINT_DURATION : remainder;
@@ -315,6 +338,15 @@ const quadraticPoint = (start, control, end, amount) => {
   return {
     x: inverse * inverse * start.x + 2 * inverse * t * control.x + t * t * end.x,
     y: inverse * inverse * start.y + 2 * inverse * t * control.y + t * t * end.y,
+  };
+};
+const pointAlongPolyline = (points, amount) => {
+  const progress = clamp(amount) * (points.length - 1);
+  const index = Math.min(points.length - 2, Math.floor(progress));
+  const localProgress = progress - index;
+  return {
+    x: mix(points[index].x, points[index + 1].x, localProgress),
+    y: mix(points[index].y, points[index + 1].y, localProgress),
   };
 };
 const projectileLines = (boss, count, spread, length, opacity, offset = 0) =>
@@ -564,6 +596,54 @@ function primitivesFor(spec, frame) {
           current ? 'signal' : elapsed ? 'safe' : 'accent',
           5,
           current ? 0.42 : elapsed ? 0.18 : 0.06,
+        );
+      }),
+    ];
+  }
+  if (mode === 'chain-explosions') {
+    const centers = spec.blastCenters.map(point);
+    const activeIndex = phase === 1 ? chainExplosionIndex(action) : -1;
+    const pathOpacity =
+      phase === 0 ? 0.34 + prepare * 0.46 : phase === 1 ? 0.3 : 0.3 * (1 - recover);
+    const chainPath = centers
+      .map((center, index) => `${index ? 'L' : 'M'} ${center.x} ${center.y}`)
+      .join(' ');
+    return [
+      path(chainPath, pathOpacity, 'accent', 7, 0, '11 11'),
+      ...centers.map((center, index) => {
+        const elapsed = phase === 1 && action > CHAIN_EXPLOSION_WINDOWS[index][1];
+        const current = index === activeIndex;
+        const opacity =
+          phase === 0
+            ? 0.4 + prepare * 0.42
+            : phase === 1
+              ? current
+                ? 1
+                : elapsed
+                  ? 0.42
+                  : 0.58
+              : 0.34 * (1 - recover);
+        return circle(
+          center.x,
+          center.y,
+          current ? spec.blastRadius + 12 * pulse(action * 7) : spec.blastRadius,
+          opacity,
+          current ? 'signal' : elapsed ? 'safe' : 'accent',
+          current ? 16 : 6,
+          current ? 0.34 : elapsed ? 0.08 : 0.04,
+        );
+      }),
+      ...centers.map((center, index) => {
+        const elapsed = phase === 1 && action > CHAIN_EXPLOSION_WINDOWS[index][1];
+        const current = index === activeIndex;
+        return circle(
+          center.x,
+          center.y,
+          current ? 17 : 11,
+          phase === 2 ? 0.24 * (1 - recover) : current ? 1 : 0.66,
+          current ? 'signal' : elapsed ? 'safe' : 'accent',
+          current ? 7 : 4,
+          current ? 0.58 : 0.16,
         );
       }),
     ];
@@ -886,6 +966,12 @@ function pointClearsThreat(spec, frame, value, radius = BLUEPRINT_PLAYER_RADIUS)
       );
   if (mode === 'pulse-beam')
     return distanceToSegment(value, point(spec.beamStart), point(spec.beamEnd)) > 17 + radius;
+  if (mode === 'chain-explosions') {
+    const activeIndex = frame.phase === 1 ? chainExplosionIndex(frame.action) : -1;
+    if (activeIndex < 0) return true;
+    const blast = point(spec.blastCenters[activeIndex]);
+    return Math.hypot(value.x - blast.x, value.y - blast.y) > spec.blastRadius + radius;
+  }
   if (mode === 'spiral')
     return (
       distanceFromBoss > 52 + radius &&
@@ -1043,6 +1129,8 @@ export function blueprintFrame(id, time) {
     responseProgress = phase === 0 ? 0 : phase === 1 ? smooth((action - 0.1) / 0.55) : 1;
   else if (spec.mode === 'pulse-beam')
     responseProgress = phase === 0 ? 0 : phase === 1 ? smooth((action - 0.25) / 0.2) : 1;
+  else if (spec.mode === 'chain-explosions')
+    responseProgress = phase === 0 ? 0 : phase === 1 ? smooth((action - 0.2) / 0.7) : 1;
   else if (spec.mode === 'knockback')
     responseProgress = phase === 0 ? 0 : phase === 1 ? smooth(action) : 1;
   else if (spec.mode === 'target-lock')
@@ -1083,6 +1171,17 @@ export function blueprintFrame(id, time) {
         y: mix(finalPosition.y, startPlayer.y, returnProgress),
       };
     }
+  } else if (spec.mode === 'chain-explosions') {
+    const wake = [startPlayer, ...spec.blastCenters.slice(0, -1).map(point)];
+    const finalPosition = wake.at(-1);
+    if (phase === 0) player = startPlayer;
+    else if (phase === 1) player = pointAlongPolyline(wake, responseProgress);
+    else {
+      player = {
+        x: mix(finalPosition.x, startPlayer.x, returnProgress),
+        y: mix(finalPosition.y, startPlayer.y, returnProgress),
+      };
+    }
   }
   const route = Math.hypot(targetPlayer.x - startPlayer.x, targetPlayer.y - startPlayer.y);
   const stride = pulse(responseProgress) + pulse(returnProgress) * 0.8;
@@ -1093,7 +1192,9 @@ export function blueprintFrame(id, time) {
       ? phase === 1 && action >= 0.32 && action <= 0.72
       : spec.mode === 'pulse-beam'
         ? phase === 1 && pulseBeamIndex(action) >= 0
-        : phase === 1;
+        : spec.mode === 'chain-explosions'
+          ? phase === 1 && chainExplosionIndex(action) >= 0
+          : phase === 1;
   const frame = {
     id,
     mode: spec.mode,
@@ -1139,7 +1240,9 @@ export function blueprintFrame(id, time) {
           ? pulse(clamp((action - 0.42) / 0.22))
           : spec.mode === 'shockwave' || spec.mode === 'knockback'
             ? pulse(action * 3)
-            : 0,
+            : spec.mode === 'chain-explosions'
+              ? pulse((action * 5) % 1)
+              : 0,
     }),
     playerMotion: motion({
       gait: (route * responseProgress + route * returnProgress) / 20,

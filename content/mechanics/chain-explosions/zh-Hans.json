@@ -1,0 +1,142 @@
+{
+  "title": "连锁爆炸",
+  "subtitle": "先锁定一条可见的爆炸节点路线，再让每次引爆把节奏交给下一个节点。",
+  "variant": "五个相连爆点，危险节点依次移动",
+  "summary": "预先公布的一列爆区按顺序引爆，每个已清空的区域都会成为下一处安全落脚点。",
+  "overview": "连锁爆炸会按固定顺序结算多个离散爆区。只有在接触前能读清整条路线、顺序、半径、间隔与首次点火，碰撞只属于当前爆点，而且每个清空区域都能安全保持到足以完成预期移动时，这条规则才成立。",
+  "learning": "把已公布路线、引爆时钟、当前碰撞节点、沿余波移动的应对和恢复设计成同一个有序状态机。",
+  "category": "区域控制",
+  "readTime": "5 分钟",
+  "demo": {
+    "title": "检查连锁爆炸",
+    "timeline": "攻击时间轴",
+    "step": "攻击阶段",
+    "phaseNames": ["公布完整爆炸链", "依次引爆并跟随余波", "清空路线并恢复"],
+    "phaseDescriptions": [
+      "Kern 在产生碰撞前标出五个相连圆区、传播方向、共同半径、间隔和首次点火。",
+      "节点从右向左逐个引爆。Tavi 等过第一次爆炸，再沿已经熄灭的区域前进。",
+      "最后一次爆炸结束，所有节点失去伤害，Kern 留出清晰的恢复时间。"
+    ],
+    "boss": "Boss",
+    "player": "Player",
+    "danger": "只有当前可见的爆点拥有碰撞",
+    "locked": "路线、顺序、半径、间隔和点火时刻均已锁定",
+    "safe": "每个清空节点都会保持足够久的安全状态",
+    "reducedMotion": "减少动态效果设置已关闭自动播放。请用时间轴检查每次爆炸和安全余波。",
+    "diagramDescription": "循环示意：Boss 标出五个相连圆区，它们从右向左逐个爆炸；Player 沿已经清空的圆区前进，随后 Boss 进入恢复。"
+  },
+  "steps": [
+    {
+      "title": "玩家能在第一次爆炸前读懂完整顺序吗？",
+      "body": "显示每个中心、完整半径、传播方向、间隔与首次点火。编号、移动符文或分段声音都能表达顺序，但所有反馈必须与碰撞时间表一致。"
+    },
+    {
+      "title": "碰撞是否跟随可见的引爆节点移动？",
+      "body": "用同一个当前节点索引驱动光效、声音、伤害和命中检测。未来标记不能提前伤害，已经熄灭的节点也不能保留隐形危险圆。"
+    },
+    {
+      "title": "熄灭后的路径是可靠的应对空间吗？",
+      "body": "用玩家完整体积、加速和输入延迟测试相邻半径之间的移动。留出足够间距或时间，让预期动作能在爆炸链追上前进入上一个节点。"
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "顺序随每次爆炸才逐步揭示",
+      "body": "过晚的标记会把路线阅读变成连续的意外反应。应预览完整爆炸链，或明确说明后续分支属于另一条规则。"
+    },
+    {
+      "title": "多个不可见节点仍有伤害",
+      "body": "隐藏重叠会破坏安全余波的承诺。若两次爆炸有意重叠，就同时显示两个活动体积，并用玩家完整身体测试间隙。"
+    },
+    {
+      "title": "爆炸链快过所有支持的应对",
+      "body": "画面清楚的序列仍可能不可完成。先按普通移动调整间隔、间距和半径，再制作只允许冲刺或无敌的变体。"
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "把爆炸链存为有序节点",
+      "body": "为每个节点记录中心、半径、开始偏移、活动时长和完成状态，再从这份列表生成预览路线、当前爆点、碰撞、声音与恢复。"
+    },
+    {
+      "title": "分离传播节奏和爆炸时长",
+      "body": "间隔决定危险推进速度，活动时长决定重叠程度。分别调节二者，避免加速节奏时悄悄扩大危险范围。"
+    },
+    {
+      "title": "测试每一次交接",
+      "body": "从零号节点到一号节点的路线也要像最终过渡一样测量。镜头、场地边缘或另一机制可能让单独安全的交接失效。"
+    },
+    {
+      "title": "通过改变路线形状升级",
+      "body": "后期变体可以弯曲、分叉、反转或加速已学会的爆炸链。一次只改一个属性，并在玩家跟随余波前公布分支。"
+    }
+  ],
+  "story": {
+    "title": "机制传达的感觉",
+    "body": "Kern 像是把符文力量从一块石头传向下一块，让场地变成一根精心布置的引线。Tavi 读懂传递，并踏入正在冷却的余波。"
+  },
+  "adaptation": {
+    "title": "适配玩家动作",
+    "body": "普通移动需要宽裕的间距和间隔。冲刺允许更紧的交接，格挡、招架或传送则可中断或跳过节点；要说明这种应对影响一次爆炸还是剩余整条链。"
+  },
+  "distinction": {
+    "title": "保持机制区别",
+    "body": "连锁爆炸是有固定顺序的离散区域。标记区域攻击只结算一个区域，冲击波作为连续前沿移动，而地雷是持续等待触发的物体。应保留独立爆点之间的有序交接。"
+  },
+  "lensNotes": [
+    {
+      "id": "telegraphing",
+      "body": "每个节点、半径、传播方向、间隔和首次点火都在碰撞前出现。"
+    },
+    {
+      "id": "commitment",
+      "body": "有序路线会在引爆前锁定，不会在连锁过程中重新追踪玩家。"
+    },
+    {
+      "id": "threat-geometry",
+      "body": "只有当前节点用自身半径检测玩家完整身体；已完成和未开始节点都不造成伤害。"
+    },
+    {
+      "id": "counterplay",
+      "body": "熄灭余波保持开放，至少支持一种移动或防御动作。"
+    },
+    {
+      "id": "difficulty-rhythm",
+      "body": "节点数量、间隔、活动时长、间距和重叠能改变压力而不隐藏顺序。"
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "Cuphead",
+      "boss": "Dr. Kahl's Robot",
+      "screenshot": "https://i.ytimg.com/vi/6anMOwVo7tc/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=6anMOwVo7tc&t=31s",
+      "body": "Dr. Kahl 的飞行炸弹相撞时会产生大型连锁爆炸。这个战斗说明，相连爆炸物需要明确归属、可读间距，以及一次爆炸引发下一次的清楚时刻。",
+      "video": "https://www.youtube.com/watch?v=6anMOwVo7tc&t=31s",
+      "videoDurationSeconds": 137
+    },
+    {
+      "dimension": "2D",
+      "game": "One Step From Eden",
+      "boss": "Shopkeeper",
+      "screenshot": "https://i.ytimg.com/vi/YOhPQTOkOlI/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=YOhPQTOkOlI&t=80s",
+      "body": "Shopkeeper 用标记格填满战斗网格，再按顺序结算爆炸图案。固定网格让顺序与安全交接清晰可读，同时仍会严厉惩罚时间误差。",
+      "video": "https://www.youtube.com/watch?v=YOhPQTOkOlI&t=80s",
+      "videoDurationSeconds": 134
+    },
+    {
+      "dimension": "3D",
+      "game": "Final Fantasy XIV",
+      "boss": "Golden Bahamut",
+      "screenshot": "https://i.ytimg.com/vi/E0cBisPLbq8/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=E0cBisPLbq8&t=982s",
+      "body": "Golden Bahamut 的 Exaflare 通过连续地面爆炸向前推进。三维场地体现了提前锁定传播路线，并让玩家进入刚刚结算空间的价值。",
+      "video": "https://www.youtube.com/watch?v=E0cBisPLbq8&t=982s",
+      "videoDurationSeconds": 1179
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}
