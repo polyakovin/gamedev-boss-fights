@@ -1,4 +1,20 @@
 {
+  "categories": {
+    "Body and melee": "Тело и ближний бой",
+    "Projectiles": "Снаряды",
+    "Beams": "Лучи",
+    "Zones and traps": "Зоны и ловушки",
+    "Arena": "Арена",
+    "Additional targets": "Дополнительные цели",
+    "Targeting and rhythm": "Наведение и ритм",
+    "Defense": "Защита",
+    "Structure and readability": "Структура и читаемость",
+    "Space, movement, and perception": "Пространство, движение и восприятие",
+    "Encounter goals and vulnerability": "Цель боя и открытие уязвимости",
+    "States, resources, and scaling": "Состояния, ресурсы и масштабирование",
+    "Multi-boss relationships": "Связи между несколькими боссами",
+    "Cooperative coordination": "Кооперативная координация"
+  },
   "additionsHeading": "## Новые механики: 58 терминов",
   "stopHeading": "## Что не стало",
   "draftSummary": "Черновой контур механики «{title}». Правила, настройка и примеры ещё в работе.",

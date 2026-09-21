@@ -39,13 +39,15 @@ test('boss drafts keep safe local fields and published mechanic ids', () => {
       version: 2,
       name: 'Gatekeeper',
       description: 'Guards the next area.',
-      phases: [{ id: 'phase-1', name: '', goal: '' }],
-      assignments: [{ mechanicId: 'charge', phaseId: 'phase-1', combo: 'solo' }],
+      phases: [{ id: 'phase-1', name: '', goal: '', activationHealthPercent: 100 }],
+      assignments: [
+        { mechanicId: 'charge', phaseId: 'phase-1', combo: 'solo', implementation: '' },
+      ],
     },
   );
 });
 
-test('boss drafts normalize phase ids, assignments, and combinations', () => {
+test('boss drafts normalize phase ids and assignments', () => {
   assert.deepEqual(
     normalizeBossDraft(
       {
@@ -66,14 +68,61 @@ test('boss drafts normalize phase ids, assignments, and combinations', () => {
       name: '',
       description: '',
       phases: [
-        { id: 'phase-opening', name: ' Opening ', goal: 'Teach the lane.' },
-        { id: 'phase-2', name: 'Finale', goal: '' },
+        {
+          id: 'phase-opening',
+          name: ' Opening ',
+          goal: 'Teach the lane.',
+          activationHealthPercent: 100,
+        },
+        { id: 'phase-2', name: 'Finale', goal: '', activationHealthPercent: 50 },
       ],
       assignments: [
-        { mechanicId: 'charge', phaseId: 'phase-opening', combo: 'solo' },
-        { mechanicId: 'charge', phaseId: 'phase-2', combo: 'a' },
+        {
+          mechanicId: 'charge',
+          phaseId: 'phase-opening',
+          combo: 'solo',
+          implementation: '',
+        },
+        { mechanicId: 'charge', phaseId: 'phase-2', combo: 'solo', implementation: '' },
       ],
     },
+  );
+});
+
+test('phase health thresholds stay ordered and produce non-overlapping ranges', () => {
+  const draft = normalizeBossDraft(
+    {
+      phases: [
+        { id: 'phase-1', activationHealthPercent: 80 },
+        { id: 'phase-2', activationHealthPercent: 60 },
+        { id: 'phase-3', activationHealthPercent: 75 },
+      ],
+    },
+    ['charge'],
+  );
+  assert.deepEqual(
+    draft.phases.map(({ activationHealthPercent }) => activationHealthPercent),
+    [100, 60, 59],
+  );
+  const sketch = createBossSketch(
+    {
+      ...draft,
+      name: 'Gatekeeper',
+      assignments: [{ mechanicId: 'charge', phaseId: 'phase-1', combo: 'solo' }],
+    },
+    mechanics,
+    'en',
+  );
+  assert.deepEqual(
+    sketch.phases.map(({ activationHealthPercent, healthRange }) => ({
+      activationHealthPercent,
+      healthRange,
+    })),
+    [
+      { activationHealthPercent: 100, healthRange: { minPercent: 61, maxPercent: 100 } },
+      { activationHealthPercent: 60, healthRange: { minPercent: 60, maxPercent: 60 } },
+      { activationHealthPercent: 59, healthRange: { minPercent: 0, maxPercent: 59 } },
+    ],
   );
 });
 
@@ -91,11 +140,11 @@ test('a mechanic page adds to the first phase and can remove the mechanic again'
 
   const selected = setBossDraftMechanic(draft, 'charge', true);
   assert.deepEqual(selected.assignments, [
-    { mechanicId: 'teleport', phaseId: 'phase-1', combo: 'a' },
-    { mechanicId: 'charge', phaseId: 'phase-1', combo: 'solo' },
+    { mechanicId: 'teleport', phaseId: 'phase-1', combo: 'solo', implementation: '' },
+    { mechanicId: 'charge', phaseId: 'phase-1', combo: 'solo', implementation: '' },
   ]);
   assert.deepEqual(setBossDraftMechanic(selected, 'charge', false).assignments, [
-    { mechanicId: 'teleport', phaseId: 'phase-1', combo: 'a' },
+    { mechanicId: 'teleport', phaseId: 'phase-1', combo: 'solo', implementation: '' },
   ]);
 });
 
@@ -106,11 +155,18 @@ test('boss sketch exports a portable localized mechanic snapshot', () => {
         name: ' Gatekeeper ',
         description: ' Guards the next area. ',
         phases: [{ id: 'phase-1', name: 'Opening', goal: 'Teach the lane.' }],
-        assignments: [{ mechanicId: 'charge', phaseId: 'phase-1', combo: 'a' }],
+        assignments: [
+          {
+            mechanicId: 'charge',
+            phaseId: 'phase-1',
+            combo: 'a',
+            implementation: 'A two-handed gate axe.',
+          },
+        ],
       },
       mechanics,
       'en',
-      { phase: 'Phase', combos: { solo: 'Solo', a: 'Combination A' } },
+      { phase: 'Phase', combos: { solo: 'Solo' } },
     ),
     {
       format: BOSS_SKETCH_FORMAT,
@@ -124,11 +180,13 @@ test('boss sketch exports a portable localized mechanic snapshot', () => {
           id: 'phase-1',
           name: 'Opening',
           goal: 'Teach the lane.',
+          activationHealthPercent: 100,
+          healthRange: { minPercent: 0, maxPercent: 100 },
           combinations: [
             {
-              id: 'a',
-              name: 'Combination A',
-              mechanics,
+              id: 'solo',
+              name: 'Solo',
+              mechanics: [{ ...mechanics[0], implementation: 'A two-handed gate axe.' }],
             },
           ],
         },

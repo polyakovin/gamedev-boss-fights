@@ -1,4 +1,20 @@
 {
+  "categories": {
+    "Body and melee": "身体と近接攻撃",
+    "Projectiles": "飛び道具",
+    "Beams": "ビーム",
+    "Zones and traps": "エリアとトラップ",
+    "Arena": "アリーナ",
+    "Additional targets": "追加ターゲット",
+    "Targeting and rhythm": "照準とリズム",
+    "Defense": "防御",
+    "Structure and readability": "構成と読みやすさ",
+    "Space, movement, and perception": "空間・移動・知覚",
+    "Encounter goals and vulnerability": "戦闘目標と弱点の露出",
+    "States, resources, and scaling": "状態・リソース・スケーリング",
+    "Multi-boss relationships": "複数ボス間の関係",
+    "Cooperative coordination": "協力プレイの連携"
+  },
   "bossUpFramework": {
     "copy": {
       "eyebrow": "GDC 2018 をもとに再構成",

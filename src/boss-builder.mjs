@@ -1,5 +1,4 @@
 import {
-  BOSS_COMBO_IDS,
   BOSS_DRAFT_STORAGE_KEY,
   BOSS_PHASE_LIMIT,
   bossSketchFilename,
@@ -79,12 +78,7 @@ if (builder) {
   let activePhaseId = draft.phases[0].id;
 
   const phaseLabel = (phase, index) => phase.name.trim() || `${config.messages.phase} ${index + 1}`;
-  const comboLabels = {
-    solo: config.messages.comboSolo,
-    a: config.messages.comboA,
-    b: config.messages.comboB,
-    c: config.messages.comboC,
-  };
+  const comboLabels = { solo: config.messages.comboSolo };
 
   const updateMeta = () => {
     selected.textContent = `${config.messages.selected}: ${draft.assignments.length}`;
@@ -120,10 +114,8 @@ if (builder) {
     });
   };
 
-  const updatePhaseSelectors = () => {
+  const updatePhaseSelector = () => {
     fillPhaseSelect(activePhase, activePhaseId);
-    for (const select of phases.querySelectorAll('[data-assignment-phase]'))
-      fillPhaseSelect(select, select.dataset.selectedPhase);
   };
 
   const makeButton = (label, dataName, value) => {
@@ -139,9 +131,14 @@ if (builder) {
     fillPhaseSelect(activePhase, activePhaseId);
     phases.replaceChildren();
     draft.phases.forEach((phase, index) => {
+      const isActive = phase.id === activePhaseId;
       const card = document.createElement('article');
-      card.className = `boss-builder-phase${phase.id === activePhaseId ? ' boss-builder-phase--active' : ''}`;
+      card.className = `boss-builder-phase${isActive ? ' boss-builder-phase--active' : ''}`;
       card.dataset.phaseId = phase.id;
+      card.tabIndex = 0;
+      card.setAttribute('role', 'group');
+      card.setAttribute('aria-label', `${config.messages.phase}: ${phaseLabel(phase, index)}`);
+      if (isActive) card.setAttribute('aria-current', 'true');
 
       const header = document.createElement('header');
       const number = document.createElement('button');
@@ -166,6 +163,35 @@ if (builder) {
         header.append(remove);
       }
 
+      const nextPhase = draft.phases[index + 1];
+      const previousPhase = draft.phases[index - 1];
+      const minHealthPercent = nextPhase ? nextPhase.activationHealthPercent + 1 : 0;
+      const maxHealthPercent = previousPhase ? previousPhase.activationHealthPercent - 1 : 100;
+      const healthField = document.createElement('label');
+      healthField.className = 'boss-builder-phase__health';
+      const healthLabel = document.createElement('span');
+      healthLabel.textContent = config.messages.phaseHealth;
+      const healthControl = document.createElement('span');
+      healthControl.className = 'boss-builder-phase__health-control';
+      const healthInput = document.createElement('input');
+      healthInput.type = 'number';
+      healthInput.inputMode = 'numeric';
+      healthInput.min = String(minHealthPercent);
+      healthInput.max = String(maxHealthPercent);
+      healthInput.step = '1';
+      healthInput.value = String(phase.activationHealthPercent);
+      healthInput.disabled = index === 0;
+      healthInput.dataset.phaseHealth = phase.id;
+      const healthSuffix = document.createElement('span');
+      healthSuffix.textContent = '%';
+      healthSuffix.setAttribute('aria-hidden', 'true');
+      healthControl.append(healthInput, healthSuffix);
+      const healthRange = document.createElement('small');
+      healthRange.textContent = config.messages.phaseHealthRange
+        .replace('{max}', String(phase.activationHealthPercent))
+        .replace('{min}', String(minHealthPercent));
+      healthField.append(healthLabel, healthControl, healthRange);
+
       const goal = document.createElement('textarea');
       goal.rows = 2;
       goal.maxLength = 280;
@@ -187,35 +213,26 @@ if (builder) {
         const row = document.createElement('div');
         row.className = 'boss-builder-assignment';
         row.dataset.assignment = assignment.mechanicId;
+        const assignmentHeader = document.createElement('div');
+        assignmentHeader.className = 'boss-builder-assignment__header';
         const title = document.createElement('strong');
         title.textContent = mechanic.title;
-        const controls = document.createElement('div');
-        controls.className = 'boss-builder-assignment__controls';
-
-        const phaseSelect = document.createElement('select');
-        phaseSelect.dataset.assignmentPhase = assignment.mechanicId;
-        phaseSelect.dataset.selectedPhase = assignment.phaseId;
-        phaseSelect.setAttribute('aria-label', config.messages.phase);
-        fillPhaseSelect(phaseSelect, assignment.phaseId);
-
-        const comboSelect = document.createElement('select');
-        comboSelect.dataset.assignmentCombo = assignment.mechanicId;
-        comboSelect.setAttribute('aria-label', config.messages.combo);
-        for (const combo of BOSS_COMBO_IDS) {
-          const option = document.createElement('option');
-          option.value = combo;
-          option.textContent = comboLabels[combo];
-          option.selected = combo === assignment.combo;
-          comboSelect.append(option);
-        }
         const removeMechanic = makeButton('×', 'removeAssignment', assignment.mechanicId);
         removeMechanic.dataset.assignmentPhaseId = assignment.phaseId;
         removeMechanic.setAttribute('aria-label', config.messages.removeMechanic);
-        controls.append(phaseSelect, comboSelect, removeMechanic);
-        row.append(title, controls);
+        assignmentHeader.append(title, removeMechanic);
+        const implementation = document.createElement('textarea');
+        implementation.rows = 2;
+        implementation.maxLength = 500;
+        implementation.placeholder = config.messages.mechanicImplementationPlaceholder;
+        implementation.value = assignment.implementation;
+        implementation.dataset.assignmentImplementation = assignment.mechanicId;
+        implementation.dataset.assignmentPhaseId = assignment.phaseId;
+        implementation.setAttribute('aria-label', config.messages.mechanicImplementation);
+        row.append(assignmentHeader, implementation);
         assignmentList.append(row);
       }
-      card.append(header, goal, assignmentList);
+      card.append(header, healthField, goal, assignmentList);
       phases.append(card);
     });
   };
@@ -320,6 +337,21 @@ if (builder) {
     updateMeta();
   };
 
+  const activatePhase = (phaseId) => {
+    if (phaseId === activePhaseId || !draft.phases.some(({ id }) => id === phaseId)) return;
+    activePhaseId = phaseId;
+    fillPhaseSelect(activePhase, activePhaseId);
+    for (const card of phases.querySelectorAll('[data-phase-id]')) {
+      const isActive = card.dataset.phaseId === activePhaseId;
+      card.classList.toggle('boss-builder-phase--active', isActive);
+      if (isActive) card.setAttribute('aria-current', 'true');
+      else card.removeAttribute('aria-current');
+    }
+    syncMechanicInputs();
+    renderRelations();
+    updateMeta();
+  };
+
   const applyFilters = () => {
     const query = mechanicSearch.value.trim().toLocaleLowerCase(config.locale);
     const activeFilters = Object.fromEntries(
@@ -387,7 +419,13 @@ if (builder) {
     if (draft.phases.length >= BOSS_PHASE_LIMIT) return;
     let number = draft.phases.length + 1;
     while (draft.phases.some(({ id }) => id === `phase-${number}`)) number += 1;
-    const phase = { id: `phase-${number}`, name: '', goal: '' };
+    const previousHealthPercent = draft.phases.at(-1).activationHealthPercent;
+    const phase = {
+      id: `phase-${number}`,
+      name: '',
+      goal: '',
+      activationHealthPercent: Math.floor(previousHealthPercent / 2),
+    };
     draft.phases.push(phase);
     activePhaseId = phase.id;
     storeDraft();
@@ -395,6 +433,18 @@ if (builder) {
   });
 
   phases.addEventListener('input', (event) => {
+    const implementation = event.target.closest('[data-assignment-implementation]');
+    if (implementation) {
+      const assignment = draft.assignments.find(
+        ({ mechanicId, phaseId }) =>
+          mechanicId === implementation.dataset.assignmentImplementation &&
+          phaseId === implementation.dataset.assignmentPhaseId,
+      );
+      if (!assignment) return;
+      assignment.implementation = implementation.value;
+      storeDraft();
+      return;
+    }
     const phase = draft.phases.find(
       ({ id }) => id === (event.target.dataset.phaseName || event.target.dataset.phaseGoal),
     );
@@ -402,27 +452,22 @@ if (builder) {
     if (event.target.matches('[data-phase-name]')) phase.name = event.target.value;
     if (event.target.matches('[data-phase-goal]')) phase.goal = event.target.value;
     storeDraft();
-    updatePhaseSelectors();
+    updatePhaseSelector();
   });
 
   phases.addEventListener('change', (event) => {
-    const assignment = draft.assignments.find(
-      ({ mechanicId }) =>
-        mechanicId ===
-        (event.target.dataset.assignmentPhase || event.target.dataset.assignmentCombo),
-    );
-    if (!assignment) return;
-    if (event.target.matches('[data-assignment-phase]')) assignment.phaseId = event.target.value;
-    if (event.target.matches('[data-assignment-combo]')) assignment.combo = event.target.value;
-    storeDraft();
-    renderDraft();
+    const healthPhase = draft.phases.find(({ id }) => id === event.target.dataset.phaseHealth);
+    if (healthPhase) {
+      healthPhase.activationHealthPercent = event.target.valueAsNumber;
+      storeDraft();
+      renderDraft();
+    }
   });
 
   phases.addEventListener('click', (event) => {
     const activate = event.target.closest('[data-activate-phase]');
     if (activate) {
-      activePhaseId = activate.dataset.activatePhase;
-      renderDraft();
+      activatePhase(activate.dataset.activatePhase);
       return;
     }
     const removeAssignment = event.target.closest('[data-remove-assignment]');
@@ -448,7 +493,17 @@ if (builder) {
       if (activePhaseId === removePhase.dataset.removePhase) activePhaseId = fallback.id;
       storeDraft();
       renderDraft();
+      return;
     }
+    const card = event.target.closest('[data-phase-id]');
+    if (card) activatePhase(card.dataset.phaseId);
+  });
+
+  phases.addEventListener('keydown', (event) => {
+    const card = event.target.closest('[data-phase-id]');
+    if (event.target !== card || (event.key !== 'Enter' && event.key !== ' ')) return;
+    event.preventDefault();
+    activatePhase(card.dataset.phaseId);
   });
 
   suggestionList.addEventListener('click', (event) => {
@@ -479,7 +534,7 @@ if (builder) {
         assignments: randomMechanics.map((mechanic, index) => ({
           mechanicId: mechanic.id,
           phaseId: index < secondPhaseStart ? 'phase-1' : 'phase-2',
-          combo: index === 0 ? 'solo' : 'a',
+          combo: 'solo',
         })),
       },
       mechanicIds,

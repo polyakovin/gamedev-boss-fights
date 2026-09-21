@@ -17,7 +17,12 @@ test('mechanic pages add to the current boss draft', async ({ page }) => {
     await page.evaluate(
       () => JSON.parse(localStorage.getItem('boss-fight-atlas-boss-builder')).assignments,
     ),
-  ).toContainEqual({ mechanicId: 'charge', phaseId: 'phase-1', combo: 'solo' });
+  ).toContainEqual({
+    mechanicId: 'charge',
+    phaseId: 'phase-1',
+    combo: 'solo',
+    implementation: '',
+  });
 
   await page.reload();
   await expect(toggle).toBeChecked();
@@ -44,5 +49,10 @@ test('WIP mechanic pages expose the same current-boss control', async ({ page })
     await page.evaluate(
       () => JSON.parse(localStorage.getItem('boss-fight-atlas-boss-builder')).assignments,
     ),
-  ).toContainEqual({ mechanicId: 'boundary-attack', phaseId: 'phase-1', combo: 'solo' });
+  ).toContainEqual({
+    mechanicId: 'boundary-attack',
+    phaseId: 'phase-1',
+    combo: 'solo',
+    implementation: '',
+  });
 });

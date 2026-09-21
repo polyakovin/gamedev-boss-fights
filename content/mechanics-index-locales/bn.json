@@ -1,4 +1,20 @@
 {
+  "categories": {
+    "Body and melee": "দেহ ও কাছাকাছি লড়াই",
+    "Projectiles": "প্রক্ষেপণাস্ত্র",
+    "Beams": "রশ্মি",
+    "Zones and traps": "এলাকা ও ফাঁদ",
+    "Arena": "যুদ্ধক্ষেত্র",
+    "Additional targets": "অতিরিক্ত লক্ষ্য",
+    "Targeting and rhythm": "লক্ষ্য নির্ধারণ ও ছন্দ",
+    "Defense": "প্রতিরক্ষা",
+    "Structure and readability": "কাঠামো ও পাঠযোগ্যতা",
+    "Space, movement, and perception": "স্থান, চলাচল ও উপলব্ধি",
+    "Encounter goals and vulnerability": "এনকাউন্টারের লক্ষ্য ও দুর্বলতা",
+    "States, resources, and scaling": "অবস্থা, সম্পদ ও স্কেলিং",
+    "Multi-boss relationships": "একাধিক বসের পারস্পরিক সম্পর্ক",
+    "Cooperative coordination": "সমবায় সমন্বয়"
+  },
   "bossUpFramework": {
     "copy": {
       "eyebrow": "GDC 2018 থেকে রূপান্তরিত",

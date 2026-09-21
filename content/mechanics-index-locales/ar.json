@@ -1,4 +1,20 @@
 {
+  "categories": {
+    "Body and melee": "الجسد والقتال القريب",
+    "Projectiles": "المقذوفات",
+    "Beams": "الأشعة",
+    "Zones and traps": "المناطق والفخاخ",
+    "Arena": "الحلبة",
+    "Additional targets": "أهداف إضافية",
+    "Targeting and rhythm": "الاستهداف والإيقاع",
+    "Defense": "الدفاع",
+    "Structure and readability": "البنية والوضوح",
+    "Space, movement, and perception": "المساحة والحركة والإدراك",
+    "Encounter goals and vulnerability": "أهداف المواجهة ونقاط الضعف",
+    "States, resources, and scaling": "الحالات والموارد والتدرّج",
+    "Multi-boss relationships": "العلاقات بين عدة زعماء",
+    "Cooperative coordination": "التنسيق التعاوني"
+  },
   "bossUpFramework": {
     "copy": {
       "eyebrow": "مقتبس من GDC 2018",

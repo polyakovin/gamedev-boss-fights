@@ -1,4 +1,20 @@
 {
+  "categories": {
+    "Body and melee": "शरीर और निकट युद्ध",
+    "Projectiles": "प्रक्षेप्य",
+    "Beams": "किरणें",
+    "Zones and traps": "क्षेत्र और जाल",
+    "Arena": "अखाड़ा",
+    "Additional targets": "अतिरिक्त लक्ष्य",
+    "Targeting and rhythm": "निशाना और लय",
+    "Defense": "रक्षा",
+    "Structure and readability": "संरचना और पठनीयता",
+    "Space, movement, and perception": "स्थान, गति और अनुभूति",
+    "Encounter goals and vulnerability": "मुठभेड़ के लक्ष्य और कमज़ोरी",
+    "States, resources, and scaling": "अवस्थाएँ, संसाधन और विस्तार",
+    "Multi-boss relationships": "कई बॉस के बीच संबंध",
+    "Cooperative coordination": "सहकारी समन्वय"
+  },
   "bossUpFramework": {
     "copy": {
       "eyebrow": "GDC 2018 से रूपांतरित",

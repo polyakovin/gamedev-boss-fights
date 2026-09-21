@@ -9,6 +9,27 @@ import {
 const registry = JSON.parse(
   await fs.readFile(new URL('../../locales/registry.json', import.meta.url)),
 );
+const mechanicsIndex = JSON.parse(
+  await fs.readFile(new URL('../../content/mechanics-index.json', import.meta.url)),
+);
+const mechanicsIndexLocales = Object.fromEntries(
+  await Promise.all(
+    registry.map(async ({ code }) => [
+      code,
+      JSON.parse(
+        await fs.readFile(
+          new URL(`../../content/mechanics-index-locales/${code}.json`, import.meta.url),
+        ),
+      ),
+    ]),
+  ),
+);
+const catalogCategoryKeys = [
+  ...new Set(mechanicsIndex.mechanics.map(({ translations }) => translations.en.category)),
+];
+const groundSlamCategoryKey = mechanicsIndex.mechanics.find(({ id }) => id === 'ground-slam')
+  .translations.en.category;
+const groundSlamCategoryRu = mechanicsIndexLocales.ru.categories[groundSlamCategoryKey];
 const scriptFontFamilies = {
   'zh-Hans': 'Noto+Sans+SC',
   hi: 'Noto+Sans+Devanagari',
@@ -99,7 +120,7 @@ for (const locale of registry) {
     await expect(page.locator('.charge-demo input')).toHaveAttribute('type', 'range');
     await expect(page.locator('.lesson-category')).toHaveAttribute(
       'href',
-      `/gamedev-boss-fights/${locale.code}/#mechanics`,
+      `/gamedev-boss-fights/${locale.code}/#catalog-part-1`,
     );
     await expect(page.locator('.lesson-title-line > .lesson-category')).toHaveCount(1);
     expect(
@@ -112,6 +133,10 @@ for (const locale of registry) {
     await expect(page.locator('.header-nav .lenses-link')).toHaveAttribute(
       'href',
       `/gamedev-boss-fights/${locale.code}/lenses/`,
+    );
+    await expect(page.locator('.header-nav .catalog-link')).toHaveAttribute(
+      'href',
+      `/gamedev-boss-fights/${locale.code}/#mechanics`,
     );
     await expect(page.locator('.mechanic-overview')).toHaveCount(1);
     await expect(
@@ -258,6 +283,36 @@ for (const locale of registry) {
     expect(errors).toEqual([]);
   });
 }
+test('the header mechanics link opens the available mechanics section', async ({ page }) => {
+  await page.goto('ru/mechanics/charge/');
+  await page.locator('.header-nav .catalog-link').click();
+  await expect(page).toHaveURL(/\/ru\/#mechanics$/);
+  await expect(page.locator('#mechanics')).toBeVisible();
+});
+test('the lesson category opens its matching catalog section', async ({ page }) => {
+  await page.goto('ru/mechanics/ground-slam/');
+  const category = page.locator('.lesson-category');
+  await expect(category).toHaveText(groundSlamCategoryRu);
+  await expect(category).toHaveAttribute('href', '/gamedev-boss-fights/ru/#catalog-part-1');
+  await category.click();
+  await expect(page).toHaveURL(/\/ru\/#catalog-part-1$/);
+  await expect(page.locator('#catalog-part-1-title')).toHaveText(groundSlamCategoryRu);
+});
+test('every mechanic page links its localized category to the matching catalog section', async () => {
+  for (const { code } of registry) {
+    const categories = mechanicsIndexLocales[code].categories;
+    for (const mechanic of mechanicsIndex.mechanics) {
+      const categoryKey = mechanic.translations.en.category;
+      const sectionNumber = catalogCategoryKeys.indexOf(categoryKey) + 1;
+      const html = await fs.readFile(
+        new URL(`../../dist/${code}/mechanics/${mechanic.id}/index.html`, import.meta.url),
+        'utf8',
+      );
+      expect(html).toContain(`href="/gamedev-boss-fights/${code}/#catalog-part-${sectionNumber}"`);
+      expect(html).toContain(`>${categories[categoryKey]}</a`);
+    }
+  }
+});
 test('the loop autoplays, alternates sides, shows the current phase, and keeps only the slider', async ({
   page,
 }) => {
@@ -268,10 +323,10 @@ test('the loop autoplays, alternates sides, shows the current phase, and keeps o
     page.locator('.lesson-toolbar, .back-link, .lesson-edit, .lesson-topline, .title-index'),
   ).toHaveCount(0);
   await expect(page.locator('.lesson-hero h1')).toHaveText('Charge');
-  await expect(page.locator('.lesson-category')).toHaveText('Movement & space');
+  await expect(page.locator('.lesson-category')).toHaveText('Body and melee');
   await page.locator('.lesson-category').click();
-  await expect(page).toHaveURL(/\/en\/#mechanics$/);
-  await expect(page.locator('#mechanics')).toBeVisible();
+  await expect(page).toHaveURL(/\/en\/#catalog-part-1$/);
+  await expect(page.locator('#catalog-part-1')).toBeVisible();
   await page.goto('en/mechanics/charge/');
   await expect(page.locator('.mechanic-overview')).toHaveText(
     'Charge is a high-speed attack: the boss aims, locks its direction, and rushes forward without turning. The mechanic works well when the clear lock makes the path predictable, sideways movement provides a reachable response, and recovery creates an opening for a counterattack.',
@@ -572,6 +627,8 @@ test('boss builder persists a local draft and downloads portable JSON', async ({
   await expect(page.locator('.boss-builder-storage')).toHaveText(
     'The draft stays only in this browser.',
   );
+  await expect(page.locator('.boss-builder-phases [data-boss-download]')).toHaveCount(1);
+  await expect(page.locator('.boss-builder-form [data-boss-download]')).toHaveCount(0);
   await expect(page.locator('.boss-builder-mechanic')).toHaveCount(124);
   await expect(page.locator('.boss-builder-mechanic--wip')).toHaveCount(90);
   await expect(page.locator('.boss-builder-mechanic:not(.boss-builder-mechanic--wip)')).toHaveCount(
@@ -604,13 +661,45 @@ test('boss builder persists a local draft and downloads portable JSON', async ({
   await expect(page.locator('[data-boss-selected]')).toHaveText('Selected: 1');
   await page.locator('[data-boss-add-phase]').click();
   await expect(page.locator('.boss-builder-phase')).toHaveCount(2);
+  await expect(page.locator('[data-phase-health="phase-1"]')).toBeDisabled();
+  await expect(page.locator('[data-phase-health="phase-1"]')).toHaveValue('100');
+  await page.locator('[data-phase-health="phase-2"]').fill('35');
+  await page.locator('[data-phase-health="phase-2"]').press('Tab');
+  await expect(page.locator('[data-phase-health="phase-2"]')).toHaveValue('35');
+  await expect(page.locator('[data-phase-id="phase-1"] .boss-builder-phase__health')).toContainText(
+    'Health range: 100%–36%',
+  );
+  await expect(page.locator('[data-phase-id="phase-2"] .boss-builder-phase__health')).toContainText(
+    'Health range: 35%–0%',
+  );
+  const firstPhase = page.locator('[data-phase-id="phase-1"]');
+  const secondPhase = page.locator('[data-phase-id="phase-2"]');
+  await firstPhase.click({ position: { x: 5, y: 5 } });
+  await expect(page.locator('[data-boss-active-phase]')).toHaveValue('phase-1');
+  await expect(firstPhase).toHaveClass(/boss-builder-phase--active/);
+  await secondPhase.focus();
+  await page.keyboard.press('Enter');
+  await expect(page.locator('[data-boss-active-phase]')).toHaveValue('phase-2');
+  await expect(secondPhase).toHaveAttribute('aria-current', 'true');
+  await page.locator('[data-phase-goal="phase-1"]').click();
+  await expect(page.locator('[data-boss-active-phase]')).toHaveValue('phase-1');
+  await page.locator('[data-phase-name="phase-2"]').click();
+  await expect(page.locator('[data-boss-active-phase]')).toHaveValue('phase-2');
   await page.locator('[data-phase-name="phase-2"]').fill('Finale');
   await page.locator('[data-phase-goal="phase-2"]').fill('Compress the safe space.');
   await expect(page.locator('[data-boss-active-phase]')).toHaveValue('phase-2');
   await page.locator('[data-boss-mechanic-search]').fill('Teleport');
   await expect(page.locator('.boss-builder-mechanic:visible')).toHaveCount(1);
   await page.locator('[data-boss-mechanic][value="teleport"]').check();
-  await page.locator('[data-assignment-combo="teleport"]').selectOption('a');
+  await expect(page.locator('[data-assignment-phase]')).toHaveCount(0);
+  await expect(page.locator('[data-assignment-combo]')).toHaveCount(0);
+  await expect(secondPhase.locator('[data-assignment="teleport"]')).toContainText('Teleport');
+  await expect(
+    secondPhase.locator('[data-assignment="teleport"] .boss-builder-assignment__header > button'),
+  ).toHaveCount(1);
+  await page
+    .locator('[data-assignment-implementation="teleport"]')
+    .fill('The boss blinks through the player with a hooked spear.');
   await expect(page.locator('[data-boss-selected]')).toHaveText('Selected: 2');
   await page.locator('[data-boss-mechanic-search]').fill('');
   expect(
@@ -620,12 +709,27 @@ test('boss builder persists a local draft and downloads portable JSON', async ({
     name: 'Gate Warden',
     description: 'Guards the passage to the next area.',
     phases: [
-      { id: 'phase-1', name: '', goal: '' },
-      { id: 'phase-2', name: 'Finale', goal: 'Compress the safe space.' },
+      { id: 'phase-1', name: '', goal: '', activationHealthPercent: 100 },
+      {
+        id: 'phase-2',
+        name: 'Finale',
+        goal: 'Compress the safe space.',
+        activationHealthPercent: 35,
+      },
     ],
     assignments: [
-      { mechanicId: 'charge', phaseId: 'phase-1', combo: 'solo' },
-      { mechanicId: 'teleport', phaseId: 'phase-2', combo: 'a' },
+      {
+        mechanicId: 'charge',
+        phaseId: 'phase-1',
+        combo: 'solo',
+        implementation: '',
+      },
+      {
+        mechanicId: 'teleport',
+        phaseId: 'phase-2',
+        combo: 'solo',
+        implementation: 'The boss blinks through the player with a hooked spear.',
+      },
     ],
   });
 
@@ -655,13 +759,17 @@ test('boss builder persists a local draft and downloads portable JSON', async ({
       {
         id: 'phase-1',
         name: 'Phase 1',
+        activationHealthPercent: 100,
+        healthRange: { minPercent: 36, maxPercent: 100 },
         combinations: [{ id: 'solo', name: 'Solo' }],
       },
       {
         id: 'phase-2',
         name: 'Finale',
         goal: 'Compress the safe space.',
-        combinations: [{ id: 'a', name: 'Combination A' }],
+        activationHealthPercent: 35,
+        healthRange: { minPercent: 0, maxPercent: 35 },
+        combinations: [{ id: 'solo', name: 'Solo' }],
       },
     ],
   });
@@ -672,6 +780,10 @@ test('boss builder persists a local draft and downloads portable JSON', async ({
   });
   expect(exported.phases[0].combinations[0].mechanics.map(({ id }) => id)).toEqual(['charge']);
   expect(exported.phases[1].combinations[0].mechanics.map(({ id }) => id)).toEqual(['teleport']);
+  expect(exported.phases[1].combinations[0].mechanics[0].implementation).toBe(
+    'The boss blinks through the player with a hooked spear.',
+  );
+  expect(exported.mechanics[1]).not.toHaveProperty('implementation');
 
   await page.goto('ru/builder/');
   await expect(page.locator('[data-boss-name]')).toHaveValue('Gate Warden');
@@ -692,6 +804,10 @@ test('boss builder surfaces compatible and conflicting mechanics in the active p
   page,
 }) => {
   await page.goto('en/builder/');
+  const recommendations = page.locator('.boss-builder-mechanics > .boss-builder-recommendations');
+  await expect(recommendations).toHaveCount(1);
+  await expect(recommendations.locator('h3')).toHaveText('Recommendations');
+  await expect(page.locator('.boss-builder-sidebar .boss-builder-recommendations')).toHaveCount(0);
   await page.locator('[data-boss-mechanic][value="charge"]').check();
   await page.locator('[data-boss-mechanic][value="attack-lock"]').check();
   await expect(page.locator('[data-boss-compatible]')).toContainText('Charge + Attack lock');
@@ -711,7 +827,24 @@ test('boss builder generates a localized random boss with a conflict-free phase 
   await page.addInitScript(() => {
     Math.random = () => 0.25;
   });
+  await page.setViewportSize({ width: 390, height: 844 });
   await page.goto('en/builder/');
+  const topbar = page.locator('.boss-builder-topbar');
+  await expect(topbar.locator('[data-boss-random]')).toHaveCount(1);
+  await expect(topbar.locator('[data-boss-reset]')).toHaveCount(1);
+  expect(
+    await topbar.evaluate((element) =>
+      element.nextElementSibling?.classList.contains('boss-builder-layout'),
+    ),
+  ).toBe(true);
+  const [randomBounds, resetBounds] = await Promise.all([
+    topbar.locator('[data-boss-random]').boundingBox(),
+    topbar.locator('[data-boss-reset]').boundingBox(),
+  ]);
+  expect(randomBounds).not.toBeNull();
+  expect(resetBounds).not.toBeNull();
+  expect(Math.abs(randomBounds.y - resetBounds.y)).toBeLessThan(1);
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
   await expect(page.locator('[data-boss-random]')).toHaveText('Random boss');
   await page.locator('[data-boss-description]').fill('Keep this encounter premise.');
   await page.locator('[data-boss-filter="geometry"]').selectOption('radial');
@@ -735,11 +868,15 @@ test('boss builder generates a localized random boss with a conflict-free phase 
     name: 'The Hollow Regent',
     description: 'Keep this encounter premise.',
     phases: [
-      { id: 'phase-1', name: '', goal: '' },
-      { id: 'phase-2', name: '', goal: '' },
+      { id: 'phase-1', name: '', goal: '', activationHealthPercent: 100 },
+      { id: 'phase-2', name: '', goal: '', activationHealthPercent: 50 },
     ],
   });
   expect(stored.assignments).toHaveLength(5);
+  expect(new Set(stored.assignments.map(({ combo }) => combo))).toEqual(new Set(['solo']));
+  expect(new Set(stored.assignments.map(({ implementation }) => implementation))).toEqual(
+    new Set(['']),
+  );
   expect(new Set(stored.assignments.map(({ mechanicId }) => mechanicId)).size).toBe(5);
   expect(stored.assignments.filter(({ phaseId }) => phaseId === 'phase-1')).toHaveLength(3);
   expect(stored.assignments.filter(({ phaseId }) => phaseId === 'phase-2')).toHaveLength(2);

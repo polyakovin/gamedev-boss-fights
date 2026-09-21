@@ -14,6 +14,7 @@ const {
   ui,
   bossUpFramework,
   mechanicsIndex,
+  mechanicsIndexLocales,
   mechanicsExamples,
   popularMechanics,
   mechanics,
@@ -202,7 +203,7 @@ function shell(
             <nav class="header-nav" aria-label="${e(t.siteMapTitle)}">
               <a
                 class="catalog-link"
-                href="${link(locale.code + '/')}"
+                href="${link(`${locale.code}/#mechanics`)}"
                 ${catalog ? ' aria-current="page"' : ''}
                 >${e(t.catalog)}</a
               ><a
@@ -377,7 +378,7 @@ function renderLessonBody(
   mechanic,
   content,
   animation,
-  { isWip = false, contentLocale = locale.code } = {},
+  { isWip = false, contentLocale = locale.code, catalogEntry } = {},
 ) {
   const fallbackAttributes =
     contentLocale === locale.code ? '' : ` lang="${contentLocale}" dir="ltr"`;
@@ -388,8 +389,10 @@ function renderLessonBody(
           <div class="lesson-title-line">
             <h1>${e(content.title)}</h1>
             ${isWip ? '<span class="wip-badge">WIP</span>' : ''}
-            <a class="eyebrow lesson-category" href="${link(`${locale.code}/#mechanics`)}"
-              >${e(content.category)}</a
+            <a
+              class="eyebrow lesson-category"
+              href="${link(`${locale.code}/#${catalogEntry.catalogSectionId}`)}"
+              >${e(catalogEntry.category)}</a
             >
             ${lensChips(locale.code, mechanic.meta.lenses, content.lensNotes, contentLocale)}
           </div>
@@ -744,12 +747,13 @@ for (const locale of locales) {
   const catalogEntries = mechanicsIndex.mechanics.map((outline) => {
     const mechanic = mechanicsById.get(outline.id);
     const outlineContent = outline.translations[locale.code] ?? outline.translations.en;
+    const categoryKey = outline.translations.en.category;
     const lesson = mechanic?.translations[locale.code];
     return {
       id: outline.id,
       number: outline.number,
-      category: outlineContent.category,
-      categoryKey: outline.translations.en.category,
+      category: mechanicsIndexLocales[locale.code].categories[categoryKey],
+      categoryKey,
       title: lesson?.title ?? outlineContent.title,
       summary: lesson?.summary ?? outlineContent.summary,
       mechanic,
@@ -768,16 +772,22 @@ for (const locale of locales) {
   for (const entry of catalogEntries) {
     let part = partsByCategory.get(entry.category);
     if (!part) {
-      part = { category: entry.category, mechanics: [] };
+      part = {
+        id: `catalog-part-${catalogParts.length + 1}`,
+        category: entry.category,
+        mechanics: [],
+      };
       partsByCategory.set(entry.category, part);
       catalogParts.push(part);
     }
+    entry.catalogSectionId = part.id;
     part.mechanics.push(entry);
   }
+  const catalogEntriesById = new Map(catalogEntries.map((entry) => [entry.id, entry]));
   const catalogNavigation = catalogParts
     .map(
       (part, index) =>
-        /* HTML */ `<a class="catalog-part-nav__link" href="#catalog-part-${index + 1}">
+        /* HTML */ `<a class="catalog-part-nav__link" href="#${part.id}">
           <span class="catalog-part-nav__number">${String(index + 1).padStart(2, '0')}</span>
           <strong>${e(part.category)}</strong>
         </a>`,
@@ -788,12 +798,12 @@ for (const locale of locales) {
       (part, partIndex) =>
         /* HTML */ `<section
           class="catalog-part"
-          id="catalog-part-${partIndex + 1}"
-          aria-labelledby="catalog-part-${partIndex + 1}-title"
+          id="${part.id}"
+          aria-labelledby="${part.id}-title"
         >
           <header class="catalog-part__header">
             <span class="catalog-part__number">${String(partIndex + 1).padStart(2, '0')}</span>
-            <h3 id="catalog-part-${partIndex + 1}-title">${e(part.category)}</h3>
+            <h3 id="${part.id}-title">${e(part.category)}</h3>
           </header>
           <ol class="catalog-lessons">
             ${part.mechanics
@@ -1057,6 +1067,17 @@ for (const locale of locales) {
       <p>${e(t.builderIntro)}</p>
       <span class="boss-builder-storage">${e(t.builderStorageNote)}</span>
     </header>
+    <div class="boss-builder-topbar">
+      <div class="boss-builder-actions boss-builder-actions--top">
+        <button type="button" class="boss-builder-random" data-boss-random>
+          ${icon('shuffle')}${e(connectionCopy.randomBoss)}
+        </button>
+        <button type="button" class="boss-builder-reset" data-boss-reset disabled>
+          ${icon('rotate-ccw')}${e(t.builderReset)}
+        </button>
+      </div>
+      <p class="boss-builder-status" role="status" aria-live="polite" data-boss-status></p>
+    </div>
     <div class="boss-builder-layout">
       <aside class="boss-builder-sidebar">
         <section class="boss-builder-form" aria-label="${e(t.builderTitle)}">
@@ -1079,18 +1100,6 @@ for (const locale of locales) {
               data-boss-description
             ></textarea>
           </label>
-          <div class="boss-builder-actions">
-            <button type="button" class="boss-builder-random" data-boss-random>
-              ${icon('shuffle')}${e(connectionCopy.randomBoss)}
-            </button>
-            <button type="button" class="boss-builder-download" data-boss-download>
-              ${icon('download')}${e(t.builderDownload)}
-            </button>
-            <button type="button" class="boss-builder-reset" data-boss-reset disabled>
-              ${icon('rotate-ccw')}${e(t.builderReset)}
-            </button>
-          </div>
-          <p class="boss-builder-status" role="status" aria-live="polite" data-boss-status></p>
         </section>
         <section class="boss-builder-phases" aria-labelledby="boss-builder-phases-title">
           <header>
@@ -1099,24 +1108,10 @@ for (const locale of locales) {
           </header>
           <p>${e(connectionCopy.phasesIntro)}</p>
           <div class="boss-builder-phase-list" data-boss-phases></div>
-        </section>
-        <section class="boss-builder-relations" aria-labelledby="boss-builder-relations-title">
-          <header>
-            <span class="eyebrow">${e(connectionCopy.relationsTitle)}</span>
-            <h2 id="boss-builder-relations-title">${e(connectionCopy.relationsTitle)}</h2>
-            <p>${e(connectionCopy.relationsIntro)}</p>
-          </header>
-          <div class="boss-builder-relation-group boss-builder-relation-group--compatible">
-            <h3>${e(connectionCopy.compatibleTitle)}</h3>
-            <ul data-boss-compatible></ul>
-          </div>
-          <div class="boss-builder-relation-group boss-builder-relation-group--conflict">
-            <h3>${e(connectionCopy.conflictsTitle)}</h3>
-            <ul data-boss-conflicts></ul>
-          </div>
-          <div class="boss-builder-relation-group">
-            <h3>${e(connectionCopy.suggestionsTitle)}</h3>
-            <ul data-boss-suggestions></ul>
+          <div class="boss-builder-actions boss-builder-actions--download">
+            <button type="button" class="boss-builder-download" data-boss-download>
+              ${icon('download')}${e(t.builderDownload)}
+            </button>
           </div>
         </section>
       </aside>
@@ -1152,6 +1147,29 @@ for (const locale of locales) {
           <span>${e(connectionCopy.activePhase)}</span>
           <select data-boss-active-phase></select>
         </label>
+        <section
+          class="boss-builder-recommendations"
+          aria-labelledby="boss-builder-recommendations-title"
+        >
+          <header>
+            <h3 id="boss-builder-recommendations-title">${e(connectionCopy.relationsTitle)}</h3>
+            <p>${e(connectionCopy.relationsIntro)}</p>
+          </header>
+          <div class="boss-builder-recommendations__groups">
+            <div class="boss-builder-relation-group boss-builder-relation-group--compatible">
+              <h4>${e(connectionCopy.compatibleTitle)}</h4>
+              <ul data-boss-compatible></ul>
+            </div>
+            <div class="boss-builder-relation-group boss-builder-relation-group--conflict">
+              <h4>${e(connectionCopy.conflictsTitle)}</h4>
+              <ul data-boss-conflicts></ul>
+            </div>
+            <div class="boss-builder-relation-group">
+              <h4>${e(connectionCopy.suggestionsTitle)}</h4>
+              <ul data-boss-suggestions></ul>
+            </div>
+          </div>
+        </section>
         <div class="boss-builder-mechanics__grid">${builderCards}</div>
       </section>
     </div>
@@ -1193,7 +1211,9 @@ for (const locale of locales) {
   for (const m of published) {
     const c = m.translations[locale.code],
       a = animations[m.meta.animation];
-    const body = renderLessonBody(locale, t, m, c, a);
+    const body = renderLessonBody(locale, t, m, c, a, {
+      catalogEntry: catalogEntriesById.get(m.meta.id),
+    });
     await write(
       `${locale.code}/mechanics/${m.meta.id}/`,
       shell(locale, c.title, c.summary, body, {
@@ -1210,6 +1230,7 @@ for (const locale of locales) {
       const body = renderLessonBody(locale, t, entry.mechanic, content, animation, {
         isWip: true,
         contentLocale,
+        catalogEntry: entry,
       });
       await write(
         `${locale.code}/mechanics/${entry.id}/`,
@@ -1225,7 +1246,9 @@ for (const locale of locales) {
       locale.code === 'ru' || locale.code === 'en' ? '' : ' lang="en" dir="ltr"';
     const body = /* HTML */ `<main id="main" class="wip-mechanic-main">
       <header class="wip-mechanic-hero" ${fallbackAttributes}>
-        <a class="eyebrow lesson-category" href="${link(`${locale.code}/#mechanics`)}"
+        <a
+          class="eyebrow lesson-category"
+          href="${link(`${locale.code}/#${entry.catalogSectionId}`)}"
           >${e(entry.category)}</a
         >
         <div class="wip-mechanic-title">

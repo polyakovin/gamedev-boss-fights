@@ -1,4 +1,20 @@
 {
+  "categories": {
+    "Body and melee": "Cuerpo y combate cuerpo a cuerpo",
+    "Projectiles": "Proyectiles",
+    "Beams": "Rayos",
+    "Zones and traps": "Zonas y trampas",
+    "Arena": "Arena",
+    "Additional targets": "Objetivos adicionales",
+    "Targeting and rhythm": "Apuntado y ritmo",
+    "Defense": "Defensa",
+    "Structure and readability": "Estructura y legibilidad",
+    "Space, movement, and perception": "Espacio, movimiento y percepción",
+    "Encounter goals and vulnerability": "Objetivos del encuentro y vulnerabilidad",
+    "States, resources, and scaling": "Estados, recursos y escalado",
+    "Multi-boss relationships": "Relaciones entre varios jefes",
+    "Cooperative coordination": "Coordinación cooperativa"
+  },
   "bossUpFramework": {
     "copy": {
       "eyebrow": "ADAPTADO DE GDC 2018",

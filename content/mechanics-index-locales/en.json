@@ -1,4 +1,20 @@
 {
+  "categories": {
+    "Body and melee": "Body and melee",
+    "Projectiles": "Projectiles",
+    "Beams": "Beams",
+    "Zones and traps": "Zones and traps",
+    "Arena": "Arena",
+    "Additional targets": "Additional targets",
+    "Targeting and rhythm": "Targeting and rhythm",
+    "Defense": "Defense",
+    "Structure and readability": "Structure and readability",
+    "Space, movement, and perception": "Space, movement, and perception",
+    "Encounter goals and vulnerability": "Encounter goals and vulnerability",
+    "States, resources, and scaling": "States, resources, and scaling",
+    "Multi-boss relationships": "Multi-boss relationships",
+    "Cooperative coordination": "Cooperative coordination"
+  },
   "popularUi": {
     "blueprintTitle": "Mechanic blueprint",
     "animationTitle": "Rule animation",

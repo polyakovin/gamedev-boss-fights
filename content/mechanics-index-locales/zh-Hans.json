@@ -1,4 +1,20 @@
 {
+  "categories": {
+    "Body and melee": "身体与近战",
+    "Projectiles": "投射物",
+    "Beams": "光束",
+    "Zones and traps": "区域与陷阱",
+    "Arena": "场地",
+    "Additional targets": "附加目标",
+    "Targeting and rhythm": "瞄准与节奏",
+    "Defense": "防御",
+    "Structure and readability": "结构与可读性",
+    "Space, movement, and perception": "空间、移动与感知",
+    "Encounter goals and vulnerability": "战斗目标与弱点暴露",
+    "States, resources, and scaling": "状态、资源与成长",
+    "Multi-boss relationships": "多首领关系",
+    "Cooperative coordination": "合作协调"
+  },
   "bossUpFramework": {
     "copy": {
       "eyebrow": "改编自 GDC 2018",

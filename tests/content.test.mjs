@@ -38,6 +38,21 @@ test('the public index contains 124 unique builder-ready mechanics', async () =>
   duplicate.mechanicsIndex.mechanics[1].id = duplicate.mechanicsIndex.mechanics[0].id;
   await assert.rejects(validateContent(duplicate), /duplicate mechanic id/);
 });
+test('every catalog category is translated for every locale', async () => {
+  const categories = new Set(
+    source.mechanicsIndex.mechanics.map(({ translations }) => translations.en.category),
+  );
+  assert.equal(categories.size, 14);
+  for (const { code } of source.locales) {
+    const localizedCategories = source.mechanicsIndexLocales[code].categories;
+    assert.deepEqual(new Set(Object.keys(localizedCategories)), categories);
+    assert.ok(Object.values(localizedCategories).every((category) => category.trim().length > 0));
+  }
+
+  const data = structuredClone(source);
+  delete data.mechanicsIndexLocales.ja.categories.Projectiles;
+  await assert.rejects(validateContent(data), /missing category translation Projectiles/);
+});
 test('a missing published translation is rejected instead of silently showing English', async () => {
   const data = structuredClone(source);
   delete data.mechanics[0].translations.bn;
