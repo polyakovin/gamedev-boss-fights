@@ -108,6 +108,17 @@ const SPECS = {
     hazardEnd: [485, 620],
     hazardRadius: 72,
   },
+  'converging-threats': {
+    mode: 'converging-threats',
+    boss: [280, 260],
+    player: [280, 655],
+    target: [280, 455],
+    arenaWidth: 560,
+    threatTop: 535,
+    threatHeight: 235,
+    entryWidth: 90,
+    convergence: 280,
+  },
   'wide-swing': { mode: 'arc', boss: [280, 310], player: [410, 470], target: [470, 650] },
   lunge: { mode: 'lunge', boss: [170, 290], player: [390, 590], target: [470, 660] },
   grab: { mode: 'grab', boss: [280, 300], player: [390, 485], target: [470, 610] },
@@ -765,6 +776,63 @@ function primitivesFor(spec, frame) {
       line(center.x + 49, center.y - 7, center.x + 64, center.y - 7, opacity, tone, 6),
     ];
   }
+  if (mode === 'converging-threats') {
+    const edge =
+      phase === 0
+        ? spec.entryWidth
+        : phase === 1
+          ? mix(spec.entryWidth, spec.convergence, smooth(action))
+          : spec.convergence;
+    const right = spec.arenaWidth - edge;
+    const opacity = phase === 0 ? 0.38 + prepare * 0.32 : phase === 1 ? 0.94 : 0.6 * (1 - recover);
+    const tone = phase === 1 ? 'signal' : phase === 2 ? 'safe' : 'accent';
+    const mid = spec.threatTop + spec.threatHeight / 2;
+    return [
+      rect(0, spec.threatTop, edge, spec.threatHeight, opacity, tone, phase === 1 ? 0.28 : 0.07),
+      rect(
+        right,
+        spec.threatTop,
+        edge,
+        spec.threatHeight,
+        opacity,
+        tone,
+        phase === 1 ? 0.28 : 0.07,
+      ),
+      line(edge - 80, mid, edge - 25, mid, opacity, tone, 8),
+      path(
+        `M ${edge - 43} ${mid - 16} L ${edge - 25} ${mid} L ${edge - 43} ${mid + 16}`,
+        opacity,
+        tone,
+        7,
+      ),
+      line(right + 80, mid, right + 25, mid, opacity, tone, 8),
+      path(
+        `M ${right + 43} ${mid - 16} L ${right + 25} ${mid} L ${right + 43} ${mid + 16}`,
+        opacity,
+        tone,
+        7,
+      ),
+      line(
+        280,
+        655,
+        280,
+        455,
+        phase === 0 ? 0.5 + prepare * 0.2 : phase === 1 ? 0.4 : 0,
+        'safe',
+        7,
+        '12 10',
+      ),
+      circle(
+        280,
+        455,
+        28,
+        phase === 0 ? 0.48 + prepare * 0.2 : phase === 1 ? 0.62 : 0.3 * (1 - recover),
+        'safe',
+        6,
+        0.08,
+      ),
+    ];
+  }
   if (mode === 'arc')
     return [
       path(arcPath(boss, 205, -1.15, 2.25), preview, 'accent', 20, 0, '12 10'),
@@ -1097,6 +1165,16 @@ function pointClearsThreat(spec, frame, value, radius = BLUEPRINT_PLAYER_RADIUS)
     const hazard = frame.primitives[1];
     return Math.hypot(value.x - hazard.x, value.y - hazard.y) > hazard.radius + radius;
   }
+  if (mode === 'converging-threats')
+    return frame.primitives
+      .slice(0, 2)
+      .every(
+        (threat) =>
+          value.x + radius <= threat.x ||
+          value.x - radius >= threat.x + threat.rectWidth ||
+          value.y + radius <= threat.y ||
+          value.y - radius >= threat.y + threat.rectHeight,
+      );
   if (mode === 'spiral')
     return (
       distanceFromBoss > 52 + radius &&
@@ -1260,6 +1338,8 @@ export function blueprintFrame(id, time) {
     responseProgress = phase === 0 ? 0 : phase === 1 ? smooth((action - 0.06) / 0.8) : 1;
   else if (spec.mode === 'moving-hazard')
     responseProgress = phase === 0 ? 0 : phase === 1 ? smooth(action / 0.5) : 1;
+  else if (spec.mode === 'converging-threats')
+    responseProgress = phase === 0 ? 0 : phase === 1 ? smooth(action / 0.53) : 1;
   else if (spec.mode === 'knockback')
     responseProgress = phase === 0 ? 0 : phase === 1 ? smooth(action) : 1;
   else if (spec.mode === 'target-lock')

@@ -1,0 +1,28 @@
+{
+  "id": "converging-threats",
+  "number": 41,
+  "published": true,
+  "sourceLocale": "en",
+  "contentVersion": 1,
+  "animation": "converging-threats",
+  "lenses": ["telegraphing", "commitment", "threat-geometry", "counterplay", "difficulty-rhythm"],
+  "related": ["crossfire", "moving-hazard", "shrinking-safe-area"],
+  "sources": [
+    {
+      "title": "Enemy Attacks and Telegraphing · Mike Stout",
+      "url": "https://www.gamedeveloper.com/design/enemy-attacks-and-telegraphing"
+    },
+    {
+      "title": "Mantis Lords · Hollow Knight Wiki",
+      "url": "https://hollowknight.wiki/w/Mantis_Lords"
+    },
+    {
+      "title": "Chef Saltbaker · Cuphead Wiki",
+      "url": "https://cuphead.wiki.gg/wiki/Chef_Saltbaker"
+    },
+    {
+      "title": "Euphrosyne · Final Fantasy XIV Wiki",
+      "url": "https://ffxiv.consolegameswiki.com/wiki/Euphrosyne"
+    }
+  ]
+}

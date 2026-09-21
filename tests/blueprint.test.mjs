@@ -13,8 +13,8 @@ import {
   renderBlueprintThumbnail,
 } from '../lib/blueprint-view.mjs';
 
-test('all 34 promoted lesson animations have distinct rule modes and complete moving frames', () => {
-  assert.equal(BLUEPRINT_MECHANIC_IDS.length, 34);
+test('all 35 promoted lesson animations have distinct rule modes and complete moving frames', () => {
+  assert.equal(BLUEPRINT_MECHANIC_IDS.length, 35);
   const modes = new Set();
   for (const id of BLUEPRINT_MECHANIC_IDS) {
     for (let time = 0; time <= BLUEPRINT_DURATION; time += 0.1) {
@@ -35,7 +35,7 @@ test('all 34 promoted lesson animations have distinct rule modes and complete mo
           assert.ok(Number.isFinite(value), `${id} has an invalid ${primitive.type}`);
     }
   }
-  assert.equal(modes.size, 34);
+  assert.equal(modes.size, 35);
 });
 
 test('every blueprint exposes signal, committed action, and recovery without player teleports', () => {
@@ -69,6 +69,7 @@ test('every promoted animation derives safety from its own active geometry', () 
     'chain-explosions': null,
     mine: { x: 320, y: 610 },
     'moving-hazard': null,
+    'converging-threats': { x: 100, y: 650 },
     'wide-swing': { x: 280, y: 515 },
     lunge: { x: 300, y: 440 },
     grab: { x: 390, y: 485 },
@@ -464,6 +465,39 @@ test('moving hazard carries its visible radius along a fixed lane while the play
   assert.equal(middle.playerSafe, true);
   assert.equal(blueprintPointSafe('moving-hazard', 5.2, { x: 485, y: 620 }), true);
   assert.ok(middle.player.y < signal.player.y, 'player must move out of the moving lane');
+});
+
+test('two converging fronts close the lower corridor while the ordinary upper exit remains safe', () => {
+  const signal = blueprintFrame('converging-threats', 1.59);
+  const early = blueprintFrame('converging-threats', 2.1);
+  const middle = blueprintFrame('converging-threats', 3);
+  const late = blueprintFrame('converging-threats', 4.2);
+  const recovery = blueprintFrame('converging-threats', 5.2);
+  const widths = [signal, early, middle, late].map((frame) => frame.primitives[0].rectWidth);
+
+  assert.equal(widths[0], 90);
+  assert.ok(widths[0] < widths[1] && widths[1] < widths[2] && widths[2] < widths[3]);
+  for (const frame of [signal, early, middle, late, recovery]) {
+    const [left, right] = frame.primitives;
+    assert.equal(left.x, 0);
+    assert.equal(left.y, right.y);
+    assert.equal(left.rectHeight, right.rectHeight);
+    assert.equal(right.x + right.rectWidth, 560);
+    assert.equal(right.x - left.rectWidth, 560 - left.rectWidth * 2);
+    assert.ok(frame.primitives[2].x1 < frame.primitives[2].x2);
+    assert.ok(frame.primitives[2].x2 < left.x + left.rectWidth);
+    assert.ok(frame.primitives[4].x1 > frame.primitives[4].x2);
+    assert.ok(frame.primitives[4].x2 > right.x);
+  }
+  assert.equal(blueprintPointSafe('converging-threats', 1.59, { x: 280, y: 650 }), true);
+  assert.equal(blueprintPointSafe('converging-threats', 3, { x: 100, y: 650 }), false);
+  assert.equal(blueprintPointSafe('converging-threats', 3, { x: 460, y: 650 }), false);
+  assert.equal(blueprintPointSafe('converging-threats', 3, { x: 280, y: 650 }), true);
+  assert.equal(blueprintPointSafe('converging-threats', 4.2, { x: 280, y: 650 }), false);
+  assert.equal(blueprintPointSafe('converging-threats', 4.2, { x: 280, y: 455 }), true);
+  assert.equal(late.playerSafe, true);
+  assert.ok(late.player.y < signal.player.y);
+  assert.equal(blueprintPointSafe('converging-threats', 5.2, { x: 280, y: 650 }), true);
 });
 
 test('blueprint pages and previews reuse Tavi and Kern with accessible localized data', () => {

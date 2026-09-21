@@ -1,0 +1,146 @@
+{
+  "title": "Converging threats",
+  "subtitle": "Announce two approaching fronts and preserve a reachable exit before their safe corridor closes.",
+  "variant": "Two synchronized side fronts close a lower corridor",
+  "summary": "Separate threats approach one another, narrowing a previously safe region and asking the player to leave it before the overlap.",
+  "overview": "Converging threats are two visible danger fronts advancing toward the same space. Their combined loss of clearance is the rule: reveal both origins and closing direction, commit the timing before movement, and leave an ordinary route out. Two side fields close below Tavi while the upper exit remains open.",
+  "learning": "Design the two fronts, their meeting time, and a reachable full-body escape as one spatial promise.",
+  "category": "Arena",
+  "readTime": "5 min",
+  "demo": {
+    "title": "Inspect converging threats",
+    "timeline": "Attack timeline",
+    "step": "Attack phases",
+    "phaseNames": [
+      "Announce both fronts",
+      "Leave before the corridor closes",
+      "Release the arena and recover"
+    ],
+    "phaseDescriptions": [
+      "Kern lights two broad side fields at the same height. Inward arrows show that their visible edges will meet below Tavi, while the upper route remains open.",
+      "The fronts advance toward the center on a locked schedule. Their current filled areas, not the arrows, are dangerous; Tavi walks upward before full-body clearance disappears.",
+      "The two fields meet, fade, and lose collision together. Kern's recovery gives Tavi room to re-enter the cleared lower corridor."
+    ],
+    "boss": "Boss",
+    "player": "Player",
+    "danger": "Both current filled side fields can hurt",
+    "locked": "Both origins, fronts, height, speed, and meeting time are committed",
+    "safe": "The upper exit stays reachable before the fronts meet",
+    "reducedMotion": "Autoplay is disabled by reduced-motion settings. Use the timeline to inspect the two fronts and the full-body escape.",
+    "diagramDescription": "A looping diagram: the boss announces two opposing side fields across a lower strip. They advance inward together, closing the center corridor, while the player walks up through an open exit. The fields then fade and the boss recovers."
+  },
+  "steps": [
+    {
+      "title": "Can both sources and their meeting point be read?",
+      "body": "Show two distinct origins, direction, footprint, and a shared arrival time. The reader should predict where the safe corridor closes without mistaking an arrow or preview line for active collision."
+    },
+    {
+      "title": "Does the union of threats leave a real exit?",
+      "body": "Test the player's whole body against both current fields. Measure the route to an upper or lateral exit at ordinary movement speed, including acceleration and arena boundaries; a point-sized gap is not sufficient."
+    },
+    {
+      "title": "Is the meeting and release timing fair?",
+      "body": "Lock the fronts before they move, make the closing rate readable, and remove both hitboxes when their visible fields fade. Reserve a useful recovery interval after the corridor is clear."
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "Only one front is telegraphed",
+      "body": "A surprise second source changes the route after commitment. Reveal both edges before activation, or introduce the second as a separately announced escalation."
+    },
+    {
+      "title": "The apparent exit fits only a point",
+      "body": "A gap can look open while the player's body collides with either field. Include radius, travel time, wall clearance, and camera framing in every sampled safe route."
+    },
+    {
+      "title": "The fronts accelerate or linger invisibly",
+      "body": "The viewer cannot trust a closing diagram when hitboxes outrun their edges or remain after they fade. Drive motion, damage, and cleanup from the same clock."
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "Model the union, not an invented central hitbox",
+      "body": "Store each front's origin, width, height, timing, and current edge. A player is unsafe if either visible field overlaps their full collision body; their meeting does not add a hidden third attack."
+    },
+    {
+      "title": "Test the escape under the worst overlap",
+      "body": "Sample the remaining corridor width and the time needed to clear its threatened strip. Sweep each moving edge between frames so a fast front cannot cross the player unnoticed."
+    },
+    {
+      "title": "Separate convergence from crossfire",
+      "body": "Crossfire is about trajectories from distinct origins crossing. Here two broad fronts progressively remove the corridor even if no discrete projectiles intersect. A persistent shrinking safe zone instead constricts a region from all sides."
+    },
+    {
+      "title": "Escalate the relationship carefully",
+      "body": "Change one front's timing, angle, size, or the exit's location only after the base two-source pattern is learned. Keep at least one reachable route under every combination."
+    }
+  ],
+  "story": {
+    "title": "What the mechanic communicates",
+    "body": "Kern charges runes along two flanking walls. Their paired stone fronts close a lower passage, but Tavi can step into the open upper lane before the runes meet."
+  },
+  "adaptation": {
+    "title": "Adapt it to the player verbs",
+    "body": "Basic walking must reach the exit before the fronts arrive. A jump or dash may offer an alternate crossing only when its collision and invulnerability rules explicitly support it; neither should silently become mandatory."
+  },
+  "distinction": {
+    "title": "Keep the mechanic distinct",
+    "body": "Convergence makes the safe corridor narrower through two announced approaching sources. Moving hazard carries one footprint across the arena, crossfire intersects discrete paths, and shrinking safe area reduces a bounded sanctuary rather than combining two fields."
+  },
+  "lensNotes": [
+    {
+      "id": "telegraphing",
+      "body": "Both origins, edge directions, footprints, meeting time, and the upper exit are visible before collision begins."
+    },
+    {
+      "id": "commitment",
+      "body": "The two fronts lock their speed and timing together; a delayed or redirected front requires a new cue."
+    },
+    {
+      "id": "threat-geometry",
+      "body": "The unsafe region is the union of the two current filled fields, tested against the player's full body."
+    },
+    {
+      "id": "counterplay",
+      "body": "An upper escape remains accessible at normal movement speed before the lower corridor closes."
+    },
+    {
+      "id": "difficulty-rhythm",
+      "body": "Entry width, front speed, meeting time, exit distance, and a clean recovery set pressure."
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "Hollow Knight",
+      "boss": "Mantis Lords",
+      "screenshot": "https://i.ytimg.com/vi/VG3h6uVtWyY/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=VG3h6uVtWyY&t=128s",
+      "body": "In the second phase, two Mantis Lords can dash from opposite arena edges at once. Their separate bodies and opposing origins make the shared lower route unsafe, while an airborne response differs from the atlas's walking exit.",
+      "video": "https://www.youtube.com/watch?v=VG3h6uVtWyY&t=128s",
+      "videoDurationSeconds": 152
+    },
+    {
+      "dimension": "2D",
+      "game": "Cuphead",
+      "boss": "Chef Saltbaker",
+      "screenshot": "https://i.ytimg.com/vi/UNcMzx_CUXk/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=UNcMzx_CUXk&t=130s",
+      "body": "In Saltbaker's last phase, the two salt cyclones flank the vertical platform space and slowly close inward. The danger is the narrowing span between large fronts, not a single projectile, with a different vertical response from the atlas diagram.",
+      "video": "https://www.youtube.com/watch?v=UNcMzx_CUXk&t=130s",
+      "videoDurationSeconds": 190
+    },
+    {
+      "dimension": "3D",
+      "game": "Final Fantasy XIV",
+      "boss": "Halone",
+      "screenshot": "https://i.ytimg.com/vi/HZ9QiiQS6q0/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=HZ9QiiQS6q0&t=545s",
+      "body": "Halone's Lochos announces two edge-sourced spear rows whose half-arena attacks combine to leave one quarter safe. This is simultaneous convergence of coverage rather than literal moving walls, so the player reads the union of two sources before they resolve.",
+      "video": "https://www.youtube.com/watch?v=HZ9QiiQS6q0&t=545s",
+      "videoDurationSeconds": 907
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

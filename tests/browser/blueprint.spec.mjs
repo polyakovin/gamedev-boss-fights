@@ -87,9 +87,41 @@ test('moving hazard travels with its visible footprint and leaves a clear wake',
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
 });
 
-test('catalog and builder reuse the 34 promoted rule-specific previews', async ({ page }) => {
+test('converging fronts visibly close both sides while the player exits above', async ({
+  page,
+}) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.goto('en/mechanics/converging-threats/');
+  const widget = page.locator('[data-blueprint-demo]');
+  const timeline = widget.locator('[data-blueprint-timeline]');
+  await expect(page.locator('.lesson-title-line h1')).toHaveText('Converging threats');
+  await expect(page.locator('.wip-badge, .draft-profile')).toHaveCount(0);
+  await expect(widget).toHaveAttribute('data-blueprint-ready', 'true');
+  await expect(page.locator('.game-example')).toHaveCount(3);
+  const left = widget.locator('[data-blueprint-primitive="0"] rect');
+  const right = widget.locator('[data-blueprint-primitive="1"] rect');
+  const initialWidth = Number(await left.getAttribute('width'));
+  const initialRight = Number(await right.getAttribute('x'));
+
+  await timeline.evaluate((element) => {
+    element.value = '3850';
+    element.dispatchEvent(new Event('input', { bubbles: true }));
+  });
+  await expect(widget).toHaveAttribute('data-blueprint-phase', '1');
+  await expect(widget).toHaveAttribute('data-blueprint-outcome', 'safe');
+  await expect(widget.locator('[data-blueprint-phase-name]')).toHaveText(
+    'Leave before the corridor closes',
+  );
+  expect(Number(await left.getAttribute('width'))).toBeGreaterThan(initialWidth + 120);
+  expect(Number(await right.getAttribute('x'))).toBeLessThan(initialRight - 120);
+
+  await page.setViewportSize({ width: 390, height: 844 });
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+});
+
+test('catalog and builder reuse the 35 promoted rule-specific previews', async ({ page }) => {
   await page.goto('en/');
-  await expect(page.locator('[data-blueprint-preview]')).toHaveCount(34);
+  await expect(page.locator('[data-blueprint-preview]')).toHaveCount(35);
   const catalogLayouts = await page.locator('[data-blueprint-preview]').evaluateAll((previews) =>
     previews.map((preview) => {
       const boss = preview.querySelector('[data-character-art-preview="kern"]');
@@ -113,7 +145,7 @@ test('catalog and builder reuse the 34 promoted rule-specific previews', async (
   expect(new Set(catalogLayouts.map(({ layout }) => layout)).size).toBeGreaterThanOrEqual(18);
 
   await page.goto('en/builder/');
-  await expect(page.locator('[data-blueprint-preview]')).toHaveCount(34);
+  await expect(page.locator('[data-blueprint-preview]')).toHaveCount(35);
   const builderLayouts = await page.locator('[data-blueprint-preview]').evaluateAll((previews) =>
     previews.map((preview) => {
       const boss = preview.querySelector('[data-character-art-preview="kern"]');

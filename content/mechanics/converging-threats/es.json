@@ -1,0 +1,146 @@
+{
+  "title": "Amenazas convergentes",
+  "subtitle": "Anuncia dos frentes que se acercan y conserva una salida alcanzable antes de que se cierre el pasillo seguro.",
+  "variant": "Dos frentes laterales sincronizados cierran un pasillo inferior",
+  "summary": "Dos amenazas separadas se acercan entre sí, estrechan una zona antes segura y obligan al jugador a abandonarla a tiempo.",
+  "overview": "Dos frentes de peligro avanzan hacia el mismo espacio. La regla es la pérdida conjunta de margen: revela ambos orígenes y la dirección de cierre, fija sus tiempos antes del movimiento y deja una ruta normal de salida. Dos campos laterales se cierran bajo Tavi mientras la salida superior sigue abierta.",
+  "learning": "Diseña los dos frentes, su momento de encuentro y una salida alcanzable para todo el cuerpo como una sola promesa espacial.",
+  "category": "Arena",
+  "readTime": "5 min",
+  "demo": {
+    "title": "Examinar amenazas convergentes",
+    "timeline": "Cronología del ataque",
+    "step": "Fases del ataque",
+    "phaseNames": [
+      "Anunciar ambos frentes",
+      "Salir antes del cierre",
+      "Despejar la arena y recuperarse"
+    ],
+    "phaseDescriptions": [
+      "Kern ilumina dos campos laterales anchos a la misma altura. Las flechas apuntan hacia el lugar donde se juntarán los bordes bajo Tavi; la ruta superior queda abierta.",
+      "Los frentes avanzan hacia el centro con tiempos fijados. Sus áreas rellenas actuales, no las flechas, hacen daño; Tavi camina hacia arriba antes de perder el espacio para todo su cuerpo.",
+      "Los campos se encuentran, se desvanecen y pierden la colisión a la vez. La recuperación de Kern permite que Tavi vuelva al pasillo inferior despejado."
+    ],
+    "boss": "Jefe",
+    "player": "Jugador",
+    "danger": "Ambos campos laterales rellenos actuales pueden herir",
+    "locked": "Orígenes, frentes, altura, velocidad y encuentro están fijados",
+    "safe": "La salida superior es alcanzable antes del encuentro",
+    "reducedMotion": "La reproducción automática se desactiva si prefieres menos movimiento. Usa la línea de tiempo para inspeccionar los dos frentes y la salida de cuerpo entero.",
+    "diagramDescription": "Diagrama en bucle: el jefe anuncia dos campos laterales opuestos en una franja inferior. Avanzan juntos hacia el centro y cierran el pasillo mientras el jugador camina hacia arriba por una salida abierta. Después se desvanecen y el jefe se recupera."
+  },
+  "steps": [
+    {
+      "title": "¿Se leen los dos orígenes y el punto de encuentro?",
+      "body": "Muestra dos orígenes distintos, dirección, superficie y tiempo de llegada común. Debe poder predecirse dónde se cerrará el pasillo sin confundir una flecha o guía con colisión activa."
+    },
+    {
+      "title": "¿Deja una salida la unión de los peligros?",
+      "body": "Comprueba el cuerpo completo frente a ambos campos actuales. Mide la ruta a una salida superior o lateral con velocidad y aceleración normales, incluidos los límites de la arena; una brecha para un punto no basta."
+    },
+    {
+      "title": "¿Son justos el encuentro y la liberación?",
+      "body": "Fija ambos frentes antes del movimiento, haz legible la velocidad de cierre y elimina las dos colisiones cuando se desvanezcan los campos. Reserva una recuperación útil tras despejar el pasillo."
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "Solo se anuncia uno de los frentes",
+      "body": "Una segunda fuente inesperada cambia la ruta después del compromiso. Revela los dos bordes antes de activarlos o anuncia la segunda fuente como escalada propia."
+    },
+    {
+      "title": "La salida aparente solo admite un punto",
+      "body": "Una brecha puede parecer abierta aunque el cuerpo choque con un campo. Incluye radio, tiempo de desplazamiento, distancia a las paredes y encuadre de cámara en cada ruta segura."
+    },
+    {
+      "title": "Los frentes aceleran o persisten invisibles",
+      "body": "El diagrama deja de ser fiable si la colisión adelanta al borde o permanece tras desaparecer. Usa un mismo reloj para movimiento, daño y limpieza."
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "Modela la unión, no un impacto oculto central",
+      "body": "Guarda origen, anchura, altura, tiempo y borde actual de cada frente. El jugador está en peligro si cualquiera de los campos visibles toca todo su cuerpo; su encuentro no añade un tercer ataque oculto."
+    },
+    {
+      "title": "Prueba la salida durante el peor solapamiento",
+      "body": "Mide la anchura restante y el tiempo necesario para salir de la franja amenazada. Barre cada borde entre fotogramas para que un frente rápido no atraviese al jugador sin detectarlo."
+    },
+    {
+      "title": "Distingue convergencia de fuego cruzado",
+      "body": "El fuego cruzado trata de trayectorias que se cortan desde distintos orígenes. Aquí dos frentes anchos eliminan progresivamente un pasillo sin proyectiles discretos. Una zona segura menguante se contrae desde todos los lados."
+    },
+    {
+      "title": "Escala la relación con cuidado",
+      "body": "Cambia los tiempos, ángulo, tamaño de un frente o posición de salida solo después de enseñar el patrón básico de dos fuentes. Mantén al menos una ruta alcanzable en cada combinación."
+    }
+  ],
+  "story": {
+    "title": "Qué comunica la mecánica",
+    "body": "Kern carga runas a lo largo de dos muros laterales. Los frentes pétreos cierran un paso inferior, pero Tavi puede entrar en el carril superior antes de que se junten."
+  },
+  "adaptation": {
+    "title": "Adaptarla a las acciones del jugador",
+    "body": "Caminar normalmente debe bastar para alcanzar la salida. Un salto o desplazamiento rápido puede ofrecer otro cruce solo si sus reglas de colisión e invulnerabilidad lo permiten explícitamente; ninguno debe volverse obligatorio sin aviso."
+  },
+  "distinction": {
+    "title": "Mantener la mecánica diferenciada",
+    "body": "La convergencia estrecha el pasillo seguro mediante dos fuentes anunciadas que se aproximan. Un peligro móvil lleva una sola huella, el fuego cruzado intersecta trayectorias discretas y una zona segura menguante reduce un refugio delimitado en vez de unir dos campos."
+  },
+  "lensNotes": [
+    {
+      "id": "telegraphing",
+      "body": "Ambos orígenes, direcciones, superficies, tiempo de encuentro y salida superior se ven antes de la colisión."
+    },
+    {
+      "id": "commitment",
+      "body": "Las velocidades y los tiempos de los dos frentes quedan fijados juntos; un retraso o giro necesita otra señal."
+    },
+    {
+      "id": "threat-geometry",
+      "body": "El peligro es la unión de los dos campos rellenos actuales, comprobada frente al cuerpo completo."
+    },
+    {
+      "id": "counterplay",
+      "body": "Una salida superior sigue al alcance del movimiento normal antes del cierre inferior."
+    },
+    {
+      "id": "difficulty-rhythm",
+      "body": "Anchura inicial, velocidad, tiempo de encuentro, distancia a la salida y recuperación limpia regulan la presión."
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "Hollow Knight",
+      "boss": "Mantis Lords",
+      "screenshot": "https://i.ytimg.com/vi/VG3h6uVtWyY/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=VG3h6uVtWyY&t=128s",
+      "body": "En la segunda fase, dos Mantis Lords pueden embestir simultáneamente desde bordes opuestos. Sus cuerpos y orígenes separados vuelven peligroso el paso bajo; la respuesta aérea difiere de la salida a pie del diagrama.",
+      "video": "https://www.youtube.com/watch?v=VG3h6uVtWyY&t=128s",
+      "videoDurationSeconds": 152
+    },
+    {
+      "dimension": "2D",
+      "game": "Cuphead",
+      "boss": "Chef Saltbaker",
+      "screenshot": "https://i.ytimg.com/vi/UNcMzx_CUXk/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=UNcMzx_CUXk&t=130s",
+      "body": "En la fase final de Saltbaker, dos ciclones de sal flanquean las plataformas verticales y se acercan lentamente. El peligro es el espacio menguante entre grandes frentes, no un proyectil; la respuesta vertical difiere del diagrama.",
+      "video": "https://www.youtube.com/watch?v=UNcMzx_CUXk&t=130s",
+      "videoDurationSeconds": 190
+    },
+    {
+      "dimension": "3D",
+      "game": "Final Fantasy XIV",
+      "boss": "Halone",
+      "screenshot": "https://i.ytimg.com/vi/HZ9QiiQS6q0/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=HZ9QiiQS6q0&t=545s",
+      "body": "Lochos de Halone anuncia dos hileras de lanzas en los bordes: sus ataques de media arena dejan un cuarto seguro. Es una convergencia simultánea de coberturas, no muros que se mueven literalmente; hay que leer ambas fuentes antes de su resolución.",
+      "video": "https://www.youtube.com/watch?v=HZ9QiiQS6q0&t=545s",
+      "videoDurationSeconds": 907
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}
