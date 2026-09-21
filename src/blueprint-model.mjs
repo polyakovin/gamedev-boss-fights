@@ -44,6 +44,14 @@ const SPECS = {
       [465, 850],
     ],
   },
+  'returning-projectile': {
+    mode: 'returning-projectile',
+    boss: [155, 270],
+    player: [370, 610],
+    target: [95, 700],
+    turn: [485, 455],
+    returnControl: [430, 785],
+  },
   'wide-swing': { mode: 'arc', boss: [280, 310], player: [410, 470], target: [470, 650] },
   lunge: { mode: 'lunge', boss: [170, 290], player: [390, 590], target: [470, 660] },
   grab: { mode: 'grab', boss: [280, 300], player: [390, 485], target: [470, 610] },
@@ -432,6 +440,51 @@ function primitivesFor(spec, frame) {
       ),
     ];
   }
+  if (mode === 'returning-projectile') {
+    const start = point(spec.boss);
+    const turn = point(spec.turn);
+    const returnControl = point(spec.returnControl);
+    const turnAt = 0.52;
+    const outgoingProgress = clamp(action / turnAt);
+    const returnProgress = clamp((action - turnAt) / (1 - turnAt));
+    const projectile =
+      action < turnAt
+        ? {
+            x: mix(start.x, turn.x, outgoingProgress),
+            y: mix(start.y, turn.y, outgoingProgress),
+          }
+        : quadraticPoint(turn, returnControl, start, returnProgress);
+    return [
+      line(
+        start.x,
+        start.y,
+        turn.x,
+        turn.y,
+        phase === 0 ? 0.34 + prepare * 0.34 : phase === 1 ? 0.12 : 0,
+        'accent',
+        7,
+        '12 12',
+      ),
+      path(
+        `M ${turn.x} ${turn.y} Q ${returnControl.x} ${returnControl.y} ${start.x} ${start.y}`,
+        phase === 0 ? 0.26 + prepare * 0.36 : phase === 1 ? 0.12 : 0,
+        'safe',
+        7,
+        0,
+        '10 12',
+      ),
+      circle(
+        turn.x,
+        turn.y,
+        mix(24, 38, phase === 0 ? prepare : pulse(clamp((action - 0.42) / 0.2))),
+        phase === 0 ? 0.46 + prepare * 0.34 : phase === 1 ? 0.58 * (1 - returnProgress) : 0,
+        'safe',
+        5,
+        0.08,
+      ),
+      circle(projectile.x, projectile.y, 21, phase === 1 ? 1 : 0.7, 'signal', 6, 0.48),
+    ];
+  }
   if (mode === 'arc')
     return [
       path(arcPath(boss, 205, -1.15, 2.25), preview, 'accent', 20, 0, '12 10'),
@@ -737,6 +790,10 @@ function pointClearsThreat(spec, frame, value, radius = BLUEPRINT_PLAYER_RADIUS)
         (projectile) =>
           Math.hypot(value.x - projectile.x, value.y - projectile.y) > projectile.radius + radius,
       );
+  if (mode === 'returning-projectile') {
+    const projectile = frame.primitives[3];
+    return Math.hypot(value.x - projectile.x, value.y - projectile.y) > projectile.radius + radius;
+  }
   if (mode === 'spiral')
     return (
       distanceFromBoss > 52 + radius &&
@@ -888,6 +945,8 @@ export function blueprintFrame(id, time) {
     responseProgress = phase === 0 ? 0 : phase === 1 ? smooth(action / 0.38) : 1;
   else if (spec.mode === 'splitting-projectile')
     responseProgress = phase === 0 ? 0 : phase === 1 ? smooth((action - 0.24) / 0.34) : 1;
+  else if (spec.mode === 'returning-projectile')
+    responseProgress = phase === 0 ? 0 : phase === 1 ? smooth((action - 0.2) / 0.34) : 1;
   else if (spec.mode === 'knockback')
     responseProgress = phase === 0 ? 0 : phase === 1 ? smooth(action) : 1;
   else if (spec.mode === 'target-lock')

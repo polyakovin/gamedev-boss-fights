@@ -1,0 +1,142 @@
+{
+  "title": "Proyectil de retorno",
+  "subtitle": "Anuncia la ida y la vuelta, conserva la propiedad y permite evitar ambos pasos.",
+  "variant": "Retorno curvo comprometido",
+  "summary": "Un proyectil se aleja de su dueño, gira en un punto legible y crea un segundo paso peligroso al volver.",
+  "overview": "Un proyectil de retorno sigue siendo peligroso después del primer paso porque gira y vuelve hacia su dueño. Funciona cuando el giro y la ruta de vuelta se ven antes de responder, no hay reorientación oculta, ambos pasos usan una colisión coherente y la recuperación empieza solo tras atrapar o retirar el objeto.",
+  "learning": "Diseña la salida, el giro, la vuelta, la respuesta a dos pasos y la captura como una regla espacial completa.",
+  "category": "Proyectiles",
+  "readTime": "5 min",
+  "demo": {
+    "title": "Prueba el proyectil de retorno",
+    "timeline": "Línea temporal del ataque",
+    "step": "Fases del ataque",
+    "phaseNames": ["Mostrar ambos tramos", "Lanzar y devolver", "Atrapar y recuperar"],
+    "phaseDescriptions": [
+      "Kern muestra la salida recta, un giro fijo y una curva de vuelta al mismo dueño.",
+      "El proyectil gira en la marca y vuelve por la curva fijada mientras Tavi sale de ambos pasos.",
+      "Kern atrapa el proyectil y recupera cuando todo el volumen de colisión ha dejado la ruta de Tavi."
+    ],
+    "boss": "Jefe",
+    "player": "Jugador",
+    "danger": "El proyectil de ida o vuelta está activo",
+    "locked": "El giro y la vuelta están fijados",
+    "safe": "La ruta despeja ambos pasos",
+    "reducedMotion": "La reproducción automática está desactivada por el movimiento reducido. Usa el control temporal para revisar ambos tramos.",
+    "diagramDescription": "Diagrama en bucle: un disparo va del jefe a un giro marcado y regresa por una curva distinta mientras el jugador sale de las dos rutas de colisión."
+  },
+  "steps": [
+    {
+      "title": "¿Pueden planearse ambos pasos desde la primera señal?",
+      "body": "Muestra juntos la línea de ida, el giro y el corredor general de vuelta. Debe quedar claro que la primera esquiva no termina el ataque."
+    },
+    {
+      "title": "¿La vuelta conserva la geometría comprometida?",
+      "body": "Fija el giro y la curva al lanzar. Comprueba el cuerpo completo en ambos tramos, incluida la zona donde salir de la ida puede entrar en la vuelta."
+    },
+    {
+      "title": "¿La captura termina de forma visible?",
+      "body": "Sincroniza proyectil, estela, colisión y animación del dueño hasta la captura. Recupera solo cuando el cuerpo de vuelta ya no sea activo."
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "Solo se anuncia la ida",
+      "body": "Una vuelta sorpresa castiga la primera respuesta correcta. Indica el lado o corredor que el objeto volverá a ocupar."
+    },
+    {
+      "title": "La vuelta persigue al jugador",
+      "body": "El giro oculto convierte un bumerán en seguimiento. Si el dueño cambia de posición, muéstrala y fíjala antes del giro."
+    },
+    {
+      "title": "La captura acaba antes que la colisión",
+      "body": "Un golpe invisible cerca del dueño rompe la recuperación. Un solo evento debe terminar imagen, colisión, audio y propiedad."
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "Guarda un plan de ida y vuelta",
+      "body": "Registra dueño, salida, giro, curva, velocidad, radio y captura en un plan del que deriven imagen y seguridad."
+    },
+    {
+      "title": "Da un acento legible al giro",
+      "body": "Una breve pausa, luz, sonido o rotación separa las dos decisiones sin cortar el ritmo."
+    },
+    {
+      "title": "Prueba el cruce, no solo los extremos",
+      "body": "Recorre la ruta corporal en el tiempo para que una esquiva de ida no choque con la curva de vuelta."
+    },
+    {
+      "title": "Cambia la propiedad con cuidado",
+      "body": "Si el dueño se mueve o hay reflejo, comunica el nuevo dueño y el punto de captura para conservar la regla aprendida."
+    }
+  ],
+  "story": {
+    "title": "Qué comunica la mecánica",
+    "body": "El retorno hace que el ataque de Kern parezca controlado: el mismo objeto rúnico sale y responde a su llamada. El viaje completo da a Tavi una consecuencia visible tras el primer éxito."
+  },
+  "adaptation": {
+    "title": "Adáptala a los verbos del jugador",
+    "body": "El movimiento puede cruzar entre tramos o quedarse fuera. Bloqueo, reflejo y destrucción deben recibir una consecuencia explícita sobre el viaje completo."
+  },
+  "distinction": {
+    "title": "Mantén la mecánica diferenciada",
+    "body": "El proyectil de retorno vuelve a su dueño tras la ida. El rebote cambia en una superficie, el seguimiento corrige hacia un objetivo y el fuego cruzado usa varias fuentes. Conserva viaje y propiedad."
+  },
+  "lensNotes": [
+    {
+      "id": "telegraphing",
+      "body": "La ida, el giro y el corredor de vuelta aparecen antes del lanzamiento."
+    },
+    {
+      "id": "commitment",
+      "body": "El lanzamiento fija giro y vuelta; no hay nueva puntería en vuelo."
+    },
+    {
+      "id": "threat-geometry",
+      "body": "La seguridad incluye el radio en ambos tramos y la ruta entre ellos."
+    },
+    {
+      "id": "counterplay",
+      "body": "El movimiento despeja ambos pasos y cada defensa tiene un efecto explícito."
+    },
+    {
+      "id": "context-and-sequence",
+      "body": "Bordes, movimiento del dueño y ataques vecinos deciden si la segunda ruta es alcanzable."
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "Hollow Knight",
+      "boss": "Hornet Protector",
+      "screenshot": "https://i.ytimg.com/vi/rwZmf4u366o/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=rwZmf4u366o&t=276s",
+      "body": "La aguja de Hornet permanece unida por hilo y vuelve tras cruzar la arena. El vínculo visible hace que el segundo paso pertenezca al mismo ataque.",
+      "video": "https://www.youtube.com/watch?v=rwZmf4u366o&t=276s",
+      "videoDurationSeconds": 2832
+    },
+    {
+      "dimension": "2D",
+      "game": "Hades",
+      "boss": "Theseus and Asterius",
+      "screenshot": "https://i.ytimg.com/vi/iTV6y_0GBfg/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=iTV6y_0GBfg&t=22s",
+      "body": "Theseus lanza y reclama su lanza, que puede golpear al volver. Los pilares muestran cómo cobertura y dueño forman ambos tramos.",
+      "video": "https://www.youtube.com/watch?v=iTV6y_0GBfg&t=22s",
+      "videoDurationSeconds": 321
+    },
+    {
+      "dimension": "3D",
+      "game": "God of War Ragnarök",
+      "boss": "Thor",
+      "screenshot": "https://i.ytimg.com/vi/yFlBtaORn5E/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=yFlBtaORn5E&t=70s",
+      "body": "Mjölnir conserva una silueta fuerte y su vínculo con Thor. El audio de retorno y la pose del dueño ayudan cuando la profundidad oculta el tramo entrante.",
+      "video": "https://www.youtube.com/watch?v=yFlBtaORn5E&t=70s",
+      "videoDurationSeconds": 538
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

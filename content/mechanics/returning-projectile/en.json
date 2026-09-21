@@ -1,0 +1,142 @@
+{
+  "title": "Returning projectile",
+  "subtitle": "Announce the outbound and return legs, preserve ownership, and make both passes avoidable.",
+  "variant": "Curved committed return path",
+  "summary": "A projectile travels away from its owner, turns at a readable point, and creates a second dangerous pass on the way back.",
+  "overview": "A returning projectile stays dangerous after its first pass because it travels back toward its owner. It works when the turnaround and return route are visible before the player commits, the projectile does not secretly retarget, both passes use consistent collision geometry, and recovery begins only after the object is caught or removed.",
+  "learning": "Design the outbound route, turnaround, return route, two-pass response, and catch as one complete spatial rule.",
+  "category": "Projectiles",
+  "readTime": "5 min",
+  "demo": {
+    "title": "Test the returning projectile",
+    "timeline": "Attack timeline",
+    "step": "Attack phases",
+    "phaseNames": ["Preview both legs", "Throw and return", "Catch and recover"],
+    "phaseDescriptions": [
+      "Kern shows a straight outbound leg, a fixed turnaround, and a curved route back to the same owner.",
+      "The projectile reaches the marker and follows the committed return curve while Tavi crosses to the outside of both passes.",
+      "Kern catches the projectile and holds recovery after the full collision volume has left Tavi’s route."
+    ],
+    "boss": "Boss",
+    "player": "Player",
+    "danger": "The outbound or returning projectile is active",
+    "locked": "Turnaround and return route are locked",
+    "safe": "The route clears both passes",
+    "reducedMotion": "Autoplay is disabled by the reduced-motion setting. Use the timeline slider to inspect both legs.",
+    "diagramDescription": "A looping diagram of a returning projectile. One shot travels from the boss to a marked turnaround, then follows a distinct curved route back while the player moves outside both collision paths."
+  },
+  "steps": [
+    {
+      "title": "Can both passes be planned from the first signal?",
+      "body": "Show the outward line, turnaround cue, and broad return route together. The player should understand that the first dodge is not the end of the attack before leaving a safe position."
+    },
+    {
+      "title": "Does the return preserve its committed geometry?",
+      "body": "Lock the turnaround point and return curve at release. Sample the complete player body against the projectile on both legs, including the crossing region where a move that clears the throw may enter the return."
+    },
+    {
+      "title": "Is the catch visibly complete?",
+      "body": "Keep the projectile, trail, collision, and owner animation synchronized until the catch. Recovery should begin only when the returning body is no longer active, confirming the end of the two-pass rule."
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "Only the outbound route is telegraphed",
+      "body": "A surprise return punishes the correct first response. Even when the exact curve emerges in motion, signal which side or corridor the projectile will revisit."
+    },
+    {
+      "title": "The return homes onto the player",
+      "body": "Unannounced steering turns a boomerang rule into tracking. If the owner recalls toward a new position, show that destination and lock it before the turn."
+    },
+    {
+      "title": "The catch animation ends before collision",
+      "body": "An invisible late hit near the owner makes recovery unreliable. Use one catch event to end visuals, collision, audio, and ownership state together."
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "Store one round-trip plan",
+      "body": "Capture owner, outbound segment, turnaround, return curve, speed profile, radius, and catch time in one plan. Rendering and safety checks should derive both legs from it."
+    },
+    {
+      "title": "Give the turnaround a readable beat",
+      "body": "A brief slowdown, flash, sound, or rotation marks the change of direction. Keep it short enough to preserve flow but long enough to separate the two decisions."
+    },
+    {
+      "title": "Test the crossing, not only endpoints",
+      "body": "The dangerous moment is often between the legs. Sweep the player’s full route across time so a dodge around the outward path does not collide with the returning curve."
+    },
+    {
+      "title": "Escalate by changing ownership carefully",
+      "body": "Later variants can move the owner or let the player reflect the object. Make the new owner and catch point explicit; otherwise the learned return route stops being reusable."
+    }
+  ],
+  "story": {
+    "title": "What the mechanic communicates",
+    "body": "A returning projectile makes Kern’s attack feel controlled rather than disposable: the same rune-charged object leaves and answers its owner’s call. The round trip gives Tavi a visible consequence to anticipate after the first success."
+  },
+  "adaptation": {
+    "title": "Adapt it to the player verbs",
+    "body": "Movement may cross between the two legs or stay outside their combined envelope. Blocking can stop only one pass, reflection can change ownership, and destruction can cancel the return; define which verb affects the round trip and show the result."
+  },
+  "distinction": {
+    "title": "Keep the mechanic distinct",
+    "body": "A returning projectile reverses or curves back to an owner after an outbound pass. A ricochet changes direction at a surface, a homing projectile continually steers toward a target, and crossfire uses multiple sources. Preserve the round trip and ownership."
+  },
+  "lensNotes": [
+    {
+      "id": "telegraphing",
+      "body": "The outward leg, turnaround, and broad return corridor appear before release."
+    },
+    {
+      "id": "commitment",
+      "body": "Release fixes the turnaround and return path; the projectile does not retarget mid-flight."
+    },
+    {
+      "id": "threat-geometry",
+      "body": "Safety includes the projectile radius on both legs and the player’s route between them."
+    },
+    {
+      "id": "counterplay",
+      "body": "Movement clears both passes, while block, reflect, or destruction receives one explicit round-trip effect."
+    },
+    {
+      "id": "context-and-sequence",
+      "body": "Arena edges, owner movement, and adjacent attacks determine whether the second pass preserves a reachable route."
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "Hollow Knight",
+      "boss": "Hornet Protector",
+      "screenshot": "https://i.ytimg.com/vi/rwZmf4u366o/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=rwZmf4u366o&t=276s",
+      "body": "Hornet’s thrown needle remains attached by thread and returns after crossing the side-view arena. The visible tether and stable height make the second pass part of the same readable attack rather than a surprise shot.",
+      "video": "https://www.youtube.com/watch?v=rwZmf4u366o&t=276s",
+      "videoDurationSeconds": 2832
+    },
+    {
+      "dimension": "2D",
+      "game": "Hades",
+      "boss": "Theseus and Asterius",
+      "screenshot": "https://i.ytimg.com/vi/iTV6y_0GBfg/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=iTV6y_0GBfg&t=22s",
+      "body": "Theseus marks Zagreus, throws his spear, and recalls it so the same weapon can hit on the way back. Arena pillars reveal how cover and owner position can shape both legs without changing the projectile’s identity.",
+      "video": "https://www.youtube.com/watch?v=iTV6y_0GBfg&t=22s",
+      "videoDurationSeconds": 321
+    },
+    {
+      "dimension": "3D",
+      "game": "God of War Ragnarök",
+      "boss": "Thor",
+      "screenshot": "https://i.ytimg.com/vi/yFlBtaORn5E/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=yFlBtaORn5E&t=70s",
+      "body": "Thor’s Mjölnir throw preserves a strong weapon silhouette and a clear relationship to its owner in a close 3D camera. The example shows why return audio and owner pose matter when depth can hide the inbound leg.",
+      "video": "https://www.youtube.com/watch?v=yFlBtaORn5E&t=70s",
+      "videoDurationSeconds": 538
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

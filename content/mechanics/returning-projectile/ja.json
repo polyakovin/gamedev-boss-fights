@@ -1,0 +1,130 @@
+{
+  "title": "帰還弾",
+  "subtitle": "往路と復路を予告し、所有者を保ち、両方の通過を回避可能にします。",
+  "variant": "確定した曲線帰還経路",
+  "summary": "弾が所有者から離れ、読める地点で向きを変え、戻る途中に2回目の危険な通過を作ります。",
+  "overview": "帰還弾は最初の通過後に向きを変えて所有者へ戻るため、危険が続きます。転回点と復路が応答前に見え、隠れた再照準がなく、両経路の判定が一貫し、捕獲または消去後にだけ回復すると機能します。",
+  "learning": "往路、転回、復路、2回の応答、捕獲を1つの空間ルールとして設計します。",
+  "category": "投射物",
+  "readTime": "5分",
+  "demo": {
+    "title": "帰還弾をテストする",
+    "timeline": "攻撃タイムライン",
+    "step": "攻撃フェーズ",
+    "phaseNames": ["両経路を予告", "投げて戻す", "捕らえて回復"],
+    "phaseDescriptions": [
+      "Kernは直線の往路、固定転回点、同じ所有者への曲線復路を示します。",
+      "弾はマーカーで向きを変え、Taviが両経路の外へ移動する間に確定曲線を戻ります。",
+      "全判定がTaviの経路を離れてからKernが弾を捕らえ、回復します。"
+    ],
+    "boss": "ボス",
+    "player": "プレイヤー",
+    "danger": "往路または復路の弾が有効",
+    "locked": "転回と復路が固定済み",
+    "safe": "経路が両方の通過を避ける",
+    "reducedMotion": "動きを減らす設定により自動再生は無効です。タイムラインで両経路を確認してください。",
+    "diagramDescription": "帰還弾のループ図。弾がボスから転回マーカーへ進み、別の曲線で戻る間にプレイヤーが両判定経路の外へ移動します。"
+  },
+  "steps": [
+    {
+      "title": "最初の合図から両方を計画できるか？",
+      "body": "往路、転回合図、大まかな復路を同時に示し、最初の回避で攻撃が終わらないと事前に理解させます。"
+    },
+    {
+      "title": "復路は確定形を保つか？",
+      "body": "発射時に転回点と復路曲線を固定します。往路回避が復路へ入る交差部を含め、全身を両経路で検証します。"
+    },
+    {
+      "title": "捕獲完了が見えるか？",
+      "body": "弾、軌跡、判定、所有者アニメを捕獲まで同期し、帰還判定が無効になってから回復します。"
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "往路だけを予告する",
+      "body": "不意の復路は正しい最初の応答を罰します。再訪する側または通路を先に示します。"
+    },
+    {
+      "title": "復路がプレイヤーを追う",
+      "body": "隠れた操舵は帰還を追尾に変えます。所有者が移動するなら転回前に新しい捕獲点を固定します。"
+    },
+    {
+      "title": "捕獲演出が判定より先に終わる",
+      "body": "所有者付近の見えない遅い命中を防ぐため、同じ捕獲イベントで映像、判定、音、所有権を終了します。"
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "往復計画を1つ保存する",
+      "body": "所有者、往路、転回、復路曲線、速度、半径、捕獲時間を1計画に入れ、描画と安全判定を導きます。"
+    },
+    {
+      "title": "転回に読める節目を置く",
+      "body": "短い減速、閃光、音、回転で流れを保ちながら2つの判断を分けます。"
+    },
+    {
+      "title": "端点ではなく交差を検証する",
+      "body": "時間に沿って全身経路を走査し、往路回避が復路曲線に入らないようにします。"
+    },
+    {
+      "title": "所有権変更は慎重に",
+      "body": "所有者移動や反射がある場合、新所有者と捕獲点を明示し、学習した復路を再利用可能にします。"
+    }
+  ],
+  "story": {
+    "title": "この仕組みが伝えるもの",
+    "body": "帰還はKernの攻撃を使い捨てでなく制御されたものにします。同じルーン物体が離れて呼びかけに応じ、Taviは最初の成功後の結果も予測できます。"
+  },
+  "adaptation": {
+    "title": "プレイヤーの動詞に合わせる",
+    "body": "移動は2経路の間を抜けるか外に留まれます。ガード、反射、破壊が往復へ与える効果を1つずつ明示します。"
+  },
+  "distinction": {
+    "title": "仕組みの違いを保つ",
+    "body": "帰還弾は往路後に所有者へ戻ります。跳弾は面で方向を変え、追尾は目標へ操舵し、交差射撃は複数源を使います。往復と所有権を保ちます。"
+  },
+  "lensNotes": [
+    { "id": "telegraphing", "body": "発射前に往路、転回、復路通路を示します。" },
+    { "id": "commitment", "body": "発射で転回と復路が固定され、飛行中は再照準しません。" },
+    { "id": "threat-geometry", "body": "安全判定は両経路の弾半径とその間の移動を含みます。" },
+    { "id": "counterplay", "body": "移動は両通過を避け、防御動作には往復への明示効果があります。" },
+    {
+      "id": "context-and-sequence",
+      "body": "端、所有者移動、前後攻撃が2回目の経路の到達性を決めます。"
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "Hollow Knight",
+      "boss": "Hornet Protector",
+      "screenshot": "https://i.ytimg.com/vi/rwZmf4u366o/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=rwZmf4u366o&t=276s",
+      "body": "Hornetの針は糸で結ばれ、横画面を通過後に戻ります。見える接続が2回目を同じ攻撃として示します。",
+      "video": "https://www.youtube.com/watch?v=rwZmf4u366o&t=276s",
+      "videoDurationSeconds": 2832
+    },
+    {
+      "dimension": "2D",
+      "game": "Hades",
+      "boss": "Theseus and Asterius",
+      "screenshot": "https://i.ytimg.com/vi/iTV6y_0GBfg/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=iTV6y_0GBfg&t=22s",
+      "body": "Theseusは槍を投げて呼び戻し、復路でも命中させます。柱と所有者位置が両経路を形作ります。",
+      "video": "https://www.youtube.com/watch?v=iTV6y_0GBfg&t=22s",
+      "videoDurationSeconds": 321
+    },
+    {
+      "dimension": "3D",
+      "game": "God of War Ragnarök",
+      "boss": "Thor",
+      "screenshot": "https://i.ytimg.com/vi/yFlBtaORn5E/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=yFlBtaORn5E&t=70s",
+      "body": "Mjölnirは強い輪郭とThorとの所有関係を保ちます。奥行きが復路を隠すとき、帰還音と所有者の姿勢が重要です。",
+      "video": "https://www.youtube.com/watch?v=yFlBtaORn5E&t=70s",
+      "videoDurationSeconds": 538
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

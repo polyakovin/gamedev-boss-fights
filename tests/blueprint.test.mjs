@@ -13,8 +13,8 @@ import {
   renderBlueprintThumbnail,
 } from '../lib/blueprint-view.mjs';
 
-test('all 28 promoted lesson animations have distinct rule modes and complete moving frames', () => {
-  assert.equal(BLUEPRINT_MECHANIC_IDS.length, 28);
+test('all 29 promoted lesson animations have distinct rule modes and complete moving frames', () => {
+  assert.equal(BLUEPRINT_MECHANIC_IDS.length, 29);
   const modes = new Set();
   for (const id of BLUEPRINT_MECHANIC_IDS) {
     for (let time = 0; time <= BLUEPRINT_DURATION; time += 0.1) {
@@ -35,7 +35,7 @@ test('all 28 promoted lesson animations have distinct rule modes and complete mo
           assert.ok(Number.isFinite(value), `${id} has an invalid ${primitive.type}`);
     }
   }
-  assert.equal(modes.size, 28);
+  assert.equal(modes.size, 29);
 });
 
 test('every blueprint exposes signal, committed action, and recovery without player teleports', () => {
@@ -63,6 +63,7 @@ test('every promoted animation derives safety from its own active geometry', () 
     'single-shot': null,
     crossfire: null,
     'splitting-projectile': null,
+    'returning-projectile': null,
     'wide-swing': { x: 280, y: 515 },
     lunge: { x: 300, y: 440 },
     grab: { x: 390, y: 485 },
@@ -105,6 +106,9 @@ test('every promoted animation derives safety from its own active geometry', () 
       const projectile = frame.primitives.find(
         (primitive, index) => index >= 5 && primitive.type === 'circle' && primitive.opacity > 0.15,
       );
+      point = { x: projectile.x, y: projectile.y };
+    } else if (!point && id === 'returning-projectile') {
+      const projectile = frame.primitives[3];
       point = { x: projectile.x, y: projectile.y };
     } else if (!point && ['scanning-beam', 'rotating-beams'].includes(id)) {
       const beam = frame.primitives.find(
@@ -276,6 +280,31 @@ test('splitting projectile commits one parent, one split point, and three fragme
     false,
   );
   assert.equal(fragments.playerSafe, true);
+});
+
+test('returning projectile announces an outbound leg and a distinct committed return leg', () => {
+  const signal = blueprintFrame('returning-projectile', 1.59);
+  const outgoing = blueprintFrame('returning-projectile', 2.35);
+  const turn = blueprintFrame('returning-projectile', 3);
+  const returning = blueprintFrame('returning-projectile', 3.75);
+  const nearOwner = blueprintFrame('returning-projectile', 4.2);
+
+  assert.deepEqual(signal.player, blueprintFrame('returning-projectile', 0).player);
+  assert.equal(signal.primitives[2].x, turn.primitives[2].x);
+  assert.equal(signal.primitives[2].y, turn.primitives[2].y);
+  assert.ok(outgoing.primitives[3].x < turn.primitives[3].x);
+  assert.ok(returning.primitives[3].y > turn.primitives[3].y);
+  const distanceFromOwner = (frame) =>
+    Math.hypot(frame.primitives[3].x - frame.boss.x, frame.primitives[3].y - frame.boss.y);
+  assert.ok(distanceFromOwner(nearOwner) < distanceFromOwner(returning));
+  assert.equal(
+    blueprintPointSafe('returning-projectile', 3.75, {
+      x: returning.primitives[3].x,
+      y: returning.primitives[3].y,
+    }),
+    false,
+  );
+  assert.equal(returning.playerSafe, true);
 });
 
 test('blueprint pages and previews reuse Tavi and Kern with accessible localized data', () => {

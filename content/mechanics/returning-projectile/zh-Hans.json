@@ -1,0 +1,127 @@
+{
+  "title": "回返弹体",
+  "subtitle": "同时预告去程与回程，保留所有者关系，并让两次通过都可避开。",
+  "variant": "锁定的弧形回程",
+  "summary": "弹体离开所有者，在可读位置转向，并在返回时形成第二次危险通过。",
+  "overview": "回返弹体在第一次通过后仍然危险，因为它会转向并回到所有者。转向与回程提前可见、弹体不会暗中重新瞄准、两程使用一致碰撞几何，而且只在接住或移除物体后恢复时，这条规则才可靠。",
+  "learning": "把去程、转向、回程、两次应对和接住设计成一个完整空间规则。",
+  "category": "弹体",
+  "readTime": "5 分钟",
+  "demo": {
+    "title": "测试回返弹体",
+    "timeline": "攻击时间轴",
+    "step": "攻击阶段",
+    "phaseNames": ["预告两程", "投出并回返", "接住并恢复"],
+    "phaseDescriptions": [
+      "Kern 展示直线去程、固定转向点和回到同一所有者的弧线。",
+      "弹体到达标记并沿锁定曲线返回，Tavi 移到两次通过的外侧。",
+      "完整碰撞体离开 Tavi 路线后，Kern 接住弹体并进入恢复。"
+    ],
+    "boss": "Boss",
+    "player": "玩家",
+    "danger": "去程或回程弹体正在生效",
+    "locked": "转向与回程已锁定",
+    "safe": "路线避开两次通过",
+    "reducedMotion": "减少动态效果设置已关闭自动播放。请用时间轴检查两段路线。",
+    "diagramDescription": "循环演示：弹体从 Boss 飞向标记转向点，再沿另一条曲线返回，玩家移出两条碰撞路线。"
+  },
+  "steps": [
+    {
+      "title": "能从第一个信号规划两次通过吗？",
+      "body": "同时显示去程线、转向提示和大致回程走廊，让玩家在离开安全位置前知道第一次闪避并未结束攻击。"
+    },
+    {
+      "title": "回程是否保持锁定几何？",
+      "body": "发射时锁定转向点与回程曲线。用完整身体检查两程，包括避开去程却可能进入回程的交叉区。"
+    },
+    {
+      "title": "接住是否明确结束？",
+      "body": "让弹体、拖尾、碰撞与所有者动画同步到接住事件。回返碰撞体失效后才开始恢复。"
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "只预告去程",
+      "body": "突袭式回返会惩罚正确的第一次应对。至少提前指出会再次经过的一侧或走廊。"
+    },
+    {
+      "title": "回程追踪玩家",
+      "body": "未预告转向会把回返规则变成追踪。若所有者移动，转向前显示并锁定新接收点。"
+    },
+    {
+      "title": "接住动画早于碰撞结束",
+      "body": "所有者附近的隐形迟到命中会破坏恢复。用同一接住事件结束画面、碰撞、声音和所有权。"
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "保存一个往返计划",
+      "body": "把所有者、去程、转向、回程曲线、速度、半径和接住时间放进同一计划，并由它生成画面与安全检查。"
+    },
+    {
+      "title": "给转向一个可读节拍",
+      "body": "短暂减速、闪光、声音或旋转可以分开两个决定，同时保持攻击流动。"
+    },
+    {
+      "title": "检查交叉而非只看端点",
+      "body": "随时间扫描玩家完整路径，避免绕出去程后撞上回程曲线。"
+    },
+    {
+      "title": "谨慎改变所有权",
+      "body": "若所有者移动或玩家能反射，应明确新所有者与接住点，使已学回程仍可复用。"
+    }
+  ],
+  "story": {
+    "title": "机制传达了什么",
+    "body": "回返让 Kern 的攻击显得受控：同一个符文物体离开后回应召唤。完整往返让 Tavi 在第一次成功后仍能看到后果。"
+  },
+  "adaptation": {
+    "title": "适配玩家动作",
+    "body": "移动可穿过两程之间或停在共同范围外。格挡、反射与摧毁应各自对完整往返产生一个明确结果。"
+  },
+  "distinction": {
+    "title": "保持机制区别",
+    "body": "回返弹体在去程后回到所有者；反弹在表面改向，追踪持续朝目标转向，交叉火力使用多个来源。保留往返与所有权。"
+  },
+  "lensNotes": [
+    { "id": "telegraphing", "body": "发射前显示去程、转向和大致回程走廊。" },
+    { "id": "commitment", "body": "发射锁定转向与回程，飞行中不重新瞄准。" },
+    { "id": "threat-geometry", "body": "安全检查包含两程的弹体半径与其间玩家路线。" },
+    { "id": "counterplay", "body": "移动避开两程，每种防御对往返只有一个明确作用。" },
+    { "id": "context-and-sequence", "body": "场地边缘、所有者移动和相邻攻击决定第二程是否可避。" }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "Hollow Knight",
+      "boss": "Hornet Protector",
+      "screenshot": "https://i.ytimg.com/vi/rwZmf4u366o/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=rwZmf4u366o&t=276s",
+      "body": "Hornet 投出的针由丝线连接并在横穿场地后返回。可见连接让第二程明确属于同一次攻击。",
+      "video": "https://www.youtube.com/watch?v=rwZmf4u366o&t=276s",
+      "videoDurationSeconds": 2832
+    },
+    {
+      "dimension": "2D",
+      "game": "Hades",
+      "boss": "Theseus and Asterius",
+      "screenshot": "https://i.ytimg.com/vi/iTV6y_0GBfg/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=iTV6y_0GBfg&t=22s",
+      "body": "Theseus 投枪后召回，同一武器可在回程命中。柱子展示掩体和所有者位置如何塑造两程。",
+      "video": "https://www.youtube.com/watch?v=iTV6y_0GBfg&t=22s",
+      "videoDurationSeconds": 321
+    },
+    {
+      "dimension": "3D",
+      "game": "God of War Ragnarök",
+      "boss": "Thor",
+      "screenshot": "https://i.ytimg.com/vi/yFlBtaORn5E/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=yFlBtaORn5E&t=70s",
+      "body": "Mjölnir 保持强烈轮廓和与 Thor 的所有权联系。深度遮挡回程时，召回声音与所有者姿态尤其重要。",
+      "video": "https://www.youtube.com/watch?v=yFlBtaORn5E&t=70s",
+      "videoDurationSeconds": 538
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}
