@@ -49,19 +49,31 @@
       "type": "object",
       "additionalProperties": false,
       "required": [
-        "badge",
         "blueprintTitle",
+        "animationTitle",
+        "timeline",
+        "boss",
+        "player",
+        "reducedMotion",
+        "diagramDescription",
         "signalTitle",
         "responseTitle",
+        "recoveryTitle",
         "tuningTitle",
         "pitfallTitle",
         "escalationTitle"
       ],
       "properties": {
-        "badge": { "type": "string", "minLength": 1 },
         "blueprintTitle": { "type": "string", "minLength": 1 },
+        "animationTitle": { "type": "string", "minLength": 1 },
+        "timeline": { "type": "string", "minLength": 1 },
+        "boss": { "type": "string", "minLength": 1 },
+        "player": { "type": "string", "minLength": 1 },
+        "reducedMotion": { "type": "string", "minLength": 1 },
+        "diagramDescription": { "type": "string", "minLength": 1 },
         "signalTitle": { "type": "string", "minLength": 1 },
         "responseTitle": { "type": "string", "minLength": 1 },
+        "recoveryTitle": { "type": "string", "minLength": 1 },
         "tuningTitle": { "type": "string", "minLength": 1 },
         "pitfallTitle": { "type": "string", "minLength": 1 },
         "escalationTitle": { "type": "string", "minLength": 1 }
@@ -70,11 +82,12 @@
     "profileCopy": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["overview", "signal", "response", "tuning", "pitfall", "escalation"],
+      "required": ["overview", "signal", "response", "recovery", "tuning", "pitfall", "escalation"],
       "properties": {
         "overview": { "type": "string", "minLength": 1 },
         "signal": { "type": "string", "minLength": 1 },
         "response": { "type": "string", "minLength": 1 },
+        "recovery": { "type": "string", "minLength": 1 },
         "tuning": { "type": "string", "minLength": 1 },
         "pitfall": { "type": "string", "minLength": 1 },
         "escalation": { "type": "string", "minLength": 1 }

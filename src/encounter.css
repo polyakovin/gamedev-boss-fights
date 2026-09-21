@@ -1,6 +1,7 @@
 /* The encounter is a small game viewport in either surrounding site theme. */
 .charge-demo,
-.pattern-demo {
+.pattern-demo,
+.blueprint-demo {
   --surface: #162426;
   --paper: #102023;
   --ink: #e4ece2;
@@ -14,7 +15,8 @@
   background: var(--surface);
 }
 .charge-demo__canvas,
-.pattern-demo__canvas {
+.pattern-demo__canvas,
+.blueprint-demo__canvas {
   padding: 0;
 }
 @media (min-width: 961px) {

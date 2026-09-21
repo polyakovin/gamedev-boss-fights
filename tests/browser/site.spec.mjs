@@ -576,8 +576,9 @@ test('boss builder persists a local draft and downloads portable JSON', async ({
   await expect(page.locator('.boss-builder-mechanic:not(.boss-builder-mechanic--wip)')).toHaveCount(
     5,
   );
-  await expect(page.locator('.boss-builder-mechanic [data-character-art="kern"]')).toHaveCount(5);
-  await expect(page.locator('.boss-builder-mechanic [data-character-art="tavi"]')).toHaveCount(5);
+  await expect(page.locator('.boss-builder-mechanic [data-character-art="kern"]')).toHaveCount(30);
+  await expect(page.locator('.boss-builder-mechanic [data-character-art="tavi"]')).toHaveCount(30);
+  await expect(page.locator('.boss-builder-mechanic [data-blueprint-preview]')).toHaveCount(25);
   await expect(page.locator('.boss-builder-mechanic [data-pattern-preview]')).toHaveCount(4);
   await expect(page.locator('[data-boss-filter]')).toHaveCount(5);
   await page.locator('[data-boss-filter="geometry"]').selectOption('radial');
@@ -984,8 +985,13 @@ test('the root defaults to English and localized catalogs point to real pages', 
   await expect(page.locator('.catalog-lesson:not(.catalog-lesson--wip)')).toHaveCount(5);
   await expect(page.locator('.catalog-lesson__number').first()).toHaveText('1.1');
   await expect(page.locator('.catalog-lesson__number').last()).toHaveText('14.11');
-  await expect(page.locator('.catalog-lesson__preview [data-character-art="kern"]')).toHaveCount(5);
-  await expect(page.locator('.catalog-lesson__preview [data-character-art="tavi"]')).toHaveCount(5);
+  await expect(page.locator('.catalog-lesson__preview [data-character-art="kern"]')).toHaveCount(
+    30,
+  );
+  await expect(page.locator('.catalog-lesson__preview [data-character-art="tavi"]')).toHaveCount(
+    30,
+  );
+  await expect(page.locator('.catalog-lesson__preview [data-blueprint-preview]')).toHaveCount(25);
   await expect(page.locator('.catalog-lesson__preview [data-pattern-preview]')).toHaveCount(4);
   const draftPage = await request.get('en/mechanics/wide-swing/');
   expect(draftPage.status()).toBe(200);

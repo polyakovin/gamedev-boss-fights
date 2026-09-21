@@ -3,6 +3,7 @@ import path from 'node:path';
 import { createHash } from 'node:crypto';
 import { ROOT, loadContent, validateContent } from '../lib/content.mjs';
 import { animations } from '../lib/animations.mjs';
+import { renderBlueprint, renderBlueprintThumbnail } from '../lib/blueprint-view.mjs';
 import { escape as e, jsonForHtml } from '../lib/html.mjs';
 import { icon } from '../lib/icons.mjs';
 import { renderLensVisual } from '../lib/lens-view.mjs';
@@ -26,7 +27,6 @@ for (const example of mechanicsExamples.examples) {
   entries.push(example);
   mechanicsExamplesById.set(example.mechanicId, entries);
 }
-const popularRankById = new Map(popularMechanics.mechanicIds.map((id, index) => [id, index + 1]));
 const popularProfilesById = new Map(
   popularMechanics.profiles.map((profile) => [profile.id, profile]),
 );
@@ -382,7 +382,7 @@ function draftExampleSection(items, locale, t) {
     <div class="wip-example-grid">${cards}</div>
   </section>`;
 }
-function draftProfileSection(profile, rank, locale) {
+function draftProfileSection(profile, locale) {
   if (!profile) return '';
   const copy = profile.translations[locale.code] ?? profile.translations.en;
   const labels = popularMechanics.ui[locale.code] ?? popularMechanics.ui.en;
@@ -391,6 +391,7 @@ function draftProfileSection(profile, rank, locale) {
   const cards = [
     [labels.signalTitle, copy.signal],
     [labels.responseTitle, copy.response],
+    [labels.recoveryTitle, copy.recovery],
     [labels.tuningTitle, copy.tuning],
     [labels.pitfallTitle, copy.pitfall],
     [labels.escalationTitle, copy.escalation],
@@ -401,7 +402,6 @@ function draftProfileSection(profile, rank, locale) {
     ${fallbackAttributes}
   >
     <header class="draft-profile__header">
-      <span class="core-badge">${e(labels.badge)} · ${String(rank).padStart(2, '0')}</span>
       <h2 id="draft-profile-title">${e(labels.blueprintTitle)}</h2>
       <p>${e(copy.overview)}</p>
     </header>
@@ -410,13 +410,38 @@ function draftProfileSection(profile, rank, locale) {
         .map(
           ([title, body], index) =>
             /* HTML */ `<article class="draft-profile__card">
-              <span aria-hidden="true">0${index + 1}</span>
+              <span aria-hidden="true">${String(index + 1).padStart(2, '0')}</span>
               <h3>${e(title)}</h3>
               <p>${e(body)}</p>
             </article>`,
         )
         .join('')}
     </div>
+  </section>`;
+}
+function draftAnimationSection(entry, locale) {
+  if (!entry.profile) return '';
+  const copy = entry.profile.translations[locale.code] ?? entry.profile.translations.en;
+  const labels = popularMechanics.ui[locale.code] ?? popularMechanics.ui.en;
+  const fallbackAttributes =
+    locale.code === 'ru' || locale.code === 'en' ? '' : ' lang="en" dir="ltr"';
+  const demo = {
+    title: `${entry.title}: ${labels.animationTitle}`,
+    timeline: labels.timeline,
+    phaseNames: [labels.signalTitle, labels.responseTitle, labels.recoveryTitle],
+    phaseDescriptions: [copy.signal, `${copy.overview} ${copy.response}`, copy.recovery],
+    boss: labels.boss,
+    player: labels.player,
+    reducedMotion: labels.reducedMotion,
+    diagramDescription: labels.diagramDescription.replace('{title}', entry.title),
+    fallbackAttributes,
+  };
+  return /* HTML */ `<section class="wip-blueprint-animation" ${fallbackAttributes}>
+    <header>
+      <span class="eyebrow">${e(labels.blueprintTitle)}</span>
+      <h2>${e(labels.animationTitle)}</h2>
+    </header>
+    ${renderBlueprint(demo, entry.id)}
   </section>`;
 }
 function renderLensCards(localeCode, t) {
@@ -585,7 +610,6 @@ function renderAbout(locale, t) {
 }
 for (const locale of locales) {
   const t = ui[locale.code];
-  const popularUi = popularMechanics.ui[locale.code] ?? popularMechanics.ui.en;
   await write(
     `${locale.code}/about/`,
     shell(locale, t.aboutTitle, t.aboutDescription, renderAbout(locale, t), {
@@ -606,7 +630,6 @@ for (const locale of locales) {
       summary: lesson?.summary ?? outlineContent.summary,
       mechanic,
       examples: mechanicsExamplesById.get(outline.id) ?? [],
-      popularRank: popularRankById.get(outline.id) ?? null,
       profile: popularProfilesById.get(outline.id) ?? null,
       connectionProfile: createMechanicProfile({
         id: outline.id,
@@ -663,7 +686,6 @@ for (const locale of locales) {
                       <span class="catalog-lesson__copy">
                         <span class="catalog-lesson__title">
                           <strong>${e(entry.title)}</strong>
-                          ${entry.popularRank ? `<span class="core-badge">${e(popularUi.badge)} · ${String(entry.popularRank).padStart(2, '0')}</span>` : ''}
                           ${entry.isWip ? '<span class="wip-badge">WIP</span>' : ''}
                         </span>
                         <small>${e(entry.summary)}</small>
@@ -672,7 +694,7 @@ for (const locale of locales) {
                         class="catalog-lesson__preview${entry.isWip ? ' catalog-lesson__preview--wip' : ''}"
                         aria-hidden="true"
                       >
-                        ${entry.isWip ? '<span>WIP</span>' : animations[entry.mechanic.meta.animation].thumbnail(entry.id)}
+                        ${entry.isWip ? (entry.profile ? renderBlueprintThumbnail(entry.id, `catalog-${locale.code}-${entry.id}`) : '<span>WIP</span>') : animations[entry.mechanic.meta.animation].thumbnail(entry.id)}
                       </span>
                       <span class="catalog-lesson__arrow"
                         >${icon('arrow-right', { className: 'icon--directional' })}</span
@@ -794,14 +816,12 @@ for (const locale of locales) {
             class="boss-builder-mechanic__diagram${entry.isWip ? ' boss-builder-mechanic__diagram--wip' : ''}"
             aria-hidden="true"
           >
-            ${entry.isWip ? '<span>WIP</span>' : animations[entry.mechanic.meta.animation].thumbnail(entry.id)}
+            ${entry.isWip ? (entry.profile ? renderBlueprintThumbnail(entry.id, `builder-${locale.code}-${entry.id}`) : '<span>WIP</span>') : animations[entry.mechanic.meta.animation].thumbnail(entry.id)}
           </span>
           <span class="boss-builder-mechanic__copy">
             <span class="eyebrow">${e(entry.category)}</span>
             <strong
-              >${e(entry.title)}
-              ${entry.popularRank ? `<span class="core-badge">${e(popularUi.badge)}</span>` : ''}
-              ${entry.isWip ? '<span class="wip-badge">WIP</span>' : ''}</strong
+              >${e(entry.title)} ${entry.isWip ? '<span class="wip-badge">WIP</span>' : ''}</strong
             >
             <span class="boss-builder-mechanic__tags">
               <span>${e(taxonomyLabels.geometry[profile.geometry[0]])}</span>
@@ -1049,12 +1069,11 @@ for (const locale of locales) {
         >
         <div class="wip-mechanic-title">
           <h1>${e(entry.title)}</h1>
-          ${entry.popularRank ? `<span class="core-badge">${e(popularUi.badge)} · ${String(entry.popularRank).padStart(2, '0')}</span>` : ''}
           <span class="wip-badge">WIP</span>
         </div>
         <p>${e(entry.summary)}</p>
       </header>
-      ${draftProfileSection(entry.profile, entry.popularRank, locale)}
+      ${draftAnimationSection(entry, locale)} ${draftProfileSection(entry.profile, locale)}
       ${draftExampleSection(entry.examples, locale, t)}
       <section class="wip-mechanic-panel" aria-label="WIP">
         <div class="wip-mechanic-placeholder" aria-hidden="true">
@@ -1075,6 +1094,7 @@ for (const locale of locales) {
       shell(locale, entry.title, entry.summary, body, {
         route: `mechanics/${entry.id}/`,
         pageClass: 'wip-mechanic-page',
+        assets: entry.profile ? ['blueprint.css', 'encounter.css', 'blueprint-player.mjs'] : [],
       }),
     );
   }

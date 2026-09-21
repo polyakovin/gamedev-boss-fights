@@ -1,0 +1,146 @@
+import { BLUEPRINT_DURATION, blueprintFrame } from './blueprint-model.mjs';
+import { createCharacterAnimator } from './character-motion.mjs';
+import { createEncounterEffects } from './encounter-effects.mjs';
+
+const set = (node, name, value) => node.setAttribute(name, String(value));
+
+function updatePrimitive(group, primitive) {
+  const node = group.firstElementChild;
+  node.setAttribute('class', `blueprint-tone--${primitive.tone}`);
+  set(node, 'opacity', primitive.opacity);
+  set(node, 'stroke-width', primitive.width);
+  if (primitive.dash) set(node, 'stroke-dasharray', primitive.dash);
+  else node.removeAttribute('stroke-dasharray');
+  node.setAttribute('fill', primitive.fill ? 'currentColor' : 'none');
+  if (primitive.fill) set(node, 'fill-opacity', primitive.fill);
+  else node.removeAttribute('fill-opacity');
+  if (primitive.type === 'circle') {
+    set(node, 'cx', primitive.x);
+    set(node, 'cy', primitive.y);
+    set(node, 'r', primitive.radius);
+  } else if (primitive.type === 'line') {
+    set(node, 'x1', primitive.x1);
+    set(node, 'y1', primitive.y1);
+    set(node, 'x2', primitive.x2);
+    set(node, 'y2', primitive.y2);
+  } else if (primitive.type === 'rect') {
+    set(node, 'x', primitive.x);
+    set(node, 'y', primitive.y);
+    set(node, 'width', primitive.rectWidth);
+    set(node, 'height', primitive.rectHeight);
+  } else set(node, 'd', primitive.data);
+}
+
+export function initializeBlueprint(widget) {
+  if (widget.dataset.blueprintReady) return;
+  const find = (selector) => widget.querySelector(selector);
+  const config = JSON.parse(find('[data-blueprint-config]').textContent);
+  const mechanicId = widget.dataset.blueprintId;
+  const timeline = find('[data-blueprint-timeline]');
+  const currentPhase = find('[data-blueprint-current-phase]');
+  const phaseName = find('[data-blueprint-phase-name]');
+  const phaseTooltip = find('[data-blueprint-phase-tooltip]');
+  const boss = find('[data-blueprint-boss]');
+  const player = find('[data-blueprint-player]');
+  const animateBoss = createCharacterAnimator(boss, 'kern');
+  const animatePlayer = createCharacterAnimator(player, 'tavi');
+  const animateEffects = createEncounterEffects(widget, (time) => blueprintFrame(mechanicId, time));
+  const bossLabel = find('[data-blueprint-boss-label]');
+  const playerLabel = find('[data-blueprint-player-label]');
+  const primitives = [...widget.querySelectorAll('[data-blueprint-primitive]')];
+  const status = find('[data-blueprint-status]');
+  const motionNote = find('[data-blueprint-motion-note]');
+  const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
+  let time = 0;
+  let running = false;
+  let animationId = 0;
+  let lastTimestamp;
+  let announcedPhase = -1;
+  let scrubbing = false;
+  let phaseHovered = false;
+
+  function render() {
+    const frame = blueprintFrame(mechanicId, time);
+    widget.dataset.blueprintPhase = String(frame.phase);
+    widget.dataset.blueprintCommitted = String(frame.committed);
+    widget.dataset.blueprintOutcome = frame.playerSafe ? 'safe' : 'danger';
+    boss.setAttribute(
+      'transform',
+      `translate(${frame.boss.x} ${frame.boss.y}) scale(${frame.bossScale})`,
+    );
+    boss.setAttribute('opacity', String(frame.bossVisible));
+    player.setAttribute('transform', `translate(${frame.player.x} ${frame.player.y})`);
+    animateBoss(frame.bossMotion, frame.bossFacing);
+    animatePlayer(frame.playerMotion, frame.playerFacing);
+    animateEffects(time, frame);
+    bossLabel.setAttribute('x', frame.bossLabel.x);
+    bossLabel.setAttribute('y', frame.bossLabel.y);
+    bossLabel.setAttribute('opacity', String(frame.bossVisible));
+    playerLabel.setAttribute('x', frame.player.x);
+    playerLabel.setAttribute('y', frame.player.y - 62);
+    primitives.forEach((primitive, index) => updatePrimitive(primitive, frame.primitives[index]));
+    phaseName.textContent = config.phaseNames[frame.phase];
+    phaseTooltip.textContent = config.phaseDescriptions[frame.phase];
+    if (announcedPhase !== frame.phase) {
+      status.textContent = config.phaseDescriptions[frame.phase];
+      announcedPhase = frame.phase;
+    }
+    timeline.value = String(Math.round(time * 1000));
+    timeline.setAttribute('aria-valuetext', config.phaseNames[frame.phase]);
+    widget.style.setProperty('--blueprint-progress', `${(time / BLUEPRINT_DURATION) * 100}%`);
+  }
+
+  function setRunning(next) {
+    running = next;
+    widget.dataset.blueprintPlaying = String(next);
+    cancelAnimationFrame(animationId);
+    lastTimestamp = undefined;
+    if (running) animationId = requestAnimationFrame(tick);
+  }
+  function tick(timestamp) {
+    if (!running) return;
+    if (lastTimestamp !== undefined)
+      time = (time + (timestamp - lastTimestamp) / 1000) % BLUEPRINT_DURATION;
+    lastTimestamp = timestamp;
+    render();
+    animationId = requestAnimationFrame(tick);
+  }
+  function updatePlayback() {
+    setRunning(!reducedMotion.matches && !document.hidden && !scrubbing && !phaseHovered);
+  }
+  timeline.addEventListener('pointerdown', () => {
+    scrubbing = true;
+    updatePlayback();
+  });
+  timeline.addEventListener('input', () => {
+    time = Number(timeline.value) / 1000;
+    render();
+  });
+  const finishScrub = () => {
+    scrubbing = false;
+    updatePlayback();
+  };
+  timeline.addEventListener('pointerup', finishScrub);
+  timeline.addEventListener('pointercancel', finishScrub);
+  timeline.addEventListener('change', finishScrub);
+  currentPhase.addEventListener('pointerenter', () => {
+    phaseHovered = true;
+    updatePlayback();
+  });
+  currentPhase.addEventListener('pointerleave', () => {
+    phaseHovered = false;
+    updatePlayback();
+  });
+  const applyMotionPreference = () => {
+    motionNote.hidden = !reducedMotion.matches;
+    updatePlayback();
+  };
+  reducedMotion.addEventListener('change', applyMotionPreference);
+  document.addEventListener('visibilitychange', updatePlayback);
+  widget.dataset.blueprintReady = 'true';
+  render();
+  applyMotionPreference();
+}
+
+for (const widget of document.querySelectorAll('[data-blueprint-demo]'))
+  initializeBlueprint(widget);

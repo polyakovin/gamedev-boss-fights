@@ -1,0 +1,144 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {
+  BLUEPRINT_DURATION,
+  BLUEPRINT_MECHANIC_IDS,
+  blueprintFrame,
+  blueprintPhaseAt,
+} from '../src/blueprint-model.mjs';
+import { renderBlueprint, renderBlueprintThumbnail } from '../lib/blueprint-view.mjs';
+
+test('all 25 expanded WIP mechanics have distinct rule modes and complete moving frames', () => {
+  assert.equal(BLUEPRINT_MECHANIC_IDS.length, 25);
+  const modes = new Set();
+  for (const id of BLUEPRINT_MECHANIC_IDS) {
+    for (let time = 0; time <= BLUEPRINT_DURATION; time += 0.1) {
+      const frame = blueprintFrame(id, time);
+      modes.add(frame.mode);
+      for (const value of [
+        frame.boss.x,
+        frame.boss.y,
+        frame.player.x,
+        frame.player.y,
+        frame.bossLabel.x,
+        frame.bossLabel.y,
+      ])
+        assert.ok(Number.isFinite(value), `${id} has invalid geometry at ${time}`);
+      assert.ok(frame.primitives.length > 0, `${id} has no visible rule geometry`);
+      for (const primitive of frame.primitives)
+        for (const value of Object.values(primitive).filter((item) => typeof item === 'number'))
+          assert.ok(Number.isFinite(value), `${id} has an invalid ${primitive.type}`);
+    }
+  }
+  assert.equal(modes.size, 25);
+});
+
+test('every blueprint exposes signal, committed action, and recovery without player teleports', () => {
+  assert.equal(blueprintPhaseAt(0), 0);
+  assert.equal(blueprintPhaseAt(1.6), 1);
+  assert.equal(blueprintPhaseAt(4.3), 2);
+
+  for (const id of BLUEPRINT_MECHANIC_IDS) {
+    assert.equal(blueprintFrame(id, 1.59).committed, false, id);
+    assert.equal(blueprintFrame(id, 1.6).committed, true, id);
+    assert.equal(blueprintFrame(id, 3).dangerActive, true, id);
+    assert.equal(blueprintFrame(id, 3).playerSafe, true, id);
+    let previous = blueprintFrame(id, 0).player;
+    for (let time = 0.02; time < BLUEPRINT_DURATION; time += 0.02) {
+      const player = blueprintFrame(id, time).player;
+      assert.ok(Math.hypot(player.x - previous.x, player.y - previous.y) < 18, `${id} teleports`);
+      previous = player;
+    }
+  }
+});
+
+test('lock, destruction, and recovery are expressed by their own geometry', () => {
+  const lockStart = blueprintFrame('target-lock', 0.8);
+  const lockAction = blueprintFrame('target-lock', 3);
+  assert.equal(lockStart.primitives[0].x, lockAction.primitives[0].x);
+  assert.equal(lockStart.primitives[0].y, lockAction.primitives[0].y);
+  assert.notDeepEqual(lockStart.player, lockAction.player);
+
+  const platforms = blueprintFrame('platform-destruction', 3.4).primitives;
+  assert.ok(platforms[1].opacity < platforms[0].opacity);
+  assert.ok(platforms[2].opacity < platforms[3].opacity);
+  const recoveredPlatforms = blueprintFrame('platform-destruction', 5.2).primitives;
+  assert.equal(recoveredPlatforms[1].opacity, 0);
+  assert.equal(recoveredPlatforms[2].opacity, 0);
+
+  const activeBeam = blueprintFrame('straight-beam', 3).primitives[1];
+  const recoveredBeam = blueprintFrame('straight-beam', 5.95).primitives[1];
+  assert.ok(activeBeam.opacity > 0.9);
+  assert.ok(recoveredBeam.opacity < 0.1);
+});
+
+test('rule-specific commitments stay visible through the response and recovery', () => {
+  const ring = blueprintFrame('ring-volley', 3);
+  assert.equal(ring.primitives[0].type, 'path');
+  assert.equal(ring.primitives[1].tone, 'safe');
+  assert.ok(ring.primitives[1].dash);
+
+  const homing = blueprintFrame('homing-projectile', 4.15);
+  const homingHead = homing.primitives[2];
+  assert.ok(Math.hypot(homingHead.x - homing.player.x, homingHead.y - homing.player.y) > 80);
+  assert.ok(homingHead.y > 650, 'homing projectile should continue straight after tracking ends');
+
+  for (const time of [2, 3, 4]) {
+    const rotating = blueprintFrame('rotating-beams', time);
+    const arm = rotating.primitives[0];
+    const armAngle = Math.atan2(arm.y2 - rotating.boss.y, arm.x2 - rotating.boss.x);
+    const playerAngle = Math.atan2(
+      rotating.player.y - rotating.boss.y,
+      rotating.player.x - rotating.boss.x,
+    );
+    const wrappedOffset = Math.atan2(
+      Math.sin(playerAngle - armAngle),
+      Math.cos(playerAngle - armAngle),
+    );
+    assert.ok(Math.abs(wrappedOffset - Math.PI / 3) < 0.001);
+  }
+
+  const recoveringTrail = blueprintFrame('hazard-trail', 5.1).primitives.slice(1);
+  assert.ok(recoveringTrail[0].opacity < recoveringTrail.at(-1).opacity);
+
+  const compressedArena = blueprintFrame('shrinking-safe-area', 5.2).primitives;
+  assert.equal(compressedArena[0].radius, 150);
+  assert.equal(compressedArena[0].opacity, 1);
+
+  const enragedRecovery = blueprintFrame('enrage', 5.2);
+  assert.equal(enragedRecovery.bossScale, 1.1);
+  assert.equal(enragedRecovery.primitives[0].opacity, 1);
+  assert.ok(enragedRecovery.primitives.slice(1).every((primitive) => primitive.opacity === 0));
+});
+
+test('target lock commits before the marked player leaves', () => {
+  const start = blueprintFrame('target-lock', 0);
+  const beforeCommit = blueprintFrame('target-lock', 1.59);
+  const afterCommit = blueprintFrame('target-lock', 2.8);
+  assert.deepEqual(beforeCommit.player, start.player);
+  assert.notDeepEqual(afterCommit.player, start.player);
+  assert.equal(beforeCommit.primitives[0].x, afterCommit.primitives[0].x);
+  assert.equal(beforeCommit.primitives[0].y, afterCommit.primitives[0].y);
+});
+
+test('blueprint pages and previews reuse Tavi and Kern with accessible localized data', () => {
+  const demo = {
+    title: 'Wide swing rule',
+    timeline: 'Timeline',
+    phaseNames: ['Signal', 'Response', 'Recovery'],
+    phaseDescriptions: ['Read the arc.', 'Leave the arc.', 'Use the safe side.'],
+    boss: 'Boss',
+    player: 'Player',
+    reducedMotion: 'Use the timeline.',
+    diagramDescription: 'A boss signals a wide arc and the player leaves it.',
+  };
+  const page = renderBlueprint(demo, 'wide-swing');
+  const preview = renderBlueprintThumbnail('wide-swing', 'test-wide-swing');
+  assert.match(page, /data-blueprint-id="wide-swing"/);
+  assert.match(page, /data-character-art="kern"/);
+  assert.match(page, /data-character-art="tavi"/);
+  assert.match(page, /A boss signals a wide arc/);
+  assert.match(preview, /data-blueprint-preview="wide-swing"/);
+  assert.match(preview, /data-character-art-preview="kern"/);
+  assert.match(preview, /data-character-art-preview="tavi"/);
+});

@@ -4,7 +4,7 @@ import { loadContent, validateContent } from '../lib/content.mjs';
 
 const source = await loadContent();
 
-test('the core collection contains 30 detailed mechanics', async () => {
+test('every selected WIP mechanic has a detailed blueprint', async () => {
   await validateContent(source);
 
   const selected = new Set(source.popularMechanics.mechanicIds);
@@ -19,8 +19,8 @@ test('the core collection contains 30 detailed mechanics', async () => {
   assert.deepEqual([...selected].filter((id) => !published.has(id)).sort(), [...profiles].sort());
 });
 
-test('each expanded draft explains signal, response, tuning, failure, and escalation', () => {
-  const fields = ['overview', 'signal', 'response', 'tuning', 'pitfall', 'escalation'];
+test('each expanded draft explains signal, response, recovery, tuning, failure, and escalation', () => {
+  const fields = ['overview', 'signal', 'response', 'recovery', 'tuning', 'pitfall', 'escalation'];
 
   for (const profile of source.popularMechanics.profiles)
     for (const locale of ['en', 'ru']) {

@@ -1380,22 +1380,6 @@ section[id] {
   letter-spacing: 0.09em;
   line-height: 1.2;
 }
-.core-badge {
-  display: inline-flex;
-  align-items: center;
-  width: max-content;
-  padding: 3px 7px;
-  border: 1px solid var(--variant-line);
-  border-radius: 999px;
-  background: var(--variant-bg);
-  color: var(--variant-ink);
-  font-family: var(--font-label);
-  font-size: 9px;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  line-height: 1.2;
-  text-transform: uppercase;
-}
 .catalog-lesson__copy small {
   color: var(--muted);
   font-size: 13px;
@@ -2482,8 +2466,7 @@ section[id] {
   font-size: 19px;
   line-height: 1.25;
 }
-.boss-builder-mechanic__copy strong .wip-badge,
-.boss-builder-mechanic__copy strong .core-badge {
+.boss-builder-mechanic__copy strong .wip-badge {
   display: inline-flex;
   margin-inline-start: 5px;
   vertical-align: 3px;
@@ -2546,10 +2529,6 @@ section[id] {
 .wip-mechanic-title .wip-badge {
   padding: 5px 9px;
   font-size: 11px;
-}
-.wip-mechanic-title .core-badge {
-  padding: 6px 10px;
-  font-size: 10px;
 }
 .wip-mechanic-hero > p {
   max-width: 760px;
