@@ -127,6 +127,15 @@ const SPECS = {
     pullRadius: 445,
     dangerRadius: 82,
   },
+  'turret-deployment': {
+    mode: 'turret-deployment',
+    boss: [145, 290],
+    player: [430, 680],
+    target: [225, 680],
+    turret: [430, 480],
+    beamEnd: [430, 870],
+    beamHalfWidth: 17,
+  },
   'wide-swing': { mode: 'arc', boss: [280, 310], player: [410, 470], target: [470, 650] },
   lunge: { mode: 'lunge', boss: [170, 290], player: [390, 590], target: [470, 660] },
   grab: { mode: 'grab', boss: [280, 300], player: [390, 485], target: [470, 610] },
@@ -902,6 +911,69 @@ function primitivesFor(spec, frame) {
       ),
     ];
   }
+  if (mode === 'turret-deployment') {
+    const turret = point(spec.turret);
+    const end = point(spec.beamEnd);
+    const deployed = phase !== 0 || prepare >= 0.7;
+    const shellOpacity =
+      phase === 2 ? 1 - recover : phase === 0 ? 0.18 + smooth((prepare - 0.7) / 0.3) * 0.74 : 0.92;
+    const shotOpacity = frame.dangerActive ? 0.94 : 0;
+    const travel = phase === 0 ? smooth(prepare / 0.7) : 1;
+    const capsule = {
+      x: mix(boss.x, turret.x, travel),
+      y: mix(boss.y, turret.y, travel),
+    };
+    return [
+      path(
+        `M ${boss.x} ${boss.y} L ${turret.x} ${turret.y}`,
+        phase === 0 ? 0.38 + prepare * 0.2 : 0,
+        'accent',
+        5,
+        0,
+        '10 12',
+      ),
+      circle(capsule.x, capsule.y, 17, phase === 0 ? 0.9 : 0, 'accent', 6, 0.18),
+      circle(turret.x, turret.y, 39, shellOpacity, deployed ? 'accent' : 'safe', 7, 0.2),
+      circle(turret.x, turret.y, 18, shellOpacity, 'signal', 6, 0.35),
+      line(turret.x, turret.y + 24, turret.x, turret.y + 61, shellOpacity, 'accent', 13),
+      path(
+        `M ${turret.x - 12} ${turret.y - 22} L ${turret.x} ${turret.y - 34} L ${turret.x + 12} ${turret.y - 22}`,
+        shellOpacity,
+        'accent',
+        5,
+      ),
+      line(
+        turret.x,
+        turret.y + 61,
+        end.x,
+        end.y,
+        phase === 0 ? 0.3 + prepare * 0.3 : frame.dangerActive ? 0 : 0.1 * (1 - recover),
+        'signal',
+        spec.beamHalfWidth * 2,
+        '15 11',
+      ),
+      line(turret.x, turret.y + 61, end.x, end.y, shotOpacity, 'signal', spec.beamHalfWidth * 2),
+      line(
+        spec.player[0],
+        spec.player[1],
+        spec.target[0],
+        spec.target[1],
+        phase === 0 ? 0.52 : phase === 1 ? 0.35 : 0.1 * (1 - recover),
+        'safe',
+        7,
+        '12 10',
+      ),
+      circle(
+        spec.target[0],
+        spec.target[1],
+        29,
+        phase === 2 ? 0.3 * (1 - recover) : 0.65,
+        'safe',
+        6,
+        0.06,
+      ),
+    ];
+  }
   if (mode === 'arc')
     return [
       path(arcPath(boss, 205, -1.15, 2.25), preview, 'accent', 20, 0, '12 10'),
@@ -1246,6 +1318,11 @@ function pointClearsThreat(spec, frame, value, radius = BLUEPRINT_PLAYER_RADIUS)
       );
   if (mode === 'pull')
     return Math.hypot(value.x - frame.boss.x, value.y - frame.boss.y) > spec.dangerRadius + radius;
+  if (mode === 'turret-deployment')
+    return (
+      distanceToSegment(value, { x: spec.turret[0], y: spec.turret[1] + 61 }, point(spec.beamEnd)) >
+      spec.beamHalfWidth + radius
+    );
   if (mode === 'spiral')
     return (
       distanceFromBoss > 52 + radius &&
@@ -1413,6 +1490,7 @@ export function blueprintFrame(id, time) {
     responseProgress = phase === 0 ? 0 : phase === 1 ? smooth(action / 0.53) : 1;
   else if (spec.mode === 'pull')
     responseProgress = phase === 0 ? 0 : phase === 1 ? smooth((action - 0.15) / 0.77) : 1;
+  else if (spec.mode === 'turret-deployment') responseProgress = smooth((t - 0.64) / 1.34);
   else if (spec.mode === 'knockback')
     responseProgress = phase === 0 ? 0 : phase === 1 ? smooth(action) : 1;
   else if (spec.mode === 'target-lock')
@@ -1500,7 +1578,9 @@ export function blueprintFrame(id, time) {
         ? phase === 1 && pulseBeamIndex(action) >= 0
         : spec.mode === 'chain-explosions'
           ? phase === 1 && chainExplosionIndex(action) >= 0
-          : phase === 1;
+          : spec.mode === 'turret-deployment'
+            ? phase === 1 && action >= 0.2 && action <= 0.88
+            : phase === 1;
   const frame = {
     id,
     mode: spec.mode,

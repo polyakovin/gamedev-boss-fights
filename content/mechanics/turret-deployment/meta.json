@@ -1,0 +1,24 @@
+{
+  "id": "turret-deployment",
+  "number": 43,
+  "published": true,
+  "sourceLocale": "en",
+  "contentVersion": 1,
+  "animation": "turret-deployment",
+  "lenses": ["telegraphing", "commitment", "threat-geometry", "counterplay", "difficulty-rhythm"],
+  "related": ["summon", "mine", "moving-hazard"],
+  "sources": [
+    {
+      "title": "Enemy Attacks and Telegraphing · Mike Stout",
+      "url": "https://www.gamedeveloper.com/design/enemy-attacks-and-telegraphing"
+    },
+    {
+      "title": "Tips for all boss fights · OTXO Steam Community",
+      "url": "https://steamcommunity.com/sharedfiles/filedetails/?id=3072971765"
+    },
+    {
+      "title": "Bosses · Roboquest Wiki",
+      "url": "https://roboquest.wiki.gg/wiki/Bosses/en"
+    }
+  ]
+}

@@ -13,8 +13,8 @@ import {
   renderBlueprintThumbnail,
 } from '../lib/blueprint-view.mjs';
 
-test('all 36 promoted lesson animations have distinct rule modes and complete moving frames', () => {
-  assert.equal(BLUEPRINT_MECHANIC_IDS.length, 36);
+test('all 37 promoted lesson animations have distinct rule modes and complete moving frames', () => {
+  assert.equal(BLUEPRINT_MECHANIC_IDS.length, 37);
   const modes = new Set();
   for (const id of BLUEPRINT_MECHANIC_IDS) {
     for (let time = 0; time <= BLUEPRINT_DURATION; time += 0.1) {
@@ -35,7 +35,7 @@ test('all 36 promoted lesson animations have distinct rule modes and complete mo
           assert.ok(Number.isFinite(value), `${id} has an invalid ${primitive.type}`);
     }
   }
-  assert.equal(modes.size, 36);
+  assert.equal(modes.size, 37);
 });
 
 test('every blueprint exposes signal, committed action, and recovery without player teleports', () => {
@@ -71,6 +71,7 @@ test('every promoted animation derives safety from its own active geometry', () 
     'moving-hazard': null,
     'converging-threats': { x: 100, y: 650 },
     pull: { x: 280, y: 310 },
+    'turret-deployment': { x: 430, y: 700 },
     'wide-swing': { x: 280, y: 515 },
     lunge: { x: 300, y: 440 },
     grab: { x: 390, y: 485 },
@@ -521,6 +522,36 @@ test('pull displaces the player toward its source but only the visible core deal
   assert.equal(late.playerSafe, true);
   assert.equal(blueprintPointSafe('pull', 5.2, { x: 280, y: 300 }), true);
   assert.ok(recovery.primitives[1].opacity < late.primitives[1].opacity);
+});
+
+test('deployed turret stays fixed, announces its lane, and only fires while visibly active', () => {
+  const placement = blueprintFrame('turret-deployment', 1.59);
+  const warming = blueprintFrame('turret-deployment', 1.95);
+  const firing = blueprintFrame('turret-deployment', 3);
+  const ended = blueprintFrame('turret-deployment', 4.2);
+  const recovery = blueprintFrame('turret-deployment', 5.2);
+  for (const frame of [placement, warming, firing, ended]) {
+    assert.equal(frame.primitives[2].x, 430);
+    assert.equal(frame.primitives[2].y, 480);
+    assert.equal(frame.primitives[7].x1, 430);
+    assert.equal(frame.primitives[7].x2, 430);
+  }
+  assert.equal(placement.primitives[6].dash, '15 11');
+  assert.equal(placement.primitives[7].opacity, 0);
+  assert.equal(warming.dangerActive, false);
+  assert.equal(firing.dangerActive, true);
+  assert.equal(firing.primitives[7].opacity, 0.94);
+  assert.equal(ended.dangerActive, false);
+  assert.equal(ended.primitives[7].opacity, 0);
+  assert.equal(blueprintPointSafe('turret-deployment', 1.59, { x: 430, y: 680 }), true);
+  assert.equal(blueprintPointSafe('turret-deployment', 1.95, { x: 430, y: 680 }), true);
+  assert.equal(blueprintPointSafe('turret-deployment', 3, { x: 430, y: 680 }), false);
+  assert.equal(blueprintPointSafe('turret-deployment', 3, { x: 382, y: 680 }), true);
+  assert.equal(blueprintPointSafe('turret-deployment', 3, { x: 382, y: 680 }, 40), false);
+  assert.equal(firing.playerSafe, true);
+  assert.ok(firing.player.x < placement.player.x);
+  assert.equal(blueprintPointSafe('turret-deployment', 5.2, { x: 430, y: 680 }), true);
+  assert.ok(recovery.primitives[2].opacity < firing.primitives[2].opacity);
 });
 
 test('blueprint pages and previews reuse Tavi and Kern with accessible localized data', () => {

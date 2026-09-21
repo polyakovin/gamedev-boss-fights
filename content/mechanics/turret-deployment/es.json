@@ -1,0 +1,142 @@
+{
+  "title": "Despliegue de torreta",
+  "subtitle": "Un arma colocada crea una segunda fuente fija de amenaza.",
+  "variant": "Kern instala una torreta rúnica que dispara por un carril anunciado",
+  "summary": "El jefe instala un arma fija cuya línea de fuego sigue siendo peligrosa después del despliegue.",
+  "overview": "Una torreta desplegada añade una fuente fija de ataque. Kern envía una cápsula a una base visible; se fija antes de disparar por la línea marcada. Tavi sale de ella con movimiento normal. La torreta permanece inmóvil mientras dispara y se apaga antes del siguiente ataque. Colocación, disparo y retirada deben coincidir en el dibujo y la colisión.",
+  "learning": "Diseña la posición, el calentamiento, la línea de fuego, la salida segura y la retirada como un solo momento legible.",
+  "category": "Objetivos adicionales",
+  "readTime": "5 min",
+  "demo": {
+    "title": "Examina la torreta desplegada",
+    "timeline": "Cronología del ataque",
+    "step": "Fases del ataque",
+    "phaseNames": ["Marcar e instalar", "Salir de la línea de fuego", "Apagar y recuperarse"],
+    "phaseDescriptions": [
+      "Kern envía la cápsula a una base fija. La torreta que emerge y la línea discontinua anuncian el disparo; la marca no daña a Tavi.",
+      "Tras el calentamiento, la torreta permanece fija y dispara por la recta comprometida. Tavi despeja todo su cuerpo con movimiento normal antes de que se active el rayo.",
+      "El rayo se apaga antes de que desaparezca la torreta. La línea vuelve a ser segura y Kern deja una recuperación diferenciada."
+    ],
+    "boss": "Jefe",
+    "player": "Jugador",
+    "danger": "Solo el rayo sólido daña cuando la torreta está activa",
+    "locked": "Base, dirección, anchura, calentamiento y apagado están fijados",
+    "safe": "Mueve todo el cuerpo lateralmente fuera de la línea",
+    "reducedMotion": "Con movimiento reducido, la reproducción automática está desactivada. Mueve el control para ver instalación, disparo y apagado.",
+    "diagramDescription": "Kern lanza una cápsula rúnica hacia una base a la derecha. La torreta fija se abre y marca un carril vertical. Tavi se mueve a la izquierda antes del rayo; después el rayo se apaga y la torreta desaparece."
+  },
+  "steps": [
+    {
+      "title": "¿Se anuncia la nueva fuente antes de atacar?",
+      "body": "Muestra la base, la silueta, la dirección y la demora de activación antes del disparo. Una marca inocua no debe parecer una zona de daño activa."
+    },
+    {
+      "title": "¿Puede el jugador despejar la línea fijada?",
+      "body": "Mide el movimiento normal desde el peor inicio válido, incluyendo aceleración y radio corporal completo. Deja un pasillo lateral alcanzable y mantén fija la torreta al disparar."
+    },
+    {
+      "title": "¿Cuándo acaba la amenaza adicional?",
+      "body": "Vincula el daño al rayo visible y apaga ambos a la vez. Si se puede destruir antes, define salud y regla de cancelación; si no, muestra claramente su duración finita."
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "Dispara en el mismo instante de colocación",
+      "body": "No hay tiempo para leer la nueva fuente ni su línea. Da a la torreta instalada un calentamiento inequívoco."
+    },
+    {
+      "title": "La línea sigue al jugador sin aviso",
+      "body": "Un cañón que gira cambia el pasillo seguro. Fija la dirección durante la ráfaga o señala y prueba cada giro posterior."
+    },
+    {
+      "title": "Una torreta invisible sigue dañando",
+      "body": "El daño después de desaparecer el rayo o la torreta rompe el contrato visual. Arte y colisión deben compartir estados de activación y apagado."
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "Modela la torreta como objeto independiente",
+      "body": "Guarda base fija, temporizador de calentamiento, vector de puntería, anchura, vida útil y salud opcional. El movimiento posterior del jefe no debe desplazarla ni cambiar silenciosamente su dirección."
+    },
+    {
+      "title": "Comprueba la salida con todo el cuerpo",
+      "body": "Barre la forma de colisión del jugador desde cada inicio válido hasta el pasillo lateral. El trayecto solo es seguro si su distancia al segmento activo supera semianchura del rayo más radio corporal."
+    },
+    {
+      "title": "Limita solapamiento y limpieza",
+      "body": "Si hay varias torretas, limita su número y verifica que las líneas no cierren todas las salidas. Por tiempo, destrucción o cambio de fase, elimina a la vez colisión y efectos."
+    },
+    {
+      "title": "Varía un parámetro por vez",
+      "body": "Cambia base, calentamiento, duración o ángulo con una señal que conserve la regla aprendida. Una torreta que sigue objetivos independientemente exige otra respuesta."
+    }
+  ],
+  "story": {
+    "title": "Qué comunica la mecánica",
+    "body": "Kern encaja una pequeña piedra rúnica en la arena. Se abre como centinela fijo, carga una recta de luz y se apaga antes del siguiente intercambio."
+  },
+  "adaptation": {
+    "title": "Adáptala a las acciones del jugador",
+    "body": "El movimiento básico debe bastar para salir de la línea. Un espadazo podría destruir opcionalmente una torreta alcanzable, pero tiempo de aproximación, alcance, salud y cancelación del daño requieren pruebas aparte; la demostración no lo exige."
+  },
+  "distinction": {
+    "title": "Distingue esta mecánica",
+    "body": "Una torreta es un atacante fijo y colocado, con su propia regla de disparo. Un esbirro invocado puede perseguir o elegir ataques; una mina espera un disparador y suele resolverse una vez; un peligro móvil transporta su zona dañina por la arena."
+  },
+  "lensNotes": [
+    {
+      "id": "telegraphing",
+      "body": "Base, cañón emergente, línea discontinua y calentamiento revelan fuente, dirección e inicio antes del daño."
+    },
+    {
+      "id": "commitment",
+      "body": "La torreta permanece en la base y su línea recta de fuego no cambia durante esta ráfaga."
+    },
+    {
+      "id": "threat-geometry",
+      "body": "Solo colisiona el segmento sólido del rayo; marca discontinua, trayectoria de la cápsula y torreta apagada no dañan."
+    },
+    {
+      "id": "counterplay",
+      "body": "El movimiento lateral normal saca todo el cuerpo más allá de la semianchura del rayo y del radio corporal."
+    },
+    {
+      "id": "difficulty-rhythm",
+      "body": "Calentamiento, anchura, posición, duración, límite de solapamiento y apagado limpio determinan la presión."
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "OTXO",
+      "boss": "The Legionary",
+      "screenshot": "https://i.ytimg.com/vi/s0lrozjZVmE/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=s0lrozjZVmE&t=31s",
+      "body": "The Legionary arroja una lanza que se clava en la pared y dispara durante un tiempo limitado. El arma anclada crea otra fuente de fuego; a diferencia de la torreta rúnica del diagrama, es una lanza arrojada.",
+      "video": "https://www.youtube.com/watch?v=s0lrozjZVmE&t=31s",
+      "videoDurationSeconds": 125
+    },
+    {
+      "dimension": "3D",
+      "game": "Roboquest",
+      "boss": "Sir Catercoaster",
+      "screenshot": "https://i.ytimg.com/vi/wiXmfg3NiAQ/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=wiXmfg3NiAQ&t=34s",
+      "body": "Turret Toss lanza una cápsula a la pared que, tras una demora, se convierte en torreta láser fija. Destaca el intervalo entre colocación y activación; el diagrama usa una base en el suelo.",
+      "video": "https://www.youtube.com/watch?v=wiXmfg3NiAQ&t=34s",
+      "videoDurationSeconds": 57
+    },
+    {
+      "dimension": "3D",
+      "game": "Roboquest",
+      "boss": "Judgeball",
+      "screenshot": "https://i.ytimg.com/vi/x_P9yYj86RQ/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=x_P9yYj86RQ&t=15s",
+      "body": "Laser Trap despliega dos torretas magnéticas cerca del jugador. Su control local difiere de la única línea dañina del diagrama, pero ambos objetos colocados cambian la situación de la arena por sí mismos.",
+      "video": "https://www.youtube.com/watch?v=x_P9yYj86RQ&t=15s",
+      "videoDurationSeconds": 99
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

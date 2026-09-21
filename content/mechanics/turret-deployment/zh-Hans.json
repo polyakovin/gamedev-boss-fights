@@ -1,0 +1,136 @@
+{
+  "title": "部署炮塔",
+  "subtitle": "放置的武器会形成第二个固定威胁源。",
+  "variant": "克恩安放符文炮塔，沿预告的直线开火",
+  "summary": "首领安装固定武器，部署动作结束后，其射击路线仍会造成威胁。",
+  "overview": "部署炮塔会在竞技场的指定位置增加一个独立的攻击源。克恩把符文舱送到可见的基座；炮塔先固定，再沿标出的路线射击。塔维可以用普通移动离开路线。炮塔开火时不移动，并在克恩再次攻击前关闭。落点、启动延迟、攻击几何和清除时机必须与画面及碰撞一致。",
+  "learning": "把落点、预热、射击路线、安全路径和移除设计成一个清晰的战斗节拍。",
+  "category": "额外目标",
+  "readTime": "5 分钟",
+  "demo": {
+    "title": "观察炮塔部署",
+    "timeline": "攻击时间轴",
+    "step": "攻击阶段",
+    "phaseNames": ["标记并安装炮塔", "离开射击路线", "关闭并恢复"],
+    "phaseDescriptions": [
+      "克恩将符文舱送往固定基座。展开的炮塔和虚线预告射击路线；虚线不会伤害塔维。",
+      "预热后炮塔保持原位，沿已锁定的直线开火。塔维在光束开启前用普通移动让整个身体离开路线。",
+      "光束先关闭，炮塔随后消失。路线重新安全，克恩留出独立的恢复时间。"
+    ],
+    "boss": "首领",
+    "player": "玩家",
+    "danger": "只有炮塔启动时的实线光束造成伤害",
+    "locked": "基座、方向、宽度、预热与关闭时机已锁定",
+    "safe": "侧移，让整个身体离开射击路线",
+    "reducedMotion": "启用减少动态效果时不会自动播放。拖动时间轴查看部署、射击和关闭。",
+    "diagramDescription": "克恩把符文舱投向右侧基座。固定炮塔展开并标记竖直路线。塔维在发射前向左移动；随后光束关闭，炮塔在恢复阶段消失。"
+  },
+  "steps": [
+    {
+      "title": "新攻击源是否先被预告？",
+      "body": "开火前显示落点、炮塔轮廓、方向和启动延迟。无害的落点标记不应看起来像已激活的碰撞区。"
+    },
+    {
+      "title": "玩家能否离开已锁定路线？",
+      "body": "从最不利的合法起点测量普通移动，考虑加速度及完整身体半径。留出可达的侧边通道，并让炮塔开火时保持固定。"
+    },
+    {
+      "title": "额外威胁何时结束？",
+      "body": "让光束伤害与可见光束同步消失。若能提前摧毁炮塔，明确其生命值和取消规则；否则清楚呈现有限持续时间。"
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "安装瞬间开火",
+      "body": "玩家来不及辨认新攻击源及其路线。给放置后的炮塔明确的预热。"
+    },
+    {
+      "title": "没有新提示就改变方向",
+      "body": "转动炮管会改变安全通道。锁定一轮射击的瞄准，或逐次提示并测试转向。"
+    },
+    {
+      "title": "看不见的炮塔仍造成伤害",
+      "body": "光束或炮塔消失后仍受伤会破坏视觉约定。让画面与碰撞共用启动和关闭状态。"
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "将炮塔建模为独立对象",
+      "body": "记录固定基座、预热计时、方向、光束宽度、寿命，以及可选生命值。首领之后的移动不能带动炮塔或暗中改变瞄准。"
+    },
+    {
+      "title": "用完整身体检验侧移",
+      "body": "从每个合法起点把玩家碰撞体扫向侧边通道。只有与激活线段的最近距离大于光束半宽加身体半径，路径才安全。"
+    },
+    {
+      "title": "限制重叠并统一清除",
+      "body": "若可存在多座炮塔，限制数量并检查射线不会封死全部出口。超时、摧毁或切换阶段时，同时移除碰撞与特效。"
+    },
+    {
+      "title": "每次只改变一个参数",
+      "body": "改变基座、预热、射击时长或角度时给出能维持既有规则的提示。独立追踪的炮塔是另一种应对问题。"
+    }
+  ],
+  "story": {
+    "title": "机制传达什么",
+    "body": "克恩将小块符文石嵌入竞技场。它展开为固定哨兵，蓄起一道直线光芒，并在下一轮交锋前熄灭。"
+  },
+  "adaptation": {
+    "title": "适配玩家动作",
+    "body": "普通移动必须足以离开射线。剑击可以作为额外方式摧毁可接近的炮塔，但靠近时间、攻击距离、生命值和伤害取消都需单独测试；本演示不要求这种能力。"
+  },
+  "distinction": {
+    "title": "与其他机制区分",
+    "body": "炮塔是具有独立射击规则的固定攻击物。召唤的随从可能追逐或选择攻击；地雷等待触发且通常只结算一次；移动危险区会把伤害范围带过竞技场。"
+  },
+  "lensNotes": [
+    {
+      "id": "telegraphing",
+      "body": "基座、展开的炮管、虚线和预热提前说明攻击源、方向与起效时间。"
+    },
+    { "id": "commitment", "body": "本轮射击中炮塔留在基座，直线射击方向不变。" },
+    {
+      "id": "threat-geometry",
+      "body": "只有实线光束线段发生碰撞；预告虚线、符文舱轨迹和停机炮塔均无伤害。"
+    },
+    { "id": "counterplay", "body": "普通侧移让整个身体越过光束半宽加身体半径的范围。" },
+    {
+      "id": "difficulty-rhythm",
+      "body": "预热、宽度、落点、射击时长、重叠上限和明确关闭共同决定压力。"
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "OTXO",
+      "boss": "The Legionary",
+      "screenshot": "https://i.ytimg.com/vi/s0lrozjZVmE/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=s0lrozjZVmE&t=31s",
+      "body": "The Legionary 掷出长矛，长矛嵌入墙壁并在有限时间内射击。固定的武器形成新火力源；与图中的符文炮塔不同，它是一支投掷的长矛。",
+      "video": "https://www.youtube.com/watch?v=s0lrozjZVmE&t=31s",
+      "videoDurationSeconds": 125
+    },
+    {
+      "dimension": "3D",
+      "game": "Roboquest",
+      "boss": "Sir Catercoaster",
+      "screenshot": "https://i.ytimg.com/vi/wiXmfg3NiAQ/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=wiXmfg3NiAQ&t=34s",
+      "body": "Turret Toss 把舱体射向墙壁，数秒后变成固定激光炮塔。这里突出的是放置到启动的间隔；图中则使用地面基座。",
+      "video": "https://www.youtube.com/watch?v=wiXmfg3NiAQ&t=34s",
+      "videoDurationSeconds": 57
+    },
+    {
+      "dimension": "3D",
+      "game": "Roboquest",
+      "boss": "Judgeball",
+      "screenshot": "https://i.ytimg.com/vi/x_P9yYj86RQ/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=x_P9yYj86RQ&t=15s",
+      "body": "Laser Trap 在玩家附近部署两座磁力炮塔。其局部束缚效果不同于图中的单条伤害路线，但两者都让独立放置的物件改变竞技场问题。",
+      "video": "https://www.youtube.com/watch?v=x_P9yYj86RQ&t=15s",
+      "videoDurationSeconds": 99
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

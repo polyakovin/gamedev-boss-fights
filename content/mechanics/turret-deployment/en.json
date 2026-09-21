@@ -1,0 +1,146 @@
+{
+  "title": "Turret deployment",
+  "subtitle": "A placed attacker makes a second, stationary source of threat.",
+  "variant": "Kern plants a rune turret that fires down one announced lane",
+  "summary": "A boss installs a fixed weapon whose firing lane remains dangerous after the deployment animation ends.",
+  "overview": "Turret deployment adds a fixed attack source. Kern sends a rune capsule to a visible socket; it locks there before firing down a marked lane. Tavi leaves that lane with ordinary movement. The turret stays anchored while firing, then powers down before Kern's next attack. Placement, firing, and cleanup must agree on screen and in collision.",
+  "learning": "Design the turret's placement, warm-up, firing lane, safe route, and removal as one readable encounter beat.",
+  "category": "Additional targets",
+  "readTime": "5 min",
+  "demo": {
+    "title": "Inspect the deployed turret",
+    "timeline": "Attack timeline",
+    "step": "Attack phases",
+    "phaseNames": [
+      "Mark and install the turret",
+      "Clear its firing lane",
+      "Power down and recover"
+    ],
+    "phaseDescriptions": [
+      "Kern sends a capsule to a fixed socket. The emerging turret and dashed lane forecast where it will fire; the dashed mark cannot hurt Tavi.",
+      "After a warm-up, the turret remains fixed and fires along the committed straight lane. Tavi's ordinary sideways movement clears their full body before the beam turns on.",
+      "The beam switches off before the turret fades. The lane becomes safe again and Kern leaves a distinct recovery interval."
+    ],
+    "boss": "Boss",
+    "player": "Player",
+    "danger": "Only the solid firing lane hurts while the turret is active",
+    "locked": "Socket, lane, width, warm-up, and shutdown are committed",
+    "safe": "Move the full player body sideways beyond the lane",
+    "reducedMotion": "Autoplay is disabled by reduced-motion settings. Scrub the timeline to inspect placement, firing, and shutdown.",
+    "diagramDescription": "Kern launches a rune capsule toward a socket on the right. A stationary turret unfolds and marks a vertical lane. Tavi moves left before the turret fires a solid beam; the beam shuts off and the turret fades during recovery."
+  },
+  "steps": [
+    {
+      "title": "Is the new source announced before it attacks?",
+      "body": "Show the landing socket, turret silhouette, firing direction, and activation delay before the shot. Do not let a harmless placement marker resemble an active hitbox."
+    },
+    {
+      "title": "Can the player clear the committed lane?",
+      "body": "Measure ordinary movement from the worst legal starting point, including acceleration and the full body radius. Leave a reachable side corridor and keep the turret fixed while this lane fires."
+    },
+    {
+      "title": "When does the extra threat end?",
+      "body": "Bind beam damage to the visible beam, then remove both on shutdown. If the turret can be destroyed early, specify its health and cancellation rule; otherwise show its finite duration clearly."
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "The turret fires on the placement frame",
+      "body": "The player cannot read a new attacker and its lane instantly. Give the deployed object an unmistakable warm-up."
+    },
+    {
+      "title": "The lane tracks without a new signal",
+      "body": "A rotating or retargeting barrel changes the safe corridor. Either lock its aim for the burst or mark and test every subsequent turn."
+    },
+    {
+      "title": "An invisible turret still shoots",
+      "body": "Damage after the beam or turret fades breaks the visual contract. Tie collision to the same activation and shutdown states as the art."
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "Represent the emplacement as an independent object",
+      "body": "Store a fixed socket, warm-up timer, aim vector, firing width, lifetime, and optional health. The boss's later motion must not move the turret or silently change its committed aim."
+    },
+    {
+      "title": "Check lane clearance with the whole body",
+      "body": "Sweep the player's collision shape from each allowed starting position to the side corridor. A path is safe only when its nearest distance from the active segment exceeds beam half-width plus player radius."
+    },
+    {
+      "title": "Bound overlap and cleanup",
+      "body": "If more than one turret can exist, cap their count and verify that their lanes do not close every exit. On timeout, destruction, or phase transition, clear the beam hitbox and its effects together."
+    },
+    {
+      "title": "Vary one deployment parameter at a time",
+      "body": "Change the socket, wind-up, firing duration, or lane angle only with a cue that preserves the learned rule. An independently tracking turret is a different response problem."
+    }
+  ],
+  "story": {
+    "title": "What the mechanic communicates",
+    "body": "Kern seats a small rune stone in the arena. It unfolds into a fixed sentry, charges a straight seam of light, and goes dark before the next exchange."
+  },
+  "adaptation": {
+    "title": "Adapt it to the player verbs",
+    "body": "Basic movement must clear the lane. A sword strike could optionally destroy a reachable turret, but its travel time, attack range, health, and damage cancellation need separate testing; the demonstration does not require that upgrade."
+  },
+  "distinction": {
+    "title": "Keep the mechanic distinct",
+    "body": "A turret is a placed, stationary attacker with its own firing rule. A summoned minion may chase or choose new attacks; a mine waits for a trigger and usually resolves once; a moving hazard carries its damaging area through the arena."
+  },
+  "lensNotes": [
+    {
+      "id": "telegraphing",
+      "body": "The landing socket, emerging barrel, dashed lane, and warm-up reveal the source, direction, and onset before damage."
+    },
+    {
+      "id": "commitment",
+      "body": "The turret stays at its socket and its straight firing lane stays fixed for this burst."
+    },
+    {
+      "id": "threat-geometry",
+      "body": "Only the solid beam segment collides; the dashed preview, capsule path, and inactive turret are non-damaging."
+    },
+    {
+      "id": "counterplay",
+      "body": "Ordinary sideways movement clears the full player body beyond beam half-width plus body radius."
+    },
+    {
+      "id": "difficulty-rhythm",
+      "body": "Warm-up, lane width, socket placement, firing duration, overlap cap, and clean shutdown determine pressure."
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "OTXO",
+      "boss": "The Legionary",
+      "screenshot": "https://i.ytimg.com/vi/s0lrozjZVmE/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=s0lrozjZVmE&t=31s",
+      "body": "The Legionary throws a spear that lodges in the arena wall and shoots for a limited time. Its anchored weapon creates a new firing source; unlike this diagram's rune turret, the source is a thrown spear.",
+      "video": "https://www.youtube.com/watch?v=s0lrozjZVmE&t=31s",
+      "videoDurationSeconds": 125
+    },
+    {
+      "dimension": "3D",
+      "game": "Roboquest",
+      "boss": "Sir Catercoaster",
+      "screenshot": "https://i.ytimg.com/vi/wiXmfg3NiAQ/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=wiXmfg3NiAQ&t=34s",
+      "body": "Turret Toss sends a capsule to a wall and turns it into a stationary laser turret after a delay. This example emphasizes the gap between placement and activation; the diagram uses a floor socket instead.",
+      "video": "https://www.youtube.com/watch?v=wiXmfg3NiAQ&t=34s",
+      "videoDurationSeconds": 57
+    },
+    {
+      "dimension": "3D",
+      "game": "Roboquest",
+      "boss": "Judgeball",
+      "screenshot": "https://i.ytimg.com/vi/x_P9yYj86RQ/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=x_P9yYj86RQ&t=15s",
+      "body": "Laser Trap deploys two magnet turrets near the player. Their local control effect differs from the diagram's single damaging lane, but both make an independently placed object change the arena problem.",
+      "video": "https://www.youtube.com/watch?v=x_P9yYj86RQ&t=15s",
+      "videoDurationSeconds": 99
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}
