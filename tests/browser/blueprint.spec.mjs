@@ -36,7 +36,48 @@ test('blueprints autoplay only when motion is allowed', async ({ page }) => {
 test('catalog and builder reuse the 24 promoted rule-specific previews', async ({ page }) => {
   await page.goto('en/');
   await expect(page.locator('[data-blueprint-preview]')).toHaveCount(24);
+  const catalogLayouts = await page.locator('[data-blueprint-preview]').evaluateAll((previews) =>
+    previews.map((preview) => {
+      const boss = preview.querySelector('[data-character-art-preview="kern"]');
+      const player = preview.querySelector('[data-character-art-preview="tavi"]');
+      const primitiveShapes = [...preview.querySelectorAll('g[clip-path] > g > g > *')];
+      return {
+        layout: `${preview.dataset.blueprintPreviewTime}|${boss?.getAttribute('transform')}|${player?.getAttribute('transform')}`,
+        visibleGeometry: primitiveShapes.some((shape) => {
+          const bounds = shape.getBoundingClientRect();
+          const stroke = getComputedStyle(shape).stroke;
+          return (
+            Number(shape.getAttribute('opacity')) > 0.05 &&
+            Math.max(bounds.width, bounds.height) > 5 &&
+            stroke !== 'none'
+          );
+        }),
+      };
+    }),
+  );
+  expect(catalogLayouts.every(({ visibleGeometry }) => visibleGeometry)).toBe(true);
+  expect(new Set(catalogLayouts.map(({ layout }) => layout)).size).toBeGreaterThanOrEqual(18);
 
   await page.goto('en/builder/');
   await expect(page.locator('[data-blueprint-preview]')).toHaveCount(24);
+  const builderLayouts = await page.locator('[data-blueprint-preview]').evaluateAll((previews) =>
+    previews.map((preview) => {
+      const boss = preview.querySelector('[data-character-art-preview="kern"]');
+      const player = preview.querySelector('[data-character-art-preview="tavi"]');
+      const primitiveShapes = [...preview.querySelectorAll('g[clip-path] > g > g > *')];
+      return {
+        layout: `${preview.dataset.blueprintPreviewTime}|${boss?.getAttribute('transform')}|${player?.getAttribute('transform')}`,
+        visibleGeometry: primitiveShapes.some((shape) => {
+          const bounds = shape.getBoundingClientRect();
+          const stroke = getComputedStyle(shape).stroke;
+          return (
+            Number(shape.getAttribute('opacity')) > 0.05 &&
+            Math.max(bounds.width, bounds.height) > 5 &&
+            stroke !== 'none'
+          );
+        }),
+      };
+    }),
+  );
+  expect(builderLayouts).toEqual(catalogLayouts);
 });

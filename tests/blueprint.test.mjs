@@ -7,7 +7,11 @@ import {
   blueprintPhaseAt,
   blueprintPointSafe,
 } from '../src/blueprint-model.mjs';
-import { renderBlueprint, renderBlueprintThumbnail } from '../lib/blueprint-view.mjs';
+import {
+  blueprintPreviewLayout,
+  renderBlueprint,
+  renderBlueprintThumbnail,
+} from '../lib/blueprint-view.mjs';
 
 test('all 24 promoted lesson animations have distinct rule modes and complete moving frames', () => {
   assert.equal(BLUEPRINT_MECHANIC_IDS.length, 24);
@@ -193,4 +197,33 @@ test('blueprint pages and previews reuse Tavi and Kern with accessible localized
   assert.match(preview, /data-blueprint-preview="wide-swing"/);
   assert.match(preview, /data-character-art-preview="kern"/);
   assert.match(preview, /data-character-art-preview="tavi"/);
+  assert.match(preview, /stroke="var\(--signal\)"/);
+  assert.match(preview, /clip-path="[^"]+">\s*<g transform="translate/);
+  assert.doesNotMatch(preview, /clip-path="[^"]+"\s+transform=/);
+});
+
+test('blueprint previews use mechanic-specific keyframes and modeled actor placement', () => {
+  const layouts = BLUEPRINT_MECHANIC_IDS.map((id) => [id, blueprintPreviewLayout(id)]);
+  const relativePlacements = new Set();
+  const keyframes = new Set();
+
+  for (const [id, layout] of layouts) {
+    const { frame, boss, player, time } = layout;
+    keyframes.add(time);
+    relativePlacements.add(`${Math.round(player.x - boss.x)}:${Math.round(player.y - boss.y)}`);
+    assert.ok(boss.x > 0 && boss.x < 360, `${id} boss leaves the preview`);
+    assert.ok(boss.y > 0 && boss.y < 160, `${id} boss leaves the preview`);
+    assert.ok(player.x > 0 && player.x < 360, `${id} player leaves the preview`);
+    assert.ok(player.y > 0 && player.y < 160, `${id} player leaves the preview`);
+    assert.equal(Math.sign(player.x - boss.x), Math.sign(frame.player.x - frame.boss.x), id);
+    assert.equal(Math.sign(player.y - boss.y), Math.sign(frame.player.y - frame.boss.y), id);
+
+    const preview = renderBlueprintThumbnail(id, `test-${id}`);
+    assert.match(preview, new RegExp(`data-blueprint-preview-time="${time}"`));
+    assert.match(preview, new RegExp(`translate\\(${boss.x} ${boss.y}\\)`));
+    assert.match(preview, new RegExp(`translate\\(${player.x} ${player.y}\\)`));
+  }
+
+  assert.ok(keyframes.size >= 18, 'previews should not all sample the same moment');
+  assert.ok(relativePlacements.size >= 18, 'previews should not repeat one actor composition');
 });
