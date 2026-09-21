@@ -1,0 +1,146 @@
+{
+  "title": "Mina",
+  "subtitle": "Coloca un detonador persistente con un armado visible y deja que el jugador rodee su radio comprometido.",
+  "variant": "Una mina colocada con radio armado explícito",
+  "summary": "El jefe coloca un objeto que solo se vuelve peligroso al armarse y conserva un radio fijo hasta desactivarse.",
+  "overview": "Una mina es un objeto persistente con al menos tres estados legibles: colocada pero segura, armada y activable, y gastada o desactivada. Su posición, radio, momento de armado, condición de activación y duración deben coincidir entre imagen y colisión.",
+  "learning": "Diseña colocación, armado, geometría, bloqueo de rutas y limpieza como una sola regla con estados.",
+  "category": "Zonas y trampas",
+  "readTime": "5 min",
+  "demo": {
+    "title": "Analiza una mina",
+    "timeline": "Cronología del ataque",
+    "step": "Fases del ataque",
+    "phaseNames": [
+      "Colocar y armar la mina",
+      "Respetar el radio armado",
+      "Desactivar y reabrir la ruta"
+    ],
+    "phaseDescriptions": [
+      "Kern coloca una runa en un punto fijo. El círculo completo y el progreso de armado aparecen antes de activar la colisión.",
+      "El radio se activa y no se mueve. Tavi rodea el círculo completo sin cruzar un detonador oculto más grande.",
+      "La runa se apaga, la colisión termina en el mismo fotograma y Kern muestra una recuperación legible mientras se reabre la ruta."
+    ],
+    "boss": "Jefe",
+    "player": "Jugador",
+    "danger": "La colisión pertenece solo al radio armado visible",
+    "locked": "Centro, radio, tiempo de armado y duración quedan comprometidos",
+    "safe": "Fuera del radio para el cuerpo completo se mantiene seguro",
+    "reducedMotion": "La reproducción automática se desactiva con movimiento reducido. Usa la cronología para inspeccionar colocación, armado y desactivación.",
+    "diagramDescription": "Diagrama en bucle: el jefe coloca una mina rúnica. El círculo se arma, el jugador sigue una curva alrededor del radio completo y después la mina se desactiva y el jefe se recupera."
+  },
+  "steps": [
+    {
+      "title": "¿Se leen estado, centro y radio antes del armado?",
+      "body": "Muestra el objeto y todo su círculo mientras aún es seguro. Una runa que carga, un cambio de color o audio escalonado pueden mostrar el progreso, pero todos deben coincidir en el primer fotograma peligroso."
+    },
+    {
+      "title": "¿La colisión usa el mismo estado y círculo?",
+      "body": "Deriva luz, sonido, prueba del detonador, explosión y limpieza de una sola máquina de estados. Comprueba el cuerpo completo del jugador contra el radio mostrado."
+    },
+    {
+      "title": "¿La arena restante permite la respuesta prevista?",
+      "body": "Mide las rutas con aceleración normal, encuadre de cámara y ataques simultáneos. La mina debe negar un carril útil sin eliminar en secreto todas las respuestas compatibles."
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "La mina se arma sin transición clara",
+      "body": "Un objeto seguro que daña de repente convierte la planificación en una apuesta. Da al armado una duración legible y un cambio inequívoco antes de activar la colisión."
+    },
+    {
+      "title": "El detonador es mayor que el marcador",
+      "body": "El jugador calcula la ruta por el perímetro visible. Incluye el cuerpo completo al ajustar, pero no ocultes distancia extra fuera del círculo señalado."
+    },
+    {
+      "title": "Una mina gastada sigue bloqueando",
+      "body": "Si la imagen se apaga pero la colisión continúa, la limpieza miente. Termina daño y bloqueo juntos o muestra claramente un peligro persistente distinto."
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "Usa una máquina de estados explícita",
+      "body": "Guarda estados de colocación, armado, activa, detonada y desactivada con tiempos. Deriva de ellos imagen, audio, colisión, objetivo y retirada."
+    },
+    {
+      "title": "Prueba el cuerpo completo",
+      "body": "El centro puede salir mientras hombros o pies aún solapan el círculo. Amplía el detonador por el radio corporal al probar rutas y conserva un perímetro visual honesto."
+    },
+    {
+      "title": "Separa activación y detonación",
+      "body": "La condición puede ser contacto, proximidad, tiempo u orden del jefe; la explosión puede ser inmediata o tardía. Señala ambos momentos si permiten decisiones distintas."
+    },
+    {
+      "title": "Limita la cantidad persistente",
+      "body": "Duración y frecuencia deciden cuánta arena queda. Define un máximo y una retirada predecible antes de combinar minas con otros bloqueos."
+    }
+  ],
+  "story": {
+    "title": "Qué comunica la mecánica",
+    "body": "Kern reclama una parte de la arena con una runa cargada y hace visible esa intención antes del peligro. Tavi sobrevive respetando el límite hasta que se apaga."
+  },
+  "adaptation": {
+    "title": "Adáptala a los verbos del jugador",
+    "body": "Caminar exige márgenes generosos y pocas minas. Un impulso solo cruza si su invulnerabilidad lo permite; ataques, desvíos o interacciones pueden desarmar si ese contraataque está señalado."
+  },
+  "distinction": {
+    "title": "Mantén distinta la mecánica",
+    "body": "Una mina espera como objeto persistente activable. Un golpe de área marcada resuelve una zona programada, un peligro persistente daña continuamente y las explosiones encadenadas transfieren el peligro entre nodos. Conserva el estado armado y su condición."
+  },
+  "lensNotes": [
+    {
+      "id": "telegraphing",
+      "body": "Objeto, radio completo, progreso, estado activo y desactivación aparecen antes de cambiar la colisión."
+    },
+    {
+      "id": "commitment",
+      "body": "Centro, radio, armado, regla y duración se fijan al colocar la mina en vez de seguir al jugador."
+    },
+    {
+      "id": "threat-geometry",
+      "body": "El círculo armado visible prueba todo el cuerpo; fuera del perímetro queda seguro."
+    },
+    {
+      "id": "counterplay",
+      "body": "Mientras controla un carril queda al menos una ruta compatible o un verbo explícito para desarmar."
+    },
+    {
+      "id": "difficulty-rhythm",
+      "body": "Tiempo de armado, radio, duración, cantidad, separación y retraso aumentan presión sin ocultar estados."
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "Enter the Gungeon",
+      "boss": "Mine Flayer",
+      "screenshot": "https://i.ytimg.com/vi/RV6vnqvy-4o/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=RV6vnqvy-4o&t=62s",
+      "body": "Mine Flayer lanza minas claymore que persiguen o rodean la sala, explotan al contacto y desaparecen después. Los objetos persistentes y perímetros legibles vuelven centrales el estado, detonador y duración.",
+      "video": "https://www.youtube.com/watch?v=RV6vnqvy-4o&t=62s",
+      "videoDurationSeconds": 125
+    },
+    {
+      "dimension": "2D",
+      "game": "Sky Force Reloaded",
+      "boss": "Armored Dock Platform",
+      "screenshot": "https://i.ytimg.com/vi/Z0_SYrQ-rcY/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=Z0_SYrQ-rcY&t=535s",
+      "body": "Armored Dock Platform libera minas AA cuyos círculos rojos muestran el radio de activación; entrar atrae la mina al avión. El ejemplo une el radio visible con una respuesta concreta.",
+      "video": "https://www.youtube.com/watch?v=Z0_SYrQ-rcY&t=535s",
+      "videoDurationSeconds": 1284
+    },
+    {
+      "dimension": "3D",
+      "game": "Final Fantasy XIV",
+      "boss": "Magitek Rearguard",
+      "screenshot": "https://i.ytimg.com/vi/6VZKVNB_52E/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=6VZKVNB_52E&t=89s",
+      "body": "Rearguard Mines cruzan la arena desde los bordes y detonan al contacto. Esta variante móvil conserva objeto visible y regla de contacto mientras otros ataques compiten por atención.",
+      "video": "https://www.youtube.com/watch?v=6VZKVNB_52E&t=89s",
+      "videoDurationSeconds": 439
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

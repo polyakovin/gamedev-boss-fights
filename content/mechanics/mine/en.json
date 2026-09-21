@@ -1,0 +1,146 @@
+{
+  "title": "Mine",
+  "subtitle": "Place a persistent trigger with a visible arming state, then let the player route around its committed radius.",
+  "variant": "One placed mine with an explicit armed radius",
+  "summary": "The boss places an object that becomes dangerous only after arming and keeps one fixed trigger radius until it disarms.",
+  "overview": "A mine is a persistent object with at least three readable states: placed but safe, armed and triggerable, then spent or disarmed. Its location, trigger radius, arming moment, trigger condition, and lifetime must agree across visuals and collision.",
+  "learning": "Design placement, arming, trigger geometry, route denial, and cleanup as one stateful rule.",
+  "category": "Zones and traps",
+  "readTime": "5 min",
+  "demo": {
+    "title": "Inspect a mine",
+    "timeline": "Attack timeline",
+    "step": "Attack phases",
+    "phaseNames": [
+      "Place and arm the mine",
+      "Respect the armed radius",
+      "Disarm and reopen the route"
+    ],
+    "phaseDescriptions": [
+      "Kern places a rune at one fixed point. Its full trigger circle and arming progress appear before collision becomes active.",
+      "The radius becomes live and stays fixed. Tavi routes around the complete circle rather than crossing a hidden larger trigger.",
+      "The rune goes dark, collision ends on the same frame, and Kern holds a readable recovery while the route reopens."
+    ],
+    "boss": "Boss",
+    "player": "Player",
+    "danger": "Collision belongs only to the visible armed radius",
+    "locked": "Center, radius, arming time, and lifetime are committed",
+    "safe": "Outside the full-body radius stays safe",
+    "reducedMotion": "Autoplay is disabled by reduced-motion settings. Use the timeline to inspect placement, arming, and disarming.",
+    "diagramDescription": "A looping diagram: the boss places one runic mine. Its circle arms, the player follows a curved route around the whole radius, then the mine disarms and the boss recovers."
+  },
+  "steps": [
+    {
+      "title": "Can the player read the state, center, and radius before arming?",
+      "body": "Show the placed object and its complete trigger circle while it is still harmless. A charging rune, color shift, or staged audio can show progress, but every channel must agree on the first dangerous frame."
+    },
+    {
+      "title": "Does collision use the same state and circle?",
+      "body": "Drive the light, sound, trigger test, detonation, and cleanup from one mine state machine. Test the player's full body against the displayed radius so the marker never understates the dangerous footprint."
+    },
+    {
+      "title": "Does the remaining arena support the intended response?",
+      "body": "Measure routes around the mine with normal acceleration, camera framing, and any concurrent attack. The mine should deny a meaningful lane without silently removing every supported movement or defensive verb."
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "The mine arms without a distinct transition",
+      "body": "A harmless object that suddenly damages turns planning into guesswork. Give arming a readable duration and an unmistakable state change before collision activates."
+    },
+    {
+      "title": "The trigger is larger than its marker",
+      "body": "Players judge the route from the visible perimeter. Include the player's full collision body in tuning, but do not hide extra trigger distance outside the signaled circle."
+    },
+    {
+      "title": "A spent mine still blocks the route",
+      "body": "If the visual goes dark while collision remains, cleanup lies about the arena. End damage and blocking on the same state transition, or clearly show a separate lingering hazard."
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "Use one explicit state machine",
+      "body": "Store placed, arming, armed, triggered, and disarmed states with timestamps. Derive visuals, audio, collision, targeting, and removal from that single source of truth."
+    },
+    {
+      "title": "Test the player's full body",
+      "body": "A center point can clear a circle while shoulders or feet overlap it. Expand the trigger by the player's collision radius during path tests, then keep the visible perimeter honest."
+    },
+    {
+      "title": "Separate trigger from detonation",
+      "body": "The trigger condition may be contact, proximity, time, or a boss command; the detonation may be instant or delayed. Signal both moments when the player can make a different decision between them."
+    },
+    {
+      "title": "Cap the persistent count",
+      "body": "Lifetime and spawn cadence determine how much arena remains. Set an explicit maximum and a predictable removal rule before combining mines with other lane-denial mechanics."
+    }
+  ],
+  "story": {
+    "title": "What the mechanic communicates",
+    "body": "Kern stakes a patch of the arena with a charged rune and makes that claim visible before it becomes dangerous. Tavi survives by respecting the boundary until the charge fades."
+  },
+  "adaptation": {
+    "title": "Adapt it to the player verbs",
+    "body": "Walking needs generous margins and limited mine count. A dash may cross only when its invulnerability rule says so, while attacks, parries, or interactions can disarm a mine if that counterplay is explicitly signaled."
+  },
+  "distinction": {
+    "title": "Keep the mechanic distinct",
+    "body": "A mine waits as a persistent triggerable object. A marked-area strike resolves one zone on a schedule, a lingering hazard deals continuous damage inside an active area, and chain explosions hand danger through ordered nodes. Preserve the readable armed state and trigger condition."
+  },
+  "lensNotes": [
+    {
+      "id": "telegraphing",
+      "body": "The object, full radius, arming progress, active state, and disarming transition appear before their collision changes."
+    },
+    {
+      "id": "commitment",
+      "body": "Center, radius, arming time, trigger rule, and lifetime lock when the mine is placed rather than following the player."
+    },
+    {
+      "id": "threat-geometry",
+      "body": "The visible armed circle tests the player's full collision body; outside that perimeter remains safe."
+    },
+    {
+      "id": "counterplay",
+      "body": "At least one supported route or explicit disarm verb remains available while the mine controls its lane."
+    },
+    {
+      "id": "difficulty-rhythm",
+      "body": "Arming time, radius, lifetime, count, spacing, and trigger delay raise pressure without hiding state changes."
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "Enter the Gungeon",
+      "boss": "Mine Flayer",
+      "screenshot": "https://i.ytimg.com/vi/RV6vnqvy-4o/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=RV6vnqvy-4o&t=62s",
+      "body": "Mine Flayer throws claymore mines that can chase the player or circle the room, explode on contact, and disappear after a while. Their persistent objects and readable perimeters make state, trigger, and lifetime central to route planning.",
+      "video": "https://www.youtube.com/watch?v=RV6vnqvy-4o&t=62s",
+      "videoDurationSeconds": 125
+    },
+    {
+      "dimension": "2D",
+      "game": "Sky Force Reloaded",
+      "boss": "Armored Dock Platform",
+      "screenshot": "https://i.ytimg.com/vi/Z0_SYrQ-rcY/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=Z0_SYrQ-rcY&t=535s",
+      "body": "Armored Dock Platform releases AA mines whose red circles show their activation radius; entering that proximity pulls a mine toward the plane. The example tightly couples a visible radius to a specific trigger response.",
+      "video": "https://www.youtube.com/watch?v=Z0_SYrQ-rcY&t=535s",
+      "videoDurationSeconds": 1284
+    },
+    {
+      "dimension": "3D",
+      "game": "Final Fantasy XIV",
+      "boss": "Magitek Rearguard",
+      "screenshot": "https://i.ytimg.com/vi/6VZKVNB_52E/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=6VZKVNB_52E&t=89s",
+      "body": "Rearguard Mines move across the arena from its edges and detonate on contact. This moving variation still preserves a visible object and contact rule, forcing route planning while other attacks compete for attention.",
+      "video": "https://www.youtube.com/watch?v=6VZKVNB_52E&t=89s",
+      "videoDurationSeconds": 439
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

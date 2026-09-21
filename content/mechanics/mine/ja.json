@@ -1,0 +1,139 @@
+{
+  "title": "地雷",
+  "subtitle": "起動が見える持続的なトリガーを置き、固定された半径を迂回できるようにする。",
+  "variant": "起動半径を明示する一個の設置地雷",
+  "summary": "ボスが置いた物体は起動後にのみ危険となり、解除まで固定の反応半径を保つ。",
+  "overview": "地雷は少なくとも三つの読める状態を持つ持続物体だ。設置済みだが安全、起動して反応可能、消費または解除済み。位置、半径、起動時刻、反応条件、寿命を表示と当たり判定で一致させる。",
+  "learning": "設置、起動、反応範囲、経路封鎖、後片付けを一つの状態付きルールとして設計する。",
+  "category": "エリアと罠",
+  "readTime": "5分",
+  "demo": {
+    "title": "地雷を確認",
+    "timeline": "攻撃タイムライン",
+    "step": "攻撃段階",
+    "phaseNames": ["設置して起動する", "起動半径を避ける", "解除して経路を開く"],
+    "phaseDescriptions": [
+      "ケルンが固定位置にルーンを設置する。完全な反応円と起動進度が、当たり判定の開始前に現れる。",
+      "半径が有効になり、動かない。タヴィは隠れた大きな判定を踏まず、円全体を迂回する。",
+      "ルーンが消えた同じフレームで当たり判定も終わり、ケルンの回復中に経路が開く。"
+    ],
+    "boss": "ボス",
+    "player": "プレイヤー",
+    "danger": "当たり判定は見えている起動半径だけに属する",
+    "locked": "中心、半径、起動時刻、寿命は確定済み",
+    "safe": "体全体が半径の外なら安全",
+    "reducedMotion": "動きを減らす設定では自動再生しません。タイムラインで設置、起動、解除を確認してください。",
+    "diagramDescription": "ループ図。ボスがルーン地雷を設置し、円が起動する。プレイヤーは半径全体を迂回し、地雷が解除されてボスが回復する。"
+  },
+  "steps": [
+    {
+      "title": "起動前に状態、中心、半径が読めるか？",
+      "body": "安全なうちから物体と反応円全体を示す。充電するルーン、色、音は進度を伝えられるが、危険になる最初のフレームで全て一致させる。"
+    },
+    {
+      "title": "当たり判定は同じ状態と円を使うか？",
+      "body": "光、音、反応判定、爆発、削除を一つの状態機械から導く。示した半径に対してプレイヤーの体全体を検査する。"
+    },
+    {
+      "title": "残る空間で意図した対応が可能か？",
+      "body": "通常の加速、カメラ、同時攻撃を含めて迂回路を測る。有意な通路を塞ぎつつ、全ての対応手段を密かに消さない。"
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "予告なしに起動する",
+      "body": "安全だった物体が突然傷つけると計画が当て推量になる。判定開始前に読める起動時間と明確な状態変化を設ける。"
+    },
+    {
+      "title": "反応範囲が表示より広い",
+      "body": "プレイヤーは見える縁を基準に経路を選ぶ。体全体を調整に含めつつ、円の外に隠れた距離を加えない。"
+    },
+    {
+      "title": "使用済みでも経路を塞ぐ",
+      "body": "表示が消えて判定が残ると空間の状態を偽る。ダメージと封鎖を同時に終えるか、別の残留危険を明示する。"
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "単一の明示的な状態機械",
+      "body": "設置、起動中、起動済み、反応済み、解除済みを時刻とともに記録し、表示、音、判定、狙い、削除を導く。"
+    },
+    {
+      "title": "体全体を検査",
+      "body": "中心が円を出ても肩や足が重なる場合がある。経路検査には体の半径を加え、表示の縁も正直に保つ。"
+    },
+    {
+      "title": "反応と爆発を分離",
+      "body": "条件は接触、接近、時間、ボスの命令などで、爆発は即時にも遅延にもできる。間に別の判断ができるなら双方を知らせる。"
+    },
+    {
+      "title": "残存数に上限を",
+      "body": "寿命と設置間隔が残る空間を決める。他の経路封鎖と組み合わせる前に上限と予測可能な撤去規則を定める。"
+    }
+  ],
+  "story": {
+    "title": "仕組みが伝えること",
+    "body": "ケルンは充電したルーンで一角を占め、危険になる前からそれを見せる。タヴィは電荷が消えるまで境界を守る。"
+  },
+  "adaptation": {
+    "title": "プレイヤーの行動に合わせる",
+    "body": "徒歩には広い余白と少ない個数が必要。ダッシュでの通過は無敵規則が許す場合だけ。攻撃、防御、操作による解除を用意するなら明示する。"
+  },
+  "distinction": {
+    "title": "仕組みを区別する",
+    "body": "地雷は反応を待つ持続物体。予告範囲攻撃は予定時刻に一領域を解決し、残留危険は範囲内で連続して傷つけ、連鎖爆発は順に危険を移す。起動状態と条件を保つ。"
+  },
+  "lensNotes": [
+    {
+      "id": "telegraphing",
+      "body": "物体、全半径、起動進度、有効状態、解除が判定の変化に先立って見える。"
+    },
+    {
+      "id": "commitment",
+      "body": "中心、半径、起動時刻、条件、寿命は設置時に確定し、プレイヤーを追わない。"
+    },
+    { "id": "threat-geometry", "body": "見える起動円が体全体を検査し、外側は安全なまま。" },
+    {
+      "id": "counterplay",
+      "body": "通路を制圧しても、少なくとも一つの対応経路か明示された解除行動を残す。"
+    },
+    {
+      "id": "difficulty-rhythm",
+      "body": "起動時間、半径、寿命、数、間隔、遅延で圧力を変え、状態変化は隠さない。"
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "Enter the Gungeon",
+      "boss": "Mine Flayer",
+      "screenshot": "https://i.ytimg.com/vi/RV6vnqvy-4o/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=RV6vnqvy-4o&t=62s",
+      "body": "Mine Flayer は追跡または旋回する地雷を投げる。接触で爆発し、時間後に消える。持続物体と読める縁により、状態、反応、寿命が経路選択の中心になる。",
+      "video": "https://www.youtube.com/watch?v=RV6vnqvy-4o&t=62s",
+      "videoDurationSeconds": 125
+    },
+    {
+      "dimension": "2D",
+      "game": "Sky Force Reloaded",
+      "boss": "Armored Dock Platform",
+      "screenshot": "https://i.ytimg.com/vi/Z0_SYrQ-rcY/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=Z0_SYrQ-rcY&t=535s",
+      "body": "Armored Dock Platform の対空地雷は赤い円で起動半径を示し、近づくと機体へ寄る。見える半径と具体的な反応が結びつく。",
+      "video": "https://www.youtube.com/watch?v=Z0_SYrQ-rcY&t=535s",
+      "videoDurationSeconds": 1284
+    },
+    {
+      "dimension": "3D",
+      "game": "Final Fantasy XIV",
+      "boss": "Magitek Rearguard",
+      "screenshot": "https://i.ytimg.com/vi/6VZKVNB_52E/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=6VZKVNB_52E&t=89s",
+      "body": "Rearguard Mines は端から場内を横切り、接触で爆発する。移動型でも見える物体と接触規則は保たれ、他の攻撃と並行した経路選択を迫る。",
+      "video": "https://www.youtube.com/watch?v=6VZKVNB_52E&t=89s",
+      "videoDurationSeconds": 439
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

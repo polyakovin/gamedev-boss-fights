@@ -33,9 +33,33 @@ test('blueprints autoplay only when motion is allowed', async ({ page }) => {
     .toBeGreaterThan(150);
 });
 
-test('catalog and builder reuse the 32 promoted rule-specific previews', async ({ page }) => {
+test('mine arms its visible circle, keeps the player safe, and fits on mobile', async ({ page }) => {
+  await page.goto('ru/mechanics/mine/');
+  const widget = page.locator('[data-blueprint-demo]');
+  const timeline = widget.locator('[data-blueprint-timeline]');
+  await expect(page.locator('.lesson-title-line h1')).toHaveText('Мина');
+  await expect(page.locator('.wip-badge, .draft-profile')).toHaveCount(0);
+  await expect(widget).toHaveAttribute('data-blueprint-ready', 'true');
+  await expect(page.locator('.game-example')).toHaveCount(3);
+
+  await timeline.evaluate((element) => {
+    element.value = '3000';
+    element.dispatchEvent(new Event('input', { bubbles: true }));
+  });
+  await expect(widget).toHaveAttribute('data-blueprint-phase', '1');
+  await expect(widget).toHaveAttribute('data-blueprint-outcome', 'safe');
+  await expect(widget.locator('[data-blueprint-phase-name]')).toHaveText(
+    'Уважать вооружённый радиус',
+  );
+  await expect(widget.locator('[data-blueprint-primitive="2"] circle')).toBeVisible();
+
+  await page.setViewportSize({ width: 390, height: 844 });
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+});
+
+test('catalog and builder reuse the 33 promoted rule-specific previews', async ({ page }) => {
   await page.goto('en/');
-  await expect(page.locator('[data-blueprint-preview]')).toHaveCount(32);
+  await expect(page.locator('[data-blueprint-preview]')).toHaveCount(33);
   const catalogLayouts = await page.locator('[data-blueprint-preview]').evaluateAll((previews) =>
     previews.map((preview) => {
       const boss = preview.querySelector('[data-character-art-preview="kern"]');
@@ -59,7 +83,7 @@ test('catalog and builder reuse the 32 promoted rule-specific previews', async (
   expect(new Set(catalogLayouts.map(({ layout }) => layout)).size).toBeGreaterThanOrEqual(18);
 
   await page.goto('en/builder/');
-  await expect(page.locator('[data-blueprint-preview]')).toHaveCount(32);
+  await expect(page.locator('[data-blueprint-preview]')).toHaveCount(33);
   const builderLayouts = await page.locator('[data-blueprint-preview]').evaluateAll((previews) =>
     previews.map((preview) => {
       const boss = preview.querySelector('[data-character-art-preview="kern"]');

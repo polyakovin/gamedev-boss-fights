@@ -1,0 +1,136 @@
+{
+  "title": "地雷",
+  "subtitle": "放置一枚有明确启动过程的持续触发物，让玩家绕开已锁定的范围。",
+  "variant": "一枚显示启动半径的定点地雷",
+  "summary": "首领放置物体；它只在启动后危险，并保持固定触发半径直到解除。",
+  "overview": "地雷是至少具有三个可辨状态的持续物体：已放置但安全、已启动可触发、已消耗或解除。位置、半径、启动时刻、触发条件和存续时间必须与画面和碰撞一致。",
+  "learning": "将放置、启动、触发几何、封锁路线与清理设计成一条有状态的规则。",
+  "category": "区域与陷阱",
+  "readTime": "5 分钟",
+  "demo": {
+    "title": "观察地雷",
+    "timeline": "攻击时间线",
+    "step": "攻击阶段",
+    "phaseNames": ["放置并启动地雷", "避开启动半径", "解除并重开路线"],
+    "phaseDescriptions": [
+      "克恩在固定位置放下符文。完整触发圈和启动进度在碰撞生效前就已出现。",
+      "半径开始生效且保持不动。塔维绕过整个圆，而非碰上未显示的更大触发区。",
+      "符文熄灭，碰撞在同一帧结束；克恩进入清晰的恢复阶段，路线重新开放。"
+    ],
+    "boss": "首领",
+    "player": "玩家",
+    "danger": "仅可见的已启动半径产生碰撞",
+    "locked": "中心、半径、启动时刻和存续时间已锁定",
+    "safe": "玩家全身离开半径后保持安全",
+    "reducedMotion": "减少动态效果时自动播放关闭。请用时间线观察放置、启动和解除。",
+    "diagramDescription": "循环示意：首领放下一枚符文地雷；圆圈启动，玩家沿弧线绕过完整半径，随后地雷解除，首领恢复。"
+  },
+  "steps": [
+    {
+      "title": "玩家能在启动前读懂状态、中心和半径吗？",
+      "body": "物体仍安全时就显示完整触发圈。充能符文、颜色或分段音效可以表示进度，但必须与第一帧危险碰撞同步。"
+    },
+    {
+      "title": "碰撞使用相同状态与圆圈吗？",
+      "body": "让光效、声音、触发检测、爆炸和清理共用同一状态机。用玩家整个身体测试所示半径，避免标记低估危险。"
+    },
+    {
+      "title": "剩余场地支持预期应对吗？",
+      "body": "考虑正常加速、镜头取景及同时发生的攻击，测试绕行路线。地雷应封住有意义的通道，却不能暗中排除所有可用动作。"
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "地雷毫无过渡地启动",
+      "body": "原本安全的物体突然伤人会使规划变成猜测。启动应有可读时长，并在碰撞生效前明确变色。"
+    },
+    {
+      "title": "触发区大于标记",
+      "body": "玩家按可见边界规划路线。调整时纳入整个碰撞体，但不要在标记外藏额外触发距离。"
+    },
+    {
+      "title": "失效地雷仍封路",
+      "body": "画面熄灭而碰撞尚在，会误报场地状态。同步结束伤害与阻挡，或明确显示另一种持续危险。"
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "使用明确的单一状态机",
+      "body": "记录放置、启动中、已启动、触发及解除状态与时间。画面、音效、碰撞、锁定和移除均由此推导。"
+    },
+    {
+      "title": "测试玩家整个身体",
+      "body": "中心已离开圆圈时肩膀或脚仍可能重叠。路径测试要加上玩家碰撞半径，同时保持画面边界诚实。"
+    },
+    {
+      "title": "分开触发与爆炸",
+      "body": "触发可以来自接触、接近、计时或首领命令；爆炸可以即时或延迟。若两者之间允许新决策，就分别提示。"
+    },
+    {
+      "title": "限制持续数量",
+      "body": "存续时间和生成频率决定剩余空间。与其他封路招式组合前，先设定上限和可预测的移除规则。"
+    }
+  ],
+  "story": {
+    "title": "机制传达什么",
+    "body": "克恩用充能符文占据一片场地，并在危险生效前展示这项主张。塔维守住边界，直到电荷消退。"
+  },
+  "adaptation": {
+    "title": "适配玩家动作",
+    "body": "步行需要宽裕间距和较少地雷。冲刺只有在无敌规则允许时才能穿过；攻击、格挡或交互可用于拆雷，但必须清楚提示。"
+  },
+  "distinction": {
+    "title": "保持机制的区别",
+    "body": "地雷作为持续且可触发的物体等待。标记区域打击按时处理单一区域，持续危险不断伤害区域内目标，连锁爆炸按顺序转移危险。保留明确的启动状态与触发条件。"
+  },
+  "lensNotes": [
+    {
+      "id": "telegraphing",
+      "body": "物体、完整半径、启动进度、生效状态及解除变化均先于碰撞变化出现。"
+    },
+    {
+      "id": "commitment",
+      "body": "中心、半径、启动时间、触发规则和存续时间在放置时锁定，不跟随玩家。"
+    },
+    { "id": "threat-geometry", "body": "可见的启动圆圈检测玩家全身；边界之外保持安全。" },
+    { "id": "counterplay", "body": "封锁通道期间，至少保留一条可行路线或明确的拆雷动作。" },
+    {
+      "id": "difficulty-rhythm",
+      "body": "启动时间、半径、存续时间、数量、间距和延迟提高压力，但不隐藏状态变化。"
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "Enter the Gungeon",
+      "boss": "Mine Flayer",
+      "screenshot": "https://i.ytimg.com/vi/RV6vnqvy-4o/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=RV6vnqvy-4o&t=62s",
+      "body": "Mine Flayer 投出可追逐玩家或绕场移动的地雷；接触后爆炸，稍后也会消失。持续物体和清晰边界使状态、触发与寿命成为路线规划的核心。",
+      "video": "https://www.youtube.com/watch?v=RV6vnqvy-4o&t=62s",
+      "videoDurationSeconds": 125
+    },
+    {
+      "dimension": "2D",
+      "game": "Sky Force Reloaded",
+      "boss": "Armored Dock Platform",
+      "screenshot": "https://i.ytimg.com/vi/Z0_SYrQ-rcY/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=Z0_SYrQ-rcY&t=535s",
+      "body": "Armored Dock Platform 释放防空地雷，红圈标示启动半径；接近会使其向飞机靠拢。可见半径与具体触发反应直接相连。",
+      "video": "https://www.youtube.com/watch?v=Z0_SYrQ-rcY&t=535s",
+      "videoDurationSeconds": 1284
+    },
+    {
+      "dimension": "3D",
+      "game": "Final Fantasy XIV",
+      "boss": "Magitek Rearguard",
+      "screenshot": "https://i.ytimg.com/vi/6VZKVNB_52E/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=6VZKVNB_52E&t=89s",
+      "body": "Rearguard Mines 从场地边缘横穿并在接触时爆炸。这个移动变体仍保留可见物体与接触规则，让玩家在其他攻击中规划路线。",
+      "video": "https://www.youtube.com/watch?v=6VZKVNB_52E&t=89s",
+      "videoDurationSeconds": 439
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

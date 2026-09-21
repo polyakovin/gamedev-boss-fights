@@ -13,8 +13,8 @@ import {
   renderBlueprintThumbnail,
 } from '../lib/blueprint-view.mjs';
 
-test('all 32 promoted lesson animations have distinct rule modes and complete moving frames', () => {
-  assert.equal(BLUEPRINT_MECHANIC_IDS.length, 32);
+test('all 33 promoted lesson animations have distinct rule modes and complete moving frames', () => {
+  assert.equal(BLUEPRINT_MECHANIC_IDS.length, 33);
   const modes = new Set();
   for (const id of BLUEPRINT_MECHANIC_IDS) {
     for (let time = 0; time <= BLUEPRINT_DURATION; time += 0.1) {
@@ -35,7 +35,7 @@ test('all 32 promoted lesson animations have distinct rule modes and complete mo
           assert.ok(Number.isFinite(value), `${id} has an invalid ${primitive.type}`);
     }
   }
-  assert.equal(modes.size, 32);
+  assert.equal(modes.size, 33);
 });
 
 test('every blueprint exposes signal, committed action, and recovery without player teleports', () => {
@@ -67,6 +67,7 @@ test('every promoted animation derives safety from its own active geometry', () 
     'orbiting-projectiles': null,
     'pulse-beam': null,
     'chain-explosions': null,
+    mine: { x: 320, y: 610 },
     'wide-swing': { x: 280, y: 515 },
     lunge: { x: 300, y: 440 },
     grab: { x: 390, y: 485 },
@@ -410,6 +411,31 @@ test('chain explosions keep a fixed order, damage one live node, and let the pla
   assert.equal(blueprintPointSafe('chain-explosions', 3, { x: 455, y: 650 }), true);
   assert.equal(third.playerSafe, true);
   assert.ok(third.player.x > third.primitives[3].x, 'player should trail the live blast');
+});
+
+test('mine keeps one fixed radius, arms with collision, and lets the player route around it', () => {
+  const signal = blueprintFrame('mine', 1.59);
+  const armed = blueprintFrame('mine', 3);
+  const recovery = blueprintFrame('mine', 5.2);
+  const centers = [signal, armed, recovery].map((frame) => {
+    const trigger = frame.primitives[2];
+    return [trigger.x, trigger.y, trigger.radius];
+  });
+
+  assert.deepEqual(centers, [
+    [320, 610, 96],
+    [320, 610, 96],
+    [320, 610, 96],
+  ]);
+  assert.equal(signal.dangerActive, false);
+  assert.equal(blueprintPointSafe('mine', 1.59, { x: 320, y: 610 }), true);
+  assert.equal(armed.dangerActive, true);
+  assert.equal(blueprintPointSafe('mine', 3, { x: 320, y: 610 }), false);
+  assert.equal(blueprintPointSafe('mine', 3, { x: 445, y: 610 }), true);
+  assert.equal(armed.playerSafe, true);
+  assert.equal(recovery.dangerActive, false);
+  assert.equal(blueprintPointSafe('mine', 5.2, { x: 320, y: 610 }), true);
+  assert.ok(armed.primitives[1].opacity > 0, 'armed mine should show the safe response route');
 });
 
 test('blueprint pages and previews reuse Tavi and Kern with accessible localized data', () => {

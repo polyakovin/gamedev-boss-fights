@@ -1,0 +1,32 @@
+{
+  "id": "mine",
+  "number": 39,
+  "published": true,
+  "sourceLocale": "en",
+  "contentVersion": 1,
+  "animation": "mine",
+  "lenses": ["telegraphing", "commitment", "threat-geometry", "counterplay", "difficulty-rhythm"],
+  "related": ["marked-area-strike", "lingering-hazard", "chain-explosions"],
+  "sources": [
+    {
+      "title": "Enemy Attacks and Telegraphing · Mike Stout",
+      "url": "https://www.gamedeveloper.com/design/enemy-attacks-and-telegraphing"
+    },
+    {
+      "title": "Boss Up: Boss Battle Design · GDC Vault",
+      "url": "https://www.gdcvault.com/play/1024921/Boss-Up-Boss-Battle-Design"
+    },
+    {
+      "title": "Mine Flayer · Enter the Gungeon Wiki",
+      "url": "https://enterthegungeon.wiki.gg/wiki/Mine_Flayer"
+    },
+    {
+      "title": "AA Mine · Sky Force Reloaded Wiki",
+      "url": "https://sky-force-reloaded-2016.fandom.com/wiki/Enemies/AA_Mine"
+    },
+    {
+      "title": "Doma Castle · FFXIV Guide",
+      "url": "https://ffxiv.guide/sb/doma-castle"
+    }
+  ]
+}

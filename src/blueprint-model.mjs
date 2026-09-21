@@ -84,6 +84,21 @@ const SPECS = {
       [95, 650],
     ],
   },
+  mine: {
+    mode: 'mine',
+    boss: [170, 270],
+    player: [455, 690],
+    target: [170, 820],
+    mine: [320, 610],
+    triggerRadius: 96,
+    safeRoute: [
+      [455, 690],
+      [500, 730],
+      [470, 820],
+      [330, 865],
+      [170, 820],
+    ],
+  },
   'wide-swing': { mode: 'arc', boss: [280, 310], player: [410, 470], target: [470, 650] },
   lunge: { mode: 'lunge', boss: [170, 290], player: [390, 590], target: [470, 660] },
   grab: { mode: 'grab', boss: [280, 300], player: [390, 485], target: [470, 610] },
@@ -648,6 +663,57 @@ function primitivesFor(spec, frame) {
       }),
     ];
   }
+  if (mode === 'mine') {
+    const mine = point(spec.mine);
+    const placementOpacity =
+      phase === 0 ? 0.3 + prepare * 0.48 : phase === 1 ? 0.18 : 0.18 * (1 - recover);
+    const routeOpacity = phase === 1 ? 0.48 : phase === 2 ? 0.28 * (1 - recover) : 0;
+    const armedOpacity = phase === 1 ? 0.76 + 0.2 * pulse(action * 2) : 0;
+    const deviceOpacity = phase === 2 ? 0.72 * (1 - recover) : 0.72 + prepare * 0.28;
+    const routePath = spec.safeRoute
+      .map(([x, y], index) => `${index ? 'L' : 'M'} ${x} ${y}`)
+      .join(' ');
+    return [
+      path(
+        `M ${spec.boss[0]} ${spec.boss[1]} Q 235 390 ${mine.x} ${mine.y}`,
+        placementOpacity,
+        'accent',
+        7,
+        0,
+        '12 11',
+      ),
+      path(routePath, routeOpacity, 'safe', 8, 0, '12 12'),
+      circle(
+        mine.x,
+        mine.y,
+        spec.triggerRadius,
+        phase === 0 ? 0.26 + prepare * 0.38 : phase === 1 ? armedOpacity : 0.32 * (1 - recover),
+        phase === 1 ? 'signal' : phase === 2 ? 'safe' : 'accent',
+        phase === 1 ? 9 : 6,
+        phase === 1 ? 0.12 : 0.04,
+      ),
+      circle(
+        mine.x,
+        mine.y,
+        27,
+        deviceOpacity,
+        phase === 1 ? 'signal' : phase === 2 ? 'safe' : 'accent',
+        phase === 1 ? 8 : 6,
+        phase === 1 ? 0.42 : 0.16,
+      ),
+      circle(
+        mine.x,
+        mine.y,
+        12,
+        deviceOpacity,
+        phase === 1 ? 'signal' : phase === 2 ? 'safe' : 'accent',
+        5,
+        phase === 1 ? 0.64 : 0.26,
+      ),
+      line(mine.x - 17, mine.y, mine.x + 17, mine.y, deviceOpacity, 'accent', 5),
+      line(mine.x, mine.y - 17, mine.x, mine.y + 17, deviceOpacity, 'accent', 5),
+    ];
+  }
   if (mode === 'arc')
     return [
       path(arcPath(boss, 205, -1.15, 2.25), preview, 'accent', 20, 0, '12 10'),
@@ -972,6 +1038,10 @@ function pointClearsThreat(spec, frame, value, radius = BLUEPRINT_PLAYER_RADIUS)
     const blast = point(spec.blastCenters[activeIndex]);
     return Math.hypot(value.x - blast.x, value.y - blast.y) > spec.blastRadius + radius;
   }
+  if (mode === 'mine') {
+    const mine = point(spec.mine);
+    return Math.hypot(value.x - mine.x, value.y - mine.y) > spec.triggerRadius + radius;
+  }
   if (mode === 'spiral')
     return (
       distanceFromBoss > 52 + radius &&
@@ -1131,6 +1201,8 @@ export function blueprintFrame(id, time) {
     responseProgress = phase === 0 ? 0 : phase === 1 ? smooth((action - 0.25) / 0.2) : 1;
   else if (spec.mode === 'chain-explosions')
     responseProgress = phase === 0 ? 0 : phase === 1 ? smooth((action - 0.2) / 0.7) : 1;
+  else if (spec.mode === 'mine')
+    responseProgress = phase === 0 ? 0 : phase === 1 ? smooth((action - 0.06) / 0.8) : 1;
   else if (spec.mode === 'knockback')
     responseProgress = phase === 0 ? 0 : phase === 1 ? smooth(action) : 1;
   else if (spec.mode === 'target-lock')
@@ -1176,6 +1248,17 @@ export function blueprintFrame(id, time) {
     const finalPosition = wake.at(-1);
     if (phase === 0) player = startPlayer;
     else if (phase === 1) player = pointAlongPolyline(wake, responseProgress);
+    else {
+      player = {
+        x: mix(finalPosition.x, startPlayer.x, returnProgress),
+        y: mix(finalPosition.y, startPlayer.y, returnProgress),
+      };
+    }
+  } else if (spec.mode === 'mine') {
+    const route = spec.safeRoute.map(point);
+    const finalPosition = route.at(-1);
+    if (phase === 0) player = startPlayer;
+    else if (phase === 1) player = pointAlongPolyline(route, responseProgress);
     else {
       player = {
         x: mix(finalPosition.x, startPlayer.x, returnProgress),
