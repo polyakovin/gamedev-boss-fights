@@ -4,19 +4,21 @@ import { loadContent, validateContent } from '../lib/content.mjs';
 
 const source = await loadContent();
 
-test('every selected WIP mechanic has a detailed blueprint', async () => {
+test('every selected mechanic has either a full lesson or a detailed blueprint', async () => {
   await validateContent(source);
 
   const selected = new Set(source.popularMechanics.mechanicIds);
-  const published = new Set(
-    source.mechanics.filter(({ meta }) => meta.published).map(({ meta }) => meta.id),
-  );
+  const lessons = new Set(source.mechanics.map(({ meta }) => meta.id));
   const profiles = new Set(source.popularMechanics.profiles.map(({ id }) => id));
 
   assert.equal(selected.size, 30);
-  assert.equal(profiles.size, 25);
-  assert.equal([...selected].filter((id) => published.has(id)).length, 5);
-  assert.deepEqual([...selected].filter((id) => !published.has(id)).sort(), [...profiles].sort());
+  assert.equal(profiles.size, 24);
+  assert.equal([...selected].filter((id) => lessons.has(id)).length, 6);
+  assert.deepEqual([...selected].filter((id) => !lessons.has(id)).sort(), [...profiles].sort());
+  assert.equal(
+    source.mechanics.find(({ meta }) => meta.id === 'projectile-fan').meta.published,
+    false,
+  );
 });
 
 test('each expanded draft explains signal, response, recovery, tuning, failure, and escalation', () => {

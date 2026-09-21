@@ -1,12 +1,21 @@
 import { sweepWeaponPose, SWEEP_OUTER_RADIUS, SWEEP_PLAYER_RADIUS } from './sweep-weapon-model.mjs';
 import { GAP_VOLLEY_DURATION, gapVolleyPlan, volleyPlayerIsClear } from './gap-volley-model.mjs';
+import {
+  PROJECTILE_FAN_DURATION,
+  projectileFanPlan,
+  projectileFanPlayerIsClear,
+} from './projectile-fan-model.mjs';
 
 export const PATTERN_DURATION = 6;
 export const PATTERN_PHASE_ENDS = Object.freeze([1.6, 4.25, PATTERN_DURATION]);
 export const BOSS_LABEL_OFFSET_Y = -104;
 
 export const patternDuration = (kind) =>
-  kind === 'gap-volley' ? GAP_VOLLEY_DURATION : PATTERN_DURATION;
+  kind === 'gap-volley'
+    ? GAP_VOLLEY_DURATION
+    : kind === 'projectile-fan'
+      ? PROJECTILE_FAN_DURATION
+      : PATTERN_DURATION;
 
 const clamp = (value, min = 0, max = 1) => Math.min(max, Math.max(min, value));
 const mix = (from, to, amount) => from + (to - from) * amount;
@@ -46,7 +55,8 @@ export function patternPhaseAt(time) {
 /** A deterministic frame shared by browser animation and tests. */
 export function patternFrame(kind, time) {
   const volley = kind === 'gap-volley' ? gapVolleyPlan(time) : null;
-  const t = volley?.localTime ?? localTime(time);
+  const fan = kind === 'projectile-fan' ? projectileFanPlan(time) : null;
+  const t = volley?.localTime ?? fan?.localTime ?? localTime(time);
   const phase = patternPhaseAt(t);
   const prepare = smooth(t / PATTERN_PHASE_ENDS[0]);
   const action = clamp(
@@ -54,11 +64,18 @@ export function patternFrame(kind, time) {
   );
   const recover = smooth((t - PATTERN_PHASE_ENDS[1]) / (PATTERN_DURATION - PATTERN_PHASE_ENDS[1]));
   const visibility = phase === 2 ? 1 - recover : phase === 0 ? prepare : 1;
-  const boss = { x: 280, y: kind === 'gap-volley' ? 175 : kind === 'summon' ? 235 : 275 };
+  const boss = {
+    x: 280,
+    y:
+      kind === 'gap-volley' ? 175 : kind === 'projectile-fan' ? 165 : kind === 'summon' ? 235 : 275,
+  };
   const playerStart =
-    volley?.playerStart ?? (kind === 'sweep' ? { x: 412, y: 525 } : { x: 390, y: 700 });
+    volley?.playerStart ??
+    fan?.playerStart ??
+    (kind === 'sweep' ? { x: 412, y: 525 } : { x: 390, y: 700 });
   const playerTarget =
     volley?.playerTarget ??
+    fan?.playerTarget ??
     (kind === 'sweep'
       ? { x: 440, y: 650 }
       : kind === 'ground-slam'
@@ -66,7 +83,7 @@ export function patternFrame(kind, time) {
         : kind === 'summon'
           ? { x: 170, y: 720 }
           : { x: 280, y: 760 });
-  const playerEnd = volley?.playerEnd ?? playerStart;
+  const playerEnd = volley?.playerEnd ?? fan?.playerEnd ?? playerStart;
   // A brief reaction, a committed run, then planted feet while the threat passes.
   const responseTime = (t - 0.4) / 0.75;
   const returnTime = (t - 4.55) / 1.3;
@@ -179,10 +196,14 @@ export function patternFrame(kind, time) {
     summonOpacity: kind === 'summon' ? visibility : 0,
     volley,
     volleyOpacity: volley ? 1 : 0,
+    fan,
+    fanOpacity: fan ? 1 : 0,
     clear:
       phase > 0 &&
       (volley
         ? volleyPlayerIsClear(volley, player)
-        : kind !== 'sweep' || phase === 2 || sweepClear),
+        : fan
+          ? projectileFanPlayerIsClear(fan, player)
+          : kind !== 'sweep' || phase === 2 || sweepClear),
   });
 }

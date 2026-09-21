@@ -3,6 +3,7 @@ import { createCharacterAnimator } from './character-motion.mjs';
 import { createEncounterEffects } from './encounter-effects.mjs';
 import { createSweepWeaponAnimator } from './sweep-weapon-player.mjs';
 import { createGapVolleyAnimator } from './gap-volley-player.mjs';
+import { createProjectileFanAnimator } from './projectile-fan-player.mjs';
 
 for (const widget of document.querySelectorAll('[data-pattern-demo]')) initializePattern(widget);
 
@@ -33,6 +34,8 @@ export function initializePattern(widget) {
   const animateMinions = minions.map((minion) => createCharacterAnimator(minion, 'kern'));
   const volley = find('[data-pattern-volley]');
   const animateVolley = createGapVolleyAnimator(volley);
+  const fan = find('[data-pattern-projectile-fan]');
+  const animateFan = createProjectileFanAnimator(fan);
   const status = find('[data-pattern-status]');
   const motionNote = find('[data-pattern-motion-note]');
   const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
@@ -91,6 +94,8 @@ export function initializePattern(widget) {
     });
     volley.setAttribute('opacity', String(frame.volleyOpacity));
     animateVolley(frame.volley);
+    fan.setAttribute('opacity', String(frame.fanOpacity));
+    animateFan(frame.fan);
     phaseName.textContent = config.phaseNames[frame.phase];
     phaseTooltip.textContent = config.phaseDescriptions[frame.phase];
     if (announcedPhase !== frame.phase) {

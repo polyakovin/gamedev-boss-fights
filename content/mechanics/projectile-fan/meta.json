@@ -1,0 +1,20 @@
+{
+  "id": "projectile-fan",
+  "number": 10,
+  "published": false,
+  "sourceLocale": "en",
+  "contentVersion": 1,
+  "animation": "projectile-fan",
+  "lenses": ["telegraphing", "threat-geometry", "counterplay", "risk-reward"],
+  "related": ["gap-volley"],
+  "sources": [
+    {
+      "title": "Enemy Attacks and Telegraphing · Mike Stout",
+      "url": "https://www.gamedeveloper.com/design/enemy-attacks-and-telegraphing"
+    },
+    {
+      "title": "Encounter reference · Bullet King",
+      "url": "https://enterthegungeon.wiki.gg/wiki/Bullet_King"
+    }
+  ]
+}

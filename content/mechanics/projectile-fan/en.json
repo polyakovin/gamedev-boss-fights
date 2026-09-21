@@ -1,0 +1,134 @@
+{
+  "title": "Projectile fan",
+  "subtitle": "Design a readable spread, a reachable gap, and a useful recovery.",
+  "variant": "Fixed-angle projectile spread",
+  "summary": "The boss releases several projectiles from one origin along committed rays, leaving gaps whose width changes with distance.",
+  "overview": "A projectile fan turns one release into several diverging lanes. It works when the complete spread is visible before launch, every projectile keeps its announced angle, and at least one gap fits the player's full collision shape at the intended crossing distance.",
+  "learning": "Tune the preview, projectile count, angular spacing, size, speed, crossing distance, and recovery as one geometric rule.",
+  "category": "Projectiles",
+  "readTime": "4 min",
+  "demo": {
+    "title": "Test the fan",
+    "timeline": "Attack timeline",
+    "step": "Attack phases",
+    "phaseNames": ["Preview", "Release", "Recovery"],
+    "phaseDescriptions": [
+      "The emitter shows all six committed rays and highlights a reachable gap.",
+      "The projectiles follow those fixed rays while the player holds the chosen lane.",
+      "The last projectile leaves the arena before the boss resets and the player repositions."
+    ],
+    "boss": "Boss",
+    "player": "Player",
+    "danger": "The complete spread is visible",
+    "locked": "The projectile angles are locked",
+    "safe": "The fan has cleared",
+    "reducedMotion": "Autoplay is disabled by the reduced-motion setting. Use the timeline slider to inspect the loop.",
+    "diagramDescription": "A looping diagram of a projectile fan. The boss previews six fixed rays, the player moves into one highlighted gap, the projectiles cross the arena without homing, and both sides reset after the fan clears."
+  },
+  "steps": [
+    {
+      "title": "Can the player read the whole spread?",
+      "body": "Show the center direction, both outer limits, and every occupied ray before release. The cue should explain the fan as one formation, not six unrelated shots."
+    },
+    {
+      "title": "Does the full player fit through a gap?",
+      "body": "Measure clearance perpendicular to the adjacent projectile paths at the intended crossing distance, including both projectile and player collision radii."
+    },
+    {
+      "title": "Does the fan clear before the next decision?",
+      "body": "Let the final projectile leave the playable route before the boss aims again, so residual danger cannot contradict the next telegraph."
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "The outer rays appear only at release",
+      "body": "If the preview shows only the center, the true width of the attack arrives too late and edge escapes become guesses."
+    },
+    {
+      "title": "A visible gap is smaller than the colliders",
+      "body": "A corridor may look open while the combined player and projectile radii make it impossible. Test geometry at the actual crossing point."
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "Lock angles at release",
+      "body": "Aim during the signal, then keep every ray fixed. Late homing changes the mechanic from spacing to pursuit and invalidates the chosen route."
+    },
+    {
+      "title": "Tune distance with angular spacing",
+      "body": "Diverging lanes widen as they travel. The same fan can be dense near the boss and generous near the arena edge, so define where the decision should happen."
+    },
+    {
+      "title": "Use speed to set response time",
+      "body": "Projectile speed should preserve enough time to reach a declared gap after the formation becomes legible, including camera motion and animation latency."
+    },
+    {
+      "title": "Escalate by rotating the formation",
+      "body": "Offset or rotate later fans only after the base spacing is learned. Keep the new center and outer limits visible before each release."
+    }
+  ],
+  "story": {
+    "title": "Give the fan a readable backdrop",
+    "body": "Keep the emitter and outer rays on camera, and reduce particles or floor detail where projectile silhouettes and gaps must be judged."
+  },
+  "adaptation": {
+    "title": "Preserve an ordinary movement answer",
+    "body": "Verify that walking or the game's baseline dodge can reach at least one announced gap. Special defenses may add options, but should not hide an impossible base pattern."
+  },
+  "distinction": {
+    "title": "Separate a fan from a gap volley",
+    "body": "A projectile fan creates angular lanes that widen from one origin. A gap volley moves a broader formation through the arena with a deliberately empty segment."
+  },
+  "lensNotes": [
+    {
+      "id": "telegraphing",
+      "body": "The preview communicates the center direction, outer limits, occupied rays, and release time."
+    },
+    {
+      "id": "threat-geometry",
+      "body": "Angular spacing, collider size, and crossing distance determine which gaps really exist."
+    },
+    {
+      "id": "counterplay",
+      "body": "A committed formation lets the player choose a lane, leave an edge, or use an explicitly supported defense."
+    },
+    {
+      "id": "risk-reward",
+      "body": "Near and far gaps can trade shorter travel against tighter clearance or a better position during recovery."
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "Ori and the Will of the Wisps",
+      "boss": "Shriek",
+      "video": "https://www.youtube.com/watch?v=DvuB8cImPIg&t=1165s",
+      "videoDurationSeconds": 2062,
+      "screenshot": "https://i.ytimg.com/vi/DvuB8cImPIg/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=DvuB8cImPIg&t=1165s",
+      "body": "Shriek releases a visible spread whose diverging paths create routes for movement and Bash. The example shows how a fan can support more than one response verb without changing its geometry."
+    },
+    {
+      "dimension": "2D",
+      "game": "Enter the Gungeon",
+      "boss": "Bullet King",
+      "video": "https://www.youtube.com/watch?v=ynVmgUSV7Bc&t=26s",
+      "videoDurationSeconds": 135,
+      "screenshot": "https://i.ytimg.com/vi/ynVmgUSV7Bc/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=ynVmgUSV7Bc&t=26s",
+      "body": "Radial spreads expose their lanes immediately and then preserve them while the bullets travel. The gaps widen with distance, so arena position changes the practical difficulty."
+    },
+    {
+      "dimension": "3D",
+      "game": "Returnal",
+      "boss": "Phrike",
+      "video": "https://www.youtube.com/watch?v=UdBbTMFLFIo&t=32s",
+      "videoDurationSeconds": 175,
+      "screenshot": "https://i.ytimg.com/vi/UdBbTMFLFIo/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=UdBbTMFLFIo&t=32s",
+      "body": "Phrike's luminous projectile spreads remain readable against the arena and camera perspective. Strong silhouettes make the fixed paths and spaces between them legible in 3D."
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

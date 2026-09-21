@@ -51,15 +51,6 @@
       "escalation": "Add false trails, several possible exits, or hazards left behind while keeping the final committed destination identifiable.",
       "recovery": "After emergence, the ground marker dissipates and the boss finishes turning above the surface, creating a brief readable interval before tracking resumes."
     },
-    "projectile-fan": {
-      "overview": "Several projectiles leave one origin at different angles, creating readable lanes whose gaps determine whether the player moves near, far, or through the spread.",
-      "signal": "Preview the emitter direction and spread width before release; the first readable frame should already communicate the center line and outer limits.",
-      "response": "Players can occupy a gap, move beyond the fan’s edge, approach before lanes separate, or use a defensive verb that is explicitly supported.",
-      "tuning": "Set projectile count, angular spacing, speed, size, and arena distance together because each changes the width of reachable gaps.",
-      "pitfall": "Adding projectiles without preserving navigable gaps turns a spacing test into unavoidable chip damage.",
-      "escalation": "Rotate the next fan, offset its center line, or alternate narrow and wide spreads while keeping each volley’s geometry legible.",
-      "recovery": "The emitter lowers only after the final projectiles have opened stable lanes, leaving a bounded interval in which the player can reposition or approach."
-    },
     "ring-volley": {
       "overview": "Projectiles expand from the boss in every direction, testing radial spacing and the player’s ability to find or create a route through a closing circle.",
       "signal": "Charge energy around the complete emitter and show any deliberate gap before launch so the player reads a ring rather than unrelated shots.",

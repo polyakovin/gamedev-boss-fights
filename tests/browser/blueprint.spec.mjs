@@ -33,10 +33,10 @@ test('blueprints autoplay only when motion is allowed', async ({ page }) => {
     .toBeGreaterThan(150);
 });
 
-test('catalog and builder reuse the 25 rule-specific previews', async ({ page }) => {
+test('catalog and builder reuse the 24 compact rule-specific previews', async ({ page }) => {
   await page.goto('en/');
-  await expect(page.locator('[data-blueprint-preview]')).toHaveCount(25);
+  await expect(page.locator('[data-blueprint-preview]')).toHaveCount(24);
 
   await page.goto('en/builder/');
-  await expect(page.locator('[data-blueprint-preview]')).toHaveCount(25);
+  await expect(page.locator('[data-blueprint-preview]')).toHaveCount(24);
 });

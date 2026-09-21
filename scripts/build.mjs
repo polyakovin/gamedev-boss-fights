@@ -20,7 +20,7 @@ const {
   lenses,
 } = await validateContent(await loadContent());
 const published = mechanics.filter((m) => m.meta.published);
-const publishedById = new Map(published.map((mechanic) => [mechanic.meta.id, mechanic]));
+const mechanicsById = new Map(mechanics.map((mechanic) => [mechanic.meta.id, mechanic]));
 const mechanicsExamplesById = new Map();
 for (const example of mechanicsExamples.examples) {
   const entries = mechanicsExamplesById.get(example.mechanicId) ?? [];
@@ -32,8 +32,9 @@ const popularProfilesById = new Map(
 );
 const publishedLenses = lenses.filter((lens) => lens.meta.published);
 const lensById = new Map(publishedLenses.map((lens) => [lens.meta.id, lens]));
-for (const m of published)
-  if (!animations[m.meta.animation]) throw new Error(`Unknown animation: ${m.meta.animation}`);
+for (const m of mechanics)
+  if (m.meta.animation && !animations[m.meta.animation])
+    throw new Error(`Unknown animation: ${m.meta.animation}`);
 const out = path.join(ROOT, 'dist');
 await fs.rm(out, { recursive: true, force: true });
 await fs.mkdir(path.join(out, 'assets'), { recursive: true });
@@ -284,7 +285,7 @@ function checklistItems(items, group) {
     )
     .join('');
 }
-function lensChips(localeCode, ids, notes) {
+function lensChips(localeCode, ids, notes, contentLocale = localeCode) {
   const t = ui[localeCode];
   const notesById = new Map(notes.map((note) => [note.id, note.body]));
   return /* HTML */ `<nav class="lens-chips" aria-label="${e(t.mechanicLenses)}">
@@ -292,7 +293,7 @@ function lensChips(localeCode, ids, notes) {
       .map((id) => {
         const lens = lensById.get(id);
         if (!lens) throw new Error(`Unknown published lens: ${id}`);
-        const content = lens.translations[localeCode];
+        const content = lens.translations[contentLocale];
         const note = notesById.get(id);
         if (!note) throw new Error(`Missing ${localeCode} lens note: ${id}`);
         const tooltipId = `lens-tooltip-${id}`;
@@ -344,6 +345,103 @@ function exampleCards(items, t) {
         </article>`,
     )
     .join('');
+}
+function renderLessonBody(
+  locale,
+  t,
+  mechanic,
+  content,
+  animation,
+  { isWip = false, contentLocale = locale.code } = {},
+) {
+  const fallbackAttributes =
+    contentLocale === locale.code ? '' : ` lang="${contentLocale}" dir="ltr"`;
+  return /* HTML */ `<div class="lesson-layout${isWip ? ' lesson-layout--wip' : ''}">
+    <main id="main" class="lesson-main" ${fallbackAttributes}>
+      <div class="lesson-overview-grid">
+        <section id="overview" class="lesson-hero">
+          <div class="lesson-title-line">
+            <h1>${e(content.title)}</h1>
+            ${isWip ? '<span class="wip-badge">WIP</span>' : ''}
+            <a class="eyebrow lesson-category" href="${link(`${locale.code}/#mechanics`)}"
+              >${e(content.category)}</a
+            >
+            ${lensChips(locale.code, mechanic.meta.lenses, content.lensNotes, contentLocale)}
+          </div>
+          <p class="mechanic-overview">${e(content.overview)}</p>
+        </section>
+        <div id="simulation" class="simulation-section">${animation.render(content.demo)}</div>
+        <section
+          class="implementation-checklist"
+          aria-labelledby="implementation-checklist-title"
+          data-checklist-id="${e(mechanic.meta.id)}"
+        >
+          <div class="implementation-checklist__intro">
+            <h2 id="implementation-checklist-title">${e(t.implementationChecklist)}</h2>
+            <p>${e(content.learning)}</p>
+            <button type="button" class="checklist-reset" data-checklist-reset disabled>
+              ${icon('rotate-ccw')}${e(t.checklistReset)}
+            </button>
+          </div>
+          <div class="implementation-checklist__groups">
+            <section class="checklist-group" aria-labelledby="core-checks-title">
+              <span class="eyebrow">${e(t.playbook)}</span>
+              <h3 id="core-checks-title">${e(t.stepsTitle)}</h3>
+              <ul class="checklist-items">
+                ${checklistItems(content.steps, 'steps')}
+              </ul>
+              <h4>${e(t.mistakesTitle)}</h4>
+              <ul class="checklist-items checklist-items--mistakes">
+                ${checklistItems(content.mistakes, 'mistakes')}
+              </ul>
+            </section>
+            <section class="checklist-group" aria-labelledby="tuning-title">
+              <span class="eyebrow">${e(t.design)}</span>
+              <h3 id="tuning-title">${e(t.designerTitle)}</h3>
+              <ul class="checklist-items">
+                ${checklistItems(content.designNotes, 'design')}
+              </ul>
+              <h4>${e(t.storyTitle)}</h4>
+              <ul class="checklist-items">
+                ${checklistItems([content.story], 'story')}
+              </ul>
+              <h4>${e(t.adaptTitle)}</h4>
+              <ul class="checklist-items">
+                ${checklistItems([content.adaptation], 'adaptation')}
+              </ul>
+              <h4>${e(t.relatedTitle)}</h4>
+              <ul class="checklist-items">
+                ${checklistItems([content.distinction], 'distinction')}
+              </ul>
+            </section>
+          </div>
+        </section>
+      </div>
+      <section id="examples" class="content-section examples-section">
+        <h2>${e(t.examplesTitle)}</h2>
+        <div class="example-grid">${exampleCards(content.examples, t)}</div>
+      </section>
+      <section id="sources" class="content-section sources">
+        <h2>${e(t.sources)}</h2>
+        <ul>
+          ${mechanic.meta.sources.map((source) => `<li><a href="${e(source.url)}">${e(source.title)}${icon('external-link', { className: 'icon--external' })}</a></li>`).join('')}
+        </ul>
+        <p class="review-note">
+          ${e(t.reviewNote)}
+          <a
+            href="${REPOSITORY}/edit/main/content/mechanics/${mechanic.meta.id}/${contentLocale}.json"
+            >${icon('square-pen')}${e(t.edit)}</a
+          >
+        </p>
+      </section>
+    </main>
+  </div>`;
+}
+function mechanicThumbnail(entry, id) {
+  if (entry.mechanic?.meta.animation)
+    return animations[entry.mechanic.meta.animation].thumbnail(id);
+  if (entry.profile) return renderBlueprintThumbnail(entry.id, id);
+  return '<span>WIP</span>';
 }
 function draftExampleSection(items, locale, t) {
   if (items.length === 0) return '';
@@ -618,7 +716,7 @@ for (const locale of locales) {
     }),
   );
   const catalogEntries = mechanicsIndex.mechanics.map((outline) => {
-    const mechanic = publishedById.get(outline.id);
+    const mechanic = mechanicsById.get(outline.id);
     const outlineContent = outline.translations[locale.code] ?? outline.translations.en;
     const lesson = mechanic?.translations[locale.code];
     return {
@@ -636,7 +734,7 @@ for (const locale of locales) {
         category: outline.translations.en.category,
         lenses: mechanic?.meta.lenses ?? [],
       }),
-      isWip: !mechanic,
+      isWip: !mechanic?.meta.published,
     };
   });
   const catalogParts = [];
@@ -694,7 +792,7 @@ for (const locale of locales) {
                         class="catalog-lesson__preview${entry.isWip ? ' catalog-lesson__preview--wip' : ''}"
                         aria-hidden="true"
                       >
-                        ${entry.isWip ? (entry.profile ? renderBlueprintThumbnail(entry.id, `catalog-${locale.code}-${entry.id}`) : '<span>WIP</span>') : animations[entry.mechanic.meta.animation].thumbnail(entry.id)}
+                        ${mechanicThumbnail(entry, `catalog-${locale.code}-${entry.id}`)}
                       </span>
                       <span class="catalog-lesson__arrow"
                         >${icon('arrow-right', { className: 'icon--directional' })}</span
@@ -892,7 +990,7 @@ for (const locale of locales) {
             class="boss-builder-mechanic__diagram${entry.isWip ? ' boss-builder-mechanic__diagram--wip' : ''}"
             aria-hidden="true"
           >
-            ${entry.isWip ? (entry.profile ? renderBlueprintThumbnail(entry.id, `builder-${locale.code}-${entry.id}`) : '<span>WIP</span>') : animations[entry.mechanic.meta.animation].thumbnail(entry.id)}
+            ${mechanicThumbnail(entry, `builder-${locale.code}-${entry.id}`)}
           </span>
           <span class="boss-builder-mechanic__copy">
             <span class="eyebrow">${e(entry.category)}</span>
@@ -1049,84 +1147,7 @@ for (const locale of locales) {
   for (const m of published) {
     const c = m.translations[locale.code],
       a = animations[m.meta.animation];
-    const body = /* HTML */ `<div class="lesson-layout">
-      <main id="main" class="lesson-main">
-        <div class="lesson-overview-grid">
-          <section id="overview" class="lesson-hero">
-            <div class="lesson-title-line">
-              <h1>${e(c.title)}</h1>
-              <a class="eyebrow lesson-category" href="${link(`${locale.code}/#mechanics`)}"
-                >${e(c.category)}</a
-              >
-              ${lensChips(locale.code, m.meta.lenses, c.lensNotes)}
-            </div>
-            <p class="mechanic-overview">${e(c.overview)}</p>
-          </section>
-          <div id="simulation" class="simulation-section">${a.render(c.demo)}</div>
-          <section
-            class="implementation-checklist"
-            aria-labelledby="implementation-checklist-title"
-            data-checklist-id="${e(m.meta.id)}"
-          >
-            <div class="implementation-checklist__intro">
-              <h2 id="implementation-checklist-title">${e(t.implementationChecklist)}</h2>
-              <p>${e(c.learning)}</p>
-              <button type="button" class="checklist-reset" data-checklist-reset disabled>
-                ${icon('rotate-ccw')}${e(t.checklistReset)}
-              </button>
-            </div>
-            <div class="implementation-checklist__groups">
-              <section class="checklist-group" aria-labelledby="core-checks-title">
-                <span class="eyebrow">${e(t.playbook)}</span>
-                <h3 id="core-checks-title">${e(t.stepsTitle)}</h3>
-                <ul class="checklist-items">
-                  ${checklistItems(c.steps, 'steps')}
-                </ul>
-                <h4>${e(t.mistakesTitle)}</h4>
-                <ul class="checklist-items checklist-items--mistakes">
-                  ${checklistItems(c.mistakes, 'mistakes')}
-                </ul>
-              </section>
-              <section class="checklist-group" aria-labelledby="tuning-title">
-                <span class="eyebrow">${e(t.design)}</span>
-                <h3 id="tuning-title">${e(t.designerTitle)}</h3>
-                <ul class="checklist-items">
-                  ${checklistItems(c.designNotes, 'design')}
-                </ul>
-                <h4>${e(t.storyTitle)}</h4>
-                <ul class="checklist-items">
-                  ${checklistItems([c.story], 'story')}
-                </ul>
-                <h4>${e(t.adaptTitle)}</h4>
-                <ul class="checklist-items">
-                  ${checklistItems([c.adaptation], 'adaptation')}
-                </ul>
-                <h4>${e(t.relatedTitle)}</h4>
-                <ul class="checklist-items">
-                  ${checklistItems([c.distinction], 'distinction')}
-                </ul>
-              </section>
-            </div>
-          </section>
-        </div>
-        <section id="examples" class="content-section examples-section">
-          <h2>${e(t.examplesTitle)}</h2>
-          <div class="example-grid">${exampleCards(c.examples, t)}</div>
-        </section>
-        <section id="sources" class="content-section sources">
-          <h2>${e(t.sources)}</h2>
-          <ul>
-            ${m.meta.sources.map((s) => `<li><a href="${e(s.url)}">${e(s.title)}${icon('external-link', { className: 'icon--external' })}</a></li>`).join('')}
-          </ul>
-          <p class="review-note">
-            ${e(t.reviewNote)}
-            <a href="${REPOSITORY}/edit/main/content/mechanics/${m.meta.id}/${locale.code}.json"
-              >${icon('square-pen')}${e(t.edit)}</a
-            >
-          </p>
-        </section>
-      </main>
-    </div>`;
+    const body = renderLessonBody(locale, t, m, c, a);
     await write(
       `${locale.code}/mechanics/${m.meta.id}/`,
       shell(locale, c.title, c.summary, body, {
@@ -1136,6 +1157,24 @@ for (const locale of locales) {
     );
   }
   for (const entry of catalogEntries.filter(({ isWip }) => isWip)) {
+    if (entry.mechanic?.meta.animation) {
+      const contentLocale = entry.mechanic.translations[locale.code] ? locale.code : 'en';
+      const content = entry.mechanic.translations[contentLocale];
+      const animation = animations[entry.mechanic.meta.animation];
+      const body = renderLessonBody(locale, t, entry.mechanic, content, animation, {
+        isWip: true,
+        contentLocale,
+      });
+      await write(
+        `${locale.code}/mechanics/${entry.id}/`,
+        shell(locale, content.title, content.summary, body, {
+          route: `mechanics/${entry.id}/`,
+          pageClass: 'lesson-page--wip',
+          assets: [...animation.styles, ...animation.scripts],
+        }),
+      );
+      continue;
+    }
     const fallbackAttributes =
       locale.code === 'ru' || locale.code === 'en' ? '' : ' lang="en" dir="ltr"';
     const body = /* HTML */ `<main id="main" class="wip-mechanic-main">

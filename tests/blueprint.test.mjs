@@ -8,8 +8,8 @@ import {
 } from '../src/blueprint-model.mjs';
 import { renderBlueprint, renderBlueprintThumbnail } from '../lib/blueprint-view.mjs';
 
-test('all 25 expanded WIP mechanics have distinct rule modes and complete moving frames', () => {
-  assert.equal(BLUEPRINT_MECHANIC_IDS.length, 25);
+test('all 24 compact WIP mechanics have distinct rule modes and complete moving frames', () => {
+  assert.equal(BLUEPRINT_MECHANIC_IDS.length, 24);
   const modes = new Set();
   for (const id of BLUEPRINT_MECHANIC_IDS) {
     for (let time = 0; time <= BLUEPRINT_DURATION; time += 0.1) {
@@ -30,7 +30,7 @@ test('all 25 expanded WIP mechanics have distinct rule modes and complete moving
           assert.ok(Number.isFinite(value), `${id} has an invalid ${primitive.type}`);
     }
   }
-  assert.equal(modes.size, 25);
+  assert.equal(modes.size, 24);
 });
 
 test('every blueprint exposes signal, committed action, and recovery without player teleports', () => {

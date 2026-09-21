@@ -6,12 +6,14 @@ import { lensVisualIds, renderLensVisual } from '../lib/lens-view.mjs';
 const source = await loadContent();
 test('all published mechanics have complete content in eight languages', async () => {
   await validateContent(source);
-  assert.equal(source.mechanics.length, 5);
-  assert.ok(source.mechanics.every((mechanic) => Object.keys(mechanic.translations).length === 8));
+  const published = source.mechanics.filter(({ meta }) => meta.published);
+  assert.equal(source.mechanics.length, 6);
+  assert.equal(published.length, 5);
+  assert.ok(published.every((mechanic) => Object.keys(mechanic.translations).length === 8));
   assert.equal(source.lenses.length, 15);
   assert.ok(source.lenses.every((lens) => Object.keys(lens.translations).length === 8));
   assert.ok(
-    source.mechanics.every((mechanic) =>
+    published.every((mechanic) =>
       Object.values(mechanic.translations).every((lesson) => !('quiz' in lesson)),
     ),
   );
@@ -29,7 +31,7 @@ test('the public index contains 124 unique builder-ready mechanics', async () =>
   assert.ok(source.mechanics.every(({ meta }) => indexedIds.has(meta.id)));
   assert.equal(
     indexed.filter(({ id }) => !source.mechanics.some(({ meta }) => meta.id === id)).length,
-    119,
+    118,
   );
 
   const duplicate = structuredClone(source);
@@ -359,7 +361,8 @@ test('learning sources do not repeat unexplained gameplay from boss examples', a
 
 test('every boss reference opens at the exact attack instead of unrelated gameplay', async () => {
   const data = structuredClone(source);
-  for (const lesson of Object.values(data.mechanics.at(-1).translations))
+  const mechanic = data.mechanics.find((item) => item.folder === 'gap-volley');
+  for (const lesson of Object.values(mechanic.translations))
     lesson.examples[0].video = 'https://www.youtube.com/watch?v=7pVgc-VBuPk';
   await assert.rejects(validateContent(data), /example 1 needs an exact YouTube timestamp/);
 });

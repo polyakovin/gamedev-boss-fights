@@ -13,7 +13,6 @@ const SPECS = {
     player: [380, 590],
     target: [455, 700],
   },
-  'projectile-fan': { mode: 'fan', boss: [280, 220], player: [280, 690], target: [455, 700] },
   'ring-volley': { mode: 'ring', boss: [280, 400], player: [280, 690], target: [440, 690] },
   'spiral-barrage': {
     mode: 'spiral',

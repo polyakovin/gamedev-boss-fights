@@ -28,7 +28,7 @@ test('an expanded draft teaches the complete mechanic blueprint', async ({ page 
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
 });
 
-test('all 25 selected WIP mechanics expose their complete blueprint', async ({ request }) => {
+test('all 24 compact WIP mechanics expose their complete blueprint', async ({ request }) => {
   const index = await request.get('en/');
   const catalog = await index.text();
   const selectedDrafts = [
@@ -36,7 +36,6 @@ test('all 25 selected WIP mechanics expose their complete blueprint', async ({ r
     'lunge',
     'grab',
     'burrow-and-emerge',
-    'projectile-fan',
     'ring-volley',
     'spiral-barrage',
     'ricochet-projectile',
@@ -59,7 +58,7 @@ test('all 25 selected WIP mechanics expose their complete blueprint', async ({ r
     'enrage',
   ];
 
-  expect(selectedDrafts).toHaveLength(25);
+  expect(selectedDrafts).toHaveLength(24);
   for (const id of selectedDrafts) {
     expect(catalog).toContain(`en/mechanics/${id}/`);
     const response = await request.get(`en/mechanics/${id}/`);
@@ -71,6 +70,24 @@ test('all 25 selected WIP mechanics expose their complete blueprint', async ({ r
     expect(html, id).toContain('class="wip-badge"');
     expect(html, id).not.toContain('core-badge');
   }
+});
+
+test('projectile fan uses the complete canonical lesson while retaining WIP status', async ({
+  page,
+}) => {
+  await page.goto('ru/mechanics/projectile-fan/');
+  await expect(page.locator('.lesson-title-line h1')).toHaveText(
+    '\u0412\u0435\u0435\u0440 \u0441\u043d\u0430\u0440\u044f\u0434\u043e\u0432',
+  );
+  await expect(page.locator('.lesson-title-line .wip-badge')).toHaveText('WIP');
+  await expect(page.locator('.implementation-checklist')).toBeVisible();
+  await expect(page.locator('.checklist-group').first().locator('.checklist-item')).toHaveCount(5);
+  await expect(page.locator('.game-example')).toHaveCount(3);
+  await expect(page.locator('.draft-profile, .wip-mechanic-panel')).toHaveCount(0);
+  await expect(page.locator('[data-pattern-demo]')).toHaveAttribute(
+    'data-pattern-kind',
+    'projectile-fan',
+  );
 });
 
 test('expanded drafts can include sourced examples while other WIP pages stay compact', async ({

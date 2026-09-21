@@ -448,6 +448,7 @@ for (const [id, title, activePhase] of [
   ['ground-slam', 'Ground slam', 'Impact'],
   ['summon', 'Summon', 'Arrival'],
   ['gap-volley', 'Gap volley', 'Volley'],
+  ['projectile-fan', 'Projectile fan', 'Release'],
 ]) {
   test(`${id}: localized page animates its own pattern`, async ({ page }) => {
     await page.emulateMedia({ reducedMotion: 'no-preference' });
@@ -500,7 +501,7 @@ for (const [id, title, activePhase] of [
     await expect(page.locator('.lesson-title-line .lens-chip')).toHaveCount(4);
     await expect(page.locator('.game-example')).toHaveCount(3);
     await expect(page.locator('.game-example__media img')).toHaveCount(3);
-    await expect(page.locator('.sources li a')).toHaveCount(1);
+    await expect(page.locator('.sources li a')).toHaveCount(id === 'projectile-fan' ? 2 : 1);
     await expect(page.locator('[data-pattern-boss] [data-character-art="kern"]')).toHaveCount(1);
     await expect(page.locator('[data-pattern-player] [data-character-art="tavi"]')).toHaveCount(1);
     await page.locator('[data-pattern-timeline]').evaluate((element) => {
@@ -578,8 +579,8 @@ test('boss builder persists a local draft and downloads portable JSON', async ({
   );
   await expect(page.locator('.boss-builder-mechanic [data-character-art="kern"]')).toHaveCount(30);
   await expect(page.locator('.boss-builder-mechanic [data-character-art="tavi"]')).toHaveCount(30);
-  await expect(page.locator('.boss-builder-mechanic [data-blueprint-preview]')).toHaveCount(25);
-  await expect(page.locator('.boss-builder-mechanic [data-pattern-preview]')).toHaveCount(4);
+  await expect(page.locator('.boss-builder-mechanic [data-blueprint-preview]')).toHaveCount(24);
+  await expect(page.locator('.boss-builder-mechanic [data-pattern-preview]')).toHaveCount(5);
   await expect(page.locator('[data-boss-filter]')).toHaveCount(5);
   await page.locator('[data-boss-filter="geometry"]').selectOption('radial');
   const radialCount = await page.locator('.boss-builder-mechanic:visible').count();
@@ -997,8 +998,8 @@ test('the root defaults to English and localized catalogs point to real pages', 
   await expect(page.locator('.catalog-lesson__preview [data-character-art="tavi"]')).toHaveCount(
     30,
   );
-  await expect(page.locator('.catalog-lesson__preview [data-blueprint-preview]')).toHaveCount(25);
-  await expect(page.locator('.catalog-lesson__preview [data-pattern-preview]')).toHaveCount(4);
+  await expect(page.locator('.catalog-lesson__preview [data-blueprint-preview]')).toHaveCount(24);
+  await expect(page.locator('.catalog-lesson__preview [data-pattern-preview]')).toHaveCount(5);
   const draftPage = await request.get('en/mechanics/wide-swing/');
   expect(draftPage.status()).toBe(200);
   expect(await draftPage.text()).toContain('class="wip-badge"');
