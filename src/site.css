@@ -2318,42 +2318,50 @@ section[id] {
   font-size: 10px;
 }
 .boss-builder-support {
-  width: min(calc(100% - 36px), 540px);
+  width: min(calc(100% - 36px), 480px);
   padding: 0;
   overflow: hidden;
-  border: 1px solid var(--accent-line);
-  border-radius: 14px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
   background: var(--surface);
   color: var(--ink);
-  box-shadow: 0 24px 80px color-mix(in srgb, var(--ink) 24%, transparent);
+  box-shadow: 0 20px 64px color-mix(in srgb, var(--ink) 20%, transparent);
 }
 .boss-builder-support::backdrop {
-  background: color-mix(in srgb, var(--ink) 48%, transparent);
-  backdrop-filter: blur(4px);
+  background: color-mix(in srgb, var(--ink) 42%, transparent);
+  backdrop-filter: blur(3px);
 }
 .boss-builder-support__card {
-  padding: 30px;
+  padding: 26px;
 }
-.boss-builder-support__card > .eyebrow {
-  color: var(--accent);
+.boss-builder-support__card::before {
+  display: block;
+  width: 36px;
+  height: 3px;
+  margin-bottom: 16px;
+  border-radius: 999px;
+  background: var(--accent);
+  content: '';
 }
 .boss-builder-support__card h2 {
-  margin: 9px 0 12px;
-  font-size: clamp(27px, 5vw, 36px);
-  line-height: 1.12;
+  margin: 0 0 9px;
+  font-size: clamp(20px, 5.5vw, 28px);
+  letter-spacing: -0.025em;
+  line-height: 1.15;
+  white-space: nowrap;
 }
 .boss-builder-support__card > p {
   margin: 0;
   color: var(--soft-ink);
-  font-size: 14px;
-  line-height: 1.65;
+  font-size: 13px;
+  line-height: 1.6;
 }
 .boss-builder-support__actions {
   display: flex;
   flex-wrap: wrap;
   justify-content: flex-end;
-  gap: 9px;
-  margin-top: 24px;
+  gap: 8px;
+  margin-top: 20px;
 }
 .boss-builder-support__actions button,
 .boss-builder-support__actions a {
@@ -2361,8 +2369,8 @@ section[id] {
   align-items: center;
   justify-content: center;
   gap: 7px;
-  min-height: 42px;
-  padding: 9px 14px;
+  min-height: 40px;
+  padding: 8px 13px;
   border: 1px solid var(--line);
   border-radius: 8px;
   font: inherit;
@@ -3416,10 +3424,11 @@ section[id] {
     grid-template-columns: 122px minmax(0, 1fr);
   }
   .boss-builder-support__card {
-    padding: 24px 20px 20px;
+    padding: 22px 18px 18px;
   }
   .boss-builder-support__actions {
     display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
   }
   .wip-mechanic-main {
     width: calc(100% - 36px);

@@ -42,7 +42,9 @@ test('the third successful JSON download offers project support once', async ({ 
 
   await expect(prompt).toBeVisible();
   await expect(prompt).toHaveAttribute('open', '');
-  await expect(prompt.locator('h2')).toHaveText('Help keep Boss Fight Atlas growing');
+  await expect(prompt.locator('h2')).toHaveText('Support the project');
+  await expect(prompt).not.toContainText('Boss Fight Atlas');
+  await expect(prompt).not.toContainText('You have downloaded three boss sketches.');
   await expect(page.locator('[data-boss-support-link]')).toHaveAttribute(
     'href',
     ENGLISH_SUPPORT_URL,
@@ -61,6 +63,7 @@ test('the third successful JSON download offers project support once', async ({ 
 });
 
 test('the Russian builder uses the Russian Boosty post', async ({ page }) => {
+  await page.setViewportSize({ width: 375, height: 812 });
   await prepareSketch(page, 'ru');
   await page.evaluate(
     ([key, value]) => localStorage.setItem(key, value),
@@ -71,7 +74,9 @@ test('the Russian builder uses the Russian Boosty post', async ({ page }) => {
 
   const prompt = page.locator('[data-boss-support]');
   await expect(prompt).toBeVisible();
-  await expect(prompt.locator('h2')).toHaveText(russianUi.builderSupportTitle);
+  const title = prompt.locator('h2');
+  await expect(title).toHaveText(russianUi.builderSupportTitle);
+  expect(await title.evaluate((element) => element.scrollWidth <= element.clientWidth)).toBe(true);
   await expect(page.locator('[data-boss-support-link]')).toHaveAttribute(
     'href',
     RUSSIAN_SUPPORT_URL,

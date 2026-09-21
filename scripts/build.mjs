@@ -1135,7 +1135,6 @@ for (const locale of locales) {
       data-boss-support
     >
       <div class="boss-builder-support__card">
-        <span class="eyebrow">Boss Fight Atlas</span>
         <h2 id="boss-builder-support-title">${e(t.builderSupportTitle)}</h2>
         <p>${e(t.builderSupportBody)}</p>
         <form method="dialog" class="boss-builder-support__actions">
