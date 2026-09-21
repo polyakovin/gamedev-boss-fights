@@ -1,6 +1,7 @@
 import { test, expect } from '@playwright/test';
 
 const promotedBlueprints = [
+  'landing-jump',
   'wide-swing',
   'lunge',
   'grab',
@@ -50,13 +51,13 @@ test('a promoted mechanic uses the complete canonical lesson architecture', asyn
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
 });
 
-test('all 24 promoted blueprint mechanics expose a full lesson without WIP', async ({
+test('all 25 promoted blueprint mechanics expose a full lesson without WIP', async ({
   request,
 }) => {
   const index = await request.get('en/');
   const catalog = await index.text();
 
-  expect(promotedBlueprints).toHaveLength(24);
+  expect(promotedBlueprints).toHaveLength(25);
   for (const id of promotedBlueprints) {
     expect(catalog).toContain(`en/mechanics/${id}/`);
     const response = await request.get(`en/mechanics/${id}/`);
@@ -86,7 +87,7 @@ test('projectile fan is a published canonical lesson', async ({ page }) => {
   );
 });
 
-test('promoted lessons retain sourced Ori examples while ordinary drafts stay compact', async ({
+test('promoted lessons retain sourced Ori examples and new lessons use the full architecture', async ({
   page,
 }) => {
   await page.goto('en/mechanics/platform-destruction/');
@@ -97,7 +98,9 @@ test('promoted lessons retain sourced Ori examples while ordinary drafts stay co
   await expect(page.locator('.wip-badge, .draft-profile')).toHaveCount(0);
 
   await page.goto('en/mechanics/landing-jump/');
-  await expect(page.locator('.draft-profile')).toHaveCount(0);
-  await expect(page.locator('.wip-mechanic-panel')).toBeVisible();
-  await expect(page.locator('.wip-badge')).toHaveText('WIP');
+  await expect(page.locator('.lesson-title-line h1')).toHaveText('Landing jump');
+  await expect(page.locator('.wip-badge, .draft-profile, .wip-mechanic-panel')).toHaveCount(0);
+  await expect(page.locator('[data-blueprint-id="landing-jump"]')).toBeVisible();
+  await expect(page.locator('.implementation-checklist')).toBeVisible();
+  await expect(page.locator('.game-example')).toHaveCount(3);
 });

@@ -1,0 +1,130 @@
+{
+  "title": "落地跳跃",
+  "subtitle": "起跳前锁定落点，保留可达的撤离路线，并用落地硬直奖励正确应对。",
+  "variant": "锁定落点的跳跃",
+  "summary": "首领跳向已锁定的位置，并短暂把落地半径变成威胁。",
+  "overview": "落地跳跃把首领位移和局部冲击结合起来。若落点在起跳前停止追踪、玩家全身能用普通移动离开标记半径，且首领落地后停留足够久，规则就是公平的。",
+  "learning": "把信号、落点锁定、飞行、冲击半径和恢复设计成一个连续的空间承诺。",
+  "category": "本体与近战",
+  "readTime": "5 分钟",
+  "demo": {
+    "title": "测试落地跳跃",
+    "timeline": "攻击时间轴",
+    "step": "攻击阶段",
+    "phaseNames": ["下蹲与标记", "起跳与撤离", "落地与恢复"],
+    "phaseDescriptions": [
+      "同时展示起跳姿势和落点标记，并在凯恩离地前停止移动标记。",
+      "凯恩沿已宣告的弧线飞行，塔维用普通移动让全身离开半径；落点不再跟随塔维。",
+      "接触时结算标记半径，随后凯恩在落点停留，让新的距离或反击窗口真正有用。"
+    ],
+    "boss": "首领",
+    "player": "玩家",
+    "danger": "落地半径已激活",
+    "locked": "落点已锁定",
+    "safe": "塔维全身离开半径",
+    "reducedMotion": "减少动态效果设置已关闭自动播放。使用时间轴滑块检查跳跃。",
+    "diagramDescription": "落地跳跃的循环示意。凯恩下蹲并锁定落点，沿可见弧线移动，在固定圆圈内落地并恢复；塔维完全离开半径。"
+  },
+  "steps": [
+    {
+      "title": "落点何时停止追踪？",
+      "body": "在预备阶段放置标记，并在起跳前冻结。姿势、阴影和标记应共享一个中心，让玩家根据稳定承诺行动，而不是追赶迟到的修正。"
+    },
+    {
+      "title": "玩家全身能离开半径吗？",
+      "body": "用最慢的预期移动方式测量从锁定到接触的时间。测试边缘起点、镜头压缩、碰撞半径和空中身体判定，而不只看玩家中心点。"
+    },
+    {
+      "title": "落地是否产生有用结果？",
+      "body": "让凯恩在落点保持清晰的恢复。正确应对应在下一次选招前带来新的距离、侧面入口或短暂攻击窗口。"
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "落点在飞行中继续追踪",
+      "body": "空中修正会让标记失效，把规划撤离变成信号未声明的反应测试。若刻意使用追踪，应做成带独立截止提示的另一种机制。"
+    },
+    {
+      "title": "身体在标记半径外命中",
+      "body": "肩膀、武器或不可见碰撞体伸出圆圈，会让几何上正确的应对失败。边界测试要包括双方完整轮廓。"
+    },
+    {
+      "title": "后续攻击抹掉恢复",
+      "body": "若凯恩立刻取消到横扫或再次跳跃，离开落点便没有有用结果。先保留基础恢复，再把后续作为组合规则加入。"
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "落点只使用一个数据源",
+      "body": "让标记、落地阴影、路径终点、冲击特效和伤害查询都来自同一个锁定坐标，避免调参时表现与碰撞分离。"
+    },
+    {
+      "title": "区分飞行危险与落地危险",
+      "body": "明确空中身体是否造成伤害。本基础规则只在接触附近激活，因此塔维读取的是固定圆形，而不是未声明的移动胶囊。"
+    },
+    {
+      "title": "联动调整截止、距离、半径和恢复",
+      "body": "只有锁定清晰且所有预期起点都有路线时，更长距离才可配更大半径。移动升级或场地变化后需重新测试。"
+    },
+    {
+      "title": "一次只升级一个承诺",
+      "body": "后续可加入延迟落地、第二跳或冲击波；应先确保固定落点和基础半径无需额外特效也能读懂。"
+    }
+  ],
+  "story": {
+    "title": "机制传达什么",
+    "body": "凯恩成为移动的场地几何：起跳释放旧位置，落地占领新位置的标记圆。跳跃因此能表达重量、追击或领地控制，而无需用视觉奇观掩盖规则。"
+  },
+  "adaptation": {
+    "title": "适配玩家动作",
+    "body": "对步行和冲刺，用水平速度校准锁定到接触的时间。对跳跃、抓钩或格挡，明确它们是躲开径向冲击、与空中身体互动，还是形成独立应对，并在锁定前说明。"
+  },
+  "distinction": {
+    "title": "保持机制区别",
+    "body": "落地跳跃把首领移到锁定位置并在那里结算局部半径。突进威胁移动通道，标记区域攻击无需首领位移，砸地则可能向外发波。保留“位移加局部冲击”的契约。"
+  },
+  "lensNotes": [
+    { "id": "telegraphing", "body": "下蹲、弧线和落点标记在离地前揭示目的地与接触时机。" },
+    { "id": "commitment", "body": "落点在起跳前停止追踪，因此整个飞行中都可据此行动。" },
+    {
+      "id": "threat-geometry",
+      "body": "安全性由玩家完整身体与锁定半径衡量，并计入接触时的首领身体。"
+    },
+    { "id": "counterplay", "body": "普通移动能离开圆形，恢复把撤离转化为新距离或攻击机会。" },
+    { "id": "risk-reward", "body": "贴近边缘的路线可保留更强反击，但必须始终清晰且可靠安全。" }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "Hollow Knight",
+      "boss": "False Knight",
+      "screenshot": "https://i.ytimg.com/vi/rwZmf4u366o/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=rwZmf4u366o&t=151s",
+      "body": "False Knight 落回地面前有缓慢清晰的身体弧线。大轮廓便于把目的地、接触和恢复与横版场地几何对照。",
+      "video": "https://www.youtube.com/watch?v=rwZmf4u366o&t=151s",
+      "videoDurationSeconds": 2832
+    },
+    {
+      "dimension": "2D",
+      "game": "Ori and the Will of the Wisps",
+      "boss": "Horn Beetle",
+      "screenshot": "https://i.ytimg.com/vi/DvuB8cImPIg/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=DvuB8cImPIg&t=61s",
+      "body": "Horn Beetle 把紧凑起跳与沉重落地结合。横版视角适合研究身体大小的威胁、场地边缘和短恢复如何共享有限空间。",
+      "video": "https://www.youtube.com/watch?v=DvuB8cImPIg&t=61s",
+      "videoDurationSeconds": 2062
+    },
+    {
+      "dimension": "3D",
+      "game": "Elden Ring",
+      "boss": "Margit, the Fell Omen",
+      "screenshot": "https://i.ytimg.com/vi/m60ucpQggJ0/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=m60ucpQggJ0&t=131s",
+      "body": "Margit 持锤上升与短暂停滞为落地前的承诺跳跃定框。该例展示镜头角度、圆形撤离和落地后的短窗口如何在 3D 中构成同一规则。",
+      "video": "https://www.youtube.com/watch?v=m60ucpQggJ0&t=131s",
+      "videoDurationSeconds": 389
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

@@ -4,6 +4,13 @@ export const BLUEPRINT_PLAYER_RADIUS = 24;
 export const BLUEPRINT_BOSS_LABEL_OFFSET_Y = -104;
 
 const SPECS = {
+  'landing-jump': {
+    mode: 'landing',
+    boss: [155, 280],
+    player: [365, 600],
+    target: [470, 720],
+    landing: [365, 600],
+  },
   'wide-swing': { mode: 'arc', boss: [280, 310], player: [410, 470], target: [470, 650] },
   lunge: { mode: 'lunge', boss: [170, 290], player: [390, 590], target: [470, 660] },
   grab: { mode: 'grab', boss: [280, 300], player: [390, 485], target: [470, 610] },
@@ -257,6 +264,30 @@ function primitivesFor(spec, frame) {
   const { boss, player, prepare, action, recover, phase } = frame;
   const active = phase === 1 ? 1 : phase === 0 ? 0.22 + prepare * 0.28 : 1 - recover;
   const preview = phase === 0 ? 0.28 + prepare * 0.3 : phase === 1 ? 0.08 : 0;
+  if (mode === 'landing') {
+    const landing = point(spec.landing);
+    const contact = phase === 1 ? clamp(1 - Math.abs(action - 0.52) / 0.2) : 0;
+    return [
+      path(
+        `M ${spec.boss[0]} ${spec.boss[1]} Q 260 135 ${landing.x} ${landing.y}`,
+        phase === 0 ? 0.32 + prepare * 0.28 : phase === 1 ? 0.24 * (1 - action) : 0,
+        'accent',
+        7,
+        0,
+        '12 12',
+      ),
+      circle(
+        landing.x,
+        landing.y,
+        mix(46, 88, phase === 0 ? prepare : 1),
+        phase === 0 ? 0.42 + prepare * 0.38 : phase === 1 ? 0.34 : 0,
+        'accent',
+        5,
+        phase === 0 ? 0.06 : 0,
+      ),
+      circle(landing.x, landing.y, 88, contact, 'signal', 18, 0.24),
+    ];
+  }
   if (mode === 'arc')
     return [
       path(arcPath(boss, 205, -1.15, 2.25), preview, 'accent', 20, 0, '12 10'),
@@ -521,6 +552,10 @@ function pointClearsThreat(spec, frame, value, radius = BLUEPRINT_PLAYER_RADIUS)
   if (!frame.dangerActive) return true;
   const distanceFromBoss = Math.hypot(value.x - frame.boss.x, value.y - frame.boss.y);
   const { mode } = spec;
+  if (mode === 'landing') {
+    const landing = point(spec.landing);
+    return Math.hypot(value.x - landing.x, value.y - landing.y) > 88 + radius;
+  }
   if (mode === 'arc') return distanceFromBoss > 205 + radius;
   if (mode === 'lunge')
     return distanceToSegment(value, { x: 170, y: 290 }, { x: 430, y: 590 }) > 27 + radius;
@@ -667,7 +702,12 @@ export function blueprintFrame(id, time) {
   const response = smooth((t - 0.42) / 0.92);
   const returnProgress = smooth((t - 4.65) / 1.2);
   let boss = startBoss;
-  if (spec.mode === 'lunge') {
+  if (spec.mode === 'landing') {
+    const landing = point(spec.landing);
+    const control = { x: 260, y: 105 };
+    const flight = phase === 0 ? 0 : phase === 1 ? smooth(action / 0.52) : 1 - returnProgress;
+    boss = quadraticPoint(startBoss, control, landing, flight);
+  } else if (spec.mode === 'lunge') {
     const travel = phase === 0 ? 0 : phase === 1 ? smooth(action / 0.62) : 1 - recover;
     boss = { x: mix(170, 430, travel), y: mix(290, 590, travel) };
   } else if (spec.mode === 'burrow') {
@@ -677,7 +717,9 @@ export function blueprintFrame(id, time) {
     boss = { x: mix(175, 410, travel), y: mix(260, 610, travel) };
   }
   let responseProgress = response;
-  if (spec.mode === 'knockback')
+  if (spec.mode === 'landing')
+    responseProgress = phase === 0 ? 0 : phase === 1 ? smooth(action / 0.4) : 1;
+  else if (spec.mode === 'knockback')
     responseProgress = phase === 0 ? 0 : phase === 1 ? smooth(action) : 1;
   else if (spec.mode === 'target-lock')
     responseProgress = phase === 1 ? smooth(action / 0.45) : phase === 2 ? 1 : 0;
@@ -708,7 +750,8 @@ export function blueprintFrame(id, time) {
   const stride = pulse(responseProgress) + pulse(returnProgress) * 0.8;
   const bossVisible = spec.mode === 'burrow' && phase === 1 && action < 0.68 ? 0 : 1;
   const committed = t >= BLUEPRINT_PHASE_ENDS[0];
-  const dangerActive = phase === 1;
+  const dangerActive =
+    spec.mode === 'landing' ? phase === 1 && action >= 0.32 && action <= 0.72 : phase === 1;
   const frame = {
     id,
     mode: spec.mode,
@@ -731,13 +774,30 @@ export function blueprintFrame(id, time) {
             ? 1 + prepare * 0.1
             : 1.1
           : 1,
-    bossFacing: 90,
+    bossFacing:
+      spec.mode === 'landing'
+        ? (Math.atan2(spec.landing[1] - spec.boss[1], spec.landing[0] - spec.boss[0]) * 180) /
+          Math.PI
+        : 90,
     playerFacing: -90,
     bossMotion: motion({
-      lean: phase === 0 ? -0.22 * prepare : 0.24 * pulse(action),
-      crouch: 0.2 * prepare,
+      lean:
+        spec.mode === 'landing'
+          ? phase === 0
+            ? -0.3 * prepare
+            : 0.36 * pulse(clamp(action / 0.52))
+          : phase === 0
+            ? -0.22 * prepare
+            : 0.24 * pulse(action),
+      crouch: spec.mode === 'landing' ? (phase === 0 ? 0.42 * prepare : 0) : 0.2 * prepare,
+      lift: spec.mode === 'landing' && phase === 1 ? pulse(clamp(action / 0.52)) : 0,
       attack: phase === 1 ? 0.75 : prepare * 0.35,
-      impact: spec.mode === 'shockwave' || spec.mode === 'knockback' ? pulse(action * 3) : 0,
+      impact:
+        spec.mode === 'landing'
+          ? pulse(clamp((action - 0.42) / 0.22))
+          : spec.mode === 'shockwave' || spec.mode === 'knockback'
+            ? pulse(action * 3)
+            : 0,
     }),
     playerMotion: motion({
       gait: (route * responseProgress + route * returnProgress) / 20,

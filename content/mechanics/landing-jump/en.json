@@ -1,0 +1,142 @@
+{
+  "title": "Landing jump",
+  "subtitle": "Lock the destination before takeoff, preserve a reachable clearance route, and reward the landing with recovery.",
+  "variant": "Locked-destination landing jump",
+  "summary": "The boss leaps to a committed destination and turns the landing radius into a short radial threat.",
+  "overview": "A landing jump combines relocation with a local impact. The rule is fair when the destination stops tracking before takeoff, the whole player body can clear the marked radius with an ordinary movement verb, and the boss remains at the landing point long enough for the successful response to matter.",
+  "learning": "Design the signal, destination lock, flight, impact radius, and recovery as one continuous spatial promise.",
+  "category": "Body and melee",
+  "readTime": "5 min",
+  "demo": {
+    "title": "Test the landing jump",
+    "timeline": "Attack timeline",
+    "step": "Attack phases",
+    "phaseNames": ["Crouch and mark", "Takeoff and clear", "Land and recover"],
+    "phaseDescriptions": [
+      "Show the launch pose and destination marker together, then stop moving the marker before Kern leaves the ground.",
+      "Kern follows the announced arc while Tavi clears the full landing radius with ordinary movement; the destination no longer follows Tavi.",
+      "The marked radius resolves on contact, then Kern holds the landing point long enough for the new spacing or punish window to be useful."
+    ],
+    "boss": "Boss",
+    "player": "Player",
+    "danger": "The landing radius is active",
+    "locked": "The destination is locked",
+    "safe": "Tavi clears the full radius",
+    "reducedMotion": "Autoplay is disabled by the reduced-motion setting. Use the timeline slider to inspect the jump.",
+    "diagramDescription": "A looping diagram of a landing jump. Kern crouches and locks a marked destination, travels along a visible arc, lands in the fixed circle, and recovers while Tavi moves fully outside the radius."
+  },
+  "steps": [
+    {
+      "title": "When does the destination stop tracking?",
+      "body": "Place the landing marker during anticipation and freeze it before takeoff. The pose, shadow, and marker should agree on one center so the player can act on a stable promise instead of chasing a late correction."
+    },
+    {
+      "title": "Can the whole player body clear the radius?",
+      "body": "Measure from the lock moment to contact using the slowest intended movement option. Test edge starts, camera compression, collision radii, and any airborne body hitbox—not only whether the player pivot crosses the line."
+    },
+    {
+      "title": "Does the landing create a useful outcome?",
+      "body": "Hold Kern at the destination through a readable recovery. A successful response should produce changed spacing, access to a side, or a short punish window before the boss can select another attack."
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "The destination keeps tracking during flight",
+      "body": "A midair correction invalidates the marker and turns a planned clearance into a reaction test the signal did not announce. If homing is intentional, present it as a different mechanic with its own cutoff cue."
+    },
+    {
+      "title": "The body hits outside the marked landing radius",
+      "body": "A shoulder, weapon, or invisible collision volume that reaches beyond the visible circle makes a geometrically correct response fail. Include the boss silhouette and the complete player extent in boundary tests."
+    },
+    {
+      "title": "The next attack erases recovery",
+      "body": "If Kern cancels immediately into a sweep or another jump, clearing the landing point produces no useful result. Reserve follow-ups for a later combination rule and preserve the base landing recovery first."
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "Use one source of truth for the destination",
+      "body": "Drive the marker, landing shadow, boss path endpoint, impact effect, and damage query from one locked coordinate. This prevents presentation and collision from drifting apart during tuning."
+    },
+    {
+      "title": "Separate travel danger from landing danger",
+      "body": "Decide explicitly whether the airborne body is harmful. The base rule here activates only near contact, so Tavi reads one fixed radial threat rather than an unannounced moving capsule."
+    },
+    {
+      "title": "Tune cutoff, distance, radius, and recovery together",
+      "body": "Longer travel can support a larger radius only when the lock remains readable and every intended starting position retains a route. Re-test after movement upgrades or arena-size changes."
+    },
+    {
+      "title": "Escalate by changing one promise",
+      "body": "Later variants can add a delayed landing, a second jump, or a follow-up wave. Introduce each only after the fixed destination and base radius are already legible without extra effects."
+    }
+  ],
+  "story": {
+    "title": "What the mechanic communicates",
+    "body": "Kern becomes a moving piece of arena geometry: the launch yields space at the old position and claims a marked circle at the new one. The jump can therefore express weight, pursuit, or territorial control without hiding the rule behind spectacle."
+  },
+  "adaptation": {
+    "title": "Adapt it to the player verbs",
+    "body": "For walking and dashing, tune cutoff-to-contact time against horizontal speed. For jumping, grappling, or parrying, decide whether those verbs clear the radial impact, interact with the airborne body, or create a distinct response—and show that relationship before commitment."
+  },
+  "distinction": {
+    "title": "Keep the mechanic distinct",
+    "body": "A landing jump relocates the boss to a locked destination and resolves a local radius there. A lunge threatens the travel lane, a marked-area strike can occur without boss relocation, and a ground slam may send a wave away from the boss. Preserve the relocation-plus-local-impact contract."
+  },
+  "lensNotes": [
+    {
+      "id": "telegraphing",
+      "body": "The crouch, arc, and landing marker reveal the destination and contact timing before the boss leaves the ground."
+    },
+    {
+      "id": "commitment",
+      "body": "The destination stops following the player before takeoff, so the announced circle remains actionable throughout flight."
+    },
+    {
+      "id": "threat-geometry",
+      "body": "Safety is measured from the complete player body to the locked impact radius, with the boss body accounted for at contact."
+    },
+    {
+      "id": "counterplay",
+      "body": "Ordinary movement clears the circle, and the landing recovery turns that clearance into new spacing or an attack opening."
+    },
+    {
+      "id": "risk-reward",
+      "body": "A route that stays close to the landing edge can preserve a stronger punish, but it must remain visibly and consistently safe."
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "Hollow Knight",
+      "boss": "False Knight",
+      "screenshot": "https://i.ytimg.com/vi/rwZmf4u366o/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=rwZmf4u366o&t=151s",
+      "body": "False Knight uses a slow, readable body arc before returning to the floor. The large silhouette makes destination, contact, and recovery easy to compare against the arena’s side-view geometry.",
+      "video": "https://www.youtube.com/watch?v=rwZmf4u366o&t=151s",
+      "videoDurationSeconds": 2832
+    },
+    {
+      "dimension": "2D",
+      "game": "Ori and the Will of the Wisps",
+      "boss": "Horn Beetle",
+      "screenshot": "https://i.ytimg.com/vi/DvuB8cImPIg/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=DvuB8cImPIg&t=61s",
+      "body": "Horn Beetle combines a compact launch with a heavy return to the ground. The side view makes it useful for studying how a body-sized landing threat, arena edge, and brief recovery share limited space.",
+      "video": "https://www.youtube.com/watch?v=DvuB8cImPIg&t=61s",
+      "videoDurationSeconds": 2062
+    },
+    {
+      "dimension": "3D",
+      "game": "Elden Ring",
+      "boss": "Margit, the Fell Omen",
+      "screenshot": "https://i.ytimg.com/vi/m60ucpQggJ0/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=m60ucpQggJ0&t=131s",
+      "body": "Margit’s hammer-bearing ascent and hang time frame a committed leap before the landing. The example shows how camera angle, circular clearance, and a short post-impact opening shape the same rule in 3D.",
+      "video": "https://www.youtube.com/watch?v=m60ucpQggJ0&t=131s",
+      "videoDurationSeconds": 389
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

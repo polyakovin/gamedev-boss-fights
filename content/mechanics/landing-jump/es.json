@@ -1,0 +1,142 @@
+{
+  "title": "Salto con aterrizaje",
+  "subtitle": "Fija el destino antes del despegue, conserva una ruta alcanzable y recompensa la respuesta con recuperación.",
+  "variant": "Salto hacia un destino fijado",
+  "summary": "El jefe salta hacia un destino fijado y convierte brevemente el radio de aterrizaje en una amenaza.",
+  "overview": "El salto con aterrizaje combina desplazamiento y un impacto local. La regla es justa cuando el destino deja de seguir al jugador antes del despegue, todo el cuerpo puede salir del radio marcado con movimiento normal y el jefe permanece allí el tiempo suficiente para que la respuesta tenga valor.",
+  "learning": "Diseña la señal, el bloqueo del destino, el vuelo, el radio de impacto y la recuperación como una sola promesa espacial.",
+  "category": "Cuerpo y combate cuerpo a cuerpo",
+  "readTime": "5 min",
+  "demo": {
+    "title": "Prueba el salto con aterrizaje",
+    "timeline": "Cronología del ataque",
+    "step": "Fases del ataque",
+    "phaseNames": ["Agacharse y marcar", "Despegar y salir", "Aterrizar y recuperarse"],
+    "phaseDescriptions": [
+      "Muestra juntos la postura de despegue y el marcador del destino; deja de moverlo antes de que Kern abandone el suelo.",
+      "Kern recorre el arco anunciado mientras Tavi sale por completo del radio con movimiento normal; el destino ya no sigue a Tavi.",
+      "El radio marcado se resuelve al contacto y Kern mantiene la posición el tiempo suficiente para aprovechar el nuevo espacio o una ventana de castigo."
+    ],
+    "boss": "Jefe",
+    "player": "Jugador",
+    "danger": "El radio de aterrizaje está activo",
+    "locked": "El destino está fijado",
+    "safe": "Tavi sale por completo del radio",
+    "reducedMotion": "La reproducción automática está desactivada por la preferencia de movimiento reducido. Usa el control temporal para estudiar el salto.",
+    "diagramDescription": "Diagrama en bucle de un salto con aterrizaje. Kern se agacha y fija un destino, recorre un arco visible, cae dentro del círculo inmóvil y se recupera mientras Tavi sale por completo del radio."
+  },
+  "steps": [
+    {
+      "title": "¿Cuándo deja de seguir el destino?",
+      "body": "Coloca el marcador durante la anticipación y congélalo antes del despegue. La pose, la sombra y el marcador deben compartir un centro para que el jugador responda a una promesa estable."
+    },
+    {
+      "title": "¿Puede salir del radio todo el cuerpo?",
+      "body": "Mide desde el bloqueo hasta el contacto con la opción de movimiento prevista más lenta. Prueba inicios en el borde, cámara, radios de colisión y el cuerpo aéreo, no solo el punto central del jugador."
+    },
+    {
+      "title": "¿El aterrizaje crea un resultado útil?",
+      "body": "Mantén a Kern en el destino durante una recuperación legible. La respuesta debe producir nueva distancia, acceso a un flanco o una breve ventana de ataque antes de la siguiente decisión."
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "El destino sigue al jugador durante el vuelo",
+      "body": "Una corrección aérea invalida el marcador y convierte una salida planificada en una prueba de reflejos no anunciada. Si el seguimiento es intencional, trátalo como otra mecánica con su propio corte."
+    },
+    {
+      "title": "El cuerpo golpea fuera del radio marcado",
+      "body": "Un hombro, arma o volumen invisible que supera el círculo hace fallar una respuesta geométricamente correcta. Incluye ambas siluetas completas al probar los límites."
+    },
+    {
+      "title": "El siguiente ataque borra la recuperación",
+      "body": "Si Kern cancela de inmediato hacia otro ataque, despejar el aterrizaje no produce un resultado útil. Conserva primero la recuperación base y añade continuaciones como una regla posterior de combinación."
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "Usa una sola fuente para el destino",
+      "body": "Haz que el marcador, la sombra, el final de la trayectoria, el efecto y la consulta de daño dependan de una misma coordenada fijada. Así presentación y colisión no se separan al ajustar."
+    },
+    {
+      "title": "Separa el peligro del viaje y del aterrizaje",
+      "body": "Decide si el cuerpo en el aire hace daño. Esta regla base solo se activa cerca del contacto, por lo que Tavi lee un círculo fijo y no una cápsula móvil sin anunciar."
+    },
+    {
+      "title": "Ajusta juntos corte, distancia, radio y recuperación",
+      "body": "Un viaje más largo admite un radio mayor solo si el bloqueo sigue siendo legible y todas las posiciones previstas conservan una ruta. Repite las pruebas tras mejoras de movimiento o cambios de arena."
+    },
+    {
+      "title": "Escala una promesa cada vez",
+      "body": "Las variantes pueden añadir demora, un segundo salto o una onda. Introdúcelas después de que el destino fijo y el radio base ya sean claros sin efectos adicionales."
+    }
+  ],
+  "story": {
+    "title": "Qué comunica la mecánica",
+    "body": "Kern se vuelve geometría móvil: libera su posición anterior y reclama un círculo marcado en la nueva. El salto puede expresar peso, persecución o control territorial sin ocultar la regla tras el espectáculo."
+  },
+  "adaptation": {
+    "title": "Adáptala a las acciones del jugador",
+    "body": "Para caminar o impulsarse, compara el tiempo hasta el contacto con la velocidad horizontal. Para saltar, engancharse o parar, decide si esas acciones evitan el impacto, interactúan con el cuerpo aéreo o forman otra respuesta, y muéstralo antes del compromiso."
+  },
+  "distinction": {
+    "title": "Mantén distinta la mecánica",
+    "body": "El salto desplaza al jefe a un destino fijado y resuelve allí un radio local. Una embestida amenaza el carril de viaje, un golpe de área no exige desplazamiento y un golpe al suelo puede emitir una onda. Conserva el contrato de desplazamiento más impacto local."
+  },
+  "lensNotes": [
+    {
+      "id": "telegraphing",
+      "body": "La postura, el arco y el marcador revelan destino y contacto antes del despegue."
+    },
+    {
+      "id": "commitment",
+      "body": "El destino deja de seguir al jugador antes del salto y permanece accionable durante el vuelo."
+    },
+    {
+      "id": "threat-geometry",
+      "body": "La seguridad se mide entre el cuerpo completo del jugador y el radio fijado, incluido el cuerpo del jefe al contacto."
+    },
+    {
+      "id": "counterplay",
+      "body": "El movimiento normal despeja el círculo y la recuperación convierte la salida en espacio u oportunidad."
+    },
+    {
+      "id": "risk-reward",
+      "body": "Pasar cerca del borde puede conservar un castigo mayor, pero debe ser visible y consistentemente seguro."
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "Hollow Knight",
+      "boss": "False Knight",
+      "screenshot": "https://i.ytimg.com/vi/rwZmf4u366o/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=rwZmf4u366o&t=151s",
+      "body": "False Knight describe un arco corporal lento antes de volver al suelo. Su gran silueta permite comparar destino, contacto y recuperación con la geometría lateral de la arena.",
+      "video": "https://www.youtube.com/watch?v=rwZmf4u366o&t=151s",
+      "videoDurationSeconds": 2832
+    },
+    {
+      "dimension": "2D",
+      "game": "Ori and the Will of the Wisps",
+      "boss": "Horn Beetle",
+      "screenshot": "https://i.ytimg.com/vi/DvuB8cImPIg/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=DvuB8cImPIg&t=61s",
+      "body": "Horn Beetle combina un despegue compacto con un retorno pesado. La vista lateral muestra cómo una amenaza del tamaño del cuerpo, el borde y la recuperación comparten poco espacio.",
+      "video": "https://www.youtube.com/watch?v=DvuB8cImPIg&t=61s",
+      "videoDurationSeconds": 2062
+    },
+    {
+      "dimension": "3D",
+      "game": "Elden Ring",
+      "boss": "Margit, the Fell Omen",
+      "screenshot": "https://i.ytimg.com/vi/m60ucpQggJ0/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=m60ucpQggJ0&t=131s",
+      "body": "El ascenso con martillo y la suspensión de Margit enmarcan un salto comprometido. El ejemplo muestra cómo cámara, salida circular y apertura posterior forman la misma regla en 3D.",
+      "video": "https://www.youtube.com/watch?v=m60ucpQggJ0&t=131s",
+      "videoDurationSeconds": 389
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

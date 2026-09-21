@@ -13,8 +13,8 @@ import {
   renderBlueprintThumbnail,
 } from '../lib/blueprint-view.mjs';
 
-test('all 24 promoted lesson animations have distinct rule modes and complete moving frames', () => {
-  assert.equal(BLUEPRINT_MECHANIC_IDS.length, 24);
+test('all 25 promoted lesson animations have distinct rule modes and complete moving frames', () => {
+  assert.equal(BLUEPRINT_MECHANIC_IDS.length, 25);
   const modes = new Set();
   for (const id of BLUEPRINT_MECHANIC_IDS) {
     for (let time = 0; time <= BLUEPRINT_DURATION; time += 0.1) {
@@ -35,7 +35,7 @@ test('all 24 promoted lesson animations have distinct rule modes and complete mo
           assert.ok(Number.isFinite(value), `${id} has an invalid ${primitive.type}`);
     }
   }
-  assert.equal(modes.size, 24);
+  assert.equal(modes.size, 25);
 });
 
 test('every blueprint exposes signal, committed action, and recovery without player teleports', () => {
@@ -59,6 +59,7 @@ test('every blueprint exposes signal, committed action, and recovery without pla
 
 test('every promoted animation derives safety from its own active geometry', () => {
   const unsafePoints = {
+    'landing-jump': { x: 365, y: 600 },
     'wide-swing': { x: 280, y: 515 },
     lunge: { x: 300, y: 440 },
     grab: { x: 390, y: 485 },
@@ -175,6 +176,24 @@ test('target lock commits before the marked player leaves', () => {
   assert.notDeepEqual(afterCommit.player, start.player);
   assert.equal(beforeCommit.primitives[0].x, afterCommit.primitives[0].x);
   assert.equal(beforeCommit.primitives[0].y, afterCommit.primitives[0].y);
+});
+
+test('landing jump locks its destination before takeoff and resolves the marked radius', () => {
+  const signal = blueprintFrame('landing-jump', 1.4);
+  const flight = blueprintFrame('landing-jump', 2.2);
+  const impact = blueprintFrame('landing-jump', 3);
+  const recovery = blueprintFrame('landing-jump', 4.8);
+
+  assert.deepEqual(signal.player, blueprintFrame('landing-jump', 0).player);
+  assert.equal(signal.primitives[1].x, impact.primitives[1].x);
+  assert.equal(signal.primitives[1].y, impact.primitives[1].y);
+  assert.ok(flight.bossMotion.lift > 0.5);
+  assert.notDeepEqual(flight.boss, signal.boss);
+  assert.equal(impact.dangerActive, true);
+  assert.equal(blueprintPointSafe('landing-jump', 3, { x: 365, y: 600 }), false);
+  assert.equal(impact.playerSafe, true);
+  assert.equal(recovery.dangerActive, false);
+  assert.ok(recovery.boss.x < impact.boss.x);
 });
 
 test('blueprint pages and previews reuse Tavi and Kern with accessible localized data', () => {

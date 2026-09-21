@@ -1,0 +1,24 @@
+{
+  "id": "landing-jump",
+  "number": 31,
+  "published": true,
+  "sourceLocale": "en",
+  "contentVersion": 1,
+  "animation": "landing-jump",
+  "lenses": ["telegraphing", "commitment", "threat-geometry", "counterplay", "risk-reward"],
+  "related": ["ground-slam", "marked-area-strike", "lunge"],
+  "sources": [
+    {
+      "title": "Boss Fight Design · GD Creator School",
+      "url": "https://www.gdcreatorschool.com/docs/guides/gameplay-2/bossfight-design/"
+    },
+    {
+      "title": "Enemy Attacks and Telegraphing · Mike Stout",
+      "url": "https://www.gamedeveloper.com/design/enemy-attacks-and-telegraphing"
+    },
+    {
+      "title": "Elden Ring: Margit, the Fell Omen Boss Guide · GameGrin",
+      "url": "https://www.gamegrin.com/articles/elden-ring-margit-the-fell-omen-boss-guide/"
+    }
+  ]
+}
