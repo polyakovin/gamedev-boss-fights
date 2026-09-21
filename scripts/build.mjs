@@ -685,7 +685,6 @@ for (const locale of locales) {
   const body = /* HTML */ `<main id="main" class="catalog-main">
     <section class="catalog-hero">
       <div class="catalog-hero__copy">
-        <span class="eyebrow">${e(t.indexEyebrow)}</span>
         <h1>${e(t.indexTitle)}</h1>
         <p class="lead">${e(t.indexSubtitle)}</p>
         <p class="catalog-hero__reference">

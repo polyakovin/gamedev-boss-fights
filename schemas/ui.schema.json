@@ -47,7 +47,6 @@
     "indexTitle",
     "indexSubtitle",
     "indexReference",
-    "indexEyebrow",
     "siteMapTitle",
     "siteMapIntro",
     "mechanicsNavText",
@@ -304,10 +303,6 @@
       "minLength": 1
     },
     "indexReference": {
-      "type": "string",
-      "minLength": 1
-    },
-    "indexEyebrow": {
       "type": "string",
       "minLength": 1
     },
