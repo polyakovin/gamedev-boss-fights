@@ -48,7 +48,6 @@
     "indexSubtitle",
     "indexGuidesTitle",
     "indexGuidesBody",
-    "indexReference",
     "siteMapTitle",
     "siteMapIntro",
     "mechanicsNavText",
@@ -318,10 +317,6 @@
       "minLength": 1
     },
     "indexGuidesBody": {
-      "type": "string",
-      "minLength": 1
-    },
-    "indexReference": {
       "type": "string",
       "minLength": 1
     },

@@ -897,12 +897,6 @@ for (const locale of locales) {
         <span class="eyebrow">Tavi &amp; Kern</span>
         <h2 id="catalog-guides-title">${e(t.indexGuidesTitle)}</h2>
         <p>${e(t.indexGuidesBody)}</p>
-        <p class="catalog-hero__reference">
-          <a href="https://gamemechanics.org/" target="_blank" rel="noopener noreferrer"
-            >Game Mechanics${icon('external-link', { className: 'icon--external' })}</a
-          >
-          ${e(t.indexReference)}
-        </p>
       </div>
     </section>
     <section id="mechanics" class="catalog-contents" aria-labelledby="mechanics-title">

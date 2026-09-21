@@ -1469,25 +1469,6 @@ section[id] {
   font-size: 15px;
   line-height: 1.65;
 }
-.catalog-hero__reference {
-  padding-top: 19px;
-  margin-top: 24px !important;
-  border-top: 1px solid var(--line);
-  color: var(--muted) !important;
-  font-size: 12px;
-  line-height: 1.6;
-}
-.catalog-hero__reference a {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  color: var(--accent);
-  font-weight: 700;
-}
-.catalog-hero__reference .icon {
-  width: 12px;
-  height: 12px;
-}
 .section-heading {
   display: flex;
   justify-content: space-between;

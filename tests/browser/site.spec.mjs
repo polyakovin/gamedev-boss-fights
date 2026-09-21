@@ -939,14 +939,7 @@ test('the root defaults to English and localized catalogs point to real pages', 
   await expect(page.locator('.catalog-hero__questions li')).toHaveCount(3);
   await expect(page.locator('.catalog-workflow__steps li')).toHaveCount(5);
   await expect(page.locator('.catalog-guides h2')).toHaveText('Meet Tavi and Kern');
-  const relatedCatalog = page.locator('.catalog-guides .catalog-hero__reference');
-  await expect(relatedCatalog.getByRole('link', { name: 'Game Mechanics' })).toHaveAttribute(
-    'href',
-    'https://gamemechanics.org/',
-  );
-  await expect(relatedCatalog).toContainText(
-    'is another useful resource: a catalog of video game mechanics with examples from real games',
-  );
+  await expect(page.locator('.catalog-guides')).not.toContainText('Game Mechanics');
   await expect(page.locator('.catalog-lenses')).toHaveCount(0);
   await expect(page.locator('.header-nav .lenses-link')).toHaveAttribute(
     'href',
