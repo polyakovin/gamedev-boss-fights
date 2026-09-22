@@ -851,7 +851,7 @@ test('boss builder generates a localized random boss with a conflict-free phase 
   await page.locator('[data-boss-mechanic-search]').fill('Charge');
   await page.locator('[data-boss-random]').click();
 
-  await expect(page.locator('[data-boss-name]')).toHaveValue('The Hollow Regent');
+  await expect(page.locator('[data-boss-name]')).toHaveValue('Dread Harbinger');
   await expect(page.locator('[data-boss-description]')).toHaveValue('Keep this encounter premise.');
   await expect(page.locator('[data-boss-status]')).toHaveText('A random boss was generated.');
   await expect(page.locator('[data-boss-selected]')).toHaveText('Selected: 5');
@@ -865,7 +865,7 @@ test('boss builder generates a localized random boss with a conflict-free phase 
   );
   expect(stored).toMatchObject({
     version: 2,
-    name: 'The Hollow Regent',
+    name: 'Dread Harbinger',
     description: 'Keep this encounter premise.',
     phases: [
       { id: 'phase-1', name: '', goal: '', activationHealthPercent: 100 },
@@ -882,7 +882,7 @@ test('boss builder generates a localized random boss with a conflict-free phase 
   expect(stored.assignments.filter(({ phaseId }) => phaseId === 'phase-2')).toHaveLength(2);
 
   await page.reload();
-  await expect(page.locator('[data-boss-name]')).toHaveValue('The Hollow Regent');
+  await expect(page.locator('[data-boss-name]')).toHaveValue('Dread Harbinger');
   await expect(page.locator('[data-boss-selected]')).toHaveText('Selected: 5');
 });
 

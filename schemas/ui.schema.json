@@ -626,10 +626,25 @@
         "randomBoss": { "$ref": "#/definitions/nonEmptyString" },
         "randomized": { "$ref": "#/definitions/nonEmptyString" },
         "randomNames": {
-          "type": "array",
-          "minItems": 8,
-          "uniqueItems": true,
-          "items": { "$ref": "#/definitions/nonEmptyString" }
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["adjectives", "nouns", "order", "separator"],
+          "properties": {
+            "adjectives": {
+              "type": "array",
+              "minItems": 32,
+              "uniqueItems": true,
+              "items": { "$ref": "#/definitions/nonEmptyString" }
+            },
+            "nouns": {
+              "type": "array",
+              "minItems": 32,
+              "uniqueItems": true,
+              "items": { "$ref": "#/definitions/nonEmptyString" }
+            },
+            "order": { "enum": ["adjective-noun", "noun-adjective"] },
+            "separator": { "enum": ["", " "] }
+          }
         }
       }
     },

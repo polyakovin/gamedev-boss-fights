@@ -32,6 +32,8 @@ For animation phases, translate both the compact label and its tooltip as one pa
 - Do not add HTML, Markdown formatting, invisible direction overrides, or English filler to a text field.
 - Use consistent terms for the mechanic, its phases, commitment, danger lane, and recovery. Prefer a natural explanation over an unclear borrowed term.
 
+The builder's `builderConnections.randomNames` contains 32 boss-themed adjectives and 32 boss roles or creature nouns. Its `order` and `separator` form a natural two-part title in each language. Keep every word distinct within its list, use compatible grammatical forms for any pairing, and check a few generated names in the browser.
+
 If the source contains an ambiguity, raise it in the PR instead of inventing a new rule in one language. A language-only correction should keep the underlying mechanic intact.
 
 ## Preserve the teaching

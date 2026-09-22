@@ -10,6 +10,7 @@ import {
   mechanicRelationship,
   rankCompatibleMechanics,
 } from './mechanic-relations.mjs';
+import { generateBossName } from './boss-name.mjs';
 
 const BOSS_DOWNLOAD_COUNT_STORAGE_KEY = 'boss-fight-atlas-boss-builder-download-count';
 const SUPPORT_PROMPT_DOWNLOAD_COUNT = 3;
@@ -520,8 +521,7 @@ if (builder) {
 
   randomBoss.addEventListener('click', () => {
     const randomMechanics = buildRandomMechanicSet(config.mechanics, { count: 5 });
-    const randomNames = config.messages.randomNames;
-    const randomName = randomNames[Math.floor(Math.random() * randomNames.length)];
+    const randomName = generateBossName(config.messages.randomNames);
     const secondPhaseStart = Math.ceil(randomMechanics.length / 2);
     draft = normalizeBossDraft(
       {
