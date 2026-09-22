@@ -4,6 +4,8 @@ import {
   BLUEPRINT_DURATION,
   BLUEPRINT_MECHANIC_IDS,
   attackReflectionState,
+  counterStanceOutcome,
+  counterStanceState,
   blueprintFrame,
   blueprintPhaseAt,
   blueprintPointSafe,
@@ -20,8 +22,8 @@ import {
   renderBlueprintThumbnail,
 } from '../lib/blueprint-view.mjs';
 
-test('all 51 promoted lesson animations have distinct rule modes and complete moving frames', () => {
-  assert.equal(BLUEPRINT_MECHANIC_IDS.length, 51);
+test('all 52 promoted lesson animations have distinct rule modes and complete moving frames', () => {
+  assert.equal(BLUEPRINT_MECHANIC_IDS.length, 52);
   const modes = new Set();
   for (const id of BLUEPRINT_MECHANIC_IDS) {
     for (let time = 0; time <= BLUEPRINT_DURATION; time += 0.1) {
@@ -42,7 +44,7 @@ test('all 51 promoted lesson animations have distinct rule modes and complete mo
           assert.ok(Number.isFinite(value), `${id} has an invalid ${primitive.type}`);
     }
   }
-  assert.equal(modes.size, 51);
+  assert.equal(modes.size, 52);
 });
 
 test('every blueprint exposes signal, committed action, and recovery without player teleports', () => {
@@ -53,7 +55,8 @@ test('every blueprint exposes signal, committed action, and recovery without pla
   for (const id of BLUEPRINT_MECHANIC_IDS) {
     assert.equal(blueprintFrame(id, 1.59).committed, false, id);
     assert.equal(blueprintFrame(id, 1.6).committed, true, id);
-    if (id !== 'part-break') assert.equal(blueprintFrame(id, 3).dangerActive, true, id);
+    if (id !== 'part-break' && id !== 'counter-stance')
+      assert.equal(blueprintFrame(id, 3).dangerActive, true, id);
     assert.equal(blueprintFrame(id, 3).playerSafe, true, id);
     let previous = blueprintFrame(id, 0).player;
     for (let time = 0.02; time < BLUEPRINT_DURATION; time += 0.02) {
@@ -120,7 +123,8 @@ test('every damaging promoted animation derives safety from its own active geome
       id !== 'directional-shield' &&
       id !== 'damage-type-resistance' &&
       id !== 'situational-immunity' &&
-      id !== 'part-break',
+      id !== 'part-break' &&
+      id !== 'counter-stance',
   )) {
     const frame = blueprintFrame(id, 3);
     let point = unsafePoints[id];
@@ -1085,6 +1089,39 @@ test('reflection transfers one sword pulse into a dodgeable hostile return', () 
   assert.match(
     renderBlueprintThumbnail(id, 'test-attack-reflection'),
     /data-blueprint-preview="attack-reflection"/,
+  );
+});
+
+test('counter stance ripostes only after a guarded sword hit and leaves an untriggered opening', () => {
+  const id = 'counter-stance';
+  const spec = blueprintSpec(id);
+  assert.equal(counterStanceOutcome(1.88, true), 'parried-counter');
+  assert.equal(counterStanceOutcome(4.0, false), 'no-trigger');
+  assert.equal(counterStanceOutcome(4.96, true), 'hit');
+  assert.equal(counterStanceState(1.4), 'guarded');
+  assert.equal(counterStanceState(2.5), 'riposte');
+  assert.equal(counterStanceState(4), 'guarded-withheld');
+  assert.equal(counterStanceState(4.6), 'open');
+  const parry = blueprintFrame(id, spec.parriedStrike);
+  const riposte = blueprintFrame(id, 2.62);
+  const withheld = blueprintFrame(id, 4);
+  const open = blueprintFrame(id, spec.openStrike);
+  assert.equal(parry.parriedStrike, true);
+  assert.ok(parry.primitives[3].opacity > 0.9);
+  assert.equal(riposte.riposte, true);
+  assert.ok(riposte.primitives[5].opacity > 0.9, 'the counter is an independent attack');
+  assert.equal(blueprintPointSafe(id, 2.62, { x: 390, y: 421 }), false);
+  assert.equal(riposte.playerSafe, true);
+  assert.ok(riposte.player.y > spec.counterStart[1] + spec.counterHalfWidth + 24);
+  assert.equal(withheld.dangerActive, false);
+  assert.ok(withheld.primitives[0].opacity > 0.9, 'the second guard is visible');
+  assert.equal(withheld.primitives[5].opacity, 0, 'waiting does not create a counter');
+  assert.equal(open.openStrike, true);
+  assert.ok(open.primitives[7].opacity > 0.9);
+  assert.deepEqual(blueprintFrame(id, 0).player, blueprintFrame(id, 6).player);
+  assert.match(
+    renderBlueprintThumbnail(id, 'test-counter-stance'),
+    /data-blueprint-preview="counter-stance"/,
   );
 });
 

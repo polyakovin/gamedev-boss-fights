@@ -1,0 +1,134 @@
+{
+  "title": "Counter stance",
+  "subtitle": "Make the boss's retaliation depend on a readable player attack.",
+  "variant": "A guarded rune fist ripostes, then times out",
+  "summary": "A visible guard converts a qualifying player strike into the boss's own counterattack.",
+  "overview": "Kern raises a rune guard. Tavi's first sword strike meets it, producing a parry flash and a separate counter sweep. Later Kern takes the same stance again, but Tavi holds the sword back. With no trigger, the guard expires and an ordinary strike lands. The mechanic is a conditional response, not a permanent block or a reflected projectile.",
+  "learning": "Connect the guarded trigger, visible parry, independent counter threat, no-trigger timeout, and useful open window.",
+  "category": "Defense",
+  "readTime": "4 min",
+  "demo": {
+    "title": "Compare a triggered counter with a withheld attack",
+    "timeline": "Counter-stance timeline",
+    "step": "Counter-stance states",
+    "phaseNames": ["Read the guard", "See the triggered riposte", "Wait for the opening"],
+    "phaseDescriptions": [
+      "Kern raises a marked rune guard from 0.62 s. Tavi's sword meets it at 1.88 s. The contact flash confirms a parry rather than boss damage.",
+      "The parry commits Kern to a fixed counter lane before its 2.43–2.88 s active sweep. Tavi retreats below the full-width danger before the swing begins.",
+      "Kern guards again from 3.48–4.48 s. Tavi does not attack this time, so no counter occurs. The rune drops, and a sword strike connects at 4.96 s."
+    ],
+    "boss": "Boss",
+    "player": "Player",
+    "danger": "The triggered counter sweep occupies the marked front lane",
+    "locked": "A sword strike during the rune guard triggers a separate counter; withholding it does not",
+    "safe": "Clear the counter lane or wait for the guard to time out, then use the open window",
+    "reducedMotion": "Autoplay is disabled by the reduced-motion setting. Use the timeline slider to compare the triggered and untriggered guards.",
+    "diagramDescription": "A stone boss raises a rune guard against a sword-bearing player. The first sword strike flashes against the guard, then a marked horizontal counter sweep crosses the front lane while the player retreats below it. The boss raises the same guard a second time; the player withholds the attack, the guard lowers without a sweep, and a normal sword strike lands."
+  },
+  "steps": [
+    {
+      "title": "What exactly triggers the counter?",
+      "body": "Define the accepted attack class and the guard's active interval. Here a sword hit at 1.88 s during the first guard is parried. The parry flash and sound must coincide with collision; the hit does not also deal boss damage. A guard with no incoming hit never starts the riposte."
+    },
+    {
+      "title": "Can the player read and clear the new threat?",
+      "body": "Treat the counter as Kern's own attack, with its own wind-up, hitbox, damage, and recovery. Mark the fixed front lane after the parry, then start the 2.43–2.88 s sweep. Test Tavi's full body, not just the center point, at the slowest intended retreat speed."
+    },
+    {
+      "title": "What happens if the player waits?",
+      "body": "Repeat the same guard from 3.48–4.48 s without a player strike. It expires without spawning a counter. Lower the rune visibly and allow a normal sword hit at 4.96 s. This timeout keeps patience useful and prevents an indefinite no-attack state."
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "The counter strikes before the parry is legible",
+      "body": "If contact instantly creates damage, the player cannot distinguish an attack-triggered response from an arbitrary boss swing. Give the parry a clear flash, then announce the separate counter hitbox before activation."
+    },
+    {
+      "title": "Every attack type is silently punished",
+      "body": "Specify whether the stance reacts to sword, projectile, heavy, rear, or status attacks. A rule that changes by build needs a cue or safe discovery path; otherwise the guard appears inconsistent."
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "Separate the two event owners",
+      "body": "Resolve the incoming strike first: parried or accepted. Only then schedule Kern's own counter. Do not reverse the player's attack object—that would be reflection—and do not leave the counter hitbox active for the whole guard."
+    },
+    {
+      "title": "Budget the response time",
+      "body": "Measure parry recognition, counter wind-up, movement startup, and the distance the full player body must travel out of the sweep. A counter may be quick, but it cannot be an invisible punish for the player's committed input."
+    },
+    {
+      "title": "Make waiting productive",
+      "body": "Time out the second guard without an incoming strike. The boss may spend a fixed recovery beat lowering the rune; the player can then re-enter with a normal sword hit. This is a design choice, not a requirement that every counter stance must expire."
+    },
+    {
+      "title": "Check both branches frame by frame",
+      "body": "Inspect the 1.88 s parry, 2.43 s sweep start, 2.88 s sweep end, 4.48 s no-trigger timeout, and 4.96 s open hit. Seeking and reduced motion must preserve both branches and the same collision rule."
+    }
+  ],
+  "story": {
+    "title": "A rune that waits for steel",
+    "body": "Kern's forward fist carries the guard rune. Contact makes it flare once, then the fist drives a short counter sweep. During the second guard the rune stays bright but never flares; when Kern lowers the arm, the exposed space is visible rather than inferred from a timer."
+  },
+  "adaptation": {
+    "title": "Use the player's established attack verb",
+    "body": "Tavi already has a sword, so the demonstration uses an ordinary sword hit as both the triggering input and the later useful attack. For other combat systems, choose one known attack class and make its interaction with the stance explicit before testing variations."
+  },
+  "distinction": {
+    "title": "A new boss move follows the trigger",
+    "body": "Directional shield stops a hit while its facing remains guarded. Attack reflection turns the player's shot into a returning threat. Counter stance instead parries a qualifying hit and launches a separate boss-owned move; withholding the hit avoids that branch entirely."
+  },
+  "lensNotes": [
+    {
+      "id": "counterplay",
+      "body": "The player can clear the announced counter lane after a parry or avoid the trigger by waiting through the next guard."
+    },
+    {
+      "id": "progress-clarity",
+      "body": "Guard rune, contact flash, counter lane, timeout, and open strike visibly distinguish the decision points."
+    },
+    {
+      "id": "risk-reward",
+      "body": "An early sword hit costs a dodge; waiting sacrifices immediate pressure but creates a safer attack window."
+    },
+    {
+      "id": "rule-exception",
+      "body": "Document which attack classes and angles the stance counters and whether a missed attack can trigger it."
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "Hollow Knight: Silksong",
+      "boss": "Lace",
+      "video": "https://www.youtube.com/watch?v=h9qZ4ii8G_I&t=1s",
+      "videoDurationSeconds": 12,
+      "screenshot": "https://i.ytimg.com/vi/h9qZ4ii8G_I/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=h9qZ4ii8G_I&t=1s",
+      "body": "Lace uses a distinct parry posture that can answer a player hit with a rapid riposte. The short clip tests that guard against several attack types; Kern stretches one accepted sword hit and its counter so the rule can be inspected."
+    },
+    {
+      "dimension": "3D",
+      "game": "Sekiro: Shadows Die Twice",
+      "boss": "Great Shinobi Owl",
+      "video": "https://www.youtube.com/watch?v=P7LUa3DkWV0&t=1s",
+      "videoDurationSeconds": 16,
+      "screenshot": "https://i.ytimg.com/vi/P7LUa3DkWV0/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=P7LUa3DkWV0&t=1s",
+      "body": "Owl can Mikiri Counter the player's thrust and follow it with his own attack. The short clip isolates that failure; unlike Kern's time-limited guard, Owl's exception depends strongly on the chosen attack type."
+    },
+    {
+      "dimension": "3D",
+      "game": "Sekiro: Shadows Die Twice",
+      "boss": "Genichiro Ashina",
+      "video": "https://www.youtube.com/watch?v=4_TfCUZNyH8&t=64s",
+      "videoDurationSeconds": 214,
+      "screenshot": "https://i.ytimg.com/vi/4_TfCUZNyH8/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=4_TfCUZNyH8&t=64s",
+      "body": "Genichiro's sword exchanges can shift from guarding player pressure to a counter slash. The linked moment shows close weapon contact; his rapid turn-taking is less isolated than Kern's clearly timed stance."
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

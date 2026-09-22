@@ -100,6 +100,14 @@ export function initializeBlueprint(widget) {
           : frame.outgoingShot
             ? 'player-shot'
             : frame.reflectionState;
+    if (mechanicId === 'counter-stance')
+      widget.dataset.blueprintCounter = frame.parriedStrike
+        ? 'parried-hit'
+        : frame.riposte
+          ? 'riposte-danger'
+          : frame.openStrike
+            ? 'open-hit'
+            : frame.counterState;
     boss.setAttribute(
       'transform',
       `translate(${frame.boss.x} ${frame.boss.y}) scale(${frame.bossScale})`,

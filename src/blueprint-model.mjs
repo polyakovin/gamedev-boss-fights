@@ -297,6 +297,20 @@ const SPECS = {
     mirrorRaised: 5.28,
     boltRadius: 13,
   },
+  'counter-stance': {
+    mode: 'counter-stance',
+    boss: [280, 430],
+    player: [435, 430],
+    target: [475, 550],
+    firstGuard: [0.62, 1.98],
+    parriedStrike: 1.88,
+    riposte: [2.43, 2.88],
+    secondGuard: [3.48, 4.48],
+    openStrike: 4.96,
+    counterStart: [345, 421],
+    counterEnd: [438, 421],
+    counterHalfWidth: 19,
+  },
   'wide-swing': { mode: 'arc', boss: [280, 310], player: [410, 470], target: [470, 650] },
   lunge: { mode: 'lunge', boss: [170, 290], player: [390, 590], target: [470, 660] },
   grab: { mode: 'grab', boss: [280, 300], player: [390, 485], target: [470, 610] },
@@ -604,6 +618,27 @@ export function attackReflectionState(time) {
   if (t >= spec.mirrorLowered && t < spec.mirrorRaised) return 'open';
   if (t >= spec.mirrorRaised && t < spec.mirrorRaised + 0.35) return 'raising';
   return 'guarded';
+}
+
+export function counterStanceState(time) {
+  const spec = SPECS['counter-stance'];
+  const t = localTime(time);
+  if (t >= spec.riposte[0] && t < spec.riposte[1]) return 'riposte';
+  if (t >= spec.parriedStrike && t < spec.riposte[0]) return 'triggered';
+  if (t >= spec.firstGuard[0] && t < spec.parriedStrike) return 'guarded';
+  if (t >= spec.secondGuard[0] && t < spec.secondGuard[1]) return 'guarded-withheld';
+  if (t >= spec.secondGuard[1] && t < spec.openStrike + 0.36) return 'open';
+  return 'idle';
+}
+
+export function counterStanceOutcome(time, incomingAttack = false) {
+  const spec = SPECS['counter-stance'];
+  const t = localTime(time);
+  if (!incomingAttack) return 'no-trigger';
+  const guarded =
+    (t >= spec.firstGuard[0] && t < spec.firstGuard[1]) ||
+    (t >= spec.secondGuard[0] && t < spec.secondGuard[1]);
+  return guarded ? 'parried-counter' : 'hit';
 }
 
 const pointInPolygon = (value, points) => {
@@ -987,6 +1022,53 @@ function primitivesFor(spec, frame) {
       circle(returnedX, spec.mirror[1], spec.boltRadius, reflected ? 0.97 : 0, 'signal', 6, 0.32),
       line(player.x - 25, player.y - 28, boss.x + 46, boss.y - 19, swordHit, 'accent', 8),
       circle(boss.x + 46, boss.y - 19, 17 + 16 * swordHit, swordHit, 'signal', 6),
+    ];
+  }
+  if (mode === 'counter-stance') {
+    const guarded =
+      (frame.time >= spec.firstGuard[0] && frame.time < spec.firstGuard[1]) ||
+      (frame.time >= spec.secondGuard[0] && frame.time < spec.secondGuard[1]);
+    const firstRaised =
+      smooth((frame.time - 0.42) / 0.3) * (1 - smooth((frame.time - spec.firstGuard[1]) / 0.24));
+    const secondRaised =
+      smooth((frame.time - 3.28) / 0.3) * (1 - smooth((frame.time - spec.secondGuard[1]) / 0.24));
+    const guardOpacity = 0.28 + 0.66 * Math.max(firstRaised, secondRaised);
+    const parryFlash = strikePulse(frame.time, spec.parriedStrike, 0.3);
+    const counterPreview = frame.time >= spec.firstGuard[1] && frame.time < spec.riposte[0];
+    const counterLive = frame.time >= spec.riposte[0] && frame.time < spec.riposte[1];
+    const openHit = strikePulse(frame.time, spec.openStrike, 0.3);
+    return [
+      path(
+        `M 328 375 L 355 388 L 360 425 L 346 454 L 324 443 L 336 420 Z`,
+        guardOpacity,
+        guarded ? 'accent' : 'muted',
+        7,
+        0.29,
+      ),
+      circle(344, 416, 14, guardOpacity, 'signal', 5, 0.25),
+      line(player.x - 27, player.y - 30, 345, 421, parryFlash, 'accent', 8),
+      circle(345, 421, 18 + 19 * parryFlash, parryFlash, 'signal', 6),
+      line(
+        spec.counterStart[0],
+        spec.counterStart[1],
+        spec.counterEnd[0],
+        spec.counterEnd[1],
+        counterPreview ? 0.45 : 0,
+        'accent',
+        5,
+        '9 10',
+      ),
+      line(
+        spec.counterStart[0],
+        spec.counterStart[1],
+        spec.counterEnd[0],
+        spec.counterEnd[1],
+        counterLive ? 0.92 : 0,
+        'signal',
+        spec.counterHalfWidth * 2,
+      ),
+      line(player.x - 28, player.y - 32, 344, 416, openHit, 'accent', 8),
+      circle(344, 416, 17 + openHit * 17, openHit, 'signal', 6),
     ];
   }
   if (mode === 'landing') {
@@ -2213,6 +2295,11 @@ function pointClearsThreat(spec, frame, value, radius = BLUEPRINT_PLAYER_RADIUS)
     const shot = frame.primitives[6];
     return Math.hypot(value.x - shot.x, value.y - shot.y) > spec.boltRadius + radius;
   }
+  if (mode === 'counter-stance')
+    return (
+      distanceToSegment(value, point(spec.counterStart), point(spec.counterEnd)) >
+      spec.counterHalfWidth + radius
+    );
   if (mode === 'spiral')
     return (
       distanceFromBoss > 52 + radius &&
@@ -2415,6 +2502,7 @@ export function blueprintFrame(id, time) {
   else if (spec.mode === 'situational-immunity') responseProgress = smooth((t - 1.6) / 0.42);
   else if (spec.mode === 'part-break') responseProgress = smooth((t - 2.24) / 0.55);
   else if (spec.mode === 'attack-reflection') responseProgress = smooth((t - 2.55) / 0.62);
+  else if (spec.mode === 'counter-stance') responseProgress = smooth((t - 1.92) / 0.48);
   else if (spec.mode === 'knockback')
     responseProgress = phase === 0 ? 0 : phase === 1 ? smooth(action) : 1;
   else if (spec.mode === 'target-lock')
@@ -2472,6 +2560,24 @@ export function blueprintFrame(id, time) {
     player = {
       x: mix(mix(spec.target[0], 390, approach), startPlayer.x, retreat),
       y: mix(mix(spec.target[1], 405, approach), startPlayer.y, retreat),
+    };
+  }
+  if (spec.mode === 'counter-stance') {
+    const retreat = smooth((t - 1.92) / 0.48);
+    const returnToGuard = smooth((t - 3.04) / 0.88);
+    const openApproach = smooth((t - 4.54) / 0.38);
+    const reset = smooth((t - 5.2) / 0.62);
+    const afterRetreat = {
+      x: mix(startPlayer.x, targetPlayer.x, retreat),
+      y: mix(startPlayer.y, targetPlayer.y, retreat),
+    };
+    const afterReturn = {
+      x: mix(afterRetreat.x, startPlayer.x, returnToGuard),
+      y: mix(afterRetreat.y, startPlayer.y, returnToGuard),
+    };
+    player = {
+      x: mix(mix(afterReturn.x, 405, openApproach), startPlayer.x, reset),
+      y: mix(mix(afterReturn.y, 430, openApproach), startPlayer.y, reset),
     };
   }
   if (spec.mode === 'rotating' && phase === 0) {
@@ -2595,7 +2701,9 @@ export function blueprintFrame(id, time) {
                                   ? t >= spec.firstShot[0] && t < spec.firstShot[1]
                                   : spec.mode === 'attack-reflection'
                                     ? t >= spec.reflected[0] && t < spec.reflected[1]
-                                    : phase === 1;
+                                    : spec.mode === 'counter-stance'
+                                      ? t >= spec.riposte[0] && t < spec.riposte[1]
+                                      : phase === 1;
   const frame = {
     id,
     mode: spec.mode,
@@ -2632,7 +2740,8 @@ export function blueprintFrame(id, time) {
         : spec.mode === 'damage-type-resistance' ||
             spec.mode === 'situational-immunity' ||
             spec.mode === 'part-break' ||
-            spec.mode === 'attack-reflection'
+            spec.mode === 'attack-reflection' ||
+            spec.mode === 'counter-stance'
           ? -180
           : -90,
     bossMotion: motion({
@@ -2672,9 +2781,11 @@ export function blueprintFrame(id, time) {
                     )
                   : spec.mode === 'attack-reflection'
                     ? strikePulse(t, spec.outgoing[1], 0.38)
-                    : phase === 1
-                      ? 0.75
-                      : prepare * 0.35,
+                    : spec.mode === 'counter-stance'
+                      ? strikePulse(t, spec.riposte[0], 0.52)
+                      : phase === 1
+                        ? 0.75
+                        : prepare * 0.35,
       impact:
         spec.mode === 'landing'
           ? pulse(clamp((action - 0.42) / 0.22))
@@ -2690,11 +2801,13 @@ export function blueprintFrame(id, time) {
                   ? 0.75 * strikePulse(t, spec.breakAt, 0.26)
                   : spec.mode === 'attack-reflection'
                     ? 0.85 * strikePulse(t, spec.meleeStrike, 0.27)
-                    : spec.mode === 'shockwave' || spec.mode === 'knockback'
-                      ? pulse(action * 3)
-                      : spec.mode === 'chain-explosions'
-                        ? pulse((action * 5) % 1)
-                        : 0,
+                    : spec.mode === 'counter-stance'
+                      ? 0.85 * strikePulse(t, spec.openStrike, 0.27)
+                      : spec.mode === 'shockwave' || spec.mode === 'knockback'
+                        ? pulse(action * 3)
+                        : spec.mode === 'chain-explosions'
+                          ? pulse((action * 5) % 1)
+                          : 0,
     }),
     playerMotion: motion({
       gait: (route * responseProgress + route * returnProgress) / 20,
@@ -2723,11 +2836,16 @@ export function blueprintFrame(id, time) {
                       strikePulse(t, spec.outgoing[0], 0.32),
                       strikePulse(t, spec.meleeStrike, 0.33),
                     )
-                  : spec.mode === 'decoy' && phase === 1
-                    ? pulse(clamp((action - 0.52) / 0.3))
-                    : spec.mode === 'weak-point' && phase === 1
-                      ? pulse(action * 1.5)
-                      : 0,
+                  : spec.mode === 'counter-stance'
+                    ? Math.max(
+                        strikePulse(t, spec.parriedStrike, 0.3),
+                        strikePulse(t, spec.openStrike, 0.33),
+                      )
+                    : spec.mode === 'decoy' && phase === 1
+                      ? pulse(clamp((action - 0.52) / 0.3))
+                      : spec.mode === 'weak-point' && phase === 1
+                        ? pulse(action * 1.5)
+                        : 0,
     }),
   };
   if (spec.mode === 'directional-shield') {
@@ -2763,6 +2881,12 @@ export function blueprintFrame(id, time) {
     frame.reflectedShot = dangerActive;
     frame.meleeStrike = strikePulse(t, spec.meleeStrike) > 0.5;
   }
+  if (spec.mode === 'counter-stance') {
+    frame.counterState = counterStanceState(t);
+    frame.parriedStrike = strikePulse(t, spec.parriedStrike) > 0.5;
+    frame.openStrike = strikePulse(t, spec.openStrike) > 0.5;
+    frame.riposte = dangerActive;
+  }
   frame.primitives = primitivesFor(spec, frame);
   frame.playerSafe = pointClearsThreat(spec, frame, player);
   frame.bossLabel = {
@@ -2777,7 +2901,8 @@ export function blueprintFrame(id, time) {
       spec.mode === 'damage-type-resistance' ||
       spec.mode === 'situational-immunity' ||
       spec.mode === 'part-break' ||
-      spec.mode === 'attack-reflection'
+      spec.mode === 'attack-reflection' ||
+      spec.mode === 'counter-stance'
         ? 92
         : -62),
   };

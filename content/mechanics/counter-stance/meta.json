@@ -1,0 +1,24 @@
+{
+  "id": "counter-stance",
+  "number": 58,
+  "published": true,
+  "sourceLocale": "en",
+  "contentVersion": 1,
+  "animation": "counter-stance",
+  "lenses": ["counterplay", "progress-clarity", "risk-reward", "rule-exception"],
+  "related": ["attack-reflection", "directional-shield", "damage-type-resistance"],
+  "sources": [
+    {
+      "title": "Hollow Knight Wiki · Lace's parry and riposte",
+      "url": "https://hollowknight.wiki/w/Lace"
+    },
+    {
+      "title": "GameWith · Great Shinobi Owl counters player thrusts",
+      "url": "https://gamewith.net/sekiro/article/show/8639"
+    },
+    {
+      "title": "Jason de Heras · Genichiro deflects and responds to player pressure",
+      "url": "https://www.jasondeheras.com/gamedesign"
+    }
+  ]
+}

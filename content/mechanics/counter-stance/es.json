@@ -1,0 +1,134 @@
+{
+  "title": "Postura de contraataque",
+  "subtitle": "La respuesta del jefe depende de un golpe reconocible del jugador.",
+  "variant": "Un puño rúnico para el golpe y luego baja",
+  "summary": "Una guardia visible convierte un golpe válido del jugador en un ataque propio del jefe.",
+  "overview": "Kern levanta una guardia rúnica. La primera estocada de Tavi choca con ella: un destello de parada precede a un barrido de respuesta. Más tarde Kern repite la postura, pero Tavi contiene la espada. Sin contacto, la guardia termina y un golpe normal alcanza al jefe. Es una respuesta condicional, no un bloqueo permanente ni un proyectil reflejado.",
+  "learning": "Relaciona la condición, la parada, el peligro independiente, la caducidad de la guardia y la ventana de ataque.",
+  "category": "Defensa",
+  "readTime": "4 min",
+  "demo": {
+    "title": "Compara una respuesta activada con un golpe retenido",
+    "timeline": "Cronología de la postura de contraataque",
+    "step": "Estados de la postura",
+    "phaseNames": ["Lee la guardia", "Observa la respuesta", "Espera la apertura"],
+    "phaseDescriptions": [
+      "Kern muestra la guardia desde 0,62 s. La espada de Tavi la toca a 1,88 s. El destello indica parada, no daño al jefe.",
+      "La parada compromete a Kern a un carril fijo. El barrido amenaza de 2,43 a 2,88 s; Tavi sale por debajo antes de que empiece.",
+      "Kern vuelve a cubrirse de 3,48 a 4,48 s. Tavi no golpea y no hay respuesta. La runa baja; la espada conecta a 4,96 s."
+    ],
+    "boss": "Jefe",
+    "player": "Jugador",
+    "danger": "El barrido activado ocupa el carril marcado delante del jefe",
+    "locked": "Golpear con la espada durante la guardia activa otra acción; esperar no la activa",
+    "safe": "Sal del carril de respuesta o espera a que termine la guardia y aprovecha la apertura",
+    "reducedMotion": "Con movimiento reducido se desactiva la reproducción automática. Usa el control temporal para comparar ambas guardias.",
+    "diagramDescription": "Un jefe de piedra levanta una guardia rúnica frente a un jugador con espada. El primer golpe produce un destello; después, un barrido horizontal marcado cruza el frente mientras el jugador se retira por debajo. En la segunda guardia el jugador espera, no aparece barrido y un golpe normal conecta cuando el brazo baja."
+  },
+  "steps": [
+    {
+      "title": "¿Qué activa exactamente la respuesta?",
+      "body": "Define qué ataques acepta la guardia y durante cuánto tiempo. Aquí la espada queda parada a 1,88 s. Destello y sonido deben coincidir con el contacto, sin causar también daño al jefe. Sin golpe entrante no se programa ningún contraataque."
+    },
+    {
+      "title": "¿Puede leerse y esquivarse el nuevo peligro?",
+      "body": "El barrido es un ataque propio de Kern, con preparación, zona de daño y recuperación independientes. Señala el carril fijo tras la parada y actívalo de 2,43 a 2,88 s. Comprueba el cuerpo completo de Tavi con la velocidad de retirada más lenta prevista."
+    },
+    {
+      "title": "¿Qué ocurre si el jugador espera?",
+      "body": "Repite la guardia de 3,48 a 4,48 s sin golpe del jugador. Debe terminar sin crear una respuesta. Baja la runa de forma visible y permite un golpe normal a 4,96 s. Así la paciencia tiene valor y la postura no prohíbe atacar para siempre."
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "La respuesta daña antes de que se entienda la parada",
+      "body": "El daño instantáneo en el contacto se confunde con un ataque arbitrario. Muestra la parada y anuncia la zona separada antes de activarla."
+    },
+    {
+      "title": "Todos los ataques reciben castigo sin aviso",
+      "body": "Aclara si la postura reacciona a espada, proyectil, golpe fuerte, espalda o estados. Las excepciones entre configuraciones necesitan una señal o una forma segura de aprenderlas."
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "Separa los dos eventos",
+      "body": "Primero resuelve el golpe entrante: parado o aceptado. Solo después programa el ataque de Kern. No inviertas el objeto del jugador, pues eso sería reflexión, ni mantengas la zona peligrosa durante toda la guardia."
+    },
+    {
+      "title": "Calcula el tiempo de reacción",
+      "body": "Mide reconocimiento, preparación, inicio del movimiento y distancia necesaria para sacar todo el cuerpo del carril. Una respuesta rápida puede ser justa; un castigo invisible por una orden ya comprometida no lo es."
+    },
+    {
+      "title": "Haz útil la espera",
+      "body": "Deja que la segunda guardia caduque sin contacto. Kern dedica un breve intervalo a bajar la runa y el jugador puede volver a atacar. Es una elección de este ejemplo, no una ley para todas las posturas."
+    },
+    {
+      "title": "Verifica ambas ramas fotograma a fotograma",
+      "body": "Revisa la parada a 1,88 s, inicio y fin del barrido a 2,43 y 2,88 s, caducidad sin respuesta a 4,48 s y golpe abierto a 4,96 s. La búsqueda manual y el movimiento reducido deben conservar las mismas reglas."
+    }
+  ],
+  "story": {
+    "title": "Una runa que espera al acero",
+    "body": "La runa defensiva está en el puño adelantado de Kern. El contacto la enciende una vez y el brazo ejecuta el barrido. En la segunda guardia brilla sin destellar; cuando Kern baja el brazo, la apertura se ve sin consultar un cronómetro."
+  },
+  "adaptation": {
+    "title": "Usa una acción conocida del jugador",
+    "body": "Tavi ya lleva espada: el golpe habitual activa la primera respuesta y sigue siendo útil en la apertura. En otro combate, elige una clase de ataque familiar y enseña su relación con la postura antes de añadir variantes."
+  },
+  "distinction": {
+    "title": "La condición inicia una nueva acción del jefe",
+    "body": "El escudo direccional detiene un golpe por el lado protegido. La reflexión devuelve el disparo del jugador. Esta postura para un golpe válido y lanza un movimiento nuevo del jefe; si no hay golpe, esa rama no sucede."
+  },
+  "lensNotes": [
+    {
+      "id": "counterplay",
+      "body": "Tras una parada se puede salir del carril marcado; también se puede esperar a que termine la siguiente guardia sin activarla."
+    },
+    {
+      "id": "progress-clarity",
+      "body": "Runa, destello, carril, bajada de la guardia y golpe abierto distinguen los momentos decisivos."
+    },
+    {
+      "id": "risk-reward",
+      "body": "Un golpe temprano exige retirarse; esperar reduce la presión inmediata, pero crea una ventana más segura."
+    },
+    {
+      "id": "rule-exception",
+      "body": "Documenta las clases y ángulos de ataque que acepta la postura y si un golpe fallido puede activarla."
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "Hollow Knight: Silksong",
+      "boss": "Lace",
+      "video": "https://www.youtube.com/watch?v=h9qZ4ii8G_I&t=1s",
+      "videoDurationSeconds": 12,
+      "screenshot": "https://i.ytimg.com/vi/h9qZ4ii8G_I/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=h9qZ4ii8G_I&t=1s",
+      "body": "Lace adopta una postura de parada y puede responder con rapidez. El clip breve prueba esa guardia ante varios ataques; Kern alarga un golpe de espada aceptado y su respuesta para examinar la regla."
+    },
+    {
+      "dimension": "3D",
+      "game": "Sekiro: Shadows Die Twice",
+      "boss": "Great Shinobi Owl",
+      "video": "https://www.youtube.com/watch?v=P7LUa3DkWV0&t=1s",
+      "videoDurationSeconds": 16,
+      "screenshot": "https://i.ytimg.com/vi/P7LUa3DkWV0/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=P7LUa3DkWV0&t=1s",
+      "body": "Owl puede contrarrestar con Mikiri una estocada del jugador y seguir con su propio ataque. El clip breve aísla esa consecuencia; aquí importa más la clase de ataque que el tiempo de guardia de Kern."
+    },
+    {
+      "dimension": "3D",
+      "game": "Sekiro: Shadows Die Twice",
+      "boss": "Genichiro Ashina",
+      "video": "https://www.youtube.com/watch?v=4_TfCUZNyH8&t=64s",
+      "videoDurationSeconds": 214,
+      "screenshot": "https://i.ytimg.com/vi/4_TfCUZNyH8/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=4_TfCUZNyH8&t=64s",
+      "body": "Los cruces de espada con Genichiro pueden pasar de defenderse de la presión del jugador a responder con un tajo. El momento enlazado muestra contacto cercano, menos aislado que la postura cronometrada de Kern."
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}
