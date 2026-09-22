@@ -3,6 +3,8 @@ import assert from 'node:assert/strict';
 import {
   BLUEPRINT_DURATION,
   BLUEPRINT_MECHANIC_IDS,
+  absorptionCharge,
+  absorptionOutcome,
   attackReflectionState,
   counterStanceOutcome,
   counterStanceState,
@@ -22,8 +24,8 @@ import {
   renderBlueprintThumbnail,
 } from '../lib/blueprint-view.mjs';
 
-test('all 52 promoted lesson animations have distinct rule modes and complete moving frames', () => {
-  assert.equal(BLUEPRINT_MECHANIC_IDS.length, 52);
+test('all 53 promoted lesson animations have distinct rule modes and complete moving frames', () => {
+  assert.equal(BLUEPRINT_MECHANIC_IDS.length, 53);
   const modes = new Set();
   for (const id of BLUEPRINT_MECHANIC_IDS) {
     for (let time = 0; time <= BLUEPRINT_DURATION; time += 0.1) {
@@ -44,7 +46,7 @@ test('all 52 promoted lesson animations have distinct rule modes and complete mo
           assert.ok(Number.isFinite(value), `${id} has an invalid ${primitive.type}`);
     }
   }
-  assert.equal(modes.size, 52);
+  assert.equal(modes.size, 53);
 });
 
 test('every blueprint exposes signal, committed action, and recovery without player teleports', () => {
@@ -55,7 +57,7 @@ test('every blueprint exposes signal, committed action, and recovery without pla
   for (const id of BLUEPRINT_MECHANIC_IDS) {
     assert.equal(blueprintFrame(id, 1.59).committed, false, id);
     assert.equal(blueprintFrame(id, 1.6).committed, true, id);
-    if (id !== 'part-break' && id !== 'counter-stance')
+    if (id !== 'part-break' && id !== 'counter-stance' && id !== 'absorption-power-up')
       assert.equal(blueprintFrame(id, 3).dangerActive, true, id);
     assert.equal(blueprintFrame(id, 3).playerSafe, true, id);
     let previous = blueprintFrame(id, 0).player;
@@ -124,7 +126,8 @@ test('every damaging promoted animation derives safety from its own active geome
       id !== 'damage-type-resistance' &&
       id !== 'situational-immunity' &&
       id !== 'part-break' &&
-      id !== 'counter-stance',
+      id !== 'counter-stance' &&
+      id !== 'absorption-power-up',
   )) {
     const frame = blueprintFrame(id, 3);
     let point = unsafePoints[id];
@@ -1174,4 +1177,30 @@ test('blueprint previews use mechanic-specific keyframes and modeled actor place
 
   assert.ok(keyframes.size >= 18, 'previews should not all sample the same moment');
   assert.ok(relativePlacements.size >= 18, 'previews should not repeat one actor composition');
+});
+
+test('absorption stores two eligible hits, spends the charge on one marked ring, and opens afterward', () => {
+  const id = 'absorption-power-up';
+  assert.equal(absorptionOutcome(1.4, 'sword-pulse'), 'absorbed');
+  assert.equal(absorptionOutcome(1.4, 'melee'), 'ordinary');
+  assert.equal(absorptionOutcome(2.4, 'sword-pulse'), 'absorbed');
+  assert.equal(absorptionOutcome(2.6, 'sword-pulse'), 'at-cap');
+  assert.equal(absorptionOutcome(5, 'sword-pulse'), 'ordinary');
+  assert.deepEqual([0, 1.8, 2.6, 3.4, 3.7, 5].map(absorptionCharge), [0, 1, 2, 2, 0, 0]);
+  const before = blueprintFrame(id, 3.3);
+  assert.equal(before.absorptionState, 'charged');
+  assert.equal(before.absorptionCharge, 2);
+  assert.ok(before.primitives[8].opacity > 0, 'the final radius is previewed');
+  for (let time = 3.55; time < 3.94; time += 0.025) {
+    const frame = blueprintFrame(id, time);
+    assert.equal(frame.dangerActive, true);
+    assert.equal(frame.playerSafe, true, `the full player body clears the ring at ${time}`);
+    assert.equal(blueprintPointSafe(id, time, frame.boss), false);
+  }
+  assert.equal(blueprintFrame(id, 4.5).absorptionState, 'spent-open');
+  assert.equal(blueprintFrame(id, 4.96).openStrike, true);
+  assert.match(
+    renderBlueprintThumbnail(id, 'test-absorption'),
+    /data-blueprint-preview="absorption-power-up"/,
+  );
 });

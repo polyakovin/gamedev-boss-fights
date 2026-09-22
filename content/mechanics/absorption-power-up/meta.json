@@ -1,0 +1,24 @@
+{
+  "id": "absorption-power-up",
+  "number": 59,
+  "published": true,
+  "sourceLocale": "en",
+  "contentVersion": 1,
+  "animation": "absorption-power-up",
+  "lenses": ["progress-clarity", "risk-reward", "counterplay", "rule-exception"],
+  "related": ["attack-reflection", "damage-type-resistance", "counter-stance"],
+  "sources": [
+    {
+      "title": "Game Developer · Josh Hano on Nefarious's four-shot absorption and laser",
+      "url": "https://www.gamedeveloper.com/design/designing-boss-fights-from-the-bad-guy-s-pov-in-i-nefarious-i-"
+    },
+    {
+      "title": "Metroid Prime logbook · Sheegoth's energy-absorbing crystals",
+      "url": "https://www.metroidwiki.org/wiki/Sheegoth"
+    },
+    {
+      "title": "HoYoLAB · Prism Slime boss guide",
+      "url": "https://www.hoyolab.com/article/45841215"
+    }
+  ]
+}

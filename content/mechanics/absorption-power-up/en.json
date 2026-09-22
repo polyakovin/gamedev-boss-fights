@@ -1,0 +1,138 @@
+{
+  "title": "Absorption power-up",
+  "subtitle": "Turn accepted hits into a visible, bounded charge.",
+  "variant": "Two sword pulses charge Kern's rune core",
+  "summary": "A marked input is absorbed instead of damaging the boss and fills a resource for a stronger next move.",
+  "overview": "An absorption power-up converts a specified player action into a boss resource, not just negated damage. Kern's core accepts two sword pulses, shows each unit, and spends both on a wider shockwave. Tavi sees the transfer, clears the announced radius, and uses the spent-core recovery. Input, cap, payoff, and exit must be readable.",
+  "learning": "Specify accepted attacks, charge increments and cap, empowered hitbox, safe response, and the spent state.",
+  "category": "Defense",
+  "readTime": "4 min",
+  "demo": {
+    "title": "Follow two absorbed pulses into one empowered release",
+    "timeline": "Absorption timeline",
+    "step": "Absorption states",
+    "phaseNames": [
+      "See the accepting core",
+      "Count the stored hits",
+      "Clear the release and return"
+    ],
+    "phaseDescriptions": [
+      "Kern opens a marked rune core at 0.6 s. Tavi's sword sends a short energy pulse; contact at 1.65 s makes the pulse vanish into the core, with no boss-damage flash.",
+      "A second pulse is absorbed at 2.45 s. Two distinct rune pips remain lit. At 2.95 s Kern commits to spending that stored charge; a wide ring is previewed before it becomes dangerous.",
+      "The empowered ring is active from 3.55–3.94 s. Tavi clears its full outer radius. At 4.2 s the pips empty, the core closes, and an ordinary sword strike reaches Kern at 4.96 s."
+    ],
+    "boss": "Boss",
+    "player": "Player",
+    "danger": "The stored charge powers the marked wide ring only during its active interval",
+    "locked": "Only sword pulses that touch the open core add one pip, up to two",
+    "safe": "Stop feeding the core, move beyond the announced ring, and use the spent-core recovery",
+    "reducedMotion": "Autoplay is disabled by reduced motion. Scrub to compare zero, one, two, and spent charge.",
+    "diagramDescription": "A stone boss presents a rune core to a sword-bearing player. Two separate sword pulses converge on the core and light one pip each. The full core announces a broad circular shockwave, which the player clears before it activates. Both pips extinguish as the ring releases; the player returns during the open recovery."
+  },
+  "steps": [
+    {
+      "title": "What can be absorbed, and what is gained?",
+      "body": "Mark the accepting core, its active interval, and the eligible attack class. In this example only a sword pulse that touches the core adds one of two visible pips; the pulse does not also damage Kern. A missed, melee, or out-of-window hit must resolve by its ordinary rule. Test the charge cap so extra hits cannot silently make an unbounded attack."
+    },
+    {
+      "title": "Does charge visibly change the next threat?",
+      "body": "Keep a stable mapping from stored pips to the empowered move. Two absorbed pulses authorize one wider ring, not an immediate invisible retaliation. Preview its outer radius from 2.95 s, activate it only from 3.55–3.94 s, and test Tavi's full body at the slowest expected movement speed."
+    },
+    {
+      "title": "How does the boss leave the powered state?",
+      "body": "Spend the pips when the ring releases, close the core at 4.2 s, and expose a useful recovery. Tavi's 4.96 s sword strike demonstrates that the boss does not keep absorbing after the payoff. Also test the no-feed branch: the boss must not wait forever for the player to donate energy."
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "A blocked hit is mistaken for ordinary armor",
+      "body": "If the incoming pulse disappears without a transfer cue or count change, the player cannot tell whether it was absorbed, resisted, or missed. Animate energy into the core and update a persistent, countable charge marker at contact."
+    },
+    {
+      "title": "More charge means an unannounced hitbox",
+      "body": "An amplified effect that suddenly covers extra space violates the learned response. Show the final radius before damage begins, preserve a reachable outside edge, and cap both charge and payoff."
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "Track a resource, not a cosmetic color",
+      "body": "Store each accepted collision as a deterministic charge increment. Rendering, damage, and the subsequent move must read the same capped state. Seeking backward should restore the earlier pip count without accumulating hits twice."
+    },
+    {
+      "title": "Make feeding a deliberate tradeoff",
+      "body": "If the player can choose not to send an eligible pulse, give that choice an ordinary attack or positional benefit. If feeding is required to progress, signal that requirement and ensure the charged result is still respondable."
+    },
+    {
+      "title": "Separate input, wind-up, and release",
+      "body": "The accepted pulse stops at the core. The later shockwave is a new boss-owned attack with its own preview, active window, and collision. It is neither the same projectile reflected back nor permanent damage resistance."
+    },
+    {
+      "title": "Test the edge conditions",
+      "body": "Check a pulse that arrives exactly as the core closes, simultaneous eligible hits, charge at cap, interruption during wind-up, death during charge, reduced motion, and a player body standing at the ring's outer boundary."
+    }
+  ],
+  "story": {
+    "title": "A stone battery with two rune sockets",
+    "body": "Kern's chest core is a single simple shape with two slots. Each absorbed sword pulse flies visibly into one slot. Once both glow, a floor ring previews the powered release; both slots darken when it fires, keeping the rule legible without extra scenery."
+  },
+  "adaptation": {
+    "title": "Respect Tavi's sword and ordinary movement",
+    "body": "The example uses a short sword pulse so the transfer can be seen, but its trigger could be any clearly taught attack class. The ring's edge is reachable by ordinary movement, and the later sword hit uses Tavi's existing melee verb rather than a special counter item."
+  },
+  "distinction": {
+    "title": "Stored energy, not a returned shot",
+    "body": "Attack reflection changes the ownership and direction of one incoming shot. Damage-type resistance changes how much damage lands. Absorption power-up consumes eligible input, increments a boss resource, and pays it off in a later, separately announced move."
+  },
+  "lensNotes": [
+    {
+      "id": "progress-clarity",
+      "body": "The two slots show every accepted hit, the full state, and the moment charge is spent."
+    },
+    {
+      "id": "risk-reward",
+      "body": "Feeding the core trades immediate sword-pulse pressure for a stronger but predictable boss move and recovery."
+    },
+    {
+      "id": "counterplay",
+      "body": "Tavi may withhold eligible pulses, clear the wide ring, and strike after the core empties."
+    },
+    {
+      "id": "rule-exception",
+      "body": "Document which attack types, angles, and timings the core accepts and what happens at the two-pip cap."
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "Nefarious",
+      "boss": "Crow's absorbing mech",
+      "video": "https://www.youtube.com/watch?v=BJ-0kld9x7g&t=558s",
+      "videoDurationSeconds": 1567,
+      "screenshot": "https://i.ytimg.com/vi/BJ-0kld9x7g/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=BJ-0kld9x7g&t=558s",
+      "body": "In this reverse boss fight the player pilots the boss machine. Its creator describes absorbing four incoming shots before firing a sustained laser. The linked Mack chapter shows the boss-side framing; Kern compresses the count to two pips so the conversion is easier to inspect."
+    },
+    {
+      "dimension": "3D",
+      "game": "Metroid Prime Remastered",
+      "boss": "Sheegoth",
+      "video": "https://www.youtube.com/watch?v=e2NoBFsqiBA&t=1s",
+      "videoDurationSeconds": 107,
+      "screenshot": "https://i.ytimg.com/vi/e2NoBFsqiBA/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=e2NoBFsqiBA&t=1s",
+      "body": "Sheegoth's back crystals absorb energy attacks and can fire that energy at prey, as its in-game logbook states. The short boss guide shows the creature and the need to distinguish the absorbing surface from another target; Kern makes the stored amount explicit."
+    },
+    {
+      "dimension": "3D",
+      "game": "Genshin Impact",
+      "boss": "Prism Slime",
+      "video": "https://www.youtube.com/watch?v=uCKxeJa5kQg&t=1s",
+      "videoDurationSeconds": 111,
+      "screenshot": "https://i.ytimg.com/vi/uCKxeJa5kQg/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=uCKxeJa5kQg&t=1s",
+      "body": "The local-legend slime absorbs a character's elemental energy and changes state. The focused clip is about limiting absorption attempts. Its stolen resource and state change differ from Kern's player-shot conversion, but both need an explicit charge cue and a bounded payoff."
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

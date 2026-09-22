@@ -311,6 +311,21 @@ const SPECS = {
     counterEnd: [438, 421],
     counterHalfWidth: 19,
   },
+  'absorption-power-up': {
+    mode: 'absorption-power-up',
+    boss: [280, 430],
+    player: [450, 430],
+    target: [510, 430],
+    core: [310, 409],
+    swordStart: [420, 407],
+    firstPulse: [1.25, 1.65],
+    secondPulse: [2.05, 2.45],
+    chargeWindup: 2.95,
+    shockwave: [3.55, 3.94],
+    spentAt: 4.2,
+    openStrike: 4.96,
+    shockwaveRadius: 175,
+  },
   'wide-swing': { mode: 'arc', boss: [280, 310], player: [410, 470], target: [470, 650] },
   lunge: { mode: 'lunge', boss: [170, 290], player: [390, 590], target: [470, 660] },
   grab: { mode: 'grab', boss: [280, 300], player: [390, 485], target: [470, 610] },
@@ -639,6 +654,23 @@ export function counterStanceOutcome(time, incomingAttack = false) {
     (t >= spec.firstGuard[0] && t < spec.firstGuard[1]) ||
     (t >= spec.secondGuard[0] && t < spec.secondGuard[1]);
   return guarded ? 'parried-counter' : 'hit';
+}
+
+export function absorptionCharge(time) {
+  const spec = SPECS['absorption-power-up'];
+  const t = localTime(time);
+  if (t >= spec.shockwave[0]) return 0;
+  if (t >= spec.secondPulse[1]) return 2;
+  if (t >= spec.firstPulse[1]) return 1;
+  return 0;
+}
+
+export function absorptionOutcome(time, attackType = 'sword-pulse') {
+  const spec = SPECS['absorption-power-up'];
+  const t = localTime(time);
+  if (attackType !== 'sword-pulse') return 'ordinary';
+  if (t < 0.6 || t >= spec.chargeWindup) return 'ordinary';
+  return absorptionCharge(t) < 2 ? 'absorbed' : 'at-cap';
 }
 
 const pointInPolygon = (value, points) => {
@@ -1069,6 +1101,83 @@ function primitivesFor(spec, frame) {
       ),
       line(player.x - 28, player.y - 32, 344, 416, openHit, 'accent', 8),
       circle(344, 416, 17 + openHit * 17, openHit, 'signal', 6),
+    ];
+  }
+  if (mode === 'absorption-power-up') {
+    const core = point(spec.core);
+    const charge = absorptionCharge(frame.time);
+    const accepting = frame.time >= 0.6 && frame.time < spec.chargeWindup;
+    const primed = frame.time >= spec.chargeWindup && frame.time < spec.spentAt;
+    const firstTravel = frame.time >= spec.firstPulse[0] && frame.time < spec.firstPulse[1];
+    const secondTravel = frame.time >= spec.secondPulse[0] && frame.time < spec.secondPulse[1];
+    const firstProgress = smooth(
+      (frame.time - spec.firstPulse[0]) / (spec.firstPulse[1] - spec.firstPulse[0]),
+    );
+    const secondProgress = smooth(
+      (frame.time - spec.secondPulse[0]) / (spec.secondPulse[1] - spec.secondPulse[0]),
+    );
+    const absorbFlash = Math.max(
+      strikePulse(frame.time, spec.firstPulse[1], 0.26),
+      strikePulse(frame.time, spec.secondPulse[1], 0.26),
+    );
+    const preview = frame.time >= spec.chargeWindup && frame.time < spec.shockwave[0];
+    const live = frame.dangerActive;
+    const openHit = strikePulse(frame.time, spec.openStrike, 0.3);
+    return [
+      circle(
+        core.x,
+        core.y,
+        30,
+        accepting || primed ? 0.94 : 0.34,
+        accepting || primed ? 'accent' : 'muted',
+        6,
+        0.1,
+      ),
+      circle(core.x - 10, core.y - 4, 6, charge >= 1 ? 0.96 : 0.25, 'signal', 3, 0.52),
+      circle(core.x + 10, core.y - 4, 6, charge >= 2 ? 0.96 : 0.25, 'signal', 3, 0.52),
+      line(
+        spec.swordStart[0],
+        spec.swordStart[1],
+        core.x,
+        core.y,
+        firstTravel ? 0.3 : 0,
+        'accent',
+        3,
+        '7 9',
+      ),
+      circle(
+        mix(spec.swordStart[0], core.x, firstProgress),
+        mix(spec.swordStart[1], core.y, firstProgress),
+        10,
+        firstTravel ? 0.96 : 0,
+        'accent',
+        4,
+        0.3,
+      ),
+      line(
+        spec.swordStart[0],
+        spec.swordStart[1],
+        core.x,
+        core.y,
+        secondTravel ? 0.3 : 0,
+        'accent',
+        3,
+        '7 9',
+      ),
+      circle(
+        mix(spec.swordStart[0], core.x, secondProgress),
+        mix(spec.swordStart[1], core.y, secondProgress),
+        10,
+        secondTravel ? 0.96 : 0,
+        'accent',
+        4,
+        0.3,
+      ),
+      circle(core.x, core.y, 30 + 19 * absorbFlash, absorbFlash, 'signal', 5),
+      circle(boss.x, boss.y, spec.shockwaveRadius, preview ? 0.48 : 0, 'accent', 4, 0.08, '10 10'),
+      circle(boss.x, boss.y, spec.shockwaveRadius, live ? 0.88 : 0, 'signal', 9, 0.16),
+      line(player.x - 28, player.y - 31, core.x, core.y, openHit, 'accent', 8),
+      circle(core.x, core.y, 17 + 17 * openHit, openHit, 'signal', 5),
     ];
   }
   if (mode === 'landing') {
@@ -2300,6 +2409,10 @@ function pointClearsThreat(spec, frame, value, radius = BLUEPRINT_PLAYER_RADIUS)
       distanceToSegment(value, point(spec.counterStart), point(spec.counterEnd)) >
       spec.counterHalfWidth + radius
     );
+  if (mode === 'absorption-power-up')
+    return (
+      Math.hypot(value.x - frame.boss.x, value.y - frame.boss.y) > spec.shockwaveRadius + radius
+    );
   if (mode === 'spiral')
     return (
       distanceFromBoss > 52 + radius &&
@@ -2503,6 +2616,8 @@ export function blueprintFrame(id, time) {
   else if (spec.mode === 'part-break') responseProgress = smooth((t - 2.24) / 0.55);
   else if (spec.mode === 'attack-reflection') responseProgress = smooth((t - 2.55) / 0.62);
   else if (spec.mode === 'counter-stance') responseProgress = smooth((t - 1.92) / 0.48);
+  else if (spec.mode === 'absorption-power-up')
+    responseProgress = smooth((t - spec.chargeWindup) / 0.53);
   else if (spec.mode === 'knockback')
     responseProgress = phase === 0 ? 0 : phase === 1 ? smooth(action) : 1;
   else if (spec.mode === 'target-lock')
@@ -2578,6 +2693,15 @@ export function blueprintFrame(id, time) {
     player = {
       x: mix(mix(afterReturn.x, 405, openApproach), startPlayer.x, reset),
       y: mix(mix(afterReturn.y, 430, openApproach), startPlayer.y, reset),
+    };
+  }
+  if (spec.mode === 'absorption-power-up') {
+    const away = smooth((t - spec.chargeWindup) / 0.53);
+    const approach = smooth((t - 4.24) / 0.45);
+    const reset = smooth((t - 5.25) / 0.58);
+    player = {
+      x: mix(mix(mix(startPlayer.x, targetPlayer.x, away), 390, approach), startPlayer.x, reset),
+      y: startPlayer.y,
     };
   }
   if (spec.mode === 'rotating' && phase === 0) {
@@ -2703,7 +2827,9 @@ export function blueprintFrame(id, time) {
                                     ? t >= spec.reflected[0] && t < spec.reflected[1]
                                     : spec.mode === 'counter-stance'
                                       ? t >= spec.riposte[0] && t < spec.riposte[1]
-                                      : phase === 1;
+                                      : spec.mode === 'absorption-power-up'
+                                        ? t >= spec.shockwave[0] && t < spec.shockwave[1]
+                                        : phase === 1;
   const frame = {
     id,
     mode: spec.mode,
@@ -2741,7 +2867,8 @@ export function blueprintFrame(id, time) {
             spec.mode === 'situational-immunity' ||
             spec.mode === 'part-break' ||
             spec.mode === 'attack-reflection' ||
-            spec.mode === 'counter-stance'
+            spec.mode === 'counter-stance' ||
+            spec.mode === 'absorption-power-up'
           ? -180
           : -90,
     bossMotion: motion({
@@ -2783,9 +2910,11 @@ export function blueprintFrame(id, time) {
                     ? strikePulse(t, spec.outgoing[1], 0.38)
                     : spec.mode === 'counter-stance'
                       ? strikePulse(t, spec.riposte[0], 0.52)
-                      : phase === 1
-                        ? 0.75
-                        : prepare * 0.35,
+                      : spec.mode === 'absorption-power-up'
+                        ? strikePulse(t, spec.shockwave[0], 0.62)
+                        : phase === 1
+                          ? 0.75
+                          : prepare * 0.35,
       impact:
         spec.mode === 'landing'
           ? pulse(clamp((action - 0.42) / 0.22))
@@ -2803,11 +2932,13 @@ export function blueprintFrame(id, time) {
                     ? 0.85 * strikePulse(t, spec.meleeStrike, 0.27)
                     : spec.mode === 'counter-stance'
                       ? 0.85 * strikePulse(t, spec.openStrike, 0.27)
-                      : spec.mode === 'shockwave' || spec.mode === 'knockback'
-                        ? pulse(action * 3)
-                        : spec.mode === 'chain-explosions'
-                          ? pulse((action * 5) % 1)
-                          : 0,
+                      : spec.mode === 'absorption-power-up'
+                        ? 0.85 * strikePulse(t, spec.openStrike, 0.27)
+                        : spec.mode === 'shockwave' || spec.mode === 'knockback'
+                          ? pulse(action * 3)
+                          : spec.mode === 'chain-explosions'
+                            ? pulse((action * 5) % 1)
+                            : 0,
     }),
     playerMotion: motion({
       gait: (route * responseProgress + route * returnProgress) / 20,
@@ -2841,11 +2972,17 @@ export function blueprintFrame(id, time) {
                         strikePulse(t, spec.parriedStrike, 0.3),
                         strikePulse(t, spec.openStrike, 0.33),
                       )
-                    : spec.mode === 'decoy' && phase === 1
-                      ? pulse(clamp((action - 0.52) / 0.3))
-                      : spec.mode === 'weak-point' && phase === 1
-                        ? pulse(action * 1.5)
-                        : 0,
+                    : spec.mode === 'absorption-power-up'
+                      ? Math.max(
+                          strikePulse(t, spec.firstPulse[0], 0.32),
+                          strikePulse(t, spec.secondPulse[0], 0.32),
+                          strikePulse(t, spec.openStrike, 0.33),
+                        )
+                      : spec.mode === 'decoy' && phase === 1
+                        ? pulse(clamp((action - 0.52) / 0.3))
+                        : spec.mode === 'weak-point' && phase === 1
+                          ? pulse(action * 1.5)
+                          : 0,
     }),
   };
   if (spec.mode === 'directional-shield') {
@@ -2887,6 +3024,21 @@ export function blueprintFrame(id, time) {
     frame.openStrike = strikePulse(t, spec.openStrike) > 0.5;
     frame.riposte = dangerActive;
   }
+  if (spec.mode === 'absorption-power-up') {
+    frame.absorptionCharge = absorptionCharge(t);
+    frame.absorptionState = dangerActive
+      ? 'empowered-release'
+      : t >= spec.spentAt && t < spec.openStrike + 0.35
+        ? 'spent-open'
+        : t >= spec.chargeWindup && t < spec.spentAt
+          ? 'charged'
+          : t >= 0.6 && t < spec.chargeWindup
+            ? 'accepting'
+            : 'idle';
+    frame.absorbedFirst = strikePulse(t, spec.firstPulse[1], 0.26) > 0.5;
+    frame.absorbedSecond = strikePulse(t, spec.secondPulse[1], 0.26) > 0.5;
+    frame.openStrike = strikePulse(t, spec.openStrike, 0.3) > 0.5;
+  }
   frame.primitives = primitivesFor(spec, frame);
   frame.playerSafe = pointClearsThreat(spec, frame, player);
   frame.bossLabel = {
@@ -2902,7 +3054,8 @@ export function blueprintFrame(id, time) {
       spec.mode === 'situational-immunity' ||
       spec.mode === 'part-break' ||
       spec.mode === 'attack-reflection' ||
-      spec.mode === 'counter-stance'
+      spec.mode === 'counter-stance' ||
+      spec.mode === 'absorption-power-up'
         ? 92
         : -62),
   };

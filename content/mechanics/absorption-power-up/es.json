@@ -1,0 +1,138 @@
+{
+  "title": "Absorción que potencia",
+  "subtitle": "Convierte los golpes aceptados en una carga visible y limitada.",
+  "variant": "Dos pulsos de espada cargan el núcleo rúnico de Kern",
+  "summary": "Un ataque marcado se absorbe en vez de dañar al jefe y alimenta un recurso para su siguiente movimiento.",
+  "overview": "La absorción transforma una acción del jugador en un recurso del jefe, no solo en daño anulado. El núcleo de Kern acepta dos pulsos de espada, muestra cada carga y las gasta en una onda más amplia. Tavi ve la transferencia, sale del radio anunciado y aprovecha la recuperación. La condición, el límite y el resultado deben leerse por separado.",
+  "learning": "Define los ataques admitidos, el incremento y límite de carga, el área potenciada, la respuesta segura y el estado agotado.",
+  "category": "Defensa",
+  "readTime": "4 min",
+  "demo": {
+    "title": "Sigue dos pulsos absorbidos hasta una descarga potenciada",
+    "timeline": "Cronología de absorción",
+    "step": "Estados de absorción",
+    "phaseNames": [
+      "Reconocer el núcleo abierto",
+      "Contar los golpes almacenados",
+      "Salir de la onda y volver"
+    ],
+    "phaseDescriptions": [
+      "Kern abre el núcleo marcado a los 0,6 s. La espada de Tavi envía un pulso; al tocarlo a los 1,65 s, desaparece dentro sin destello de daño al jefe.",
+      "El segundo pulso se absorbe a los 2,45 s. Quedan encendidas dos runas distintas. A los 2,95 s Kern se compromete a gastar la carga y anticipa el radio antes de que haga daño.",
+      "La onda potenciada está activa entre 3,55 y 3,94 s. Tavi aleja todo su cuerpo. A los 4,2 s se apagan las runas, se cierra el núcleo y un golpe normal conecta a los 4,96 s."
+    ],
+    "boss": "Jefe",
+    "player": "Jugador",
+    "danger": "La carga almacenada alimenta la onda ancha solo durante su intervalo activo",
+    "locked": "Solo un pulso de espada que toca el núcleo abierto añade una runa; máximo dos",
+    "safe": "Dejar de alimentar el núcleo, salir del radio anunciado y aprovechar su recuperación",
+    "reducedMotion": "Con movimiento reducido no hay reproducción automática. Desliza la línea para comparar cero, una, dos y ninguna carga.",
+    "diagramDescription": "Un jefe de piedra ofrece su núcleo rúnico a un jugador con espada. Dos pulsos separados llegan al núcleo y encienden una runa cada uno. El núcleo lleno anuncia una amplia onda circular; el jugador sale del radio antes de su activación. Las runas se apagan al disparar y el jugador vuelve durante la recuperación."
+  },
+  "steps": [
+    {
+      "title": "¿Qué se absorbe y qué se obtiene?",
+      "body": "Marca el núcleo, su intervalo y la clase de ataque válida. Aquí solo un pulso de espada que lo toque enciende una de dos runas, sin dañar también a Kern. Un fallo, un golpe cuerpo a cuerpo o un impacto fuera del intervalo siguen sus reglas normales. Limita la carga para que los golpes extra no aumenten el poder sin control."
+    },
+    {
+      "title": "¿La carga modifica visiblemente la amenaza?",
+      "body": "Relaciona el número de runas con un movimiento concreto. Dos pulsos autorizan una sola onda más amplia, no un contraataque invisible e instantáneo. Muestra su radio desde 2,95 s, activa el daño solo entre 3,55 y 3,94 s y comprueba el cuerpo completo de Tavi a la velocidad mínima prevista."
+    },
+    {
+      "title": "¿Cómo sale el jefe del estado potenciado?",
+      "body": "Gasta las runas cuando sale la onda, cierra el núcleo a los 4,2 s y deja una recuperación útil. El golpe de Tavi a los 4,96 s demuestra que el jefe ya no absorbe. Prueba también la rama sin alimentación: el jefe no debe esperar energía del jugador para siempre."
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "La absorción parece armadura normal",
+      "body": "Si el pulso desaparece sin transferencia ni cambio del contador, nadie sabe si fue absorbido, resistido o falló. Lleva la energía hasta el núcleo y actualiza una marca persistente justo en el contacto."
+    },
+    {
+      "title": "El poder amplía el área sin aviso",
+      "body": "Un área mayor que aparece de golpe invalida la respuesta aprendida. Anticipa el radio definitivo antes del daño, deja un borde exterior alcanzable y limita la carga y el resultado."
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "Guarda un recurso, no un color decorativo",
+      "body": "Cada colisión aceptada aumenta una carga determinista. La imagen, el daño y el siguiente movimiento consultan el mismo estado limitado. Retroceder en la línea debe restaurar el contador anterior sin duplicar impactos."
+    },
+    {
+      "title": "Haz de la alimentación una decisión",
+      "body": "Si el jugador puede reservar el pulso, esa opción debe conservar otra ventaja de ataque o posición. Si alimentar el núcleo es obligatorio para avanzar, anúncialo y mantén una respuesta posible al ataque potenciado."
+    },
+    {
+      "title": "Separa entrada, preparación y descarga",
+      "body": "El pulso admitido termina en el núcleo. La onda posterior es un ataque nuevo del jefe con aviso, ventana activa y colisión propios. No es el mismo proyectil reflejado ni resistencia permanente."
+    },
+    {
+      "title": "Prueba los casos límite",
+      "body": "Comprueba el cierre del núcleo, impactos simultáneos, carga máxima, interrupción de la preparación, muerte con carga, movimiento reducido y el cuerpo del jugador en el borde exterior."
+    }
+  ],
+  "story": {
+    "title": "Una batería de piedra con dos huecos rúnicos",
+    "body": "El núcleo del pecho de Kern es una forma sencilla con dos ranuras. Cada pulso entra visiblemente en una. Con ambas iluminadas, un círculo en el suelo anuncia la descarga; al disparar, se apagan sin necesitar decorado adicional."
+  },
+  "adaptation": {
+    "title": "Respeta la espada y el movimiento normal de Tavi",
+    "body": "El pulso corto de espada hace visible la transferencia, aunque la regla podría aceptar otra clase de ataque ya enseñada. El borde exterior se alcanza andando y el golpe final usa el ataque cuerpo a cuerpo habitual."
+  },
+  "distinction": {
+    "title": "Energía almacenada, no un disparo devuelto",
+    "body": "La reflexión cambia dueño y dirección de un proyectil. La resistencia cambia el daño recibido. La absorción consume un ataque válido, incrementa un recurso del jefe y lo gasta después en otro movimiento anunciado."
+  },
+  "lensNotes": [
+    {
+      "id": "progress-clarity",
+      "body": "Dos ranuras muestran cada impacto aceptado, la carga completa y su gasto."
+    },
+    {
+      "id": "risk-reward",
+      "body": "Alimentar el núcleo cambia presión inmediata por un movimiento más fuerte pero predecible y su recuperación."
+    },
+    {
+      "id": "counterplay",
+      "body": "Tavi puede reservar pulsos, salir de la onda y atacar cuando se vacía el núcleo."
+    },
+    {
+      "id": "rule-exception",
+      "body": "Documenta clases, ángulos y tiempos admitidos, y qué ocurre al llegar a dos cargas."
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "Nefarious",
+      "boss": "Crow's absorbing mech",
+      "video": "https://www.youtube.com/watch?v=BJ-0kld9x7g&t=558s",
+      "videoDurationSeconds": 1567,
+      "screenshot": "https://i.ytimg.com/vi/BJ-0kld9x7g/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=BJ-0kld9x7g&t=558s",
+      "body": "En esta batalla invertida el jugador pilota la máquina del jefe. Su creador describe absorber cuatro disparos antes de lanzar un láser sostenido. El enlace abre el capítulo de Mack; Kern reduce la cuenta a dos runas para examinar la conversión."
+    },
+    {
+      "dimension": "3D",
+      "game": "Metroid Prime Remastered",
+      "boss": "Sheegoth",
+      "video": "https://www.youtube.com/watch?v=e2NoBFsqiBA&t=1s",
+      "videoDurationSeconds": 107,
+      "screenshot": "https://i.ytimg.com/vi/e2NoBFsqiBA/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=e2NoBFsqiBA&t=1s",
+      "body": "Según el registro del juego, los cristales de la espalda de Sheegoth absorben ataques de energía y pueden dispararla a sus presas. La guía breve muestra la criatura y la diferencia entre la superficie absorbente y otro objetivo; Kern explicita la cantidad almacenada."
+    },
+    {
+      "dimension": "3D",
+      "game": "Genshin Impact",
+      "boss": "Prism Slime",
+      "video": "https://www.youtube.com/watch?v=uCKxeJa5kQg&t=1s",
+      "videoDurationSeconds": 111,
+      "screenshot": "https://i.ytimg.com/vi/uCKxeJa5kQg/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=uCKxeJa5kQg&t=1s",
+      "body": "Este enemigo especial absorbe energía elemental del personaje y cambia de estado. El clip se centra en limitar sus intentos de absorción. Robar un recurso y absorber un disparo son variantes distintas, pero ambas necesitan una señal de carga y un resultado limitado."
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

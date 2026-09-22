@@ -108,6 +108,16 @@ export function initializeBlueprint(widget) {
           : frame.openStrike
             ? 'open-hit'
             : frame.counterState;
+    if (mechanicId === 'absorption-power-up') {
+      widget.dataset.blueprintAbsorption = frame.openStrike
+        ? 'open-hit'
+        : frame.absorbedSecond
+          ? 'second-absorbed'
+          : frame.absorbedFirst
+            ? 'first-absorbed'
+            : frame.absorptionState;
+      widget.dataset.blueprintCharge = String(frame.absorptionCharge);
+    }
     boss.setAttribute(
       'transform',
       `translate(${frame.boss.x} ${frame.boss.y}) scale(${frame.bossScale})`,
