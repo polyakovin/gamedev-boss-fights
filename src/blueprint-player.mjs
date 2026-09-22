@@ -41,8 +41,10 @@ export function initializeBlueprint(widget) {
   const phaseName = find('[data-blueprint-phase-name]');
   const phaseTooltip = find('[data-blueprint-phase-tooltip]');
   const boss = find('[data-blueprint-boss]');
+  const decoy = find('[data-blueprint-decoy]');
   const player = find('[data-blueprint-player]');
   const animateBoss = createCharacterAnimator(boss, 'kern');
+  const animateDecoy = decoy ? createCharacterAnimator(decoy, 'kern') : null;
   const animatePlayer = createCharacterAnimator(player, 'tavi');
   const animateEffects = createEncounterEffects(widget, (time) => blueprintFrame(mechanicId, time));
   const bossLabel = find('[data-blueprint-boss-label]');
@@ -69,6 +71,11 @@ export function initializeBlueprint(widget) {
       `translate(${frame.boss.x} ${frame.boss.y}) scale(${frame.bossScale})`,
     );
     boss.setAttribute('opacity', String(frame.bossVisible));
+    if (decoy && frame.decoy) {
+      decoy.setAttribute('transform', `translate(${frame.decoy.x} ${frame.decoy.y})`);
+      decoy.setAttribute('opacity', String(frame.decoy.opacity));
+      animateDecoy(frame.bossMotion, frame.bossFacing);
+    }
     player.setAttribute('transform', `translate(${frame.player.x} ${frame.player.y})`);
     animateBoss(frame.bossMotion, frame.bossFacing);
     animatePlayer(frame.playerMotion, frame.playerFacing);

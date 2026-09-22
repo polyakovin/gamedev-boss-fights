@@ -149,6 +149,15 @@ const SPECS = {
     ],
     shotRadius: 19,
   },
+  decoy: {
+    mode: 'decoy',
+    boss: [280, 350],
+    player: [440, 690],
+    target: [280, 535],
+    real: [190, 425],
+    mirror: [410, 425],
+    contactRadius: 56,
+  },
   'wide-swing': { mode: 'arc', boss: [280, 310], player: [410, 470], target: [470, 650] },
   lunge: { mode: 'lunge', boss: [170, 290], player: [390, 590], target: [470, 660] },
   grab: { mode: 'grab', boss: [280, 300], player: [390, 485], target: [470, 610] },
@@ -336,7 +345,7 @@ const motion = (values = {}) => ({
   dodge: 0,
   ...values,
 });
-const circle = (x, y, radius, opacity = 1, tone = 'signal', width = 4, fill = 0) => ({
+const circle = (x, y, radius, opacity = 1, tone = 'signal', width = 4, fill = 0, dash = '') => ({
   type: 'circle',
   x,
   y,
@@ -345,6 +354,7 @@ const circle = (x, y, radius, opacity = 1, tone = 'signal', width = 4, fill = 0)
   tone,
   width,
   fill,
+  dash,
 });
 const line = (x1, y1, x2, y2, opacity = 1, tone = 'signal', width = 5, dash = '') => ({
   type: 'line',
@@ -1070,6 +1080,60 @@ function primitivesFor(spec, frame) {
       circle(spec.target[0], spec.target[1], 29, phase === 2 ? 0 : 0.7, 'safe', 6, 0.1),
     ];
   }
+  if (mode === 'decoy') {
+    const mirror = frame.decoy;
+    const split = phase === 0 ? prepare : 1;
+    const decision = phase === 1 ? smooth((action - 0.3) / 0.45) : phase === 2 ? 1 - recover : 0;
+    return [
+      line(
+        spec.boss[0],
+        spec.boss[1],
+        spec.real[0],
+        spec.real[1],
+        phase === 0 ? 0.3 + prepare * 0.38 : 0,
+        'accent',
+        5,
+        '11 12',
+      ),
+      line(
+        spec.boss[0],
+        spec.boss[1],
+        spec.mirror[0],
+        spec.mirror[1],
+        phase === 0 ? 0.3 + prepare * 0.38 : 0,
+        'signal',
+        5,
+        '11 12',
+      ),
+      circle(
+        boss.x,
+        boss.y,
+        spec.contactRadius,
+        phase === 1 ? 0.48 : 0.14 * split,
+        'signal',
+        5,
+        0.12,
+      ),
+      circle(boss.x, boss.y, 70, phase === 1 ? 0.76 : 0.24 * split, 'accent', 6),
+      path(
+        `M ${boss.x - 17} ${boss.y + 62} L ${boss.x} ${boss.y + 78} L ${boss.x + 17} ${boss.y + 62}`,
+        phase === 1 ? 0.88 : 0.26 * split,
+        'accent',
+        5,
+      ),
+      circle(mirror.x, mirror.y, 70, mirror.opacity * 0.75, 'muted', 5, 0, '20 14'),
+      path(
+        `M ${mirror.x - 17} ${mirror.y + 62} L ${mirror.x - 4} ${mirror.y + 73} M ${mirror.x + 4} ${mirror.y + 73} L ${mirror.x + 17} ${mirror.y + 62}`,
+        mirror.opacity * 0.85,
+        'muted',
+        5,
+        0,
+        '8 9',
+      ),
+      line(player.x, player.y - 22, boss.x + 35, boss.y + 45, decision * 0.7, 'safe', 6, '10 9'),
+      circle(boss.x + 35, boss.y + 45, 23, decision * 0.8, 'safe', 5),
+    ];
+  }
   if (mode === 'arc')
     return [
       path(arcPath(boss, 205, -1.15, 2.25), preview, 'accent', 20, 0, '12 10'),
@@ -1424,6 +1488,11 @@ function pointClearsThreat(spec, frame, value, radius = BLUEPRINT_PLAYER_RADIUS)
       (shot) =>
         !shot.active || Math.hypot(value.x - shot.x, value.y - shot.y) > shot.radius + radius,
     );
+  if (mode === 'decoy')
+    return (
+      frame.phase !== 1 ||
+      Math.hypot(value.x - frame.boss.x, value.y - frame.boss.y) > spec.contactRadius + radius
+    );
   if (mode === 'spiral')
     return (
       distanceFromBoss > 52 + radius &&
@@ -1565,6 +1634,12 @@ export function blueprintFrame(id, time) {
   } else if (spec.mode === 'trail') {
     const travel = phase === 0 ? 0 : phase === 1 ? smooth(action) : 1 - returnProgress;
     boss = { x: mix(175, 410, travel), y: mix(260, 610, travel) };
+  } else if (spec.mode === 'decoy') {
+    const split = phase === 0 ? prepare : phase === 1 ? 1 : 1 - returnProgress;
+    boss = {
+      x: mix(startBoss.x, spec.real[0], split),
+      y: mix(startBoss.y, spec.real[1], split),
+    };
   }
   let responseProgress = response;
   if (spec.mode === 'landing')
@@ -1593,6 +1668,7 @@ export function blueprintFrame(id, time) {
     responseProgress = phase === 0 ? 0 : phase === 1 ? smooth((action - 0.15) / 0.77) : 1;
   else if (spec.mode === 'turret-deployment') responseProgress = smooth((t - 0.64) / 1.34);
   else if (spec.mode === 'threat-generator') responseProgress = smooth((t - 0.42) / 1.2);
+  else if (spec.mode === 'decoy') responseProgress = smooth((t - 1.35) / 1.72);
   else if (spec.mode === 'knockback')
     responseProgress = phase === 0 ? 0 : phase === 1 ? smooth(action) : 1;
   else if (spec.mode === 'target-lock')
@@ -1672,6 +1748,14 @@ export function blueprintFrame(id, time) {
   const route = Math.hypot(targetPlayer.x - startPlayer.x, targetPlayer.y - startPlayer.y);
   const stride = pulse(responseProgress) + pulse(returnProgress) * 0.8;
   const bossVisible = spec.mode === 'burrow' && phase === 1 && action < 0.68 ? 0 : 1;
+  const decoy =
+    spec.mode === 'decoy'
+      ? {
+          x: mix(startBoss.x, spec.mirror[0], phase === 0 ? prepare : 1),
+          y: mix(startBoss.y, spec.mirror[1], phase === 0 ? prepare : 1),
+          opacity: phase === 0 ? 0.12 + prepare * 0.53 : phase === 1 ? 0.65 : 0.65 * (1 - recover),
+        }
+      : null;
   const committed = t >= BLUEPRINT_PHASE_ENDS[0];
   const dangerActive =
     spec.mode === 'landing'
@@ -1700,6 +1784,7 @@ export function blueprintFrame(id, time) {
     playerSafe: true,
     boss,
     player,
+    decoy,
     bossVisible,
     bossScale:
       spec.mode === 'phase'
@@ -1742,7 +1827,12 @@ export function blueprintFrame(id, time) {
       lean: stride * 0.45,
       crouch: stride * 0.16,
       dodge: phase === 0 ? pulse(responseProgress) * 0.45 : 0,
-      attack: spec.mode === 'weak-point' && phase === 1 ? pulse(action * 1.5) : 0,
+      attack:
+        spec.mode === 'decoy' && phase === 1
+          ? pulse(clamp((action - 0.52) / 0.3))
+          : spec.mode === 'weak-point' && phase === 1
+            ? pulse(action * 1.5)
+            : 0,
     }),
   };
   frame.primitives = primitivesFor(spec, frame);

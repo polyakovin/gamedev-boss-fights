@@ -211,9 +211,49 @@ test('threat generator releases independent motes and stops after the last fligh
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
 });
 
-test('catalog and builder reuse the 38 promoted rule-specific previews', async ({ page }) => {
+test('decoy keeps only the real Kern solid and clears its mirror on recovery', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.goto('en/mechanics/decoy/');
+  const widget = page.locator('[data-blueprint-demo]');
+  const timeline = widget.locator('[data-blueprint-timeline]');
+  const mirror = widget.locator('[data-blueprint-decoy]');
+  await expect(page.locator('.lesson-title-line h1')).toHaveText('Decoy');
+  await expect(page.locator('.wip-badge, .draft-profile')).toHaveCount(0);
+  await expect(page.locator('.game-example')).toHaveCount(3);
+  await expect(widget).toHaveAttribute('data-blueprint-ready', 'true');
+  await expect(widget).toHaveAttribute('data-blueprint-playing', 'false');
+  await expect(mirror.locator('[data-character-art="kern-decoy"]')).toHaveCount(1);
+  await timeline.evaluate((element) => {
+    element.value = '3000';
+    element.dispatchEvent(new Event('input', { bubbles: true }));
+  });
+  await expect(widget).toHaveAttribute('data-blueprint-outcome', 'safe');
+  await expect(mirror).toHaveAttribute('transform', 'translate(410 425)');
+  await expect(mirror).toHaveAttribute('opacity', '0.65');
+  await expect(widget.locator('[data-blueprint-boss]')).toHaveAttribute(
+    'transform',
+    'translate(190 425) scale(1)',
+  );
+  await expect(widget.locator('[data-blueprint-primitive="5"] circle')).toHaveAttribute(
+    'stroke-dasharray',
+    '20 14',
+  );
+  await expect(widget.locator('[data-blueprint-primitive="6"] path')).toHaveAttribute(
+    'stroke-dasharray',
+    '8 9',
+  );
+  await timeline.evaluate((element) => {
+    element.value = '5900';
+    element.dispatchEvent(new Event('input', { bubbles: true }));
+  });
+  expect(Number(await mirror.getAttribute('opacity'))).toBeLessThan(0.01);
+  await page.setViewportSize({ width: 390, height: 844 });
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+});
+
+test('catalog and builder reuse the 39 promoted rule-specific previews', async ({ page }) => {
   await page.goto('en/');
-  await expect(page.locator('[data-blueprint-preview]')).toHaveCount(38);
+  await expect(page.locator('[data-blueprint-preview]')).toHaveCount(39);
   const catalogLayouts = await page.locator('[data-blueprint-preview]').evaluateAll((previews) =>
     previews.map((preview) => {
       const boss = preview.querySelector('[data-character-art-preview="kern"]');
@@ -237,7 +277,7 @@ test('catalog and builder reuse the 38 promoted rule-specific previews', async (
   expect(new Set(catalogLayouts.map(({ layout }) => layout)).size).toBeGreaterThanOrEqual(18);
 
   await page.goto('en/builder/');
-  await expect(page.locator('[data-blueprint-preview]')).toHaveCount(38);
+  await expect(page.locator('[data-blueprint-preview]')).toHaveCount(39);
   const builderLayouts = await page.locator('[data-blueprint-preview]').evaluateAll((previews) =>
     previews.map((preview) => {
       const boss = preview.querySelector('[data-character-art-preview="kern"]');

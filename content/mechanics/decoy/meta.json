@@ -1,0 +1,28 @@
+{
+  "id": "decoy",
+  "number": 45,
+  "published": true,
+  "sourceLocale": "en",
+  "contentVersion": 1,
+  "animation": "decoy",
+  "lenses": ["telegraphing", "commitment", "counterplay", "player-expression", "progress-clarity"],
+  "related": ["summon", "threat-generator", "fight-phase"],
+  "sources": [
+    {
+      "title": "Game Accessibility Guidelines · Color Is Not Enough",
+      "url": "https://gameaccessibilityguidelines.com/ensure-no-essential-information-is-conveyed-by-a-fixed-colour-alone/"
+    },
+    {
+      "title": "Official Terraria Wiki · Brain of Cthulhu",
+      "url": "https://terraria.wiki.gg/wiki/Brain_of_Cthulhu"
+    },
+    {
+      "title": "Dark Souls Wiki · Pinwheel",
+      "url": "https://darksouls.wikidot.com/pinwheel"
+    },
+    {
+      "title": "Boss Up: Boss Battle Design · GDC",
+      "url": "https://www.gdcvault.com/play/1024921/Boss-Up-Boss-Battle-Design"
+    }
+  ]
+}

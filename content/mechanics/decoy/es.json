@@ -1,0 +1,142 @@
+{
+  "title": "Señuelo",
+  "subtitle": "Una figura falsa del jefe desvía la atención sin heredar las reglas del cuerpo real.",
+  "variant": "Kern separa un reflejo rúnico que se desvanece mientras Tavi identifica al auténtico",
+  "summary": "El jefe presenta un blanco falso convincente; antes de atacar, el jugador debe identificar cuál puede hacer avanzar el combate.",
+  "overview": "El señuelo obliga a elegir objetivo. Kern se divide en un cuerpo sólido y un reflejo rúnico similar. Solo el real tiene una runa de apoyo completa y colisión de contacto; el anillo roto de la copia es una pista constante. Tavi la reconoce, se acerca al cuerpo real y golpea con la espada. La copia se desvanece durante la recuperación.",
+  "learning": "Define presentación, interacción, pista de identidad, tiempo de decisión y retirada del señuelo.",
+  "category": "Objetivos adicionales",
+  "readTime": "5 min",
+  "demo": {
+    "title": "Examina el señuelo",
+    "timeline": "Secuencia del ataque",
+    "step": "Fases del ataque",
+    "phaseNames": ["Anunciar la separación", "Identificar y atacar", "Disolver y recuperarse"],
+    "phaseDescriptions": [
+      "La runa de Kern marca dos posiciones antes de dividirse. El Kern sólido camina a la izquierda y una copia tenue va a la derecha; ninguna aparece por teletransporte.",
+      "Ambas figuras se parecen. El cuerpo real conserva la runa completa y la colisión de contacto. El reflejo tiene un contorno roto, no recibe daño de espada ni choca con el jugador. Tavi avanza hacia el verdadero y ataca.",
+      "El cuerpo falso pierde opacidad y desaparece. Kern se detiene y regresa a su posición inicial; no quedan copias ocultas activas."
+    ],
+    "boss": "Jefe",
+    "player": "Jugador",
+    "danger": "Solo el cuerpo sólido del jefe tiene colisión de contacto",
+    "locked": "Posiciones, pistas de identidad y momento de desaparición fijados",
+    "safe": "Lee el anillo roto antes de gastar un golpe de espada en el blanco falso",
+    "reducedMotion": "Con movimiento reducido se desactiva la reproducción automática. Mueve el control para comparar ambos cuerpos y su retirada.",
+    "diagramDescription": "Kern se separa en un cuerpo sólido a la izquierda y una copia rúnica translúcida a la derecha. La runa completa identifica al real; la copia tiene un anillo roto y no colisiona. Tavi se acerca al verdadero, ataca con la espada y la copia se disuelve."
+  },
+  "steps": [
+    {
+      "title": "¿Qué hace creíble al blanco falso?",
+      "body": "Repite suficiente silueta, posición y ritmo del jefe para crear una decisión. Anuncia la división antes de que aparezcan los blancos; no introduzcas una figura idéntica en un fotograma ilegible."
+    },
+    {
+      "title": "¿Cómo se identifica al verdadero?",
+      "body": "Dale una propiedad observable y constante antes de comprometer el ataque. Refuerza la runa completa frente a la rota con movimiento o respuesta a la interacción; el color no debe ser la única pista."
+    },
+    {
+      "title": "¿Qué hace cada golpe posible?",
+      "body": "Define por separado daño, colisión, fijación de objetivo, confirmación de impacto y gasto de recursos para jefe y señuelo. Muestra el resultado al instante y retira la copia con un temporizador o evento explícito."
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "La respuesta es azarosa",
+      "body": "Sin una pista repetible, acertar es adivinar. Conserva la misma señal en cada repetición o comunica claramente cualquier cambio de regla."
+    },
+    {
+      "title": "El falso consume un ataque caro sin respuesta",
+      "body": "El señuelo puede castigar una decisión precipitada, pero un recurso gastado debe producir un fallo, rotura o revelación inmediata. No ignores la acción en silencio."
+    },
+    {
+      "title": "La copia tiene una colisión invisible",
+      "body": "Un reflejo intangible que daña al tocarlo contradice su aspecto. Si una variante es peligrosa, anuncia y modela esa amenaza aparte, sin copiar la colisión del cuerpo real."
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "Separa identidad y apariencia",
+      "body": "Mantén un identificador estable del cuerpo real y otros para las copias. Deriva de ellos selección, daño, colisión e interfaz. Duplicar el sprite no debe duplicar por accidente la vida del jefe."
+    },
+    {
+      "title": "Reserva tiempo para decidir",
+      "body": "Mide desde la división visible hasta el momento de gastar el golpe. Incluye recorrido, cámara y reconocimiento de la pista; permite comprobarla antes del compromiso."
+    },
+    {
+      "title": "Ofrece pistas redundantes",
+      "body": "Combina runa completa frente a rota, solidez o movimiento y respuesta al impacto. Prueba escala de grises, bajo contraste, pantalla pequeña y movimiento reducido; la identidad no puede depender solo del color."
+    },
+    {
+      "title": "Cierra ambas ramas",
+      "body": "Decide si la copia golpeada se disuelve, se rompe o permanece. Al terminar la fase, retira a la vez imagen, fijación de objetivo y efectos; no dejes un blanco fantasma."
+    }
+  ],
+  "story": {
+    "title": "Qué comunica la mecánica",
+    "body": "Kern presiona una runa contra el suelo y su reflejo sale a su lado. El original conserva el apoyo; el anillo de la copia está roto. Cuando Tavi elige al verdadero, el contorno prestado se deshace."
+  },
+  "adaptation": {
+    "title": "Adáptala a los verbos del jugador",
+    "body": "Bastan el movimiento normal y la espada de Tavi: ver la pista, acercarse al real y dar un golpe. Si hay fijación de objetivo, proyectiles o ataques de área, decide si evitan la prueba de identidad y reajusta el tiempo."
+  },
+  "distinction": {
+    "title": "No la confundas con otras mecánicas",
+    "body": "El señuelo desvía la elección de objetivo. Una invocación añade un enemigo independiente; una copia que causa daño pleno es otro atacante; un cambio de fase modifica reglas más amplias. Aquí el reflejo es una trampa intangible de selección, no un segundo jefe."
+  },
+  "lensNotes": [
+    {
+      "id": "telegraphing",
+      "body": "La separación y las marcas de destino permiten ver que aparecerán dos figuras similares."
+    },
+    {
+      "id": "commitment",
+      "body": "Las posiciones real y falsa quedan fijas durante el ciclo; no intercambian identidad a escondidas tras la elección."
+    },
+    {
+      "id": "counterplay",
+      "body": "La runa completa frente al anillo roto da una diferencia útil antes del espadazo."
+    },
+    {
+      "id": "player-expression",
+      "body": "El jugador puede comprobar la pista o decidir antes si confía en su lectura; la espada hace visible la elección."
+    },
+    {
+      "id": "progress-clarity",
+      "body": "Solo golpear al real reduce su vida; atacar la copia produce otra respuesta inmediata."
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "Terraria",
+      "boss": "Brain of Cthulhu",
+      "screenshot": "https://i.ytimg.com/vi/mUyWmLTb2KM/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=mUyWmLTb2KM&t=80s",
+      "body": "En la segunda fase de Expert Mode, tres reflejos imitan los movimientos del verdadero Brain of Cthulhu y se vuelven más opacos al perder vida. Es una elección entre varias copias; el diagrama usa una sola con una runa rota explícita.",
+      "video": "https://www.youtube.com/watch?v=mUyWmLTb2KM&t=80s",
+      "videoDurationSeconds": 116
+    },
+    {
+      "dimension": "3D",
+      "game": "Demon's Souls",
+      "boss": "Fool's Idol",
+      "screenshot": "https://img.gamewith.jp/img/002bcad8af183f613b651b21513e9f71.jpg",
+      "screenshotSource": "https://gamewith.jp/demons-souls/article/show/238077",
+      "body": "Fool's Idol crea dobles por la capilla. El auténtico se distingue por diferencias en sus ataques y en la respuesta al apuntar. A diferencia del reflejo inofensivo de Kern, los dobles también lanzan hechizos y su peligro debe presupuestarse aparte.",
+      "video": "https://www.youtube.com/watch?v=bPxIww64zus&t=105s",
+      "videoDurationSeconds": 130
+    },
+    {
+      "dimension": "3D",
+      "game": "Dark Souls",
+      "boss": "Pinwheel",
+      "screenshot": "https://i.ytimg.com/vi/Wvood4TN390/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=Wvood4TN390&t=125s",
+      "body": "Pinwheel crea copias casi idénticas mientras el original sigue siendo el objetivo cuya vida importa. Una copia desaparece con un golpe, pero antes puede atacar. A diferencia del reflejo inofensivo de Kern, identificar y eliminar señuelos ocurre bajo presión simultánea.",
+      "video": "https://www.youtube.com/watch?v=Wvood4TN390&t=125s",
+      "videoDurationSeconds": 176
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

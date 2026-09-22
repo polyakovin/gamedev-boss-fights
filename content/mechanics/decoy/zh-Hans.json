@@ -1,0 +1,142 @@
+{
+  "title": "诱饵",
+  "subtitle": "伪装成首领的目标转移注意力，却不继承真身的规则。",
+  "variant": "Kern 分出逐渐消散的符文镜像，Tavi 辨认真身",
+  "summary": "首领制造可信的假目标，玩家须在出手前认出能够推进战斗的真身。",
+  "overview": "诱饵考验目标选择，而非单纯增加伤害来源。Kern 分成实体与符文镜像，两者都有相同轮廓，但只有真身脚下的符文完整且具有接触碰撞。镜像断裂的圆环与闪烁始终是可读线索。Tavi 等分身稳定后接近真身并挥剑，随后镜像消散，Kern 进入恢复。",
+  "learning": "一起定义假目标的外观、交互规则、身份线索、决策时间和清理方式。",
+  "category": "额外目标",
+  "readTime": "5 分钟",
+  "demo": {
+    "title": "观察诱饵",
+    "timeline": "攻击时间轴",
+    "step": "攻击阶段",
+    "phaseNames": ["预告分身", "辨认并出手", "消散与恢复"],
+    "phaseDescriptions": [
+      "Kern 的符文先标出两个位置。实体向左行走，暗淡的镜像向右移动；两者都不会瞬间传送到位。",
+      "两者都像 Kern。真身保有完整的落地符文和接触碰撞；镜像轮廓断裂，不受剑伤也不会撞到玩家。Tavi 靠近真身并挥剑。",
+      "假身逐渐透明并消失。真身停顿后返回起点；不会留下隐藏的活跃镜像。"
+    ],
+    "boss": "首领",
+    "player": "玩家",
+    "danger": "只有实体首领有接触碰撞",
+    "locked": "真假位置、身份线索及消散时间均已确定",
+    "safe": "在把剑击浪费于假目标前，辨认断裂圆环",
+    "reducedMotion": "减少动态效果时自动播放关闭。拖动时间轴对比两具身体及清理过程。",
+    "diagramDescription": "Kern 分成左侧实体和右侧半透明符文镜像。完整落地符文标识真身；镜像有断裂圆环且没有碰撞。Tavi 走近真身挥剑，镜像随后消散。"
+  },
+  "steps": [
+    {
+      "title": "假目标为何可信？",
+      "body": "在轮廓、位置和节奏上保留足够相似性，让玩家需要选择。先预告分身，再允许选中目标；不要在无法阅读的单帧中突然添出相同身体。"
+    },
+    {
+      "title": "如何辨认真身？",
+      "body": "在玩家必须攻击前，提供稳定可观察的特征。用动作或交互反馈强化完整与断裂符文的区别；不能只靠颜色传达答案。"
+    },
+    {
+      "title": "击中各目标会怎样？",
+      "body": "分别定义真身与诱饵的伤害、碰撞、锁定、命中反馈和资源消耗。立即显示结果，并按明确计时或事件清除假身。"
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "答案只能猜",
+      "body": "若没有可重复的线索，正确选择便成为随机猜测。每次重复保留同一特征；若规则改变，先明确告知。"
+    },
+    {
+      "title": "假身悄然吞掉昂贵攻击",
+      "body": "诱饵可以惩罚仓促决定，但消耗资源时必须立即给出独特的未命中、破碎或揭示反馈。不要无声忽略输入。"
+    },
+    {
+      "title": "镜像有看不见的碰撞",
+      "body": "看似无形的镜像若接触伤人，就违反视觉承诺。危险变体应另行预告并建模，不能直接套用真身碰撞。"
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "将身份与外观分开",
+      "body": "保持稳定的真身 ID 和镜像 ID，再由身份决定锁定、伤害、碰撞与 UI。复制绘图不应意外复制首领血量。"
+    },
+    {
+      "title": "留出决策窗口",
+      "body": "测量从分身显现到 Tavi 必须挥剑的时间，计入移动、镜头与辨识。玩家应能在承诺攻击前核对线索。"
+    },
+    {
+      "title": "提供多重线索",
+      "body": "结合完整或断裂符文、实体感或动作，以及受击反馈。在灰度、低对比度、小屏幕和减少动态效果下测试，身份不能只靠色彩。"
+    },
+    {
+      "title": "清楚结束两条分支",
+      "body": "确定被击中的镜像会消失、碎裂还是保留。阶段结束时同步移除画面、可锁定状态和相关效果，别留下幽灵目标。"
+    }
+  ],
+  "story": {
+    "title": "机制传达什么",
+    "body": "Kern 把符文压入地面，镜像从旁走出。真身与地面保持连接，复制体圆环明显断开。Tavi 选中真身时，借来的轮廓开始解体。"
+  },
+  "adaptation": {
+    "title": "适配玩家动作",
+    "body": "Tavi 用普通移动和剑即可：识别线索、接近真身、挥剑一次。若游戏有锁定、远程弹体或范围攻击，要决定它们是否绕过身份判断，再调整决策窗口。"
+  },
+  "distinction": {
+    "title": "与其他机制区分",
+    "body": "诱饵主要误导目标选择。召唤带来独立敌人；能造成完整伤害的复制体是额外攻击者；阶段切换改变更广泛规则。这里的镜像无形，是选目标的陷阱，不是第二个首领。"
+  },
+  "lensNotes": [
+    {
+      "id": "telegraphing",
+      "body": "分裂过程与落点标记让玩家提前看到两具相似身体。"
+    },
+    {
+      "id": "commitment",
+      "body": "本轮真身与镜像位置固定；Tavi 选择后身份不会暗中互换。"
+    },
+    {
+      "id": "counterplay",
+      "body": "完整符文与断裂圆环在挥剑前提供可操作的区别。"
+    },
+    {
+      "id": "player-expression",
+      "body": "玩家可多花时间核对，或在有把握时提前出手；剑击使选择可见。"
+    },
+    {
+      "id": "progress-clarity",
+      "body": "只有击中真身才减少首领生命；攻击镜像立即获得不同反馈。"
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "Terraria",
+      "boss": "Brain of Cthulhu",
+      "screenshot": "https://i.ytimg.com/vi/mUyWmLTb2KM/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=mUyWmLTb2KM&t=80s",
+      "body": "Expert Mode 第二阶段，三个幻象模仿真正的 Brain of Cthulhu；首领失血后它们更不透明。这是多重目标选择，而示意图只有一具带明显断裂符文的固定镜像。",
+      "video": "https://www.youtube.com/watch?v=mUyWmLTb2KM&t=80s",
+      "videoDurationSeconds": 116
+    },
+    {
+      "dimension": "3D",
+      "game": "Demon's Souls",
+      "boss": "Fool's Idol",
+      "screenshot": "https://img.gamewith.jp/img/002bcad8af183f613b651b21513e9f71.jpg",
+      "screenshotSource": "https://gamewith.jp/demons-souls/article/show/238077",
+      "body": "Fool's Idol 在礼拜堂各处制造相似分身。玩家可从攻击差异与瞄准反馈辨认真身。不同于 Kern 无害的镜像，这些分身也施法，因此须单独计算它们的危险。",
+      "video": "https://www.youtube.com/watch?v=bPxIww64zus&t=105s",
+      "videoDurationSeconds": 130
+    },
+    {
+      "dimension": "3D",
+      "game": "Dark Souls",
+      "boss": "Pinwheel",
+      "screenshot": "https://i.ytimg.com/vi/Wvood4TN390/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=Wvood4TN390&t=125s",
+      "body": "Pinwheel 会召出几乎相同的分身，而本体仍是影响首领生命值的目标。分身受一击便消失，但此前也能施法。与 Kern 无害的镜像不同，这里辨认目标与清理分身同时承受攻击压力。",
+      "video": "https://www.youtube.com/watch?v=Wvood4TN390&t=125s",
+      "videoDurationSeconds": 176
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

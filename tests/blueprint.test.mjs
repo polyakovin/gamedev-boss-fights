@@ -13,8 +13,8 @@ import {
   renderBlueprintThumbnail,
 } from '../lib/blueprint-view.mjs';
 
-test('all 38 promoted lesson animations have distinct rule modes and complete moving frames', () => {
-  assert.equal(BLUEPRINT_MECHANIC_IDS.length, 38);
+test('all 39 promoted lesson animations have distinct rule modes and complete moving frames', () => {
+  assert.equal(BLUEPRINT_MECHANIC_IDS.length, 39);
   const modes = new Set();
   for (const id of BLUEPRINT_MECHANIC_IDS) {
     for (let time = 0; time <= BLUEPRINT_DURATION; time += 0.1) {
@@ -35,7 +35,7 @@ test('all 38 promoted lesson animations have distinct rule modes and complete mo
           assert.ok(Number.isFinite(value), `${id} has an invalid ${primitive.type}`);
     }
   }
-  assert.equal(modes.size, 38);
+  assert.equal(modes.size, 39);
 });
 
 test('every blueprint exposes signal, committed action, and recovery without player teleports', () => {
@@ -73,6 +73,7 @@ test('every promoted animation derives safety from its own active geometry', () 
     pull: { x: 280, y: 310 },
     'turret-deployment': { x: 430, y: 700 },
     'threat-generator': null,
+    decoy: { x: 190, y: 425 },
     'wide-swing': { x: 280, y: 515 },
     lunge: { x: 300, y: 440 },
     grab: { x: 390, y: 485 },
@@ -586,6 +587,46 @@ test('threat generator announces a fixed source, emits separate motes, and ends 
     assert.equal(blueprintFrame(id, time).playerSafe, true, `player clips a mote at ${time}`);
   assert.deepEqual(blueprintFrame(id, 3), blueprintFrame(id, 3));
   assert.deepEqual(blueprintFrame(id, 0).player, blueprintFrame(id, 6).player);
+});
+
+test('decoy separates identity from contact, lets Tavi choose the real body, and fades cleanly', () => {
+  const id = 'decoy';
+  const signal = blueprintFrame(id, 1.59);
+  const action = blueprintFrame(id, 3);
+  const recovery = blueprintFrame(id, 5.9);
+  assert.equal(signal.dangerActive, false);
+  assert.ok(signal.decoy.x > signal.boss.x + 200);
+  assert.equal(action.boss.x, 190);
+  assert.equal(action.boss.y, 425);
+  assert.equal(action.decoy.x, 410);
+  assert.equal(action.decoy.y, 425);
+  assert.equal(action.decoy.opacity, 0.65);
+  assert.equal(action.primitives[4].dash, '');
+  assert.equal(action.primitives[5].dash, '20 14');
+  assert.equal(action.primitives[6].dash, '8 9');
+  assert.equal(blueprintPointSafe(id, 3, action.boss), false);
+  assert.equal(blueprintPointSafe(id, 3, action.decoy), true);
+  assert.equal(action.playerSafe, true);
+  assert.ok(recovery.decoy.opacity < 0.01);
+  assert.equal(recovery.dangerActive, false);
+  assert.deepEqual(blueprintFrame(id, 0).player, blueprintFrame(id, 6).player);
+  const page = renderBlueprint(
+    {
+      title: 'Decoy',
+      timeline: 'Timeline',
+      phaseNames: ['Split', 'Choose', 'Recover'],
+      phaseDescriptions: ['Split.', 'Choose.', 'Recover.'],
+      boss: 'Boss',
+      player: 'Player',
+      reducedMotion: 'Scrub the timeline.',
+      diagramDescription: 'The boss creates a decoy.',
+    },
+    id,
+  );
+  const preview = renderBlueprintThumbnail(id, 'test-decoy');
+  assert.match(page, /data-blueprint-decoy/);
+  assert.match(page, /data-character-art="kern-decoy"/);
+  assert.match(preview, /data-character-art-preview="kern-decoy"/);
 });
 
 test('blueprint pages and previews reuse Tavi and Kern with accessible localized data', () => {

@@ -1,0 +1,142 @@
+{
+  "title": "Decoy",
+  "subtitle": "A false boss-shaped target redirects attention without inheriting the real boss's rules.",
+  "variant": "Kern splits off a fading rune mirror while Tavi tests the true target",
+  "summary": "The boss presents a convincing false target, so the player must identify which body can advance the fight before committing an attack.",
+  "overview": "A decoy makes the player choose a target. Kern splits into a solid body and a similar rune mirror. Only the real body has a complete grounding rune and contact hitbox; the mirror's broken ring is a stable tell. Tavi reads it, approaches the real body, and swings the sword. The mirror fades during recovery.",
+  "learning": "Specify the false target's presentation, interaction rules, readable identity cue, decision window, and cleanup.",
+  "category": "Additional targets",
+  "readTime": "5 min",
+  "demo": {
+    "title": "Inspect the decoy",
+    "timeline": "Attack timeline",
+    "step": "Attack phases",
+    "phaseNames": ["Announce the split", "Identify and commit", "Dissolve and recover"],
+    "phaseDescriptions": [
+      "Kern's rune divides into two announced positions. One solid Kern walks left; a dim copy moves right. Neither branch teleports into place.",
+      "Both figures resemble Kern. The real body keeps a continuous grounding rune and a contact hitbox. The mirror has a broken outline, cannot take sword damage, and has no contact hitbox. Tavi moves toward the solid target and swings.",
+      "The false body loses opacity and disappears. The real Kern pauses, then returns to the starting pose; no hidden decoy remains active."
+    ],
+    "boss": "Boss",
+    "player": "Player",
+    "danger": "Only the solid boss body has contact collision",
+    "locked": "The real and false positions, identity cues, and fade time are fixed",
+    "safe": "Read the broken ring before spending a sword attack on the false target",
+    "reducedMotion": "Autoplay is disabled by reduced-motion settings. Scrub to compare the two bodies and their cleanup.",
+    "diagramDescription": "Kern separates into a solid body on the left and a translucent rune copy on the right. A complete grounding rune identifies the real body; the copy has a broken ring and no collision. Tavi moves to the real Kern, swings the sword, and the copy dissolves."
+  },
+  "steps": [
+    {
+      "title": "What makes the false target believable?",
+      "body": "Match enough of the boss's silhouette, placement, and timing to invite a choice. Announce the split before either copy becomes a target; do not introduce an identical body in a single unreadable frame."
+    },
+    {
+      "title": "How can the real target be identified?",
+      "body": "Give the real body a consistent observable property before the attack commitment. Pair the solid versus broken grounding rune with motion or interaction feedback; color alone cannot carry the answer."
+    },
+    {
+      "title": "What does each attempted hit do?",
+      "body": "Define damage, collision, lock-on, hit confirmation, and resource cost separately for the real boss and the decoy. Show the result immediately and remove the false body on an explicit timer or trigger."
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "The answer is random",
+      "body": "If no repeatable cue distinguishes the bodies, choosing correctly is a guess. Keep the same tell across repetitions or clearly signal when the rule changes."
+    },
+    {
+      "title": "A fake target consumes an expensive attack without feedback",
+      "body": "A decoy can punish commitment, but a spent resource must produce an immediate distinct miss, break, or reveal. Do not silently ignore the input."
+    },
+    {
+      "title": "The decoy shares an invisible hitbox",
+      "body": "An intangible copy that still damages on contact contradicts its presentation. If a variant is dangerous, announce and model that threat separately instead of borrowing the real body's collision."
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "Separate identity from appearance",
+      "body": "Track a stable realBodyId and decoy IDs, then derive targeting, damage, collision, and UI from those identities. Rendering a duplicate sprite must not duplicate the real health pool by accident."
+    },
+    {
+      "title": "Budget the decision window",
+      "body": "Measure time from visible split to the point where Tavi must spend a sword attack. Include travel, camera framing, and cue recognition; let the player verify the tell before commitment."
+    },
+    {
+      "title": "Provide redundant tells",
+      "body": "Use the full versus broken rune, solidity or motion, and hit feedback together. Test grayscale, low contrast, a small screen, and reduced motion so target identity survives without a color-only cue."
+    },
+    {
+      "title": "Resolve both branches cleanly",
+      "body": "Specify whether a struck decoy vanishes, shatters, or stays. When the phase ends, remove its visual, targetability, and any associated effects together; never leave a phantom lock-on target."
+    }
+  ],
+  "story": {
+    "title": "What the mechanic communicates",
+    "body": "Kern presses a rune into the floor, and its reflection steps out beside him. The original remains grounded; the copy's ring is visibly fractured. When Tavi commits to the real body, the borrowed outline unravels."
+  },
+  "adaptation": {
+    "title": "Adapt it to the player verbs",
+    "body": "Tavi's ordinary movement and sword are sufficient: observe the tell, reach the real body, and commit one swing. If the game adds lock-on, projectiles, or area attacks, decide whether these bypass the identification test and retune the window accordingly."
+  },
+  "distinction": {
+    "title": "Keep the mechanic distinct",
+    "body": "A decoy's main job is to redirect targeting. A summon adds an independently meaningful enemy; a clone that deals full damage is an additional attacker; a phase swap changes the boss's broader rules. Here the false body is an intangible target trap, not a second boss."
+  },
+  "lensNotes": [
+    {
+      "id": "telegraphing",
+      "body": "The split and destination marks give the player time to see that two similar figures will appear."
+    },
+    {
+      "id": "commitment",
+      "body": "The solid body and mirror positions stay fixed for this cycle; identity does not silently swap after Tavi chooses."
+    },
+    {
+      "id": "counterplay",
+      "body": "A continuous rune versus broken ring provides an actionable distinction before the sword swing."
+    },
+    {
+      "id": "player-expression",
+      "body": "The player can spend time verifying the tell or commit earlier when confident; the sword makes the choice visible."
+    },
+    {
+      "id": "progress-clarity",
+      "body": "Only a hit on the real body advances the boss's health, while a decoy hit gives separate immediate feedback."
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "Terraria",
+      "boss": "Brain of Cthulhu",
+      "screenshot": "https://i.ytimg.com/vi/mUyWmLTb2KM/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=mUyWmLTb2KM&t=80s",
+      "body": "In Expert Mode's second phase, three mirror images track the real Brain. They grow more opaque as its health falls. This is a multi-copy targeting test, whereas the diagram uses one fixed mirror with an explicit broken-rune tell.",
+      "video": "https://www.youtube.com/watch?v=mUyWmLTb2KM&t=80s",
+      "videoDurationSeconds": 116
+    },
+    {
+      "dimension": "3D",
+      "game": "Demon's Souls",
+      "boss": "Fool's Idol",
+      "screenshot": "https://img.gamewith.jp/img/002bcad8af183f613b651b21513e9f71.jpg",
+      "screenshotSource": "https://gamewith.jp/demons-souls/article/show/238077",
+      "body": "Fool's Idol creates lookalikes across the chapel. The player can distinguish the real idol using differences in attack and targeting feedback. Unlike Kern's harmless rune reflection, these copies also cast spells, so their danger must be budgeted separately.",
+      "video": "https://www.youtube.com/watch?v=bPxIww64zus&t=105s",
+      "videoDurationSeconds": 130
+    },
+    {
+      "dimension": "3D",
+      "game": "Dark Souls",
+      "boss": "Pinwheel",
+      "screenshot": "https://i.ytimg.com/vi/Wvood4TN390/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=Wvood4TN390&t=125s",
+      "body": "Pinwheel conjures nearly identical copies while the original remains the health-bearing target. A copy vanishes after one hit but can cast attacks before then. This turns identification and decoy cleanup into a simultaneous pressure problem, unlike Kern's harmless mirror.",
+      "video": "https://www.youtube.com/watch?v=Wvood4TN390&t=125s",
+      "videoDurationSeconds": 176
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}
