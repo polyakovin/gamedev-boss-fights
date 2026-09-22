@@ -178,9 +178,42 @@ test('turret deployment is seekable, shows its fixed beam, and clears after firi
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
 });
 
-test('catalog and builder reuse the 37 promoted rule-specific previews', async ({ page }) => {
+test('threat generator releases independent motes and stops after the last flight', async ({
+  page,
+}) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.goto('en/mechanics/threat-generator/');
+  const widget = page.locator('[data-blueprint-demo]');
+  const timeline = widget.locator('[data-blueprint-timeline]');
+  const source = widget.locator('[data-blueprint-primitive="3"] circle');
+  const secondMote = widget.locator('[data-blueprint-primitive="10"] circle');
+  await expect(page.locator('.wip-badge, .draft-profile')).toHaveCount(0);
+  await expect(page.locator('.game-example')).toHaveCount(3);
+  await expect(widget).toHaveAttribute('data-blueprint-ready', 'true');
+  await expect(widget).toHaveAttribute('data-blueprint-playing', 'false');
+  await timeline.evaluate((element) => {
+    element.value = '3000';
+    element.dispatchEvent(new Event('input', { bubbles: true }));
+  });
+  await expect(widget).toHaveAttribute('data-blueprint-outcome', 'safe');
+  await expect(widget.locator('[data-blueprint-phase-name]')).toHaveText(
+    'Release repeated threats',
+  );
+  await expect(source).toHaveAttribute('cx', '405');
+  await expect(source).toHaveAttribute('cy', '455');
+  await expect(secondMote).toHaveAttribute('opacity', '0.96');
+  await timeline.evaluate((element) => {
+    element.value = '5200';
+    element.dispatchEvent(new Event('input', { bubbles: true }));
+  });
+  await expect(secondMote).toHaveAttribute('opacity', '0');
+  await page.setViewportSize({ width: 390, height: 844 });
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+});
+
+test('catalog and builder reuse the 38 promoted rule-specific previews', async ({ page }) => {
   await page.goto('en/');
-  await expect(page.locator('[data-blueprint-preview]')).toHaveCount(37);
+  await expect(page.locator('[data-blueprint-preview]')).toHaveCount(38);
   const catalogLayouts = await page.locator('[data-blueprint-preview]').evaluateAll((previews) =>
     previews.map((preview) => {
       const boss = preview.querySelector('[data-character-art-preview="kern"]');
@@ -204,7 +237,7 @@ test('catalog and builder reuse the 37 promoted rule-specific previews', async (
   expect(new Set(catalogLayouts.map(({ layout }) => layout)).size).toBeGreaterThanOrEqual(18);
 
   await page.goto('en/builder/');
-  await expect(page.locator('[data-blueprint-preview]')).toHaveCount(37);
+  await expect(page.locator('[data-blueprint-preview]')).toHaveCount(38);
   const builderLayouts = await page.locator('[data-blueprint-preview]').evaluateAll((previews) =>
     previews.map((preview) => {
       const boss = preview.querySelector('[data-character-art-preview="kern"]');

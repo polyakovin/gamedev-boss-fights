@@ -1,0 +1,142 @@
+{
+  "title": "威胁生成器",
+  "subtitle": "持续存在的源头以清晰节奏制造新危险。",
+  "variant": "Kern 放置一个符文节点，依次释放三枚独立光弹",
+  "summary": "首领制造一个源头，在循环结束或源头被移除前反复产生独立威胁。",
+  "overview": "威胁生成器是持续制造新危险的源头，而不是一次持续生效的攻击。Kern 放置符文节点；它明显蓄能后按固定间隔释放独立光弹。Tavi 靠普通移动离开弹道，节点在 Kern 恢复前停止工作。释放节奏、同时存在的物体上限和关闭时机决定压力是否清晰可读。",
+  "learning": "将生成器的位置、释放时间表、同时存在的威胁上限、安全路线和关闭规则设计成一个整体。",
+  "category": "额外目标",
+  "readTime": "5 分钟",
+  "demo": {
+    "title": "观察威胁生成器",
+    "timeline": "攻击时间轴",
+    "step": "攻击阶段",
+    "phaseNames": ["放置并蓄能", "连续释放威胁", "停止并恢复"],
+    "phaseDescriptions": [
+      "Kern 将符文种子投向可见的底座。虚线预告三条可能弹道，但不会造成伤害。Tavi 开始向空旷一侧移动。",
+      "节点按固定节奏释放三枚不同的光弹。每枚光弹仅在可见且飞行时危险；首次释放前，Tavi 的整个身体已离开弹道。",
+      "最后一枚光弹飞离场地，节点熄灭，Kern 仍处于恢复阶段。关闭后不会继续产生不可见的攻击。"
+    ],
+    "boss": "首领",
+    "player": "玩家",
+    "danger": "只有可见的飞行光弹具有伤害判定",
+    "locked": "底座、释放时间、弹道和关闭时机均已确定",
+    "safe": "让玩家整个身体离开每条弹道",
+    "reducedMotion": "启用减少动态效果时会关闭自动播放。拖动时间轴查看每次释放与关闭。",
+    "diagramDescription": "Kern 在右侧放置符文节点。蓄能后，它按间隔沿预告的路径释放三枚独立光弹。Tavi 在首枚出现前向左移动，直到最后一枚离场都保持安全；随后节点熄灭。"
+  },
+  "steps": [
+    {
+      "title": "首次释放前能识别源头吗？",
+      "body": "展示节点落点、持续存在的形态、蓄能过程及可能覆盖的路径。放置标记不是伤害判定，要与飞行光弹区分。"
+    },
+    {
+      "title": "释放节奏留下可到达的路线吗？",
+      "body": "从最不利的合法起点测量普通移动到所有弹道之外的距离，计入玩家完整半径。检查首发以及之后可能重叠的全部光弹。"
+    },
+    {
+      "title": "什么会停止生成并清理场地？",
+      "body": "设定有限次数或寿命、同时存在的威胁上限，以及超时、被破坏或阶段切换时的清理规则。可见光弹消失时同步移除判定。"
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "源头未经预告就开火",
+      "body": "新物体与新弹体在同一帧出现，玩家来不及理解两者关系。将放置与蓄能分为清楚的动作。"
+    },
+    {
+      "title": "生成器堵住所有出口",
+      "body": "重复一次公平的射击也可能造成不公平的重叠。模拟最大存活数量，逐次检查整个人物的逃生路径。"
+    },
+    {
+      "title": "危险在可见原因消失后仍存在",
+      "body": "节点消失却继续生成，或已淡出的光弹仍碰撞，都会破坏视觉规则。渲染、碰撞和清理应由同一状态驱动。"
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "分别建模源头和产物",
+      "body": "记录节点底座、启动延迟、间隔、次数、寿命及可选生命值。每个产物都有独立起点、速度、半径和失效时间；不要仅凭节点图形推断伤害。"
+    },
+    {
+      "title": "限制同时存在的威胁",
+      "body": "根据间隔与飞行时间计算可能共存的光弹数量，并设上限。检查其扫过的圆盘是否封死普通路线，包括首领下一次攻击期间的移动。"
+    },
+    {
+      "title": "明确取消规则",
+      "body": "本示例在三次释放后让源头停止，已经飞出的光弹完成轨迹。若玩家能破坏源头，须决定在途光弹保留、消失还是改道，并明确传达。"
+    },
+    {
+      "title": "每次只提高一项预算",
+      "body": "增加次数、缩短间隔或改变路线时，仍要让新节奏可学习。移动或自主瞄准的源头需要新的提示和净空测试。"
+    }
+  ],
+  "story": {
+    "title": "机制传达什么",
+    "body": "Kern 把一块小符文石固定在场地里。它每次发射前发光，依次射出三道火花，然后熄灭；之后的安静时间属于 Kern 的恢复。"
+  },
+  "adaptation": {
+    "title": "适配玩家动作",
+    "body": "普通移动足以离开图中的弹道。剑击也可作为破坏可接近节点的可选方式，但要另测接近时间、攻击距离、源头生命值以及在途光弹如何处理；此处不依赖该能力。"
+  },
+  "distinction": {
+    "title": "区分相近机制",
+    "body": "生成器的核心是反复创造独立威胁。炮塔的重点是固定武器的射击方向；召唤带来新的战斗单位；持续危险保持同一片活跃区域，而非不断出现新物体。"
+  },
+  "lensNotes": [
+    {
+      "id": "telegraphing",
+      "body": "底座、节点蓄能和虚线在首枚光弹危险之前预告源头及可能路径。"
+    },
+    {
+      "id": "commitment",
+      "body": "位置、三次释放时间与弹道在本轮固定，节点不会暗中重新瞄准后续光弹。"
+    },
+    {
+      "id": "threat-geometry",
+      "body": "碰撞属于每枚可见光弹移动时扫过的圆盘，不属于虚线或节点装饰环。"
+    },
+    {
+      "id": "counterplay",
+      "body": "Tavi 可在首次释放前靠普通移动让整个碰撞体离开弹道，无须冲刺或无敌。"
+    },
+    {
+      "id": "difficulty-rhythm",
+      "body": "蓄能、间隔、飞行时间、同时存在上限、释放次数和清理分别控制压力。"
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "Hollow Knight",
+      "boss": "Flukemarm",
+      "screenshot": "https://i.ytimg.com/vi/6BufoYXDODE/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=6BufoYXDODE&t=18s",
+      "body": "Flukemarm 固定在原地，反复放出 Flukefeys。此处源头是首领身体，而非放置的节点；持续生成和同时存在的幼体上限让生成节奏成为关键设计量。",
+      "video": "https://www.youtube.com/watch?v=6BufoYXDODE&t=18s",
+      "videoDurationSeconds": 73
+    },
+    {
+      "dimension": "2D",
+      "game": "OTXO",
+      "boss": "The Legionary",
+      "screenshot": "https://i.ytimg.com/vi/s0lrozjZVmE/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=s0lrozjZVmE&t=31s",
+      "body": "The Legionary 的长矛插在场地墙上，一段时间内成为额外射击源。可比较其重复输出；与图中分离的光弹不同，它更像一件固定武器。",
+      "video": "https://www.youtube.com/watch?v=s0lrozjZVmE&t=31s",
+      "videoDurationSeconds": 125
+    },
+    {
+      "dimension": "3D",
+      "game": "Remnant II",
+      "boss": "The Nightweaver",
+      "screenshot": "https://gdm-universal-media.b-cdn.net/gfinityesports/5ade1e230a5f41b911b799b7b278cf5edc841399-1640x942.png?width=1400",
+      "screenshotSource": "https://www.gfinityesports.com/article/remnant-2-bosses",
+      "body": "The Nightweaver 停下来放出一群蜘蛛状随从。产生威胁时，暴露的心脏使源头可被攻击。这里的源头是首领身体，而不是 Kern 放置的符文，但压力同样来自源头随时间产生的单位。",
+      "video": "https://www.youtube.com/watch?v=Yp7wyKol4xY&t=48s",
+      "videoDurationSeconds": 233
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

@@ -1,0 +1,142 @@
+{
+  "title": "Generador de amenazas",
+  "subtitle": "Una fuente persistente crea nuevos peligros con una cadencia legible.",
+  "variant": "Kern instala un nodo rúnico que libera tres motas distintas",
+  "summary": "El jefe crea una fuente que emite amenazas independientes varias veces hasta que termina el ciclo o se elimina la fuente.",
+  "overview": "Un generador crea peligros separados repetidamente en vez de mantener un solo ataque. Kern coloca un nodo rúnico que se carga a la vista y libera tres motas a intervalos fijos. Tavi sale de sus rutas con movimiento normal. Limitar las motas simultáneas y mostrar el apagado mantiene legible la presión y deja una recuperación tras el último vuelo.",
+  "learning": "Diseña la posición, los tiempos de emisión, el límite de amenazas activas, la ruta segura y el apagado como una sola regla.",
+  "category": "Objetivos adicionales",
+  "readTime": "5 min",
+  "demo": {
+    "title": "Examina el generador de amenazas",
+    "timeline": "Cronología del ataque",
+    "step": "Fases del ataque",
+    "phaseNames": ["Colocar y cargar", "Liberar amenazas sucesivas", "Detenerse y recuperarse"],
+    "phaseDescriptions": [
+      "Kern lanza una semilla rúnica a un soporte visible. Las líneas discontinuas anticipan tres trayectorias posibles, pero no causan daño. Tavi empieza a moverse hacia el lado libre.",
+      "El nodo instalado libera tres motas distintas con un ritmo fijo. Cada una solo es peligrosa mientras vuela y es visible; todo el cuerpo de Tavi despeja las rutas antes de la primera emisión.",
+      "La última mota sale de la arena, el nodo se apaga y Kern permanece en recuperación. No hay emisiones invisibles tras el apagado."
+    ],
+    "boss": "Jefe",
+    "player": "Jugador",
+    "danger": "Solo cada mota visible en vuelo tiene colisión",
+    "locked": "Posición, tiempos, trayectorias y apagado quedan fijados",
+    "safe": "Saca todo el cuerpo del jugador de cada trayectoria",
+    "reducedMotion": "La reproducción automática se desactiva al reducir el movimiento. Mueve el control temporal para ver cada emisión y el apagado.",
+    "diagramDescription": "Kern instala un nodo rúnico a la derecha. Tras cargarse libera tres motas separadas a intervalos por rutas anunciadas. Tavi se mueve a la izquierda antes de la primera y permanece a salvo hasta que sale la última; entonces el nodo se apaga."
+  },
+  "steps": [
+    {
+      "title": "¿Se reconoce la fuente antes de la primera emisión?",
+      "body": "Muestra dónde cae el nodo, que permanece activo, su carga y las rutas que puede ocupar. La marca de colocación no daña: distínguela de las motas en vuelo."
+    },
+    {
+      "title": "¿Deja la cadencia una ruta alcanzable?",
+      "body": "Mide el desplazamiento normal desde la peor posición inicial válida hasta un pasillo libre de todas las rutas, incluido el radio completo del jugador. Comprueba la primera emisión y todas las motas posteriores que coincidan."
+    },
+    {
+      "title": "¿Qué detiene la producción y limpia la arena?",
+      "body": "Define un número finito de emisiones o una duración, un máximo de amenazas simultáneas y la limpieza por tiempo, destrucción o cambio de fase. Retira las colisiones al desaparecer las motas visibles."
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "La fuente dispara sin aviso",
+      "body": "Aparecen un objeto y un proyectil en el mismo fotograma, sin tiempo para entender su relación. Separa la colocación y la carga."
+    },
+    {
+      "title": "El generador cierra todas las salidas",
+      "body": "Repetir un disparo justo puede crear una superposición injusta. Simula el máximo de objetos activos y comprueba la ruta de todo el cuerpo en cada emisión."
+    },
+    {
+      "title": "Los peligros sobreviven a su causa visible",
+      "body": "Si el nodo desaparece pero sigue disparando, o una mota desvanecida aún colisiona, falla la regla visual. Usa el mismo estado para dibujo, colisión y limpieza."
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "Modela por separado la fuente y sus emisiones",
+      "body": "Guarda posición, retraso de activación, intervalo, cantidad, duración y salud opcional del nodo. Cada objeto emitido tiene origen, velocidad, radio y caducidad propios; no deduzcas daño del dibujo del nodo."
+    },
+    {
+      "title": "Limita las amenazas simultáneas",
+      "body": "Calcula cuántas motas pueden coexistir según el intervalo y el tiempo de vuelo, y fija un límite. Comprueba si sus discos barridos cierran todas las rutas normales, incluso durante otro ataque del jefe."
+    },
+    {
+      "title": "Haz explícita la cancelación",
+      "body": "Aquí la fuente expira tras tres emisiones y las motas en vuelo terminan su recorrido. Si el jugador puede destruirla, decide si esas motas persisten, desaparecen o cambian de ruta y señala la regla."
+    },
+    {
+      "title": "Aumenta un parámetro cada vez",
+      "body": "Aumenta la cantidad, acorta el intervalo o cambia las rutas solo si el nuevo ritmo sigue siendo aprendible. Una fuente móvil o que apunta por sí sola necesita otra señal y otra prueba de despeje."
+    }
+  ],
+  "story": {
+    "title": "Qué comunica la mecánica",
+    "body": "Kern fija una pequeña piedra rúnica en la arena. Brilla antes de cada emisión, envía tres chispas separadas y se apaga; el silencio siguiente pertenece a la recuperación de Kern."
+  },
+  "adaptation": {
+    "title": "Adáptala a las acciones del jugador",
+    "body": "El movimiento normal basta para salir de las trayectorias mostradas. Un golpe de espada podría destruir un nodo alcanzable, pero comprueba aparte tiempo de acercamiento, alcance, salud de la fuente y destino de las motas ya lanzadas; aquí no es obligatorio."
+  },
+  "distinction": {
+    "title": "Distingue esta mecánica",
+    "body": "La regla del generador es crear amenazas independientes repetidamente. En una torreta importa sobre todo la dirección de disparo fija; una invocación añade otro combatiente; un peligro persistente mantiene una sola zona activa en vez de crear objetos nuevos."
+  },
+  "lensNotes": [
+    {
+      "id": "telegraphing",
+      "body": "El soporte, la carga y las líneas discontinuas anuncian la fuente y sus posibles salidas antes de que la primera mota haga daño."
+    },
+    {
+      "id": "commitment",
+      "body": "Posición, tres tiempos de emisión y trayectorias quedan fijados para el ciclo; el nodo no cambia de objetivo a escondidas."
+    },
+    {
+      "id": "threat-geometry",
+      "body": "Solo colisiona el disco móvil de cada mota visible, no la línea discontinua ni el anillo decorativo del nodo."
+    },
+    {
+      "id": "counterplay",
+      "body": "Tavi puede sacar toda su colisión de las rutas antes del primer lanzamiento sin esquiva especial ni invulnerabilidad."
+    },
+    {
+      "id": "difficulty-rhythm",
+      "body": "Carga, intervalo, vuelo, límite activo, cantidad y limpieza regulan la presión por separado."
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "Hollow Knight",
+      "boss": "Flukemarm",
+      "screenshot": "https://i.ytimg.com/vi/6BufoYXDODE/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=6BufoYXDODE&t=18s",
+      "body": "Flukemarm permanece inmóvil y libera Flukefeys una y otra vez. La fuente es el cuerpo del jefe, no un nodo colocado; la producción recurrente y el límite de crías simultáneas hacen del ritmo la variable principal.",
+      "video": "https://www.youtube.com/watch?v=6BufoYXDODE&t=18s",
+      "videoDurationSeconds": 73
+    },
+    {
+      "dimension": "2D",
+      "game": "OTXO",
+      "boss": "The Legionary",
+      "screenshot": "https://i.ytimg.com/vi/s0lrozjZVmE/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=s0lrozjZVmE&t=31s",
+      "body": "La lanza clavada de The Legionary queda como fuente adicional que dispara durante un tiempo limitado. Aquí interesa comparar su salida repetida; a diferencia de las motas separadas del diagrama, se percibe como un arma fija.",
+      "video": "https://www.youtube.com/watch?v=s0lrozjZVmE&t=31s",
+      "videoDurationSeconds": 125
+    },
+    {
+      "dimension": "3D",
+      "game": "Remnant II",
+      "boss": "The Nightweaver",
+      "screenshot": "https://gdm-universal-media.b-cdn.net/gfinityesports/5ade1e230a5f41b911b799b7b278cf5edc841399-1640x942.png?width=1400",
+      "screenshotSource": "https://www.gfinityesports.com/article/remnant-2-bosses",
+      "body": "The Nightweaver se detiene y libera un grupo de esbirros arácnidos. Su corazón expuesto vuelve vulnerable la fuente mientras genera amenazas. A diferencia de la runa colocada por Kern, aquí la fuente es el cuerpo del jefe, pero la presión también procede de lo que produce con el tiempo.",
+      "video": "https://www.youtube.com/watch?v=Yp7wyKol4xY&t=48s",
+      "videoDurationSeconds": 233
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

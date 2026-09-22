@@ -1,0 +1,24 @@
+{
+  "id": "threat-generator",
+  "number": 44,
+  "published": true,
+  "sourceLocale": "en",
+  "contentVersion": 1,
+  "animation": "threat-generator",
+  "lenses": ["telegraphing", "commitment", "threat-geometry", "counterplay", "difficulty-rhythm"],
+  "related": ["summon", "turret-deployment", "pulse-beam"],
+  "sources": [
+    {
+      "title": "BattleTale · Spawners Guide",
+      "url": "https://battletale.app/customhelp/reference/spawner"
+    },
+    {
+      "title": "BattleTale · Custom Attacks",
+      "url": "https://battletale.app/customhelp/concepts/custom-attacks"
+    },
+    {
+      "title": "How Does a Boss Get Made in Wildstar? · Jacob Mott",
+      "url": "https://jmgamedev.com/wildstar/how-does-a-boss-get-made-in-wildstar/"
+    }
+  ]
+}

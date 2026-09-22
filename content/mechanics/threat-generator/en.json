@@ -1,0 +1,142 @@
+{
+  "title": "Threat generator",
+  "subtitle": "A persistent source produces new hazards on a readable cadence.",
+  "variant": "Kern installs a rune node that releases three separate motes",
+  "summary": "A boss creates a source that repeatedly emits independent threats until its cycle ends or the source is removed.",
+  "overview": "A threat generator repeatedly creates separate hazards instead of keeping one attack active. Kern places a rune node that visibly charges, then releases three motes at fixed intervals. Tavi clears every path with ordinary movement. A cap on live motes and a clear shutdown keep pressure readable and leave recovery after the last flight.",
+  "learning": "Design a generator's placement, emission schedule, live-threat budget, safe route, and shutdown as one rule.",
+  "category": "Additional targets",
+  "readTime": "5 min",
+  "demo": {
+    "title": "Inspect the threat generator",
+    "timeline": "Attack timeline",
+    "step": "Attack phases",
+    "phaseNames": ["Place and charge", "Release repeated threats", "Stop and recover"],
+    "phaseDescriptions": [
+      "Kern throws a rune seed to a visible socket. Dashed paths preview three possible trajectories; they do not deal damage. Tavi starts moving to the clear side.",
+      "The planted node releases three distinct motes on a fixed cadence. Each mote is dangerous only while visible in flight; Tavi's entire body has cleared their paths before the first release.",
+      "The final mote leaves the arena, the node powers down, and Kern remains in recovery. No invisible emission continues after shutdown."
+    ],
+    "boss": "Boss",
+    "player": "Player",
+    "danger": "Only each visible flying mote has a hitbox",
+    "locked": "Socket, release times, paths, and shutdown are committed",
+    "safe": "Move the whole player body beyond every emitted path",
+    "reducedMotion": "Autoplay is disabled by reduced-motion settings. Scrub the timeline to inspect each release and shutdown.",
+    "diagramDescription": "Kern plants a rune node on the right. It charges, then releases three separate motes down announced paths at intervals. Tavi moves left before the first mote and remains clear until the final mote leaves; the node then powers down."
+  },
+  "steps": [
+    {
+      "title": "Can the source be identified before the first emission?",
+      "body": "Show where the node lands, that it persists, its warm-up, and the paths it can fill. A placement cue is not a damaging hitbox; distinguish it from the flying motes."
+    },
+    {
+      "title": "Does the cadence leave a reachable route?",
+      "body": "Measure ordinary travel from the worst legal start to a corridor clear of every path, including the full player radius. Test the first release and all later overlapping motes, not merely the first shot."
+    },
+    {
+      "title": "What ends production and clears the arena?",
+      "body": "Set a finite release count or lifetime, a maximum number of live threats, and a cleanup rule for timeout, destruction, and phase change. Remove hitboxes when their visible motes expire."
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "An unannounced source begins firing",
+      "body": "A new object and a new projectile arrive on the same frame, leaving no time to read their relationship. Give placement and warm-up separate beats."
+    },
+    {
+      "title": "The generator floods every exit",
+      "body": "Repeating a fair shot can create an unfair overlap. Simulate the maximum live count and check the whole-body route through every release."
+    },
+    {
+      "title": "Threats outlive their visible cause",
+      "body": "If the node disappears but keeps spawning, or a faded mote still collides, the visual rule breaks. Tie rendering, collision, and cleanup to the same state."
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "Model the source and emissions separately",
+      "body": "Store the node's socket, activation delay, interval, count, lifetime, and optional health. Give each emitted object its own origin, velocity, radius, and expiry; never infer damage from the node graphic alone."
+    },
+    {
+      "title": "Budget simultaneous threats",
+      "body": "Calculate how many motes can coexist from interval and flight time, then cap that count. Check whether their swept discs intersect every ordinary escape route, including movement during a later boss attack."
+    },
+    {
+      "title": "Make cancellation explicit",
+      "body": "In this demonstration the source expires after three emissions and the remaining motes finish their flights. If the player can destroy it, decide whether existing motes persist, vanish, or change path, and signal that rule."
+    },
+    {
+      "title": "Escalate one budget at a time",
+      "body": "Increase release count, shorten interval, or vary paths only while the new schedule stays learnable. A moving or independently aiming source requires its own cue and clearance test."
+    }
+  ],
+  "story": {
+    "title": "What the mechanic communicates",
+    "body": "Kern fixes a small rune stone into the arena. It glows before each emission, sends out three separate sparks, then goes dark; the quiet interval belongs to Kern's recovery."
+  },
+  "adaptation": {
+    "title": "Adapt it to the player verbs",
+    "body": "Ordinary movement is enough to leave the shown trajectories. A sword strike could optionally break a reachable node, but test approach time, range, source health, and what happens to motes already in flight; that shortcut is not required here."
+  },
+  "distinction": {
+    "title": "Keep the mechanic distinct",
+    "body": "A generator's defining rule is repeated creation of independent threats. A turret is a fixed attacker whose firing direction is the main problem; a summon introduces another combatant; a lingering hazard is one area that stays active rather than new objects appearing over time."
+  },
+  "lensNotes": [
+    {
+      "id": "telegraphing",
+      "body": "The socket, charging node, and dashed paths announce the source and its possible output before the first mote becomes dangerous."
+    },
+    {
+      "id": "commitment",
+      "body": "Placement, three release times, and trajectories are fixed for this cycle; the node does not secretly retarget later motes."
+    },
+    {
+      "id": "threat-geometry",
+      "body": "Collision belongs to each visible mote's swept disc, not to the dashed path or the node's decorative ring."
+    },
+    {
+      "id": "counterplay",
+      "body": "Tavi can move their complete collision shape clear before the first release, with no dash or invulnerability required."
+    },
+    {
+      "id": "difficulty-rhythm",
+      "body": "Warm-up, interval, flight time, live-object cap, release count, and cleanup set the pressure independently."
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "Hollow Knight",
+      "boss": "Flukemarm",
+      "screenshot": "https://i.ytimg.com/vi/6BufoYXDODE/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=6BufoYXDODE&t=18s",
+      "body": "Flukemarm stays in place and repeatedly releases Flukefeys. The source is the boss's body rather than a placed node; the recurring production and cap on simultaneous offspring make throughput the central design variable.",
+      "video": "https://www.youtube.com/watch?v=6BufoYXDODE&t=18s",
+      "videoDurationSeconds": 73
+    },
+    {
+      "dimension": "2D",
+      "game": "OTXO",
+      "boss": "The Legionary",
+      "screenshot": "https://i.ytimg.com/vi/s0lrozjZVmE/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=s0lrozjZVmE&t=31s",
+      "body": "The Legionary's lodged spear remains as an additional source that fires for a limited period. Its repeated output is the useful comparison here; unlike the diagram's separate motes, this variant reads as an anchored weapon.",
+      "video": "https://www.youtube.com/watch?v=s0lrozjZVmE&t=31s",
+      "videoDurationSeconds": 125
+    },
+    {
+      "dimension": "3D",
+      "game": "Remnant II",
+      "boss": "The Nightweaver",
+      "screenshot": "https://gdm-universal-media.b-cdn.net/gfinityesports/5ade1e230a5f41b911b799b7b278cf5edc841399-1640x942.png?width=1400",
+      "screenshotSource": "https://www.gfinityesports.com/article/remnant-2-bosses",
+      "body": "The Nightweaver pauses to release a group of spider-like minions. Her exposed heart makes the source vulnerable while it generates threats. Unlike Kern's placed rune, this source is the boss's body, but the pressure still comes from what it produces over time.",
+      "video": "https://www.youtube.com/watch?v=Yp7wyKol4xY&t=48s",
+      "videoDurationSeconds": 233
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

@@ -13,8 +13,8 @@ import {
   renderBlueprintThumbnail,
 } from '../lib/blueprint-view.mjs';
 
-test('all 37 promoted lesson animations have distinct rule modes and complete moving frames', () => {
-  assert.equal(BLUEPRINT_MECHANIC_IDS.length, 37);
+test('all 38 promoted lesson animations have distinct rule modes and complete moving frames', () => {
+  assert.equal(BLUEPRINT_MECHANIC_IDS.length, 38);
   const modes = new Set();
   for (const id of BLUEPRINT_MECHANIC_IDS) {
     for (let time = 0; time <= BLUEPRINT_DURATION; time += 0.1) {
@@ -35,7 +35,7 @@ test('all 37 promoted lesson animations have distinct rule modes and complete mo
           assert.ok(Number.isFinite(value), `${id} has an invalid ${primitive.type}`);
     }
   }
-  assert.equal(modes.size, 37);
+  assert.equal(modes.size, 38);
 });
 
 test('every blueprint exposes signal, committed action, and recovery without player teleports', () => {
@@ -72,6 +72,7 @@ test('every promoted animation derives safety from its own active geometry', () 
     'converging-threats': { x: 100, y: 650 },
     pull: { x: 280, y: 310 },
     'turret-deployment': { x: 430, y: 700 },
+    'threat-generator': null,
     'wide-swing': { x: 280, y: 515 },
     lunge: { x: 300, y: 440 },
     grab: { x: 390, y: 485 },
@@ -143,6 +144,12 @@ test('every promoted animation derives safety from its own active geometry', () 
     } else if (!point && id === 'attack-combination') {
       const wave = frame.primitives[1];
       point = { x: frame.boss.x + wave.radius, y: frame.boss.y };
+    } else if (!point && id === 'threat-generator') {
+      const mote = frame.primitives.find(
+        (primitive) =>
+          primitive.type === 'circle' && primitive.radius === 19 && primitive.opacity > 0,
+      );
+      point = { x: mote.x, y: mote.y };
     }
     assert.equal(blueprintPointSafe(id, 3, point), false, `${id} accepts an unsafe point`);
     assert.equal(frame.playerSafe, true, `${id} does not clear its own active geometry`);
@@ -552,6 +559,33 @@ test('deployed turret stays fixed, announces its lane, and only fires while visi
   assert.ok(firing.player.x < placement.player.x);
   assert.equal(blueprintPointSafe('turret-deployment', 5.2, { x: 430, y: 680 }), true);
   assert.ok(recovery.primitives[2].opacity < firing.primitives[2].opacity);
+});
+
+test('threat generator announces a fixed source, emits separate motes, and ends cleanly', () => {
+  const id = 'threat-generator';
+  const motes = (time) =>
+    blueprintFrame(id, time).primitives.filter(
+      (primitive) =>
+        primitive.type === 'circle' && primitive.radius === 19 && primitive.opacity > 0,
+    );
+  assert.equal(blueprintFrame(id, 1.59).dangerActive, false);
+  assert.equal(motes(1.59).length, 0);
+  assert.equal(motes(2).length, 1);
+  assert.equal(motes(2.65).length, 2, 'overlapping flights must respect the live-object budget');
+  assert.equal(motes(3).length, 1);
+  assert.equal(motes(3.42).length, 2);
+  assert.equal(motes(4.28).length, 0);
+  assert.equal(blueprintFrame(id, 4.28).dangerActive, false);
+  assert.equal(blueprintFrame(id, 5).dangerActive, false);
+  assert.equal(blueprintPointSafe(id, 1.59, { x: 405, y: 487 }), true);
+  const live = motes(3)[0];
+  assert.equal(blueprintPointSafe(id, 3, { x: live.x, y: live.y }), false);
+  assert.equal(blueprintPointSafe(id, 3, { x: live.x - 44, y: live.y }), true);
+  assert.equal(blueprintPointSafe(id, 3, { x: live.x - 44, y: live.y }, 26), false);
+  for (let time = 1.86; time <= 4.23; time += 0.03)
+    assert.equal(blueprintFrame(id, time).playerSafe, true, `player clips a mote at ${time}`);
+  assert.deepEqual(blueprintFrame(id, 3), blueprintFrame(id, 3));
+  assert.deepEqual(blueprintFrame(id, 0).player, blueprintFrame(id, 6).player);
 });
 
 test('blueprint pages and previews reuse Tavi and Kern with accessible localized data', () => {
