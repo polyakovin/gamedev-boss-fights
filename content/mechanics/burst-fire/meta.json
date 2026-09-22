@@ -1,0 +1,28 @@
+{
+  "id": "burst-fire",
+  "number": 48,
+  "published": true,
+  "sourceLocale": "en",
+  "contentVersion": 1,
+  "animation": "burst-fire",
+  "lenses": ["telegraphing", "commitment", "counterplay", "threat-geometry", "difficulty-rhythm"],
+  "related": ["single-shot", "gap-volley", "source-tracking"],
+  "sources": [
+    {
+      "title": "Hollow Knight Wiki · White Defender",
+      "url": "https://hollowknight.wiki/w/White_Defender"
+    },
+    {
+      "title": "Hollow Knight Wiki · The Unravelled",
+      "url": "https://hollowknight.wiki/w/The_Unravelled"
+    },
+    {
+      "title": "PlayStation Blog · The making of Returnal's Hyperion fight",
+      "url": "https://blog.playstation.com/2021/05/28/returnal-the-making-of-that-unforgettable-hyperion-fight/"
+    },
+    {
+      "title": "Mike Stout · Enemy Attacks and Telegraphing",
+      "url": "https://www.gamedeveloper.com/design/enemy-attacks-and-telegraphing"
+    }
+  ]
+}

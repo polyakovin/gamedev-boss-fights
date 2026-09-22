@@ -1,0 +1,126 @@
+{
+  "title": "连续射击",
+  "subtitle": "一条预告过的弹道，数次错开发射。",
+  "variant": "克恩快速发射三枚符文弹",
+  "summary": "短点射按清晰节奏重复弹丸威胁，而不是同时射出所有弹丸。",
+  "overview": "克恩先标出射击路线并锁定方向，再依次发射三枚符文弹。塔维靠普通移动离开路线，直到第三枚弹丸通过才返回。每枚弹丸都有独立的移动碰撞范围；虚线提示不会造成伤害。决定应对何时结束、恢复何时开始的是最后一发，而不是第一发。",
+  "learning": "调整预警、锁定、发射间隔、弹速、完整身体的避让距离，以及最后一发后的反击窗口。",
+  "category": "瞄准与节奏",
+  "readTime": "5 分钟",
+  "demo": {
+    "title": "数清三次发射",
+    "timeline": "攻击时间轴",
+    "step": "攻击阶段",
+    "phaseNames": ["标出路线", "连续发射三次", "恢复并返回"],
+    "phaseDescriptions": [
+      "克恩抬起发射器，用无害的虚线标出将来的路线。第一枚弹丸出现前方向已经锁定。",
+      "三枚弹丸依次从同一位置射出。塔维向侧面移动，使整个身体离开路线，并一直等待最后一枚飞过。",
+      "第三枚弹丸离开场地后，克恩才结束动作。双方连续移动回起始位置。"
+    ],
+    "boss": "首领",
+    "player": "玩家",
+    "danger": "每枚可见弹丸只在自身飞行期间危险",
+    "locked": "三次发射共用固定路线",
+    "safe": "最后一枚飞过前，整个身体都留在路线外",
+    "reducedMotion": "减少动态效果时自动播放会关闭。拖动时间轴比较预警、每次发射和恢复。",
+    "diagramDescription": "克恩标出固定的斜向路线，然后依次发射三枚符文弹。塔维在第一枚抵达前侧移，等第三枚离开后才返回。"
+  },
+  "steps": [
+    {
+      "title": "怎样预告整轮点射？",
+      "body": "第一发前就显示发射器和共同路线。用明确的锁定信号排除后续偷偷改瞄的可能。虚线只提供信息，不是伤害范围。"
+    },
+    {
+      "title": "能否数清每一发？",
+      "body": "为每枚弹丸显示来源、发射脉冲、间隔、飞行和圆形碰撞范围。间隔要足以区分发射，又要让它们仍属于同一次攻击。"
+    },
+    {
+      "title": "何时能够返回？",
+      "body": "用玩家完整碰撞体检查每枚活动弹丸。第一发抵达前必须能靠侧移离开路线；直到最后一发通过才开放安全窗口。"
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "三发同时出现",
+      "body": "同时生成会更像齐射或扇形散射。把生成时刻、后坐动作和声音节拍分开。"
+    },
+    {
+      "title": "后续弹丸暗中重新瞄准",
+      "body": "若第二或第三发追随塔维，共同的固定路线预警就失效了。重新瞄准可以成为另一种变体，但需要新提示和新的反应时间。"
+    },
+    {
+      "title": "第一发后就开始恢复",
+      "body": "塔维可能回到仍有下一发的路线。追踪所有存活弹丸，最后一发清场后才给出可用的机会。"
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "单独调节节奏",
+      "body": "分别保存发射数量、间隔、速度、半径和飞行寿命。即使瞄准规则不变，更快的节奏也会改变威胁重叠与移动时间。"
+    },
+    {
+      "title": "测试完整路线",
+      "body": "测试慢速移动、靠墙起步、站在路线边缘和过早返回。碰撞要使用弹丸半径加玩家半径，而不是装饰性轨迹的中心。"
+    },
+    {
+      "title": "让来源清晰",
+      "body": "每发都从克恩可见的发射器出发，并让身体随每发轻微反冲。轨迹和提示线不能看起来像额外的伤害面。"
+    }
+  ],
+  "story": {
+    "title": "机制传达的信息",
+    "body": "克恩的符文孔一次蓄能，按节奏吐出三枚石弹。固定来源便于学习计数；塔维侧移说明路线会持续危险。"
+  },
+  "adaptation": {
+    "title": "适应玩家动作",
+    "body": "普通侧向移动必须足以躲过第一发并维持安全直到第三发。冲刺可以缩短路径，格挡也可成为有明确代价的替代方式；两者都不能被暗中设为必需。"
+  },
+  "distinction": {
+    "title": "与相邻机制区分",
+    "body": "单发只有一次发射；齐射同时放出多枚弹丸。点射从一个已预告的来源按时间错开发射多枚；此例不会在发射间重新瞄准。"
+  },
+  "lensNotes": [
+    { "id": "telegraphing", "body": "可见发射器和无害虚线预告整轮攻击，三次脉冲帮助计数。" },
+    { "id": "commitment", "body": "路线角度在第一发前冻结，直到第三发也不改变。" },
+    { "id": "counterplay", "body": "塔维靠普通移动离开路线，所有弹丸消失后才重新进入。" },
+    { "id": "threat-geometry", "body": "只有三枚移动弹丸的圆形范围能命中；按玩家完整半径检测。" },
+    {
+      "id": "difficulty-rhythm",
+      "body": "间隔和弹速决定路线不安全的时长，以及恢复何时具有实际价值。"
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "Hollow Knight",
+      "boss": "White Defender",
+      "screenshot": "https://i.ytimg.com/vi/wQggkrQA4cQ/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=wQggkrQA4cQ&t=95s",
+      "body": "White Defender 的 Dung Toss 连续投出两球，Defender Jubilee 将节奏延长至三球。弧线与弹跳使场地比克恩的直线弹丸危险更久；数量和存续时间需一起调节。",
+      "video": "https://www.youtube.com/watch?v=wQggkrQA4cQ&t=95s",
+      "videoDurationSeconds": 167
+    },
+    {
+      "dimension": "2D",
+      "game": "Hollow Knight: Silksong",
+      "boss": "The Unravelled",
+      "screenshot": "https://i.ytimg.com/vi/8RM4EBkhApQ/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=8RM4EBkhApQ&t=85s",
+      "body": "The Unravelled 的 Cadaver Spit 连续发射三个物体，第三个可能走不同弧线。变化的轨迹不同于克恩的固定路线，但独立的发射节拍同样要求将最后一发计入应对预算。",
+      "video": "https://www.youtube.com/watch?v=8RM4EBkhApQ&t=85s",
+      "videoDurationSeconds": 137
+    },
+    {
+      "dimension": "3D",
+      "game": "Returnal",
+      "boss": "Hyperion",
+      "screenshot": "https://blog.playstation.com/tachyon/2021/05/51192459805_f3dfca3cda_o-scaled.jpg?fit=1024%2C1024",
+      "screenshotSource": "https://blog.playstation.com/2021/05/28/returnal-the-making-of-that-unforgettable-hyperion-fight/",
+      "body": "Hyperion 把快速弹幕叠成持续的音乐式攻势。重复节拍在立体空间和全场制造压力；克恩的简化示例只保留一个来源、一条锁定路线和三次可数的发射。",
+      "video": "https://www.youtube.com/watch?v=TdnGpLzBaKA&t=117s",
+      "videoDurationSeconds": 170
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

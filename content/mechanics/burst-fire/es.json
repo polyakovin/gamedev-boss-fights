@@ -1,0 +1,138 @@
+{
+  "title": "Ráfaga de disparos",
+  "subtitle": "Una trayectoria anunciada y varios disparos separados en el tiempo.",
+  "variant": "Kern lanza tres proyectiles rúnicos en rápida sucesión",
+  "summary": "Una ráfaga corta repite la amenaza de proyectil con un ritmo legible en vez de lanzar todo a la vez.",
+  "overview": "Kern marca una trayectoria, fija su dirección y lanza tres proyectiles rúnicos por separado. Tavi sale con movimiento normal y espera fuera hasta que pase el tercero. Cada proyectil tiene su zona de impacto móvil; la guía punteada no hace daño. El último disparo determina cuándo termina la respuesta y empieza la recuperación.",
+  "learning": "Ajusta el aviso, la fijación, los intervalos, la velocidad, la salida de todo el cuerpo y la oportunidad posterior al último disparo.",
+  "category": "Puntería y ritmo",
+  "readTime": "5 min",
+  "demo": {
+    "title": "Cuenta los tres disparos",
+    "timeline": "Línea de tiempo del ataque",
+    "step": "Fases del ataque",
+    "phaseNames": ["Marcar la trayectoria", "Disparar tres veces", "Recuperar y volver"],
+    "phaseDescriptions": [
+      "Kern alza el emisor y dibuja una guía punteada e inofensiva sobre la trayectoria futura. La dirección queda fija antes del primer proyectil.",
+      "Tres proyectiles distintos salen del mismo origen por turnos. Tavi se mueve de lado, aparta todo el cuerpo y permanece fuera hasta que pasa el último.",
+      "Kern se recompone solo después de que el tercero sale de la arena. Ambos vuelven sin saltos a sus posiciones iniciales."
+    ],
+    "boss": "Jefe",
+    "player": "Jugador",
+    "danger": "Cada proyectil visible solo es peligroso durante su vuelo",
+    "locked": "La trayectoria permanece fija durante los tres disparos",
+    "safe": "Mantén todo el cuerpo fuera hasta que pase el último",
+    "reducedMotion": "La reproducción automática se desactiva con movimiento reducido. Recorre la línea de tiempo para comparar aviso, disparos y recuperación.",
+    "diagramDescription": "Kern marca una trayectoria diagonal fija y lanza tres proyectiles rúnicos por separado. Tavi se aparta antes del primero, espera fuera hasta el tercero y vuelve tras la recuperación."
+  },
+  "steps": [
+    {
+      "title": "¿Qué anuncia toda la ráfaga?",
+      "body": "Muestra el emisor y la trayectoria común antes del primer disparo. Una señal de fijación debe descartar cambios de puntería ocultos. La guía punteada informa, pero no hace daño."
+    },
+    {
+      "title": "¿Se puede contar cada disparo?",
+      "body": "Da a cada proyectil un origen visible, un impulso de lanzamiento, separación, recorrido y colisión circular. El intervalo debe distinguirlos sin romper la unidad del ataque."
+    },
+    {
+      "title": "¿Cuándo se puede volver?",
+      "body": "Comprueba toda la forma de colisión del jugador frente a cada proyectil activo. Debe poder salir de lado antes del primero, y la oportunidad segura se abre después del último."
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "Los tres salen a la vez",
+      "body": "Un lanzamiento simultáneo se lee como descarga o abanico. Separa los instantes de aparición, el retroceso y los golpes de sonido."
+    },
+    {
+      "title": "Un disparo posterior cambia de objetivo en secreto",
+      "body": "Si el segundo o el tercero persigue a Tavi, el aviso de trayectoria fija deja de ser cierto. Volver a apuntar puede ser otra variante, pero necesita una nueva señal y otro margen de reacción."
+    },
+    {
+      "title": "La recuperación empieza tras el primero",
+      "body": "Tavi podría regresar a una trayectoria todavía ocupada. Sigue todos los proyectiles activos y abre la oportunidad útil solo cuando sale el último."
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "Ajusta el ritmo por separado",
+      "body": "Guarda número, intervalos, velocidad, radio y duración de vuelo como parámetros distintos. Acelerar la ráfaga cambia el solapamiento y el tiempo de movimiento aunque la puntería no cambie."
+    },
+    {
+      "title": "Prueba toda la ruta",
+      "body": "Comprueba movimiento lento, cercanía a paredes, inicio en el borde y regreso prematuro. Usa el radio de cada proyectil más el del jugador, no el centro de una estela decorativa."
+    },
+    {
+      "title": "Haz legible el origen",
+      "body": "Vincula cada disparo al emisor visible de Kern y mueve su cuerpo una vez por lanzamiento. Ni la estela ni la guía deben parecer una superficie peligrosa adicional."
+    }
+  ],
+  "story": {
+    "title": "Qué comunica la mecánica",
+    "body": "El hueco rúnico de Kern se carga una vez y escupe tres piedras con ritmo. El origen repetido ayuda a aprender la cuenta; el movimiento lateral de Tavi muestra que la trayectoria sigue siendo peligrosa."
+  },
+  "adaptation": {
+    "title": "Adáptala a las acciones del jugador",
+    "body": "Moverse normalmente de lado debe bastar para esquivar el primero y conservar la seguridad hasta el tercero. Una carrera rápida puede acortar la ruta y bloquear puede ser otra respuesta con coste claro; ninguna debe ser obligatoria sin avisar."
+  },
+  "distinction": {
+    "title": "Diferencia esta mecánica",
+    "body": "Un disparo único tiene un lanzamiento. Una descarga libera varios proyectiles a la vez. Una ráfaga separa en el tiempo varios lanzamientos desde un origen anunciado; este ejemplo no vuelve a apuntar entre ellos."
+  },
+  "lensNotes": [
+    {
+      "id": "telegraphing",
+      "body": "El emisor visible y la guía inocua anuncian toda la ráfaga; tres impulsos permiten contarla."
+    },
+    {
+      "id": "commitment",
+      "body": "El ángulo queda fijo antes del primero y no cambia hasta el tercero."
+    },
+    {
+      "id": "counterplay",
+      "body": "Tavi sale de la trayectoria con movimiento normal y espera a que desaparezcan todos los proyectiles."
+    },
+    {
+      "id": "threat-geometry",
+      "body": "Solo pueden golpear los tres círculos móviles; compruébalos contra todo el radio del jugador."
+    },
+    {
+      "id": "difficulty-rhythm",
+      "body": "Los intervalos y la velocidad definen cuánto dura el peligro y cuándo sirve la recuperación."
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "Hollow Knight",
+      "boss": "White Defender",
+      "screenshot": "https://i.ytimg.com/vi/wQggkrQA4cQ/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=wQggkrQA4cQ&t=95s",
+      "body": "Dung Toss de White Defender lanza dos bolas sucesivas; Defender Jubilee alarga el ritmo a tres. Los arcos y rebotes mantienen el peligro más tiempo que los disparos rectos de Kern: hay que ajustar juntos cantidad y duración.",
+      "video": "https://www.youtube.com/watch?v=wQggkrQA4cQ&t=95s",
+      "videoDurationSeconds": 167
+    },
+    {
+      "dimension": "2D",
+      "game": "Hollow Knight: Silksong",
+      "boss": "The Unravelled",
+      "screenshot": "https://i.ytimg.com/vi/8RM4EBkhApQ/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=8RM4EBkhApQ&t=85s",
+      "body": "Cadaver Spit de The Unravelled lanza tres cuerpos seguidos; el tercero puede tomar otro arco. La trayectoria variable contrasta con la línea fija de Kern, pero los tiempos separados también obligan a presupuestar el último disparo.",
+      "video": "https://www.youtube.com/watch?v=8RM4EBkhApQ&t=85s",
+      "videoDurationSeconds": 137
+    },
+    {
+      "dimension": "3D",
+      "game": "Returnal",
+      "boss": "Hyperion",
+      "screenshot": "https://blog.playstation.com/tachyon/2021/05/51192459805_f3dfca3cda_o-scaled.jpg?fit=1024%2C1024",
+      "screenshotSource": "https://blog.playstation.com/2021/05/28/returnal-the-making-of-that-unforgettable-hyperion-fight/",
+      "body": "Hyperion superpone descargas rápidas en un bombardeo musical sostenido. Los golpes repetidos generan presión en profundidad y por la arena; el ejemplo reducido de Kern aísla un origen, una línea fija y tres disparos contables.",
+      "video": "https://www.youtube.com/watch?v=TdnGpLzBaKA&t=117s",
+      "videoDurationSeconds": 170
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

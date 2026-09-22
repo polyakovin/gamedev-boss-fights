@@ -1,0 +1,138 @@
+{
+  "title": "Burst fire",
+  "subtitle": "One announced lane, several separately released shots.",
+  "variant": "Kern fires three rune bolts in quick succession",
+  "summary": "A short burst repeats a projectile threat at a readable cadence instead of releasing every shot at once.",
+  "overview": "Kern marks one lane, locks its direction, then releases three rune bolts at separate instants. Tavi clears it with ordinary movement and stays out until the third passes. Each bolt has its own travelling hitbox; the dotted guide does no damage. The last bolt's exit ends the response and starts recovery.",
+  "learning": "Tune the tell, lock, release spacing, projectile speed, full-body clearance, and opening after the last shot.",
+  "category": "Targeting and rhythm",
+  "readTime": "5 min",
+  "demo": {
+    "title": "Count the three releases",
+    "timeline": "Attack timeline",
+    "step": "Attack phases",
+    "phaseNames": ["Mark the lane", "Fire three times", "Recover and return"],
+    "phaseDescriptions": [
+      "Kern raises the emitter and draws a dotted, harmless guide along the future lane. The direction locks before any bolt is released.",
+      "Three distinct bolts leave the same source in sequence. Tavi steps sideways, clears the entire body from the lane, and remains clear through the last travelling bolt.",
+      "Only after the third bolt leaves the arena does Kern settle. Tavi and Kern return continuously to their starting positions."
+    ],
+    "boss": "Boss",
+    "player": "Player",
+    "danger": "Each visible bolt is dangerous only during its own flight",
+    "locked": "The lane stays fixed for all three releases",
+    "safe": "Stay fully outside the lane until the last bolt passes",
+    "reducedMotion": "Autoplay is disabled by reduced-motion settings. Scrub to compare the tell, each release, and recovery.",
+    "diagramDescription": "Kern marks a fixed diagonal lane, then fires three separate rune bolts along it. Tavi moves sideways before the first arrives, waits outside the lane until the third exits, and returns after recovery."
+  },
+  "steps": [
+    {
+      "title": "What announces the whole burst?",
+      "body": "Show the emitter and the shared lane before the first release. Use a distinct lock cue so later bolts cannot silently retarget. A dotted guide is informational, not a damage region."
+    },
+    {
+      "title": "Can every shot be counted?",
+      "body": "Give each bolt a visible origin, release pulse, spacing, travel, and collision circle. Keep the interval long enough to read separate shots but short enough that they form one attack."
+    },
+    {
+      "title": "When is it safe to return?",
+      "body": "Measure the player's complete collision shape against every active bolt. Make sideways clearance possible before the first arrival, and keep the opening closed until the final bolt has passed."
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "Three shots appear simultaneously",
+      "body": "If all bolts spawn together, the mechanic reads as a volley or spread. Release times, recoil, and audio beats must be separate."
+    },
+    {
+      "title": "A later shot secretly re-aims",
+      "body": "A shared fixed-lane tell becomes false if the second or third bolt follows Tavi. Retargeting can be a valid variant, but it needs a new cue and a different response budget."
+    },
+    {
+      "title": "Recovery starts after the first bolt",
+      "body": "Tavi may re-enter a lane that still contains the next shot. Track all live projectiles and begin the useful opening only after the final one clears."
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "Expose cadence as a parameter",
+      "body": "Store release count, intervals, velocity, bolt radius, and flight lifetime separately. A faster cadence changes overlap and available movement time even if the aiming rule stays fixed."
+    },
+    {
+      "title": "Test the complete route",
+      "body": "Check slow movement, nearby walls, starting near the lane edge, and an early return. Collision uses every bolt's radius plus the player radius, not the center of a decorative trail."
+    },
+    {
+      "title": "Keep the source legible",
+      "body": "Attach each release to Kern's visible emitter and pulse the pose once per shot. Do not let a visual trail or guide imply an extra damaging surface."
+    }
+  ],
+  "story": {
+    "title": "What the mechanic communicates",
+    "body": "Kern's rune socket charges once and spits three stones in rhythm. The repeated source makes the count learnable; Tavi's sideways movement makes the persistent lane clear."
+  },
+  "adaptation": {
+    "title": "Adapt it to the player verbs",
+    "body": "Ordinary lateral movement must clear the first bolt and sustain safety through the third. A dash may shorten the route, while a guard can be an alternate response if it has a clear cost; neither is silently required."
+  },
+  "distinction": {
+    "title": "Keep the mechanic distinct",
+    "body": "A single shot has one release. A volley launches several projectiles together. Burst fire spaces multiple releases over time from one announced source; this example does not re-aim between them."
+  },
+  "lensNotes": [
+    {
+      "id": "telegraphing",
+      "body": "The visible emitter and harmless dotted guide announce the whole burst, while three release pulses make the count readable."
+    },
+    {
+      "id": "commitment",
+      "body": "The lane angle freezes before the first bolt and remains fixed through the third."
+    },
+    {
+      "id": "counterplay",
+      "body": "Tavi leaves the lane with ordinary movement and delays re-entry until every bolt is gone."
+    },
+    {
+      "id": "threat-geometry",
+      "body": "Only the three moving bolt circles can hit; test them against the complete player radius."
+    },
+    {
+      "id": "difficulty-rhythm",
+      "body": "Release spacing and travel speed control how long the lane stays unsafe and when recovery becomes useful."
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "Hollow Knight",
+      "boss": "White Defender",
+      "screenshot": "https://i.ytimg.com/vi/wQggkrQA4cQ/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=wQggkrQA4cQ&t=95s",
+      "body": "White Defender's Dung Toss throws two balls one after another, and Defender Jubilee extends that cadence to three. Arcing, bouncing balls keep the arena unsafe longer than Kern's straight, fixed-lane bolts; count and lifetime must be tuned together.",
+      "video": "https://www.youtube.com/watch?v=wQggkrQA4cQ&t=95s",
+      "videoDurationSeconds": 167
+    },
+    {
+      "dimension": "2D",
+      "game": "Hollow Knight: Silksong",
+      "boss": "The Unravelled",
+      "screenshot": "https://i.ytimg.com/vi/8RM4EBkhApQ/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=8RM4EBkhApQ&t=85s",
+      "body": "The Unravelled's Cadaver Spit sends three bodies in a row; the third can take a different arc. Its changing trajectory contrasts with Kern's fixed lane, while the distinct release beats still ask the designer to budget for the last shot.",
+      "video": "https://www.youtube.com/watch?v=8RM4EBkhApQ&t=85s",
+      "videoDurationSeconds": 137
+    },
+    {
+      "dimension": "3D",
+      "game": "Returnal",
+      "boss": "Hyperion",
+      "screenshot": "https://blog.playstation.com/tachyon/2021/05/51192459805_f3dfca3cda_o-scaled.jpg?fit=1024%2C1024",
+      "screenshotSource": "https://blog.playstation.com/2021/05/28/returnal-the-making-of-that-unforgettable-hyperion-fight/",
+      "body": "Hyperion layers fast projectile volleys into a sustained musical barrage. The repeated beats demonstrate prolonged pressure in depth and across an arena; Kern's reduced example isolates a single source, one locked lane, and three countable shots.",
+      "video": "https://www.youtube.com/watch?v=TdnGpLzBaKA&t=117s",
+      "videoDurationSeconds": 170
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

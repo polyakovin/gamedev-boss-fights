@@ -14,8 +14,8 @@ import {
   renderBlueprintThumbnail,
 } from '../lib/blueprint-view.mjs';
 
-test('all 41 promoted lesson animations have distinct rule modes and complete moving frames', () => {
-  assert.equal(BLUEPRINT_MECHANIC_IDS.length, 41);
+test('all 42 promoted lesson animations have distinct rule modes and complete moving frames', () => {
+  assert.equal(BLUEPRINT_MECHANIC_IDS.length, 42);
   const modes = new Set();
   for (const id of BLUEPRINT_MECHANIC_IDS) {
     for (let time = 0; time <= BLUEPRINT_DURATION; time += 0.1) {
@@ -36,7 +36,7 @@ test('all 41 promoted lesson animations have distinct rule modes and complete mo
           assert.ok(Number.isFinite(value), `${id} has an invalid ${primitive.type}`);
     }
   }
-  assert.equal(modes.size, 41);
+  assert.equal(modes.size, 42);
 });
 
 test('every blueprint exposes signal, committed action, and recovery without player teleports', () => {
@@ -77,6 +77,7 @@ test('every promoted animation derives safety from its own active geometry', () 
     decoy: { x: 190, y: 425 },
     'predictive-aiming': null,
     'source-tracking': null,
+    'burst-fire': null,
     'wide-swing': { x: 280, y: 515 },
     lunge: { x: 300, y: 440 },
     grab: { x: 390, y: 485 },
@@ -160,6 +161,9 @@ test('every promoted animation derives safety from its own active geometry', () 
     } else if (!point && id === 'source-tracking') {
       const beam = frame.primitives[3];
       point = { x: (beam.x1 + beam.x2) / 2, y: (beam.y1 + beam.y2) / 2 };
+    } else if (!point && id === 'burst-fire') {
+      const shot = frame.primitives[2];
+      point = { x: shot.x, y: shot.y };
     }
     assert.equal(blueprintPointSafe(id, 3, point), false, `${id} accepts an unsafe point`);
     assert.equal(frame.playerSafe, true, `${id} does not clear its own active geometry`);
@@ -708,6 +712,52 @@ test('source tracking turns its emitter before lock and keeps the damaging beam 
   assert.equal(active.playerSafe, true);
   assert.deepEqual(start.player, blueprintFrame(id, 6).player);
   assert.equal(start.sourceAngle, blueprintFrame(id, 6).sourceAngle);
+});
+
+test('burst fire emits three separate fixed-lane shots and remains unsafe until the last exits', () => {
+  const id = 'burst-fire';
+  const spec = blueprintSpec(id);
+  const before = blueprintFrame(id, 1.89);
+  const first = blueprintFrame(id, 1.91);
+  const between = blueprintFrame(id, 2.3);
+  const second = blueprintFrame(id, 2.46);
+  const third = blueprintFrame(id, 3.01);
+  const lastFlight = blueprintFrame(id, 4.2);
+  const recovered = blueprintFrame(id, 4.3);
+  assert.equal(before.primitives.slice(2, 5).filter((shot) => shot.opacity > 0).length, 0);
+  assert.equal(first.primitives.slice(2, 5).filter((shot) => shot.opacity > 0).length, 1);
+  assert.equal(between.primitives.slice(2, 5).filter((shot) => shot.opacity > 0).length, 1);
+  assert.equal(second.primitives.slice(2, 5).filter((shot) => shot.opacity > 0).length, 2);
+  assert.equal(third.primitives.slice(2, 5).filter((shot) => shot.opacity > 0).length, 3);
+  assert.ok(third.primitives[2].y > third.primitives[3].y);
+  assert.ok(third.primitives[3].y > third.primitives[4].y);
+  assert.equal(lastFlight.primitives[4].opacity > 0, true);
+  assert.equal(
+    recovered.primitives.slice(2, 5).every((shot) => shot.opacity === 0),
+    true,
+  );
+  assert.equal(lastFlight.dangerActive, true);
+  assert.equal(recovered.dangerActive, false);
+  for (const time of [1.91, 2.46, 3.01, 3.6, 4.2]) {
+    const frame = blueprintFrame(id, time);
+    assert.equal(frame.playerSafe, true);
+    for (const shot of frame.primitives
+      .slice(2, 5)
+      .filter((projectile) => projectile.opacity > 0)) {
+      assert.equal(blueprintPointSafe(id, time, shot), false);
+      const lineProgress = (shot.y - spec.emitter[1]) / (spec.shotEnd[1] - spec.emitter[1]);
+      assert.ok(
+        Math.abs(shot.x - (spec.emitter[0] + lineProgress * (spec.shotEnd[0] - spec.emitter[0]))) <
+          0.001,
+      );
+    }
+  }
+  assert.equal(blueprintPointSafe(id, 1.89, { x: spec.emitter[0], y: spec.emitter[1] }), true);
+  assert.deepEqual(blueprintFrame(id, 0).player, blueprintFrame(id, 6).player);
+  assert.match(
+    renderBlueprintThumbnail(id, 'test-burst-fire'),
+    /data-blueprint-preview="burst-fire"/,
+  );
 });
 
 test('blueprint pages and previews reuse Tavi and Kern with accessible localized data', () => {

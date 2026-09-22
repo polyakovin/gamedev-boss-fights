@@ -1,0 +1,132 @@
+{
+  "title": "連続射撃",
+  "subtitle": "予告した一本の射線へ、時間をずらして数発撃つ。",
+  "variant": "ケルンがルーン弾を三発続けて放つ",
+  "summary": "短い連射は弾の脅威を読める拍子で繰り返し、全弾を同時には放たない。",
+  "overview": "ケルンは射線を示して向きを固定し、三発のルーン弾を別々の時刻に放つ。タヴィは通常の移動で射線から離れ、三発目が通り過ぎるまで戻らない。各弾には移動する固有の当たり判定があり、点線の案内にはダメージがない。対応の終了と隙の開始を決めるのは一発目ではなく最後の一発だ。",
+  "learning": "予告、方向の固定、発射間隔、弾速、体全体の退避距離、最後の弾の後の反撃時間を調整する。",
+  "category": "照準とリズム",
+  "readTime": "5分",
+  "demo": {
+    "title": "三回の発射を数える",
+    "timeline": "攻撃のタイムライン",
+    "step": "攻撃の段階",
+    "phaseNames": ["射線を示す", "三発を連射", "硬直と帰還"],
+    "phaseDescriptions": [
+      "ケルンが発射口を構え、将来の射線を無害な点線で示す。一発目より前に方向が固定される。",
+      "三発が同じ発射口から順番に出る。タヴィは横へ移動して体全体を射線から外し、最後の弾まで外側にとどまる。",
+      "三発目が画面を出てからケルンは姿勢を戻す。両者は連続した動きで開始位置へ戻る。"
+    ],
+    "boss": "ボス",
+    "player": "プレイヤー",
+    "danger": "見える各弾は飛行中だけ危険",
+    "locked": "三発とも固定した射線を使う",
+    "safe": "最後の弾が過ぎるまで体全体を射線の外に置く",
+    "reducedMotion": "動きを減らす設定では自動再生を停止します。タイムラインを動かして予告、各発射、硬直を比べてください。",
+    "diagramDescription": "ケルンが斜めの固定射線を示し、三発のルーン弾を順に放つ。タヴィは一発目より前に横へ離れ、三発目が抜けてから戻る。"
+  },
+  "steps": [
+    {
+      "title": "連射全体をどう予告するか？",
+      "body": "一発目より前に発射口と共通の射線を見せる。明確な固定の合図で後続弾の密かな再照準を否定する。点線は情報であり、攻撃判定ではない。"
+    },
+    {
+      "title": "各発射を数えられるか？",
+      "body": "弾ごとに出現位置、発射時の反動、間隔、飛行、円形の当たり判定を示す。別々と分かる長さを保ちつつ、一つの攻撃としてまとまる間隔にする。"
+    },
+    {
+      "title": "いつ戻ってよいか？",
+      "body": "活動中の全弾に対してプレイヤーの当たり判定全体を調べる。一発目の到着前に横へ退避でき、最後の弾の後だけ安全な戻り道を開く。"
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "三発が同時に現れる",
+      "body": "同時に生成すると一斉射撃や扇状射撃に見える。出現時刻、反動、効果音の拍を分ける。"
+    },
+    {
+      "title": "後続弾がひそかに狙い直す",
+      "body": "二発目や三発目がタヴィを追うなら、固定射線の予告は嘘になる。再照準を採用するなら新たな合図と応答時間が必要だ。"
+    },
+    {
+      "title": "一発目の後に隙を開く",
+      "body": "タヴィがまだ後続弾のある射線へ戻りかねない。全弾を追跡し、最後の一発が消えてから有効な隙を作る。"
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "拍子を独立して調整",
+      "body": "発射数、間隔、速度、弾の半径、飛行時間を別々に設定する。照準が同じでも拍子を速めると脅威の重なりと移動可能時間が変わる。"
+    },
+    {
+      "title": "経路全体を検証",
+      "body": "遅い移動、壁際、射線の縁からの開始、早すぎる帰還を試す。装飾の軌跡ではなく、弾とプレイヤー双方の半径で判定する。"
+    },
+    {
+      "title": "発生源を読めるようにする",
+      "body": "全弾をケルンの見える発射口から出し、一発ごとに体を反動させる。残像や案内線を追加の危険面に見せない。"
+    }
+  ],
+  "story": {
+    "title": "仕組みが伝えること",
+    "body": "ケルンのルーンの穴が一度蓄え、三つの石を拍子よく吐き出す。同じ発生源は数を覚えやすくし、タヴィの横移動は射線が危険なままだと示す。"
+  },
+  "adaptation": {
+    "title": "プレイヤーの行動に合わせる",
+    "body": "通常の横移動だけで一発目を避け、三発目まで安全を保てるようにする。ダッシュは距離を短縮し、防御は明確な代償のある別解にできるが、どちらも暗黙に必須にしない。"
+  },
+  "distinction": {
+    "title": "近い仕組みとの違い",
+    "body": "単発は発射が一度だけ。一斉射撃は複数の弾を同時に放つ。連射は予告した一つの発生源から時間をずらして放つ。この例では発射間に狙い直さない。"
+  },
+  "lensNotes": [
+    {
+      "id": "telegraphing",
+      "body": "見える発射口と無害な点線が連射全体を予告し、三回の反動が数を伝える。"
+    },
+    { "id": "commitment", "body": "射線の角度は一発目より前に固定され、三発目まで変わらない。" },
+    { "id": "counterplay", "body": "タヴィは通常の移動で射線を離れ、全弾が消えてから戻る。" },
+    {
+      "id": "threat-geometry",
+      "body": "命中するのは三つの移動する円形弾だけ。プレイヤーの半径全体を考慮する。"
+    },
+    {
+      "id": "difficulty-rhythm",
+      "body": "発射間隔と弾速で射線が危険な時間と有効な隙の開始が決まる。"
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "Hollow Knight",
+      "boss": "White Defender",
+      "screenshot": "https://i.ytimg.com/vi/wQggkrQA4cQ/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=wQggkrQA4cQ&t=95s",
+      "body": "White Defender の Dung Toss は二つの球を順に投げ、Defender Jubilee は三つに増やす。弧を描いて跳ねる球はケルンの直進弾より長く場を危険にするため、数と残存時間を一緒に調整したい。",
+      "video": "https://www.youtube.com/watch?v=wQggkrQA4cQ&t=95s",
+      "videoDurationSeconds": 167
+    },
+    {
+      "dimension": "2D",
+      "game": "Hollow Knight: Silksong",
+      "boss": "The Unravelled",
+      "screenshot": "https://i.ytimg.com/vi/8RM4EBkhApQ/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=8RM4EBkhApQ&t=85s",
+      "body": "The Unravelled の Cadaver Spit は三つの物体を続けて放ち、三つ目だけ異なる弧を取る場合がある。ケルンの固定射線とは違うが、最後の発射まで対応を見積もる必要は同じだ。",
+      "video": "https://www.youtube.com/watch?v=8RM4EBkhApQ&t=85s",
+      "videoDurationSeconds": 137
+    },
+    {
+      "dimension": "3D",
+      "game": "Returnal",
+      "boss": "Hyperion",
+      "screenshot": "https://blog.playstation.com/tachyon/2021/05/51192459805_f3dfca3cda_o-scaled.jpg?fit=1024%2C1024",
+      "screenshotSource": "https://blog.playstation.com/2021/05/28/returnal-the-making-of-that-unforgettable-hyperion-fight/",
+      "body": "Hyperion は速い弾幕を重ね、音楽のような持続攻撃を作る。反復する拍が奥行きと広い戦場に圧力を生む。ケルンの単純化した例は、一つの発生源、固定射線、数えられる三発だけを取り出す。",
+      "video": "https://www.youtube.com/watch?v=TdnGpLzBaKA&t=117s",
+      "videoDurationSeconds": 170
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

@@ -330,9 +330,45 @@ test('source tracking shows a harmless moving guide and a fixed damaging beam', 
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
 });
 
-test('catalog and builder reuse the 41 promoted rule-specific previews', async ({ page }) => {
+test('burst fire shows three separate shots from one locked source', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.goto('en/mechanics/burst-fire/');
+  const widget = page.locator('[data-blueprint-demo]');
+  const timeline = widget.locator('[data-blueprint-timeline]');
+  const shots = [2, 3, 4].map((index) =>
+    widget.locator(`[data-blueprint-primitive="${index}"] circle`),
+  );
+  const seek = (milliseconds) =>
+    timeline.evaluate((element, value) => {
+      element.value = String(value);
+      element.dispatchEvent(new Event('input', { bubbles: true }));
+    }, milliseconds);
+  await expect(page.locator('.lesson-title-line h1')).toHaveText('Burst fire');
+  await expect(page.locator('.wip-badge, .draft-profile')).toHaveCount(0);
+  await expect(page.locator('.game-example')).toHaveCount(3);
+  await expect(widget).toHaveAttribute('data-blueprint-playing', 'false');
+  await seek(1850);
+  for (const shot of shots) await expect(shot).toHaveAttribute('opacity', '0');
+  await seek(2200);
+  expect(Number(await shots[0].getAttribute('opacity'))).toBeGreaterThan(0.9);
+  await expect(shots[1]).toHaveAttribute('opacity', '0');
+  await expect(shots[2]).toHaveAttribute('opacity', '0');
+  await seek(3050);
+  for (const shot of shots) expect(Number(await shot.getAttribute('opacity'))).toBeGreaterThan(0.9);
+  await expect(widget).toHaveAttribute('data-blueprint-outcome', 'safe');
+  await seek(4200);
+  await expect(shots[0]).toHaveAttribute('opacity', '0');
+  await expect(shots[1]).toHaveAttribute('opacity', '0');
+  expect(Number(await shots[2].getAttribute('opacity'))).toBeGreaterThan(0.9);
+  await seek(4300);
+  for (const shot of shots) await expect(shot).toHaveAttribute('opacity', '0');
+  await page.setViewportSize({ width: 375, height: 812 });
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+});
+
+test('catalog and builder reuse the 42 promoted rule-specific previews', async ({ page }) => {
   await page.goto('en/');
-  await expect(page.locator('[data-blueprint-preview]')).toHaveCount(41);
+  await expect(page.locator('[data-blueprint-preview]')).toHaveCount(42);
   const catalogLayouts = await page.locator('[data-blueprint-preview]').evaluateAll((previews) =>
     previews.map((preview) => {
       const boss = preview.querySelector('[data-character-art-preview="kern"]');
@@ -356,7 +392,7 @@ test('catalog and builder reuse the 41 promoted rule-specific previews', async (
   expect(new Set(catalogLayouts.map(({ layout }) => layout)).size).toBeGreaterThanOrEqual(18);
 
   await page.goto('en/builder/');
-  await expect(page.locator('[data-blueprint-preview]')).toHaveCount(41);
+  await expect(page.locator('[data-blueprint-preview]')).toHaveCount(42);
   const builderLayouts = await page.locator('[data-blueprint-preview]').evaluateAll((previews) =>
     previews.map((preview) => {
       const boss = preview.querySelector('[data-character-art-preview="kern"]');
