@@ -129,6 +129,11 @@ export function initializeBlueprint(widget) {
       widget.dataset.blueprintAdaptation = frame.loadoutState;
       widget.dataset.blueprintPackage = frame.adaptedPackage;
     }
+    if (mechanicId === 'wind-up') {
+      widget.dataset.blueprintWindUp = frame.windUpRelease ? 'released-danger' : frame.windUpState;
+      widget.dataset.blueprintWindUpBeat = String(frame.windUpBeat);
+      widget.dataset.blueprintWindUpProgress = frame.windUpProgress.toFixed(3);
+    }
     boss.setAttribute(
       'transform',
       `translate(${frame.boss.x} ${frame.boss.y}) scale(${frame.bossScale})`,

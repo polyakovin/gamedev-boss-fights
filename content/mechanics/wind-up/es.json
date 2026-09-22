@@ -1,0 +1,138 @@
+{
+  "title": "Preparación",
+  "subtitle": "Haz que la preparación revele la acción sin convertirla en un temporizador oculto.",
+  "variant": "Tres pulsos de preparación con una salida rápida y otra retenida",
+  "summary": "La preparación es un estado legible previo a la acción que permite reconocer y responder a un ataque pendiente.",
+  "overview": "La preparación es la acción legible del jefe antes de que un ataque se active. Kern construye el mismo golpe frontal con tres pulsos de pose y runas; la segunda repetición retiene el pulso final sin cambiar el carril prometido. Tavi responde al estado visible y un acento de salida separado marca el paso exacto al peligro.",
+  "learning": "Define el inicio, los pulsos, el límite de salida, la geometría prometida, la respuesta alcanzable y la recuperación.",
+  "category": "Estructura y legibilidad",
+  "readTime": "4 min",
+  "demo": {
+    "title": "Compara una preparación corta con la misma pose retenida antes de salir",
+    "timeline": "Línea temporal de preparación",
+    "step": "Estados de preparación",
+    "phaseNames": [
+      "Leer la acumulación",
+      "Leer la pose retenida",
+      "Verificar salida y recuperación"
+    ],
+    "phaseDescriptions": [
+      "A los 0,55 s Kern se echa atrás y enciende tres runas en orden. El carril discontinuo y la pose cambiante identifican el golpe frontal; Tavi empieza a apartar todo el cuerpo antes de la salida a 1,60 s.",
+      "El primer carril es peligroso hasta 1,98 s. Kern repite la acumulación a 2,88 s, llega al tercer pulso a 3,72 s y mantiene de forma visible la pose final en vez de retrasar el golpe en secreto.",
+      "Un acento separado activa el segundo carril a 4,30 s. Termina a 4,68 s, Kern se asienta hasta 5,35 s y el carril y las runas desaparecen antes de reiniciar."
+    ],
+    "boss": "Jefe",
+    "player": "Jugador",
+    "danger": "Solo el carril frontal sólido durante la salida es peligroso",
+    "locked": "Los tres pulsos prometen un carril fijo; la pose final retenida sigue siendo preparación",
+    "safe": "Saca todo el cuerpo del carril con movimiento normal antes de cada salida",
+    "reducedMotion": "La reproducción automática está desactivada por movimiento reducido. Usa la barra para comparar acumulación, retención, salida y recuperación.",
+    "diagramDescription": "Un jefe de piedra prepara dos veces el mismo golpe frontal. Tres runas romboidales se iluminan sobre su pose mientras un carril discontinuo anticipa el ataque. Un jugador con espada se aparta hacia un lado en la preparación corta y hacia el otro durante la retención. Cada salida vuelve el carril sólido y peligroso antes de una recuperación clara."
+  },
+  "steps": [
+    {
+      "title": "¿Dónde empieza la preparación y dónde la salida?",
+      "body": "Representa preparación y ataque activo como estados distintos con una transición autoritativa. Kern prepara a 0,55 o 2,88 s; el daño empieza solo a 1,60 o 4,30 s. Haz que pose, runas, audio, hitbox y eventos de red dependan de esos límites y prueba el fotograma anterior y posterior."
+    },
+    {
+      "title": "¿La acumulación identifica una sola acción?",
+      "body": "Usa cambios propios del ataque: el peso va atrás, se abre el lado de golpeo, se acumulan tres runas y un carril discontinuo queda fijo. Si la pose final puede retenerse, conserva su silueta y geometría y añade un acento de salida separado en vez de usar solo el tiempo."
+    },
+    {
+      "title": "¿Puede completarse la respuesta prevista?",
+      "body": "Incluye reconocimiento, entrada, aceleración y despeje de todo el cuerpo en la preparación más corta. Tavi empieza a 170 unidades de Kern y despeja un carril de 44 con movimiento normal antes de 1,60 s. Prueba distancias menores, configuraciones lentas, cámara obstruida, audio reducido y todas las duraciones permitidas."
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "Una animación larga oculta una salida ilegible",
+      "body": "Más duración no ayuda si el cuerpo queda congelado de forma ambigua y el golpe aparece en un fotograma arbitrario. Muestra cambios de estado, conserva la pose durante la retención y marca la salida con movimiento, efecto o sonido impulsado por el mismo evento que activa el hitbox."
+    },
+    {
+      "title": "La preparación promete otra geometría",
+      "body": "Un brazo retirado o un carril frontal no puede resolver con seguimiento tardío ni un hitbox oculto más ancho. Congela los parámetros declarados en su límite y deriva vista previa y colisión del mismo origen, dirección y extensión."
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "Describe la preparación como datos",
+      "body": "Guarda inicio, hitos, rango de retención, salida, duración activa y recuperación junto a la geometría. Los eventos de animación pueden presentarlos, pero no deben ser el único lugar donde exista el tiempo jugable."
+    },
+    {
+      "title": "Varía la duración sin borrar el vocabulario",
+      "body": "La segunda muestra llega a la pose final y la retiene hasta 4,30 s. Conserva el orden de pulsos y el acento de salida al variar dificultad. Limita el rango para que el mínimo sea reaccionable y el máximo no exija contar ni frene el combate."
+    },
+    {
+      "title": "Separa preparación de compromiso",
+      "body": "La preparación es el intervalo previo; el bloqueo de ataque define qué parámetros ya no cambian. Un jefe puede apuntar al principio y fijarse después, pero debe declarar ese límite. No trates cada fotograma de anticipación como permiso para seguir hasta el impacto."
+    },
+    {
+      "title": "Trata la interrupción como extensión explícita",
+      "body": "Este ejemplo no se cancela: la respuesta de Tavi es moverse. Si daño, parada o control detienen el ataque, añade estado interrumpible, verbos aceptados, fecha límite, limpieza de cancelación y resultado alternativo, no un tambaleo incidental."
+    }
+  ],
+  "story": {
+    "title": "Un cuerpo de piedra almacena fuerza en tres runas",
+    "body": "Kern se inclina en sentido opuesto mientras tres runas brillan sobre sus hombros. La última se cierra en un anillo al completar la postura; un impulso rompe el anillo y envía fuerza por el carril marcado. El mismo vocabulario explica la preparación corta y retenida."
+  },
+  "adaptation": {
+    "title": "Respeta el movimiento normal de Tavi",
+    "body": "Tavi no necesita parada, carrera ni invulnerabilidad: un paso vertical a cualquier lado saca todo el cuerpo del carril. Ajusta la preparación mínima a la menor velocidad y mayor cuerpo admitidos y usa retenciones para variar ritmo sin cambiar la salida."
+  },
+  "distinction": {
+    "title": "Tiempo de preparación, no toda advertencia",
+    "body": "El telegrafiado abarca todos los canales que comunican un evento futuro. La preparación es el estado de acción del jefe antes de salir. El bloqueo marca parámetros inmutables y una preparación interrumpible añade una regla capaz de cancelar la acción pendiente."
+  },
+  "lensNotes": [
+    {
+      "id": "telegraphing",
+      "body": "La pose, las runas ordenadas y el carril discontinuo identifican el golpe antes del hitbox."
+    },
+    {
+      "id": "difficulty-rhythm",
+      "body": "Una acumulación corta y una retención legible cambian el ritmo sin perder el vocabulario de salida."
+    },
+    {
+      "id": "commitment",
+      "body": "El carril permanece fijo durante la preparación y un acento separado marca el estado activo."
+    },
+    {
+      "id": "counterplay",
+      "body": "El movimiento normal despeja todo el carril antes de ambas salidas y deja una recuperación observable."
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "Hollow Knight",
+      "boss": "Mantis Lords",
+      "video": "https://www.youtube.com/watch?v=VG3h6uVtWyY&t=19s",
+      "videoDurationSeconds": 148,
+      "screenshot": "https://i.ytimg.com/vi/VG3h6uVtWyY/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=VG3h6uVtWyY&t=19s",
+      "body": "La postura agachada y el arma de una Mantis Lord preceden un ataque rápido y comprometido en vista lateral. La repetición hace legible el inicio sin medidor y muestra cómo una preparación breve conserva silueta y respuesta."
+    },
+    {
+      "dimension": "3D",
+      "game": "Elden Ring",
+      "boss": "Margit, the Fell Omen",
+      "video": "https://www.youtube.com/watch?v=m60ucpQggJ0&t=131s",
+      "videoDurationSeconds": 389,
+      "screenshot": "https://i.ytimg.com/vi/m60ucpQggJ0/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=m60ucpQggJ0&t=131s",
+      "body": "El martillo alzado y el cuerpo suspendido de Margit crean una pose final clara. La larga retención muestra por qué hacen falta una transición de salida y una geometría estable, no solo memorizar duración."
+    },
+    {
+      "dimension": "3D",
+      "game": "Sekiro: Shadows Die Twice",
+      "boss": "Corrupted Monk",
+      "video": "https://www.youtube.com/watch?v=bSI6RWT8WUw&t=5s",
+      "videoDurationSeconds": 74,
+      "screenshot": "https://i.ytimg.com/vi/bSI6RWT8WUw/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=bSI6RWT8WUw&t=5s",
+      "body": "La retirada del bastón con todo el cuerpo expone lado y arco antes de salir. La gran silueta 3D muestra cómo postura, arma, cámara y tiempo activo deben coincidir incluso en una preparación corta."
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

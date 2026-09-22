@@ -1,0 +1,134 @@
+{
+  "title": "Wind-up",
+  "subtitle": "Make preparation reveal the coming action without turning it into a hidden timer.",
+  "variant": "A three-beat preparation with a short release and a held release",
+  "summary": "A wind-up is a readable pre-action state that gives the player time to identify and answer a pending attack.",
+  "overview": "A wind-up is the boss's readable preparation before an attack becomes active. Kern builds the same frontal strike through three pose-and-rune beats; the second repetition holds the final beat longer without changing the promised lane. Tavi responds to visible state, while a distinct release accent marks the exact transition into danger.",
+  "learning": "Define the wind-up onset, buildup beats, release boundary, promised geometry, reachable response, and recovery.",
+  "category": "Structure and readability",
+  "readTime": "4 min",
+  "demo": {
+    "title": "Compare a short wind-up with the same preparation held before release",
+    "timeline": "Wind-up timeline",
+    "step": "Wind-up states",
+    "phaseNames": ["Read the buildup", "Read the held preparation", "Verify release and recovery"],
+    "phaseDescriptions": [
+      "At 0.55 s Kern draws back and lights three runes in order. The dashed lane and changing body pose identify the pending frontal strike; Tavi begins a full-body sidestep before release at 1.60 s.",
+      "The first lane is dangerous until 1.98 s and then clears. Kern begins the same buildup at 2.88 s, reaches the third beat at 3.72 s, and visibly holds that final pose instead of silently delaying the hit.",
+      "A separate release accent starts the second active lane at 4.30 s. It ends at 4.68 s, Kern settles through 5.35 s, and both the lane and runes disappear before the loop returns."
+    ],
+    "boss": "Boss",
+    "player": "Player",
+    "danger": "Only the solid frontal lane during release is dangerous",
+    "locked": "The three buildup beats promise one fixed lane; the final held pose is still preparation",
+    "safe": "Clear the complete lane with ordinary movement before either release",
+    "reducedMotion": "Autoplay is disabled by reduced motion. Scrub to compare the short buildup, held final pose, release accent, and recovery.",
+    "diagramDescription": "A stone boss prepares the same frontal strike twice. Three diamond runes illuminate above its changing pose while a dashed lane previews the attack. A sword-bearing player sidesteps the short preparation, returns, then moves to the other side during a longer held preparation. Each release changes the lane to a solid dangerous shape before a clear recovery."
+  },
+  "steps": [
+    {
+      "title": "Where does preparation begin and release start?",
+      "body": "Represent wind-up and active attack as separate gameplay states with one authoritative transition. Kern enters preparation at 0.55 or 2.88 s; damage begins only at 1.60 or 4.30 s. Drive pose, rune beats, audio layers, hitbox enablement, and network events from those boundaries, then test the frames immediately before and after release."
+    },
+    {
+      "title": "Does the buildup identify one pending action?",
+      "body": "Use changes that belong to the attack: weight shifts backward, the striking side opens, three runes accumulate, and one dashed lane stays fixed. Avoid decorative motion that could also precede another move. If a final pose can be held, preserve its silhouette and promised geometry and add a separate release accent instead of making time alone the cue."
+    },
+    {
+      "title": "Can the intended response finish in time?",
+      "body": "Budget recognition, input, acceleration, and full-body clearance inside the shortest supported wind-up. Tavi starts 170 units from Kern and clears a 44-unit lane with ordinary movement before 1.60 s. Test closer starts, slower builds, camera obstruction, reduced audio, and every allowed duration without requiring a dodge that the page does not declare."
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "A long animation hides an unreadable release",
+      "body": "Extra duration does not help when the body freezes ambiguously and the hit appears on an arbitrary frame. Keep state changes visible, preserve the final pose during a hold, and mark release with a distinct motion, effect, or sound driven by the same event as the hitbox."
+    },
+    {
+      "title": "The wind-up promises different geometry than the attack",
+      "body": "A backward arm or lane marker that suggests a frontal strike cannot resolve as late tracking or a wider unseen hitbox. Freeze every committed parameter at its declared boundary and derive both preview and collision from the same origin, direction, and extent."
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "Author wind-up as data",
+      "body": "Store onset, buildup milestones, optional hold range, release, active duration, and recovery beside the attack geometry. Animation events may present those values, but they should not be the only place that gameplay timing exists."
+    },
+    {
+      "title": "Vary duration without erasing vocabulary",
+      "body": "The second example reaches its final readable pose, then holds until 4.30 s. If difficulty changes the delay, retain the same ordered beats and release accent. Cap variation so the shortest value remains reactable and the longest does not force counting or stall the fight."
+    },
+    {
+      "title": "Separate preparation from commitment",
+      "body": "A wind-up is the pre-action interval; attack lock describes which parameters can no longer change. A boss may aim during early preparation and lock later, but the page must state that boundary. Do not treat every visible anticipation frame as permission to retarget until impact."
+    },
+    {
+      "title": "Test interruption as an explicit extension",
+      "body": "This example cannot be cancelled: Tavi's supported response is movement. If damage, parry, or crowd control can stop the pending attack, add an interruptible state, accepted verbs, deadline feedback, cancellation cleanup, and fallback outcome rather than relying on incidental stagger."
+    }
+  ],
+  "story": {
+    "title": "A stone body that stores force in three runes",
+    "body": "Kern leans away from the strike while three small runes brighten above its shoulders. The last rune closes into a ring when the stance is fully loaded; a sharp forward shift breaks that ring and sends force down the already marked lane. The same physical vocabulary explains both the short and held preparation."
+  },
+  "adaptation": {
+    "title": "Respect Tavi's ordinary movement",
+    "body": "Tavi needs no parry, dash, or invulnerability window: either vertical sidestep clears the full frontal lane. Tune the shortest wind-up against the slowest supported movement and largest relevant body, then use longer holds for rhythm variation without changing the escape geometry."
+  },
+  "distinction": {
+    "title": "Preparation time, not every warning",
+    "body": "Telegraphing covers all channels that communicate a future event, including floor markers and sound. Wind-up is specifically the boss action state before release. Attack lock marks when chosen parameters become immutable, while an interruptible wind-up adds a rule that can cancel the pending action."
+  },
+  "lensNotes": [
+    {
+      "id": "telegraphing",
+      "body": "The changing pose, ordered runes, and dashed lane identify the pending strike before its hitbox activates."
+    },
+    {
+      "id": "difficulty-rhythm",
+      "body": "A short buildup and a readable held buildup vary cadence while preserving the same learned release vocabulary."
+    },
+    {
+      "id": "commitment",
+      "body": "The lane remains fixed throughout the shown wind-up, and a separate accent marks the transition into its active state."
+    },
+    {
+      "id": "counterplay",
+      "body": "Ordinary movement clears the full lane before both supported release times and leaves an observable recovery."
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "Hollow Knight",
+      "boss": "Mantis Lords",
+      "video": "https://www.youtube.com/watch?v=VG3h6uVtWyY&t=19s",
+      "videoDurationSeconds": 148,
+      "screenshot": "https://i.ytimg.com/vi/VG3h6uVtWyY/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=VG3h6uVtWyY&t=19s",
+      "body": "A Mantis Lord's compact crouch and weapon placement precede a fast committed attack in a clear side view. Repetition makes the onset readable without a meter, useful for studying how little preparation can still carry a stable silhouette and response window."
+    },
+    {
+      "dimension": "3D",
+      "game": "Elden Ring",
+      "boss": "Margit, the Fell Omen",
+      "video": "https://www.youtube.com/watch?v=m60ucpQggJ0&t=131s",
+      "videoDurationSeconds": 389,
+      "screenshot": "https://i.ytimg.com/vi/m60ucpQggJ0/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=m60ucpQggJ0&t=131s",
+      "body": "Margit's raised hammer and suspended body create a conspicuous final preparation pose before the landing. The long hold illustrates why players need a readable release transition and stable geometry rather than a duration they can only memorize."
+    },
+    {
+      "dimension": "3D",
+      "game": "Sekiro: Shadows Die Twice",
+      "boss": "Corrupted Monk",
+      "video": "https://www.youtube.com/watch?v=bSI6RWT8WUw&t=5s",
+      "videoDurationSeconds": 74,
+      "screenshot": "https://i.ytimg.com/vi/bSI6RWT8WUw/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=bSI6RWT8WUw&t=5s",
+      "body": "The Corrupted Monk's full-body staff draw exposes the striking side and anticipated arc before release. The large 3D silhouette shows how stance, weapon path, camera angle, and active timing must agree for a short wind-up to stay legible."
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

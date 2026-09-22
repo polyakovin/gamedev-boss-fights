@@ -21,6 +21,8 @@ import {
   partBreakCanFire,
   partBreakState,
   situationalImmunityOutcome,
+  windUpProgress,
+  windUpState,
 } from '../src/blueprint-model.mjs';
 import {
   blueprintPreviewLayout,
@@ -28,8 +30,8 @@ import {
   renderBlueprintThumbnail,
 } from '../lib/blueprint-view.mjs';
 
-test('all 55 promoted lesson animations have distinct rule modes and complete moving frames', () => {
-  assert.equal(BLUEPRINT_MECHANIC_IDS.length, 55);
+test('all 56 promoted lesson animations have distinct rule modes and complete moving frames', () => {
+  assert.equal(BLUEPRINT_MECHANIC_IDS.length, 56);
   const modes = new Set();
   for (const id of BLUEPRINT_MECHANIC_IDS) {
     for (let time = 0; time <= BLUEPRINT_DURATION; time += 0.1) {
@@ -50,7 +52,7 @@ test('all 55 promoted lesson animations have distinct rule modes and complete mo
           assert.ok(Number.isFinite(value), `${id} has an invalid ${primitive.type}`);
     }
   }
-  assert.equal(modes.size, 55);
+  assert.equal(modes.size, 56);
 });
 
 test('every blueprint exposes signal, committed action, and recovery without player teleports', () => {
@@ -66,7 +68,8 @@ test('every blueprint exposes signal, committed action, and recovery without pla
       id !== 'counter-stance' &&
       id !== 'absorption-power-up' &&
       id !== 'interruptible-wind-up' &&
-      id !== 'loadout-adaptation'
+      id !== 'loadout-adaptation' &&
+      id !== 'wind-up'
     )
       assert.equal(blueprintFrame(id, 3).dangerActive, true, id);
     assert.equal(blueprintFrame(id, 3).playerSafe, true, id);
@@ -139,7 +142,8 @@ test('every damaging promoted animation derives safety from its own active geome
       id !== 'counter-stance' &&
       id !== 'absorption-power-up' &&
       id !== 'interruptible-wind-up' &&
-      id !== 'loadout-adaptation',
+      id !== 'loadout-adaptation' &&
+      id !== 'wind-up',
   )) {
     const frame = blueprintFrame(id, 3);
     let point = unsafePoints[id];
@@ -1318,4 +1322,48 @@ test('loadout adaptation snapshots one equipped rune into a deterministic visibl
     renderBlueprintThumbnail(id, 'test-loadout-adaptation'),
     /data-blueprint-preview="loadout-adaptation"/,
   );
+});
+
+test('wind-up exposes readable buildup beats before both fixed release windows', () => {
+  const id = 'wind-up';
+  assert.deepEqual([0, 0.8, 1.3, 1.7, 2.2, 3.1, 3.8, 4.4, 4.9, 5.6].map(windUpState), [
+    'idle',
+    'short-wind-up',
+    'short-wind-up',
+    'short-release',
+    'short-recovery',
+    'held-wind-up',
+    'held-ready',
+    'held-release',
+    'held-recovery',
+    'idle',
+  ]);
+  assert.ok(windUpProgress(0.8) > 0 && windUpProgress(0.8) < 1);
+  assert.equal(windUpProgress(3.8), 1);
+
+  const building = blueprintFrame(id, 1.42);
+  assert.equal(building.windUpState, 'short-wind-up');
+  assert.equal(building.dangerActive, false);
+  assert.ok(building.windUpBeat >= 2);
+  assert.ok(building.primitives[0].opacity > 0, 'the lane is promised during preparation');
+  assert.ok(building.primitives[4].opacity > 0, 'the third buildup rune appears before release');
+
+  const firstRelease = blueprintFrame(id, 1.75);
+  assert.equal(firstRelease.windUpState, 'short-release');
+  assert.equal(firstRelease.windUpRelease, true);
+  assert.equal(firstRelease.playerSafe, true);
+  assert.equal(blueprintPointSafe(id, 1.75, { x: 450, y: 430 }), false);
+  assert.ok(firstRelease.primitives[1].opacity > 0, 'the promised lane becomes active');
+
+  const held = blueprintFrame(id, 3.9);
+  assert.equal(held.windUpState, 'held-ready');
+  assert.equal(held.windUpProgress, 1);
+  assert.equal(held.dangerActive, false);
+  assert.ok(held.primitives[5].opacity > 0, 'the final pose remains visibly held');
+
+  const secondRelease = blueprintFrame(id, 4.45);
+  assert.equal(secondRelease.windUpState, 'held-release');
+  assert.equal(secondRelease.playerSafe, true);
+  assert.equal(blueprintPointSafe(id, 4.45, { x: 450, y: 430 }), false);
+  assert.match(renderBlueprintThumbnail(id, 'test-wind-up'), /data-blueprint-preview="wind-up"/);
 });

@@ -1,0 +1,122 @@
+{
+  "title": "蓄势",
+  "subtitle": "让准备动作说明接下来的行动，而不是成为隐藏计时器。",
+  "variant": "三拍蓄势，以及快速释放和保持后释放",
+  "summary": "蓄势是可读的行动前状态，让玩家有时间识别并回应待发攻击。",
+  "overview": "蓄势是攻击生效前Boss可读的准备状态。Kern用姿势和三枚符文逐拍积累同一条正面攻击；第二次会更久地保持最后一拍，却不改变承诺的路线。Tavi依据可见状态行动，独立的释放强调准确标出危险开始。",
+  "learning": "定义蓄势开始、积累节拍、释放边界、承诺几何、可达回应和恢复。",
+  "category": "结构与可读性",
+  "readTime": "4分钟",
+  "demo": {
+    "title": "比较短蓄势与保持同一最终姿势后的释放",
+    "timeline": "蓄势时间轴",
+    "step": "蓄势状态",
+    "phaseNames": ["读取积累", "读取保持准备", "验证释放与恢复"],
+    "phaseDescriptions": [
+      "0.55秒Kern后撤并依次点亮三枚符文。虚线路线与变化姿势指明待发正面攻击；Tavi在1.60秒释放前开始让全身横向离开。",
+      "第一条路线危险至1.98秒。Kern在2.88秒重复积累，3.72秒到达第三拍，并明确保持最终姿势，而不是暗中延迟命中。",
+      "独立释放强调在4.30秒启动第二条危险路线。它在4.68秒结束，Kern恢复至5.35秒，路线与符文消失后循环才返回。"
+    ],
+    "boss": "Boss",
+    "player": "玩家",
+    "danger": "只有释放期间的实线正面路线危险",
+    "locked": "三拍承诺一条固定路线；保持的最终姿势仍是准备",
+    "safe": "在每次释放前用普通移动让全身离开路线",
+    "reducedMotion": "减少动态效果时自动播放关闭。拖动时间轴比较短积累、保持、释放和恢复。",
+    "diagramDescription": "石头Boss两次准备同一正面攻击。三枚菱形符文在变化姿势上方依次发亮，虚线路线预告攻击。持剑玩家在短准备时移向一侧，返回后在长保持时移向另一侧。每次释放路线变成实线危险形状，随后清楚恢复。"
+  },
+  "steps": [
+    {
+      "title": "准备从哪里开始，释放从哪里开始？",
+      "body": "把蓄势和有效攻击表示为两个状态，并用一个权威转换连接。Kern在0.55或2.88秒进入准备；伤害只在1.60或4.30秒开始。让姿势、符文、音频、判定框和网络事件都由这些边界驱动，并测试释放前后一帧。"
+    },
+    {
+      "title": "积累是否只指向一个待发行动？",
+      "body": "使用属于该攻击的变化：重心后移、攻击侧展开、三枚符文积累、同一虚线路线保持固定。若最终姿势可以保持，就维持轮廓与承诺几何，并加入独立释放强调，而不是只用时间作信号。"
+    },
+    {
+      "title": "预期回应能否及时完成？",
+      "body": "把识别、输入、加速和全身净空都计入最短蓄势。Tavi从距Kern 170单位处开始，并在1.60秒前用普通移动离开44单位宽路线。测试更近起点、慢构筑、镜头遮挡、弱音频和所有允许时长。"
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "长动画掩盖不可读的释放",
+      "body": "如果身体含糊冻结、命中在任意帧出现，增加时长也无济于事。显示状态变化，保持最终姿势，并用与判定框同一事件驱动的动作、效果或声音标记释放。"
+    },
+    {
+      "title": "蓄势承诺的几何与攻击不同",
+      "body": "暗示正面攻击的后拉手臂或路线不能最终变成晚期追踪或更宽的隐藏判定框。在声明边界冻结所有参数，并从同一起点、方向和范围生成预览与碰撞。"
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "用数据描述蓄势",
+      "body": "把开始、积累节点、可选保持范围、释放、有效时长和恢复与攻击几何一起保存。动画事件可以表现这些值，但不能是游戏时序的唯一来源。"
+    },
+    {
+      "title": "改变时长但保留词汇",
+      "body": "第二次到达最终姿势后保持至4.30秒。难度改变延迟时仍保留节拍顺序和释放强调。限制变化，使最短值可反应，最长值不要求数拍也不拖慢战斗。"
+    },
+    {
+      "title": "区分准备与承诺",
+      "body": "蓄势是行动前区间；攻击锁定说明哪些参数不再改变。Boss可在早期瞄准、稍后锁定，但必须声明边界。不要把每个预备帧都当作允许追踪至命中的许可。"
+    },
+    {
+      "title": "把中断作为明确扩展测试",
+      "body": "此例不能取消，Tavi的回应是移动。若伤害、招架或控制能停止攻击，应加入可中断状态、接受动作、期限、取消清理和后备结果，而非依赖偶发硬直。"
+    }
+  ],
+  "story": {
+    "title": "石头身体在三枚符文中蓄力",
+    "body": "Kern向攻击反方向倾斜，肩上三枚符文逐一发亮。最终符文在姿势充满时闭合成环；突然前冲打破圆环，让力量沿已标记路线释放。同一身体语言解释短蓄势和保持。"
+  },
+  "adaptation": {
+    "title": "尊重Tavi的普通移动",
+    "body": "Tavi不需要招架、冲刺或无敌：向上下任一侧迈步即可让全身离开路线。按最慢支持速度与最大相关身体调整最短蓄势，再用保持改变节奏而不改变逃生几何。"
+  },
+  "distinction": {
+    "title": "行动前时间，而非所有警告",
+    "body": "预警涵盖地面标记、声音等传达未来事件的全部渠道。蓄势特指释放前的Boss行动状态。攻击锁定标出参数不可变的时刻，而可中断蓄势增加取消待发行动的规则。"
+  },
+  "lensNotes": [
+    { "id": "telegraphing", "body": "变化姿势、有序符文和虚线路线在判定框启用前说明待发攻击。" },
+    { "id": "difficulty-rhythm", "body": "短积累和可读保持改变节奏，同时保留同一释放词汇。" },
+    { "id": "commitment", "body": "路线在准备期间始终固定，独立强调标记进入有效状态。" },
+    { "id": "counterplay", "body": "普通移动能在两次释放前让全身离开路线，并留下可见恢复。" }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "Hollow Knight",
+      "boss": "Mantis Lords",
+      "video": "https://www.youtube.com/watch?v=VG3h6uVtWyY&t=19s",
+      "videoDurationSeconds": 148,
+      "screenshot": "https://i.ytimg.com/vi/VG3h6uVtWyY/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=VG3h6uVtWyY&t=19s",
+      "body": "Mantis Lord紧凑的下蹲与武器位置在清晰侧视中先于快速锁定攻击。重复让开始无需计量条也可读，适合观察很短准备如何保留稳定轮廓与回应窗口。"
+    },
+    {
+      "dimension": "3D",
+      "game": "Elden Ring",
+      "boss": "Margit, the Fell Omen",
+      "video": "https://www.youtube.com/watch?v=m60ucpQggJ0&t=131s",
+      "videoDurationSeconds": 389,
+      "screenshot": "https://i.ytimg.com/vi/m60ucpQggJ0/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=m60ucpQggJ0&t=131s",
+      "body": "Margit举起的锤与悬停身体形成醒目的最终准备姿势。长保持说明玩家需要可读释放转换与稳定几何，而不是只能记忆时长。"
+    },
+    {
+      "dimension": "3D",
+      "game": "Sekiro: Shadows Die Twice",
+      "boss": "Corrupted Monk",
+      "video": "https://www.youtube.com/watch?v=bSI6RWT8WUw&t=5s",
+      "videoDurationSeconds": 74,
+      "screenshot": "https://i.ytimg.com/vi/bSI6RWT8WUw/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=bSI6RWT8WUw&t=5s",
+      "body": "Corrupted Monk用全身后拉长柄武器，在释放前显露攻击侧与预期弧线。大型3D轮廓显示姿势、武器路径、镜头角度与有效时序必须一致。"
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

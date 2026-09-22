@@ -1,0 +1,24 @@
+{
+  "id": "wind-up",
+  "number": 62,
+  "published": true,
+  "sourceLocale": "en",
+  "contentVersion": 1,
+  "animation": "wind-up",
+  "lenses": ["telegraphing", "difficulty-rhythm", "commitment", "counterplay"],
+  "related": ["telegraph", "interruptible-wind-up", "attack-combination"],
+  "sources": [
+    {
+      "title": "Designer article · Mike Stout — enemy attacks and telegraphing",
+      "url": "https://www.gamedeveloper.com/design/enemy-attacks-and-telegraphing"
+    },
+    {
+      "title": "Combat designer article · Mike Birkhead — anticipation, timing, and holds",
+      "url": "https://www.gamedeveloper.com/design/opinion-boss-design---tips-from-a-combat-designer"
+    },
+    {
+      "title": "Developer talk · Rebecca Vessal — modular boss maneuvers in Psychonauts 2",
+      "url": "https://www.gdcvault.com/play/1028927/AI-Summit-Crafting-Epic-Boss"
+    }
+  ]
+}

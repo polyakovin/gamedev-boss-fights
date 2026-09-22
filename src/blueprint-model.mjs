@@ -358,6 +358,21 @@ const SPECS = {
     reachHalfWidth: 18,
     burstRadius: 150,
   },
+  'wind-up': {
+    mode: 'wind-up',
+    boss: [280, 430],
+    player: [450, 430],
+    target: [450, 320],
+    firstWindup: [0.55, 1.6],
+    firstRelease: [1.6, 1.98],
+    firstRecoveryEnd: 2.42,
+    secondWindup: [2.88, 4.3],
+    heldFrom: 3.72,
+    secondRelease: [4.3, 4.68],
+    recoveryEnd: 5.35,
+    laneEnd: [560, 430],
+    laneHalfWidth: 22,
+  },
   'wide-swing': { mode: 'arc', boss: [280, 310], player: [410, 470], target: [470, 650] },
   lunge: { mode: 'lunge', boss: [170, 290], player: [390, 590], target: [470, 660] },
   grab: { mode: 'grab', boss: [280, 300], player: [390, 485], target: [470, 610] },
@@ -744,6 +759,29 @@ export function loadoutAdaptationState(time) {
   if (t >= spec.burstCopiedAt && t < spec.burstAttack[0]) return 'copied-burst';
   if (t >= spec.burstAttack[0] && t < spec.burstAttack[1]) return 'burst-danger';
   if (t >= spec.burstAttack[1] && t < spec.recoveryEnd) return 'burst-recovery';
+  return 'idle';
+}
+
+export function windUpProgress(time) {
+  const spec = SPECS['wind-up'];
+  const t = localTime(time);
+  if (t >= spec.firstWindup[0] && t < spec.firstRelease[0])
+    return clamp((t - spec.firstWindup[0]) / (spec.firstRelease[0] - spec.firstWindup[0]));
+  if (t >= spec.secondWindup[0] && t < spec.secondRelease[0])
+    return clamp((t - spec.secondWindup[0]) / (spec.heldFrom - spec.secondWindup[0]));
+  return 0;
+}
+
+export function windUpState(time) {
+  const spec = SPECS['wind-up'];
+  const t = localTime(time);
+  if (t >= spec.firstWindup[0] && t < spec.firstRelease[0]) return 'short-wind-up';
+  if (t >= spec.firstRelease[0] && t < spec.firstRelease[1]) return 'short-release';
+  if (t >= spec.firstRelease[1] && t < spec.firstRecoveryEnd) return 'short-recovery';
+  if (t >= spec.secondWindup[0] && t < spec.heldFrom) return 'held-wind-up';
+  if (t >= spec.heldFrom && t < spec.secondRelease[0]) return 'held-ready';
+  if (t >= spec.secondRelease[0] && t < spec.secondRelease[1]) return 'held-release';
+  if (t >= spec.secondRelease[1] && t < spec.recoveryEnd) return 'held-recovery';
   return 'idle';
 }
 
@@ -1349,6 +1387,62 @@ function primitivesFor(spec, frame) {
       circle(boss.x, boss.y, spec.burstRadius, burstPreview ? 0.5 : 0, 'accent', 4, 0.07, '10 10'),
       circle(boss.x, boss.y, spec.burstRadius, frame.burstDanger ? 0.9 : 0, 'signal', 10, 0.17),
       circle(boss.x, boss.y - 65, 27 + 18 * copyFlash, copyFlash, 'signal', 5),
+    ];
+  }
+  if (mode === 'wind-up') {
+    const state = windUpState(frame.time);
+    const progress = windUpProgress(frame.time);
+    const winding = state === 'short-wind-up' || state === 'held-wind-up' || state === 'held-ready';
+    const ready = progress >= 1 || state === 'held-ready';
+    const releaseFlash = Math.max(
+      strikePulse(frame.time, spec.firstRelease[0], 0.34),
+      strikePulse(frame.time, spec.secondRelease[0], 0.34),
+    );
+    const rune = (offset, threshold) => {
+      const x = boss.x + offset;
+      return path(
+        `M ${x} ${boss.y - 92} L ${x + 11} ${boss.y - 79} L ${x} ${boss.y - 66} L ${x - 11} ${boss.y - 79} Z`,
+        winding && progress >= threshold ? 0.92 : winding ? 0.2 : 0,
+        progress >= threshold ? 'accent' : 'muted',
+        5,
+        progress >= threshold ? 0.2 : 0,
+      );
+    };
+    return [
+      line(
+        boss.x + 38,
+        boss.y,
+        spec.laneEnd[0],
+        spec.laneEnd[1],
+        winding ? 0.5 : 0,
+        'accent',
+        7,
+        '12 10',
+      ),
+      line(
+        boss.x + 38,
+        boss.y,
+        spec.laneEnd[0],
+        spec.laneEnd[1],
+        frame.dangerActive ? 0.95 : 0,
+        'signal',
+        spec.laneHalfWidth * 2,
+      ),
+      rune(-34, 0.12),
+      rune(0, 0.45),
+      rune(34, 0.78),
+      circle(boss.x, boss.y - 79, 57, ready ? 0.78 : 0, 'safe', 5, 0.04, '8 9'),
+      circle(boss.x + 42, boss.y, 18 + releaseFlash * 24, releaseFlash, 'signal', 8),
+      line(
+        boss.x - 62,
+        boss.y + 66,
+        boss.x + 62,
+        boss.y + 66,
+        frame.dangerActive ? 0.78 : 0,
+        'muted',
+        8,
+        '10 8',
+      ),
     ];
   }
   if (mode === 'landing') {
@@ -2599,6 +2693,12 @@ function pointClearsThreat(spec, frame, value, radius = BLUEPRINT_PLAYER_RADIUS)
       return Math.hypot(value.x - frame.boss.x, value.y - frame.boss.y) > spec.burstRadius + radius;
     return true;
   }
+  if (mode === 'wind-up')
+    return (
+      !frame.dangerActive ||
+      distanceToSegment(value, { x: frame.boss.x + 38, y: frame.boss.y }, point(spec.laneEnd)) >
+        spec.laneHalfWidth + radius
+    );
   if (mode === 'spiral')
     return (
       distanceFromBoss > 52 + radius &&
@@ -2807,6 +2907,7 @@ export function blueprintFrame(id, time) {
   else if (spec.mode === 'interruptible-wind-up')
     responseProgress = smooth((t - spec.secondWindup[0]) / 0.64);
   else if (spec.mode === 'loadout-adaptation') responseProgress = 0;
+  else if (spec.mode === 'wind-up') responseProgress = 0;
   else if (spec.mode === 'knockback')
     responseProgress = phase === 0 ? 0 : phase === 1 ? smooth(action) : 1;
   else if (spec.mode === 'target-lock')
@@ -2927,6 +3028,24 @@ export function blueprintFrame(id, time) {
     player = {
       x: mix(mix(afterReach.x, targetPlayer.x, clearBurst), startPlayer.x, reset),
       y: mix(mix(afterReach.y, targetPlayer.y, clearBurst), startPlayer.y, reset),
+    };
+  }
+  if (spec.mode === 'wind-up') {
+    const clearShort = smooth((t - 0.84) / 0.46);
+    const returnAfterShort = smooth((t - 2.12) / 0.42);
+    const clearHeld = smooth((t - 3.16) / 0.5);
+    const reset = smooth((t - spec.recoveryEnd) / 0.5);
+    const shortSafe = {
+      x: startPlayer.x,
+      y: mix(startPlayer.y, 550, clearShort),
+    };
+    const afterShort = {
+      x: mix(shortSafe.x, startPlayer.x, returnAfterShort),
+      y: mix(shortSafe.y, startPlayer.y, returnAfterShort),
+    };
+    player = {
+      x: mix(mix(afterShort.x, targetPlayer.x, clearHeld), startPlayer.x, reset),
+      y: mix(mix(afterShort.y, targetPlayer.y, clearHeld), startPlayer.y, reset),
     };
   }
   if (spec.mode === 'rotating' && phase === 0) {
@@ -3060,7 +3179,12 @@ export function blueprintFrame(id, time) {
                                             ? (t >= spec.reachAttack[0] &&
                                                 t < spec.reachAttack[1]) ||
                                               (t >= spec.burstAttack[0] && t < spec.burstAttack[1])
-                                            : phase === 1;
+                                            : spec.mode === 'wind-up'
+                                              ? (t >= spec.firstRelease[0] &&
+                                                  t < spec.firstRelease[1]) ||
+                                                (t >= spec.secondRelease[0] &&
+                                                  t < spec.secondRelease[1])
+                                              : phase === 1;
   const frame = {
     id,
     mode: spec.mode,
@@ -3101,7 +3225,8 @@ export function blueprintFrame(id, time) {
             spec.mode === 'counter-stance' ||
             spec.mode === 'absorption-power-up' ||
             spec.mode === 'interruptible-wind-up' ||
-            spec.mode === 'loadout-adaptation'
+            spec.mode === 'loadout-adaptation' ||
+            spec.mode === 'wind-up'
           ? -180
           : -90,
     bossMotion: motion({
@@ -3110,10 +3235,24 @@ export function blueprintFrame(id, time) {
           ? phase === 0
             ? -0.3 * prepare
             : 0.36 * pulse(clamp(action / 0.52))
-          : phase === 0
-            ? -0.22 * prepare
-            : 0.24 * pulse(action),
-      crouch: spec.mode === 'landing' ? (phase === 0 ? 0.42 * prepare : 0) : 0.2 * prepare,
+          : spec.mode === 'wind-up'
+            ? -0.34 * windUpProgress(t) +
+              0.46 *
+                Math.max(
+                  strikePulse(t, spec.firstRelease[0], 0.5),
+                  strikePulse(t, spec.secondRelease[0], 0.5),
+                )
+            : phase === 0
+              ? -0.22 * prepare
+              : 0.24 * pulse(action),
+      crouch:
+        spec.mode === 'landing'
+          ? phase === 0
+            ? 0.42 * prepare
+            : 0
+          : spec.mode === 'wind-up'
+            ? 0.34 * windUpProgress(t)
+            : 0.2 * prepare,
       lift: spec.mode === 'landing' && phase === 1 ? pulse(clamp(action / 0.52)) : 0,
       attack:
         spec.mode === 'speed-change'
@@ -3155,9 +3294,14 @@ export function blueprintFrame(id, time) {
                                 strikePulse(t, spec.reachAttack[0], 0.64),
                                 strikePulse(t, spec.burstAttack[0], 0.68),
                               )
-                            : phase === 1
-                              ? 0.75
-                              : prepare * 0.35,
+                            : spec.mode === 'wind-up'
+                              ? Math.max(
+                                  strikePulse(t, spec.firstRelease[0], 0.62),
+                                  strikePulse(t, spec.secondRelease[0], 0.62),
+                                )
+                              : phase === 1
+                                ? 0.75
+                                : prepare * 0.35,
       impact:
         spec.mode === 'landing'
           ? pulse(clamp((action - 0.42) / 0.22))
@@ -3179,11 +3323,17 @@ export function blueprintFrame(id, time) {
                         ? 0.85 * strikePulse(t, spec.openStrike, 0.27)
                         : spec.mode === 'interruptible-wind-up'
                           ? 0.9 * strikePulse(t, spec.interruptAt, 0.3)
-                          : spec.mode === 'shockwave' || spec.mode === 'knockback'
-                            ? pulse(action * 3)
-                            : spec.mode === 'chain-explosions'
-                              ? pulse((action * 5) % 1)
-                              : 0,
+                          : spec.mode === 'wind-up'
+                            ? 0.65 *
+                              Math.max(
+                                strikePulse(t, spec.firstRelease[0], 0.28),
+                                strikePulse(t, spec.secondRelease[0], 0.28),
+                              )
+                            : spec.mode === 'shockwave' || spec.mode === 'knockback'
+                              ? pulse(action * 3)
+                              : spec.mode === 'chain-explosions'
+                                ? pulse((action * 5) % 1)
+                                : 0,
     }),
     playerMotion: motion({
       gait: (route * responseProgress + route * returnProgress) / 20,
@@ -3303,6 +3453,12 @@ export function blueprintFrame(id, time) {
     frame.reachDanger = t >= spec.reachAttack[0] && t < spec.reachAttack[1];
     frame.burstDanger = t >= spec.burstAttack[0] && t < spec.burstAttack[1];
   }
+  if (spec.mode === 'wind-up') {
+    frame.windUpState = windUpState(t);
+    frame.windUpProgress = windUpProgress(t);
+    frame.windUpBeat = Math.min(3, Math.floor(frame.windUpProgress * 3 + 0.001));
+    frame.windUpRelease = dangerActive;
+  }
   frame.primitives = primitivesFor(spec, frame);
   frame.playerSafe = pointClearsThreat(spec, frame, player);
   frame.bossLabel = {
@@ -3321,7 +3477,8 @@ export function blueprintFrame(id, time) {
       spec.mode === 'counter-stance' ||
       spec.mode === 'absorption-power-up' ||
       spec.mode === 'interruptible-wind-up' ||
-      spec.mode === 'loadout-adaptation'
+      spec.mode === 'loadout-adaptation' ||
+      spec.mode === 'wind-up'
         ? 92
         : -62),
   };
