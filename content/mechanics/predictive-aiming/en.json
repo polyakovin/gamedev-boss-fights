@@ -1,0 +1,142 @@
+{
+  "title": "Predictive aiming",
+  "subtitle": "Aim ahead of current motion, then commit to the forecast instead of following the player.",
+  "variant": "Kern leads Tavi's run with a single committed rune shot",
+  "summary": "The boss samples the player's movement and aims at an estimated future position, creating a readable invitation to change course.",
+  "overview": "Tavi runs right while Kern marks a position ahead of the run. At release, the forecast freezes and one rune shot travels along that line. Tavi reverses after commitment, so the shot misses; it does not home. The diagram separates the live player position, forecast, locked trajectory, and projectile hitbox.",
+  "learning": "Choose a prediction horizon, show what is being forecast, freeze the result, and test a reachable change of course.",
+  "category": "Targeting and rhythm",
+  "readTime": "5 min",
+  "demo": {
+    "title": "Inspect the forecast",
+    "timeline": "Attack timeline",
+    "step": "Attack phases",
+    "phaseNames": ["Sample the run", "Commit the lead", "Clear the shot"],
+    "phaseDescriptions": [
+      "Tavi moves right. Kern projects a dashed target marker ahead of his current position using the visible direction and speed of travel.",
+      "Kern freezes the forecast at the attack cue and releases one projectile along the announced line. Tavi changes direction after commitment; the shot never retargets.",
+      "The projectile reaches its forecast destination and disappears. Kern's aiming mark clears before Tavi returns for the next cycle."
+    ],
+    "boss": "Boss",
+    "player": "Player",
+    "danger": "Only the moving rune shot has an active hitbox",
+    "locked": "The forecast and projectile route are fixed at release",
+    "safe": "Change course after the forecast locks and clear the projectile body",
+    "reducedMotion": "Autoplay is disabled by reduced-motion settings. Scrub to compare live position, forecast, and shot.",
+    "diagramDescription": "Tavi runs right while a dashed mark appears ahead of him. Kern locks that forecast and fires one rune shot along the fixed line. Tavi reverses left; the shot passes to the empty forecast point and vanishes."
+  },
+  "steps": [
+    {
+      "title": "What movement does the boss sample?",
+      "body": "Use observed position and recent velocity at a defined sample time. Limit the look-ahead interval and clamp the forecast to reachable arena space; do not secretly read future player input."
+    },
+    {
+      "title": "When does the prediction stop changing?",
+      "body": "Show the forecast marker during aiming, then freeze it at an audible and visible release cue. Spawn the shot on that committed line and keep its velocity fixed unless a separate homing rule is announced."
+    },
+    {
+      "title": "Can an ordinary course change clear it?",
+      "body": "Test from several approach speeds, distances, and directions. Include the whole player body and projectile radius in clearance checks; leave enough time to reverse or sidestep after the lock."
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "Prediction uses hidden future input",
+      "body": "A perfect forecast that reacts to a turn made after commitment feels like input reading. Derive it from a past sample and make any later correction a separately signaled mechanic."
+    },
+    {
+      "title": "The marker is too subtle or too late",
+      "body": "If players cannot compare their current position with the projected point before release, the attack reads like an unexplained miss or unavoidable hit. Use geometry and timing, not color alone."
+    },
+    {
+      "title": "Lead time outgrows the response window",
+      "body": "An extreme forecast can cover every reachable turn or point beyond the arena. Cap the horizon and test the response at low and high player speeds."
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "Predict from data the boss could observe",
+      "body": "Estimate velocity from two recent positions, smooth noise if needed, and compute target = position + velocity × lead time. Make the sample window and lead time explicit tuning parameters."
+    },
+    {
+      "title": "Keep forecast and live threat separate",
+      "body": "The dashed marker is a destination cue, not a damage zone. Collision belongs to the moving shot; it should not fire merely because the player touches the future marker."
+    },
+    {
+      "title": "Budget motion, not only distance",
+      "body": "Check a standing player, a steady runner, and a runner who reverses just after commitment. Tune projectile travel time and player acceleration together so the intended response stays possible."
+    },
+    {
+      "title": "Vary one axis at a time",
+      "body": "Later cycles may shorten the lead time or add a second forecast, but preserve the same lock cue. Combining faster prediction and longer tracking at once hides what changed."
+    }
+  ],
+  "story": {
+    "title": "What the mechanic communicates",
+    "body": "Kern reads the momentum of Tavi's run and stamps a rune where that route would lead. The stone shot obeys the completed mark rather than chasing Tavi's later decision."
+  },
+  "adaptation": {
+    "title": "Adapt it to the player verbs",
+    "body": "Tavi needs only ordinary movement to change course after the lock. If a dodge, dash, or guard is added, decide whether it creates a new escape or merely shortens a window that was already fair without it."
+  },
+  "distinction": {
+    "title": "Keep the mechanic distinct",
+    "body": "Target lock fixes the player's current position; predictive aiming projects from observed movement. Source tracking keeps turning the firing source, while homing changes a projectile after release. This shot does neither once Kern commits."
+  },
+  "lensNotes": [
+    {
+      "id": "telegraphing",
+      "body": "The dashed future marker and release cue expose the projected point before it becomes a committed route."
+    },
+    {
+      "id": "commitment",
+      "body": "At release, the sampled velocity, forecast point, and projectile direction stop changing together."
+    },
+    {
+      "id": "counterplay",
+      "body": "Tavi can reverse after the lock; the escape is a response to a visible prediction, not a hidden random miss."
+    },
+    {
+      "id": "threat-geometry",
+      "body": "The marker communicates destination, while only the moving projectile circle participates in collision."
+    },
+    {
+      "id": "difficulty-rhythm",
+      "body": "Lead horizon, cue duration, shot travel, and acceleration jointly determine whether a course change is reachable."
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "Will You Snail?",
+      "boss": "Squid",
+      "screenshot": "https://i.ytimg.com/vi/l3zMXiFZpLw/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=l3zMXiFZpLw&t=35s",
+      "body": "Squid's boss fight can place spikes and fireworks at positions where it predicts Shelly will be. This forecasts a destination for spawned hazards; Kern's diagram instead commits one traveling shot to a forecast point.",
+      "video": "https://www.youtube.com/watch?v=l3zMXiFZpLw&t=35s",
+      "videoDurationSeconds": 162
+    },
+    {
+      "dimension": "3D",
+      "game": "ULTRAKILL",
+      "boss": "Sisyphus Prime",
+      "screenshot": "https://i.ytimg.com/vi/kewnvOG3KY8/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=kewnvOG3KY8&t=35s",
+      "body": "The glint thrown during Sisyphus Prime's Destroy attack attempts to predict the player's position before exploding. It tests a change of momentum under close-range pressure, whereas Kern's shot exposes its entire projected lane.",
+      "video": "https://www.youtube.com/watch?v=kewnvOG3KY8&t=35s",
+      "videoDurationSeconds": 85
+    },
+    {
+      "dimension": "3D",
+      "game": "Saros",
+      "boss": "Rhabdom",
+      "screenshot": "https://nfapi.noobfeed.com/storage/media/58069/saros-beat-rhabdom-shattered-descent-2.jpg",
+      "screenshotSource": "https://www.noobfeed.com/articles/saros-beat-rhabdom-shattered-descent",
+      "body": "Rhabdom pressures a moving player with lunges and projectile volleys that reward abrupt grapple-based course changes. The encounter layers several threats around motion prediction; the diagram isolates one forecast and one non-homing projectile.",
+      "video": "https://www.youtube.com/watch?v=gpUCfYwESyM&t=25s",
+      "videoDurationSeconds": 81
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

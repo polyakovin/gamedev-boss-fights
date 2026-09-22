@@ -1,0 +1,28 @@
+{
+  "id": "predictive-aiming",
+  "number": 46,
+  "published": true,
+  "sourceLocale": "en",
+  "contentVersion": 1,
+  "animation": "predictive-aiming",
+  "lenses": ["telegraphing", "commitment", "counterplay", "threat-geometry", "difficulty-rhythm"],
+  "related": ["target-lock", "single-shot", "homing-projectile"],
+  "sources": [
+    {
+      "title": "Will You Snail? · developer press kit",
+      "url": "https://jonas-tyroller.itch.io/will-you-snail-press-kit"
+    },
+    {
+      "title": "Official Will You Snail? Wiki · Squid boss",
+      "url": "https://willyousnail.wiki.gg/wiki/Squid_(Boss)"
+    },
+    {
+      "title": "Official ULTRAKILL Wiki · Sisyphus Prime",
+      "url": "https://ultrakill.wiki.gg/wiki/Sisyphus_Prime"
+    },
+    {
+      "title": "Saros · Shattered Descent walkthrough",
+      "url": "https://intoindiegames.com/walkthroughs/saros-shattered-descent-walkthrough/"
+    }
+  ]
+}

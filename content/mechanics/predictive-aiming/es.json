@@ -1,0 +1,142 @@
+{
+  "title": "Apuntado predictivo",
+  "subtitle": "Apuntar por delante del movimiento actual y fijar el pronóstico en vez de seguir al jugador.",
+  "variant": "Kern anticipa la carrera de Tavi y dispara un proyectil rúnico comprometido",
+  "summary": "El jefe estima el movimiento del jugador y apunta a su futura posición, dejando una oportunidad legible para cambiar de rumbo.",
+  "overview": "Tavi corre a la derecha mientras Kern marca un punto por delante. Al disparar, la predicción queda fija y un proyectil sigue esa línea. Tavi invierte la marcha después del compromiso, de modo que el disparo falla; no lo persigue. El diagrama distingue posición actual, pronóstico, trayectoria fijada y colisión del proyectil.",
+  "learning": "Elegir el horizonte predictivo, mostrar el adelanto, fijar el resultado y comprobar que se pueda cambiar de rumbo.",
+  "category": "Apuntado y ritmo",
+  "readTime": "5 min",
+  "demo": {
+    "title": "Examinar la predicción",
+    "timeline": "Cronología del ataque",
+    "step": "Fases del ataque",
+    "phaseNames": ["Observar la carrera", "Fijar el adelanto", "Terminar el disparo"],
+    "phaseDescriptions": [
+      "Tavi corre a la derecha. Kern proyecta una marca discontinua por delante de su posición actual según la dirección y velocidad visibles.",
+      "Kern fija la predicción al dar la señal de ataque y lanza un proyectil por la línea anunciada. Tavi cambia de dirección después; el disparo nunca vuelve a apuntar.",
+      "El proyectil llega al destino previsto y desaparece. La marca de Kern se apaga antes de que Tavi vuelva para el siguiente ciclo."
+    ],
+    "boss": "Jefe",
+    "player": "Jugador",
+    "danger": "Solo el proyectil rúnico en movimiento tiene colisión activa",
+    "locked": "La predicción y la ruta del proyectil se fijan al disparar",
+    "safe": "Cambiar de rumbo tras la fijación y apartarse del cuerpo del proyectil",
+    "reducedMotion": "La reproducción automática está desactivada con movimiento reducido. Desliza el control para comparar posición actual, predicción y disparo.",
+    "diagramDescription": "Tavi corre a la derecha y aparece una marca discontinua ante él. Kern fija la predicción y dispara por una línea estable. Tavi gira a la izquierda; el proyectil pasa hacia el punto vacío previsto y desaparece."
+  },
+  "steps": [
+    {
+      "title": "¿Qué movimiento observa el jefe?",
+      "body": "Usa la posición observada y la velocidad reciente en un instante definido. Limita el tiempo de adelanto y ajusta el destino al espacio alcanzable de la arena; no leas en secreto acciones futuras."
+    },
+    {
+      "title": "¿Cuándo deja de cambiar la predicción?",
+      "body": "Muestra la marca durante el apuntado y fíjala con una señal sonora y visual al disparar. Lanza el proyectil por esa línea sin variar su velocidad, salvo que anuncies otra regla de autoguiado."
+    },
+    {
+      "title": "¿Basta un cambio normal de rumbo?",
+      "body": "Prueba varias velocidades, distancias y direcciones. Cuenta el cuerpo completo del jugador y el radio del proyectil; deja tiempo para girar o apartarse tras la fijación."
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "La predicción lee acciones futuras",
+      "body": "Una predicción perfecta que responde a un giro posterior parece leer el mando. Calcúlala a partir de muestras pasadas y señala por separado cualquier corrección posterior."
+    },
+    {
+      "title": "La marca es demasiado sutil o tardía",
+      "body": "Si no se puede comparar la posición actual con el punto previsto antes del disparo, el ataque parece un fallo inexplicable o un impacto inevitable. Usa geometría y tiempo, no solo color."
+    },
+    {
+      "title": "El adelanto supera la ventana de respuesta",
+      "body": "Un pronóstico extremo puede cubrir todos los giros posibles o salir de la arena. Limita el horizonte y prueba la respuesta a velocidades bajas y altas."
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "Predice con datos observables para el jefe",
+      "body": "Estima velocidad con dos posiciones recientes, suaviza el ruido si hace falta y calcula destino = posición + velocidad × tiempo de adelanto. Deja la ventana de muestreo y el adelanto como parámetros ajustables."
+    },
+    {
+      "title": "Separa pronóstico y amenaza real",
+      "body": "La marca discontinua indica un destino, no una zona de daño. La colisión corresponde al proyectil en movimiento; tocar el punto futuro no causa daño."
+    },
+    {
+      "title": "Presupuesta movimiento, no solo distancia",
+      "body": "Prueba a un jugador quieto, uno que corre y otro que gira justo después de la fijación. Ajusta juntos tiempo de vuelo y aceleración para que la respuesta prevista sea posible."
+    },
+    {
+      "title": "Varía un eje cada vez",
+      "body": "Los ciclos posteriores pueden acortar el adelanto o añadir otra predicción, conservando la misma señal de fijación. Acelerar la predicción y prolongar el seguimiento a la vez oculta el cambio."
+    }
+  ],
+  "story": {
+    "title": "Qué comunica la mecánica",
+    "body": "Kern lee el impulso de Tavi y graba una runa donde lo llevaría su carrera. El disparo de piedra obedece la marca terminada, no la decisión posterior de Tavi."
+  },
+  "adaptation": {
+    "title": "Adaptación a las acciones del jugador",
+    "body": "A Tavi le basta el movimiento normal para cambiar de rumbo tras la fijación. Si añades esquiva, impulso o bloqueo, decide si abren una salida nueva o solo acortan una ventana que ya era justa sin ellos."
+  },
+  "distinction": {
+    "title": "Distinguir esta mecánica",
+    "body": "El bloqueo de objetivo fija la posición actual; el apuntado predictivo proyecta el movimiento observado. El seguimiento gira la fuente y el autoguiado corrige un proyectil tras dispararlo. Este disparo no hace ninguna de las dos cosas."
+  },
+  "lensNotes": [
+    {
+      "id": "telegraphing",
+      "body": "La marca del punto futuro y la señal de disparo revelan el destino antes de comprometer la ruta."
+    },
+    {
+      "id": "commitment",
+      "body": "Al disparar, velocidad muestreada, destino previsto y dirección del proyectil dejan de cambiar juntos."
+    },
+    {
+      "id": "counterplay",
+      "body": "Tavi puede girar después de la fijación; responde a una predicción visible, no a un fallo aleatorio."
+    },
+    {
+      "id": "threat-geometry",
+      "body": "La marca comunica destino, pero solo el círculo móvil del proyectil participa en la colisión."
+    },
+    {
+      "id": "difficulty-rhythm",
+      "body": "Horizonte, duración de la señal, tiempo de vuelo y aceleración determinan si es posible cambiar de rumbo."
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "Will You Snail?",
+      "boss": "Squid",
+      "screenshot": "https://i.ytimg.com/vi/l3zMXiFZpLw/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=l3zMXiFZpLw&t=35s",
+      "body": "En la pelea con Squid pueden aparecer pinchos y fuegos artificiales donde prevé que estará Shelly. Allí se pronostica el lugar donde nace el peligro; el diagrama de Kern compromete un proyectil móvil hacia ese punto.",
+      "video": "https://www.youtube.com/watch?v=l3zMXiFZpLw&t=35s",
+      "videoDurationSeconds": 162
+    },
+    {
+      "dimension": "3D",
+      "game": "ULTRAKILL",
+      "boss": "Sisyphus Prime",
+      "screenshot": "https://i.ytimg.com/vi/kewnvOG3KY8/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=kewnvOG3KY8&t=35s",
+      "body": "Durante Destroy, el destello que lanza Sisyphus Prime intenta predecir la posición del jugador antes de explotar. Pone a prueba el cambio de impulso a corta distancia, mientras el disparo de Kern muestra toda su línea prevista.",
+      "video": "https://www.youtube.com/watch?v=kewnvOG3KY8&t=35s",
+      "videoDurationSeconds": 85
+    },
+    {
+      "dimension": "3D",
+      "game": "Saros",
+      "boss": "Rhabdom",
+      "screenshot": "https://nfapi.noobfeed.com/storage/media/58069/saros-beat-rhabdom-shattered-descent-2.jpg",
+      "screenshotSource": "https://www.noobfeed.com/articles/saros-beat-rhabdom-shattered-descent",
+      "body": "Rhabdom presiona al jugador móvil con embestidas y salvas que favorecen cambios bruscos de ruta con el gancho. El encuentro acumula amenazas alrededor de la predicción; el diagrama aísla un pronóstico y un disparo sin autoguiado.",
+      "video": "https://www.youtube.com/watch?v=gpUCfYwESyM&t=25s",
+      "videoDurationSeconds": 81
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

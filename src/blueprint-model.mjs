@@ -158,6 +158,15 @@ const SPECS = {
     mirror: [410, 425],
     contactRadius: 56,
   },
+  'predictive-aiming': {
+    mode: 'predictive-aim',
+    boss: [155, 290],
+    player: [340, 620],
+    target: [300, 620],
+    approachVelocity: 50,
+    leadSeconds: 1.6,
+    shotRadius: 22,
+  },
   'wide-swing': { mode: 'arc', boss: [280, 310], player: [410, 470], target: [470, 650] },
   lunge: { mode: 'lunge', boss: [170, 290], player: [390, 590], target: [470, 660] },
   grab: { mode: 'grab', boss: [280, 300], player: [390, 485], target: [470, 610] },
@@ -1134,6 +1143,31 @@ function primitivesFor(spec, frame) {
       circle(boss.x + 35, boss.y + 45, 23, decision * 0.8, 'safe', 5),
     ];
   }
+  if (mode === 'predictive-aim') {
+    const predicted = frame.predicted;
+    const shotProgress = clamp((frame.time - 1.6) / 2.15);
+    const shot = {
+      x: mix(boss.x, predicted.x, shotProgress),
+      y: mix(boss.y, predicted.y, shotProgress),
+    };
+    const live = phase === 1 && frame.time <= 3.75;
+    return [
+      line(player.x, player.y, predicted.x, predicted.y, phase === 0 ? 0.55 : 0, 'muted', 4, '8 9'),
+      circle(predicted.x, predicted.y, 29, phase === 2 ? 0 : 0.72, 'signal', 5, 0, '11 8'),
+      line(
+        boss.x,
+        boss.y,
+        predicted.x,
+        predicted.y,
+        phase === 2 ? 0 : phase === 0 ? 0.36 : 0.55,
+        'signal',
+        5,
+        '12 10',
+      ),
+      circle(shot.x, shot.y, spec.shotRadius, live ? 0.96 : 0, 'signal', 5, 0.3),
+      circle(player.x, player.y, 31, phase === 0 ? 0.42 : 0, 'accent', 4),
+    ];
+  }
   if (mode === 'arc')
     return [
       path(arcPath(boss, 205, -1.15, 2.25), preview, 'accent', 20, 0, '12 10'),
@@ -1493,6 +1527,13 @@ function pointClearsThreat(spec, frame, value, radius = BLUEPRINT_PLAYER_RADIUS)
       frame.phase !== 1 ||
       Math.hypot(value.x - frame.boss.x, value.y - frame.boss.y) > spec.contactRadius + radius
     );
+  if (mode === 'predictive-aim') {
+    const shot = frame.primitives[3];
+    return (
+      !frame.dangerActive ||
+      Math.hypot(value.x - shot.x, value.y - shot.y) > spec.shotRadius + radius
+    );
+  }
   if (mode === 'spiral')
     return (
       distanceFromBoss > 52 + radius &&
@@ -1669,6 +1710,7 @@ export function blueprintFrame(id, time) {
   else if (spec.mode === 'turret-deployment') responseProgress = smooth((t - 0.64) / 1.34);
   else if (spec.mode === 'threat-generator') responseProgress = smooth((t - 0.42) / 1.2);
   else if (spec.mode === 'decoy') responseProgress = smooth((t - 1.35) / 1.72);
+  else if (spec.mode === 'predictive-aim') responseProgress = smooth((t - 1.6) / 1.05);
   else if (spec.mode === 'knockback')
     responseProgress = phase === 0 ? 0 : phase === 1 ? smooth(action) : 1;
   else if (spec.mode === 'target-lock')
@@ -1690,6 +1732,16 @@ export function blueprintFrame(id, time) {
         startPlayer.y +
         (spec.boss[1] - startPlayer.y) * 0.23 * dragged +
         (spec.target[1] - startPlayer.y + 82.8) * responseProgress,
+    };
+  }
+  if (spec.mode === 'predictive-aim') {
+    const lockX = startPlayer.x + spec.approachVelocity * 1.6;
+    player = {
+      x:
+        phase === 0
+          ? startPlayer.x + spec.approachVelocity * t
+          : mix(mix(lockX, targetPlayer.x, responseProgress), startPlayer.x, returnProgress),
+      y: startPlayer.y,
     };
   }
   if (spec.mode === 'rotating' && phase === 0) {
@@ -1756,6 +1808,17 @@ export function blueprintFrame(id, time) {
           opacity: phase === 0 ? 0.12 + prepare * 0.53 : phase === 1 ? 0.65 : 0.65 * (1 - recover),
         }
       : null;
+  const predicted =
+    spec.mode === 'predictive-aim'
+      ? {
+          x:
+            (phase === 0
+              ? player.x
+              : startPlayer.x + spec.approachVelocity * BLUEPRINT_PHASE_ENDS[0]) +
+            spec.approachVelocity * spec.leadSeconds,
+          y: startPlayer.y,
+        }
+      : null;
   const committed = t >= BLUEPRINT_PHASE_ENDS[0];
   const dangerActive =
     spec.mode === 'landing'
@@ -1770,7 +1833,9 @@ export function blueprintFrame(id, time) {
               ? GENERATOR_RELEASES.some(
                   (release) => t >= release && t <= release + GENERATOR_FLIGHT,
                 )
-              : phase === 1;
+              : spec.mode === 'predictive-aim'
+                ? phase === 1 && t <= 3.75
+                : phase === 1;
   const frame = {
     id,
     mode: spec.mode,
@@ -1785,6 +1850,7 @@ export function blueprintFrame(id, time) {
     boss,
     player,
     decoy,
+    predicted,
     bossVisible,
     bossScale:
       spec.mode === 'phase'

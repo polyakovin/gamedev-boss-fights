@@ -13,8 +13,8 @@ import {
   renderBlueprintThumbnail,
 } from '../lib/blueprint-view.mjs';
 
-test('all 39 promoted lesson animations have distinct rule modes and complete moving frames', () => {
-  assert.equal(BLUEPRINT_MECHANIC_IDS.length, 39);
+test('all 40 promoted lesson animations have distinct rule modes and complete moving frames', () => {
+  assert.equal(BLUEPRINT_MECHANIC_IDS.length, 40);
   const modes = new Set();
   for (const id of BLUEPRINT_MECHANIC_IDS) {
     for (let time = 0; time <= BLUEPRINT_DURATION; time += 0.1) {
@@ -35,7 +35,7 @@ test('all 39 promoted lesson animations have distinct rule modes and complete mo
           assert.ok(Number.isFinite(value), `${id} has an invalid ${primitive.type}`);
     }
   }
-  assert.equal(modes.size, 39);
+  assert.equal(modes.size, 40);
 });
 
 test('every blueprint exposes signal, committed action, and recovery without player teleports', () => {
@@ -74,6 +74,7 @@ test('every promoted animation derives safety from its own active geometry', () 
     'turret-deployment': { x: 430, y: 700 },
     'threat-generator': null,
     decoy: { x: 190, y: 425 },
+    'predictive-aiming': null,
     'wide-swing': { x: 280, y: 515 },
     lunge: { x: 300, y: 440 },
     grab: { x: 390, y: 485 },
@@ -151,6 +152,9 @@ test('every promoted animation derives safety from its own active geometry', () 
           primitive.type === 'circle' && primitive.radius === 19 && primitive.opacity > 0,
       );
       point = { x: mote.x, y: mote.y };
+    } else if (!point && id === 'predictive-aiming') {
+      const shot = frame.primitives[3];
+      point = { x: shot.x, y: shot.y };
     }
     assert.equal(blueprintPointSafe(id, 3, point), false, `${id} accepts an unsafe point`);
     assert.equal(frame.playerSafe, true, `${id} does not clear its own active geometry`);
@@ -627,6 +631,45 @@ test('decoy separates identity from contact, lets Tavi choose the real body, and
   assert.match(page, /data-blueprint-decoy/);
   assert.match(page, /data-character-art="kern-decoy"/);
   assert.match(preview, /data-character-art-preview="kern-decoy"/);
+});
+
+test('predictive aiming commits an observable forecast and only its travelling shot can hit', () => {
+  const id = 'predictive-aiming';
+  const start = blueprintFrame(id, 0);
+  const sample = blueprintFrame(id, 1.59);
+  const lock = blueprintFrame(id, 1.6);
+  const action = blueprintFrame(id, 3);
+  const cleared = blueprintFrame(id, 3.8);
+  assert.equal(start.predicted.x - start.player.x, 80);
+  assert.equal(sample.predicted.x - sample.player.x, 80);
+  assert.equal(lock.predicted.x, 500);
+  assert.equal(action.predicted.x, lock.predicted.x);
+  assert.equal(action.player.x, 300);
+  assert.ok(action.primitives[3].x < action.predicted.x);
+  assert.equal(blueprintPointSafe(id, 0, start.predicted), true);
+  assert.equal(blueprintPointSafe(id, 3, action.predicted), true);
+  assert.equal(blueprintPointSafe(id, 3, action.primitives[3]), false);
+  assert.equal(action.playerSafe, true);
+  assert.equal(cleared.primitives[3].opacity, 0);
+  assert.equal(cleared.dangerActive, false);
+  assert.deepEqual(start.player, blueprintFrame(id, 6).player);
+  const page = renderBlueprint(
+    {
+      title: 'Predictive aiming',
+      timeline: 'Timeline',
+      phaseNames: ['Sample', 'Commit', 'Clear'],
+      phaseDescriptions: ['Sample.', 'Commit.', 'Clear.'],
+      boss: 'Boss',
+      player: 'Player',
+      reducedMotion: 'Scrub the timeline.',
+      diagramDescription: 'The boss commits one shot to a forecast.',
+    },
+    id,
+  );
+  const preview = renderBlueprintThumbnail(id, 'test-predictive-aiming');
+  assert.match(page, /data-blueprint-id="predictive-aiming"/);
+  assert.match(page, /data-character-art="kern"/);
+  assert.match(preview, /data-character-art-preview="tavi"/);
 });
 
 test('blueprint pages and previews reuse Tavi and Kern with accessible localized data', () => {

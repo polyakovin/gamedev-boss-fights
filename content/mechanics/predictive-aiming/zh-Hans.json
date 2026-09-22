@@ -1,0 +1,142 @@
+{
+  "title": "预判瞄准",
+  "subtitle": "瞄向当前运动的前方，在开火时锁定预测，而不是继续追踪玩家。",
+  "variant": "克恩预判塔维的跑动，发射一枚沿固定路线飞行的符文弹",
+  "summary": "首领根据玩家的运动估计未来位置并瞄准，让玩家能看懂并及时改变方向。",
+  "overview": "塔维向右跑，克恩在他前方标出预测点。开火时预测点冻结，符文弹沿固定直线飞行。塔维在锁定后折返，因此弹体落空；它不会追踪。图示区分玩家当前位置、预测点、固定轨迹和弹体碰撞范围。",
+  "learning": "设定预测时长、显示提前量、锁定结果，并检验玩家能否及时改变方向。",
+  "category": "瞄准与节奏",
+  "readTime": "5 分钟",
+  "demo": {
+    "title": "观察预测",
+    "timeline": "攻击时间线",
+    "step": "攻击阶段",
+    "phaseNames": ["采样跑动", "锁定提前量", "射击结束"],
+    "phaseDescriptions": [
+      "塔维向右移动。克恩根据可见的方向与速度，在其当前位置前方显示虚线预测点。",
+      "克恩在视听开火信号出现时锁定预测点，沿已示出的路线发射一枚弹体。塔维随后改变方向；弹体不再重新瞄准。",
+      "弹体到达预测位置后消失。克恩的瞄准标记清除，塔维回到下一轮的起点。"
+    ],
+    "boss": "首领",
+    "player": "玩家",
+    "danger": "只有飞行中的符文弹具有有效碰撞范围",
+    "locked": "开火时预测点与弹体路线同时固定",
+    "safe": "锁定后改变方向，避开弹体本身",
+    "reducedMotion": "减少动态效果时会关闭自动播放。拖动进度条，对比当前位置、预测点与射击。",
+    "diagramDescription": "塔维向右跑，前方出现虚线标记。克恩锁定预测并沿固定直线发射符文弹。塔维转向左侧；弹体飞向空置的预测点后消失。"
+  },
+  "steps": [
+    {
+      "title": "首领采样什么运动？",
+      "body": "在明确的时刻读取可观察的位置与近期速度。限制预测时长，并把目标限制在竞技场可到达区域；不要暗中读取玩家未来的输入。"
+    },
+    {
+      "title": "预测何时停止变化？",
+      "body": "瞄准期间显示预测点，在清晰的视听开火信号出现时将其冻结。沿这条已确定的路线发射弹体；除非另行提示追踪规则，否则不要修改弹体速度。"
+    },
+    {
+      "title": "正常改变方向能否避开？",
+      "body": "测试不同接近速度、距离和方向。计算玩家完整身体与弹体半径的间隙；锁定后留下足够时间折返或侧移。"
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "预测偷看未来输入",
+      "body": "如果玩家在锁定后转向，弹体仍准确跟上，就像首领在读取按键。只能依据过去采样预测；任何后续修正都应作为另有提示的机制。"
+    },
+    {
+      "title": "标记过弱或出现太晚",
+      "body": "如果开火前无法比较当前位置与预测点，攻击会像无缘无故落空或无法躲避。使用形状和时间提示，不要只靠颜色。"
+    },
+    {
+      "title": "预测时长超出反应窗口",
+      "body": "过大的提前量可能覆盖所有可行的转向，或把目标放在场外。限制时长，并用玩家的低速和高速状态分别测试。"
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "用首领能观察到的数据预测",
+      "body": "根据最近两次位置估计速度，必要时平滑噪声，计算目标 = 位置 + 速度 × 提前时间。把采样窗口和提前时间设为独立调节参数。"
+    },
+    {
+      "title": "分开预测点和真实威胁",
+      "body": "虚线标记只是目的地提示，不是伤害区域。碰撞只属于移动的弹体；玩家碰到未来位置标记不会受伤。"
+    },
+    {
+      "title": "核算运动，而非只看距离",
+      "body": "测试静止玩家、持续跑动者和锁定后立刻折返者。一起调整飞行时间与玩家加速度，让预期反应确实可行。"
+    },
+    {
+      "title": "一次只改变一个变量",
+      "body": "后续循环可以缩短提前时间或增加第二个预测点，但保留相同的锁定提示。若同时加快预测并延长追踪，规则变化会难以辨认。"
+    }
+  ],
+  "story": {
+    "title": "机制传达了什么",
+    "body": "克恩读出塔维奔跑的惯性，在预计抵达的位置刻下符文。石弹服从已经完成的标记，而不追逐塔维之后的决定。"
+  },
+  "adaptation": {
+    "title": "适配玩家操作",
+    "body": "塔维只需普通移动，就能在锁定后改变路线。如果加入闪避、冲刺或格挡，应明确它们是新增逃生方式，还是只缩短了原本就公平的窗口。"
+  },
+  "distinction": {
+    "title": "与相邻机制的区别",
+    "body": "目标锁定记录玩家的当前位置；预判瞄准根据已观察运动推算未来位置。源头追踪会继续转动发射源，追踪弹会在射出后改变路线。克恩开火后两者都不会发生。"
+  },
+  "lensNotes": [
+    {
+      "id": "telegraphing",
+      "body": "虚线未来位置标记和开火信号，会在路线锁定前揭示预测点。"
+    },
+    {
+      "id": "commitment",
+      "body": "开火时，采样速度、预测点和弹体方向同时停止变化。"
+    },
+    {
+      "id": "counterplay",
+      "body": "塔维可在锁定后折返；这是对可见预测的应对，不是随机落空。"
+    },
+    {
+      "id": "threat-geometry",
+      "body": "标记说明目的地，只有移动的弹体圆形范围参与碰撞。"
+    },
+    {
+      "id": "difficulty-rhythm",
+      "body": "预测时长、提示时间、飞行时间与加速度共同决定能否改变路线。"
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "Will You Snail?",
+      "boss": "Squid",
+      "screenshot": "https://i.ytimg.com/vi/l3zMXiFZpLw/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=l3zMXiFZpLw&t=35s",
+      "body": "与 Squid 的首领战中，尖刺和烟火可能在它预测 Shelly 会抵达的位置生成。那里预测的是危险生成点；克恩的图示则让一枚飞行弹体驶向预测点。",
+      "video": "https://www.youtube.com/watch?v=l3zMXiFZpLw&t=35s",
+      "videoDurationSeconds": 162
+    },
+    {
+      "dimension": "3D",
+      "game": "ULTRAKILL",
+      "boss": "Sisyphus Prime",
+      "screenshot": "https://i.ytimg.com/vi/kewnvOG3KY8/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=kewnvOG3KY8&t=35s",
+      "body": "Sisyphus Prime 使用 Destroy 时抛出的闪光，会在爆炸前尝试预测玩家位置。它考验近距离下改变动量的能力；克恩的弹体则提前展示完整预计路线。",
+      "video": "https://www.youtube.com/watch?v=kewnvOG3KY8&t=35s",
+      "videoDurationSeconds": 85
+    },
+    {
+      "dimension": "3D",
+      "game": "Saros",
+      "boss": "Rhabdom",
+      "screenshot": "https://nfapi.noobfeed.com/storage/media/58069/saros-beat-rhabdom-shattered-descent-2.jpg",
+      "screenshotSource": "https://www.noobfeed.com/articles/saros-beat-rhabdom-shattered-descent",
+      "body": "Rhabdom 以突进和弹幕压迫移动中的玩家，鼓励借助抓钩突然改变路线。该战斗围绕运动预测叠加多种威胁；图示只保留一次预测和一枚不追踪的弹体。",
+      "video": "https://www.youtube.com/watch?v=gpUCfYwESyM&t=25s",
+      "videoDurationSeconds": 81
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}
