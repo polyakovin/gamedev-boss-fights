@@ -86,6 +86,12 @@ export function initializeBlueprint(widget) {
           : frame.openStrike
             ? 'boss-hit'
             : frame.immunity;
+    if (mechanicId === 'part-break')
+      widget.dataset.blueprintPart = frame.partStrike
+        ? 'broken-now'
+        : frame.secondAttempt
+          ? 'attack-disabled'
+          : frame.partState;
     boss.setAttribute(
       'transform',
       `translate(${frame.boss.x} ${frame.boss.y}) scale(${frame.bossScale})`,

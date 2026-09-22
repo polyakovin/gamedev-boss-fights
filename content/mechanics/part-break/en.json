@@ -1,0 +1,134 @@
+{
+  "title": "Part break",
+  "subtitle": "Let a destroyed component change what the boss can do.",
+  "variant": "Break one launcher to remove its beam",
+  "summary": "A targeted boss component is destroyed, visibly disabling its associated attack.",
+  "overview": "Part break makes a boss component an independent target whose loss changes combat. Kern's arm launcher fires once, then Tavi cuts it off with an ordinary sword strike. The detached part falls; Kern's next firing pose makes no beam. A visible repair closes this teaching loop, though a real fight could leave the part broken.",
+  "learning": "Bind the component's health, attack permission, break feedback, and repair policy to one state.",
+  "category": "Defense",
+  "readTime": "4 min",
+  "demo": {
+    "title": "Break the launcher and compare two attacks",
+    "timeline": "Part-break timeline",
+    "step": "Component states",
+    "phaseNames": ["Read the attached launcher", "Break the part and retest", "Show the repair"],
+    "phaseDescriptions": [
+      "A bright launcher is bolted to Kern's right arm. Its line marks the firing lane; Tavi waits outside that lane while the first beam fires at 1.95 s.",
+      "After the beam ends, Tavi approaches and cuts the launcher at 2.88 s. The part falls away. Kern repeats the firing pose at 3.78 s, but the broken mount emits only a small spark and no dangerous beam.",
+      "The disabled state remains readable while Tavi retreats. Between 4.95 and 5.35 s the loose part visibly returns to its mount; the repaired launcher is ready for the next teaching loop."
+    ],
+    "boss": "Boss",
+    "player": "Player",
+    "danger": "An attached launcher fires across the marked lane",
+    "locked": "Breaking the launcher removes that attack until an explicit repair",
+    "safe": "The same lane is harmless during the failed second firing attempt",
+    "reducedMotion": "Autoplay is disabled by the reduced-motion setting. Use the timeline slider to inspect the intact, broken, and repaired states.",
+    "diagramDescription": "A stone boss has a bright, arm-mounted launcher. It fires a horizontal beam while the player waits outside the lane. The player then cuts the launcher with a sword; the part falls away. The boss tries to fire again but only a small spark appears, leaving the former lane safe. The loose part visibly reconnects before the loop repeats."
+  },
+  "steps": [
+    {
+      "title": "Which attack belongs to the part?",
+      "body": "Give the launcher its own break state and make the beam depend on that state. Before 2.88 s, its 1.95–2.20 s shot is dangerous across the marked lane. At 3.78 s the same firing pose must not produce a beam, even though Kern and other attacks could remain active."
+    },
+    {
+      "title": "Can an ordinary hit reach it?",
+      "body": "The component needs a readable silhouette, independent hit area, and a post-shot opening within Tavi's sword reach. Show the cut at 2.88 s, detach the complete launcher, and stop accepting hits on its empty mount. Test short-range and slower builds before requiring a special attack."
+    },
+    {
+      "title": "How does the new state persist?",
+      "body": "Let the broken state last through a visible attempted repeat so the player can verify the consequence. This loop deliberately reassembles the launcher at 5.35 s; a real encounter may keep it gone for the rest of the fight. If repair exists, show it before attack permission returns."
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "The part breaks but its attack still happens",
+      "body": "Removing art while leaving the beam in the attack table contradicts the rule. Drive spawning and hit detection from the same attached-state flag as the visible component."
+    },
+    {
+      "title": "A hidden repair restores the danger",
+      "body": "A beam from an empty mount feels like a bug. If the part can return, animate the reattachment and delay attack permission until that motion is complete."
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "Separate part health from boss health",
+      "body": "Define whether damage to the launcher also damages Kern. The illustrated cut disables one attack; it does not require the boss to become globally vulnerable or lose a fixed percentage of health."
+    },
+    {
+      "title": "Preserve a useful fight",
+      "body": "Removing a weapon should alter the decision space, not erase every threat. Keep another legible attack or movement response after the break, and retune pacing so the remaining encounter is neither trivial nor stalled."
+    },
+    {
+      "title": "Audit every state transition",
+      "body": "Test the final frame before the 2.88-second break, the first frame after it, the 3.78-second attempted shot, and the 5.35-second repair. The sprite, effect, damage check, and audio cue must switch together."
+    },
+    {
+      "title": "Escalate by component choice",
+      "body": "Later, two breakable weapons can offer different reductions in pressure. Reveal what each part controls, prevent simultaneous target clutter, and decide whether players may ignore every optional break."
+    }
+  ],
+  "story": {
+    "title": "An arm that loses its weapon",
+    "body": "The launcher's bright rune and beam share one visual motif. The loose plate lands on the arena floor instead of vanishing, while the exposed mount remains on Kern's arm. A tiny failed spark at the second firing pose makes the disabled attack observable without replaying a dangerous beam."
+  },
+  "adaptation": {
+    "title": "Support the established attack verbs",
+    "body": "Place a required part within the reach and timing of the player's ordinary kit, or expose it through a known movement route. Ranged attacks may break it earlier, but should not be the only unannounced solution. In a multiplayer or build-diverse game, decide who owns the detached loot and whether damage from different types contributes equally to part health."
+  },
+  "distinction": {
+    "title": "A broken part changes capability",
+    "body": "A weak point changes damage by hit location; it need not remove an attack. Situational immunity changes whether body hits work under a condition. Here the boss remains hittable throughout, but an independent arm component is removed and its beam cannot fire until the part is repaired."
+  },
+  "lensNotes": [
+    {
+      "id": "counterplay",
+      "body": "A normal sword strike on a reachable component removes one named source of pressure."
+    },
+    {
+      "id": "progress-clarity",
+      "body": "The falling part, empty mount, and failed second shot prove that the fight changed."
+    },
+    {
+      "id": "risk-reward",
+      "body": "Approaching after the first beam spends a recovery window to reduce future danger."
+    },
+    {
+      "id": "rule-exception",
+      "body": "If a broken part can repair or another ability can fire the same beam, state that exception before it occurs."
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "Cuphead",
+      "boss": "Dr. Kahl's Robot",
+      "video": "https://www.youtube.com/watch?v=6anMOwVo7tc&t=25s",
+      "videoDurationSeconds": 137,
+      "screenshot": "https://i.ytimg.com/vi/6anMOwVo7tc/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=6anMOwVo7tc&t=25s",
+      "body": "The robot's head, chest, and abdomen have separate targets. Destroying a section visibly replaces its attack, so this example shows a changed moveset rather than the pure attack removal in Kern's one-part lesson."
+    },
+    {
+      "dimension": "2D",
+      "game": "Terraria",
+      "boss": "Skeletron Prime",
+      "video": "https://www.youtube.com/watch?v=8I2fVeypXFc&t=155s",
+      "videoDurationSeconds": 290,
+      "screenshot": "https://i.ytimg.com/vi/8I2fVeypXFc/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=8I2fVeypXFc&t=155s",
+      "body": "Skeletron Prime has independently destructible weapon arms, including a laser arm. Removing that arm removes its ranged source while the head and other arms continue fighting; unlike Kern's demonstration, several part choices coexist."
+    },
+    {
+      "dimension": "3D",
+      "game": "Horizon Forbidden West",
+      "boss": "Slitherfang",
+      "video": "https://www.youtube.com/watch?v=duhcPDxl9nc&t=20s",
+      "videoDurationSeconds": 292,
+      "screenshot": "https://i.ytimg.com/vi/duhcPDxl9nc/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=duhcPDxl9nc&t=20s",
+      "body": "The Slitherfang's detachable Earthgrinder is a combat component and a resource target. The linked footage focuses on tearing it off; Kern's single launcher isolates the simpler design question of whether one break disables one attack."
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

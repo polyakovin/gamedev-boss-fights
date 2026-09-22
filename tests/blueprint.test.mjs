@@ -9,6 +9,8 @@ import {
   blueprintSpec,
   damageTypeResistanceDamage,
   directionalShieldOutcome,
+  partBreakCanFire,
+  partBreakState,
   situationalImmunityOutcome,
 } from '../src/blueprint-model.mjs';
 import {
@@ -17,8 +19,8 @@ import {
   renderBlueprintThumbnail,
 } from '../lib/blueprint-view.mjs';
 
-test('all 49 promoted lesson animations have distinct rule modes and complete moving frames', () => {
-  assert.equal(BLUEPRINT_MECHANIC_IDS.length, 49);
+test('all 50 promoted lesson animations have distinct rule modes and complete moving frames', () => {
+  assert.equal(BLUEPRINT_MECHANIC_IDS.length, 50);
   const modes = new Set();
   for (const id of BLUEPRINT_MECHANIC_IDS) {
     for (let time = 0; time <= BLUEPRINT_DURATION; time += 0.1) {
@@ -39,7 +41,7 @@ test('all 49 promoted lesson animations have distinct rule modes and complete mo
           assert.ok(Number.isFinite(value), `${id} has an invalid ${primitive.type}`);
     }
   }
-  assert.equal(modes.size, 49);
+  assert.equal(modes.size, 50);
 });
 
 test('every blueprint exposes signal, committed action, and recovery without player teleports', () => {
@@ -50,7 +52,7 @@ test('every blueprint exposes signal, committed action, and recovery without pla
   for (const id of BLUEPRINT_MECHANIC_IDS) {
     assert.equal(blueprintFrame(id, 1.59).committed, false, id);
     assert.equal(blueprintFrame(id, 1.6).committed, true, id);
-    assert.equal(blueprintFrame(id, 3).dangerActive, true, id);
+    if (id !== 'part-break') assert.equal(blueprintFrame(id, 3).dangerActive, true, id);
     assert.equal(blueprintFrame(id, 3).playerSafe, true, id);
     let previous = blueprintFrame(id, 0).player;
     for (let time = 0.02; time < BLUEPRINT_DURATION; time += 0.02) {
@@ -115,7 +117,8 @@ test('every damaging promoted animation derives safety from its own active geome
     (id) =>
       id !== 'directional-shield' &&
       id !== 'damage-type-resistance' &&
-      id !== 'situational-immunity',
+      id !== 'situational-immunity' &&
+      id !== 'part-break',
   )) {
     const frame = blueprintFrame(id, 3);
     let point = unsafePoints[id];
@@ -1006,6 +1009,42 @@ test('situational immunity blocks the whole boss until the linked ward is cut', 
   assert.match(
     renderBlueprintThumbnail(id, 'test-situational-immunity'),
     /data-blueprint-preview="situational-immunity"/,
+  );
+});
+
+test('breaking the arm launcher removes its exact attack until a visible repair', () => {
+  const id = 'part-break';
+  const spec = blueprintSpec(id);
+  assert.equal(partBreakState(0), 'attached');
+  assert.equal(partBreakState(2.87), 'attached');
+  assert.equal(partBreakState(2.88), 'broken');
+  assert.equal(partBreakState(4.94), 'broken');
+  assert.equal(partBreakState(4.95), 'repairing');
+  assert.equal(partBreakState(5.35), 'attached');
+  assert.equal(partBreakCanFire(2.87), true);
+  assert.equal(partBreakCanFire(2.88), false);
+  assert.equal(partBreakCanFire(5.35), true);
+  const first = blueprintFrame(id, 2);
+  const broken = blueprintFrame(id, spec.breakAt);
+  const retry = blueprintFrame(id, spec.secondAttempt);
+  const repaired = blueprintFrame(id, spec.repairEnd);
+  assert.equal(first.dangerActive, true);
+  assert.ok(first.primitives[5].opacity > 0.9);
+  assert.equal(blueprintPointSafe(id, 2, { x: 415, y: 405 }), false);
+  assert.equal(first.playerSafe, true);
+  assert.equal(broken.partStrike, true);
+  assert.ok(broken.primitives[7].opacity > 0.9);
+  assert.equal(retry.secondAttempt, true);
+  assert.equal(retry.launcherCanFire, false);
+  assert.equal(retry.primitives[5].opacity, 0);
+  assert.ok(retry.primitives[8].opacity > 0.9);
+  assert.equal(blueprintPointSafe(id, spec.secondAttempt, { x: 415, y: 405 }), true);
+  assert.deepEqual(retry.player, { x: 415, y: 405 });
+  assert.equal(repaired.launcherCanFire, true);
+  assert.deepEqual(blueprintFrame(id, 0).player, blueprintFrame(id, 6).player);
+  assert.match(
+    renderBlueprintThumbnail(id, 'test-part-break'),
+    /data-blueprint-preview="part-break"/,
   );
 });
 

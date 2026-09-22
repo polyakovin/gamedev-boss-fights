@@ -269,6 +269,20 @@ const SPECS = {
     openStrike: 3.55,
     shieldReturns: 4.3,
   },
+  'part-break': {
+    mode: 'part-break',
+    boss: [280, 430],
+    player: [475, 620],
+    target: [415, 405],
+    launcher: [347, 405],
+    shotEnd: [548, 405],
+    firstShot: [1.95, 2.2],
+    breakAt: 2.88,
+    secondAttempt: 3.78,
+    repairStart: 4.95,
+    repairEnd: 5.35,
+    beamHalfWidth: 14,
+  },
   'wide-swing': { mode: 'arc', boss: [280, 310], player: [410, 470], target: [470, 650] },
   lunge: { mode: 'lunge', boss: [170, 290], player: [390, 590], target: [470, 660] },
   grab: { mode: 'grab', boss: [280, 300], player: [390, 485], target: [470, 610] },
@@ -558,6 +572,17 @@ export function situationalImmunityOutcome(time, target = 'boss') {
   return t < spec.wardStrike || t >= spec.shieldReturns ? 'immune' : 'vulnerable';
 }
 
+export function partBreakState(time) {
+  const spec = SPECS['part-break'];
+  const t = localTime(time);
+  if (t < spec.breakAt || t >= spec.repairEnd) return 'attached';
+  return t >= spec.repairStart ? 'repairing' : 'broken';
+}
+
+export function partBreakCanFire(time) {
+  return partBreakState(time) === 'attached';
+}
+
 const pointInPolygon = (value, points) => {
   let inside = false;
   for (let index = 0, previous = points.length - 1; index < points.length; previous = index++) {
@@ -828,6 +853,58 @@ function primitivesFor(spec, frame) {
       circle(ward.x, ward.y, 16 + wardFlash * 17, wardFlash, 'signal', 7),
       line(player.x - 35, player.y - 12, boss.x + 38, boss.y - 12, openFlash, 'signal', 8),
       circle(boss.x + 38, boss.y - 12, 18 + openFlash * 19, openFlash, 'signal', 7),
+    ];
+  }
+  if (mode === 'part-break') {
+    const launcher = point(spec.launcher);
+    const detached = { x: 446, y: 560 };
+    const falling = smooth((frame.time - spec.breakAt) / 0.42);
+    const repairing = smooth((frame.time - spec.repairStart) / (spec.repairEnd - spec.repairStart));
+    const part =
+      frame.time < spec.breakAt
+        ? launcher
+        : frame.time < spec.repairStart
+          ? { x: mix(launcher.x, detached.x, falling), y: mix(launcher.y, detached.y, falling) }
+          : {
+              x: mix(detached.x, launcher.x, repairing),
+              y: mix(detached.y, launcher.y, repairing),
+            };
+    const liveShot = frame.time >= spec.firstShot[0] && frame.time < spec.firstShot[1];
+    const breakFlash = strikePulse(frame.time, spec.breakAt);
+    const failedShot = strikePulse(frame.time, spec.secondAttempt, 0.3);
+    return [
+      line(boss.x + 31, boss.y - 4, launcher.x, launcher.y, 0.75, 'muted', 8),
+      circle(launcher.x, launcher.y, 17, partBreakCanFire(frame.time) ? 0.55 : 0.36, 'accent', 5),
+      path(
+        `M ${part.x - 20} ${part.y - 27} L ${part.x + 16} ${part.y - 24} L ${part.x + 28} ${part.y} L ${part.x + 14} ${part.y + 25} L ${part.x - 20} ${part.y + 24} L ${part.x - 28} ${part.y} Z`,
+        0.94,
+        partBreakCanFire(frame.time) ? 'accent' : 'muted',
+        6,
+        0.27,
+      ),
+      circle(part.x, part.y, 10, 0.9, partBreakCanFire(frame.time) ? 'signal' : 'muted', 4, 0.55),
+      line(
+        launcher.x + 28,
+        launcher.y,
+        spec.shotEnd[0],
+        spec.shotEnd[1],
+        frame.time < spec.firstShot[0] ? 0.16 + 0.3 * prepare : 0,
+        'accent',
+        5,
+        '10 11',
+      ),
+      line(
+        launcher.x + 28,
+        launcher.y,
+        spec.shotEnd[0],
+        spec.shotEnd[1],
+        liveShot ? 0.95 : 0,
+        'signal',
+        spec.beamHalfWidth * 2,
+      ),
+      line(player.x - 24, player.y - 34, launcher.x, launcher.y, breakFlash, 'signal', 8),
+      circle(launcher.x, launcher.y, 19 + breakFlash * 20, breakFlash, 'signal', 7),
+      circle(launcher.x, launcher.y, 14 + failedShot * 14, failedShot, 'muted', 5),
     ];
   }
   if (mode === 'landing') {
@@ -2041,6 +2118,15 @@ function pointClearsThreat(spec, frame, value, radius = BLUEPRINT_PLAYER_RADIUS)
   if (mode === 'directional-shield') return true;
   if (mode === 'damage-type-resistance') return true;
   if (mode === 'situational-immunity') return true;
+  if (mode === 'part-break')
+    return (
+      distanceToSegment(
+        value,
+        { x: spec.launcher[0] + 28, y: spec.launcher[1] },
+        point(spec.shotEnd),
+      ) >
+      spec.beamHalfWidth + radius
+    );
   if (mode === 'spiral')
     return (
       distanceFromBoss > 52 + radius &&
@@ -2241,6 +2327,7 @@ export function blueprintFrame(id, time) {
   else if (spec.mode === 'directional-shield') responseProgress = smooth((t - 2.22) / 1.18);
   else if (spec.mode === 'damage-type-resistance') responseProgress = smooth((t - 1.6) / 0.42);
   else if (spec.mode === 'situational-immunity') responseProgress = smooth((t - 1.6) / 0.42);
+  else if (spec.mode === 'part-break') responseProgress = smooth((t - 2.24) / 0.55);
   else if (spec.mode === 'knockback')
     responseProgress = phase === 0 ? 0 : phase === 1 ? smooth(action) : 1;
   else if (spec.mode === 'target-lock')
@@ -2409,7 +2496,9 @@ export function blueprintFrame(id, time) {
                               : spec.mode === 'damage-type-resistance' ||
                                   spec.mode === 'situational-immunity'
                                 ? phase === 1
-                                : phase === 1;
+                                : spec.mode === 'part-break'
+                                  ? t >= spec.firstShot[0] && t < spec.firstShot[1]
+                                  : phase === 1;
   const frame = {
     id,
     mode: spec.mode,
@@ -2443,7 +2532,9 @@ export function blueprintFrame(id, time) {
     playerFacing:
       spec.mode === 'directional-shield'
         ? mix(-90, -180, smooth((t - 2.7) / 0.68)) * (1 - returnProgress) - 90 * returnProgress
-        : spec.mode === 'damage-type-resistance' || spec.mode === 'situational-immunity'
+        : spec.mode === 'damage-type-resistance' ||
+            spec.mode === 'situational-immunity' ||
+            spec.mode === 'part-break'
           ? -180
           : -90,
     bossMotion: motion({
@@ -2476,9 +2567,14 @@ export function blueprintFrame(id, time) {
                       Math.max(0, 1 - Math.abs(t - release) / 0.32),
                     ),
                   )
-                : phase === 1
-                  ? 0.75
-                  : prepare * 0.35,
+                : spec.mode === 'part-break'
+                  ? Math.max(
+                      strikePulse(t, spec.firstShot[0], 0.33),
+                      strikePulse(t, spec.secondAttempt, 0.33),
+                    )
+                  : phase === 1
+                    ? 0.75
+                    : prepare * 0.35,
       impact:
         spec.mode === 'landing'
           ? pulse(clamp((action - 0.42) / 0.22))
@@ -2490,11 +2586,13 @@ export function blueprintFrame(id, time) {
               : spec.mode === 'situational-immunity'
                 ? 0.12 * strikePulse(t, spec.blockedStrike, 0.25) +
                   0.9 * strikePulse(t, spec.openStrike, 0.28)
-                : spec.mode === 'shockwave' || spec.mode === 'knockback'
-                  ? pulse(action * 3)
-                  : spec.mode === 'chain-explosions'
-                    ? pulse((action * 5) % 1)
-                    : 0,
+                : spec.mode === 'part-break'
+                  ? 0.75 * strikePulse(t, spec.breakAt, 0.26)
+                  : spec.mode === 'shockwave' || spec.mode === 'knockback'
+                    ? pulse(action * 3)
+                    : spec.mode === 'chain-explosions'
+                      ? pulse((action * 5) % 1)
+                      : 0,
     }),
     playerMotion: motion({
       gait: (route * responseProgress + route * returnProgress) / 20,
@@ -2516,11 +2614,13 @@ export function blueprintFrame(id, time) {
                   strikePulse(t, spec.wardStrike, 0.3),
                   strikePulse(t, spec.openStrike, 0.3),
                 )
-              : spec.mode === 'decoy' && phase === 1
-                ? pulse(clamp((action - 0.52) / 0.3))
-                : spec.mode === 'weak-point' && phase === 1
-                  ? pulse(action * 1.5)
-                  : 0,
+              : spec.mode === 'part-break'
+                ? strikePulse(t, spec.breakAt, 0.33)
+                : spec.mode === 'decoy' && phase === 1
+                  ? pulse(clamp((action - 0.52) / 0.3))
+                  : spec.mode === 'weak-point' && phase === 1
+                    ? pulse(action * 1.5)
+                    : 0,
     }),
   };
   if (spec.mode === 'directional-shield') {
@@ -2543,6 +2643,13 @@ export function blueprintFrame(id, time) {
     frame.wardStrike = strikePulse(t, spec.wardStrike) > 0.5;
     frame.openStrike = strikePulse(t, spec.openStrike) > 0.5;
   }
+  if (spec.mode === 'part-break') {
+    frame.partState = partBreakState(t);
+    frame.launcherCanFire = partBreakCanFire(t);
+    frame.firstShot = dangerActive;
+    frame.secondAttempt = strikePulse(t, spec.secondAttempt) > 0.5;
+    frame.partStrike = strikePulse(t, spec.breakAt) > 0.5;
+  }
   frame.primitives = primitivesFor(spec, frame);
   frame.playerSafe = pointClearsThreat(spec, frame, player);
   frame.bossLabel = {
@@ -2555,7 +2662,8 @@ export function blueprintFrame(id, time) {
       player.y +
       (spec.mode === 'directional-shield' ||
       spec.mode === 'damage-type-resistance' ||
-      spec.mode === 'situational-immunity'
+      spec.mode === 'situational-immunity' ||
+      spec.mode === 'part-break'
         ? 92
         : -62),
   };

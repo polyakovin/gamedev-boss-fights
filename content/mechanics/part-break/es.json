@@ -1,0 +1,138 @@
+{
+  "title": "Ruptura de componentes",
+  "subtitle": "Que destruir una pieza cambie lo que el jefe puede hacer.",
+  "variant": "Romper un lanzador para eliminar su rayo",
+  "summary": "Se destruye un componente específico del jefe y se desactiva visiblemente su ataque.",
+  "overview": "Romper una pieza del jefe cambia el combate. El lanzador del brazo de Kern dispara un rayo; Tavi lo desprende con una espada normal. La pieza cae y el siguiente intento de disparo de Kern no produce rayo. El ciclo didáctico muestra una reparación visible, aunque en una pelea real la rotura puede ser permanente.",
+  "learning": "Vincula la salud de la pieza, el permiso de ataque, la reacción a la rotura y la reparación a un mismo estado.",
+  "category": "Defensa",
+  "readTime": "4 min",
+  "demo": {
+    "title": "Rompe el lanzador y compara dos ataques",
+    "timeline": "Cronología de la ruptura",
+    "step": "Estados del componente",
+    "phaseNames": [
+      "Lee el lanzador instalado",
+      "Rompe la pieza y compruébalo",
+      "Muestra la reparación"
+    ],
+    "phaseDescriptions": [
+      "Un lanzador luminoso está unido al brazo derecho de Kern. La línea marca el carril de disparo; Tavi espera fuera mientras el primer rayo sale a los 1,95 s.",
+      "Tras el rayo, Tavi se acerca y corta el lanzador a los 2,88 s. La pieza cae. Kern repite el gesto de disparo a los 3,78 s, pero del soporte roto sale solo una pequeña chispa, sin rayo peligroso.",
+      "El estado desactivado sigue claro mientras Tavi retrocede. Entre los 4,95 y los 5,35 s la pieza vuelve visiblemente a su soporte; el lanzador reparado queda listo para el siguiente ciclo didáctico."
+    ],
+    "boss": "Jefe",
+    "player": "Jugador",
+    "danger": "El lanzador instalado dispara por el carril marcado",
+    "locked": "Romperlo elimina el ataque hasta una reparación explícita",
+    "safe": "El mismo carril es inofensivo durante el segundo intento de disparo",
+    "reducedMotion": "La reproducción automática está desactivada por la opción de movimiento reducido. Usa el control temporal para comparar la pieza intacta, rota y reparada.",
+    "diagramDescription": "Un jefe de piedra lleva un lanzador luminoso en el brazo. Dispara un rayo horizontal mientras el jugador espera fuera del carril. Luego el jugador corta la pieza con la espada y esta cae. El jefe intenta disparar otra vez, pero solo aparece una chispa y el antiguo carril queda seguro. Antes de repetirse el ciclo, la pieza vuelve visiblemente a su lugar."
+  },
+  "steps": [
+    {
+      "title": "¿Qué ataque pertenece a la pieza?",
+      "body": "Dale al lanzador un estado de rotura propio del que dependa el rayo. Antes de los 2,88 s, el disparo de 1,95 a 2,20 s amenaza todo el carril marcado. A los 3,78 s, la misma postura no debe generar un rayo, aunque Kern conserve otros ataques."
+    },
+    {
+      "title": "¿Puede alcanzarse con un golpe normal?",
+      "body": "La pieza necesita una silueta clara, una zona de impacto propia y una oportunidad tras el disparo al alcance de la espada de Tavi. Muestra el corte a los 2,88 s, desprende el lanzador entero y deja de aceptar impactos en el soporte vacío. Prueba armas cortas y configuraciones lentas antes de exigir una habilidad especial."
+    },
+    {
+      "title": "¿Cuánto dura el nuevo estado?",
+      "body": "Mantén la rotura hasta un intento visible de repetir el ataque para que el jugador compruebe su efecto. Este ciclo recompone deliberadamente la pieza a los 5,35 s; en una pelea real puede permanecer rota. Si hay reparación, muéstrala antes de devolver el permiso de ataque."
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "La pieza se rompe, pero su ataque continúa",
+      "body": "Quitar la imagen y conservar el rayo en la lista de ataques contradice la regla. La aparición y la colisión del rayo deben depender del mismo estado de pieza instalada que su representación."
+    },
+    {
+      "title": "El peligro vuelve tras una reparación oculta",
+      "body": "Un rayo que sale de un soporte vacío parece un error. Si la pieza puede volver, anima su conexión y retrasa el ataque hasta que termine."
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "Separa la salud de la pieza de la del jefe",
+      "body": "Decide si dañar el lanzador también daña a Kern. El corte mostrado desactiva un ataque; no tiene por qué volver vulnerable a todo el jefe ni restarle un porcentaje fijo de vida."
+    },
+    {
+      "title": "Conserva un combate interesante",
+      "body": "Eliminar un arma debe cambiar las decisiones, no borrar todas las amenazas. Mantén otro ataque legible o una exigencia de movimiento tras la rotura y ajusta el ritmo para que la pelea no se vuelva trivial ni se estanque."
+    },
+    {
+      "title": "Revisa los límites de cada estado",
+      "body": "Comprueba el fotograma anterior y posterior a la rotura de los 2,88 s, el intento de los 3,78 s y la reparación de los 5,35 s. Imagen, efecto, detección de daño y sonido deben cambiar juntos."
+    },
+    {
+      "title": "Escala mediante la elección de piezas",
+      "body": "Más adelante, dos armas rompibles pueden reducir presiones distintas. Muestra qué controla cada una, evita saturar la escena de objetivos y decide si el jugador puede ignorar las roturas opcionales."
+    }
+  ],
+  "story": {
+    "title": "Un brazo que pierde su arma",
+    "body": "La runa del lanzador y el rayo comparten un motivo visual. La placa desprendida queda en el suelo y el soporte vacío permanece en el brazo de Kern. Una pequeña chispa al repetir la postura confirma la pérdida del ataque sin fingir que sigue siendo peligroso."
+  },
+  "adaptation": {
+    "title": "Respeta las acciones ya aprendidas",
+    "body": "Coloca cualquier pieza obligatoria dentro del alcance y tiempo del equipo normal del jugador, o ábrele un camino conocido. Los ataques a distancia pueden romperla antes, pero no deben ser la única solución no anunciada. Con varios jugadores o configuraciones, define quién recibe la pieza desprendida y cómo contribuyen los distintos tipos de daño a su resistencia."
+  },
+  "distinction": {
+    "title": "Una pieza rota cambia las capacidades",
+    "body": "Un punto débil cambia el daño según la zona golpeada, sin necesidad de eliminar ataques. La inmunidad situacional decide si funcionan los impactos al cuerpo bajo una condición. Aquí el cuerpo siempre puede recibir golpes, pero un componente del brazo se pierde y su rayo no vuelve hasta repararlo."
+  },
+  "lensNotes": [
+    {
+      "id": "counterplay",
+      "body": "Un golpe normal de espada sobre una pieza alcanzable elimina una fuente concreta de presión."
+    },
+    {
+      "id": "progress-clarity",
+      "body": "La pieza caída, el soporte vacío y el segundo disparo fallido demuestran el cambio."
+    },
+    {
+      "id": "risk-reward",
+      "body": "Acercarse tras el primer rayo invierte una recuperación para reducir peligro futuro."
+    },
+    {
+      "id": "rule-exception",
+      "body": "Si la pieza puede repararse u otra fuente usar el mismo rayo, anuncia la excepción antes."
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "Cuphead",
+      "boss": "Dr. Kahl's Robot",
+      "video": "https://www.youtube.com/watch?v=6anMOwVo7tc&t=25s",
+      "videoDurationSeconds": 137,
+      "screenshot": "https://i.ytimg.com/vi/6anMOwVo7tc/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=6anMOwVo7tc&t=25s",
+      "body": "La cabeza, el pecho y el abdomen del robot son objetivos separados. Destruir una sección sustituye su ataque de forma visible: este caso cambia el repertorio, mientras que el ejemplo de Kern solo elimina un rayo."
+    },
+    {
+      "dimension": "2D",
+      "game": "Terraria",
+      "boss": "Skeletron Prime",
+      "video": "https://www.youtube.com/watch?v=8I2fVeypXFc&t=155s",
+      "videoDurationSeconds": 290,
+      "screenshot": "https://i.ytimg.com/vi/8I2fVeypXFc/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=8I2fVeypXFc&t=155s",
+      "body": "Skeletron Prime tiene brazos armados que pueden destruirse por separado, entre ellos uno láser. Al quitarlo desaparece esa fuente a distancia, mientras la cabeza y los otros brazos siguen luchando; aquí hay más elecciones de piezas que en la demostración de Kern."
+    },
+    {
+      "dimension": "3D",
+      "game": "Horizon Forbidden West",
+      "boss": "Slitherfang",
+      "video": "https://www.youtube.com/watch?v=duhcPDxl9nc&t=20s",
+      "videoDurationSeconds": 292,
+      "screenshot": "https://i.ytimg.com/vi/duhcPDxl9nc/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=duhcPDxl9nc&t=20s",
+      "body": "El Earthgrinder desmontable de Slitherfang es tanto una pieza de combate como un recurso. El vídeo se centra en arrancarlo; el lanzador único de Kern aísla la regla más simple de que una rotura elimine un ataque."
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

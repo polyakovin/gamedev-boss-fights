@@ -1,0 +1,24 @@
+{
+  "id": "part-break",
+  "number": 56,
+  "published": true,
+  "sourceLocale": "en",
+  "contentVersion": 1,
+  "animation": "part-break",
+  "lenses": ["counterplay", "progress-clarity", "risk-reward", "rule-exception"],
+  "related": ["weak-point", "situational-immunity", "damage-type-resistance"],
+  "sources": [
+    {
+      "title": "Capcom · breaking large-monster parts can prevent specific actions",
+      "url": "https://blog.playstation.com/2026/03/12/prepare-for-monster-hunter-stories-3-on-march-13-with-a-recap-of-the-rpg-series-so-far/"
+    },
+    {
+      "title": "Guerrilla Games · machine armor can be stripped to change combat options",
+      "url": "https://www.guerrilla-games.com/read/15-minutes-of-new-gameplay-for-horizon-forbidden-west"
+    },
+    {
+      "title": "Bad Robot Games · independently breakable boss panels and explicit repair",
+      "url": "https://blog.playstation.com/2026/04/28/4loop-designing-the-ominous-cube-shaped-scanner-boss/"
+    }
+  ]
+}
