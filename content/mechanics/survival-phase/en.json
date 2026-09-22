@@ -1,0 +1,138 @@
+{
+  "title": "Survival phase",
+  "subtitle": "Make staying alive—not dealing damage—the temporary win condition.",
+  "variant": "Four telegraphed pulses while the boss is shielded, followed by a clear completion opening",
+  "summary": "A survival phase advances when players endure a bounded sequence, timer, or objective rather than reducing boss health.",
+  "overview": "A survival phase replaces damage progress with a different success condition: remain alive until a timer, sequence, or objective completes. Kern is shielded from 0.55–4.35 seconds while four fixed runes strike in order. Tavi's sword cannot advance the phase; clearing every pulse removes the shield and creates one readable opening.",
+  "learning": "Define the entry contract, non-damage progress, threat schedule, completion event, failure rule, and handoff back to ordinary combat from one deterministic state record.",
+  "category": "Structure and readability",
+  "readTime": "5 min",
+  "demo": {
+    "title": "Prove that survival—not damage—advances the encounter",
+    "timeline": "Survival-phase timeline",
+    "step": "Survival states",
+    "phaseNames": [
+      "Declare the alternate goal",
+      "Resolve the survival sequence",
+      "Complete and hand back control"
+    ],
+    "phaseDescriptions": [
+      "At 0.55 s Kern gains a dashed shield and a shrinking completion rune. The first floor mark previews for 0.60 s before becoming dangerous; Tavi leaves it through ordinary movement while the sword remains irrelevant to progress.",
+      "Four fixed circles activate at 1.15, 2.08, 3.01, and 3.94 s. Each preview captures its position before activation, each solid circle is the only damaging geometry, and the completion rune advances only with elapsed survival time.",
+      "At 4.35 s the fourth pulse is over, the timer reaches zero, and Kern's shield drops in one green completion flash. Tavi may then approach and land an ordinary sword strike at 5.08 s before the continuous loop resets."
+    ],
+    "boss": "Boss",
+    "player": "Player",
+    "danger": "Only the currently solid pulse circle deals damage",
+    "locked": "Kern remains shielded until the survival timer completes at 4.35 seconds",
+    "safe": "Leave every previewed circle before it turns solid; attack only after the completion flash",
+    "reducedMotion": "Autoplay is disabled by reduced motion. Scrub across 0.55, 1.15, 2.08, 3.01, 3.94, and 4.35 seconds to inspect the complete survival contract.",
+    "diagramDescription": "A shielded stone boss stands inside two shrinking runic rings. Four floor circles preview and activate one after another while a sword-bearing player walks out of each marked area. When the timer reaches zero, the shield vanishes in a green flash and the player approaches for one sword strike."
+  },
+  "steps": [
+    {
+      "title": "What starts the survival contract?",
+      "body": "Enter through an explicit event and state the temporary goal immediately. At 0.55 s Kern becomes shielded, the completion rune appears, and the first hazard previews. Disable or reinterpret damage, stagger, weak-point, and AI-selection rules as declared policies; do not let a stray hit secretly shorten the sequence."
+    },
+    {
+      "title": "How does survival progress?",
+      "body": "Choose one authoritative clock or objective counter. The example uses elapsed phase time from 0.55–4.35 s and four scheduled pulse records, each with preview and active intervals. Pause, hit-stop, rollback, death, multiplayer joins, and checkpoints must read the same source so UI, hazards, and completion cannot drift."
+    },
+    {
+      "title": "What proves completion?",
+      "body": "Emit one completion event after the last dangerous instant. At 4.35 s collision is already off, the timer reaches zero, the shield disappears, and the green flash announces the state handoff. Only then may Tavi's ordinary sword produce a useful result. Test the frame before, at, and after this boundary."
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "It is ordinary combat with an invisible damage lock",
+      "body": "If players keep attacking because no alternate objective, progress signal, or shield rule is visible, the phase reads as a broken health bar. Show what advances, how much remains, and why the usual verb is temporarily ineffective."
+    },
+    {
+      "title": "The timer ends before danger and authority agree",
+      "body": "A zeroed UI while a late hitbox remains active breaks the promise; a removed shield before the final effect resolves invites unfair damage trades. Drive countdown, hazard lifetime, invulnerability, audio, camera, and transition from the same completion event."
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "Name the alternate win condition",
+      "body": "Survive for time, finish a route, protect an object, or resolve a pattern are different contracts. Store the chosen condition explicitly and expose its progress. 'Boss is invulnerable' describes a restriction, not what the player is trying to accomplish."
+    },
+    {
+      "title": "Preserve meaningful verbs",
+      "body": "Temporarily suppressing damage should not suppress agency. Movement, positioning, defense, cooperation, resource timing, or route choice must still change the outcome. In the example Tavi's sword is deferred, but every movement decision clears real geometry."
+    },
+    {
+      "title": "Shape pressure as a sequence",
+      "body": "A survival phase needs readable internal rhythm, not undifferentiated waiting. Schedule preview, response, active threat, and a short release for each beat. Escalate spacing, overlap, or response demand only when the new rule remains legible."
+    },
+    {
+      "title": "Make failure and recovery explicit",
+      "body": "Decide whether one hit restarts the phase, consumes health, removes a resource, or allows recovery. In multiplayer, define personal death, party failure, resurrection, and late join behavior. Log failure time by beat so tuning separates unclear tells from execution difficulty."
+    }
+  ],
+  "story": {
+    "title": "Four runes keep the stone sealed",
+    "body": "Kern draws power from four floor stones while an unbreakable ring surrounds its core. Each stone burns out after releasing one pulse. When the fourth rune goes dark, the seal collapses and the ordinary stone body can be struck again."
+  },
+  "adaptation": {
+    "title": "Let Tavi move first and use the sword after",
+    "body": "Tavi keeps the familiar movement and sword vocabulary. During the seal, movement is the response and sword contact does not advance progress. The completion flash restores the familiar attack verb, so the phase changes priorities without inventing a one-off control."
+  },
+  "distinction": {
+    "title": "An alternate progress rule, not merely a generic phase",
+    "body": "A fight phase is any bounded ruleset within an encounter. A survival phase is the narrower case where continued survival or an objective—not boss damage—is the progress condition. Enrage adds escalating pressure or a failure deadline; it does not by itself replace the win condition. An escape phase moves progress onto traversal, while a wave-clear phase advances by defeating spawned enemies."
+  },
+  "lensNotes": [
+    {
+      "id": "phase-structure",
+      "body": "Entry at 0.55 s swaps the progress contract; completion at 4.35 s removes the shield and restores ordinary combat."
+    },
+    {
+      "id": "progress-clarity",
+      "body": "The shrinking rune, four discrete pulses, and completion flash expose what remains without relying on hidden time."
+    },
+    {
+      "id": "counterplay",
+      "body": "Each fixed preview leaves enough ordinary movement time for Tavi's full body to clear before the circle activates."
+    },
+    {
+      "id": "difficulty-rhythm",
+      "body": "Four preview–move–impact beats create an internal cadence, followed by a deliberate release and attack opening."
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "Ori and the Blind Forest",
+      "boss": "Kuro finale",
+      "screenshot": "https://i.ytimg.com/vi/Kx9DPTIDB_0/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=Kx9DPTIDB_0&t=1s",
+      "body": "The finale is won by surviving Kuro's passes and completing the burning route rather than reducing a boss health bar. Forward motion makes progress visible while repeated attacks keep the survival contract under pressure.",
+      "video": "https://www.youtube.com/watch?v=Kx9DPTIDB_0&t=1s",
+      "videoDurationSeconds": 419
+    },
+    {
+      "dimension": "2D",
+      "game": "Undertale",
+      "boss": "Sans",
+      "screenshot": "https://i.ytimg.com/vi/tHEmhVp1uAE/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=tHEmhVp1uAE&t=1596s",
+      "body": "Sans alternates player attack turns with bounded bullet-hell attacks. During each defense turn, dealing damage is unavailable and survival through the pattern is the immediate success condition before the combat menu returns.",
+      "video": "https://www.youtube.com/watch?v=tHEmhVp1uAE&t=1596s",
+      "videoDurationSeconds": 3219
+    },
+    {
+      "dimension": "3D",
+      "game": "Final Fantasy XIV",
+      "boss": "Perfect Alexander",
+      "screenshot": "https://i.ytimg.com/vi/fiXZRgAOCHw/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=fiXZRgAOCHw&t=300s",
+      "body": "During Fate Calibration Alpha, Perfect Alexander becomes untargetable while the party resolves the previously previewed movement, stack, spread, and safe-position rules. Survival and correct coordination complete the sequence before targetable combat resumes.",
+      "video": "https://www.youtube.com/watch?v=fiXZRgAOCHw&t=300s",
+      "videoDurationSeconds": 797
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

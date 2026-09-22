@@ -630,13 +630,13 @@ test('boss builder persists a local draft and downloads portable JSON', async ({
   await expect(page.locator('.boss-builder-phases [data-boss-download]')).toHaveCount(1);
   await expect(page.locator('.boss-builder-form [data-boss-download]')).toHaveCount(0);
   await expect(page.locator('.boss-builder-mechanic')).toHaveCount(124);
-  await expect(page.locator('.boss-builder-mechanic--wip')).toHaveCount(59);
+  await expect(page.locator('.boss-builder-mechanic--wip')).toHaveCount(58);
   await expect(page.locator('.boss-builder-mechanic:not(.boss-builder-mechanic--wip)')).toHaveCount(
-    65,
+    66,
   );
-  await expect(page.locator('.boss-builder-mechanic [data-character-art="kern"]')).toHaveCount(65);
-  await expect(page.locator('.boss-builder-mechanic [data-character-art="tavi"]')).toHaveCount(65);
-  await expect(page.locator('.boss-builder-mechanic [data-blueprint-preview]')).toHaveCount(59);
+  await expect(page.locator('.boss-builder-mechanic [data-character-art="kern"]')).toHaveCount(66);
+  await expect(page.locator('.boss-builder-mechanic [data-character-art="tavi"]')).toHaveCount(66);
+  await expect(page.locator('.boss-builder-mechanic [data-blueprint-preview]')).toHaveCount(60);
   await expect(page.locator('.boss-builder-mechanic [data-pattern-preview]')).toHaveCount(5);
   await expect(page.locator('[data-boss-filter]')).toHaveCount(5);
   await page.locator('[data-boss-filter="geometry"]').selectOption('radial');
@@ -1164,17 +1164,17 @@ test('the root defaults to English and localized catalogs point to real pages', 
   ]);
   await expect(page.locator('.catalog-part')).toHaveCount(14);
   await expect(page.locator('.catalog-lesson')).toHaveCount(124);
-  await expect(page.locator('.catalog-lesson--wip')).toHaveCount(59);
-  await expect(page.locator('.catalog-lesson:not(.catalog-lesson--wip)')).toHaveCount(65);
+  await expect(page.locator('.catalog-lesson--wip')).toHaveCount(58);
+  await expect(page.locator('.catalog-lesson:not(.catalog-lesson--wip)')).toHaveCount(66);
   await expect(page.locator('.catalog-lesson__number').first()).toHaveText('1.1');
   await expect(page.locator('.catalog-lesson__number').last()).toHaveText('14.11');
   await expect(page.locator('.catalog-lesson__preview [data-character-art="kern"]')).toHaveCount(
-    65,
+    66,
   );
   await expect(page.locator('.catalog-lesson__preview [data-character-art="tavi"]')).toHaveCount(
-    65,
+    66,
   );
-  await expect(page.locator('.catalog-lesson__preview [data-blueprint-preview]')).toHaveCount(59);
+  await expect(page.locator('.catalog-lesson__preview [data-blueprint-preview]')).toHaveCount(60);
   await expect(page.locator('.catalog-lesson__preview [data-pattern-preview]')).toHaveCount(5);
   const draftPage = await request.get('en/mechanics/boundary-attack/');
   expect(draftPage.status()).toBe(200);

@@ -1,0 +1,24 @@
+{
+  "id": "survival-phase",
+  "number": 66,
+  "published": true,
+  "sourceLocale": "en",
+  "contentVersion": 1,
+  "animation": "survival-phase",
+  "lenses": ["phase-structure", "progress-clarity", "counterplay", "difficulty-rhythm"],
+  "related": ["fight-phase", "enrage", "situational-immunity"],
+  "sources": [
+    {
+      "title": "GDC · Itay Keren — Boss Battle Design Fundamentals and Retrospective",
+      "url": "https://www.gdcvault.com/play/1024921/Boss-Up-Boss-Battle-Design"
+    },
+    {
+      "title": "Xbox Wire — Escape Kuro's Clutches",
+      "url": "https://news.xbox.com/en-us/2019/09/20/pre-purchase-ori-and-the-blind-forest-definitive-edition-for-nintendo-switch/"
+    },
+    {
+      "title": "Icy Veins — Perfect Alexander and Fate Calibration",
+      "url": "https://www.icy-veins.com/ffxiv/the-epic-of-alexander-ultimate-guides-perfect-alexander"
+    }
+  ]
+}

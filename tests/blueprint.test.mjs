@@ -24,6 +24,7 @@ import {
   partBreakState,
   recoveryState,
   situationalImmunityOutcome,
+  survivalPhaseState,
   windUpProgress,
   windUpState,
 } from '../src/blueprint-model.mjs';
@@ -33,8 +34,8 @@ import {
   renderBlueprintThumbnail,
 } from '../lib/blueprint-view.mjs';
 
-test('all 59 promoted lesson animations have distinct rule modes and complete moving frames', () => {
-  assert.equal(BLUEPRINT_MECHANIC_IDS.length, 59);
+test('all 60 promoted lesson animations have distinct rule modes and complete moving frames', () => {
+  assert.equal(BLUEPRINT_MECHANIC_IDS.length, 60);
   const modes = new Set();
   for (const id of BLUEPRINT_MECHANIC_IDS) {
     for (let time = 0; time <= BLUEPRINT_DURATION; time += 0.1) {
@@ -55,7 +56,7 @@ test('all 59 promoted lesson animations have distinct rule modes and complete mo
           assert.ok(Number.isFinite(value), `${id} has an invalid ${primitive.type}`);
     }
   }
-  assert.equal(modes.size, 59);
+  assert.equal(modes.size, 60);
 });
 
 test('every blueprint exposes signal, committed action, and recovery without player teleports', () => {
@@ -75,7 +76,8 @@ test('every blueprint exposes signal, committed action, and recovery without pla
       id !== 'wind-up' &&
       id !== 'attack-lock' &&
       id !== 'active-phase' &&
-      id !== 'recovery'
+      id !== 'recovery' &&
+      id !== 'survival-phase'
     )
       assert.equal(blueprintFrame(id, 3).dangerActive, true, id);
     assert.equal(blueprintFrame(id, 3).playerSafe, true, id);
@@ -152,7 +154,8 @@ test('every damaging promoted animation derives safety from its own active geome
       id !== 'wind-up' &&
       id !== 'attack-lock' &&
       id !== 'active-phase' &&
-      id !== 'recovery',
+      id !== 'recovery' &&
+      id !== 'survival-phase',
   )) {
     const frame = blueprintFrame(id, 3);
     let point = unsafePoints[id];
@@ -1511,4 +1514,59 @@ test('recovery locks the boss long enough for a measured approach and sword puni
   assert.ok(ready.primitives[5].opacity > 0, 'the ready flash follows the exact cutoff');
   assert.deepEqual(blueprintFrame(id, 0).player, blueprintFrame(id, 6).player);
   assert.match(renderBlueprintThumbnail(id, 'test-recovery'), /data-blueprint-preview="recovery"/);
+});
+
+test('survival phase advances on elapsed survival, clears each pulse, then restores damage', () => {
+  const id = 'survival-phase';
+  assert.deepEqual([0, 0.7, 1.2, 1.6, 2.2, 3.15, 4.1, 4.35, 5.08, 5.5].map(survivalPhaseState), [
+    'idle',
+    'read-next',
+    'survive-1',
+    'read-next',
+    'survive-2',
+    'survive-3',
+    'survive-4',
+    'survived',
+    'opening',
+    'reset',
+  ]);
+
+  const signal = blueprintFrame(id, 0.8);
+  assert.equal(signal.survivalShielded, true);
+  assert.equal(signal.dangerActive, false);
+  assert.ok(
+    signal.primitives[0].opacity > 0,
+    'the shield is visible for the whole survival contract',
+  );
+  assert.ok(signal.primitives[2].opacity > 0, 'the first fixed circle previews before activation');
+
+  for (const [time, index] of [
+    [1.2, 0],
+    [2.2, 1],
+    [3.15, 2],
+    [4.1, 3],
+  ]) {
+    const active = blueprintFrame(id, time);
+    assert.equal(active.survivalHazardIndex, index);
+    assert.equal(active.dangerActive, true);
+    assert.equal(active.playerSafe, true, `Tavi clears pulse ${index + 1}`);
+    const circle = active.primitives[2 + index];
+    assert.equal(blueprintPointSafe(id, time, { x: circle.x, y: circle.y }), false);
+  }
+
+  const complete = blueprintFrame(id, 4.35);
+  assert.equal(complete.survivalComplete, true);
+  assert.equal(complete.survivalShielded, false);
+  assert.equal(complete.dangerActive, false);
+  assert.equal(complete.survivalRemaining, 0);
+  assert.ok(complete.primitives[6].opacity > 0, 'one completion flash marks the handoff');
+
+  const punish = blueprintFrame(id, 5.08);
+  assert.equal(punish.punishStrike, true);
+  assert.ok(punish.primitives[7].opacity > 0, 'the sword response appears only after completion');
+  assert.deepEqual(blueprintFrame(id, 0).player, blueprintFrame(id, 6).player);
+  assert.match(
+    renderBlueprintThumbnail(id, 'test-survival-phase'),
+    /data-blueprint-preview="survival-phase"/,
+  );
 });

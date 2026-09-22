@@ -155,6 +155,14 @@ export function initializeBlueprint(widget) {
       widget.dataset.blueprintWithinPunishReach = String(frame.withinPunishReach);
       widget.dataset.blueprintPunishStrike = String(frame.punishStrike);
     }
+    if (mechanicId === 'survival-phase') {
+      widget.dataset.blueprintSurvivalPhase = frame.survivalPhaseState;
+      widget.dataset.blueprintSurvivalShielded = String(frame.survivalShielded);
+      widget.dataset.blueprintSurvivalComplete = String(frame.survivalComplete);
+      widget.dataset.blueprintSurvivalHazard = String(frame.survivalHazardIndex);
+      widget.dataset.blueprintSurvivalRemaining = frame.survivalRemaining.toFixed(3);
+      widget.dataset.blueprintPunishStrike = String(frame.punishStrike);
+    }
     boss.setAttribute(
       'transform',
       `translate(${frame.boss.x} ${frame.boss.y}) scale(${frame.bossScale})`,

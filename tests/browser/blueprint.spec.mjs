@@ -405,9 +405,9 @@ test('volley releases three parallel bolts on one beat and clears its outside ro
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
 });
 
-test('catalog and builder reuse the 59 promoted rule-specific previews', async ({ page }) => {
+test('catalog and builder reuse the 60 promoted rule-specific previews', async ({ page }) => {
   await page.goto('en/');
-  await expect(page.locator('[data-blueprint-preview]')).toHaveCount(59);
+  await expect(page.locator('[data-blueprint-preview]')).toHaveCount(60);
   const catalogLayouts = await page.locator('[data-blueprint-preview]').evaluateAll((previews) =>
     previews.map((preview) => {
       const boss = preview.querySelector('[data-character-art-preview="kern"]');
@@ -431,7 +431,7 @@ test('catalog and builder reuse the 59 promoted rule-specific previews', async (
   expect(new Set(catalogLayouts.map(({ layout }) => layout)).size).toBeGreaterThanOrEqual(18);
 
   await page.goto('en/builder/');
-  await expect(page.locator('[data-blueprint-preview]')).toHaveCount(59);
+  await expect(page.locator('[data-blueprint-preview]')).toHaveCount(60);
   const builderLayouts = await page.locator('[data-blueprint-preview]').evaluateAll((previews) =>
     previews.map((preview) => {
       const boss = preview.querySelector('[data-character-art-preview="kern"]');
@@ -1694,6 +1694,112 @@ test('recovery keeps the attack lane, countdown, and actors inside dark RTL mobi
     expect(
       bounds.every(Boolean),
       `actors, lane, and recovery countdown remain in frame at ${milliseconds}ms`,
+    ).toBe(true);
+  }
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+});
+
+test('survival phase keeps damage irrelevant until all four timed pulses are cleared', async ({
+  page,
+}) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.goto('en/mechanics/survival-phase/');
+  const widget = page.locator('[data-blueprint-demo]');
+  const timeline = widget.locator('[data-blueprint-timeline]');
+  const seek = (milliseconds) =>
+    timeline.evaluate((element, value) => {
+      element.value = String(value);
+      element.dispatchEvent(new Event('input', { bubbles: true }));
+    }, milliseconds);
+
+  await expect(page.locator('.lesson-title-line h1')).toHaveText('Survival phase');
+  await expect(page.locator('.wip-badge, .draft-profile')).toHaveCount(0);
+  await expect(page.locator('.game-example')).toHaveCount(3);
+  await expect(widget).toHaveAttribute('data-blueprint-playing', 'false');
+
+  await seek(800);
+  await expect(widget).toHaveAttribute('data-blueprint-survival-phase', 'read-next');
+  await expect(widget).toHaveAttribute('data-blueprint-survival-shielded', 'true');
+  await expect(widget).toHaveAttribute('data-blueprint-survival-complete', 'false');
+  await expect(widget.locator('[data-blueprint-primitive="0"] circle')).not.toHaveAttribute(
+    'opacity',
+    '0',
+  );
+  await expect(widget.locator('[data-blueprint-primitive="2"] circle')).not.toHaveAttribute(
+    'opacity',
+    '0',
+  );
+
+  for (const [milliseconds, state, hazard] of [
+    [1200, 'survive-1', '0'],
+    [2200, 'survive-2', '1'],
+    [3150, 'survive-3', '2'],
+    [4100, 'survive-4', '3'],
+  ]) {
+    await seek(milliseconds);
+    await expect(widget).toHaveAttribute('data-blueprint-survival-phase', state);
+    await expect(widget).toHaveAttribute('data-blueprint-survival-hazard', hazard);
+    await expect(widget).toHaveAttribute('data-blueprint-outcome', 'safe');
+    await expect(
+      widget.locator(`[data-blueprint-primitive="${2 + Number(hazard)}"] circle`),
+    ).not.toHaveAttribute('opacity', '0');
+  }
+
+  await seek(4350);
+  await expect(widget).toHaveAttribute('data-blueprint-survival-phase', 'survived');
+  await expect(widget).toHaveAttribute('data-blueprint-survival-shielded', 'false');
+  await expect(widget).toHaveAttribute('data-blueprint-survival-complete', 'true');
+  await expect(widget).toHaveAttribute('data-blueprint-survival-remaining', '0.000');
+  await expect(widget.locator('[data-blueprint-primitive="6"] circle')).not.toHaveAttribute(
+    'opacity',
+    '0',
+  );
+
+  await seek(5080);
+  await expect(widget).toHaveAttribute('data-blueprint-survival-phase', 'opening');
+  await expect(widget).toHaveAttribute('data-blueprint-punish-strike', 'true');
+  await expect(widget.locator('[data-blueprint-primitive="7"] line')).not.toHaveAttribute(
+    'opacity',
+    '0',
+  );
+});
+
+test('survival phase keeps its timer, pulses, and actors inside dark RTL mobile', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 375, height: 812 });
+  await page.emulateMedia({ reducedMotion: 'reduce', colorScheme: 'dark' });
+  await page.goto('ar/mechanics/survival-phase/');
+  const widget = page.locator('[data-blueprint-demo]');
+  await expect(page.locator('html')).toHaveAttribute('dir', 'rtl');
+  const timeline = widget.locator('[data-blueprint-timeline]');
+  for (const milliseconds of [0, 800, 1200, 2200, 3150, 4100, 4350, 5080, 5700]) {
+    await timeline.evaluate((element, value) => {
+      element.value = String(value);
+      element.dispatchEvent(new Event('input', { bubbles: true }));
+    }, milliseconds);
+    const bounds = await widget.evaluate((element) => {
+      const svg = element.querySelector('svg').getBoundingClientRect();
+      return [
+        '[data-blueprint-boss]',
+        '[data-blueprint-player]',
+        '[data-blueprint-boss-label]',
+        '[data-blueprint-player-label]',
+        '[data-blueprint-primitive="0"]',
+        '[data-blueprint-primitive="1"]',
+      ].map((selector) => {
+        const rect = element.querySelector(selector).getBoundingClientRect();
+        return (
+          rect.left >= svg.left - 2 &&
+          rect.right <= svg.right + 2 &&
+          rect.top >= svg.top - 2 &&
+          rect.bottom <= svg.bottom + 2
+        );
+      });
+    });
+    expect(
+      bounds.every(Boolean),
+      `actors, shield, and survival timer remain in frame at ${milliseconds}ms`,
     ).toBe(true);
   }
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);

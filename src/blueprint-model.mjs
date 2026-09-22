@@ -426,6 +426,29 @@ const SPECS = {
     laneHalfWidth: 24,
     punishReach: 118,
   },
+  'survival-phase': {
+    mode: 'survival-phase',
+    boss: [240, 430],
+    player: [445, 650],
+    target: [355, 430],
+    survival: [0.55, 4.35],
+    shieldDropsAt: 4.35,
+    punishAt: 5.08,
+    resetAt: 5.35,
+    hazardRadius: 92,
+    hazards: [
+      { center: [445, 650], preview: [0.55, 1.15], active: [1.15, 1.48] },
+      { center: [430, 330], preview: [1.48, 2.08], active: [2.08, 2.41] },
+      { center: [145, 430], preview: [2.41, 3.01], active: [3.01, 3.34] },
+      { center: [395, 655], preview: [3.34, 3.94], active: [3.94, 4.27] },
+    ],
+    safePositions: [
+      [430, 330],
+      [145, 430],
+      [395, 655],
+      [430, 380],
+    ],
+  },
   'wide-swing': { mode: 'arc', boss: [280, 310], player: [410, 470], target: [470, 650] },
   lunge: { mode: 'lunge', boss: [170, 290], player: [390, 590], target: [470, 660] },
   grab: { mode: 'grab', boss: [280, 300], player: [390, 485], target: [470, 610] },
@@ -873,6 +896,18 @@ export function recoveryState(time) {
   if (t >= spec.recovery[1] && t < spec.resetAt) return 'boss-ready';
   if (t >= spec.resetAt) return 'reset';
   return 'idle';
+}
+
+export function survivalPhaseState(time) {
+  const spec = SPECS['survival-phase'];
+  const t = localTime(time);
+  if (t < spec.survival[0]) return 'idle';
+  const activeIndex = spec.hazards.findIndex(({ active }) => t >= active[0] && t < active[1]);
+  if (activeIndex >= 0) return `survive-${activeIndex + 1}`;
+  if (t < spec.shieldDropsAt) return 'read-next';
+  if (t < spec.punishAt) return 'survived';
+  if (t < spec.resetAt) return 'opening';
+  return 'reset';
 }
 
 const pointInPolygon = (value, points) => {
@@ -1722,6 +1757,48 @@ function primitivesFor(spec, frame) {
       ),
       circle(boss.x, boss.y, 45 + recoveryStartFlash * 25, recoveryStartFlash, 'safe', 7),
       circle(boss.x, boss.y, 45 + readyFlash * 25, readyFlash, 'signal', 7),
+      line(frame.player.x, frame.player.y, boss.x, boss.y, strike, 'safe', 9),
+      circle(boss.x + 35, boss.y - 4, 12 + strike * 24, strike, 'safe', 7, 0.12),
+    ];
+  }
+  if (mode === 'survival-phase') {
+    const survivalOpen = frame.time >= spec.survival[0] && frame.time < spec.shieldDropsAt;
+    const survivalProgress = clamp(
+      (frame.time - spec.survival[0]) / (spec.shieldDropsAt - spec.survival[0]),
+    );
+    const completionFlash =
+      frame.time >= spec.shieldDropsAt
+        ? Math.max(0, 1 - (frame.time - spec.shieldDropsAt) / 0.42)
+        : 0;
+    const strike = strikePulse(frame.time, spec.punishAt, 0.38);
+    return [
+      circle(boss.x, boss.y, 76, survivalOpen ? 0.9 : 0, 'accent', 8, 0.08, '8 7'),
+      circle(
+        boss.x,
+        boss.y,
+        mix(118, 48, survivalProgress),
+        survivalOpen ? 0.78 : 0,
+        'safe',
+        6,
+        0.02,
+        '12 9',
+      ),
+      ...spec.hazards.map(({ center, preview: previewWindow, active }) => {
+        const previewing = frame.time >= previewWindow[0] && frame.time < active[0];
+        const activeNow = frame.time >= active[0] && frame.time < active[1];
+        const buildup = clamp((frame.time - previewWindow[0]) / (active[0] - previewWindow[0]));
+        return circle(
+          center[0],
+          center[1],
+          activeNow ? spec.hazardRadius : mix(38, spec.hazardRadius, buildup),
+          activeNow ? 0.94 : previewing ? 0.68 : 0,
+          activeNow ? 'signal' : 'accent',
+          activeNow ? 12 : 5,
+          activeNow ? 0.3 : 0.04,
+          activeNow ? '' : '10 9',
+        );
+      }),
+      circle(boss.x, boss.y, 58 + completionFlash * 34, completionFlash, 'safe', 8),
       line(frame.player.x, frame.player.y, boss.x, boss.y, strike, 'safe', 9),
       circle(boss.x + 35, boss.y - 4, 12 + strike * 24, strike, 'safe', 7, 0.12),
     ];
@@ -3001,6 +3078,14 @@ function pointClearsThreat(spec, frame, value, radius = BLUEPRINT_PLAYER_RADIUS)
       value.y + radius < spec.laneStart[1] - spec.laneHalfWidth ||
       value.y - radius > spec.laneStart[1] + spec.laneHalfWidth
     );
+  if (mode === 'survival-phase') {
+    const activeHazard = spec.hazards.find(
+      ({ active }) => frame.time >= active[0] && frame.time < active[1],
+    );
+    if (!activeHazard) return true;
+    const center = point(activeHazard.center);
+    return Math.hypot(value.x - center.x, value.y - center.y) > spec.hazardRadius + radius;
+  }
   if (mode === 'spiral')
     return (
       distanceFromBoss > 52 + radius &&
@@ -3213,6 +3298,7 @@ export function blueprintFrame(id, time) {
   else if (spec.mode === 'attack-lock') responseProgress = 0;
   else if (spec.mode === 'active-phase') responseProgress = 0;
   else if (spec.mode === 'recovery') responseProgress = 0;
+  else if (spec.mode === 'survival-phase') responseProgress = 0;
   else if (spec.mode === 'knockback')
     responseProgress = phase === 0 ? 0 : phase === 1 ? smooth(action) : 1;
   else if (spec.mode === 'target-lock')
@@ -3421,6 +3507,30 @@ export function blueprintFrame(id, time) {
       y: mix(punish.y, startPlayer.y, reset),
     };
   }
+  if (spec.mode === 'survival-phase') {
+    let current = startPlayer;
+    for (let index = 0; index < spec.hazards.length; index += 1) {
+      const hazard = spec.hazards[index];
+      const destination = point(spec.safePositions[index]);
+      const movement = smooth(
+        (t - (hazard.preview[0] + 0.015)) / (hazard.active[0] - hazard.preview[0] - 0.03),
+      );
+      current = {
+        x: mix(current.x, destination.x, movement),
+        y: mix(current.y, destination.y, movement),
+      };
+    }
+    const approach = smooth((t - spec.shieldDropsAt) / 0.58);
+    const reset = smooth((t - spec.resetAt) / (BLUEPRINT_DURATION - spec.resetAt));
+    const punish = {
+      x: mix(current.x, targetPlayer.x, approach),
+      y: mix(current.y, targetPlayer.y, approach),
+    };
+    player = {
+      x: mix(punish.x, startPlayer.x, reset),
+      y: mix(punish.y, startPlayer.y, reset),
+    };
+  }
   if (spec.mode === 'rotating' && phase === 0) {
     const initialPosition = polar(boss, 255, Math.PI / 3);
     player = {
@@ -3488,7 +3598,15 @@ export function blueprintFrame(id, time) {
             pulse(smooth((t - spec.recovery[0]) / 1.42)),
             pulse(smooth((t - spec.resetAt) / (BLUEPRINT_DURATION - spec.resetAt))) * 0.8,
           )
-        : pulse(responseProgress) + pulse(returnProgress) * 0.8;
+        : spec.mode === 'survival-phase'
+          ? Math.max(
+              ...spec.hazards.map(({ preview, active }) =>
+                pulse(smooth((t - (preview[0] + 0.015)) / (active[0] - preview[0] - 0.03))),
+              ),
+              pulse(smooth((t - spec.shieldDropsAt) / 0.58)),
+              pulse(smooth((t - spec.resetAt) / (BLUEPRINT_DURATION - spec.resetAt))) * 0.8,
+            )
+          : pulse(responseProgress) + pulse(returnProgress) * 0.8;
   const bossVisible = spec.mode === 'burrow' && phase === 1 && action < 0.68 ? 0 : 1;
   const decoy =
     spec.mode === 'decoy'
@@ -3579,7 +3697,12 @@ export function blueprintFrame(id, time) {
                                                   ? t >= spec.active[0] && t < spec.active[1]
                                                   : spec.mode === 'recovery'
                                                     ? t >= spec.active[0] && t < spec.active[1]
-                                                    : phase === 1;
+                                                    : spec.mode === 'survival-phase'
+                                                      ? spec.hazards.some(
+                                                          ({ active }) =>
+                                                            t >= active[0] && t < active[1],
+                                                        )
+                                                      : phase === 1;
   const frame = {
     id,
     mode: spec.mode,
@@ -3617,17 +3740,19 @@ export function blueprintFrame(id, time) {
           ? (Math.atan2(boss.y - player.y, boss.x - player.x) * 180) / Math.PI
           : spec.mode === 'recovery'
             ? (Math.atan2(boss.y - player.y, boss.x - player.x) * 180) / Math.PI
-            : spec.mode === 'damage-type-resistance' ||
-                spec.mode === 'situational-immunity' ||
-                spec.mode === 'part-break' ||
-                spec.mode === 'attack-reflection' ||
-                spec.mode === 'counter-stance' ||
-                spec.mode === 'absorption-power-up' ||
-                spec.mode === 'interruptible-wind-up' ||
-                spec.mode === 'loadout-adaptation' ||
-                spec.mode === 'wind-up'
-              ? -180
-              : -90,
+            : spec.mode === 'survival-phase'
+              ? (Math.atan2(boss.y - player.y, boss.x - player.x) * 180) / Math.PI
+              : spec.mode === 'damage-type-resistance' ||
+                  spec.mode === 'situational-immunity' ||
+                  spec.mode === 'part-break' ||
+                  spec.mode === 'attack-reflection' ||
+                  spec.mode === 'counter-stance' ||
+                  spec.mode === 'absorption-power-up' ||
+                  spec.mode === 'interruptible-wind-up' ||
+                  spec.mode === 'loadout-adaptation' ||
+                  spec.mode === 'wind-up'
+                ? -180
+                : -90,
     bossMotion: motion({
       lean:
         spec.mode === 'landing'
@@ -3652,9 +3777,12 @@ export function blueprintFrame(id, time) {
                   0.24 *
                     smooth((t - spec.recovery[0]) / 0.34) *
                     (1 - smooth((t - spec.recovery[1]) / 0.34))
-                : phase === 0
-                  ? -0.22 * prepare
-                  : 0.24 * pulse(action),
+                : spec.mode === 'survival-phase'
+                  ? 0.12 *
+                    Math.max(...spec.hazards.map(({ active }) => strikePulse(t, active[0], 0.34)))
+                  : phase === 0
+                    ? -0.22 * prepare
+                    : 0.24 * pulse(action),
       crouch:
         spec.mode === 'landing'
           ? phase === 0
@@ -3666,7 +3794,10 @@ export function blueprintFrame(id, time) {
               ? 0.3 *
                 smooth((t - spec.startup[0]) / (spec.active[0] - spec.startup[0])) *
                 (1 - smooth((t - spec.recovery[1]) / 0.34))
-              : 0.2 * prepare,
+              : spec.mode === 'survival-phase'
+                ? 0.12 *
+                  Math.max(...spec.hazards.map(({ active }) => strikePulse(t, active[0], 0.34)))
+                : 0.2 * prepare,
       lift: spec.mode === 'landing' && phase === 1 ? pulse(clamp(action / 0.52)) : 0,
       attack:
         spec.mode === 'speed-change'
@@ -3728,9 +3859,15 @@ export function blueprintFrame(id, time) {
                                         (t - spec.startup[0]) / (spec.active[0] - spec.startup[0]),
                                       ) *
                                       (1 - smooth((t - spec.recovery[0]) / 0.4))
-                                    : phase === 1
-                                      ? 0.75
-                                      : prepare * 0.35,
+                                    : spec.mode === 'survival-phase'
+                                      ? Math.max(
+                                          ...spec.hazards.map(({ active }) =>
+                                            strikePulse(t, active[0], 0.5),
+                                          ),
+                                        )
+                                      : phase === 1
+                                        ? 0.75
+                                        : prepare * 0.35,
       impact:
         spec.mode === 'landing'
           ? pulse(clamp((action - 0.42) / 0.22))
@@ -3771,11 +3908,18 @@ export function blueprintFrame(id, time) {
                                       0.55 * strikePulse(t, spec.active[0], 0.3),
                                       0.85 * strikePulse(t, spec.punishAt, 0.3),
                                     )
-                                  : spec.mode === 'shockwave' || spec.mode === 'knockback'
-                                    ? pulse(action * 3)
-                                    : spec.mode === 'chain-explosions'
-                                      ? pulse((action * 5) % 1)
-                                      : 0,
+                                  : spec.mode === 'survival-phase'
+                                    ? Math.max(
+                                        ...spec.hazards.map(
+                                          ({ active }) => 0.45 * strikePulse(t, active[0], 0.28),
+                                        ),
+                                        0.85 * strikePulse(t, spec.punishAt, 0.3),
+                                      )
+                                    : spec.mode === 'shockwave' || spec.mode === 'knockback'
+                                      ? pulse(action * 3)
+                                      : spec.mode === 'chain-explosions'
+                                        ? pulse((action * 5) % 1)
+                                        : 0,
     }),
     playerMotion: motion({
       gait:
@@ -3783,7 +3927,9 @@ export function blueprintFrame(id, time) {
           ? t * 7 * stride
           : spec.mode === 'recovery'
             ? t * 7 * stride
-            : (route * responseProgress + route * returnProgress) / 20,
+            : spec.mode === 'survival-phase'
+              ? t * 7 * stride
+              : (route * responseProgress + route * returnProgress) / 20,
       stride,
       lean: stride * 0.45,
       crouch: stride * 0.16,
@@ -3828,11 +3974,13 @@ export function blueprintFrame(id, time) {
                             ? strikePulse(t, spec.punishAt, 0.38)
                             : spec.mode === 'recovery'
                               ? strikePulse(t, spec.punishAt, 0.38)
-                              : spec.mode === 'decoy' && phase === 1
-                                ? pulse(clamp((action - 0.52) / 0.3))
-                                : spec.mode === 'weak-point' && phase === 1
-                                  ? pulse(action * 1.5)
-                                  : 0,
+                              : spec.mode === 'survival-phase'
+                                ? strikePulse(t, spec.punishAt, 0.38)
+                                : spec.mode === 'decoy' && phase === 1
+                                  ? pulse(clamp((action - 0.52) / 0.3))
+                                  : spec.mode === 'weak-point' && phase === 1
+                                    ? pulse(action * 1.5)
+                                    : 0,
     }),
   };
   if (spec.mode === 'directional-shield') {
@@ -3938,6 +4086,18 @@ export function blueprintFrame(id, time) {
       Math.hypot(player.x - boss.x, player.y - boss.y) <=
       spec.punishReach + BLUEPRINT_PLAYER_RADIUS;
   }
+  if (spec.mode === 'survival-phase') {
+    frame.survivalPhaseState = survivalPhaseState(t);
+    frame.survivalShielded = t >= spec.survival[0] && t < spec.shieldDropsAt;
+    frame.survivalComplete = t >= spec.shieldDropsAt;
+    frame.survivalHazardIndex = spec.hazards.findIndex(
+      ({ active }) => t >= active[0] && t < active[1],
+    );
+    frame.survivalRemaining = clamp(
+      1 - (t - spec.survival[0]) / (spec.shieldDropsAt - spec.survival[0]),
+    );
+    frame.punishStrike = strikePulse(t, spec.punishAt, 0.38) > 0.5;
+  }
   frame.primitives = primitivesFor(spec, frame);
   frame.playerSafe = pointClearsThreat(spec, frame, player);
   frame.bossLabel = {
@@ -3960,7 +4120,8 @@ export function blueprintFrame(id, time) {
       spec.mode === 'wind-up' ||
       spec.mode === 'attack-lock' ||
       spec.mode === 'active-phase' ||
-      spec.mode === 'recovery'
+      spec.mode === 'recovery' ||
+      spec.mode === 'survival-phase'
         ? 92
         : -62),
   };

@@ -1,0 +1,138 @@
+{
+  "title": "Fase de supervivencia",
+  "subtitle": "Convierte sobrevivir, y no infligir daño, en la condición temporal de éxito.",
+  "variant": "Cuatro pulsos telegrafiados mientras el jefe está protegido, seguidos de una apertura clara",
+  "summary": "Una fase de supervivencia avanza al resistir una secuencia, temporizador u objetivo limitado, no al reducir la salud del jefe.",
+  "overview": "Una fase de supervivencia sustituye el progreso por daño por otra condición: seguir con vida hasta completar un temporizador, secuencia u objetivo. Kern está protegido de 0,55 a 4,35 segundos mientras cuatro runas golpean por orden. La espada de Tavi no avanza la fase; superar los pulsos elimina el escudo y crea una apertura legible.",
+  "learning": "Define el contrato de entrada, el progreso sin daño, el calendario de amenazas, el evento de finalización, la regla de fallo y el regreso al combate normal desde un único estado determinista.",
+  "category": "Estructura y legibilidad",
+  "readTime": "5 min",
+  "demo": {
+    "title": "Demuestra que sobrevivir, no dañar, hace avanzar el encuentro",
+    "timeline": "Cronología de la fase de supervivencia",
+    "step": "Estados de supervivencia",
+    "phaseNames": [
+      "Declara el objetivo alternativo",
+      "Resuelve la secuencia",
+      "Completa y devuelve el control"
+    ],
+    "phaseDescriptions": [
+      "A los 0,55 s Kern obtiene un escudo discontinuo y una runa de finalización que se contrae. La primera marca del suelo avisa durante 0,60 s; Tavi sale con movimiento normal mientras la espada no aporta progreso.",
+      "Cuatro círculos fijos se activan a los 1,15, 2,08, 3,01 y 3,94 s. Cada aviso fija su posición antes de activarse, solo el círculo sólido causa daño y la runa de finalización avanza únicamente con el tiempo de supervivencia.",
+      "A los 4,35 s terminó el cuarto pulso, el contador llegó a cero y el escudo de Kern cae con un destello verde. Tavi puede acercarse y golpear con la espada a los 5,08 s antes de reiniciar el bucle."
+    ],
+    "boss": "Jefe",
+    "player": "Jugador",
+    "danger": "Solo el círculo sólido del pulso actual causa daño",
+    "locked": "Kern sigue protegido hasta que el temporizador termina a los 4,35 segundos",
+    "safe": "Sal de cada círculo avisado antes de que se solidifique; ataca solo después del destello final",
+    "reducedMotion": "Con movimiento reducido, la reproducción automática se desactiva. Recorre 0,55, 1,15, 2,08, 3,01, 3,94 y 4,35 segundos para revisar todo el contrato.",
+    "diagramDescription": "Un jefe de piedra protegido permanece dentro de dos anillos rúnicos que se contraen. Cuatro círculos del suelo avisan y se activan en secuencia mientras un jugador con espada sale de cada zona. Al llegar el contador a cero, el escudo desaparece con un destello verde y el jugador se acerca para golpear."
+  },
+  "steps": [
+    {
+      "title": "¿Qué inicia el contrato de supervivencia?",
+      "body": "Entra mediante un evento explícito y comunica enseguida el objetivo temporal. A los 0,55 s Kern recibe el escudo, aparece la runa y se muestra la primera amenaza. Desactiva o reinterpreta daño, aturdimiento, puntos débiles y selección de IA como políticas declaradas; un golpe accidental no debe acortar la secuencia."
+    },
+    {
+      "title": "¿Cómo progresa la supervivencia?",
+      "body": "Elige un único reloj o contador de objetivo autoritativo. El ejemplo usa el tiempo entre 0,55 y 4,35 s y cuatro registros con intervalos de aviso y actividad. Pausa, hit-stop, rollback, muerte, incorporaciones y puntos de control deben leer la misma fuente para que interfaz, amenazas y final no diverjan."
+    },
+    {
+      "title": "¿Qué demuestra la finalización?",
+      "body": "Emite un evento tras el último instante peligroso. A los 4,35 s la colisión ya está apagada, el contador llega a cero, desaparece el escudo y el destello verde anuncia el cambio. Solo entonces la espada normal de Tavi produce un resultado útil. Prueba el fotograma anterior, exacto y posterior."
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "Es combate normal con un bloqueo de daño invisible",
+      "body": "Si se sigue atacando porque no se ve el objetivo alternativo, el progreso o la regla del escudo, la fase parece una barra de salud rota. Muestra qué avanza, cuánto queda y por qué el verbo habitual no sirve temporalmente."
+    },
+    {
+      "title": "El temporizador termina antes de que coincidan peligro y autoridad",
+      "body": "Una interfaz a cero con un hitbox tardío rompe la promesa; quitar el escudo antes del último efecto invita a intercambios injustos. Controla contador, amenazas, invulnerabilidad, audio, cámara y transición con el mismo evento."
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "Nombra la condición alternativa",
+      "body": "Sobrevivir durante un tiempo, completar una ruta, proteger un objeto o resolver un patrón son contratos distintos. Guarda la condición explícitamente y muestra su progreso. «El jefe es invulnerable» describe una restricción, no el objetivo."
+    },
+    {
+      "title": "Conserva verbos significativos",
+      "body": "Suprimir el daño no debe suprimir la agencia. Movimiento, posición, defensa, cooperación, recursos o ruta deben cambiar el resultado. En el ejemplo se aplaza la espada, pero cada movimiento de Tavi despeja geometría real."
+    },
+    {
+      "title": "Da forma secuencial a la presión",
+      "body": "La fase necesita ritmo interno legible, no espera uniforme. Programa aviso, respuesta, amenaza activa y una breve liberación por compás. Aumenta distancia, solapamiento o exigencia solo mientras la regla siga clara."
+    },
+    {
+      "title": "Haz explícitos fallo y recuperación",
+      "body": "Decide si un impacto reinicia, consume salud o recurso, o permite recuperarse. En multijugador define muerte individual, fallo grupal, resurrección e incorporación tardía. Registra el momento del fallo para separar señales confusas de dificultad de ejecución."
+    }
+  ],
+  "story": {
+    "title": "Cuatro runas mantienen sellada la piedra",
+    "body": "Kern extrae poder de cuatro piedras del suelo mientras un anillo irrompible rodea su núcleo. Cada piedra se apaga tras un pulso. Cuando se oscurece la cuarta runa, el sello cae y el cuerpo de piedra vuelve a poder recibir golpes."
+  },
+  "adaptation": {
+    "title": "Haz que Tavi se mueva primero y use la espada después",
+    "body": "Tavi conserva movimiento y espada conocidos. Durante el sello, moverse es la respuesta y el contacto de la espada no aporta progreso. El destello final restaura el ataque familiar, cambiando prioridades sin inventar un control único."
+  },
+  "distinction": {
+    "title": "Una regla alternativa de progreso, no solo una fase genérica",
+    "body": "Una fase de combate es cualquier conjunto acotado de reglas. Una fase de supervivencia es el caso específico donde seguir vivo u otro objetivo, no dañar al jefe, da el progreso. Enrage añade presión o un plazo de fallo, pero no sustituye por sí mismo la condición de éxito. Escape traslada el progreso al recorrido y limpiar oleadas lo vincula a derrotar enemigos."
+  },
+  "lensNotes": [
+    {
+      "id": "phase-structure",
+      "body": "La entrada a los 0,55 s cambia el contrato; la finalización a los 4,35 s quita el escudo y restaura el combate."
+    },
+    {
+      "id": "progress-clarity",
+      "body": "La runa que se contrae, cuatro pulsos discretos y el destello final muestran lo que queda sin tiempo oculto."
+    },
+    {
+      "id": "counterplay",
+      "body": "Cada aviso fijo deja tiempo para que el cuerpo completo de Tavi salga con movimiento normal antes de la activación."
+    },
+    {
+      "id": "difficulty-rhythm",
+      "body": "Cuatro compases de aviso, movimiento e impacto crean cadencia interna, seguidos de liberación y una apertura de ataque."
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "Ori and the Blind Forest",
+      "boss": "Kuro finale",
+      "screenshot": "https://i.ytimg.com/vi/Kx9DPTIDB_0/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=Kx9DPTIDB_0&t=1s",
+      "body": "El final se gana sobreviviendo a las pasadas de Kuro y completando la ruta en llamas, no reduciendo una barra de salud. El avance visible comunica progreso mientras los ataques repetidos mantienen la presión.",
+      "video": "https://www.youtube.com/watch?v=Kx9DPTIDB_0&t=1s",
+      "videoDurationSeconds": 419
+    },
+    {
+      "dimension": "2D",
+      "game": "Undertale",
+      "boss": "Sans",
+      "screenshot": "https://i.ytimg.com/vi/tHEmhVp1uAE/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=tHEmhVp1uAE&t=1596s",
+      "body": "Sans alterna los turnos de ataque del jugador con patrones bullet hell acotados. Durante cada turno defensivo no se puede infligir daño y sobrevivir hasta que vuelva el menú es la condición inmediata.",
+      "video": "https://www.youtube.com/watch?v=tHEmhVp1uAE&t=1596s",
+      "videoDurationSeconds": 3219
+    },
+    {
+      "dimension": "3D",
+      "game": "Final Fantasy XIV",
+      "boss": "Perfect Alexander",
+      "screenshot": "https://i.ytimg.com/vi/fiXZRgAOCHw/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=fiXZRgAOCHw&t=300s",
+      "body": "Durante Fate Calibration Alpha, Perfect Alexander deja de ser seleccionable mientras el grupo resuelve movimiento, acumulación, dispersión y posiciones seguras ya mostrados. Sobrevivir y coordinarse completa la secuencia antes de reanudar el combate.",
+      "video": "https://www.youtube.com/watch?v=fiXZRgAOCHw&t=300s",
+      "videoDurationSeconds": 797
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}
