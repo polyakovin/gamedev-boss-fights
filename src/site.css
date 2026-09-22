@@ -909,7 +909,7 @@ section[id] {
   font-weight: 600;
   letter-spacing: 0.025em;
   line-height: 1.4;
-  margin: 14px 0 0;
+  margin: 24px 0 0;
 }
 .page-updated a {
   display: inline-flex;
@@ -2151,13 +2151,6 @@ section[id] {
 }
 .lens-page__copy p {
   font-size: 21px;
-}
-.lens-page__copy .page-updated,
-.wip-mechanic-hero > .page-updated {
-  color: var(--muted);
-  font-size: 11px;
-  line-height: 1.4;
-  margin: 14px 0 0;
 }
 .lens-page__mechanics,
 .lens-page__framework,

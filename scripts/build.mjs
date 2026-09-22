@@ -431,7 +431,7 @@ function renderLessonBody(
             ${lensChips(locale.code, mechanic.meta.lenses, content.lensNotes, contentLocale)}
           </div>
           <p class="mechanic-overview">${e(content.overview)}</p>
-          ${lastUpdated(locale, t, history)} ${mechanicBuilderAction(locale, t, mechanic.meta.id)}
+          ${mechanicBuilderAction(locale, t, mechanic.meta.id)}
         </section>
         <div id="simulation" class="simulation-section">${animation.render(content.demo)}</div>
         <section
@@ -497,6 +497,7 @@ function renderLessonBody(
           >
         </p>
       </section>
+      ${lastUpdated(locale, t, history)}
     </main>
   </div>`;
 }
@@ -1292,7 +1293,6 @@ for (const locale of locales) {
           <span class="wip-badge">WIP</span>
         </div>
         <p>${e(entry.summary)}</p>
-        ${lastUpdated(locale, t, mechanicHistory(entry.id, locale.code))}
         ${mechanicBuilderAction(locale, t, entry.id)}
       </header>
       ${draftAnimationSection(entry, locale)} ${draftProfileSection(entry.profile, locale)}
@@ -1310,6 +1310,7 @@ for (const locale of locales) {
           </a>
         </div>
       </section>
+      ${lastUpdated(locale, t, mechanicHistory(entry.id, locale.code))}
     </main>`;
     await write(
       `${locale.code}/mechanics/${entry.id}/`,
@@ -1374,7 +1375,6 @@ for (const locale of locales) {
             <span class="eyebrow">${e(t.lensLabel)}</span>
             <h1>${e(content.title)}</h1>
             <p>${e(content.summary)}</p>
-            ${lastUpdated(locale, t, lensHistory(lens.meta.id, locale.code))}
           </div>
           ${renderLensVisual(lens.meta.id, content)}
         </header>
@@ -1418,6 +1418,7 @@ for (const locale of locales) {
             >${icon('square-pen')}${e(t.edit)}</a
           >
         </p>
+        ${lastUpdated(locale, t, lensHistory(lens.meta.id, locale.code))}
       </article>
     </main>`;
     await write(

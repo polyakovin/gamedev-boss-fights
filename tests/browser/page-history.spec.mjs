@@ -12,6 +12,8 @@ test('mechanic and design lens pages link their last update date to a commit', a
     await page.goto(route);
     const update = page.locator('.page-updated');
     await expect(update).toBeVisible();
+    await expect(update.locator('xpath=following-sibling::*')).toHaveCount(0);
+    await expect(page.locator('main .page-updated')).toHaveCount(1);
     await expect(update).toContainText('Last updated');
     await expect(update.locator('time')).toHaveAttribute('datetime', /^\d{4}-\d{2}-\d{2}$/);
     await expect(update.locator('a')).toHaveAttribute(
