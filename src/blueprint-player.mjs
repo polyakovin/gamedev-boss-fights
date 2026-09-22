@@ -148,6 +148,13 @@ export function initializeBlueprint(widget) {
       widget.dataset.blueprintFollowThrough = String(frame.followThroughVisible);
       widget.dataset.blueprintPunishStrike = String(frame.punishStrike);
     }
+    if (mechanicId === 'recovery') {
+      widget.dataset.blueprintRecovery = frame.recoveryState;
+      widget.dataset.blueprintRecoveryLocked = String(frame.recoveryLocked);
+      widget.dataset.blueprintBossReady = String(frame.bossReady);
+      widget.dataset.blueprintWithinPunishReach = String(frame.withinPunishReach);
+      widget.dataset.blueprintPunishStrike = String(frame.punishStrike);
+    }
     boss.setAttribute(
       'transform',
       `translate(${frame.boss.x} ${frame.boss.y}) scale(${frame.bossScale})`,

@@ -1,0 +1,24 @@
+{
+  "id": "recovery",
+  "number": 65,
+  "published": true,
+  "sourceLocale": "en",
+  "contentVersion": 1,
+  "animation": "recovery",
+  "lenses": ["commitment", "counterplay", "risk-reward", "difficulty-rhythm"],
+  "related": ["active-phase", "wind-up", "charge"],
+  "sources": [
+    {
+      "title": "SF Seminar · Capcom — startup, active frames, and recovery",
+      "url": "https://game.capcom.com/cfn/sfv/column/131432?lang=en"
+    },
+    {
+      "title": "GDC · Itay Keren — Boss Battle Design Fundamentals and Retrospective",
+      "url": "https://www.gdcvault.com/play/1024921/Boss-Up-Boss-Battle-Design"
+    },
+    {
+      "title": "GDC · Rebecca Vessal — data-driven boss attack chains",
+      "url": "https://www.gdcvault.com/play/1028927/AI-Summit-Crafting-Epic-Boss"
+    }
+  ]
+}

@@ -22,6 +22,7 @@ import {
   loadoutAdaptationState,
   partBreakCanFire,
   partBreakState,
+  recoveryState,
   situationalImmunityOutcome,
   windUpProgress,
   windUpState,
@@ -32,8 +33,8 @@ import {
   renderBlueprintThumbnail,
 } from '../lib/blueprint-view.mjs';
 
-test('all 58 promoted lesson animations have distinct rule modes and complete moving frames', () => {
-  assert.equal(BLUEPRINT_MECHANIC_IDS.length, 58);
+test('all 59 promoted lesson animations have distinct rule modes and complete moving frames', () => {
+  assert.equal(BLUEPRINT_MECHANIC_IDS.length, 59);
   const modes = new Set();
   for (const id of BLUEPRINT_MECHANIC_IDS) {
     for (let time = 0; time <= BLUEPRINT_DURATION; time += 0.1) {
@@ -54,7 +55,7 @@ test('all 58 promoted lesson animations have distinct rule modes and complete mo
           assert.ok(Number.isFinite(value), `${id} has an invalid ${primitive.type}`);
     }
   }
-  assert.equal(modes.size, 58);
+  assert.equal(modes.size, 59);
 });
 
 test('every blueprint exposes signal, committed action, and recovery without player teleports', () => {
@@ -73,7 +74,8 @@ test('every blueprint exposes signal, committed action, and recovery without pla
       id !== 'loadout-adaptation' &&
       id !== 'wind-up' &&
       id !== 'attack-lock' &&
-      id !== 'active-phase'
+      id !== 'active-phase' &&
+      id !== 'recovery'
     )
       assert.equal(blueprintFrame(id, 3).dangerActive, true, id);
     assert.equal(blueprintFrame(id, 3).playerSafe, true, id);
@@ -149,7 +151,8 @@ test('every damaging promoted animation derives safety from its own active geome
       id !== 'loadout-adaptation' &&
       id !== 'wind-up' &&
       id !== 'attack-lock' &&
-      id !== 'active-phase',
+      id !== 'active-phase' &&
+      id !== 'recovery',
   )) {
     const frame = blueprintFrame(id, 3);
     let point = unsafePoints[id];
@@ -1461,4 +1464,51 @@ test('active phase is dangerous only inside its explicit collision window', () =
     renderBlueprintThumbnail(id, 'test-active-phase'),
     /data-blueprint-preview="active-phase"/,
   );
+});
+
+test('recovery locks the boss long enough for a measured approach and sword punish', () => {
+  const id = 'recovery';
+  assert.deepEqual([0, 0.8, 1.4, 1.8, 3.48, 4.6, 5.2].map(recoveryState), [
+    'idle',
+    'startup',
+    'active',
+    'approach-window',
+    'punish-window',
+    'boss-ready',
+    'reset',
+  ]);
+
+  const startup = blueprintFrame(id, 0.9);
+  assert.equal(startup.dangerActive, false);
+  assert.ok(startup.primitives[0].opacity > 0, 'startup previews the complete lane');
+  assert.equal(startup.primitives[1].opacity, 0, 'the preview is not damaging');
+
+  const active = blueprintFrame(id, 1.4);
+  assert.equal(active.recoveryState, 'active');
+  assert.equal(active.dangerActive, true);
+  assert.equal(active.playerSafe, true);
+  assert.equal(blueprintPointSafe(id, 1.4, { x: 400, y: 430 }), false);
+  assert.ok(active.primitives[1].opacity > 0, 'the damaging lane is solid');
+
+  const opening = blueprintFrame(id, 1.8);
+  assert.equal(opening.dangerActive, false);
+  assert.equal(opening.recoveryLocked, true);
+  assert.equal(opening.bossReady, false);
+  assert.equal(blueprintPointSafe(id, 1.8, { x: 400, y: 430 }), true);
+  assert.ok(opening.primitives[2].opacity > 0, 'sword reach is visible during recovery');
+  assert.ok(opening.primitives[3].opacity > 0, 'the countdown is visible during recovery');
+  assert.equal(opening.primitives[5].opacity, 0, 'the ready flash cannot appear early');
+
+  const punish = blueprintFrame(id, 3.48);
+  assert.equal(punish.recoveryLocked, true);
+  assert.equal(punish.withinPunishReach, true);
+  assert.equal(punish.punishStrike, true);
+  assert.ok(punish.primitives[6].opacity > 0, 'the sword response reaches Kern');
+
+  const ready = blueprintFrame(id, 4.6);
+  assert.equal(ready.recoveryLocked, false);
+  assert.equal(ready.bossReady, true);
+  assert.ok(ready.primitives[5].opacity > 0, 'the ready flash follows the exact cutoff');
+  assert.deepEqual(blueprintFrame(id, 0).player, blueprintFrame(id, 6).player);
+  assert.match(renderBlueprintThumbnail(id, 'test-recovery'), /data-blueprint-preview="recovery"/);
 });

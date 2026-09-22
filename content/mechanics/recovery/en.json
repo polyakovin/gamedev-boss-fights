@@ -1,0 +1,138 @@
+{
+  "title": "Recovery",
+  "subtitle": "Turn the end of an attack into a measurable opportunity.",
+  "variant": "A fixed post-strike lock long enough for one ordinary sword punish",
+  "summary": "Recovery is the post-action interval before the boss may choose or start another action.",
+  "overview": "Recovery is the post-action interval before a boss may choose or start another action. Kern's lane stops dealing damage at 1.74 seconds, but Kern stays locked until 4.58 seconds. Tavi spends part of that window approaching and lands one ordinary sword strike before the ready flash.",
+  "learning": "Define the recovery start, action lock, vulnerability policy, approach budget, useful response, and exact return-to-ready event from one state record.",
+  "category": "Structure and readability",
+  "readTime": "4 min",
+  "demo": {
+    "title": "Prove that the post-attack opening is reachable and useful",
+    "timeline": "Recovery timeline",
+    "step": "Recovery states",
+    "phaseNames": [
+      "Read the strike and clear",
+      "Spend recovery on approach",
+      "Confirm the punish and reset"
+    ],
+    "phaseDescriptions": [
+      "From 0.48–1.28 s Kern previews a fixed lane, then makes it dangerous through 1.74 s. Tavi clears the full rectangle before activation; collision ends exactly when the green recovery ring appears.",
+      "Kern is action-locked from 1.74–4.58 s. The shrinking rune shows remaining time while Tavi walks from safety into the 118-unit sword range. The travel cost is part of the opening, not free time added after it.",
+      "Tavi's ordinary sword connects at 3.48 s while Kern is still locked. A red ready flash at 4.58 s ends recovery; only then may Kern select the next action, and both actors reset for the continuous loop."
+    ],
+    "boss": "Boss",
+    "player": "Player",
+    "danger": "Only the solid lane from 1.28–1.74 seconds deals damage",
+    "locked": "Kern cannot choose, queue, or start another action until 4.58 seconds",
+    "safe": "Clear the lane, cross the approach distance, strike once, and respect the ready flash",
+    "reducedMotion": "Autoplay is disabled by reduced motion. Scrub across 1.74, 3.48, and 4.58 seconds to inspect the opening, punish, and return to ready.",
+    "diagramDescription": "A stone boss previews and performs one horizontal lane strike. A sword-bearing player clears the lane. When collision ends, a green dashed reach ring and shrinking recovery rune appear around the slumped boss. The player walks back into range and lands one sword hit before a red flash shows that the boss may act again."
+  },
+  "steps": [
+    {
+      "title": "When does recovery begin and end?",
+      "body": "Start recovery from an explicit state transition after the attack's last active instant, not from a guessed animation frame. Kern enters recovery at 1.74 s and exits at 4.58 s. During that interval the action selector, movement request, facing update, queued follow-up, and attack start remain blocked unless the move declares a specific cancel rule."
+    },
+    {
+      "title": "Can the intended response fit inside it?",
+      "body": "Budget from the player's post-avoidance position. Measure the time to recognize the cutoff, travel into the 118-unit sword range, start the established sword action, and produce contact. Tavi reaches the boss and connects at 3.48 s, leaving visible margin before the 4.58 s ready event. Test the slowest supported movement and attack startup."
+    },
+    {
+      "title": "What changes when recovery ends?",
+      "body": "Emit one return-to-ready event that restores legal decisions and removes the recovery signal. Decide separately whether Kern can take damage, be staggered, rotate, or be interrupted during the lock. The illustrated variant accepts one normal sword hit; recovery itself means inability to begin another action, not universal vulnerability."
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "The opening exists on paper but not after avoidance",
+      "body": "A three-second lock is not useful if the successful escape leaves Tavi four seconds away. Measure from real response endpoints, include camera and input recognition, and validate contact rather than counting idle frames beside the boss."
+    },
+    {
+      "title": "The animation looks open while the state machine is ready",
+      "body": "If Kern can select or buffer the next attack before the slumped pose and recovery rune end, the visual promise is false. Drive pose, lock, countdown, hit acceptance, audio, and AI availability from the same deterministic timestamps."
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "Separate action lock from vulnerability",
+      "body": "Store canAct, canMove, canTurn, canBeDamaged, and canBeInterrupted as explicit policies. A boss may recover without being vulnerable, or expose a weak point while still rotating; one overloaded recovering flag hides those distinctions."
+    },
+    {
+      "title": "Spend the window on distance and startup",
+      "body": "Useful time is recovery duration minus recognition, approach, and response startup. Log each term in playtests. When arena scale or knockback changes, recompute the route instead of preserving a familiar duration that no longer supports the promised response."
+    },
+    {
+      "title": "Make the end as readable as the start",
+      "body": "Use a stable material, pose, sound, or rune that disappears at the ready event. The player should know when to stop extending a punish without memorizing an invisible timer. Do not let a blend finish early or late relative to AI availability."
+    },
+    {
+      "title": "Test queue and cancellation edges",
+      "body": "Assert behavior immediately before, at, and after both boundaries. Cover hit-stop, stagger, phase change, death, target loss, pause, slow motion, rollback, and a follow-up queued during recovery so no path silently shortens or extends the lock."
+    }
+  ],
+  "story": {
+    "title": "Runes cool before the stone moves again",
+    "body": "Kern's heavy sweep fractures the energy in its arm. A green ring opens when the dangerous seam goes dark, and the core rune contracts while the stone body remains planted. The red ready pulse returns only after the cracks seal, making the lock feel like a physical consequence rather than an arbitrary stun."
+  },
+  "adaptation": {
+    "title": "Let Tavi earn one familiar sword action",
+    "body": "Tavi uses only ordinary movement and the established sword. The route from the safe position to contact consumes most of the window, so a faster build may earn extra attacks while the baseline build still gets one clear result. If no standard action can connect, the recovery is downtime rather than counterplay."
+  },
+  "distinction": {
+    "title": "Post-action commitment, not the damaging interval",
+    "body": "The active phase is when collision can apply the attack's effect. Follow-through is visible motion after that collision may already be gone. Recovery is the rules-level delay before the boss may act again. Stagger is a separate externally caused state, even when it uses a similar pose or creates a similar opening."
+  },
+  "lensNotes": [
+    {
+      "id": "commitment",
+      "body": "The attack's consequence includes a fixed 1.74–4.58 s action lock that cannot be canceled into a new choice."
+    },
+    {
+      "id": "counterplay",
+      "body": "Successful avoidance leads to an ordinary movement route and one verified sword hit before the ready event."
+    },
+    {
+      "id": "risk-reward",
+      "body": "Staying near the lane edge preserves more punish time, while a wider escape trades damage opportunity for margin."
+    },
+    {
+      "id": "difficulty-rhythm",
+      "body": "The fixed opening releases pressure after one committed strike and determines when the next decision beat may begin."
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "Ori and the Will of the Wisps",
+      "boss": "Horn Beetle",
+      "screenshot": "https://i.ytimg.com/vi/DvuB8cImPIg/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=DvuB8cImPIg&t=61s",
+      "body": "After a charge or heavy landing, Horn Beetle holds a brief stunned pose. The side view makes it easy to compare the safe endpoint, the distance back to its vulnerable rear, and how much of the opening remains after that approach.",
+      "video": "https://www.youtube.com/watch?v=DvuB8cImPIg&t=61s",
+      "videoDurationSeconds": 2062
+    },
+    {
+      "dimension": "2D",
+      "game": "Hollow Knight",
+      "boss": "False Knight",
+      "screenshot": "https://i.ytimg.com/vi/rwZmf4u366o/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=rwZmf4u366o&t=151s",
+      "body": "False Knight's planted finishes and longer knockdown openings show that recovery can have several action policies. The designer must distinguish an ordinary post-swing lock from a separately triggered vulnerable stagger while keeping both endpoints readable.",
+      "video": "https://www.youtube.com/watch?v=rwZmf4u366o&t=151s",
+      "videoDurationSeconds": 2832
+    },
+    {
+      "dimension": "3D",
+      "game": "Elden Ring",
+      "boss": "Margit, the Fell Omen",
+      "screenshot": "https://i.ytimg.com/vi/m60ucpQggJ0/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=m60ucpQggJ0&t=131s",
+      "body": "Margit's hammer landing ends at a position that depends on the player's escape route. In a 3D arena, camera angle, roll displacement, turn time, and weapon startup all consume the apparent post-impact opening before a punish can connect.",
+      "video": "https://www.youtube.com/watch?v=m60ucpQggJ0&t=131s",
+      "videoDurationSeconds": 389
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

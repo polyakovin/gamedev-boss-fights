@@ -1,0 +1,128 @@
+{
+  "title": "恢复期",
+  "subtitle": "把攻击结束变成可测量的机会。",
+  "variant": "攻击后固定锁定，足以完成一次普通剑击惩罚",
+  "summary": "恢复期是Boss完成动作后、能够选择或开始下一动作前的时间段。",
+  "overview": "恢复期是Boss完成动作后、能够选择或开始下一动作前的时间段。Kern的攻击带在1.74秒停止伤害，但直到4.58秒仍被锁定。Tavi用窗口的一部分接近，并在准备闪光前完成一次普通剑击。",
+  "learning": "用同一份状态记录定义恢复开始、动作锁定、受伤策略、接近预算、有效回应与精确的重新就绪事件。",
+  "category": "结构与可读性",
+  "readTime": "4分钟",
+  "demo": {
+    "title": "证明攻击后的窗口可到达且有用",
+    "timeline": "恢复期时间轴",
+    "step": "恢复期状态",
+    "phaseNames": ["读懂攻击并离开", "用恢复期接近", "确认惩罚并重置"],
+    "phaseDescriptions": [
+      "0.48–1.28秒，Kern预告固定攻击带，随后使其危险至1.74秒。Tavi在生效前让完整身体离开矩形；绿色恢复环出现时碰撞恰好关闭。",
+      "1.74–4.58秒，Kern被动作锁定。收缩符文显示剩余时间，Tavi从安全处走入118单位剑击范围。移动成本属于这个窗口，并非额外赠送的时间。",
+      "Tavi的普通剑在3.48秒命中，此时Kern仍被锁定。4.58秒的红色就绪闪光结束恢复；只有此后Kern才能选择下一动作，双方再返回循环起点。"
+    ],
+    "boss": "Boss",
+    "player": "玩家",
+    "danger": "只有1.28–1.74秒的实心攻击带造成伤害",
+    "locked": "4.58秒前Kern不能选择、排队或开始新动作",
+    "safe": "离开攻击带、跨过接近距离、攻击一次并尊重就绪闪光",
+    "reducedMotion": "减少动态效果开启时自动播放关闭。拖动到1.74、3.48与4.58秒，检查窗口、惩罚和重新就绪。",
+    "diagramDescription": "石像Boss预告并执行一条水平攻击带。持剑玩家离开攻击带。碰撞结束后，低垂的Boss周围出现绿色虚线距离环与收缩恢复符文。玩家走回攻击范围，在红色就绪闪光前命中一次。"
+  },
+  "steps": [
+    {
+      "title": "恢复期何时开始和结束？",
+      "body": "在攻击最后一个有效瞬间之后用明确状态转换开始恢复，不要猜动画帧。Kern在1.74秒进入恢复，4.58秒退出。在此期间，动作选择、移动请求、朝向更新、后续排队与攻击启动都被禁止，除非该动作明确声明取消规则。"
+    },
+    {
+      "title": "预期回应能否放进窗口？",
+      "body": "从玩家成功回避后的真实位置计算。测量识别截止、进入118单位剑击范围、启动既有剑击和产生接触的时间。Tavi在3.48秒命中Kern，到4.58秒就绪事件前仍有可见余量。测试最慢支持的移动与攻击启动。"
+    },
+    {
+      "title": "恢复结束时改变什么？",
+      "body": "发出一次重新就绪事件，恢复合法决策并移除恢复信号。另行决定Kern在锁定中能否受伤、硬直、转向或被打断。示例允许一次普通剑击；恢复本身表示不能开始新动作，而非必然脆弱。"
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "纸面有窗口，回避后却到不了",
+      "body": "若成功脱险后Tavi还需四秒才能回来，三秒锁定毫无用处。从真实回应终点测量，包含镜头与输入识别，并验证实际接触，不要只数Boss旁的空闲帧。"
+    },
+    {
+      "title": "动画仍显得开放，状态机却已就绪",
+      "body": "若低垂姿态和恢复符文结束前Kern已能选择或缓存下一攻击，视觉承诺就是假的。让姿态、锁定、倒计时、受击、声音和AI可用性由同一组确定时间戳驱动。"
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "分开动作锁定与脆弱性",
+      "body": "把canAct、canMove、canTurn、canBeDamaged与canBeInterrupted保存为明确策略。Boss可能恢复但不受伤，也可能在转向时暴露弱点；一个过载的recovering标记会掩盖差异。"
+    },
+    {
+      "title": "让距离和启动消耗窗口",
+      "body": "有效时间等于恢复时长减去识别、接近与回应启动。在游玩测试中记录每一项。场地尺度或击退改变时重新计算路径，不要保留已经无法兑现回应的熟悉时长。"
+    },
+    {
+      "title": "让结束与开始同样可读",
+      "body": "使用在就绪事件时消失的稳定材质、姿态、声音或符文。玩家无需背诵隐形计时器，也能知道何时停止延长惩罚。动画混合结束不可早于或晚于AI可用时刻。"
+    },
+    {
+      "title": "测试排队与取消边界",
+      "body": "断言两个边界前一刻、边界上与后一刻的行为。覆盖打击停顿、硬直、阶段切换、死亡、丢失目标、暂停、慢动作、回滚，以及恢复期间排队的后续动作。"
+    }
+  ],
+  "story": {
+    "title": "符文冷却后石头才能再动",
+    "body": "Kern的重扫击碎手臂中的能量。危险裂缝熄灭时绿色圆环打开，核心符文在石躯固定期间收缩。裂缝闭合后红色就绪脉冲才返回，让锁定像物理后果，而非任意眩晕。"
+  },
+  "adaptation": {
+    "title": "让Tavi赢得一次熟悉的剑击",
+    "body": "Tavi只用普通移动和既有的剑。从安全点到接触的路线消耗大部分窗口，因此更快配置可能多打几次，而基准配置仍能获得一个明确结果。若没有标准动作能命中，恢复只是停顿而非反制。"
+  },
+  "distinction": {
+    "title": "动作后的承诺，而非伤害区间",
+    "body": "有效阶段是碰撞可以施加攻击效果的时间。收势是碰撞可能已消失后的可见动作。恢复期是Boss再次行动前的规则级延迟。硬直是由外部触发的独立状态，即使姿态和机会相似。"
+  },
+  "lensNotes": [
+    { "id": "commitment", "body": "攻击后果包含固定的1.74–4.58秒动作锁，不能取消为新选择。" },
+    { "id": "counterplay", "body": "成功回避后可用普通移动接近，并在就绪前验证一次剑击。" },
+    {
+      "id": "risk-reward",
+      "body": "靠近攻击带边缘会保留更多惩罚时间，更远的撤离则用机会换安全余量。"
+    },
+    {
+      "id": "difficulty-rhythm",
+      "body": "固定窗口在一次承诺攻击后释放压力，并决定下一决策节拍何时开始。"
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "Ori and the Will of the Wisps",
+      "boss": "Horn Beetle",
+      "screenshot": "https://i.ytimg.com/vi/DvuB8cImPIg/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=DvuB8cImPIg&t=61s",
+      "body": "冲锋或重落地后，Horn Beetle会短暂维持眩晕姿态。侧视图便于比较安全终点、返回脆弱背部的距离，以及接近后窗口还剩多少。",
+      "video": "https://www.youtube.com/watch?v=DvuB8cImPIg&t=61s",
+      "videoDurationSeconds": 2062
+    },
+    {
+      "dimension": "2D",
+      "game": "Hollow Knight",
+      "boss": "False Knight",
+      "screenshot": "https://i.ytimg.com/vi/rwZmf4u366o/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=rwZmf4u366o&t=151s",
+      "body": "False Knight固定的攻击收尾与更长的倒地窗口展示了多种动作策略。设计者应区分普通挥击后的锁定与另行触发的脆弱硬直，同时让两者端点都可读。",
+      "video": "https://www.youtube.com/watch?v=rwZmf4u366o&t=151s",
+      "videoDurationSeconds": 2832
+    },
+    {
+      "dimension": "3D",
+      "game": "Elden Ring",
+      "boss": "Margit, the Fell Omen",
+      "screenshot": "https://i.ytimg.com/vi/m60ucpQggJ0/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=m60ucpQggJ0&t=131s",
+      "body": "Margit的锤击落点随玩家逃脱路线变化。在3D场地中，镜头角度、翻滚位移、转身时间与武器启动都会消耗表面上的落地后窗口。",
+      "video": "https://www.youtube.com/watch?v=m60ucpQggJ0&t=131s",
+      "videoDurationSeconds": 389
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

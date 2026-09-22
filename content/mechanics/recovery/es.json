@@ -1,0 +1,138 @@
+{
+  "title": "Recuperación",
+  "subtitle": "Convierte el final de un ataque en una oportunidad medible.",
+  "variant": "Un bloqueo fijo tras el golpe, suficiente para un castigo normal con espada",
+  "summary": "La recuperación es el intervalo posterior a una acción antes de que el jefe pueda elegir o iniciar otra.",
+  "overview": "La recuperación es el intervalo posterior a una acción antes de que el jefe pueda elegir o iniciar otra. La franja de Kern deja de dañar a los 1,74 s, pero Kern sigue bloqueado hasta los 4,58 s. Tavi usa parte de la ventana para acercarse y conecta un golpe normal antes del destello de listo.",
+  "learning": "Define el inicio, el bloqueo de acciones, la política de vulnerabilidad, el presupuesto de aproximación, la respuesta útil y el evento exacto de vuelta a listo en un mismo estado.",
+  "category": "Estructura y legibilidad",
+  "readTime": "4 min",
+  "demo": {
+    "title": "Demuestra que la apertura posterior al ataque es alcanzable y útil",
+    "timeline": "Línea temporal de recuperación",
+    "step": "Estados de recuperación",
+    "phaseNames": [
+      "Leer el golpe y salir",
+      "Gastar la recuperación en acercarse",
+      "Confirmar el castigo y reiniciar"
+    ],
+    "phaseDescriptions": [
+      "De 0,48 a 1,28 s Kern anuncia una franja fija y la vuelve peligrosa hasta 1,74 s. Tavi saca todo el cuerpo del rectángulo; la colisión termina justo cuando aparece el aro verde de recuperación.",
+      "Kern no puede actuar de 1,74 a 4,58 s. La runa menguante indica el tiempo restante mientras Tavi camina desde la seguridad hasta el alcance de espada de 118 unidades. El trayecto consume la ventana; no es tiempo gratuito añadido después.",
+      "La espada normal de Tavi conecta a los 3,48 s mientras Kern sigue bloqueado. Un destello rojo a los 4,58 s termina la recuperación; solo entonces Kern puede elegir otra acción y ambos vuelven al inicio del bucle."
+    ],
+    "boss": "Jefe",
+    "player": "Jugador",
+    "danger": "Solo la franja sólida entre 1,28 y 1,74 segundos causa daño",
+    "locked": "Kern no puede elegir, poner en cola ni iniciar otra acción hasta 4,58 segundos",
+    "safe": "Sal de la franja, recorre la distancia, golpea una vez y respeta el destello de listo",
+    "reducedMotion": "La reproducción automática se desactiva con movimiento reducido. Recorre 1,74, 3,48 y 4,58 s para inspeccionar apertura, castigo y vuelta a listo.",
+    "diagramDescription": "Un jefe de piedra anuncia y ejecuta un golpe horizontal. El jugador con espada despeja la franja. Al acabar la colisión aparecen un aro verde discontinuo de alcance y una runa menguante alrededor del jefe inclinado. El jugador se acerca y golpea antes del destello rojo de listo."
+  },
+  "steps": [
+    {
+      "title": "¿Cuándo empieza y termina la recuperación?",
+      "body": "Iníciala con una transición explícita tras el último instante activo, no desde un fotograma estimado. Kern entra a 1,74 s y sale a 4,58 s. Durante ese intervalo quedan bloqueados el selector de acciones, el movimiento, el giro, la continuación en cola y el inicio de ataques, salvo una regla de cancelación declarada."
+    },
+    {
+      "title": "¿Cabe la respuesta prevista en la ventana?",
+      "body": "Calcula desde la posición posterior a la evasión. Mide reconocer el corte, entrar en el alcance de 118 unidades, iniciar el ataque conocido y producir contacto. Tavi conecta a los 3,48 s y deja margen visible hasta el evento de listo a los 4,58 s. Prueba el movimiento y el inicio de ataque más lentos admitidos."
+    },
+    {
+      "title": "¿Qué cambia al terminar?",
+      "body": "Emite un único evento de vuelta a listo que restaure decisiones y elimine la señal. Decide por separado si Kern recibe daño, se tambalea, gira o puede interrumpirse. La variante mostrada acepta un golpe normal; recuperación significa que no puede iniciar otra acción, no vulnerabilidad universal."
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "La apertura existe en papel, pero no tras esquivar",
+      "body": "Un bloqueo de tres segundos no sirve si la evasión deja a Tavi a cuatro segundos del jefe. Mide desde extremos reales, incluye cámara y reconocimiento de entrada, y valida el contacto en lugar de contar fotogramas ociosos junto al jefe."
+    },
+    {
+      "title": "La animación parece abierta cuando la máquina ya está lista",
+      "body": "Si Kern puede elegir o almacenar el siguiente ataque antes de que terminen la pose y la runa, la promesa visual es falsa. Usa las mismas marcas deterministas para pose, bloqueo, cuenta atrás, daño, audio y disponibilidad de IA."
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "Separa bloqueo y vulnerabilidad",
+      "body": "Guarda canAct, canMove, canTurn, canBeDamaged y canBeInterrupted como políticas explícitas. Un jefe puede recuperarse sin ser vulnerable o mostrar un punto débil mientras gira; un solo indicador recovering oculta esas diferencias."
+    },
+    {
+      "title": "Gasta la ventana en distancia e inicio",
+      "body": "El tiempo útil es la duración menos reconocimiento, aproximación e inicio de respuesta. Registra cada término. Si cambian la escala de la arena o el retroceso, recalcula la ruta en lugar de conservar una duración conocida que ya no garantiza el resultado."
+    },
+    {
+      "title": "Haz el final tan legible como el inicio",
+      "body": "Usa un material, pose, sonido o runa estable que desaparezca al volver a listo. El jugador debe saber cuándo dejar de extender el castigo sin memorizar un contador invisible. La mezcla visual no debe adelantarse ni retrasarse respecto a la IA."
+    },
+    {
+      "title": "Prueba colas y cancelaciones en los bordes",
+      "body": "Comprueba justo antes, en y después de ambos límites. Cubre pausa de impacto, tambaleo, cambio de fase, muerte, pérdida de objetivo, pausa, cámara lenta, rollback y una continuación puesta en cola durante la recuperación."
+    }
+  ],
+  "story": {
+    "title": "Las runas se enfrían antes de que la piedra vuelva a moverse",
+    "body": "El barrido pesado de Kern fractura la energía del brazo. El aro verde se abre cuando la veta peligrosa se apaga y la runa del núcleo se contrae mientras el cuerpo queda plantado. El pulso rojo regresa cuando las grietas se sellan, haciendo del bloqueo una consecuencia física."
+  },
+  "adaptation": {
+    "title": "Deja que Tavi gane una acción conocida con la espada",
+    "body": "Tavi solo usa movimiento normal y la espada establecida. La ruta desde la seguridad consume casi toda la ventana: una configuración rápida puede lograr más golpes, pero la básica obtiene un resultado claro. Si ninguna acción estándar conecta, es tiempo muerto y no contrajuego."
+  },
+  "distinction": {
+    "title": "Compromiso posterior, no intervalo de daño",
+    "body": "La fase activa permite que la colisión aplique el efecto. El seguimiento es movimiento visible cuando la colisión quizá ya acabó. La recuperación es el retraso de reglas antes de actuar otra vez. El tambaleo es un estado externo distinto, aunque use una pose y apertura parecidas."
+  },
+  "lensNotes": [
+    {
+      "id": "commitment",
+      "body": "La consecuencia incluye un bloqueo fijo de 1,74 a 4,58 s que no puede cancelarse en una elección nueva."
+    },
+    {
+      "id": "counterplay",
+      "body": "Evitar con éxito lleva a una ruta de movimiento normal y a un golpe de espada verificado antes de listo."
+    },
+    {
+      "id": "risk-reward",
+      "body": "Quedarse cerca del borde conserva más tiempo de castigo; alejarse cambia oportunidad por margen."
+    },
+    {
+      "id": "difficulty-rhythm",
+      "body": "La apertura fija libera presión tras un golpe comprometido y marca el siguiente ritmo de decisión."
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "Ori and the Will of the Wisps",
+      "boss": "Horn Beetle",
+      "screenshot": "https://i.ytimg.com/vi/DvuB8cImPIg/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=DvuB8cImPIg&t=61s",
+      "body": "Tras una carga o caída pesada, Horn Beetle mantiene una breve pose aturdida. La vista lateral permite comparar el punto seguro, la distancia de vuelta a su espalda vulnerable y cuánto queda de la apertura tras acercarse.",
+      "video": "https://www.youtube.com/watch?v=DvuB8cImPIg&t=61s",
+      "videoDurationSeconds": 2062
+    },
+    {
+      "dimension": "2D",
+      "game": "Hollow Knight",
+      "boss": "False Knight",
+      "screenshot": "https://i.ytimg.com/vi/rwZmf4u366o/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=rwZmf4u366o&t=151s",
+      "body": "Los finales plantados y las caídas largas de False Knight muestran varias políticas. El diseño debe distinguir el bloqueo normal tras un golpe del tambaleo vulnerable provocado, manteniendo legibles ambos finales.",
+      "video": "https://www.youtube.com/watch?v=rwZmf4u366o&t=151s",
+      "videoDurationSeconds": 2832
+    },
+    {
+      "dimension": "3D",
+      "game": "Elden Ring",
+      "boss": "Margit, the Fell Omen",
+      "screenshot": "https://i.ytimg.com/vi/m60ucpQggJ0/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=m60ucpQggJ0&t=131s",
+      "body": "El martillazo de Margit termina según la ruta de evasión. En 3D, el ángulo de cámara, el desplazamiento de la rodada, el giro y el inicio del arma consumen la aparente apertura antes de conectar.",
+      "video": "https://www.youtube.com/watch?v=m60ucpQggJ0&t=131s",
+      "videoDurationSeconds": 389
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}
