@@ -21,6 +21,7 @@
   "aboutReviewBody": "Las versiones en {localeCount} idiomas comparten el mismo contrato de contenido. Las comprobaciones automáticas protegen la estructura; la precisión factual, de diseño y lingüística aún requiere revisión humana independiente.",
   "aboutOpenTitle": "Abierto por defecto",
   "aboutOpenBody": "Los textos e ilustraciones originales se publican bajo CC BY 4.0 y el código bajo MIT, para que el trabajo pueda estudiarse, citarse y mejorarse.",
+  "aboutAnalyticsNotice": "Usamos Cloudflare Web Analytics para contar las visualizaciones de páginas y medir el rendimiento del sitio. No utiliza cookies ni crea perfiles individuales de los visitantes.",
   "aboutContactTitle": "Acerca del autor",
   "aboutContactBody": "Soy Igor Polyakov, responsable de ingeniería de software e ingeniero con mentalidad de producto. Creo sistemas que conectan investigación, decisiones de producto y una ejecución disciplinada.",
   "aboutStory": {

@@ -21,6 +21,7 @@
   "aboutReviewBody": "Versions in {localeCount} languages share the same content contract. Automated checks protect structure; factual, design, and language accuracy still require independent human review.",
   "aboutOpenTitle": "Open by default",
   "aboutOpenBody": "Original text and illustrations are published under CC BY 4.0, and implementation code under MIT, so the work can be studied, cited, and improved.",
+  "aboutAnalyticsNotice": "We use Cloudflare Web Analytics to count page views and measure site performance. It does not use cookies or build individual visitor profiles.",
   "aboutContactTitle": "About the creator",
   "aboutContactBody": "I am Igor Polyakov, a software engineering manager and product-minded engineer. I build systems that connect research, product decisions, and disciplined delivery.",
   "aboutStory": {

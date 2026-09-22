@@ -753,6 +753,7 @@ function renderAbout(locale, t) {
             )
             .join('')}
         </div>
+        <p class="about-analytics-note">${e(t.aboutAnalyticsNotice)}</p>
       </section>
       <section class="about-contact" aria-labelledby="about-contact-title">
         <div>

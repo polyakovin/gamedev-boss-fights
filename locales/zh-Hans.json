@@ -21,6 +21,7 @@
   "aboutReviewBody": "{localeCount} 种语言版本共享同一内容约定。自动检查保护结构，而事实、设计与语言的准确性仍需独立人工审核。",
   "aboutOpenTitle": "默认开放",
   "aboutOpenBody": "原创文字和插图采用 CC BY 4.0，代码采用 MIT，便于学习、引用和改进。",
+  "aboutAnalyticsNotice": "我们使用 Cloudflare Web Analytics 统计页面浏览量并衡量网站性能。它不使用 Cookie，也不建立访客个人档案。",
   "aboutContactTitle": "关于作者",
   "aboutContactBody": "我是 Igor Polyakov，一名软件工程经理和具有产品思维的工程师。我构建连接研究、产品决策与严谨交付的系统。",
   "aboutStory": {

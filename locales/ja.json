@@ -21,6 +21,7 @@
   "aboutReviewBody": "{localeCount} 言語の各バージョンは同じコンテンツ契約を共有します。自動チェックは構造を守りますが、事実、デザイン、言語の正確さには独立した人によるレビューが必要です。",
   "aboutOpenTitle": "原則としてオープン",
   "aboutOpenBody": "オリジナルの文章とイラストは CC BY 4.0、実装コードは MIT で公開し、学習、引用、改善に利用できるようにしています。",
+  "aboutAnalyticsNotice": "Cloudflare Web Analytics を使ってページ閲覧数とサイトのパフォーマンスを測定しています。Cookie は使用せず、個々の訪問者のプロフィールも作成しません。",
   "aboutContactTitle": "作者について",
   "aboutContactBody": "私は Igor Polyakov、ソフトウェアエンジニアリングマネージャーであり、プロダクト志向のエンジニアです。調査、プロダクト判断、規律あるデリバリーを結ぶ仕組みを作っています。",
   "aboutStory": {

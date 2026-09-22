@@ -24,6 +24,7 @@
     "aboutReviewBody",
     "aboutOpenTitle",
     "aboutOpenBody",
+    "aboutAnalyticsNotice",
     "aboutContactTitle",
     "aboutContactBody",
     "aboutStory",
@@ -194,6 +195,10 @@
       "minLength": 1
     },
     "aboutOpenBody": {
+      "type": "string",
+      "minLength": 1
+    },
+    "aboutAnalyticsNotice": {
       "type": "string",
       "minLength": 1
     },
