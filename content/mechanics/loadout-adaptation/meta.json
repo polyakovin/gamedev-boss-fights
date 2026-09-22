@@ -1,0 +1,24 @@
+{
+  "id": "loadout-adaptation",
+  "number": 61,
+  "published": true,
+  "sourceLocale": "en",
+  "contentVersion": 1,
+  "animation": "loadout-adaptation",
+  "lenses": ["progress-clarity", "player-expression", "counterplay", "rule-exception"],
+  "related": ["damage-type-resistance", "absorption-power-up", "fight-phase"],
+  "sources": [
+    {
+      "title": "Steam Community · Miriam uses acquired items and equipped badges",
+      "url": "https://steamcommunity.com/sharedfiles/filedetails/?id=649878726"
+    },
+    {
+      "title": "PowerPyx · Mimic Tear copies the entered loadout",
+      "url": "https://www.powerpyx.com/elden-ring-nokron-eternal-city-walkthrough/"
+    },
+    {
+      "title": "PC Gamer · Mithrix steals the player's items in the final phase",
+      "url": "https://www.pcgamer.com/risk-of-rain-2-mithrix-boss-guide/"
+    }
+  ]
+}

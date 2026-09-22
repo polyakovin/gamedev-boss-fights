@@ -1,0 +1,138 @@
+{
+  "title": "Loadout adaptation",
+  "subtitle": "Let equipment select a declared boss package without silently invalidating the build.",
+  "variant": "A reach rune selects a thrust; a burst rune selects a ring",
+  "summary": "The boss snapshots a defined part of the player's loadout and selects a visible, bounded response package.",
+  "overview": "Loadout adaptation makes an encounter branch from equipment rather than ignore it. Kern reads one sword rune at a fixed snapshot: Reach selects a straight thrust; Burst selects a radial pulse. Tavi sees the copied mark before either threat commits and keeps an ordinary escape. Snapshot, mapping, feedback, and fallback must be explicit.",
+  "learning": "Define the loadout snapshot, whitelist, package mapping, copied-state feedback, valid response, and reset rule.",
+  "category": "Defense",
+  "readTime": "4 min",
+  "demo": {
+    "title": "Compare two loadout snapshots and their deterministic boss packages",
+    "timeline": "Loadout adaptation timeline",
+    "step": "Adaptation states",
+    "phaseNames": [
+      "Snapshot the reach rune",
+      "Verify both package mappings",
+      "Clear the copied burst"
+    ],
+    "phaseDescriptions": [
+      "At 0.62 s Kern scans Tavi's equipped Reach rune. The copied arrow appears at 1.08 s, and a straight lane announces the selected thrust. Tavi begins a full-body sidestep before the package commits.",
+      "The reach thrust is dangerous from 1.66–2.08 s and misses the sidestep. In a second deterministic test run, Tavi equips Burst at 2.76 s; Kern scans it from 3.02–3.48 s and replaces the arrow with a circular copied mark.",
+      "The copied ring is previewed before activating from 4.18–4.58 s. Tavi clears its full radius with ordinary movement. Kern drops the copied package at 5.3 s so a later loadout can be sampled cleanly."
+    ],
+    "boss": "Boss",
+    "player": "Player",
+    "danger": "Only the visible package chosen by the frozen loadout snapshot can deal damage",
+    "locked": "Reach always maps to the straight thrust and Burst always maps to the radial ring for this encounter",
+    "safe": "Read the copied mark, then sidestep the thrust lane or leave the ring's full radius",
+    "reducedMotion": "Autoplay is disabled by reduced motion. Scrub to compare the two snapshots, copied marks, active threats, and reset.",
+    "diagramDescription": "A sword-bearing player carries an arrow-shaped reach rune, which a stone boss scans and copies before drawing a straight attack lane. The player sidesteps it. In a second test the equipped mark becomes a circle; the boss copies that circle and previews a radial pulse, while the player moves beyond its edge."
+  },
+  "steps": [
+    {
+      "title": "What is sampled, and at which moment?",
+      "body": "Read a documented, narrow subset of the loadout at a stable boundary: arena entry, phase start, or an explicit scan. Kern samples only Tavi's equipped sword rune, not inventory order or hidden stats. Freeze the result through the package so menu changes and network updates cannot rewrite an attack already announced."
+    },
+    {
+      "title": "How does each loadout map to behavior?",
+      "body": "Use a finite table with a visible output. Reach always selects one previewed thrust lane; Burst always selects one previewed ring. Show the copied rune on Kern before wind-up, cap the package strength independently of item level, and provide a baseline for unknown or blacklisted equipment. Test identical snapshots for identical results."
+    },
+    {
+      "title": "Does every branch preserve a useful response?",
+      "body": "Adaptation should reshape the problem, not veto the player's build. Tavi can clear Reach laterally and Burst by moving beyond the radius with the same ordinary movement verb. Keep timings and geometry independently tunable, then compare the hardest valid loadouts so no branch removes all safe space or requires unequipping to proceed."
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "The boss rereads equipment every frame",
+      "body": "Live reevaluation can swap hitboxes after their warning or react to a menu change mid-swing. Capture an immutable snapshot, display when it was taken, and delay any later equipment change until the next declared sampling point."
+    },
+    {
+      "title": "Adaptation becomes a hard counter",
+      "body": "If the boss simply becomes immune to the equipped build, player expression collapses into inventory punishment. Prefer a changed threat or bounded advantage with ordinary counterplay, and define exclusions for combinations that would heal, loop, or make the boss untouchable."
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "Drive the branch from data",
+      "body": "Map normalized loadout tags to package ids in one table. Animation, AI selection, damage geometry, copied icon, accessibility text, and tests should consume the same resolved id rather than repeat conditionals with different answers."
+    },
+    {
+      "title": "Separate snapshot from execution",
+      "body": "The scan resolves first, then Kern signals and executes the chosen package. Log snapshot time, accepted tags, selected package, and reset time so a replay can reproduce the branch without inspecting the player's current inventory."
+    },
+    {
+      "title": "Define a safe baseline",
+      "body": "Empty, unknown, DLC, disabled, or multiplayer-mixed loadouts need a deterministic default. The baseline must still have a readable response and should not be stronger than a recognized package merely because content data was missing."
+    },
+    {
+      "title": "Test combinations, not only items",
+      "body": "Cover duplicate tags, two equipped weapons, hot-swaps at the snapshot frame, consumables, summons, copied cooldowns, multiplayer ownership, save migration, rollback, phase transition, death, and a loadout that contains only blacklisted effects."
+    }
+  ],
+  "story": {
+    "title": "A stone archive that learns one rune",
+    "body": "Kern needs only a thin scan beam and one copied glyph above the chest. An arrow becomes a long straight lane; a circle becomes a floor pulse. The same stone body and two simple marks make the selected branch readable without recreating the player's entire inventory."
+  },
+  "adaptation": {
+    "title": "Honor Tavi's chosen sword rune",
+    "body": "Both test runs use the sword Tavi already carries. The rune changes Kern's package but never disables the sword or demands a menu exploit. Games with larger inventories can normalize many items into a few encounter tags while preserving the player's chosen identity."
+  },
+  "distinction": {
+    "title": "A loadout-derived branch, not resistance alone",
+    "body": "Damage-type resistance changes the amount received from an attack type. Absorption converts eligible input into a resource. Loadout adaptation takes a declared equipment snapshot and selects a broader behavior package that may change attacks, defenses, or available states while retaining explicit counterplay."
+  },
+  "lensNotes": [
+    {
+      "id": "progress-clarity",
+      "body": "The scan, copied glyph, package preview, active interval, and reset expose every state transition."
+    },
+    {
+      "id": "player-expression",
+      "body": "The equipped rune changes the encounter branch without deleting Tavi's sword or ordinary movement."
+    },
+    {
+      "id": "counterplay",
+      "body": "Each selected package announces a reachable response: lateral clearance for Reach and radial clearance for Burst."
+    },
+    {
+      "id": "rule-exception",
+      "body": "Document the snapshot moment, accepted tags, priority, baseline, blacklist, and multiplayer ownership rules."
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "Rabi-Ribi",
+      "boss": "Miriam",
+      "video": "https://www.youtube.com/watch?v=aOmrSe9mMJo&t=1s",
+      "videoDurationSeconds": 65,
+      "screenshot": "https://i.ytimg.com/vi/aOmrSe9mMJo/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=aOmrSe9mMJo&t=1s",
+      "body": "Miriam uses attacks associated with items the player has acquired and copies many equipped badge effects. The focused 0% collection clip shows the inverse branch: much of the item-derived sequence is absent. It is a sharp test of whether a loadout mapping remains legible when the snapshot is nearly empty."
+    },
+    {
+      "dimension": "3D",
+      "game": "Elden Ring",
+      "boss": "Mimic Tear",
+      "video": "https://www.youtube.com/watch?v=bppeklQ9o8o&t=1s",
+      "videoDurationSeconds": 304,
+      "screenshot": "https://i.ytimg.com/vi/bppeklQ9o8o/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=bppeklQ9o8o&t=1s",
+      "body": "Mimic Tear copies the weapons, armor, items, and skills equipped when the player enters, then fights with that frozen character build. The short boss video begins with the transformation. Its exploitable empty-loadout case makes snapshot timing and post-snapshot menu changes especially concrete."
+    },
+    {
+      "dimension": "3D",
+      "game": "Risk of Rain 2",
+      "boss": "Mithrix",
+      "video": "https://www.youtube.com/watch?v=kpnCOSMZFlI&t=59s",
+      "videoDurationSeconds": 939,
+      "screenshot": "https://i.ytimg.com/vi/kpnCOSMZFlI/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=kpnCOSMZFlI&t=59s",
+      "body": "Mithrix's final phase steals the players' item stacks, visibly uses allowed effects, and returns items as damage thresholds are met. The linked guide starts at the transfer. Blacklisted effects and progressive restitution show why copying needs exclusions, ownership rules, and a readable exit."
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

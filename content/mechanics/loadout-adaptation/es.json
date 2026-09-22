@@ -1,0 +1,138 @@
+{
+  "title": "Adaptación al equipamiento",
+  "subtitle": "Haz que el equipo seleccione un paquete anunciado sin invalidar la configuración en secreto.",
+  "variant": "Alcance elige una estocada; Explosión elige un anillo",
+  "summary": "El jefe captura una parte definida del equipamiento y selecciona una respuesta visible y limitada.",
+  "overview": "La adaptación al equipamiento ramifica el encuentro según lo equipado. Kern lee una runa de espada en un instante fijo: Alcance selecciona una estocada recta y Explosión un pulso radial. Tavi ve la marca copiada antes de que la amenaza se comprometa y conserva una salida normal. Captura, mapeo, respuesta visual y alternativa deben ser explícitos.",
+  "learning": "Define la captura, lista permitida, mapeo, señal copiada, respuesta válida y reinicio.",
+  "category": "Defensa",
+  "readTime": "4 min",
+  "demo": {
+    "title": "Compara dos capturas y sus paquetes deterministas",
+    "timeline": "Línea de tiempo de adaptación",
+    "step": "Estados de adaptación",
+    "phaseNames": [
+      "Capturar la runa de alcance",
+      "Verificar ambos mapeos",
+      "Salir de la explosión copiada"
+    ],
+    "phaseDescriptions": [
+      "A 0,62 s Kern escanea Alcance. La flecha copiada aparece a 1,08 s y una línea anuncia la estocada. Tavi empieza a apartar todo el cuerpo antes del compromiso.",
+      "La estocada daña entre 1,66 y 2,08 s y falla. En una segunda prueba, Tavi equipa Explosión a 2,76 s; Kern la lee de 3,02 a 3,48 s y sustituye la flecha por un círculo.",
+      "El anillo copiado se anuncia antes de activarse de 4,18 a 4,58 s. Tavi supera el radio con movimiento normal. Kern elimina el paquete a 5,3 s para permitir otra captura limpia."
+    ],
+    "boss": "Jefe",
+    "player": "Jugador",
+    "danger": "Solo el paquete visible elegido por la captura congelada puede infligir daño",
+    "locked": "Alcance siempre produce la estocada y Explosión siempre produce el anillo en este encuentro",
+    "safe": "Lee la marca copiada y sal lateralmente de la estocada o más allá del radio",
+    "reducedMotion": "Con movimiento reducido no hay reproducción automática. Usa el control para comparar capturas, marcas, amenazas y reinicio.",
+    "diagramDescription": "Un jugador con espada lleva una runa de alcance en forma de flecha. Un jefe de piedra la escanea y copia antes de trazar una línea recta; el jugador se aparta. En otra prueba la marca es circular, el jefe copia el círculo y anuncia un pulso radial, y el jugador sale del borde."
+  },
+  "steps": [
+    {
+      "title": "¿Qué se captura y cuándo?",
+      "body": "Lee un subconjunto pequeño y documentado en un límite estable: entrada, fase o escaneo explícito. Kern solo toma la runa equipada, no el orden del inventario ni estadísticas ocultas. Congela el resultado durante el paquete para que el menú o la red no reescriban un ataque anunciado."
+    },
+    {
+      "title": "¿Cómo se convierte el equipo en conducta?",
+      "body": "Usa una tabla finita con salida visible. Alcance siempre elige una línea y Explosión un anillo. Muestra la runa copiada antes de la preparación, limita la fuerza al margen del nivel del objeto y ofrece una base para equipo desconocido o excluido. Capturas iguales deben dar resultados iguales."
+    },
+    {
+      "title": "¿Cada rama conserva una respuesta útil?",
+      "body": "La adaptación cambia el problema, no prohíbe la configuración. Tavi evita Alcance de lado y Explosión saliendo del radio con el mismo movimiento. Ajusta tiempo y geometría por separado y prueba las combinaciones más duras para no eliminar todo el espacio seguro."
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "El jefe relee el equipo cada fotograma",
+      "body": "La evaluación continua puede cambiar el área después del aviso. Guarda una captura inmutable, muestra cuándo se tomó y aplaza cambios hasta el siguiente punto anunciado."
+    },
+    {
+      "title": "La adaptación se vuelve un contraataque absoluto",
+      "body": "Si el jefe se hace inmune a la configuración, la expresión se convierte en castigo de inventario. Prefiere una amenaza distinta con contrajuego y excluye combinaciones que curen, bloqueen o creen bucles."
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "Dirige la rama con datos",
+      "body": "Mapea etiquetas normalizadas a identificadores en una tabla. Animación, IA, geometría, icono, texto y pruebas deben consumir el mismo resultado."
+    },
+    {
+      "title": "Separa captura y ejecución",
+      "body": "Primero se resuelve el escaneo; después Kern anuncia y ejecuta. Registra tiempo, etiquetas, paquete y reinicio para reproducir la rama sin leer el inventario actual."
+    },
+    {
+      "title": "Define una base segura",
+      "body": "Equipos vacíos, desconocidos, DLC, desactivados o mixtos necesitan un valor determinista con respuesta legible y sin castigo extra por datos ausentes."
+    },
+    {
+      "title": "Prueba combinaciones",
+      "body": "Cubre etiquetas repetidas, dos armas, cambios en el fotograma, consumibles, invocaciones, recargas, multijugador, migración, rollback, fases, muerte y solo efectos excluidos."
+    }
+  ],
+  "story": {
+    "title": "Un archivo de piedra que aprende una runa",
+    "body": "Kern solo necesita un haz fino y un glifo sobre el núcleo. Una flecha se vuelve línea larga; un círculo, pulso de suelo. Dos signos explican la rama sin copiar todo el inventario."
+  },
+  "adaptation": {
+    "title": "Respeta la runa de espada elegida",
+    "body": "Ambas pruebas usan la espada existente de Tavi. La runa cambia el paquete de Kern, pero no desactiva el arma ni exige trucos de menú. Inventarios grandes pueden normalizarse en pocas etiquetas."
+  },
+  "distinction": {
+    "title": "Rama derivada del equipo, no solo resistencia",
+    "body": "La resistencia cambia el daño recibido. La absorción convierte una entrada en recurso. Esta mecánica captura equipo y selecciona un paquete más amplio de ataques, defensas o estados con contrajuego explícito."
+  },
+  "lensNotes": [
+    {
+      "id": "progress-clarity",
+      "body": "Escaneo, glifo, aviso, intervalo activo y reinicio exponen cada transición."
+    },
+    {
+      "id": "player-expression",
+      "body": "La runa cambia la rama sin eliminar la espada ni el movimiento normal de Tavi."
+    },
+    {
+      "id": "counterplay",
+      "body": "Cada paquete anuncia una respuesta alcanzable: lateral para Alcance y radial para Explosión."
+    },
+    {
+      "id": "rule-exception",
+      "body": "Documenta instante, etiquetas, prioridad, base, lista negra y propiedad multijugador."
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "Rabi-Ribi",
+      "boss": "Miriam",
+      "video": "https://www.youtube.com/watch?v=aOmrSe9mMJo&t=1s",
+      "videoDurationSeconds": 65,
+      "screenshot": "https://i.ytimg.com/vi/aOmrSe9mMJo/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=aOmrSe9mMJo&t=1s",
+      "body": "Miriam usa ataques asociados a objetos adquiridos y copia muchos efectos de insignias equipadas. El breve clip con 0% de colección muestra la rama inversa: falta gran parte de la secuencia derivada de objetos."
+    },
+    {
+      "dimension": "3D",
+      "game": "Elden Ring",
+      "boss": "Mimic Tear",
+      "video": "https://www.youtube.com/watch?v=bppeklQ9o8o&t=1s",
+      "videoDurationSeconds": 304,
+      "screenshot": "https://i.ytimg.com/vi/bppeklQ9o8o/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=bppeklQ9o8o&t=1s",
+      "body": "Mimic Tear copia armas, armadura, objetos y habilidades equipados al entrar y lucha con esa configuración congelada. El caso de entrar sin equipo hace muy concreto el instante de captura y los cambios posteriores."
+    },
+    {
+      "dimension": "3D",
+      "game": "Risk of Rain 2",
+      "boss": "Mithrix",
+      "video": "https://www.youtube.com/watch?v=kpnCOSMZFlI&t=59s",
+      "videoDurationSeconds": 939,
+      "screenshot": "https://i.ytimg.com/vi/kpnCOSMZFlI/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=kpnCOSMZFlI&t=59s",
+      "body": "Mithrix roba las pilas de objetos, usa efectos permitidos y los devuelve al recibir daño. La guía empieza en la transferencia. Exclusiones y devolución progresiva muestran por qué copiar necesita propiedad y salida legibles."
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

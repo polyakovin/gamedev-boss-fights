@@ -16,6 +16,8 @@ import {
   directionalShieldOutcome,
   interruptibleWindUpOutcome,
   interruptibleWindUpState,
+  loadoutAdaptationPackage,
+  loadoutAdaptationState,
   partBreakCanFire,
   partBreakState,
   situationalImmunityOutcome,
@@ -26,8 +28,8 @@ import {
   renderBlueprintThumbnail,
 } from '../lib/blueprint-view.mjs';
 
-test('all 54 promoted lesson animations have distinct rule modes and complete moving frames', () => {
-  assert.equal(BLUEPRINT_MECHANIC_IDS.length, 54);
+test('all 55 promoted lesson animations have distinct rule modes and complete moving frames', () => {
+  assert.equal(BLUEPRINT_MECHANIC_IDS.length, 55);
   const modes = new Set();
   for (const id of BLUEPRINT_MECHANIC_IDS) {
     for (let time = 0; time <= BLUEPRINT_DURATION; time += 0.1) {
@@ -48,7 +50,7 @@ test('all 54 promoted lesson animations have distinct rule modes and complete mo
           assert.ok(Number.isFinite(value), `${id} has an invalid ${primitive.type}`);
     }
   }
-  assert.equal(modes.size, 54);
+  assert.equal(modes.size, 55);
 });
 
 test('every blueprint exposes signal, committed action, and recovery without player teleports', () => {
@@ -63,7 +65,8 @@ test('every blueprint exposes signal, committed action, and recovery without pla
       id !== 'part-break' &&
       id !== 'counter-stance' &&
       id !== 'absorption-power-up' &&
-      id !== 'interruptible-wind-up'
+      id !== 'interruptible-wind-up' &&
+      id !== 'loadout-adaptation'
     )
       assert.equal(blueprintFrame(id, 3).dangerActive, true, id);
     assert.equal(blueprintFrame(id, 3).playerSafe, true, id);
@@ -135,7 +138,8 @@ test('every damaging promoted animation derives safety from its own active geome
       id !== 'part-break' &&
       id !== 'counter-stance' &&
       id !== 'absorption-power-up' &&
-      id !== 'interruptible-wind-up',
+      id !== 'interruptible-wind-up' &&
+      id !== 'loadout-adaptation',
   )) {
     const frame = blueprintFrame(id, 3);
     let point = unsafePoints[id];
@@ -1257,5 +1261,61 @@ test('interruptible wind-up accepts one qualified hit before the deadline and re
   assert.match(
     renderBlueprintThumbnail(id, 'test-interruptible-wind-up'),
     /data-blueprint-preview="interruptible-wind-up"/,
+  );
+});
+
+test('loadout adaptation snapshots one equipped rune into a deterministic visible package', () => {
+  const id = 'loadout-adaptation';
+  assert.equal(loadoutAdaptationPackage('reach-rune'), 'reach-thrust');
+  assert.equal(loadoutAdaptationPackage('burst-rune'), 'burst-ring');
+  assert.equal(loadoutAdaptationPackage('unknown-rune'), 'baseline');
+  assert.deepEqual(
+    [0, 0.8, 1.3, 1.8, 2.3, 2.85, 3.2, 3.6, 4.3, 4.8, 5.5].map(loadoutAdaptationState),
+    [
+      'idle',
+      'reading-reach',
+      'copied-reach',
+      'reach-danger',
+      'reach-recovery',
+      'loadout-swapped',
+      'reading-burst',
+      'copied-burst',
+      'burst-danger',
+      'burst-recovery',
+      'idle',
+    ],
+  );
+
+  const readingReach = blueprintFrame(id, 0.85);
+  assert.equal(readingReach.loadout, 'reach-rune');
+  assert.equal(readingReach.adaptedPackage, 'reach-thrust');
+  assert.ok(readingReach.primitives[0].opacity > 0, 'the snapshot beam links Tavi to Kern');
+  assert.ok(readingReach.primitives[1].opacity > 0, 'the equipped reach rune remains visible');
+
+  const copiedReach = blueprintFrame(id, 1.3);
+  assert.ok(copiedReach.primitives[2].opacity > 0, 'Kern visibly copies the reach package');
+  assert.ok(copiedReach.primitives[3].opacity > 0, 'the copied thrust lane is announced');
+
+  const reachAttack = blueprintFrame(id, 1.85);
+  assert.equal(reachAttack.reachDanger, true);
+  assert.equal(reachAttack.playerSafe, true);
+  assert.equal(blueprintPointSafe(id, 1.85, { x: 450, y: 430 }), false);
+
+  const readingBurst = blueprintFrame(id, 3.2);
+  assert.equal(readingBurst.loadout, 'burst-rune');
+  assert.equal(readingBurst.adaptedPackage, 'burst-ring');
+  assert.ok(readingBurst.primitives[5].opacity > 0, 'the swapped burst rune remains visible');
+
+  const copiedBurst = blueprintFrame(id, 3.6);
+  assert.ok(copiedBurst.primitives[6].opacity > 0, 'Kern visibly copies the burst package');
+  assert.ok(copiedBurst.primitives[7].opacity > 0, 'the copied ring is announced');
+
+  const burstAttack = blueprintFrame(id, 4.3);
+  assert.equal(burstAttack.burstDanger, true);
+  assert.equal(burstAttack.playerSafe, true);
+  assert.equal(blueprintPointSafe(id, 4.3, burstAttack.boss), false);
+  assert.match(
+    renderBlueprintThumbnail(id, 'test-loadout-adaptation'),
+    /data-blueprint-preview="loadout-adaptation"/,
   );
 });

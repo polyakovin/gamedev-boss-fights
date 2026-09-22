@@ -1,0 +1,122 @@
+{
+  "title": "配装适应",
+  "subtitle": "让装备选择已声明的Boss方案，而不是暗中使构筑失效。",
+  "variant": "射程符文选择直刺，爆发符文选择圆环",
+  "summary": "Boss记录玩家配装中规定的部分，并选择可见且有边界的回应方案。",
+  "overview": "配装适应让战斗根据装备分支，而不是忽略装备。Kern在固定时刻读取一个剑符文：射程对应直线刺击，爆发对应环形脉冲。Tavi会在威胁锁定前看到复制标记，并保留普通移动的逃生路线。快照、映射、反馈和备用回应必须明确。",
+  "learning": "定义快照时刻、允许列表、方案映射、复制反馈、有效回应和重置规则。",
+  "category": "防御",
+  "readTime": "4 分钟",
+  "demo": {
+    "title": "比较两个配装快照及其确定性Boss方案",
+    "timeline": "配装适应时间线",
+    "step": "适应状态",
+    "phaseNames": ["记录射程符文", "验证两种方案映射", "离开复制的爆发"],
+    "phaseDescriptions": [
+      "0.62秒时Kern扫描射程符文。1.08秒出现复制箭头，直线预告刺击。Tavi在方案锁定前开始让全身横向离开。",
+      "直刺在1.66至2.08秒危险并落空。第二次确定性测试中，Tavi于2.76秒装备爆发；Kern在3.02至3.48秒读取，并用圆形标记替换箭头。",
+      "复制圆环在4.18至4.58秒生效前已有预告。Tavi用普通移动完整离开半径。5.3秒时Kern丢弃方案，让之后的配装可被重新记录。"
+    ],
+    "boss": "Boss",
+    "player": "玩家",
+    "danger": "只有冻结快照选出的可见方案能够造成伤害",
+    "locked": "本场战斗中射程始终映射为直刺，爆发始终映射为圆环",
+    "safe": "读取复制标记，然后横向离开刺击或走出圆环完整半径",
+    "reducedMotion": "减少动态时自动播放关闭。可拖动滑块比较快照、复制标记、危险和重置。",
+    "diagramDescription": "持剑玩家带有箭头形射程符文。石头Boss扫描并复制它，然后画出直线攻击通道，玩家横向闪开。第二次符文变成圆形，Boss复制圆形并预告环形脉冲，玩家移到边缘之外。"
+  },
+  "steps": [
+    {
+      "title": "记录什么，又在何时记录？",
+      "body": "在稳定边界读取狭窄且有文档的配装子集，例如入场、阶段开始或明确扫描。Kern只读取装备的剑符文，不读取物品顺序或隐藏数值。方案期间冻结结果，避免菜单和网络更新改写已预告的攻击。"
+    },
+    {
+      "title": "配装如何映射为行为？",
+      "body": "使用输出可见的有限表。射程始终选择一条预告直线，爆发始终选择一个圆环。准备前在Kern身上显示复制符文，方案强度与物品等级分开限制，并为未知或禁用装备提供基础方案。相同快照必须得到相同结果。"
+    },
+    {
+      "title": "每个分支都保留有效回应吗？",
+      "body": "适应应改变问题，而不是否定构筑。Tavi用同一普通移动横向避开射程、向外避开爆发。独立调整时间和几何，并测试最困难的有效组合，确保不会移除全部安全空间或强迫卸下装备。"
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "Boss每帧重新读取装备",
+      "body": "持续求值会在预告后更换判定。保存不可变快照，显示获取时刻，并把之后的改变推迟到下一个声明的采样点。"
+    },
+    {
+      "title": "适应变成完全克制",
+      "body": "若Boss直接免疫所选构筑，玩家表达就变成背包惩罚。应改用带普通反制的不同威胁，并排除会治疗、循环或造成不可触及的组合。"
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "用数据驱动分支",
+      "body": "在一张表中把规范化标签映射到方案ID。动画、AI、伤害几何、图标、辅助文本和测试都读取同一结果。"
+    },
+    {
+      "title": "分离快照与执行",
+      "body": "先完成扫描，再预告并执行。记录快照时间、标签、方案和重置时间，让回放无需读取当前背包即可复现。"
+    },
+    {
+      "title": "定义安全基础方案",
+      "body": "空、未知、DLC、禁用或多人混合配装需要确定性默认值；它必须可回应，且不能因数据缺失而强于已识别方案。"
+    },
+    {
+      "title": "测试组合而非单件物品",
+      "body": "覆盖重复标签、双武器、边界换装、消耗品、召唤、冷却、多人归属、存档迁移、回滚、阶段、死亡和仅含禁用效果的配装。"
+    }
+  ],
+  "story": {
+    "title": "只学习一个符文的石之档案",
+    "body": "Kern只需一道细扫描线和胸前一个复制符号。箭头变成长直线，圆形变成地面脉冲。两个简单标记无需重现整个背包。"
+  },
+  "adaptation": {
+    "title": "尊重Tavi选择的剑符文",
+    "body": "两次测试都使用Tavi已有的剑。符文改变Kern方案，但不禁用武器或要求菜单技巧。大型背包可规范为少量战斗标签。"
+  },
+  "distinction": {
+    "title": "是配装分支，不只是抗性",
+    "body": "伤害抗性改变收到的数值，吸收把输入变成资源。配装适应从声明的快照选择更广的攻击、防御或状态方案，并保留明确反制。"
+  },
+  "lensNotes": [
+    { "id": "progress-clarity", "body": "扫描、复制符号、预告、生效区间和重置展示每次状态变化。" },
+    { "id": "player-expression", "body": "符文改变战斗分支，但不会删除Tavi的剑和普通移动。" },
+    { "id": "counterplay", "body": "每个方案都有可达回应：横向避开射程，径向避开爆发。" },
+    { "id": "rule-exception", "body": "记录快照时刻、标签、优先级、默认、禁用和多人归属规则。" }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "Rabi-Ribi",
+      "boss": "Miriam",
+      "video": "https://www.youtube.com/watch?v=aOmrSe9mMJo&t=1s",
+      "videoDurationSeconds": 65,
+      "screenshot": "https://i.ytimg.com/vi/aOmrSe9mMJo/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=aOmrSe9mMJo&t=1s",
+      "body": "Miriam使用与已获得物品关联的攻击，并复制许多装备徽章效果。短小的0%收集视频展示相反分支：大量物品派生段落缺席，适合观察接近空快照。"
+    },
+    {
+      "dimension": "3D",
+      "game": "Elden Ring",
+      "boss": "Mimic Tear",
+      "video": "https://www.youtube.com/watch?v=bppeklQ9o8o&t=1s",
+      "videoDurationSeconds": 304,
+      "screenshot": "https://i.ytimg.com/vi/bppeklQ9o8o/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=bppeklQ9o8o&t=1s",
+      "body": "Mimic Tear复制入场时装备的武器、护甲、物品和技能，再用冻结构筑战斗。空装入场并在之后重装的情况让快照时刻非常具体。"
+    },
+    {
+      "dimension": "3D",
+      "game": "Risk of Rain 2",
+      "boss": "Mithrix",
+      "video": "https://www.youtube.com/watch?v=kpnCOSMZFlI&t=59s",
+      "videoDurationSeconds": 939,
+      "screenshot": "https://i.ytimg.com/vi/kpnCOSMZFlI/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=kpnCOSMZFlI&t=59s",
+      "body": "Mithrix在最终阶段夺取物品层数，使用允许效果，并随伤害归还。链接从转移开始；禁用效果和逐步返还说明复制需要清晰的归属与退出规则。"
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

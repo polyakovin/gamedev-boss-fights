@@ -340,6 +340,24 @@ const SPECS = {
     recoveryEnd: 5.28,
     threatRadius: 150,
   },
+  'loadout-adaptation': {
+    mode: 'loadout-adaptation',
+    boss: [280, 430],
+    player: [450, 430],
+    target: [485, 650],
+    reachSnapshot: [0.62, 1.08],
+    reachCopiedAt: 1.08,
+    reachAttack: [1.66, 2.08],
+    reachRecoveryEnd: 2.56,
+    swapAt: 2.76,
+    burstSnapshot: [3.02, 3.48],
+    burstCopiedAt: 3.48,
+    burstAttack: [4.18, 4.58],
+    recoveryEnd: 5.3,
+    reachEnd: [560, 430],
+    reachHalfWidth: 18,
+    burstRadius: 150,
+  },
   'wide-swing': { mode: 'arc', boss: [280, 310], player: [410, 470], target: [470, 650] },
   lunge: { mode: 'lunge', boss: [170, 290], player: [390, 590], target: [470, 660] },
   grab: { mode: 'grab', boss: [280, 300], player: [390, 485], target: [470, 610] },
@@ -706,6 +724,27 @@ export function interruptibleWindUpOutcome(time, impact = 1) {
     (t >= spec.secondWindup[0] && t < spec.secondWindup[1]);
   if (!open) return 'closed';
   return impact >= 1 ? 'interrupted' : 'insufficient-impact';
+}
+
+export function loadoutAdaptationPackage(loadout) {
+  if (loadout === 'reach-rune') return 'reach-thrust';
+  if (loadout === 'burst-rune') return 'burst-ring';
+  return 'baseline';
+}
+
+export function loadoutAdaptationState(time) {
+  const spec = SPECS['loadout-adaptation'];
+  const t = localTime(time);
+  if (t >= spec.reachSnapshot[0] && t < spec.reachCopiedAt) return 'reading-reach';
+  if (t >= spec.reachCopiedAt && t < spec.reachAttack[0]) return 'copied-reach';
+  if (t >= spec.reachAttack[0] && t < spec.reachAttack[1]) return 'reach-danger';
+  if (t >= spec.reachAttack[1] && t < spec.swapAt) return 'reach-recovery';
+  if (t >= spec.swapAt && t < spec.burstSnapshot[0]) return 'loadout-swapped';
+  if (t >= spec.burstSnapshot[0] && t < spec.burstCopiedAt) return 'reading-burst';
+  if (t >= spec.burstCopiedAt && t < spec.burstAttack[0]) return 'copied-burst';
+  if (t >= spec.burstAttack[0] && t < spec.burstAttack[1]) return 'burst-danger';
+  if (t >= spec.burstAttack[1] && t < spec.recoveryEnd) return 'burst-recovery';
+  return 'idle';
 }
 
 const pointInPolygon = (value, points) => {
@@ -1248,6 +1287,68 @@ function primitivesFor(spec, frame) {
         'safe',
         8,
       ),
+    ];
+  }
+  if (mode === 'loadout-adaptation') {
+    const reachEquipped = frame.time < spec.swapAt;
+    const burstEquipped = frame.time >= spec.swapAt && frame.time < spec.recoveryEnd;
+    const readingReach = frame.time >= spec.reachSnapshot[0] && frame.time < spec.reachSnapshot[1];
+    const readingBurst = frame.time >= spec.burstSnapshot[0] && frame.time < spec.burstSnapshot[1];
+    const reachCopied = frame.time >= spec.reachCopiedAt && frame.time < spec.reachRecoveryEnd;
+    const burstCopied = frame.time >= spec.burstCopiedAt && frame.time < spec.recoveryEnd;
+    const reachPreview = frame.time >= spec.reachCopiedAt && frame.time < spec.reachAttack[0];
+    const burstPreview = frame.time >= spec.burstCopiedAt && frame.time < spec.burstAttack[0];
+    const copyFlash = Math.max(
+      strikePulse(frame.time, spec.reachCopiedAt, 0.34),
+      strikePulse(frame.time, spec.burstCopiedAt, 0.34),
+    );
+    return [
+      line(
+        player.x,
+        player.y - 30,
+        boss.x,
+        boss.y - 30,
+        readingReach || readingBurst ? 0.82 : 0,
+        'accent',
+        5,
+        '10 9',
+      ),
+      path(
+        `M ${player.x - 30} ${player.y - 72} L ${player.x + 30} ${player.y - 72} M ${player.x + 12} ${player.y - 84} L ${player.x + 30} ${player.y - 72} L ${player.x + 12} ${player.y - 60}`,
+        reachEquipped ? 0.88 : 0,
+        'safe',
+        6,
+      ),
+      path(
+        `M ${boss.x - 34} ${boss.y - 65} L ${boss.x + 34} ${boss.y - 65} M ${boss.x + 14} ${boss.y - 79} L ${boss.x + 34} ${boss.y - 65} L ${boss.x + 14} ${boss.y - 51}`,
+        reachCopied ? 0.9 : 0,
+        'accent',
+        7,
+      ),
+      line(
+        boss.x + 38,
+        boss.y,
+        spec.reachEnd[0],
+        spec.reachEnd[1],
+        reachPreview ? 0.52 : 0,
+        'accent',
+        8,
+        '12 10',
+      ),
+      line(
+        boss.x + 38,
+        boss.y,
+        spec.reachEnd[0],
+        spec.reachEnd[1],
+        frame.reachDanger ? 0.94 : 0,
+        'signal',
+        spec.reachHalfWidth * 2,
+      ),
+      circle(player.x, player.y - 72, 24, burstEquipped ? 0.86 : 0, 'safe', 6, 0.08),
+      circle(boss.x, boss.y - 65, 24, burstCopied ? 0.9 : 0, 'accent', 7, 0.12),
+      circle(boss.x, boss.y, spec.burstRadius, burstPreview ? 0.5 : 0, 'accent', 4, 0.07, '10 10'),
+      circle(boss.x, boss.y, spec.burstRadius, frame.burstDanger ? 0.9 : 0, 'signal', 10, 0.17),
+      circle(boss.x, boss.y - 65, 27 + 18 * copyFlash, copyFlash, 'signal', 5),
     ];
   }
   if (mode === 'landing') {
@@ -2488,6 +2589,16 @@ function pointClearsThreat(spec, frame, value, radius = BLUEPRINT_PLAYER_RADIUS)
       !frame.dangerActive ||
       Math.hypot(value.x - frame.boss.x, value.y - frame.boss.y) > spec.threatRadius + radius
     );
+  if (mode === 'loadout-adaptation') {
+    if (frame.reachDanger)
+      return (
+        distanceToSegment(value, { x: frame.boss.x + 38, y: frame.boss.y }, point(spec.reachEnd)) >
+        spec.reachHalfWidth + radius
+      );
+    if (frame.burstDanger)
+      return Math.hypot(value.x - frame.boss.x, value.y - frame.boss.y) > spec.burstRadius + radius;
+    return true;
+  }
   if (mode === 'spiral')
     return (
       distanceFromBoss > 52 + radius &&
@@ -2695,6 +2806,7 @@ export function blueprintFrame(id, time) {
     responseProgress = smooth((t - spec.chargeWindup) / 0.53);
   else if (spec.mode === 'interruptible-wind-up')
     responseProgress = smooth((t - spec.secondWindup[0]) / 0.64);
+  else if (spec.mode === 'loadout-adaptation') responseProgress = 0;
   else if (spec.mode === 'knockback')
     responseProgress = phase === 0 ? 0 : phase === 1 ? smooth(action) : 1;
   else if (spec.mode === 'target-lock')
@@ -2797,6 +2909,24 @@ export function blueprintFrame(id, time) {
     player = {
       x: mix(mix(afterRetreat.x, targetPlayer.x, clearRelease), startPlayer.x, reset),
       y: startPlayer.y,
+    };
+  }
+  if (spec.mode === 'loadout-adaptation') {
+    const clearReach = smooth((t - 1.18) / 0.38);
+    const returnAfterReach = smooth((t - 2.16) / 0.42);
+    const clearBurst = smooth((t - spec.burstCopiedAt) / 0.58);
+    const reset = smooth((t - spec.recoveryEnd) / 0.52);
+    const reachSafe = {
+      x: startPlayer.x,
+      y: mix(startPlayer.y, 540, clearReach),
+    };
+    const afterReach = {
+      x: mix(reachSafe.x, startPlayer.x, returnAfterReach),
+      y: mix(reachSafe.y, startPlayer.y, returnAfterReach),
+    };
+    player = {
+      x: mix(mix(afterReach.x, targetPlayer.x, clearBurst), startPlayer.x, reset),
+      y: mix(mix(afterReach.y, targetPlayer.y, clearBurst), startPlayer.y, reset),
     };
   }
   if (spec.mode === 'rotating' && phase === 0) {
@@ -2926,7 +3056,11 @@ export function blueprintFrame(id, time) {
                                         ? t >= spec.shockwave[0] && t < spec.shockwave[1]
                                         : spec.mode === 'interruptible-wind-up'
                                           ? t >= spec.release[0] && t < spec.release[1]
-                                          : phase === 1;
+                                          : spec.mode === 'loadout-adaptation'
+                                            ? (t >= spec.reachAttack[0] &&
+                                                t < spec.reachAttack[1]) ||
+                                              (t >= spec.burstAttack[0] && t < spec.burstAttack[1])
+                                            : phase === 1;
   const frame = {
     id,
     mode: spec.mode,
@@ -2966,7 +3100,8 @@ export function blueprintFrame(id, time) {
             spec.mode === 'attack-reflection' ||
             spec.mode === 'counter-stance' ||
             spec.mode === 'absorption-power-up' ||
-            spec.mode === 'interruptible-wind-up'
+            spec.mode === 'interruptible-wind-up' ||
+            spec.mode === 'loadout-adaptation'
           ? -180
           : -90,
     bossMotion: motion({
@@ -3015,9 +3150,14 @@ export function blueprintFrame(id, time) {
                               strikePulse(t, spec.interruptAt - 0.28, 0.8),
                               strikePulse(t, spec.release[0], 0.72),
                             )
-                          : phase === 1
-                            ? 0.75
-                            : prepare * 0.35,
+                          : spec.mode === 'loadout-adaptation'
+                            ? Math.max(
+                                strikePulse(t, spec.reachAttack[0], 0.64),
+                                strikePulse(t, spec.burstAttack[0], 0.68),
+                              )
+                            : phase === 1
+                              ? 0.75
+                              : prepare * 0.35,
       impact:
         spec.mode === 'landing'
           ? pulse(clamp((action - 0.42) / 0.22))
@@ -3085,11 +3225,13 @@ export function blueprintFrame(id, time) {
                         )
                       : spec.mode === 'interruptible-wind-up'
                         ? strikePulse(t, spec.interruptAt, 0.38)
-                        : spec.mode === 'decoy' && phase === 1
-                          ? pulse(clamp((action - 0.52) / 0.3))
-                          : spec.mode === 'weak-point' && phase === 1
-                            ? pulse(action * 1.5)
-                            : 0,
+                        : spec.mode === 'loadout-adaptation'
+                          ? strikePulse(t, spec.swapAt, 0.34)
+                          : spec.mode === 'decoy' && phase === 1
+                            ? pulse(clamp((action - 0.52) / 0.3))
+                            : spec.mode === 'weak-point' && phase === 1
+                              ? pulse(action * 1.5)
+                              : 0,
     }),
   };
   if (spec.mode === 'directional-shield') {
@@ -3154,6 +3296,13 @@ export function blueprintFrame(id, time) {
       (t >= spec.firstWindup[0] && t < spec.interruptAt) ||
       (t >= spec.secondWindup[0] && t < spec.release[0]);
   }
+  if (spec.mode === 'loadout-adaptation') {
+    frame.loadoutState = loadoutAdaptationState(t);
+    frame.loadout = t < spec.swapAt ? 'reach-rune' : 'burst-rune';
+    frame.adaptedPackage = loadoutAdaptationPackage(frame.loadout);
+    frame.reachDanger = t >= spec.reachAttack[0] && t < spec.reachAttack[1];
+    frame.burstDanger = t >= spec.burstAttack[0] && t < spec.burstAttack[1];
+  }
   frame.primitives = primitivesFor(spec, frame);
   frame.playerSafe = pointClearsThreat(spec, frame, player);
   frame.bossLabel = {
@@ -3171,7 +3320,8 @@ export function blueprintFrame(id, time) {
       spec.mode === 'attack-reflection' ||
       spec.mode === 'counter-stance' ||
       spec.mode === 'absorption-power-up' ||
-      spec.mode === 'interruptible-wind-up'
+      spec.mode === 'interruptible-wind-up' ||
+      spec.mode === 'loadout-adaptation'
         ? 92
         : -62),
   };

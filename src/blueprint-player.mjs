@@ -124,6 +124,11 @@ export function initializeBlueprint(widget) {
         : frame.threatReleased
           ? 'released-danger'
           : frame.windUpState;
+    if (mechanicId === 'loadout-adaptation') {
+      widget.dataset.blueprintLoadout = frame.loadout;
+      widget.dataset.blueprintAdaptation = frame.loadoutState;
+      widget.dataset.blueprintPackage = frame.adaptedPackage;
+    }
     boss.setAttribute(
       'transform',
       `translate(${frame.boss.x} ${frame.boss.y}) scale(${frame.bossScale})`,

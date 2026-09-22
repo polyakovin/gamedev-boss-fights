@@ -405,9 +405,9 @@ test('volley releases three parallel bolts on one beat and clears its outside ro
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
 });
 
-test('catalog and builder reuse the 54 promoted rule-specific previews', async ({ page }) => {
+test('catalog and builder reuse the 55 promoted rule-specific previews', async ({ page }) => {
   await page.goto('en/');
-  await expect(page.locator('[data-blueprint-preview]')).toHaveCount(54);
+  await expect(page.locator('[data-blueprint-preview]')).toHaveCount(55);
   const catalogLayouts = await page.locator('[data-blueprint-preview]').evaluateAll((previews) =>
     previews.map((preview) => {
       const boss = preview.querySelector('[data-character-art-preview="kern"]');
@@ -431,7 +431,7 @@ test('catalog and builder reuse the 54 promoted rule-specific previews', async (
   expect(new Set(catalogLayouts.map(({ layout }) => layout)).size).toBeGreaterThanOrEqual(18);
 
   await page.goto('en/builder/');
-  await expect(page.locator('[data-blueprint-preview]')).toHaveCount(54);
+  await expect(page.locator('[data-blueprint-preview]')).toHaveCount(55);
   const builderLayouts = await page.locator('[data-blueprint-preview]').evaluateAll((previews) =>
     previews.map((preview) => {
       const boss = preview.querySelector('[data-character-art-preview="kern"]');
@@ -1168,6 +1168,128 @@ test('interruptible wind-up keeps its actors, deadline gauge, and final ring ins
     expect(
       bounds.every(Boolean),
       `actors, labels, deadline gauge, and ring remain in frame at ${milliseconds}ms`,
+    ).toBe(true);
+  }
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+});
+
+test('loadout adaptation snapshots two equipped runes into two deterministic boss packages', async ({
+  page,
+}) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.goto('en/mechanics/loadout-adaptation/');
+  const widget = page.locator('[data-blueprint-demo]');
+  const timeline = widget.locator('[data-blueprint-timeline]');
+  const seek = (milliseconds) =>
+    timeline.evaluate((element, value) => {
+      element.value = String(value);
+      element.dispatchEvent(new Event('input', { bubbles: true }));
+    }, milliseconds);
+
+  await expect(page.locator('.lesson-title-line h1')).toHaveText('Loadout adaptation');
+  await expect(page.locator('.wip-badge, .draft-profile')).toHaveCount(0);
+  await expect(page.locator('.game-example')).toHaveCount(3);
+  await expect(widget).toHaveAttribute('data-blueprint-playing', 'false');
+
+  await seek(850);
+  await expect(widget).toHaveAttribute('data-blueprint-loadout', 'reach-rune');
+  await expect(widget).toHaveAttribute('data-blueprint-adaptation', 'reading-reach');
+  await expect(widget).toHaveAttribute('data-blueprint-package', 'reach-thrust');
+  await expect(widget.locator('[data-blueprint-primitive="0"] line')).not.toHaveAttribute(
+    'opacity',
+    '0',
+  );
+
+  await seek(1300);
+  await expect(widget).toHaveAttribute('data-blueprint-adaptation', 'copied-reach');
+  await expect(widget.locator('[data-blueprint-primitive="2"] path')).not.toHaveAttribute(
+    'opacity',
+    '0',
+  );
+  await expect(widget.locator('[data-blueprint-primitive="3"] line')).not.toHaveAttribute(
+    'opacity',
+    '0',
+  );
+
+  await seek(1850);
+  await expect(widget).toHaveAttribute('data-blueprint-adaptation', 'reach-danger');
+  await expect(widget).toHaveAttribute('data-blueprint-outcome', 'safe');
+  await expect(widget.locator('[data-blueprint-primitive="4"] line')).not.toHaveAttribute(
+    'opacity',
+    '0',
+  );
+
+  await seek(2850);
+  await expect(widget).toHaveAttribute('data-blueprint-loadout', 'burst-rune');
+  await expect(widget).toHaveAttribute('data-blueprint-adaptation', 'loadout-swapped');
+  await expect(widget).toHaveAttribute('data-blueprint-package', 'burst-ring');
+
+  await seek(3200);
+  await expect(widget).toHaveAttribute('data-blueprint-adaptation', 'reading-burst');
+  await expect(widget.locator('[data-blueprint-primitive="5"] circle')).not.toHaveAttribute(
+    'opacity',
+    '0',
+  );
+
+  await seek(3600);
+  await expect(widget).toHaveAttribute('data-blueprint-adaptation', 'copied-burst');
+  await expect(widget.locator('[data-blueprint-primitive="6"] circle')).not.toHaveAttribute(
+    'opacity',
+    '0',
+  );
+  await expect(widget.locator('[data-blueprint-primitive="7"] circle')).not.toHaveAttribute(
+    'opacity',
+    '0',
+  );
+
+  await seek(4300);
+  await expect(widget).toHaveAttribute('data-blueprint-adaptation', 'burst-danger');
+  await expect(widget).toHaveAttribute('data-blueprint-outcome', 'safe');
+  await expect(widget.locator('[data-blueprint-primitive="8"] circle')).not.toHaveAttribute(
+    'opacity',
+    '0',
+  );
+
+  await seek(4800);
+  await expect(widget).toHaveAttribute('data-blueprint-adaptation', 'burst-recovery');
+});
+
+test('loadout adaptation keeps both copied packages and actors inside dark RTL mobile', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 375, height: 812 });
+  await page.emulateMedia({ reducedMotion: 'reduce', colorScheme: 'dark' });
+  await page.goto('ar/mechanics/loadout-adaptation/');
+  const widget = page.locator('[data-blueprint-demo]');
+  await expect(page.locator('html')).toHaveAttribute('dir', 'rtl');
+  const timeline = widget.locator('[data-blueprint-timeline]');
+  for (const milliseconds of [0, 850, 1300, 1850, 2850, 3200, 3600, 4300, 4800]) {
+    await timeline.evaluate((element, value) => {
+      element.value = String(value);
+      element.dispatchEvent(new Event('input', { bubbles: true }));
+    }, milliseconds);
+    const bounds = await widget.evaluate((element) => {
+      const svg = element.querySelector('svg').getBoundingClientRect();
+      return [
+        '[data-blueprint-boss]',
+        '[data-blueprint-player]',
+        '[data-blueprint-boss-label]',
+        '[data-blueprint-player-label]',
+        '[data-blueprint-primitive="1"]',
+        '[data-blueprint-primitive="7"]',
+      ].map((selector) => {
+        const rect = element.querySelector(selector).getBoundingClientRect();
+        return (
+          rect.left >= svg.left - 2 &&
+          rect.right <= svg.right + 2 &&
+          rect.top >= svg.top - 2 &&
+          rect.bottom <= svg.bottom + 2
+        );
+      });
+    });
+    expect(
+      bounds.every(Boolean),
+      `actors, equipped rune, and copied burst remain in frame at ${milliseconds}ms`,
     ).toBe(true);
   }
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
