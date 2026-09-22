@@ -25,6 +25,7 @@ import {
   recoveryState,
   situationalImmunityOutcome,
   survivalPhaseState,
+  teleportState,
   windUpProgress,
   windUpState,
 } from '../src/blueprint-model.mjs';
@@ -34,8 +35,8 @@ import {
   renderBlueprintThumbnail,
 } from '../lib/blueprint-view.mjs';
 
-test('all 60 promoted lesson animations have distinct rule modes and complete moving frames', () => {
-  assert.equal(BLUEPRINT_MECHANIC_IDS.length, 60);
+test('all 61 promoted lesson animations have distinct rule modes and complete moving frames', () => {
+  assert.equal(BLUEPRINT_MECHANIC_IDS.length, 61);
   const modes = new Set();
   for (const id of BLUEPRINT_MECHANIC_IDS) {
     for (let time = 0; time <= BLUEPRINT_DURATION; time += 0.1) {
@@ -56,7 +57,7 @@ test('all 60 promoted lesson animations have distinct rule modes and complete mo
           assert.ok(Number.isFinite(value), `${id} has an invalid ${primitive.type}`);
     }
   }
-  assert.equal(modes.size, 60);
+  assert.equal(modes.size, 61);
 });
 
 test('every blueprint exposes signal, committed action, and recovery without player teleports', () => {
@@ -77,7 +78,8 @@ test('every blueprint exposes signal, committed action, and recovery without pla
       id !== 'attack-lock' &&
       id !== 'active-phase' &&
       id !== 'recovery' &&
-      id !== 'survival-phase'
+      id !== 'survival-phase' &&
+      id !== 'teleport'
     )
       assert.equal(blueprintFrame(id, 3).dangerActive, true, id);
     assert.equal(blueprintFrame(id, 3).playerSafe, true, id);
@@ -155,7 +157,8 @@ test('every damaging promoted animation derives safety from its own active geome
       id !== 'attack-lock' &&
       id !== 'active-phase' &&
       id !== 'recovery' &&
-      id !== 'survival-phase',
+      id !== 'survival-phase' &&
+      id !== 'teleport',
   )) {
     const frame = blueprintFrame(id, 3);
     let point = unsafePoints[id];
@@ -1569,4 +1572,48 @@ test('survival phase advances on elapsed survival, clears each pulse, then resto
     renderBlueprintThumbnail(id, 'test-survival-phase'),
     /data-blueprint-preview="survival-phase"/,
   );
+});
+
+test('teleport reveals one destination, removes transit collision, and fixes its follow-up lane', () => {
+  const id = 'teleport';
+  assert.deepEqual([0, 0.7, 1.2, 1.6, 1.9, 2.5, 3.55, 4.6].map(teleportState), [
+    'idle',
+    'departing',
+    'absent',
+    'arriving',
+    'follow-up-tell',
+    'follow-up-danger',
+    'opening',
+    'reset',
+  ]);
+
+  const destinationTell = blueprintFrame(id, 0.9);
+  assert.equal(destinationTell.teleportDestinationRevealed, true);
+  assert.equal(destinationTell.teleportAbsent, false);
+  assert.equal(destinationTell.dangerActive, false);
+  assert.ok(destinationTell.primitives[1].opacity > 0, 'the exact destination is visible early');
+
+  const absent = blueprintFrame(id, 1.2);
+  assert.equal(absent.teleportAbsent, true);
+  assert.equal(absent.bossVisible, 0);
+  assert.equal(absent.dangerActive, false);
+  assert.equal(blueprintPointSafe(id, 1.2, { x: 270, y: 360 }), true);
+
+  const followUpTell = blueprintFrame(id, 1.9);
+  assert.equal(followUpTell.teleportState, 'follow-up-tell');
+  assert.ok(followUpTell.primitives[4].opacity > 0, 'the stored follow-up lane previews');
+  assert.equal(followUpTell.primitives[5].opacity, 0, 'preview geometry does not deal damage');
+
+  const active = blueprintFrame(id, 2.5);
+  assert.equal(active.teleportFollowUpActive, true);
+  assert.equal(active.playerSafe, true);
+  assert.ok(active.primitives[5].opacity > 0, 'the same fixed lane becomes solid');
+  assert.equal(blueprintPointSafe(id, 2.5, { x: 390, y: 610 }), false);
+
+  const punish = blueprintFrame(id, 3.55);
+  assert.equal(punish.punishStrike, true);
+  assert.ok(punish.primitives[7].opacity > 0, 'the sword response begins after danger ends');
+  assert.deepEqual(blueprintFrame(id, 0).player, blueprintFrame(id, 6).player);
+  assert.deepEqual(blueprintFrame(id, 0).boss, blueprintFrame(id, 6).boss);
+  assert.match(renderBlueprintThumbnail(id, 'test-teleport'), /data-blueprint-preview="teleport"/);
 });

@@ -163,6 +163,13 @@ export function initializeBlueprint(widget) {
       widget.dataset.blueprintSurvivalRemaining = frame.survivalRemaining.toFixed(3);
       widget.dataset.blueprintPunishStrike = String(frame.punishStrike);
     }
+    if (mechanicId === 'teleport') {
+      widget.dataset.blueprintTeleport = frame.teleportState;
+      widget.dataset.blueprintTeleportAbsent = String(frame.teleportAbsent);
+      widget.dataset.blueprintTeleportDestination = String(frame.teleportDestinationRevealed);
+      widget.dataset.blueprintTeleportFollowUp = String(frame.teleportFollowUpActive);
+      widget.dataset.blueprintPunishStrike = String(frame.punishStrike);
+    }
     boss.setAttribute(
       'transform',
       `translate(${frame.boss.x} ${frame.boss.y}) scale(${frame.bossScale})`,

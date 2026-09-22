@@ -1,0 +1,28 @@
+{
+  "id": "teleport",
+  "number": 67,
+  "published": true,
+  "sourceLocale": "en",
+  "contentVersion": 1,
+  "animation": "teleport",
+  "lenses": ["telegraphing", "threat-geometry", "commitment", "counterplay"],
+  "related": ["burrow-and-emerge", "attack-lock", "recovery"],
+  "sources": [
+    {
+      "title": "GDC · Itay Keren — Boss Battle Design Fundamentals and Retrospective",
+      "url": "https://www.gdcvault.com/play/1024921/Boss-Up-Boss-Battle-Design"
+    },
+    {
+      "title": "Nightmare King Grimm · Hollow Knight Wiki",
+      "url": "https://www.hollowknight.wiki/w/Nightmare_King_Grimm"
+    },
+    {
+      "title": "The Time Keeper · Official Dead Cells Wiki",
+      "url": "https://deadcells.wiki.gg/wiki/Time_Keeper"
+    },
+    {
+      "title": "Game8 · Astel, Naturalborn of the Void attack patterns",
+      "url": "https://game8.co/games/Elden-Ring/archives/371982"
+    }
+  ]
+}

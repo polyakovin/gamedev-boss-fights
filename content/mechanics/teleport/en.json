@@ -1,0 +1,134 @@
+{
+  "title": "Teleport",
+  "subtitle": "Make disappearance, destination, and follow-up read as one authored action.",
+  "variant": "A destination rune precedes a collision-free relocation and a fixed downward strike",
+  "summary": "A teleport removes the boss from one position and restores it at another without dangerous travel between the two points.",
+  "overview": "Teleport is a discontinuous position change, not a fast dash. Kern dissolves at 0.55 seconds while a destination rune appears at 0.72. With body collision off, the boss reforms there by 1.70 and commits to a fixed vertical strike from 2.36–2.72 seconds. Tavi reads the destination, clears the lane, and uses the opening.",
+  "learning": "Implement departure, absence, destination reveal, reappearance, follow-up commitment, collision authority, and reset as explicit timed states driven by one destination record.",
+  "category": "Space, movement, and perception",
+  "readTime": "5 min",
+  "demo": {
+    "title": "Separate relocation from the attack that follows",
+    "timeline": "Teleport timeline",
+    "step": "Teleport states",
+    "phaseNames": ["Reveal the destination", "Reappear and commit", "Resolve and reset"],
+    "phaseDescriptions": [
+      "At 0.55 s Kern begins dissolving at the origin. At 0.72 s a shrinking destination rune appears at the exact reappearance point; the boss body and contact collision are absent from 1.05–1.52 s.",
+      "Kern reforms from 1.52–1.70 s and immediately previews one fixed vertical lane. Tavi moves sideways before that lane alone becomes dangerous from 2.36–2.72 s; no invisible path connects origin and destination.",
+      "The strike ends before the opening begins. Tavi may approach for a sword hit at 3.55 s, then Kern performs a non-damaging reset teleport so the six-second loop returns cleanly to its first frame."
+    ],
+    "boss": "Boss",
+    "player": "Player",
+    "danger": "Only the solid follow-up lane deals damage",
+    "locked": "The destination is fixed when its rune appears at 0.72 seconds",
+    "safe": "Read the destination first, then clear the previewed lane sideways",
+    "reducedMotion": "Autoplay is disabled by reduced motion. Scrub across 0.55, 0.72, 1.05, 1.52, 1.70, 2.36, and 2.72 seconds to inspect the teleport contract.",
+    "diagramDescription": "A rune-marked stone boss dissolves on the left while a destination rune appears higher on the right. The boss is absent between the points, reforms on the rune, previews a vertical attack lane, and strikes after the sword-bearing player has moved sideways."
+  },
+  "steps": [
+    {
+      "title": "When is the destination chosen?",
+      "body": "Capture one legal destination before disappearance and keep it immutable through reappearance and the follow-up. Validate arena bounds, navigation, camera framing, overlap with players, and reserved hazard space before committing. In the example the destination record is exposed at 0.72 s and never retargets."
+    },
+    {
+      "title": "What exists while the boss is absent?",
+      "body": "Disable body, contact damage, targeting sockets, and hittable hurtboxes with one authoritative absent state. Decide separately whether status timers, projectiles, summons, and arena ownership continue. Visual disappearance must not leave an invisible collider or a damage trail between the two points."
+    },
+    {
+      "title": "What follows the reappearance?",
+      "body": "Treat arrival and the next attack as one authored package. Kern reforms by 1.70 s, then previews a stored vertical lane for 0.66 s before its 0.36 s active window. Reappearance cannot overlap Tavi, the lane never tracks after reveal, and recovery starts only after collision is off."
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "The boss appears on top of the player",
+      "body": "A random destination that becomes known only on arrival converts spatial reasoning into guessing and can create unavoidable contact damage. Reserve space around players, expose the destination early, or provide a guaranteed escape interval after arrival."
+    },
+    {
+      "title": "Teleport is implemented as a hidden dash",
+      "body": "Sweeping collision along the line between endpoints contradicts the visible disappearance. If transit should damage, show a beam, trail, portal connection, or moving body and classify that geometry explicitly instead of borrowing the teleport label."
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "Budget information, not only time",
+      "body": "Measure departure recognition, destination search, camera travel, response choice, and movement clearance separately. A long delay can still feel unfair when the new point is off-screen or indistinguishable from ambient effects."
+    },
+    {
+      "title": "Author destination policies",
+      "body": "Random does not mean unconstrained. Tag destinations by range, angle, line of sight, elevation, recent use, and compatibility with the next attack. Weighted selection should avoid repeats and impossible combinations while retaining variation."
+    },
+    {
+      "title": "Preserve state across the gap",
+      "body": "Store health, phase, cooldowns, captured target, facing policy, and queued follow-up before hiding the actor. Networked and rollback builds must replicate the destination and state transition, not infer them independently from effects."
+    },
+    {
+      "title": "Test camera and edge cases",
+      "body": "Exercise destinations near walls, platforms, split-screen edges, target-lock limits, summons, and multiple players. Verify the frame before absence, every absent frame, arrival, the first active frame, interruption, death, and loop reset."
+    }
+  ],
+  "story": {
+    "title": "One rune closes while another opens",
+    "body": "Kern collapses into fragments at the origin as a paired rune ignites elsewhere. The same rune channels the next strike, so the magical fiction communicates both where the elemental returns and what space it will threaten."
+  },
+  "adaptation": {
+    "title": "Let Tavi answer with ordinary movement",
+    "body": "Tavi does not need a special teleport counter. The destination rune creates an early spatial read, the fixed lane makes a sideways step sufficient, and the recovery preserves the familiar sword response once the danger has ended."
+  },
+  "distinction": {
+    "title": "Discontinuous relocation, not burrowing or a dash",
+    "body": "A dash occupies and crosses intermediate space. Burrow-and-emerge usually hides a moving source whose emergence point is part of a subterranean route. Teleport has no collidable transit between endpoints; portals may add a persistent connection, while a swap exchanges two actors or positions."
+  },
+  "lensNotes": [
+    {
+      "id": "telegraphing",
+      "body": "The destination rune begins before full disappearance and converges on the exact point where Kern will reform."
+    },
+    {
+      "id": "threat-geometry",
+      "body": "The endpoints and the later vertical lane are explicit geometry; the empty interval between endpoints never becomes a hidden hitbox."
+    },
+    {
+      "id": "commitment",
+      "body": "Destination, facing, and follow-up lane are stored at reveal and remain fixed through arrival and release."
+    },
+    {
+      "id": "counterplay",
+      "body": "Tavi receives enough time to locate the destination, move one full body width beyond the lane, and punish only after collision ends."
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "Hollow Knight",
+      "boss": "Nightmare King Grimm",
+      "screenshot": "https://i.ytimg.com/vi/7JWQ9KjwPyE/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=7JWQ9KjwPyE&t=15s",
+      "body": "Nightmare King Grimm repeatedly disappears and returns at a new arena position to begin a recognisable attack. The destination and pose identify the follow-up quickly, letting relocation function as spacing and attack selection rather than contact travel.",
+      "video": "https://www.youtube.com/watch?v=7JWQ9KjwPyE&t=15s",
+      "videoDurationSeconds": 140
+    },
+    {
+      "dimension": "2D",
+      "game": "Dead Cells",
+      "boss": "The Time Keeper",
+      "screenshot": "https://i.ytimg.com/vi/WQLlA73LMas/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=WQLlA73LMas&t=18s",
+      "body": "The Time Keeper uses short teleports to create spacing before shurikens, hook, or dash attacks. The relocation supports the range requirements of the queued move; it is not itself a damaging sweep across the arena.",
+      "video": "https://www.youtube.com/watch?v=WQLlA73LMas&t=18s",
+      "videoDurationSeconds": 163
+    },
+    {
+      "dimension": "3D",
+      "game": "Elden Ring",
+      "boss": "Astel, Naturalborn of the Void",
+      "screenshot": "https://i.ytimg.com/vi/dzrSCDUcFys/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=dzrSCDUcFys&t=85s",
+      "body": "Astel vanishes and may reappear overhead for a grab. The example shows why a 3D teleport needs strong arrival audio, camera-aware search time, and a distinct follow-up tell: the dangerous decision begins after relocation, potentially outside the current view.",
+      "video": "https://www.youtube.com/watch?v=dzrSCDUcFys&t=85s",
+      "videoDurationSeconds": 182
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

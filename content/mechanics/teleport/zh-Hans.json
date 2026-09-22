@@ -1,0 +1,131 @@
+{
+  "title": "传送",
+  "subtitle": "让消失、落点和后续攻击读作一个完整的设计动作。",
+  "variant": "落点符文先出现，随后无碰撞移位并释放固定的向下攻击",
+  "summary": "传送把Boss从一个位置移除并在另一个位置恢复，两点之间没有危险的移动路径。",
+  "overview": "传送是离散的位置变化，不是极快的冲刺。Kern在0.55秒开始消散，落点符文在0.72秒出现。Boss缺席时没有身体碰撞，在1.70秒前于已声明位置重组，并在2.36–2.72秒执行固定的纵向攻击。Tavi读取落点、移出通道并利用随后的破绽。",
+  "learning": "把离场、缺席、落点揭示、重现、后续承诺、碰撞权限和重置实现为由同一落点记录驱动的明确计时状态。",
+  "category": "空间、移动与感知",
+  "readTime": "5分钟",
+  "demo": {
+    "title": "把移位与后续攻击分开",
+    "timeline": "传送时间线",
+    "step": "传送状态",
+    "phaseNames": ["揭示落点", "重现并锁定", "结算并重置"],
+    "phaseDescriptions": [
+      "0.55秒时Kern在起点开始消散。0.72秒时，收缩的符文标出准确重现点；1.05–1.52秒期间Boss身体和接触碰撞均不存在。",
+      "Kern在1.52–1.70秒重组并立即预告一条固定纵向通道。Tavi横向移动，只有该通道在2.36–2.72秒变为危险；起点和终点之间没有隐形路径。",
+      "攻击结束后才进入破绽。Tavi可在3.55秒接近并挥剑；随后Kern进行无伤害的重置传送，让六秒循环平滑回到首帧。"
+    ],
+    "boss": "Boss",
+    "player": "玩家",
+    "danger": "只有实线显示的后续通道造成伤害",
+    "locked": "落点在0.72秒符文出现时锁定",
+    "safe": "先读取落点，再横向离开预告通道",
+    "reducedMotion": "启用减少动态效果时自动播放关闭。拖动到0.55、0.72、1.05、1.52、1.70、2.36和2.72秒检查完整规则。",
+    "diagramDescription": "一个符文石Boss在左侧消散，右上方出现落点符文。Boss在两点之间缺席，在符文处重组并预告纵向攻击，持剑玩家横移后攻击才释放。"
+  },
+  "steps": [
+    {
+      "title": "何时选择落点？",
+      "body": "消失前捕获一个合法落点，并在重现与后续攻击期间保持不变。提交前验证场地边界、导航、镜头、玩家重叠和已预留的危险空间。示例在0.72秒公开记录，之后不再重新瞄准。"
+    },
+    {
+      "title": "Boss缺席时什么仍然存在？",
+      "body": "用一个权威状态关闭身体、接触伤害、锁定插槽和可受击框。分别决定状态计时、弹体、召唤物和场地控制是否继续。视觉消失不能留下隐形碰撞体或两点间的伤害轨迹。"
+    },
+    {
+      "title": "重现之后发生什么？",
+      "body": "把到达与下一次攻击视为一个动作包。Kern在1.70秒前重组，随后预告保存的纵向通道0.66秒，再进入0.36秒有效期。重现不能与Tavi重叠，通道揭示后不再追踪，碰撞关闭后才恢复。"
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "Boss直接出现在玩家身上",
+      "body": "只有到达时才知道的随机落点会把空间推理变成猜测，并可能产生无法避免的接触伤害。为玩家周围保留空间、提前显示落点，或在到达后提供保证的逃离时间。"
+    },
+    {
+      "title": "把传送实现成隐藏冲刺",
+      "body": "沿端点连线扫过的碰撞与视觉消失矛盾。若过渡必须造成伤害，应显示光束、轨迹、传送门连接或移动身体，并明确分类该几何。"
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "预算信息而不只是时间",
+      "body": "分别测量离场识别、落点搜索、镜头移动、回应选择和身体完全离开。若新点在屏幕外或与环境特效混淆，再长的延迟也可能不公平。"
+    },
+    {
+      "title": "设计落点策略",
+      "body": "随机不等于无约束。按距离、角度、视线、高度、近期使用和后续攻击兼容性标记落点。加权选择应避免重复与不可能组合。"
+    },
+    {
+      "title": "跨越间隔保存状态",
+      "body": "隐藏角色前保存生命、阶段、冷却、锁定目标、朝向策略和排队动作。网络与回滚必须同步落点和状态转换，而不是分别从特效推断。"
+    },
+    {
+      "title": "测试镜头与边界",
+      "body": "测试墙边、平台、分屏边缘、锁定极限、召唤物和多人附近的落点。检查缺席前、每个缺席帧、到达、首个伤害帧、中断、死亡与循环重置。"
+    }
+  ],
+  "story": {
+    "title": "一枚符文关闭，另一枚开启",
+    "body": "Kern在起点碎成石片，同时另一处的配对符文点亮。相同符文引导下一次攻击，因此叙事同时说明元素体返回何处以及将威胁何种空间。"
+  },
+  "adaptation": {
+    "title": "让Tavi用普通移动回应",
+    "body": "Tavi不需要专用反制。落点符文提供早期空间读取，固定通道允许一次横移，恢复期则保留危险结束后的熟悉挥剑回应。"
+  },
+  "distinction": {
+    "title": "离散移位，不是钻地或冲刺",
+    "body": "冲刺占据并穿过中间空间。钻地通常隐藏沿地下路线移动的来源。传送在端点间没有可碰撞移动；传送门可以保留持续连接，而交换会互换两个角色或位置。"
+  },
+  "lensNotes": [
+    { "id": "telegraphing", "body": "落点符文在完全消失前出现，并收束到Kern重组的准确位置。" },
+    {
+      "id": "threat-geometry",
+      "body": "端点和后续纵向通道都是明确几何；中间空隙绝不会成为隐藏判定。"
+    },
+    {
+      "id": "commitment",
+      "body": "落点、朝向和后续通道在揭示时保存，并在到达和释放过程中保持不变。"
+    },
+    {
+      "id": "counterplay",
+      "body": "Tavi有足够时间找到落点、让完整身体离开通道，并只在碰撞结束后反击。"
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "Hollow Knight",
+      "boss": "Nightmare King Grimm",
+      "screenshot": "https://i.ytimg.com/vi/7JWQ9KjwPyE/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=7JWQ9KjwPyE&t=15s",
+      "body": "Nightmare King Grimm反复消失并在新位置返回以开始可辨识的攻击。落点和姿势快速说明后续，使移位承担间距与招式选择，而不是沿途接触伤害。",
+      "video": "https://www.youtube.com/watch?v=7JWQ9KjwPyE&t=15s",
+      "videoDurationSeconds": 140
+    },
+    {
+      "dimension": "2D",
+      "game": "Dead Cells",
+      "boss": "The Time Keeper",
+      "screenshot": "https://i.ytimg.com/vi/WQLlA73LMas/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=WQLlA73LMas&t=18s",
+      "body": "The Time Keeper用短距传送为飞镖、钩索或冲刺创造距离。移位服务于排队招式的射程要求，本身并非扫过场地的伤害。",
+      "video": "https://www.youtube.com/watch?v=WQLlA73LMas&t=18s",
+      "videoDurationSeconds": 163
+    },
+    {
+      "dimension": "3D",
+      "game": "Elden Ring",
+      "boss": "Astel, Naturalborn of the Void",
+      "screenshot": "https://i.ytimg.com/vi/dzrSCDUcFys/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=dzrSCDUcFys&t=85s",
+      "body": "Astel消失后可能从头顶重现并抓取。该例说明3D传送需要强烈到达音效、镜头搜索时间和独立后续提示：危险决定在移位后开始，且可能位于当前画面外。",
+      "video": "https://www.youtube.com/watch?v=dzrSCDUcFys&t=85s",
+      "videoDurationSeconds": 182
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

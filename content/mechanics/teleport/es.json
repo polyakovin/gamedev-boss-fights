@@ -1,0 +1,134 @@
+{
+  "title": "Teletransporte",
+  "subtitle": "Haz que la desaparición, el destino y la continuación se lean como una sola acción diseñada.",
+  "variant": "Una runa de destino precede a una reubicación sin colisión y a un golpe vertical fijo",
+  "summary": "Un teletransporte retira al jefe de una posición y lo devuelve en otra sin recorrido peligroso entre ambas.",
+  "overview": "El teletransporte es un cambio discontinuo, no un desplazamiento rápido. Kern se disuelve a los 0,55 s y la runa de destino aparece a los 0,72. Sin colisión corporal, el jefe se recompone allí a los 1,70 y ejecuta un golpe vertical fijo entre 2,36 y 2,72 s. Tavi lee el destino, sale del carril y aprovecha la apertura.",
+  "learning": "Implementa salida, ausencia, revelado del destino, reaparición, compromiso de la continuación, autoridad de colisión y reinicio como estados explícitos gobernados por un único registro de destino.",
+  "category": "Espacio, movimiento y percepción",
+  "readTime": "5 min",
+  "demo": {
+    "title": "Separa la reubicación del ataque posterior",
+    "timeline": "Cronología del teletransporte",
+    "step": "Estados del teletransporte",
+    "phaseNames": ["Revela el destino", "Reaparece y compromete", "Resuelve y reinicia"],
+    "phaseDescriptions": [
+      "A los 0,55 s Kern empieza a disolverse en el origen. A los 0,72 s una runa decreciente marca el punto exacto de reaparición; cuerpo y daño de contacto están ausentes entre 1,05 y 1,52 s.",
+      "Kern se recompone entre 1,52 y 1,70 s y muestra de inmediato un carril vertical fijo. Tavi se mueve de lado antes de que solo ese carril sea peligroso entre 2,36 y 2,72 s; no existe una ruta invisible entre los extremos.",
+      "El golpe termina antes de la apertura. Tavi puede acercarse para golpear con la espada a los 3,55 s; después Kern hace un teletransporte de reinicio no dañino y el bucle vuelve limpiamente al primer fotograma."
+    ],
+    "boss": "Jefe",
+    "player": "Jugador",
+    "danger": "Solo el carril sólido de continuación inflige daño",
+    "locked": "El destino queda fijado cuando aparece la runa a los 0,72 segundos",
+    "safe": "Lee primero el destino y sal después lateralmente del carril anunciado",
+    "reducedMotion": "Con movimiento reducido, la reproducción automática está desactivada. Recorre 0,55, 0,72, 1,05, 1,52, 1,70, 2,36 y 2,72 segundos para inspeccionar el contrato.",
+    "diagramDescription": "Un jefe de piedra rúnico se disuelve a la izquierda mientras aparece una runa de destino arriba a la derecha. El jefe está ausente entre ambos puntos, reaparece en la runa, muestra un carril vertical y ataca después de que el jugador con espada se aparte."
+  },
+  "steps": [
+    {
+      "title": "¿Cuándo se elige el destino?",
+      "body": "Captura un destino legal antes de desaparecer y mantenlo inmutable hasta la reaparición y la continuación. Valida límites, navegación, cámara, solapamiento con jugadores y espacio reservado antes de comprometerlo. En el ejemplo se revela a los 0,72 s y nunca se vuelve a apuntar."
+    },
+    {
+      "title": "¿Qué existe mientras el jefe está ausente?",
+      "body": "Desactiva cuerpo, daño de contacto, puntos de fijación y zonas vulnerables mediante un único estado autoritativo. Decide aparte si continúan estados, proyectiles, invocaciones y control de arena. La desaparición visual no debe dejar colisión invisible ni daño entre los puntos."
+    },
+    {
+      "title": "¿Qué sigue a la reaparición?",
+      "body": "Trata llegada y siguiente ataque como un solo paquete. Kern se recompone a los 1,70 s y muestra durante 0,66 s un carril guardado antes de 0,36 s de actividad. No puede solaparse con Tavi, el carril no sigue al jugador y la recuperación empieza con la colisión apagada."
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "El jefe aparece encima del jugador",
+      "body": "Un destino aleatorio conocido solo al llegar convierte la lectura espacial en adivinación y puede producir daño inevitable. Reserva espacio alrededor de jugadores, revela antes el punto o garantiza tiempo de salida tras la llegada."
+    },
+    {
+      "title": "El teletransporte es un desplazamiento oculto",
+      "body": "Una colisión que barre la línea entre extremos contradice la desaparición visible. Si el tránsito daña, muestra un rayo, estela, enlace de portales o cuerpo móvil y declara esa geometría de forma explícita."
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "Presupuesta información, no solo tiempo",
+      "body": "Mide por separado reconocimiento de salida, búsqueda del destino, viaje de cámara, elección de respuesta y despeje corporal. Una espera larga sigue siendo injusta si el punto está fuera de pantalla o se confunde con efectos."
+    },
+    {
+      "title": "Diseña políticas de destino",
+      "body": "Aleatorio no significa sin restricciones. Etiqueta puntos por distancia, ángulo, visibilidad, altura, uso reciente y compatibilidad con el ataque siguiente. La selección ponderada debe evitar repeticiones y combinaciones imposibles."
+    },
+    {
+      "title": "Conserva el estado durante el intervalo",
+      "body": "Guarda salud, fase, enfriamientos, objetivo, orientación y continuación antes de ocultar al actor. Red y rollback deben replicar el destino y la transición, no deducirlos por separado de los efectos."
+    },
+    {
+      "title": "Prueba cámara y bordes",
+      "body": "Ensaya destinos junto a paredes, plataformas, bordes de pantalla dividida, límites de fijación, invocaciones y varios jugadores. Verifica antes, durante y después de la ausencia, además de interrupción, muerte y reinicio."
+    }
+  ],
+  "story": {
+    "title": "Una runa se cierra y otra se abre",
+    "body": "Kern se deshace en fragmentos en el origen mientras otra runa vinculada se enciende. Esa misma runa canaliza el golpe siguiente y comunica dónde vuelve el elemental y qué espacio amenazará."
+  },
+  "adaptation": {
+    "title": "Deja que Tavi responda con movimiento normal",
+    "body": "Tavi no necesita un contraataque especial. La runa ofrece una lectura espacial temprana, el carril fijo permite un paso lateral y la recuperación conserva la respuesta familiar con espada."
+  },
+  "distinction": {
+    "title": "Reubicación discontinua, no excavación ni desplazamiento",
+    "body": "Un desplazamiento ocupa y cruza espacio intermedio. Excavar suele ocultar una fuente que recorre una ruta subterránea. El teletransporte no tiene tránsito colisionable; un portal puede mantener una conexión y un intercambio permuta actores o posiciones."
+  },
+  "lensNotes": [
+    {
+      "id": "telegraphing",
+      "body": "La runa aparece antes de la desaparición completa y converge en el punto exacto de reaparición de Kern."
+    },
+    {
+      "id": "threat-geometry",
+      "body": "Los extremos y el carril vertical posterior son geometría explícita; el intervalo nunca se convierte en una zona de impacto oculta."
+    },
+    {
+      "id": "commitment",
+      "body": "Destino, orientación y carril quedan almacenados al revelarse y no cambian hasta la liberación."
+    },
+    {
+      "id": "counterplay",
+      "body": "Tavi puede localizar el destino, sacar todo el cuerpo del carril y castigar solo cuando termina la colisión."
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "Hollow Knight",
+      "boss": "Nightmare King Grimm",
+      "screenshot": "https://i.ytimg.com/vi/7JWQ9KjwPyE/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=7JWQ9KjwPyE&t=15s",
+      "body": "Nightmare King Grimm desaparece y vuelve repetidamente en otra posición para iniciar un ataque reconocible. Destino y pose comunican rápido la continuación, de modo que la reubicación gestiona espacio y selección de ataque, no contacto en tránsito.",
+      "video": "https://www.youtube.com/watch?v=7JWQ9KjwPyE&t=15s",
+      "videoDurationSeconds": 140
+    },
+    {
+      "dimension": "2D",
+      "game": "Dead Cells",
+      "boss": "The Time Keeper",
+      "screenshot": "https://i.ytimg.com/vi/WQLlA73LMas/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=WQLlA73LMas&t=18s",
+      "body": "The Time Keeper usa teletransportes cortos para crear distancia antes de shurikens, gancho o carrera. La reubicación satisface el alcance de la acción en cola; no es un barrido dañino de la arena.",
+      "video": "https://www.youtube.com/watch?v=WQLlA73LMas&t=18s",
+      "videoDurationSeconds": 163
+    },
+    {
+      "dimension": "3D",
+      "game": "Elden Ring",
+      "boss": "Astel, Naturalborn of the Void",
+      "screenshot": "https://i.ytimg.com/vi/dzrSCDUcFys/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=dzrSCDUcFys&t=85s",
+      "body": "Astel desaparece y puede reaparecer arriba para agarrar. Muestra por qué un teletransporte 3D necesita audio de llegada, tiempo de búsqueda con cámara y una señal posterior diferenciada: el peligro empieza después y quizá fuera de plano.",
+      "video": "https://www.youtube.com/watch?v=dzrSCDUcFys&t=85s",
+      "videoDurationSeconds": 182
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}
