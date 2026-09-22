@@ -211,6 +211,18 @@ const SPECS = {
     activatesAt: 2.9,
     expiresAt: 4.0,
   },
+  'speed-change': {
+    mode: 'speed-change',
+    boss: [140, 620],
+    player: [405, 620],
+    target: [405, 790],
+    switchX: 260,
+    finishX: 440,
+    laneY: 620,
+    collisionRadius: 57,
+    switchAt: 2.8,
+    finishAt: 3.45,
+  },
   'wide-swing': { mode: 'arc', boss: [280, 310], player: [410, 470], target: [470, 650] },
   lunge: { mode: 'lunge', boss: [170, 290], player: [390, 590], target: [470, 660] },
   grab: { mode: 'grab', boss: [280, 300], player: [390, 485], target: [470, 610] },
@@ -537,6 +549,49 @@ function primitivesFor(spec, frame) {
           lit ? 0.5 : 0,
         );
       }),
+    ];
+  }
+  if (mode === 'speed-change') {
+    const accelerating = frame.time >= spec.switchAt && frame.time < spec.finishAt;
+    const moving = frame.time >= BLUEPRINT_PHASE_ENDS[0] && frame.time < spec.finishAt;
+    const lane = phase === 0 ? 0.36 + prepare * 0.35 : moving ? 0.28 : 0;
+    return [
+      rect(
+        73,
+        spec.laneY - spec.collisionRadius,
+        429,
+        spec.collisionRadius * 2,
+        lane,
+        'accent',
+        0.05,
+      ),
+      line(
+        spec.boss[0],
+        spec.laneY,
+        spec.finishX,
+        spec.laneY,
+        phase === 0 ? 0.7 : moving ? 0.22 : 0,
+        'accent',
+        5,
+        '14 12',
+      ),
+      path(
+        `M ${spec.switchX - 18} ${spec.laneY - 80} L ${spec.switchX} ${spec.laneY - 98} L ${spec.switchX + 18} ${spec.laneY - 80} M ${spec.switchX - 18} ${spec.laneY + 80} L ${spec.switchX} ${spec.laneY + 98} L ${spec.switchX + 18} ${spec.laneY + 80}`,
+        phase === 0 ? 0.45 + prepare * 0.32 : moving ? 0.84 : 0,
+        accelerating ? 'signal' : 'accent',
+        6,
+      ),
+      ...[-25, 0, 25].map((offset, index) =>
+        line(
+          boss.x - (accelerating ? 125 : 65) + index * 12,
+          boss.y + offset,
+          boss.x - 38,
+          boss.y + offset,
+          moving ? (accelerating ? 0.86 : 0.37) : 0,
+          accelerating ? 'signal' : 'accent',
+          accelerating ? 9 : 5,
+        ),
+      ),
     ];
   }
   if (mode === 'landing') {
@@ -1741,6 +1796,7 @@ function pointClearsThreat(spec, frame, value, radius = BLUEPRINT_PLAYER_RADIUS)
       );
   if (mode === 'delayed-activation')
     return Math.hypot(value.x - spec.rune[0], value.y - spec.rune[1]) > spec.radius + radius;
+  if (mode === 'speed-change') return distanceFromBoss > spec.collisionRadius + radius;
   if (mode === 'spiral')
     return (
       distanceFromBoss > 52 + radius &&
@@ -1874,6 +1930,20 @@ export function blueprintFrame(id, time) {
     const control = { x: 260, y: 105 };
     const flight = phase === 0 ? 0 : phase === 1 ? smooth(action / 0.52) : 1 - returnProgress;
     boss = quadraticPoint(startBoss, control, landing, flight);
+  } else if (spec.mode === 'speed-change') {
+    const x =
+      phase === 0
+        ? startBoss.x
+        : t < spec.switchAt
+          ? mix(
+              startBoss.x,
+              spec.switchX,
+              (t - BLUEPRINT_PHASE_ENDS[0]) / (spec.switchAt - BLUEPRINT_PHASE_ENDS[0]),
+            )
+          : t < spec.finishAt
+            ? mix(spec.switchX, spec.finishX, (t - spec.switchAt) / (spec.finishAt - spec.switchAt))
+            : mix(spec.finishX, startBoss.x, returnProgress);
+    boss = { x, y: spec.laneY };
   } else if (spec.mode === 'lunge') {
     const travel = phase === 0 ? 0 : phase === 1 ? smooth(action / 0.62) : 1 - recover;
     boss = { x: mix(170, 430, travel), y: mix(290, 590, travel) };
@@ -1922,6 +1992,7 @@ export function blueprintFrame(id, time) {
   else if (spec.mode === 'burst-fire') responseProgress = smooth((t - 1.6) / 0.75);
   else if (spec.mode === 'volley') responseProgress = smooth((t - 1.6) / 0.68);
   else if (spec.mode === 'delayed-activation') responseProgress = smooth((t - 1.7) / 0.9);
+  else if (spec.mode === 'speed-change') responseProgress = smooth((t - 1.6) / 0.7);
   else if (spec.mode === 'knockback')
     responseProgress = phase === 0 ? 0 : phase === 1 ? smooth(action) : 1;
   else if (spec.mode === 'target-lock')
@@ -2071,7 +2142,9 @@ export function blueprintFrame(id, time) {
                       ? t >= spec.release && t <= spec.release + spec.flight
                       : spec.mode === 'delayed-activation'
                         ? t >= spec.activatesAt && t < spec.expiresAt
-                        : phase === 1;
+                        : spec.mode === 'speed-change'
+                          ? t >= BLUEPRINT_PHASE_ENDS[0] && t < spec.finishAt
+                          : phase === 1;
   const frame = {
     id,
     mode: spec.mode,
@@ -2115,15 +2188,21 @@ export function blueprintFrame(id, time) {
       crouch: spec.mode === 'landing' ? (phase === 0 ? 0.42 * prepare : 0) : 0.2 * prepare,
       lift: spec.mode === 'landing' && phase === 1 ? pulse(clamp(action / 0.52)) : 0,
       attack:
-        spec.mode === 'volley' && phase === 1
-          ? Math.max(0, 1 - Math.abs(t - spec.release) / 0.36)
-          : spec.mode === 'burst-fire' && phase === 1
-            ? Math.max(
-                ...spec.releases.map((release) => Math.max(0, 1 - Math.abs(t - release) / 0.32)),
-              )
-            : phase === 1
-              ? 0.75
-              : prepare * 0.35,
+        spec.mode === 'speed-change'
+          ? dangerActive
+            ? t >= spec.switchAt
+              ? 1
+              : 0.55
+            : 0
+          : spec.mode === 'volley' && phase === 1
+            ? Math.max(0, 1 - Math.abs(t - spec.release) / 0.36)
+            : spec.mode === 'burst-fire' && phase === 1
+              ? Math.max(
+                  ...spec.releases.map((release) => Math.max(0, 1 - Math.abs(t - release) / 0.32)),
+                )
+              : phase === 1
+                ? 0.75
+                : prepare * 0.35,
       impact:
         spec.mode === 'landing'
           ? pulse(clamp((action - 0.42) / 0.22))

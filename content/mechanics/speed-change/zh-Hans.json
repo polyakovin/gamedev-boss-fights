@@ -1,0 +1,134 @@
+{
+  "title": "速度变化",
+  "subtitle": "行进时间改变，路线仍须清楚可读。",
+  "variant": "先慢后快的直线冲过",
+  "summary": "首领先标出直线路径，慢速经过前段，在同一路线上明显加速；玩家步行离开路径。",
+  "overview": "科恩标出一条固定通道及提速符文。路线锁定后，他以每秒100单位走过前120单位，再以约每秒277单位走过后180单位；他不转弯，也不扩大碰撞范围。塔维在科恩到达自己原先的位置前步行离开。移动结束后残影消失，下一轮恢复原来的慢速开场。",
+  "learning": "分别调整初速、提速提示和位置、末速、路线长度、玩家的避让余量及恢复时间。",
+  "category": "瞄准与节奏",
+  "readTime": "4 分钟",
+  "demo": {
+    "title": "观察速度切换",
+    "timeline": "攻击时间轴",
+    "step": "攻击阶段",
+    "phaseNames": ["标出通道", "慢速通过并提速", "停止与复位"],
+    "phaseDescriptions": [
+      "科恩预告固定的水平通道和提速符文，塔维站在前方。",
+      "科恩在1.6秒开始慢速通过，2.8秒到达发亮的符文后沿原路提速；塔维已离开身体碰撞范围。",
+      "科恩在3.45秒停下，危险结束，双方复位并再次从慢速开始。"
+    ],
+    "boss": "首领",
+    "player": "玩家",
+    "danger": "标出的路线会以两种速度经过",
+    "locked": "路线已固定；首领会在符文处提速",
+    "safe": "通道穿越已结束",
+    "reducedMotion": "启用减少动态效果后不会自动播放。请用时间轴滑块查看循环。",
+    "diagramDescription": "科恩先标出一条水平直线，1.6秒开始慢速通过，2.8秒在发光符文处提速但不转向。塔维在他到来之前向下步行离开。科恩于3.45秒停下，随后循环复位。"
+  },
+  "steps": [
+    {
+      "title": "变速前是否已承诺路线？",
+      "body": "移动前展示整条直线和提速符文。后半段仍走同一条路；突然拐弯会引入另一种瞄准规则。"
+    },
+    {
+      "title": "动态变化是否可辨？",
+      "body": "让慢速段持续到足以建立节奏，再在符文处切换速度。加亮残影说明加速，但不能偷偷放大碰撞体。"
+    },
+    {
+      "title": "玩家全身是否离开？",
+      "body": "比较科恩到达玩家旧位置的时间，与步行越过首领57单位半径加玩家24单位半径所需的时间。恢复前关闭危险，并重置慢速。"
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "悄悄提速",
+      "body": "没有预告的提速会惩罚已学会的节奏。提前标出阈值，并在真实切换时同步增强符文与残影。"
+    },
+    {
+      "title": "提速时又改变方向",
+      "body": "若科恩在符文处转弯，承诺的逃生路线就不成立。把速度变化与追踪和碰撞范围分别测试。"
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "明确两段速度",
+      "body": "前120单位用1.2秒，即每秒100单位；后180单位用0.65秒，约每秒277单位。调整节奏时保留鲜明对比。"
+    },
+    {
+      "title": "留足身体避让距离",
+      "body": "科恩57与塔维24单位的半径之和要求中心距离大于81单位。塔维在0.7秒内向下走170单位，完全离开通道。"
+    },
+    {
+      "title": "让地点与时刻一致",
+      "body": "科恩在2.8秒到达x=260时符文亮起。残影变化必须与位置曲线的斜率变化同步，而非独立倒计时。"
+    },
+    {
+      "title": "恢复原有基准",
+      "body": "3.45秒时移动和危险残影结束。恢复阶段回到起点，下一轮仍从慢速开始。"
+    }
+  ],
+  "story": {
+    "title": "用符文解释提速",
+    "body": "科恩的石足拖过地面，在跨越蓄能符文时爆发出更锐利的残影；世界观为特定位置的加速提供了原因。"
+  },
+  "adaptation": {
+    "title": "保留步行解法",
+    "body": "基本应对是及早沿垂直方向步行离开标示通道。闪避可挽救迟到者，但基础窗口不应要求冲刺或无敌帧。"
+  },
+  "distinction": {
+    "title": "将速度与其他强化分开",
+    "body": "冲锋固定路线；此处保留路线，只改变沿途速度。狂暴可能同时提升多项属性，战斗阶段可能更换整套招式；本课只检验一次速度切换。"
+  },
+  "lensNotes": [
+    {
+      "id": "telegraphing",
+      "body": "通道与阈值符文在开跑前说明路线及节奏变化的位置。"
+    },
+    {
+      "id": "threat-geometry",
+      "body": "只有移动的首领身体造成威胁；加速不会扩张身体或改变固定路线。"
+    },
+    {
+      "id": "counterplay",
+      "body": "玩家在快速段到达前步行横向离开已承诺的路径。"
+    },
+    {
+      "id": "difficulty-rhythm",
+      "body": "慢速起步建立预期，显眼的阈值缩短反应窗口，明确停下后留下喘息。"
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "The Legend of Zelda: Link's Awakening",
+      "boss": "Moldorm",
+      "video": "https://www.youtube.com/watch?v=U7FoVnTXgfs&t=27s",
+      "videoDurationSeconds": 3351,
+      "screenshot": "https://i.ytimg.com/vi/U7FoVnTXgfs/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=U7FoVnTXgfs&t=27s",
+      "body": "俯视视角中，Moldorm受击后加速，随后可能再次减速。它曲折的路径不同于科恩的直线；可借鉴的是同一首领明显改变移动速度。"
+    },
+    {
+      "dimension": "2D",
+      "game": "Hollow Knight",
+      "boss": "Nightmare King Grimm",
+      "video": "https://www.youtube.com/watch?v=7JWQ9KjwPyE&t=15s",
+      "videoDurationSeconds": 140,
+      "screenshot": "https://i.ytimg.com/vi/7JWQ9KjwPyE/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=7JWQ9KjwPyE&t=15s",
+      "body": "单独的梦魇遭遇沿用Grimm熟悉的动作，却明显更快；膨胀形态的火球也比此前更快。这比较的是两场战斗，不是一次攻击途中提速。"
+    },
+    {
+      "dimension": "3D",
+      "game": "Elden Ring",
+      "boss": "Dragonlord Placidusax",
+      "video": "https://www.youtube.com/watch?v=se4raf3je4o&t=240s",
+      "videoDurationSeconds": 355,
+      "screenshot": "https://i.ytimg.com/vi/se4raf3je4o/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=se4raf3je4o&t=240s",
+      "body": "阶段转换后Placidusax的节奏加快，迅速俯冲和传送改变了反应窗口。这是整阶段的速度变体，不是科恩路线上的单一阈值，因而需要单独预告。"
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

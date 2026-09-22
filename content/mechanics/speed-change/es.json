@@ -1,0 +1,134 @@
+{
+  "title": "Cambio de velocidad",
+  "subtitle": "Mantén clara la trayectoria aunque cambie el tiempo de recorrido.",
+  "variant": "Cruce lento que se acelera",
+  "summary": "El jefe anuncia un carril recto, recorre despacio el primer tramo y acelera de forma visible sin cambiar de ruta; el jugador sale andando del carril.",
+  "overview": "Kern señala un carril y la runa del cambio. Recorre 120 unidades a 100 unidades/s y otras 180 a unas 277 unidades/s. No gira ni amplía el área de daño. Tavi sale andando antes de que Kern llegue a su posición anterior. Al detenerse se borra la estela y el ciclo vuelve a empezar despacio.",
+  "learning": "Ajusta por separado la velocidad inicial, el aviso y lugar del cambio, la velocidad final, la longitud, el margen del jugador y la recuperación.",
+  "category": "Apuntado y ritmo",
+  "readTime": "4 min",
+  "demo": {
+    "title": "Observa el cambio de ritmo",
+    "timeline": "Línea de tiempo del ataque",
+    "step": "Fases del ataque",
+    "phaseNames": ["Marcar el carril", "Cruzar y acelerar", "Detenerse y reiniciar"],
+    "phaseDescriptions": [
+      "Kern muestra el carril horizontal fijo y la runa de aceleración mientras Tavi permanece delante.",
+      "Kern empieza despacio a los 1,6 s. A los 2,8 s acelera en la runa sin desviarse; Tavi ya ha salido del alcance de su cuerpo.",
+      "Kern se detiene a los 3,45 s, deja de ser peligroso y ambos vuelven al ritmo inicial."
+    ],
+    "boss": "Jefe",
+    "player": "Jugador",
+    "danger": "Una ruta marcada se recorrerá a dos velocidades",
+    "locked": "La ruta está fijada; el jefe acelerará en la runa",
+    "safe": "El cruce ha terminado",
+    "reducedMotion": "La reproducción automática se desactiva con movimiento reducido. Examina el ciclo con el deslizador.",
+    "diagramDescription": "Kern marca un carril recto, cruza despacio desde los 1,6 segundos y acelera al pasar por una runa brillante a los 2,8 segundos sin girar. Tavi sale andando hacia abajo antes de su llegada. Kern se detiene a los 3,45 segundos y el ciclo se reinicia."
+  },
+  "steps": [
+    {
+      "title": "¿Se anuncia la ruta antes del cambio?",
+      "body": "Muestra toda la recta y la runa de aceleración antes de mover a Kern. El segundo tramo conserva el recorrido; girar de repente introduciría otra regla de apuntado."
+    },
+    {
+      "title": "¿Se percibe la diferencia en movimiento?",
+      "body": "Deja que el tramo lento establezca un ritmo reconocible. Cambia la velocidad al cruzar la runa y refuerza la estela sin agrandar la colisión."
+    },
+    {
+      "title": "¿Se aparta por completo el jugador?",
+      "body": "Compara la llegada de Kern con el tiempo necesario para andar más allá de su radio corporal de 57 unidades y el radio de 24 de Tavi. Desactiva el peligro antes de recuperar y restablece la velocidad lenta."
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "Aceleración sin aviso",
+      "body": "Un cambio oculto castiga un ritmo ya aprendido. Indica el umbral con antelación y sincroniza el brillo de la runa y la estela con el cambio real."
+    },
+    {
+      "title": "Acelerar también cambia la dirección",
+      "body": "Si Kern gira en la runa, la salida prometida deja de servir. Comprueba la velocidad independientemente del seguimiento y del tamaño del área de daño."
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "Explicita las dos velocidades",
+      "body": "Los primeros 120 unidades duran 1,2 s (100 unidades/s); las 180 siguientes, 0,65 s (unas 277 unidades/s). Mantén visible el contraste al ajustar el ritmo."
+    },
+    {
+      "title": "Reserva margen para ambos cuerpos",
+      "body": "Los radios de Kern (57) y Tavi (24) exigen más de 81 unidades entre centros. Tavi baja 170 unidades en 0,7 s y sale del cruce."
+    },
+    {
+      "title": "Une lugar y momento",
+      "body": "La runa en x=260 se enciende cuando Kern la alcanza a los 2,8 s. La estela cambia al mismo tiempo que su velocidad, no según otro reloj."
+    },
+    {
+      "title": "Recupera el ritmo inicial",
+      "body": "Kern termina a los 3,45 s y la estela peligrosa desaparece. Al regresar al inicio, el siguiente ciclo vuelve a arrancar despacio."
+    }
+  ],
+  "story": {
+    "title": "Haz que la runa explique el impulso",
+    "body": "Los pies de piedra de Kern raspan el suelo hasta cruzar un glifo cargado. El signo destella y su estela se afila: el mundo explica el aumento de velocidad."
+  },
+  "adaptation": {
+    "title": "Conserva la salida andando",
+    "body": "La respuesta básica es salir pronto, perpendicularmente al carril. Una esquiva ayuda si se llega tarde, pero el tiempo base no debe exigir un impulso invulnerable."
+  },
+  "distinction": {
+    "title": "Aísla la velocidad de otras escaladas",
+    "body": "Una carga fija la trayectoria; aquí esa trayectoria se mantiene mientras cambia la velocidad. La furia puede alterar varias estadísticas y una nueva fase cambiar todo el repertorio. Esta lección aísla un solo cambio de velocidad."
+  },
+  "lensNotes": [
+    {
+      "id": "telegraphing",
+      "body": "El carril y el glifo indican de antemano tanto el recorrido como el lugar donde cambia el ritmo."
+    },
+    {
+      "id": "threat-geometry",
+      "body": "Solo hace daño el cuerpo en movimiento; ni su tamaño ni la ruta crecen con la velocidad."
+    },
+    {
+      "id": "counterplay",
+      "body": "El jugador sale andando en perpendicular antes de que llegue el tramo rápido."
+    },
+    {
+      "id": "difficulty-rhythm",
+      "body": "El comienzo lento establece una expectativa; el umbral acorta la reacción y una parada clara deja una pausa."
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "The Legend of Zelda: Link's Awakening",
+      "boss": "Moldorm",
+      "video": "https://www.youtube.com/watch?v=U7FoVnTXgfs&t=27s",
+      "videoDurationSeconds": 3351,
+      "screenshot": "https://i.ytimg.com/vi/U7FoVnTXgfs/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=U7FoVnTXgfs&t=27s",
+      "body": "Moldorm acelera tras recibir golpes y puede volver a bajar el ritmo. Su ruta serpentea, a diferencia de la recta de Kern; lo comparable es el cambio visible de velocidad del mismo jefe."
+    },
+    {
+      "dimension": "2D",
+      "game": "Hollow Knight",
+      "boss": "Nightmare King Grimm",
+      "video": "https://www.youtube.com/watch?v=7JWQ9KjwPyE&t=15s",
+      "videoDurationSeconds": 140,
+      "screenshot": "https://i.ytimg.com/vi/7JWQ9KjwPyE/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=7JWQ9KjwPyE&t=15s",
+      "body": "Este combate separado reutiliza ataques reconocibles de Grimm a mayor ritmo; incluso las bolas del ataque Pufferfish viajan más deprisa. Compara dos encuentros, no una aceleración dentro de un ataque."
+    },
+    {
+      "dimension": "3D",
+      "game": "Elden Ring",
+      "boss": "Dragonlord Placidusax",
+      "video": "https://www.youtube.com/watch?v=se4raf3je4o&t=240s",
+      "videoDurationSeconds": 355,
+      "screenshot": "https://i.ytimg.com/vi/se4raf3je4o/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=se4raf3je4o&t=240s",
+      "body": "Después del cambio de fase sube el ritmo de Placidusax y aparecen picados y teletransportes rápidos. Es una variación de toda la fase, no el umbral único de Kern; requiere su propio aviso."
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

@@ -405,9 +405,9 @@ test('volley releases three parallel bolts on one beat and clears its outside ro
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
 });
 
-test('catalog and builder reuse the 44 promoted rule-specific previews', async ({ page }) => {
+test('catalog and builder reuse the 45 promoted rule-specific previews', async ({ page }) => {
   await page.goto('en/');
-  await expect(page.locator('[data-blueprint-preview]')).toHaveCount(44);
+  await expect(page.locator('[data-blueprint-preview]')).toHaveCount(45);
   const catalogLayouts = await page.locator('[data-blueprint-preview]').evaluateAll((previews) =>
     previews.map((preview) => {
       const boss = preview.querySelector('[data-character-art-preview="kern"]');
@@ -431,7 +431,7 @@ test('catalog and builder reuse the 44 promoted rule-specific previews', async (
   expect(new Set(catalogLayouts.map(({ layout }) => layout)).size).toBeGreaterThanOrEqual(18);
 
   await page.goto('en/builder/');
-  await expect(page.locator('[data-blueprint-preview]')).toHaveCount(44);
+  await expect(page.locator('[data-blueprint-preview]')).toHaveCount(45);
   const builderLayouts = await page.locator('[data-blueprint-preview]').evaluateAll((previews) =>
     previews.map((preview) => {
       const boss = preview.querySelector('[data-character-art-preview="kern"]');
@@ -482,6 +482,41 @@ test('delayed rune warns harmlessly, ignites on its fixed beat, and extinguishes
   await expect(widget).toHaveAttribute('data-blueprint-outcome', 'safe');
   await seek(4000);
   await expect(ring).toHaveAttribute('class', warning);
+  await page.setViewportSize({ width: 375, height: 812 });
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+});
+
+test('speed change keeps its lane while the boss accelerates past a visible rune', async ({
+  page,
+}) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.goto('en/mechanics/speed-change/');
+  const widget = page.locator('[data-blueprint-demo]');
+  const timeline = widget.locator('[data-blueprint-timeline]');
+  const boss = widget.locator('[data-blueprint-boss]');
+  const rune = widget.locator('[data-blueprint-primitive="2"] path');
+  const seek = (milliseconds) =>
+    timeline.evaluate((element, value) => {
+      element.value = String(value);
+      element.dispatchEvent(new Event('input', { bubbles: true }));
+    }, milliseconds);
+  await expect(page.locator('.wip-badge, .draft-profile')).toHaveCount(0);
+  await expect(page.locator('.game-example')).toHaveCount(3);
+  await expect(widget).toHaveAttribute('data-blueprint-ready', 'true');
+  await expect(widget).toHaveAttribute('data-blueprint-playing', 'false');
+  await seek(2300);
+  await expect(widget).toHaveAttribute('data-blueprint-outcome', 'safe');
+  const slowBoss = await boss.getAttribute('transform');
+  const quietRune = await rune.getAttribute('class');
+  await seek(3100);
+  await expect(widget).toHaveAttribute('data-blueprint-outcome', 'safe');
+  await expect(boss).not.toHaveAttribute('transform', slowBoss);
+  await expect(rune).not.toHaveAttribute('class', quietRune);
+  await seek(3450);
+  await expect(widget.locator('[data-blueprint-primitive="3"] line')).toHaveAttribute(
+    'opacity',
+    '0',
+  );
   await page.setViewportSize({ width: 375, height: 812 });
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
 });

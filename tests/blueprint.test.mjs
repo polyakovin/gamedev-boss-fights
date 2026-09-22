@@ -14,8 +14,8 @@ import {
   renderBlueprintThumbnail,
 } from '../lib/blueprint-view.mjs';
 
-test('all 44 promoted lesson animations have distinct rule modes and complete moving frames', () => {
-  assert.equal(BLUEPRINT_MECHANIC_IDS.length, 44);
+test('all 45 promoted lesson animations have distinct rule modes and complete moving frames', () => {
+  assert.equal(BLUEPRINT_MECHANIC_IDS.length, 45);
   const modes = new Set();
   for (const id of BLUEPRINT_MECHANIC_IDS) {
     for (let time = 0; time <= BLUEPRINT_DURATION; time += 0.1) {
@@ -36,7 +36,7 @@ test('all 44 promoted lesson animations have distinct rule modes and complete mo
           assert.ok(Number.isFinite(value), `${id} has an invalid ${primitive.type}`);
     }
   }
-  assert.equal(modes.size, 44);
+  assert.equal(modes.size, 45);
 });
 
 test('every blueprint exposes signal, committed action, and recovery without player teleports', () => {
@@ -80,6 +80,7 @@ test('every promoted animation derives safety from its own active geometry', () 
     'burst-fire': null,
     volley: null,
     'delayed-activation': { x: 350, y: 630 },
+    'speed-change': null,
     'wide-swing': { x: 280, y: 515 },
     lunge: { x: 300, y: 440 },
     grab: { x: 390, y: 485 },
@@ -115,6 +116,8 @@ test('every promoted animation derives safety from its own active geometry', () 
     } else if (!point && id === 'single-shot') {
       const projectile = frame.primitives[2];
       point = { x: projectile.x, y: projectile.y };
+    } else if (!point && id === 'speed-change') {
+      point = frame.boss;
     } else if (!point && id === 'crossfire') {
       const projectile = frame.primitives[4];
       point = { x: projectile.x, y: projectile.y };
@@ -824,6 +827,42 @@ test('delayed rune remains safe through its countdown, then activates at its fix
   assert.match(
     renderBlueprintThumbnail(id, 'test-delayed-activation'),
     /data-blueprint-preview="delayed-activation"/,
+  );
+});
+
+test('speed change keeps one route, accelerates at its rune, and clears the whole player', () => {
+  const id = 'speed-change';
+  const spec = blueprintSpec(id);
+  assert.equal(spec.switchX, 260);
+  assert.equal(spec.switchAt, 2.8);
+  assert.equal(spec.finishAt, 3.45);
+  assert.equal(blueprintFrame(id, 1.6).boss.x, 140);
+  assert.equal(blueprintFrame(id, 2.8).boss.x, 260);
+  assert.equal(blueprintFrame(id, 3.45).boss.x, 440);
+  const slowDistance = blueprintFrame(id, 2.4).boss.x - blueprintFrame(id, 2.3).boss.x;
+  const fastDistance = blueprintFrame(id, 3.1).boss.x - blueprintFrame(id, 3).boss.x;
+  assert.ok(fastDistance > slowDistance * 2.7);
+  for (const time of [0, 1.59, 1.6, 2.79, 2.8, 3.44, 3.45, 4.3, 5.8]) {
+    const frame = blueprintFrame(id, time);
+    assert.equal(frame.boss.y, spec.laneY);
+    assert.equal(frame.dangerActive, time >= 1.6 && time < 3.45);
+    assert.equal(frame.playerSafe, true);
+    assert.equal(blueprintPointSafe(id, time, frame.boss), !frame.dangerActive);
+    assert.equal(frame.primitives[0].rectHeight, 114);
+  }
+  assert.equal(blueprintFrame(id, 2.79).primitives[2].tone, 'accent');
+  assert.equal(blueprintFrame(id, 2.8).primitives[2].tone, 'signal');
+  assert.ok(blueprintFrame(id, 3.15).primitives[3].opacity > 0.8);
+  assert.equal(blueprintFrame(id, 3.45).primitives[3].opacity, 0);
+  const bossX = blueprintFrame(id, 3.1).boss.x;
+  assert.equal(blueprintPointSafe(id, 3.1, { x: bossX, y: 700 }), false);
+  assert.equal(blueprintPointSafe(id, 3.1, { x: bossX, y: 703 }), true);
+  for (let time = 0; time < 6; time += 0.02)
+    assert.equal(blueprintFrame(id, time).playerSafe, true, `full-body clearance at ${time}`);
+  assert.deepEqual(blueprintFrame(id, 0).boss, blueprintFrame(id, 6).boss);
+  assert.match(
+    renderBlueprintThumbnail(id, 'test-speed-change'),
+    /data-blueprint-preview="speed-change"/,
   );
 });
 

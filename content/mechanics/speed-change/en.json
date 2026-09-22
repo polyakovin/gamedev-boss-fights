@@ -1,0 +1,134 @@
+{
+  "title": "Speed change",
+  "subtitle": "Keep the route legible while its travel time changes.",
+  "variant": "Slow-to-fast lane crossing",
+  "summary": "The boss marks one straight crossing, travels its first segment slowly, then visibly accelerates on the same line while the player walks outside the lane.",
+  "overview": "Kern announces a straight lane and a speed-change rune. Once committed, he crosses 120 units at 100 units per second, then 180 at about 277. He never turns or expands his hitbox. Tavi walks clear before Kern reaches her former position. He stops, the trail clears, and the next loop restores the slow pace.",
+  "learning": "Tune initial speed, the cue and position of acceleration, final speed, route length, player clearance, and recovery independently.",
+  "category": "Targeting and rhythm",
+  "readTime": "4 min",
+  "demo": {
+    "title": "Inspect the pace change",
+    "timeline": "Attack timeline",
+    "step": "Attack phases",
+    "phaseNames": ["Mark the lane", "Slow crossing, then acceleration", "Stop and reset"],
+    "phaseDescriptions": [
+      "Kern shows one fixed horizontal lane and its speed-change rune while Tavi stands ahead of him.",
+      "At 1.6 s Kern starts crossing slowly. At the visible rune at 2.8 s he accelerates on the same route; Tavi has walked clear of his body.",
+      "Kern stops at 3.45 s, his live threat ends, and both characters reset for the original slow opening."
+    ],
+    "boss": "Boss",
+    "player": "Player",
+    "danger": "A marked route will be crossed at two different speeds",
+    "locked": "The route is fixed; the runner accelerates at the rune",
+    "safe": "The crossing has ended",
+    "reducedMotion": "Autoplay is disabled by the reduced-motion setting. Use the timeline slider to inspect the loop.",
+    "diagramDescription": "Kern marks a straight horizontal lane, begins crossing slowly at 1.6 seconds, then gains speed at its glowing rune at 2.8 seconds without changing direction. Tavi walks down out of the lane before Kern arrives. Kern stops at 3.45 seconds, and the loop resets."
+  },
+  "steps": [
+    {
+      "title": "Is the route promised before the pace changes?",
+      "body": "Mark the whole straight lane and the acceleration rune before Kern moves. The second segment must use the same path; a late turn would create a separate aiming rule."
+    },
+    {
+      "title": "Can the change be read in motion?",
+      "body": "Let Kern travel the first segment long enough to establish its slow pace, then change his velocity at the glowing rune. Shorter, brighter motion trails make the fast segment legible without enlarging his collision body."
+    },
+    {
+      "title": "Does the player clear the actual body?",
+      "body": "Check the time Kern reaches the player's former position against ordinary walking time beyond his 57-unit body radius plus the player's 24-unit radius. Stop the hazard before recovery, then restore the same slow starting speed."
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "The boss silently speeds up",
+      "body": "An unannounced acceleration turns a learned timing into a trap. Preview the switch location and accompany the speed shift with an immediate change in trail and rune brightness."
+    },
+    {
+      "title": "Acceleration also retargets",
+      "body": "If Kern changes direction at the rune, the player cannot rely on the promised escape. Test the velocity change separately from tracking or a wider hitbox."
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "Keep the two velocities explicit",
+      "body": "The first 120 units take 1.2 seconds (100 units/s). The next 180 take 0.65 seconds (about 277 units/s). Preserve those distances when tuning the cadence so the contrast is visible."
+    },
+    {
+      "title": "Check full-body clearance",
+      "body": "The boss's 57-unit collision radius plus Tavi's 24-unit radius calls for more than 81 units of center separation. Tavi moves 170 units downward in 0.7 seconds and remains outside the horizontal crossing."
+    },
+    {
+      "title": "Make the switch a place and a beat",
+      "body": "At x=260 the rune brightens when Kern crosses it at 2.8 seconds. Both visual events coincide with the slope change of his position over time, not with an arbitrary effect timer."
+    },
+    {
+      "title": "Reset the learned baseline",
+      "body": "Kern's movement ends at 3.45 seconds; the danger trail vanishes. Recovery returns him to the start, so the next loop again opens slowly rather than inheriting the fast speed."
+    }
+  ],
+  "story": {
+    "title": "Give the acceleration a rune",
+    "body": "Kern's stone feet grind across the floor until he passes a charged threshold glyph. The glyph flares and his wake sharpens: the setting explains why this particular crossing suddenly gets faster."
+  },
+  "adaptation": {
+    "title": "Keep walking viable",
+    "body": "The intended answer is to leave the announced lane early by ordinary movement. A dodge can rescue a late response, but the baseline timing must not assume a dash or invulnerability."
+  },
+  "distinction": {
+    "title": "Isolate speed from other escalations",
+    "body": "Charge commits a path; this rule keeps that path and changes the movement rate along it. Enrage may raise many stats at once; a fight phase may replace an entire move set. Here a single velocity switch is the teaching variable."
+  },
+  "lensNotes": [
+    {
+      "id": "telegraphing",
+      "body": "The lane and threshold glyph warn where the boss will run and where the cadence will break before either segment becomes dangerous."
+    },
+    {
+      "id": "threat-geometry",
+      "body": "Only the boss's moving body is dangerous; its footprint and fixed route do not grow when its speed increases."
+    },
+    {
+      "id": "counterplay",
+      "body": "The player walks perpendicular to the committed route before the faster segment can arrive."
+    },
+    {
+      "id": "difficulty-rhythm",
+      "body": "A slow opening establishes an expectation, a visible threshold tightens the remaining reaction time, and a clean stop restores a useful beat."
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "The Legend of Zelda: Link's Awakening",
+      "boss": "Moldorm",
+      "video": "https://www.youtube.com/watch?v=U7FoVnTXgfs&t=27s",
+      "videoDurationSeconds": 3351,
+      "screenshot": "https://i.ytimg.com/vi/U7FoVnTXgfs/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=U7FoVnTXgfs&t=27s",
+      "body": "The top-down Moldorm moves faster after hits and can slow again. Unlike Kern's fixed straight crossing, its path wanders; the reusable ingredient is a conspicuous change of travel speed on the same visible boss."
+    },
+    {
+      "dimension": "2D",
+      "game": "Hollow Knight",
+      "boss": "Nightmare King Grimm",
+      "video": "https://www.youtube.com/watch?v=7JWQ9KjwPyE&t=15s",
+      "videoDurationSeconds": 140,
+      "screenshot": "https://i.ytimg.com/vi/7JWQ9KjwPyE/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=7JWQ9KjwPyE&t=15s",
+      "body": "This separate nightmare encounter reuses Grimm's recognisable attacks at a faster pace; even the Pufferfish fireballs move faster than in the earlier fight. It is a comparison across two encounters, not a mid-attack acceleration."
+    },
+    {
+      "dimension": "3D",
+      "game": "Elden Ring",
+      "boss": "Dragonlord Placidusax",
+      "video": "https://www.youtube.com/watch?v=se4raf3je4o&t=240s",
+      "videoDurationSeconds": 355,
+      "screenshot": "https://i.ytimg.com/vi/se4raf3je4o/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=se4raf3je4o&t=240s",
+      "body": "After the phase change, Placidusax's tempo increases and new rapid dives and teleports alter the response window. This is a whole-phase speed variant, not Kern's single predetermined threshold, and must be telegraphed accordingly."
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

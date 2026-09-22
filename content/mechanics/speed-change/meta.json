@@ -1,0 +1,24 @@
+{
+  "id": "speed-change",
+  "number": 51,
+  "published": true,
+  "sourceLocale": "en",
+  "contentVersion": 1,
+  "animation": "speed-change",
+  "lenses": ["telegraphing", "threat-geometry", "counterplay", "difficulty-rhythm"],
+  "related": ["charge", "enrage", "fight-phase"],
+  "sources": [
+    {
+      "title": "Moldorm (Boss) · Zelda Wiki",
+      "url": "https://www.zeldawiki.wiki/wiki/Moldorm_(Boss)"
+    },
+    {
+      "title": "Nightmare King Grimm · Hollow Knight Wiki",
+      "url": "https://www.hollowknight.wiki/w/Nightmare_King_Grimm"
+    },
+    {
+      "title": "Dragonlord Placidusax · Elden Ring boss guide",
+      "url": "https://game8.co/games/Elden-Ring/archives/371752"
+    }
+  ]
+}
