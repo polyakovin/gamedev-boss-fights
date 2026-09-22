@@ -1,0 +1,134 @@
+{
+  "title": "Limited spread",
+  "subtitle": "Vary each shot without moving the promised outer boundary.",
+  "variant": "Three shots inside a locked cone",
+  "summary": "The boss announces a narrow cone, then sends three separately aimed projectiles through different angles within its fixed edges.",
+  "overview": "Limited spread varies a projectile's direction inside a fixed angular range rather than across the entire arena. Kern marks the cone before firing, so Tavi can walk beyond its outer edge; the three shots differ, but none may escape the promised bounds. The final shot passes before the boss settles and the player can re-enter.",
+  "learning": "Tune the cone angle, emitter, projectile radius, release cadence, flight time, warning duration, and ordinary walking clearance as one contract.",
+  "category": "Targeting and rhythm",
+  "readTime": "4 min",
+  "demo": {
+    "title": "Inspect the bounded spread",
+    "timeline": "Attack timeline",
+    "step": "Attack phases",
+    "phaseNames": ["Mark the cone", "Three varied shots", "Clear the last shot"],
+    "phaseDescriptions": [
+      "Kern leans forward and outlines a 0.2-radian half-angle cone from one visible emitter. Tavi stands near its centerline.",
+      "The direction locks at 1.6 s. Shots launch at 1.85, 2.4, and 2.95 s with different offsets, all inside the same marked cone; Tavi walks right beyond the outer edge.",
+      "The final projectile expires at 4.25 s. The danger and warning clear, Kern settles, and the pair return visibly for the next loop."
+    ],
+    "boss": "Boss",
+    "player": "Player",
+    "danger": "Several shots can land anywhere within the announced cone",
+    "locked": "The sector stays fixed; each shot takes a different path inside it",
+    "safe": "The last projectile has passed",
+    "reducedMotion": "Autoplay is disabled by the reduced-motion setting. Use the timeline slider to inspect the loop.",
+    "diagramDescription": "Kern marks a downward cone with two stable edges. He fires three projectiles from the same rune at different angles inside the cone. Tavi walks right outside the cone before a shot could cross her former line; the last projectile clears at 4.25 seconds and both reset."
+  },
+  "steps": [
+    {
+      "title": "Are the outer limits truthful?",
+      "body": "Calculate both cone edges from the same emitter and axis used for every released direction. Lock the axis at commitment, and clamp each angle to plus or minus 0.2 radians. A decorative narrow warning over a wider random distribution would break the promise."
+    },
+    {
+      "title": "Does variation change the decision?",
+      "body": "Release three single projectiles at 1.85, 2.4, and 2.95 seconds with distinct offsets inside the sector. Show their origins and travel; unlike a simultaneous fan, the exact interior lanes vary from shot to shot, while walking around the whole envelope remains reliable."
+    },
+    {
+      "title": "Can the whole player clear it in time?",
+      "body": "At Tavi's starting depth, the right edge is about 348 units from the left wall. Add the 18-unit projectile radius and Tavi's 24-unit radius: her center must get beyond about x=390. She reaches x=465 by 2.28 seconds, before the first shot reaches that depth."
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "A random shot escapes the signal",
+      "body": "If the projectile offset is sampled after drawing a smaller cone, the player can be hit while apparently outside danger. Derive rendering, sampling bounds, and collision from one spread specification."
+    },
+    {
+      "title": "The last projectile vanishes too early",
+      "body": "Ending danger when the boss lowers its arm, instead of after the final flight, creates a false recovery cue. Keep the last shot live through its full 1.3-second flight."
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "Bound the variation",
+      "body": "The demonstration uses offsets of -0.15, +0.12, and -0.04 radians around a downward axis. All three sit inside plus or minus 0.2 radians. A seeded sequence makes scrubbing deterministic; a production random sampler must obey the same bound."
+    },
+    {
+      "title": "Measure the edge at the player",
+      "body": "The emitter is at (280, 332), Tavi starts at (280, 660), and the right edge at y=660 is about x=347. At that depth, add both collision radii (18 + 24) before declaring an outside route safe."
+    },
+    {
+      "title": "Preserve a reachable response",
+      "body": "Tavi walks 185 units laterally in 0.68 seconds after commitment. She crosses the conservative outer clearance before the first projectile's 1.3-second flight can reach her original depth; no invulnerability window is assumed."
+    },
+    {
+      "title": "Let every shot finish",
+      "body": "The release spacing is 0.55 seconds and the third projectile expires at 4.25 seconds. Recover only after the complete barrage, so the visible final threat and safe label agree."
+    }
+  ],
+  "story": {
+    "title": "Use two runes as the rangefinder",
+    "body": "Kern's cracked palm gathers three pebbles while two floor-bound rune rays frame their possible paths. The stones break away one by one; none can slip outside the runes' fixed boundary."
+  },
+  "adaptation": {
+    "title": "Keep a walking route outside the wedge",
+    "body": "Leave enough lateral arena space for the player and projectile radii beyond at least one edge. Faster dodges may cross between individual shots, but the baseline response should work with ordinary movement."
+  },
+  "distinction": {
+    "title": "Distinguish bounded scatter from a fan",
+    "body": "Projectile fan announces several fixed rays at once. Burst fire repeats shots along one ray. Limited spread allows successive shots to take different directions inside one committed sector; splitting projectile instead changes one projectile into several after launch."
+  },
+  "lensNotes": [
+    {
+      "id": "telegraphing",
+      "body": "Two visible edge rays announce the maximum possible shot deviation before the first release."
+    },
+    {
+      "id": "threat-geometry",
+      "body": "The sector describes possible trajectories; only the live projectile circles deal damage, with player and shot radii included."
+    },
+    {
+      "id": "counterplay",
+      "body": "Walking beyond an outer edge beats all allowed angle samples, whereas reading an accidental interior gap is less robust."
+    },
+    {
+      "id": "difficulty-rhythm",
+      "body": "Three spaced releases create uncertain interior lanes while a fixed final expiry provides a clean recovery beat."
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "Enter the Gungeon",
+      "boss": "Gatling Gull",
+      "video": "https://www.youtube.com/watch?v=7bLWV9-ihmI&t=128s",
+      "videoDurationSeconds": 4025,
+      "screenshot": "https://blogthumbnail.fc2.com/760x420/114/g/a/m/gamecolumn/WS000860_2017080109474950b.jpg",
+      "screenshotSource": "https://gamecolumn.jp/blog-entry-51824.html",
+      "body": "Gatling Gull's rapid shots wander within a spread toward a selected direction. This top-down example demonstrates a changing interior path, though the game does not draw Kern's explicit warning edges."
+    },
+    {
+      "dimension": "2D",
+      "game": "Enter the Gungeon",
+      "boss": "Treadnaught",
+      "video": "https://www.youtube.com/watch?v=9cjol5OrK6s&t=25s",
+      "videoDurationSeconds": 100,
+      "screenshot": "https://cdn.cloudflare.steamstatic.com/steam/apps/311690/ss_33186be82e82ee1053b636fa4c00283947b5a868.1920x1080.jpg?t=1651689180",
+      "screenshotSource": "https://store.steampowered.com/app/311690/Enter_the_Gungeon/",
+      "body": "The corner turrets independently send short sequences vaguely toward the player while the tank continues its other actions. They provide a second bounded directional variation, but not Kern's isolated and explicitly outlined cone."
+    },
+    {
+      "dimension": "3D",
+      "game": "Returnal",
+      "boss": "Ixion",
+      "video": "https://www.youtube.com/watch?v=IO0AB3Hg5cc&t=61s",
+      "videoDurationSeconds": 449,
+      "screenshot": "https://i.ytimg.com/vi/IO0AB3Hg5cc/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=IO0AB3Hg5cc&t=61s",
+      "body": "Ixion projects a cone of blue bullets during the opening phase. In 3D the readable boundary is a volumetric spread viewed from behind the player, not a flat pair of floor rays."
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

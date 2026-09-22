@@ -1,0 +1,134 @@
+{
+  "title": "有限散射",
+  "subtitle": "让每发弹丸偏转，但不改变预告的外边界。",
+  "variant": "固定扇区内的三次射击",
+  "summary": "首领先标出狭窄扇区，再以不同角度依次射出三发弹丸；弹丸始终留在固定边界内。",
+  "overview": "有限散射允许每发弹丸在固定角度范围内改变方向，而不是覆盖整个场地。Kern 先标出扇区，Tavi 因而能步行离开外边界。三发弹丸的路径不同，但都遵守预告的范围。最后一发消失后，首领收势，玩家才返回。",
+  "learning": "把扇区角度、发射点、碰撞半径、发射节奏、飞行时间、预警时长与步行净空作为一套规则调整。",
+  "category": "瞄准与节奏",
+  "readTime": "4 分钟",
+  "demo": {
+    "title": "观察散射边界",
+    "timeline": "攻击时间轴",
+    "step": "攻击阶段",
+    "phaseNames": ["标出扇区", "三发不同弹丸", "最后一发消失"],
+    "phaseDescriptions": [
+      "Kern 前倾，从可见的发射点标出半角为 0.2 弧度的扇区。Tavi 站在中心轴附近。",
+      "方向在 1.6 秒锁定。弹丸分别于 1.85、2.4、2.95 秒以不同偏角发射，但都在同一扇区内；Tavi 向右步行越过外边界。",
+      "最后一发在 4.25 秒消失。威胁与标记撤去，Kern 收势，两名角色可见地返回下一轮起点。"
+    ],
+    "boss": "首领",
+    "player": "玩家",
+    "danger": "弹丸可能穿过预告扇区中的不同位置",
+    "locked": "扇区不动，每发弹丸的路径不同",
+    "safe": "最后一发已消失",
+    "reducedMotion": "系统的减少动态效果设置已关闭自动播放。请用时间轴滑块查看循环。",
+    "diagramDescription": "Kern 标出一个朝下且两侧固定的扇区，随后从同一符文发射三发沿扇区内不同路线移动的弹丸。Tavi 在弹丸到达原先高度前向右走出边界。最后一发在 4.25 秒消失，角色回到起点。"
+  },
+  "steps": [
+    {
+      "title": "外边界是否真实？",
+      "body": "预警边界与每发弹丸都应使用同一个发射点和中心轴。攻击承诺后锁定轴向，并将偏角限制在 ±0.2 弧度。若随机方向比标记更宽，玩家会在看似安全的位置受击。"
+    },
+    {
+      "title": "变化是否影响决策？",
+      "body": "分别在 1.85、2.4、2.95 秒发射单独弹丸，并赋予不同偏角。显示发射点和飞行路径：与同时发射的固定扇形不同，内部通道逐发变化，但绕过整个扇区仍然可靠。"
+    },
+    {
+      "title": "玩家的整个身体能及时撤离吗？",
+      "body": "在 Tavi 起始高度，右边界约为 x=347。再加上弹丸半径 18 与玩家半径 24，其中心必须超过约 x=390。她在约 2.28 秒到达 x=465，早于第一发到达该高度。"
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "随机弹丸越过预警范围",
+      "body": "若取样范围大于画出的扇区，视觉提示就会失真。用同一份散射数据计算预警、弹道和碰撞。"
+    },
+    {
+      "title": "最后一发过早消失",
+      "body": "首领放下手臂不代表弹丸已经消失。让第三发完整飞行 1.3 秒，再显示恢复阶段。"
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "限制偏角",
+      "body": "演示采用相对向下轴线的 −0.15、+0.12、−0.04 弧度偏角，都落在 ±0.2 内。固定样本便于重复拖动时间轴；正式游戏的随机取样也必须遵守同一边界。"
+    },
+    {
+      "title": "在玩家高度测量边缘",
+      "body": "发射点是 (280, 332)，Tavi 从 (280, 660) 开始。右边界在 y=660 约为 x=347；判定安全前还需计入双方半径 18 + 24。"
+    },
+    {
+      "title": "保留步行可达的回答",
+      "body": "锁定后 Tavi 在 0.68 秒内横移 185 单位，早于第一发到达她原来的高度。基本逃生不依赖无敌时间。"
+    },
+    {
+      "title": "等待每发弹丸结束",
+      "body": "发射间隔是 0.55 秒，第三发在 4.25 秒消失。完整齐射结束后再恢复，安全状态才与画面一致。"
+    }
+  ],
+  "story": {
+    "title": "用两道符文标定范围",
+    "body": "Kern 裂开的手掌聚起三块小石，两道地面符文界定它们的可能路径。石块依次飞出，没有一块能越过固定边界。"
+  },
+  "adaptation": {
+    "title": "在扇区外留出步行空间",
+    "body": "至少在一侧保留加上玩家与弹丸半径后的横向余地。冲刺可穿过内部空隙，但基础解法应该只靠步行。"
+  },
+  "distinction": {
+    "title": "区分散射与固定扇形",
+    "body": "弹幕扇形同时给出多个固定射线；连射沿同一射线重复。有限散射的连续弹丸可在固定扇区内取不同方向；分裂弹丸则在发射后才变成多个。"
+  },
+  "lensNotes": [
+    {
+      "id": "telegraphing",
+      "body": "首次发射前，两条可见边界就已说明最大偏转量。"
+    },
+    {
+      "id": "threat-geometry",
+      "body": "扇区表示可能的轨迹；真正造成伤害的是活动弹丸，并需计入双方半径。"
+    },
+    {
+      "id": "counterplay",
+      "body": "离开外边界可应对任何允许的偏角；依赖内部偶然空隙则不稳定。"
+    },
+    {
+      "id": "difficulty-rhythm",
+      "body": "三次间隔射击改变内部通道，确定的结束时间则留下清晰的恢复节拍。"
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "Enter the Gungeon",
+      "boss": "Gatling Gull",
+      "video": "https://www.youtube.com/watch?v=7bLWV9-ihmI&t=128s",
+      "videoDurationSeconds": 4025,
+      "screenshot": "https://blogthumbnail.fc2.com/760x420/114/g/a/m/gamecolumn/WS000860_2017080109474950b.jpg",
+      "screenshotSource": "https://gamecolumn.jp/blog-entry-51824.html",
+      "body": "Gatling Gull 的快速射击在选定方向附近散开。俯视画面展现逐发变化的内部路径，但游戏没有画出 Kern 那样明确的警告边缘。"
+    },
+    {
+      "dimension": "2D",
+      "game": "Enter the Gungeon",
+      "boss": "Treadnaught",
+      "video": "https://www.youtube.com/watch?v=9cjol5OrK6s&t=25s",
+      "videoDurationSeconds": 100,
+      "screenshot": "https://cdn.cloudflare.steamstatic.com/steam/apps/311690/ss_33186be82e82ee1053b636fa4c00283947b5a868.1920x1080.jpg?t=1651689180",
+      "screenshotSource": "https://store.steampowered.com/app/311690/Enter_the_Gungeon/",
+      "body": "四角的炮塔在坦克进行其他动作时，各自向玩家大致方向发射短暂的连续弹丸。这也是方向受限的变化，但没有 Kern 那样独立且明确画出的扇区。"
+    },
+    {
+      "dimension": "3D",
+      "game": "Returnal",
+      "boss": "Ixion",
+      "video": "https://www.youtube.com/watch?v=IO0AB3Hg5cc&t=61s",
+      "videoDurationSeconds": 449,
+      "screenshot": "https://i.ytimg.com/vi/IO0AB3Hg5cc/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=IO0AB3Hg5cc&t=61s",
+      "body": "Ixion 在战斗初期射出蓝色弹丸锥体。3D 中它是从玩家背后看到的立体范围，而不是地面上的两条平面射线。"
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

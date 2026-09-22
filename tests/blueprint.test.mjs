@@ -14,8 +14,8 @@ import {
   renderBlueprintThumbnail,
 } from '../lib/blueprint-view.mjs';
 
-test('all 45 promoted lesson animations have distinct rule modes and complete moving frames', () => {
-  assert.equal(BLUEPRINT_MECHANIC_IDS.length, 45);
+test('all 46 promoted lesson animations have distinct rule modes and complete moving frames', () => {
+  assert.equal(BLUEPRINT_MECHANIC_IDS.length, 46);
   const modes = new Set();
   for (const id of BLUEPRINT_MECHANIC_IDS) {
     for (let time = 0; time <= BLUEPRINT_DURATION; time += 0.1) {
@@ -36,7 +36,7 @@ test('all 45 promoted lesson animations have distinct rule modes and complete mo
           assert.ok(Number.isFinite(value), `${id} has an invalid ${primitive.type}`);
     }
   }
-  assert.equal(modes.size, 45);
+  assert.equal(modes.size, 46);
 });
 
 test('every blueprint exposes signal, committed action, and recovery without player teleports', () => {
@@ -81,6 +81,7 @@ test('every promoted animation derives safety from its own active geometry', () 
     volley: null,
     'delayed-activation': { x: 350, y: 630 },
     'speed-change': null,
+    'limited-spread': null,
     'wide-swing': { x: 280, y: 515 },
     lunge: { x: 300, y: 440 },
     grab: { x: 390, y: 485 },
@@ -118,6 +119,9 @@ test('every promoted animation derives safety from its own active geometry', () 
       point = { x: projectile.x, y: projectile.y };
     } else if (!point && id === 'speed-change') {
       point = frame.boss;
+    } else if (!point && id === 'limited-spread') {
+      const projectile = frame.primitives[3];
+      point = { x: projectile.x, y: projectile.y };
     } else if (!point && id === 'crossfire') {
       const projectile = frame.primitives[4];
       point = { x: projectile.x, y: projectile.y };
@@ -863,6 +867,47 @@ test('speed change keeps one route, accelerates at its rune, and clears the whol
   assert.match(
     renderBlueprintThumbnail(id, 'test-speed-change'),
     /data-blueprint-preview="speed-change"/,
+  );
+});
+
+test('limited spread varies shot directions inside a fixed visible cone and clears the whole player', () => {
+  const id = 'limited-spread';
+  const spec = blueprintSpec(id);
+  assert.equal(spec.coneHalfAngle, 0.2);
+  assert.deepEqual(spec.releases, [1.85, 2.4, 2.95]);
+  assert.ok(spec.offsets.every((offset) => Math.abs(offset) <= spec.coneHalfAngle));
+  assert.deepEqual(
+    blueprintFrame(id, 0).primitives[0].data,
+    blueprintFrame(id, 2.8).primitives[0].data,
+  );
+  assert.ok(blueprintFrame(id, 1.59).primitives[0].opacity > 0.7);
+  assert.equal(blueprintFrame(id, 1.84).dangerActive, false);
+  assert.equal(blueprintFrame(id, 1.85).dangerActive, true);
+  assert.equal(blueprintFrame(id, 4.24).dangerActive, true);
+  assert.equal(blueprintFrame(id, 4.25).dangerActive, false);
+  assert.equal(
+    blueprintFrame(id, 4.25)
+      .primitives.slice(3, 6)
+      .every((shot) => shot.opacity === 0),
+    true,
+  );
+  assert.ok(blueprintFrame(id, 2.28).player.x > 464);
+  const shot = blueprintFrame(id, 3).primitives[3];
+  assert.equal(blueprintPointSafe(id, 3, { x: shot.x, y: shot.y }), false);
+  assert.equal(blueprintPointSafe(id, 3, { x: shot.x + 41, y: shot.y }), false);
+  assert.equal(blueprintPointSafe(id, 3, { x: shot.x + 43, y: shot.y }), true);
+  const shotPositions = [1.85, 2.4, 2.95].map((release, index) => {
+    const shotAt = blueprintFrame(id, release + 0.5).primitives[3 + index];
+    return (shotAt.x - spec.emitter[0]) / (shotAt.y - spec.emitter[1]);
+  });
+  assert.ok(new Set(shotPositions.map((angle) => angle.toFixed(3))).size === 3);
+  assert.ok(shotPositions.every((slope) => Math.abs(Math.atan(slope)) <= spec.coneHalfAngle));
+  for (let time = 0; time < 6; time += 0.02)
+    assert.equal(blueprintFrame(id, time).playerSafe, true, `full-body clearance at ${time}`);
+  assert.deepEqual(blueprintFrame(id, 0).player, blueprintFrame(id, 6).player);
+  assert.match(
+    renderBlueprintThumbnail(id, 'test-limited-spread'),
+    /data-blueprint-preview="limited-spread"/,
   );
 });
 

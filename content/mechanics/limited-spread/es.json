@@ -1,0 +1,134 @@
+{
+  "title": "Dispersión limitada",
+  "subtitle": "Varía cada disparo sin mover el límite anunciado.",
+  "variant": "Tres disparos dentro de un cono fijo",
+  "summary": "El jefe marca un cono estrecho y lanza tres proyectiles con ángulos distintos dentro de sus bordes inmóviles.",
+  "overview": "La dispersión limitada cambia la dirección de cada proyectil dentro de un ángulo fijo. Kern señala el cono antes de disparar, de modo que Tavi puede salir caminando más allá del borde exterior. Los tres disparos siguen rutas diferentes, pero ninguno rebasa el límite anunciado. Tras el último, el jefe se detiene y deja tiempo para volver.",
+  "learning": "Ajusta conjuntamente el ángulo, el emisor, los radios de colisión, la cadencia, el tiempo de vuelo, el aviso y el espacio que se puede recorrer caminando.",
+  "category": "Apuntado y ritmo",
+  "readTime": "4 min",
+  "demo": {
+    "title": "Examina la dispersión acotada",
+    "timeline": "Línea temporal del ataque",
+    "step": "Fases del ataque",
+    "phaseNames": ["Marcar el cono", "Tres trayectorias", "Termina el último disparo"],
+    "phaseDescriptions": [
+      "Kern se inclina y delimita desde un emisor visible un cono cuyo semiángulo es de 0,2 radianes. Tavi espera cerca del eje central.",
+      "La dirección se fija a los 1,6 s. Los disparos salen a los 1,85, 2,4 y 2,95 s con desviaciones distintas dentro del mismo cono; Tavi camina hacia la derecha y sale del borde.",
+      "El último proyectil desaparece a los 4,25 s. Se retiran la amenaza y el aviso; Kern se recupera y ambos vuelven de forma visible al inicio."
+    ],
+    "boss": "Jefe",
+    "player": "Jugador",
+    "danger": "Los disparos pueden cruzar cualquier punto del cono anunciado",
+    "locked": "El cono permanece fijo, pero cada proyectil sigue otra ruta",
+    "safe": "Ya pasó el último proyectil",
+    "reducedMotion": "La reproducción automática está desactivada por la preferencia de movimiento reducido. Usa el control temporal para examinar el ciclo.",
+    "diagramDescription": "Kern marca un cono descendente con dos bordes fijos y lanza tres proyectiles desde una misma runa por trayectorias diferentes en su interior. Tavi sale caminando hacia la derecha antes de que lleguen; el último desaparece a los 4,25 segundos y la escena se reinicia."
+  },
+  "steps": [
+    {
+      "title": "¿Son veraces los bordes exteriores?",
+      "body": "Calcula los bordes a partir del mismo emisor y eje empleados para todos los disparos. Fija el eje al comprometer el ataque y limita cada desviación a ±0,2 radianes. Un aviso más estrecho que la distribución real engaña al jugador."
+    },
+    {
+      "title": "¿Cambia la variación la decisión?",
+      "body": "Lanza proyectiles separados a los 1,85, 2,4 y 2,95 segundos con desviaciones distintas. Muestra el origen y el recorrido: a diferencia de un abanico simultáneo, los pasillos interiores varían, pero rodear todo el cono sigue siendo fiable."
+    },
+    {
+      "title": "¿Sale a tiempo el cuerpo entero?",
+      "body": "A la altura inicial de Tavi, el borde derecho está cerca de x=347. Suma el radio del proyectil (18) y el del jugador (24): su centro debe llegar más allá de x≈390. Tavi alcanza x=465 hacia los 2,28 s, antes de que el primer disparo llegue a esa altura."
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "Un disparo aleatorio rebasa el aviso",
+      "body": "Si la distribución real es más amplia que el cono dibujado, puede haber impactos fuera de la amenaza visible. Usa una sola especificación para el dibujo, las muestras angulares y las colisiones."
+    },
+    {
+      "title": "El último proyectil desaparece pronto",
+      "body": "No declares terminada la amenaza cuando baja el brazo del jefe. Conserva el último disparo durante sus 1,3 segundos de vuelo y solo entonces muestra la recuperación."
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "Acota la variación",
+      "body": "La escena usa desviaciones de −0,15, +0,12 y −0,04 radianes respecto al eje descendente. Todas están dentro de ±0,2. Una secuencia fija permite rebobinar; un muestreo aleatorio real debe respetar el mismo límite."
+    },
+    {
+      "title": "Mide el borde a la altura del jugador",
+      "body": "El emisor está en (280, 332), Tavi empieza en (280, 660) y el borde derecho a y=660 está cerca de x=347. Añade ambos radios de colisión, 18 + 24, antes de llamar segura a una ruta."
+    },
+    {
+      "title": "Mantén una respuesta alcanzable",
+      "body": "Tavi recorre 185 unidades laterales en 0,68 segundos tras el compromiso. Cruza el margen exterior antes de que el primer proyectil alcance su antigua altura; no presupongas invulnerabilidad."
+    },
+    {
+      "title": "Deja que terminen todos los disparos",
+      "body": "Hay 0,55 segundos entre lanzamientos y el tercero expira a los 4,25 s. La recuperación comienza después de toda la salva para que la señal de seguridad coincida con la amenaza real."
+    }
+  ],
+  "story": {
+    "title": "Usa dos runas como límites",
+    "body": "Tres piedras se reúnen en la palma agrietada de Kern mientras dos rayos rúnicos sobre el suelo enmarcan sus posibles caminos. Salen una a una sin cruzar los límites fijos."
+  },
+  "adaptation": {
+    "title": "Conserva una salida a pie",
+    "body": "Reserva espacio lateral más allá de un borde, incluidos los radios del jugador y los proyectiles. Una esquiva rápida puede atravesar los huecos, pero la solución básica debe funcionar caminando."
+  },
+  "distinction": {
+    "title": "Separa la dispersión del abanico",
+    "body": "El abanico anuncia varios rayos fijos a la vez. La ráfaga repite un solo rayo. La dispersión limitada da a disparos sucesivos direcciones distintas dentro de un sector fijo; un proyectil fragmentado se divide después de salir."
+  },
+  "lensNotes": [
+    {
+      "id": "telegraphing",
+      "body": "Los dos bordes visibles anuncian la desviación máxima antes del primer lanzamiento."
+    },
+    {
+      "id": "threat-geometry",
+      "body": "El cono indica trayectorias posibles; solo los proyectiles activos causan daño, contando ambos radios."
+    },
+    {
+      "id": "counterplay",
+      "body": "Salir del borde exterior sirve ante cualquier muestra permitida; confiar en un hueco interior casual es menos robusto."
+    },
+    {
+      "id": "difficulty-rhythm",
+      "body": "Tres lanzamientos escalonados cambian las rutas interiores, pero la caducidad final permite una pausa clara."
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "Enter the Gungeon",
+      "boss": "Gatling Gull",
+      "video": "https://www.youtube.com/watch?v=7bLWV9-ihmI&t=128s",
+      "videoDurationSeconds": 4025,
+      "screenshot": "https://blogthumbnail.fc2.com/760x420/114/g/a/m/gamecolumn/WS000860_2017080109474950b.jpg",
+      "screenshotSource": "https://gamecolumn.jp/blog-entry-51824.html",
+      "body": "La ráfaga de Gatling Gull varía su trayectoria dentro de una dispersión hacia una dirección elegida. El ejemplo cenital muestra variación interior, aunque no dibuja los bordes explícitos de Kern."
+    },
+    {
+      "dimension": "2D",
+      "game": "Enter the Gungeon",
+      "boss": "Treadnaught",
+      "video": "https://www.youtube.com/watch?v=9cjol5OrK6s&t=25s",
+      "videoDurationSeconds": 100,
+      "screenshot": "https://cdn.cloudflare.steamstatic.com/steam/apps/311690/ss_33186be82e82ee1053b636fa4c00283947b5a868.1920x1080.jpg?t=1651689180",
+      "screenshotSource": "https://store.steampowered.com/app/311690/Enter_the_Gungeon/",
+      "body": "Las torretas de las esquinas disparan por separado breves secuencias aproximadamente hacia el jugador mientras el tanque ejecuta otras acciones. Es otra variación direccional, pero sin el cono explícito y aislado de Kern."
+    },
+    {
+      "dimension": "3D",
+      "game": "Returnal",
+      "boss": "Ixion",
+      "video": "https://www.youtube.com/watch?v=IO0AB3Hg5cc&t=61s",
+      "videoDurationSeconds": 449,
+      "screenshot": "https://i.ytimg.com/vi/IO0AB3Hg5cc/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=IO0AB3Hg5cc&t=61s",
+      "body": "Ixion lanza un cono de proyectiles azules en la fase inicial. En 3D se lee como un volumen visto tras el personaje, no como dos rayos planos en el suelo."
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

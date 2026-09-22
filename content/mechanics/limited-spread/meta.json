@@ -1,0 +1,28 @@
+{
+  "id": "limited-spread",
+  "number": 52,
+  "published": true,
+  "sourceLocale": "en",
+  "contentVersion": 1,
+  "animation": "limited-spread",
+  "lenses": ["telegraphing", "threat-geometry", "counterplay", "difficulty-rhythm"],
+  "related": ["projectile-fan", "burst-fire", "splitting-projectile"],
+  "sources": [
+    {
+      "title": "Data-Driven Bullet-Hell System · Max Hjort",
+      "url": "https://maxhjort.se/projects/bullethell"
+    },
+    {
+      "title": "Gatling Gull · Official Enter the Gungeon Wiki",
+      "url": "https://enterthegungeon.wiki.gg/wiki/Gatling_Gull"
+    },
+    {
+      "title": "Treadnaught · Official Enter the Gungeon Wiki",
+      "url": "https://enterthegungeon.wiki.gg/wiki/Treadnaught"
+    },
+    {
+      "title": "Returnal boss-fight guide · GameSpot",
+      "url": "https://www.gamespot.com/articles/returnal-boss-fight-guide-how-to-survive-every-battle/1100-6490894/"
+    }
+  ]
+}

@@ -405,9 +405,9 @@ test('volley releases three parallel bolts on one beat and clears its outside ro
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
 });
 
-test('catalog and builder reuse the 45 promoted rule-specific previews', async ({ page }) => {
+test('catalog and builder reuse the 46 promoted rule-specific previews', async ({ page }) => {
   await page.goto('en/');
-  await expect(page.locator('[data-blueprint-preview]')).toHaveCount(45);
+  await expect(page.locator('[data-blueprint-preview]')).toHaveCount(46);
   const catalogLayouts = await page.locator('[data-blueprint-preview]').evaluateAll((previews) =>
     previews.map((preview) => {
       const boss = preview.querySelector('[data-character-art-preview="kern"]');
@@ -431,7 +431,7 @@ test('catalog and builder reuse the 45 promoted rule-specific previews', async (
   expect(new Set(catalogLayouts.map(({ layout }) => layout)).size).toBeGreaterThanOrEqual(18);
 
   await page.goto('en/builder/');
-  await expect(page.locator('[data-blueprint-preview]')).toHaveCount(45);
+  await expect(page.locator('[data-blueprint-preview]')).toHaveCount(46);
   const builderLayouts = await page.locator('[data-blueprint-preview]').evaluateAll((previews) =>
     previews.map((preview) => {
       const boss = preview.querySelector('[data-character-art-preview="kern"]');
@@ -517,6 +517,50 @@ test('speed change keeps its lane while the boss accelerates past a visible rune
     'opacity',
     '0',
   );
+  await page.setViewportSize({ width: 375, height: 812 });
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+});
+
+test('limited spread keeps its previewed cone while distinct live shots remain inside it', async ({
+  page,
+}) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.goto('en/mechanics/limited-spread/');
+  const widget = page.locator('[data-blueprint-demo]');
+  const timeline = widget.locator('[data-blueprint-timeline]');
+  const cone = widget.locator('[data-blueprint-primitive="0"] path');
+  const shots = [3, 4, 5].map((index) =>
+    widget.locator(`[data-blueprint-primitive="${index}"] circle`),
+  );
+  const seek = (milliseconds) =>
+    timeline.evaluate((element, value) => {
+      element.value = String(value);
+      element.dispatchEvent(new Event('input', { bubbles: true }));
+    }, milliseconds);
+  await expect(page.locator('.lesson-title-line h1')).toHaveText('Limited spread');
+  await expect(page.locator('.wip-badge, .draft-profile')).toHaveCount(0);
+  await expect(page.locator('.game-example')).toHaveCount(3);
+  await expect(widget).toHaveAttribute('data-blueprint-playing', 'false');
+  const outline = await cone.getAttribute('d');
+  await seek(3000);
+  await expect(widget).toHaveAttribute('data-blueprint-outcome', 'safe');
+  await expect(widget).toHaveAttribute('data-blueprint-phase', '1');
+  await expect(cone).toHaveAttribute('d', outline);
+  await expect(shots[0]).toHaveAttribute('opacity', '0.98');
+  await expect(shots[1]).toHaveAttribute('opacity', '0.98');
+  await expect(shots[2]).toHaveAttribute('opacity', '0.98');
+  const slopes = await Promise.all(
+    shots.map((shot) =>
+      shot.evaluate(
+        (node) => (Number(node.getAttribute('cx')) - 280) / (Number(node.getAttribute('cy')) - 332),
+      ),
+    ),
+  );
+  expect(new Set(slopes.map((slope) => slope.toFixed(3))).size).toBe(3);
+  expect(slopes.every((slope) => Math.abs(Math.atan(slope)) <= 0.2)).toBe(true);
+  await seek(4250);
+  await expect(widget).toHaveAttribute('data-blueprint-outcome', 'safe');
+  for (const shot of shots) await expect(shot).toHaveAttribute('opacity', '0');
   await page.setViewportSize({ width: 375, height: 812 });
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
 });

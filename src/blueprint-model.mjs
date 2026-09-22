@@ -223,6 +223,19 @@ const SPECS = {
     switchAt: 2.8,
     finishAt: 3.45,
   },
+  'limited-spread': {
+    mode: 'limited-spread',
+    boss: [280, 280],
+    player: [280, 660],
+    target: [465, 660],
+    emitter: [280, 332],
+    coneHalfAngle: 0.2,
+    shotRadius: 18,
+    releases: [1.85, 2.4, 2.95],
+    offsets: [-0.15, 0.12, -0.04],
+    flight: 1.3,
+    shotLength: 590,
+  },
   'wide-swing': { mode: 'arc', boss: [280, 310], player: [410, 470], target: [470, 650] },
   lunge: { mode: 'lunge', boss: [170, 290], player: [390, 590], target: [470, 660] },
   grab: { mode: 'grab', boss: [280, 300], player: [390, 485], target: [470, 610] },
@@ -374,6 +387,17 @@ const generatorShots = (spec, time) =>
       y: mix(start.y + 32, end.y, progress),
       radius: spec.shotRadius,
       active: time >= release && time <= release + GENERATOR_FLIGHT,
+    };
+  });
+const limitedSpreadShots = (spec, time) =>
+  spec.releases.map((release, index) => {
+    const angle = Math.PI / 2 + spec.offsets[index];
+    const start = point(spec.emitter);
+    const progress = clamp((time - release) / spec.flight);
+    return {
+      ...polar(start, spec.shotLength * progress, angle),
+      radius: spec.shotRadius,
+      active: time >= release && time < release + spec.flight,
     };
   });
 const chainExplosionIndex = (action) =>
@@ -591,6 +615,52 @@ function primitivesFor(spec, frame) {
           accelerating ? 'signal' : 'accent',
           accelerating ? 9 : 5,
         ),
+      ),
+    ];
+  }
+  if (mode === 'limited-spread') {
+    const origin = point(spec.emitter);
+    const edgeLength = 590;
+    const left = polar(origin, edgeLength, Math.PI / 2 - spec.coneHalfAngle);
+    const right = polar(origin, edgeLength, Math.PI / 2 + spec.coneHalfAngle);
+    const warning = phase === 0 ? 0.35 + prepare * 0.4 : phase === 1 ? 0.27 : 0;
+    const shots = limitedSpreadShots(spec, frame.time);
+    return [
+      path(
+        `M ${origin.x} ${origin.y} L ${left.x} ${left.y} L ${right.x} ${right.y} Z`,
+        warning,
+        'accent',
+        3,
+        0.07,
+        '11 12',
+      ),
+      line(
+        origin.x,
+        origin.y,
+        origin.x,
+        origin.y + edgeLength,
+        warning * 0.55,
+        'accent',
+        3,
+        '8 12',
+      ),
+      circle(origin.x, origin.y, 21, phase === 2 ? 1 - recover : 0.85, 'accent', 5, 0.1),
+      ...shots.map((shot) =>
+        circle(shot.x, shot.y, shot.radius, shot.active ? 0.98 : 0, 'signal', 6, 0.45),
+      ),
+      circle(
+        origin.x,
+        origin.y,
+        34,
+        phase === 1
+          ? Math.max(
+              ...spec.releases.map((release) =>
+                pulse(clamp(Math.abs(frame.time - release) / 0.16)),
+              ),
+            ) * 0.8
+          : 0,
+        'signal',
+        7,
       ),
     ];
   }
@@ -1797,6 +1867,11 @@ function pointClearsThreat(spec, frame, value, radius = BLUEPRINT_PLAYER_RADIUS)
   if (mode === 'delayed-activation')
     return Math.hypot(value.x - spec.rune[0], value.y - spec.rune[1]) > spec.radius + radius;
   if (mode === 'speed-change') return distanceFromBoss > spec.collisionRadius + radius;
+  if (mode === 'limited-spread')
+    return limitedSpreadShots(spec, frame.time).every(
+      (shot) =>
+        !shot.active || Math.hypot(value.x - shot.x, value.y - shot.y) > shot.radius + radius,
+    );
   if (mode === 'spiral')
     return (
       distanceFromBoss > 52 + radius &&
@@ -1993,6 +2068,7 @@ export function blueprintFrame(id, time) {
   else if (spec.mode === 'volley') responseProgress = smooth((t - 1.6) / 0.68);
   else if (spec.mode === 'delayed-activation') responseProgress = smooth((t - 1.7) / 0.9);
   else if (spec.mode === 'speed-change') responseProgress = smooth((t - 1.6) / 0.7);
+  else if (spec.mode === 'limited-spread') responseProgress = smooth((t - 1.6) / 0.68);
   else if (spec.mode === 'knockback')
     responseProgress = phase === 0 ? 0 : phase === 1 ? smooth(action) : 1;
   else if (spec.mode === 'target-lock')
@@ -2144,7 +2220,11 @@ export function blueprintFrame(id, time) {
                         ? t >= spec.activatesAt && t < spec.expiresAt
                         : spec.mode === 'speed-change'
                           ? t >= BLUEPRINT_PHASE_ENDS[0] && t < spec.finishAt
-                          : phase === 1;
+                          : spec.mode === 'limited-spread'
+                            ? spec.releases.some(
+                                (release) => t >= release && t < release + spec.flight,
+                              )
+                            : phase === 1;
   const frame = {
     id,
     mode: spec.mode,
@@ -2196,13 +2276,19 @@ export function blueprintFrame(id, time) {
             : 0
           : spec.mode === 'volley' && phase === 1
             ? Math.max(0, 1 - Math.abs(t - spec.release) / 0.36)
-            : spec.mode === 'burst-fire' && phase === 1
+            : spec.mode === 'limited-spread' && phase === 1
               ? Math.max(
-                  ...spec.releases.map((release) => Math.max(0, 1 - Math.abs(t - release) / 0.32)),
+                  ...spec.releases.map((release) => Math.max(0, 1 - Math.abs(t - release) / 0.3)),
                 )
-              : phase === 1
-                ? 0.75
-                : prepare * 0.35,
+              : spec.mode === 'burst-fire' && phase === 1
+                ? Math.max(
+                    ...spec.releases.map((release) =>
+                      Math.max(0, 1 - Math.abs(t - release) / 0.32),
+                    ),
+                  )
+                : phase === 1
+                  ? 0.75
+                  : prepare * 0.35,
       impact:
         spec.mode === 'landing'
           ? pulse(clamp((action - 0.42) / 0.22))
