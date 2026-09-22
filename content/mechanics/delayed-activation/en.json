@@ -1,0 +1,134 @@
+{
+  "title": "Delayed activation",
+  "subtitle": "Place the warning now; make the same space dangerous later.",
+  "variant": "Timed rune disc",
+  "summary": "The boss plants a harmless rune under the player, fixes its place, then activates it after a visible countdown; the player walks fully outside the circle.",
+  "overview": "Kern marks one fixed disc. Its outline and eight small runes are a harmless warning. A ring contracts to the marked radius; the disc ignites on a fixed beat and stays dangerous briefly. Tavi walks fully outside before ignition. The danger ends before Kern resets. Time, not proximity or renewed aim, triggers it.",
+  "learning": "Tune placement, warning duration, collision radius, ordinary walking distance, active lifetime, and recovery as separate controls.",
+  "category": "Targeting and rhythm",
+  "readTime": "4 min",
+  "demo": {
+    "title": "Test the delayed rune",
+    "timeline": "Attack timeline",
+    "step": "Attack phases",
+    "phaseNames": ["Placement", "Countdown and ignition", "Recovery"],
+    "phaseDescriptions": [
+      "Kern plants one visible rune beneath Tavi. The outlined disc and its extent are harmless.",
+      "The position locks at 1.6 s. The ring counts down, Tavi walks out, and the fixed disc becomes dangerous from 2.9 to 4.0 s.",
+      "The glow extinguishes before Kern resets; Tavi returns for the next loop."
+    ],
+    "boss": "Boss",
+    "player": "Player",
+    "danger": "The rune's future radius is announced, but safe",
+    "locked": "The location is fixed; the countdown leads to ignition",
+    "safe": "The timed rune has extinguished",
+    "reducedMotion": "Autoplay is disabled by the reduced-motion setting. Use the timeline slider to inspect the loop.",
+    "diagramDescription": "A looping diagram of delayed activation. Kern plants a circular rune at Tavi's position. A harmless outline contracts as a countdown; Tavi walks fully beyond the fixed radius before the rune ignites at 2.9 seconds. The disc stays dangerous until 4 seconds, then clears before reset."
+  },
+  "steps": [
+    {
+      "title": "Does the warning define the real footprint?",
+      "body": "Show the complete disc, not a tiny rune at its center. Lock the location at placement and keep the warning harmless until the stated ignition beat."
+    },
+    {
+      "title": "Can a walking player clear the radius in time?",
+      "body": "Measure from the starting point through the full disc radius plus the player's body radius. Tavi's ordinary walk reaches clear ground before activation; the countdown must cover that route."
+    },
+    {
+      "title": "Is the dangerous interval unmistakable?",
+      "body": "Switch from outline to solid glow precisely at activation, maintain a constant hitbox while lit, and visibly extinguish it before signaling recovery."
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "Damage begins with the warning",
+      "body": "If the outline already hurts, the promised delay is false. Keep the preview non-damaging and test the precise activation frame."
+    },
+    {
+      "title": "The marked area follows the player",
+      "body": "Moving the disc after placement steals the announced route. Lock the coordinate, and introduce tracking as a separate, clearly signaled rule."
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "Separate three clocks",
+      "body": "Placement ends at 1.6 s, ignition begins at 2.9 s, and danger expires at 4.0 s in this diagram. Expose these times independently instead of stretching every phase with one speed multiplier."
+    },
+    {
+      "title": "Reserve full-body clearance",
+      "body": "An 82-unit hazard radius with a 24-unit player body needs a center distance greater than 106 units. The illustrated target is 135 units from the rune's center."
+    },
+    {
+      "title": "Keep the center stable",
+      "body": "The eight satellite marks and shrinking ring stay centered on one planted rune. They communicate remaining time without changing the actual collision radius."
+    },
+    {
+      "title": "Escalate by changing one promise",
+      "body": "Later phases may shorten the countdown or alter the active lifetime, but announce the new cadence before relying on it. Adding multiple sites creates a different spatial problem."
+    }
+  ],
+  "story": {
+    "title": "Make the rune a clock",
+    "body": "Kern presses a stone seal into the arena. Its eight glyphs brighten while the outer ring contracts, so the delayed detonation reads as a rule of the world rather than an invisible timer."
+  },
+  "adaptation": {
+    "title": "Keep the baseline response",
+    "body": "The demonstration needs only ordinary walking. A dash can add a faster answer, but it must not be the sole way to leave the announced circle before ignition."
+  },
+  "distinction": {
+    "title": "Separate timing from other area rules",
+    "body": "A timed rune activates after a fixed interval regardless of player proximity. A mine waits for a trigger; a marked-area strike is a brief impact; a lingering hazard emphasizes duration after an initial hit. Here the main question is whether the player can use the visible delay to leave a committed area."
+  },
+  "lensNotes": [
+    {
+      "id": "telegraphing",
+      "body": "The harmless outline, eight glyphs, and contracting ring reveal both the future radius and activation beat."
+    },
+    {
+      "id": "threat-geometry",
+      "body": "A fixed center and radius make the required walking route measurable with full-body clearance."
+    },
+    {
+      "id": "counterplay",
+      "body": "A committed disc leaves an ordinary-movement escape; standing in the warning remains safe until ignition."
+    },
+    {
+      "id": "difficulty-rhythm",
+      "body": "Warning duration, active lifetime, and recovery create three distinct timing windows."
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "Hollow Knight",
+      "boss": "Absolute Radiance",
+      "video": "https://www.youtube.com/watch?v=bgh04-wCRyk&t=47s",
+      "videoDurationSeconds": 483,
+      "screenshot": "https://i.ytimg.com/vi/bgh04-wCRyk/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=bgh04-wCRyk&t=47s",
+      "body": "A golden glow outlines the next side of the spike floor before spikes emerge. The arena-wide patch differs from Kern's small disc, but the safe warning precedes the dangerous state at a committed location."
+    },
+    {
+      "dimension": "3D",
+      "game": "Final Fantasy XIV",
+      "boss": "Titan",
+      "video": "https://www.youtube.com/watch?v=t1m8ZnpV6sk&t=97s",
+      "videoDurationSeconds": 231,
+      "screenshot": "https://i.ytimg.com/vi/t1m8ZnpV6sk/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=t1m8ZnpV6sk&t=97s",
+      "body": "Bomb Boulders occupy visible positions before detonating. Their multiple locations and sequential explosions make a richer pattern; the reusable ingredient is a placed object that becomes dangerous on a later beat."
+    },
+    {
+      "dimension": "3D",
+      "game": "Final Fantasy XIV",
+      "boss": "Shiva",
+      "video": "https://www.youtube.com/watch?v=LJpmr-oavmI&t=91s",
+      "videoDurationSeconds": 115,
+      "screenshot": "https://i.ytimg.com/vi/LJpmr-oavmI/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=LJpmr-oavmI&t=91s",
+      "body": "Icicle Impact previews circles before ice falls on them. Unlike Kern's sustained rune, each drop is brief and can resolve in a sequence; the example isolates the readable interval between a fixed-area warning and its activation."
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

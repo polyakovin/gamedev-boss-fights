@@ -201,6 +201,16 @@ const SPECS = {
     release: 2,
     flight: 1.5,
   },
+  'delayed-activation': {
+    mode: 'delayed-activation',
+    boss: [155, 300],
+    player: [350, 630],
+    target: [485, 630],
+    rune: [350, 630],
+    radius: 82,
+    activatesAt: 2.9,
+    expiresAt: 4.0,
+  },
   'wide-swing': { mode: 'arc', boss: [280, 310], player: [410, 470], target: [470, 650] },
   lunge: { mode: 'lunge', boss: [170, 290], player: [390, 590], target: [470, 660] },
   grab: { mode: 'grab', boss: [280, 300], player: [390, 485], target: [470, 610] },
@@ -494,6 +504,41 @@ function primitivesFor(spec, frame) {
   const { boss, player, prepare, action, recover, phase } = frame;
   const active = phase === 1 ? 1 : phase === 0 ? 0.22 + prepare * 0.28 : 1 - recover;
   const preview = phase === 0 ? 0.28 + prepare * 0.3 : phase === 1 ? 0.08 : 0;
+  if (mode === 'delayed-activation') {
+    const [x, y] = spec.rune;
+    const countdown = clamp(
+      (frame.time - BLUEPRINT_PHASE_ENDS[0]) / (spec.activatesAt - BLUEPRINT_PHASE_ENDS[0]),
+    );
+    const lit = frame.dangerActive;
+    const visible = phase === 2 ? 1 - recover : phase === 0 ? 0.4 + 0.5 * prepare : 1;
+    return [
+      line(
+        boss.x + 38,
+        boss.y + 40,
+        x,
+        y,
+        phase === 0 ? 0.28 + 0.48 * prepare : 0,
+        'accent',
+        4,
+        '9 12',
+      ),
+      circle(x, y, spec.radius, visible, lit ? 'signal' : 'accent', lit ? 13 : 5, lit ? 0.4 : 0.05),
+      circle(x, y, mix(118, spec.radius, countdown), phase === 1 && !lit ? 0.75 : 0, 'accent', 5),
+      circle(x, y, 12, visible, lit ? 'signal' : 'accent', 5, lit ? 0.6 : 0.12),
+      ...Array.from({ length: 8 }, (_, index) => {
+        const angle = (index * Math.PI) / 4;
+        return circle(
+          x + Math.cos(angle) * 57,
+          y + Math.sin(angle) * 57,
+          5,
+          visible * (lit ? 1 : 0.36 + countdown * 0.5),
+          lit ? 'signal' : 'accent',
+          3,
+          lit ? 0.5 : 0,
+        );
+      }),
+    ];
+  }
   if (mode === 'landing') {
     const landing = point(spec.landing);
     const contact = phase === 1 ? clamp(1 - Math.abs(action - 0.52) / 0.2) : 0;
@@ -1694,6 +1739,8 @@ function pointClearsThreat(spec, frame, value, radius = BLUEPRINT_PLAYER_RADIUS)
           shot.opacity === 0 ||
           Math.hypot(value.x - shot.x, value.y - shot.y) > shot.radius + radius,
       );
+  if (mode === 'delayed-activation')
+    return Math.hypot(value.x - spec.rune[0], value.y - spec.rune[1]) > spec.radius + radius;
   if (mode === 'spiral')
     return (
       distanceFromBoss > 52 + radius &&
@@ -1874,6 +1921,7 @@ export function blueprintFrame(id, time) {
   else if (spec.mode === 'source-track') responseProgress = smooth((t - 1.6) / 0.84);
   else if (spec.mode === 'burst-fire') responseProgress = smooth((t - 1.6) / 0.75);
   else if (spec.mode === 'volley') responseProgress = smooth((t - 1.6) / 0.68);
+  else if (spec.mode === 'delayed-activation') responseProgress = smooth((t - 1.7) / 0.9);
   else if (spec.mode === 'knockback')
     responseProgress = phase === 0 ? 0 : phase === 1 ? smooth(action) : 1;
   else if (spec.mode === 'target-lock')
@@ -2021,7 +2069,9 @@ export function blueprintFrame(id, time) {
                     ? spec.releases.some((release) => t >= release && t <= release + spec.flight)
                     : spec.mode === 'volley'
                       ? t >= spec.release && t <= spec.release + spec.flight
-                      : phase === 1;
+                      : spec.mode === 'delayed-activation'
+                        ? t >= spec.activatesAt && t < spec.expiresAt
+                        : phase === 1;
   const frame = {
     id,
     mode: spec.mode,

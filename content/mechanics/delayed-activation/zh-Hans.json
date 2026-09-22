@@ -1,0 +1,134 @@
+{
+  "title": "延迟激活",
+  "subtitle": "先标出危险，再让同一片区域变得危险。",
+  "variant": "定时符文圆盘",
+  "summary": "首领在玩家脚下放置无害符文，锁定位置并在可见倒计时后激活；玩家步行完全离开圆圈。",
+  "overview": "克恩标出一个固定圆盘。轮廓和八枚小符文只是预告，不会提前造成伤害。放置后，外环向标记半径收缩；圆盘在固定时刻点亮，并短暂保持危险。塔维在点亮前步行离开整个区域。危险结束后克恩才复位。触发条件是时间，而不是靠近或再次瞄准玩家。",
+  "learning": "分别调整放置、预警时长、碰撞半径、普通步行距离、危险持续时间和恢复时间。",
+  "category": "瞄准与节奏",
+  "readTime": "4 分钟",
+  "demo": {
+    "title": "测试延迟符文",
+    "timeline": "攻击时间线",
+    "step": "攻击阶段",
+    "phaseNames": ["放置", "倒计时与激活", "恢复"],
+    "phaseDescriptions": [
+      "克恩在塔维脚下放置可见符文。带轮廓的圆盘此时无害。",
+      "位置在 1.6 秒锁定。圆环倒计时，塔维步行离开；圆盘在 2.9 至 4.0 秒危险。",
+      "光芒熄灭后克恩复位，塔维回到下一轮的起点。"
+    ],
+    "boss": "首领",
+    "player": "玩家",
+    "danger": "未来的符文半径已标明，但目前安全",
+    "locked": "位置已固定；倒计时通向激活",
+    "safe": "定时符文已经熄灭",
+    "reducedMotion": "启用减少动态效果时会关闭自动播放。请用时间滑块检查循环。",
+    "diagramDescription": "延迟激活的循环示意图。克恩在塔维的位置放置圆形符文。无害的轮廓在倒计时中收缩；塔维在 2.9 秒点亮前完全离开固定半径。圆盘危险状态持续至 4.0 秒，然后在复位前消失。"
+  },
+  "steps": [
+    {
+      "title": "预警覆盖真实范围吗？",
+      "body": "显示完整圆盘，而不只是中心的一枚小符文。放置时锁定位置，并在承诺的激活时刻前保持预警无害。"
+    },
+    {
+      "title": "玩家能步行离开吗？",
+      "body": "从起点量到圆盘半径加上玩家身体半径之外。塔维仅靠普通步行就能在激活前到达安全地带；倒计时必须容纳这段路。"
+    },
+    {
+      "title": "危险时段清楚吗？",
+      "body": "在激活的确切瞬间把轮廓变为实心亮光，点亮期间保持碰撞区不变，并在恢复前明确熄灭。"
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "预警一出现就造成伤害",
+      "body": "若轮廓已经伤人，延迟的承诺便落空。让预览保持无害，并测试准确的激活帧。"
+    },
+    {
+      "title": "标记继续追随玩家",
+      "body": "放置后移动圆盘会毁掉已告知的逃离路线。固定坐标；如需追踪，应将其作为另一个明确提示的规则。"
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "分开三个时间点",
+      "body": "示例中放置于 1.6 秒结束，2.9 秒激活，4.0 秒危险结束。分别调整它们，不要用单一速度倍率拉伸全部阶段。"
+    },
+    {
+      "title": "留出完整身体的余量",
+      "body": "危险半径为 82 单位、玩家身体半径为 24 单位时，中心距必须大于 106 单位。塔维的目标点距符文中心 135 单位。"
+    },
+    {
+      "title": "中心保持固定",
+      "body": "八枚辅助符文和收缩的外环始终围绕同一个中心。它们传达剩余时间，却不改变实际碰撞半径。"
+    },
+    {
+      "title": "每次只改变一项承诺",
+      "body": "后续阶段可以缩短倒计时或改变危险持续时间，但新节奏必须提前告知。增加多个位置会形成另一种空间问题。"
+    }
+  ],
+  "story": {
+    "title": "让符文成为时钟",
+    "body": "克恩把石印压入竞技场。八枚符号依次变亮，外环逐渐收缩；延迟因此像世界的法则，而不是看不见的计时器。"
+  },
+  "adaptation": {
+    "title": "保留基础应对方式",
+    "body": "示例只需普通步行。冲刺可以提供更快的选择，但不能成为在激活前离开圆圈的唯一办法。"
+  },
+  "distinction": {
+    "title": "区分计时与其他区域规则",
+    "body": "定时符文无论玩家是否靠近都会在固定间隔后激活。地雷等待触发；标记区域打击只有短暂一击；持续性危险强调首次打击后的持续时间。这里的关键是利用可见延迟离开锁定区域。"
+  },
+  "lensNotes": [
+    {
+      "id": "telegraphing",
+      "body": "无害轮廓、八枚符文和收缩的圆环同时预告未来半径与激活时刻。"
+    },
+    {
+      "id": "threat-geometry",
+      "body": "固定的中心和半径使包含全身余量的步行路线可以量化。"
+    },
+    {
+      "id": "counterplay",
+      "body": "已锁定的圆盘留下普通步行出口；预警内部直到激活前都安全。"
+    },
+    {
+      "id": "difficulty-rhythm",
+      "body": "预警、激活持续和恢复构成三个不同的时间窗口。"
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "Hollow Knight",
+      "boss": "Absolute Radiance",
+      "video": "https://www.youtube.com/watch?v=bgh04-wCRyk&t=47s",
+      "videoDurationSeconds": 483,
+      "screenshot": "https://i.ytimg.com/vi/bgh04-wCRyk/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=bgh04-wCRyk&t=47s",
+      "body": "金色光芒先圈出即将长出尖刺的一侧地面。区域比克恩的圆盘大，但同样在固定位置先出现安全预警，随后才变危险。"
+    },
+    {
+      "dimension": "3D",
+      "game": "Final Fantasy XIV",
+      "boss": "Titan",
+      "video": "https://www.youtube.com/watch?v=t1m8ZnpV6sk&t=97s",
+      "videoDurationSeconds": 231,
+      "screenshot": "https://i.ytimg.com/vi/t1m8ZnpV6sk/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=t1m8ZnpV6sk&t=97s",
+      "body": "炸弹巨石先占据可见位置，之后才爆炸。多个地点与依次爆炸构成更复杂的图案；可复用的部分是已放置的物体稍后变得危险。"
+    },
+    {
+      "dimension": "3D",
+      "game": "Final Fantasy XIV",
+      "boss": "Shiva",
+      "video": "https://www.youtube.com/watch?v=LJpmr-oavmI&t=91s",
+      "videoDurationSeconds": 115,
+      "screenshot": "https://i.ytimg.com/vi/LJpmr-oavmI/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=LJpmr-oavmI&t=91s",
+      "body": "Icicle Impact 在冰锥落下前预告圆形区域。与克恩持续发光的符文不同，每次落冰短暂且可以依次发生；此例突出了固定区域预警到生效之间的间隔。"
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

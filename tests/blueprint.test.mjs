@@ -14,8 +14,8 @@ import {
   renderBlueprintThumbnail,
 } from '../lib/blueprint-view.mjs';
 
-test('all 43 promoted lesson animations have distinct rule modes and complete moving frames', () => {
-  assert.equal(BLUEPRINT_MECHANIC_IDS.length, 43);
+test('all 44 promoted lesson animations have distinct rule modes and complete moving frames', () => {
+  assert.equal(BLUEPRINT_MECHANIC_IDS.length, 44);
   const modes = new Set();
   for (const id of BLUEPRINT_MECHANIC_IDS) {
     for (let time = 0; time <= BLUEPRINT_DURATION; time += 0.1) {
@@ -36,7 +36,7 @@ test('all 43 promoted lesson animations have distinct rule modes and complete mo
           assert.ok(Number.isFinite(value), `${id} has an invalid ${primitive.type}`);
     }
   }
-  assert.equal(modes.size, 43);
+  assert.equal(modes.size, 44);
 });
 
 test('every blueprint exposes signal, committed action, and recovery without player teleports', () => {
@@ -79,6 +79,7 @@ test('every promoted animation derives safety from its own active geometry', () 
     'source-tracking': null,
     'burst-fire': null,
     volley: null,
+    'delayed-activation': { x: 350, y: 630 },
     'wide-swing': { x: 280, y: 515 },
     lunge: { x: 300, y: 440 },
     grab: { x: 390, y: 485 },
@@ -792,6 +793,38 @@ test('volley launches three parallel bolts together with a reachable outer edge'
   assert.equal(shotsAt(3.51).filter((shot) => shot.opacity > 0).length, 0);
   assert.deepEqual(blueprintFrame(id, 0).player, blueprintFrame(id, 6).player);
   assert.match(renderBlueprintThumbnail(id, 'test-volley'), /data-blueprint-preview="volley"/);
+});
+
+test('delayed rune remains safe through its countdown, then activates at its fixed center', () => {
+  const id = 'delayed-activation';
+  const rune = { x: 350, y: 630 };
+  const spec = blueprintSpec(id);
+  assert.equal(spec.radius, 82);
+  assert.equal(spec.activatesAt, 2.9);
+  assert.equal(spec.expiresAt, 4);
+  for (const time of [0, 1.59, 1.6, 2.89, 2.9, 3.4, 3.99, 4, 4.3, 5.9]) {
+    const frame = blueprintFrame(id, time);
+    const lit = time >= 2.9 && time < 4;
+    assert.equal(frame.dangerActive, lit, `danger at ${time}`);
+    assert.equal(blueprintPointSafe(id, time, rune), !lit, `rune center at ${time}`);
+    assert.equal(frame.primitives[1].x, rune.x);
+    assert.equal(frame.primitives[1].y, rune.y);
+    assert.equal(frame.primitives[1].radius, 82);
+    assert.equal(frame.playerSafe, true, `player collision at ${time}`);
+  }
+  assert.equal(blueprintFrame(id, 1.6).player.x, 350);
+  assert.ok(blueprintFrame(id, 2.89).player.x > 456);
+  assert.equal(blueprintPointSafe(id, 3, { x: 456, y: 630 }), false);
+  assert.equal(blueprintPointSafe(id, 3, { x: 457, y: 630 }), true);
+  assert.equal(blueprintFrame(id, 3.4).primitives[1].tone, 'signal');
+  assert.equal(blueprintFrame(id, 2.7).primitives[1].tone, 'accent');
+  for (let time = 0; time < 6; time += 0.02)
+    assert.equal(blueprintFrame(id, time).playerSafe, true, `full-body clearance at ${time}`);
+  assert.deepEqual(blueprintFrame(id, 0).player, blueprintFrame(id, 6).player);
+  assert.match(
+    renderBlueprintThumbnail(id, 'test-delayed-activation'),
+    /data-blueprint-preview="delayed-activation"/,
+  );
 });
 
 test('blueprint pages and previews reuse Tavi and Kern with accessible localized data', () => {

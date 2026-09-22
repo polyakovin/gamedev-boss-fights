@@ -1,0 +1,134 @@
+{
+  "title": "Activación retardada",
+  "subtitle": "Anuncia el peligro ahora; activa el mismo espacio después.",
+  "variant": "Disco rúnico temporizado",
+  "summary": "El jefe coloca una runa inofensiva bajo el jugador, fija su posición y la activa tras una cuenta atrás visible; el jugador sale por completo del círculo caminando.",
+  "overview": "Kern marca un disco fijo. El contorno y ocho runas avisan sin dañar. Un anillo se contrae hasta el radio marcado; el disco se enciende en un momento fijo y es peligroso brevemente. Tavi sale del círculo completo antes de la activación. El peligro termina antes de que Kern reinicie. Lo activa el tiempo, no la proximidad ni un nuevo apuntado.",
+  "learning": "Ajusta por separado la colocación, la advertencia, el radio de colisión, la distancia a pie, la duración activa y la recuperación.",
+  "category": "Objetivo y ritmo",
+  "readTime": "4 min",
+  "demo": {
+    "title": "Prueba la runa retardada",
+    "timeline": "Cronología del ataque",
+    "step": "Fases del ataque",
+    "phaseNames": ["Colocación", "Cuenta atrás y activación", "Recuperación"],
+    "phaseDescriptions": [
+      "Kern coloca una runa visible bajo Tavi. El disco delineado es inofensivo.",
+      "La posición se fija a los 1,6 s. El anillo cuenta atrás, Tavi sale caminando y el disco es peligroso de 2,9 a 4,0 s.",
+      "El brillo se apaga antes de que Kern se reinicie; Tavi vuelve para el siguiente ciclo."
+    ],
+    "boss": "Jefe",
+    "player": "Jugador",
+    "danger": "Se anuncia el radio futuro, todavía seguro",
+    "locked": "La posición está fija; la cuenta atrás lleva a la activación",
+    "safe": "La runa temporizada se ha apagado",
+    "reducedMotion": "La reproducción automática está desactivada con movimiento reducido. Usa el control temporal para inspeccionar el ciclo.",
+    "diagramDescription": "Diagrama cíclico de activación retardada. Kern planta una runa circular en la posición de Tavi. Un contorno inofensivo se contrae; Tavi sale por completo del radio fijo antes de que se encienda a los 2,9 segundos. El disco es peligroso hasta los 4,0 segundos y luego desaparece."
+  },
+  "steps": [
+    {
+      "title": "¿La advertencia define el área real?",
+      "body": "Muestra todo el disco, no solo una runa pequeña en el centro. Fija su posición al colocarlo y conserva la advertencia inofensiva hasta la activación anunciada."
+    },
+    {
+      "title": "¿Puede el jugador salir caminando?",
+      "body": "Mide desde la posición inicial hasta superar el radio del disco más el radio del cuerpo. Tavi llega a terreno libre andando antes de la activación; la cuenta atrás debe permitirlo."
+    },
+    {
+      "title": "¿Se distingue el intervalo peligroso?",
+      "body": "Cambia el contorno por un brillo sólido justo al activarse, conserva el área de impacto mientras brilla y apágala visiblemente antes de la recuperación."
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "El daño empieza con el aviso",
+      "body": "Si el contorno ya hiere, la demora prometida es falsa. Mantén inofensiva la vista previa y prueba el instante exacto de activación."
+    },
+    {
+      "title": "La marca sigue al jugador",
+      "body": "Mover el disco después de colocarlo invalida la ruta anunciada. Fija su coordenada e introduce el seguimiento como otra regla señalizada."
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "Separa tres tiempos",
+      "body": "La colocación acaba a los 1,6 s, la activación empieza a los 2,9 s y el peligro termina a los 4,0 s. Ajusta estos tiempos independientemente."
+    },
+    {
+      "title": "Deja espacio para todo el cuerpo",
+      "body": "Con 82 unidades de radio peligroso y 24 del jugador, los centros deben separarse más de 106 unidades. El destino de Tavi está a 135 unidades del centro."
+    },
+    {
+      "title": "Mantén fijo el centro",
+      "body": "Las ocho marcas y el anillo menguante rodean una sola runa. Indican tiempo restante sin cambiar el radio de colisión."
+    },
+    {
+      "title": "Escala con una promesa nueva",
+      "body": "Otra fase puede acortar la cuenta atrás o cambiar la duración activa, pero anuncia primero el nuevo ritmo. Añadir varias zonas plantea otro problema espacial."
+    }
+  ],
+  "story": {
+    "title": "Convierte la runa en reloj",
+    "body": "Kern imprime un sello de piedra en la arena. Sus ocho glifos se iluminan mientras el anillo exterior se contrae: la demora parece una regla del mundo, no un temporizador invisible."
+  },
+  "adaptation": {
+    "title": "Conserva la respuesta básica",
+    "body": "La demostración solo requiere caminar. Una carrera rápida puede ofrecer otra opción, pero no debe ser la única forma de salir antes de la activación."
+  },
+  "distinction": {
+    "title": "Distingue tiempo de otras zonas",
+    "body": "La runa se activa tras un intervalo fijo sin importar la cercanía del jugador. Una mina espera un disparador; un golpe sobre una marca dura un instante; un peligro persistente destaca la duración tras el primer impacto. Aquí importa usar la demora visible para abandonar un área comprometida."
+  },
+  "lensNotes": [
+    {
+      "id": "telegraphing",
+      "body": "El contorno inofensivo, ocho glifos y el anillo menguante anuncian radio y momento de activación."
+    },
+    {
+      "id": "threat-geometry",
+      "body": "Centro y radio fijos permiten medir la ruta a pie con todo el cuerpo fuera."
+    },
+    {
+      "id": "counterplay",
+      "body": "La zona comprometida deja una salida caminando; estar dentro del aviso sigue siendo seguro hasta la activación."
+    },
+    {
+      "id": "difficulty-rhythm",
+      "body": "Duración del aviso, vida activa y recuperación forman tres ventanas temporales distintas."
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "Hollow Knight",
+      "boss": "Absolute Radiance",
+      "video": "https://www.youtube.com/watch?v=bgh04-wCRyk&t=47s",
+      "videoDurationSeconds": 483,
+      "screenshot": "https://i.ytimg.com/vi/bgh04-wCRyk/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=bgh04-wCRyk&t=47s",
+      "body": "Un resplandor dorado delimita la próxima zona con pinchos antes de que aparezcan. Es mayor que el disco de Kern, pero el aviso seguro precede al peligro en un lugar fijado."
+    },
+    {
+      "dimension": "3D",
+      "game": "Final Fantasy XIV",
+      "boss": "Titan",
+      "video": "https://www.youtube.com/watch?v=t1m8ZnpV6sk&t=97s",
+      "videoDurationSeconds": 231,
+      "screenshot": "https://i.ytimg.com/vi/t1m8ZnpV6sk/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=t1m8ZnpV6sk&t=97s",
+      "body": "Bomb Boulders ocupa posiciones visibles antes de explotar. Hay varias zonas y detonaciones sucesivas; la idea transferible es que un objeto colocado se vuelve peligroso después."
+    },
+    {
+      "dimension": "3D",
+      "game": "Final Fantasy XIV",
+      "boss": "Shiva",
+      "video": "https://www.youtube.com/watch?v=LJpmr-oavmI&t=91s",
+      "videoDurationSeconds": 115,
+      "screenshot": "https://i.ytimg.com/vi/LJpmr-oavmI/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=LJpmr-oavmI&t=91s",
+      "body": "Icicle Impact anuncia círculos antes de la caída del hielo. A diferencia de la runa sostenida de Kern, cada impacto es breve y puede seguir una secuencia; el ejemplo aísla el intervalo entre el aviso fijo y el peligro."
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

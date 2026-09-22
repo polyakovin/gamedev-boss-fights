@@ -1,0 +1,24 @@
+{
+  "id": "delayed-activation",
+  "number": 50,
+  "published": true,
+  "sourceLocale": "en",
+  "contentVersion": 1,
+  "animation": "delayed-activation",
+  "lenses": ["telegraphing", "threat-geometry", "counterplay", "difficulty-rhythm"],
+  "related": ["marked-area-strike", "mine", "lingering-hazard"],
+  "sources": [
+    {
+      "title": "Absolute Radiance · Hollow Knight Wiki",
+      "url": "https://hollowknight.wiki/w/Absolute_Radiance"
+    },
+    {
+      "title": "The Navel (Hard) · Final Fantasy XIV Online Wiki",
+      "url": "https://ffxiv.consolegameswiki.com/wiki/The_Navel_(Hard)"
+    },
+    {
+      "title": "The Akh Afah Amphitheatre (Hard) · Final Fantasy XIV Online Wiki",
+      "url": "https://ffxiv.consolegameswiki.com/wiki/The_Akh_Afah_Amphitheatre_(Hard)"
+    }
+  ]
+}

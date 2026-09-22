@@ -405,9 +405,9 @@ test('volley releases three parallel bolts on one beat and clears its outside ro
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
 });
 
-test('catalog and builder reuse the 43 promoted rule-specific previews', async ({ page }) => {
+test('catalog and builder reuse the 44 promoted rule-specific previews', async ({ page }) => {
   await page.goto('en/');
-  await expect(page.locator('[data-blueprint-preview]')).toHaveCount(43);
+  await expect(page.locator('[data-blueprint-preview]')).toHaveCount(44);
   const catalogLayouts = await page.locator('[data-blueprint-preview]').evaluateAll((previews) =>
     previews.map((preview) => {
       const boss = preview.querySelector('[data-character-art-preview="kern"]');
@@ -431,7 +431,7 @@ test('catalog and builder reuse the 43 promoted rule-specific previews', async (
   expect(new Set(catalogLayouts.map(({ layout }) => layout)).size).toBeGreaterThanOrEqual(18);
 
   await page.goto('en/builder/');
-  await expect(page.locator('[data-blueprint-preview]')).toHaveCount(43);
+  await expect(page.locator('[data-blueprint-preview]')).toHaveCount(44);
   const builderLayouts = await page.locator('[data-blueprint-preview]').evaluateAll((previews) =>
     previews.map((preview) => {
       const boss = preview.querySelector('[data-character-art-preview="kern"]');
@@ -452,4 +452,36 @@ test('catalog and builder reuse the 43 promoted rule-specific previews', async (
     }),
   );
   expect(builderLayouts).toEqual(catalogLayouts);
+});
+
+test('delayed rune warns harmlessly, ignites on its fixed beat, and extinguishes', async ({
+  page,
+}) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.goto('en/mechanics/delayed-activation/');
+  const widget = page.locator('[data-blueprint-demo]');
+  const ring = widget.locator('[data-blueprint-primitive="1"] circle');
+  const timeline = widget.locator('[data-blueprint-timeline]');
+  const seek = (milliseconds) =>
+    timeline.evaluate((element, value) => {
+      element.value = String(value);
+      element.dispatchEvent(new Event('input', { bubbles: true }));
+    }, milliseconds);
+  await expect(page.locator('.lesson-title-line h1')).toHaveText('Delayed activation');
+  await expect(page.locator('.wip-badge, .draft-profile')).toHaveCount(0);
+  await expect(page.locator('.game-example')).toHaveCount(3);
+  await expect(widget).toHaveAttribute('data-blueprint-playing', 'false');
+  await seek(2800);
+  await expect(ring).toHaveAttribute('cx', '350');
+  await expect(ring).toHaveAttribute('cy', '630');
+  await expect(ring).toHaveAttribute('r', '82');
+  await expect(widget).toHaveAttribute('data-blueprint-outcome', 'safe');
+  const warning = await ring.getAttribute('class');
+  await seek(3000);
+  await expect(ring).not.toHaveAttribute('class', warning);
+  await expect(widget).toHaveAttribute('data-blueprint-outcome', 'safe');
+  await seek(4000);
+  await expect(ring).toHaveAttribute('class', warning);
+  await page.setViewportSize({ width: 375, height: 812 });
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
 });
