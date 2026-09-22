@@ -118,6 +118,12 @@ export function initializeBlueprint(widget) {
             : frame.absorptionState;
       widget.dataset.blueprintCharge = String(frame.absorptionCharge);
     }
+    if (mechanicId === 'interruptible-wind-up')
+      widget.dataset.blueprintWindUp = frame.interruptHit
+        ? 'interrupted-now'
+        : frame.threatReleased
+          ? 'released-danger'
+          : frame.windUpState;
     boss.setAttribute(
       'transform',
       `translate(${frame.boss.x} ${frame.boss.y}) scale(${frame.bossScale})`,

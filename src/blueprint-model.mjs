@@ -326,6 +326,20 @@ const SPECS = {
     openStrike: 4.96,
     shockwaveRadius: 175,
   },
+  'interruptible-wind-up': {
+    mode: 'interruptible-wind-up',
+    boss: [280, 430],
+    player: [450, 430],
+    target: [510, 430],
+    interruptPosition: [365, 430],
+    firstWindup: [0.72, 1.82],
+    interruptAt: 1.58,
+    staggerEnd: 2.55,
+    secondWindup: [3.02, 4.18],
+    release: [4.18, 4.56],
+    recoveryEnd: 5.28,
+    threatRadius: 150,
+  },
   'wide-swing': { mode: 'arc', boss: [280, 310], player: [410, 470], target: [470, 650] },
   lunge: { mode: 'lunge', boss: [170, 290], player: [390, 590], target: [470, 660] },
   grab: { mode: 'grab', boss: [280, 300], player: [390, 485], target: [470, 610] },
@@ -671,6 +685,27 @@ export function absorptionOutcome(time, attackType = 'sword-pulse') {
   if (attackType !== 'sword-pulse') return 'ordinary';
   if (t < 0.6 || t >= spec.chargeWindup) return 'ordinary';
   return absorptionCharge(t) < 2 ? 'absorbed' : 'at-cap';
+}
+
+export function interruptibleWindUpState(time) {
+  const spec = SPECS['interruptible-wind-up'];
+  const t = localTime(time);
+  if (t >= spec.release[0] && t < spec.release[1]) return 'released';
+  if (t >= spec.secondWindup[0] && t < spec.release[0]) return 'wind-up-open';
+  if (t >= spec.interruptAt && t < spec.staggerEnd) return 'interrupted-open';
+  if (t >= spec.firstWindup[0] && t < spec.interruptAt) return 'wind-up-open';
+  if (t >= spec.release[1] && t < spec.recoveryEnd) return 'recovery';
+  return 'idle';
+}
+
+export function interruptibleWindUpOutcome(time, impact = 1) {
+  const spec = SPECS['interruptible-wind-up'];
+  const t = localTime(time);
+  const open =
+    (t >= spec.firstWindup[0] && t < spec.firstWindup[1]) ||
+    (t >= spec.secondWindup[0] && t < spec.secondWindup[1]);
+  if (!open) return 'closed';
+  return impact >= 1 ? 'interrupted' : 'insufficient-impact';
 }
 
 const pointInPolygon = (value, points) => {
@@ -1178,6 +1213,41 @@ function primitivesFor(spec, frame) {
       circle(boss.x, boss.y, spec.shockwaveRadius, live ? 0.88 : 0, 'signal', 9, 0.16),
       line(player.x - 28, player.y - 31, core.x, core.y, openHit, 'accent', 8),
       circle(core.x, core.y, 17 + 17 * openHit, openHit, 'signal', 5),
+    ];
+  }
+  if (mode === 'interruptible-wind-up') {
+    const firstOpen = frame.time >= spec.firstWindup[0] && frame.time < spec.interruptAt;
+    const secondOpen = frame.time >= spec.secondWindup[0] && frame.time < spec.release[0];
+    const interrupted = frame.time >= spec.interruptAt && frame.time < spec.staggerEnd;
+    const preview = firstOpen || secondOpen;
+    const live = frame.dangerActive;
+    const firstProgress = clamp(
+      (frame.time - spec.firstWindup[0]) / (spec.firstWindup[1] - spec.firstWindup[0]),
+    );
+    const secondProgress = clamp(
+      (frame.time - spec.secondWindup[0]) / (spec.release[0] - spec.secondWindup[0]),
+    );
+    const gaugeProgress = firstOpen ? firstProgress : secondOpen ? secondProgress : 0;
+    const interruptFlash = strikePulse(frame.time, spec.interruptAt, 0.34);
+    return [
+      circle(boss.x, boss.y, spec.threatRadius, preview ? 0.5 : 0, 'accent', 4, 0.07, '10 10'),
+      circle(boss.x, boss.y, spec.threatRadius, live ? 0.9 : 0, 'signal', 10, 0.17),
+      rect(boss.x - 58, boss.y - 118, 116, 16, preview ? 0.88 : 0, 'muted', 0.14),
+      rect(boss.x - 54, boss.y - 114, 108 * gaugeProgress, 8, preview ? 0.96 : 0, 'accent', 0.75),
+      line(player.x - 28, player.y - 31, boss.x + 42, boss.y - 4, interruptFlash, 'accent', 9),
+      circle(boss.x + 42, boss.y - 4, 17 + 21 * interruptFlash, interruptFlash, 'signal', 6),
+      path(
+        `M ${boss.x} ${boss.y - 88} L ${boss.x + 20} ${boss.y - 68} L ${boss.x} ${boss.y - 48} L ${boss.x - 20} ${boss.y - 68} Z M ${boss.x} ${boss.y - 82} L ${boss.x} ${boss.y - 54}`,
+        preview ? 0.92 : 0,
+        'accent',
+        6,
+      ),
+      path(
+        `M ${boss.x - 20} ${boss.y - 70} L ${boss.x + 20} ${boss.y - 30} M ${boss.x + 20} ${boss.y - 70} L ${boss.x - 20} ${boss.y - 30}`,
+        interrupted ? 0.88 : 0,
+        'safe',
+        8,
+      ),
     ];
   }
   if (mode === 'landing') {
@@ -2413,6 +2483,11 @@ function pointClearsThreat(spec, frame, value, radius = BLUEPRINT_PLAYER_RADIUS)
     return (
       Math.hypot(value.x - frame.boss.x, value.y - frame.boss.y) > spec.shockwaveRadius + radius
     );
+  if (mode === 'interruptible-wind-up')
+    return (
+      !frame.dangerActive ||
+      Math.hypot(value.x - frame.boss.x, value.y - frame.boss.y) > spec.threatRadius + radius
+    );
   if (mode === 'spiral')
     return (
       distanceFromBoss > 52 + radius &&
@@ -2618,6 +2693,8 @@ export function blueprintFrame(id, time) {
   else if (spec.mode === 'counter-stance') responseProgress = smooth((t - 1.92) / 0.48);
   else if (spec.mode === 'absorption-power-up')
     responseProgress = smooth((t - spec.chargeWindup) / 0.53);
+  else if (spec.mode === 'interruptible-wind-up')
+    responseProgress = smooth((t - spec.secondWindup[0]) / 0.64);
   else if (spec.mode === 'knockback')
     responseProgress = phase === 0 ? 0 : phase === 1 ? smooth(action) : 1;
   else if (spec.mode === 'target-lock')
@@ -2701,6 +2778,24 @@ export function blueprintFrame(id, time) {
     const reset = smooth((t - 5.25) / 0.58);
     player = {
       x: mix(mix(mix(startPlayer.x, targetPlayer.x, away), 390, approach), startPlayer.x, reset),
+      y: startPlayer.y,
+    };
+  }
+  if (spec.mode === 'interruptible-wind-up') {
+    const firstApproach = smooth((t - 0.92) / 0.5);
+    const firstRetreat = smooth((t - 1.78) / 0.62);
+    const clearRelease = smooth((t - spec.secondWindup[0]) / 0.64);
+    const reset = smooth((t - spec.recoveryEnd) / 0.54);
+    const closePosition = {
+      x: mix(startPlayer.x, spec.interruptPosition[0], firstApproach),
+      y: startPlayer.y,
+    };
+    const afterRetreat = {
+      x: mix(closePosition.x, startPlayer.x, firstRetreat),
+      y: startPlayer.y,
+    };
+    player = {
+      x: mix(mix(afterRetreat.x, targetPlayer.x, clearRelease), startPlayer.x, reset),
       y: startPlayer.y,
     };
   }
@@ -2829,7 +2924,9 @@ export function blueprintFrame(id, time) {
                                       ? t >= spec.riposte[0] && t < spec.riposte[1]
                                       : spec.mode === 'absorption-power-up'
                                         ? t >= spec.shockwave[0] && t < spec.shockwave[1]
-                                        : phase === 1;
+                                        : spec.mode === 'interruptible-wind-up'
+                                          ? t >= spec.release[0] && t < spec.release[1]
+                                          : phase === 1;
   const frame = {
     id,
     mode: spec.mode,
@@ -2868,7 +2965,8 @@ export function blueprintFrame(id, time) {
             spec.mode === 'part-break' ||
             spec.mode === 'attack-reflection' ||
             spec.mode === 'counter-stance' ||
-            spec.mode === 'absorption-power-up'
+            spec.mode === 'absorption-power-up' ||
+            spec.mode === 'interruptible-wind-up'
           ? -180
           : -90,
     bossMotion: motion({
@@ -2912,9 +3010,14 @@ export function blueprintFrame(id, time) {
                       ? strikePulse(t, spec.riposte[0], 0.52)
                       : spec.mode === 'absorption-power-up'
                         ? strikePulse(t, spec.shockwave[0], 0.62)
-                        : phase === 1
-                          ? 0.75
-                          : prepare * 0.35,
+                        : spec.mode === 'interruptible-wind-up'
+                          ? Math.max(
+                              strikePulse(t, spec.interruptAt - 0.28, 0.8),
+                              strikePulse(t, spec.release[0], 0.72),
+                            )
+                          : phase === 1
+                            ? 0.75
+                            : prepare * 0.35,
       impact:
         spec.mode === 'landing'
           ? pulse(clamp((action - 0.42) / 0.22))
@@ -2934,11 +3037,13 @@ export function blueprintFrame(id, time) {
                       ? 0.85 * strikePulse(t, spec.openStrike, 0.27)
                       : spec.mode === 'absorption-power-up'
                         ? 0.85 * strikePulse(t, spec.openStrike, 0.27)
-                        : spec.mode === 'shockwave' || spec.mode === 'knockback'
-                          ? pulse(action * 3)
-                          : spec.mode === 'chain-explosions'
-                            ? pulse((action * 5) % 1)
-                            : 0,
+                        : spec.mode === 'interruptible-wind-up'
+                          ? 0.9 * strikePulse(t, spec.interruptAt, 0.3)
+                          : spec.mode === 'shockwave' || spec.mode === 'knockback'
+                            ? pulse(action * 3)
+                            : spec.mode === 'chain-explosions'
+                              ? pulse((action * 5) % 1)
+                              : 0,
     }),
     playerMotion: motion({
       gait: (route * responseProgress + route * returnProgress) / 20,
@@ -2978,11 +3083,13 @@ export function blueprintFrame(id, time) {
                           strikePulse(t, spec.secondPulse[0], 0.32),
                           strikePulse(t, spec.openStrike, 0.33),
                         )
-                      : spec.mode === 'decoy' && phase === 1
-                        ? pulse(clamp((action - 0.52) / 0.3))
-                        : spec.mode === 'weak-point' && phase === 1
-                          ? pulse(action * 1.5)
-                          : 0,
+                      : spec.mode === 'interruptible-wind-up'
+                        ? strikePulse(t, spec.interruptAt, 0.38)
+                        : spec.mode === 'decoy' && phase === 1
+                          ? pulse(clamp((action - 0.52) / 0.3))
+                          : spec.mode === 'weak-point' && phase === 1
+                            ? pulse(action * 1.5)
+                            : 0,
     }),
   };
   if (spec.mode === 'directional-shield') {
@@ -3039,6 +3146,14 @@ export function blueprintFrame(id, time) {
     frame.absorbedSecond = strikePulse(t, spec.secondPulse[1], 0.26) > 0.5;
     frame.openStrike = strikePulse(t, spec.openStrike, 0.3) > 0.5;
   }
+  if (spec.mode === 'interruptible-wind-up') {
+    frame.windUpState = interruptibleWindUpState(t);
+    frame.interruptHit = strikePulse(t, spec.interruptAt, 0.3) > 0.5;
+    frame.threatReleased = dangerActive;
+    frame.interruptible =
+      (t >= spec.firstWindup[0] && t < spec.interruptAt) ||
+      (t >= spec.secondWindup[0] && t < spec.release[0]);
+  }
   frame.primitives = primitivesFor(spec, frame);
   frame.playerSafe = pointClearsThreat(spec, frame, player);
   frame.bossLabel = {
@@ -3055,7 +3170,8 @@ export function blueprintFrame(id, time) {
       spec.mode === 'part-break' ||
       spec.mode === 'attack-reflection' ||
       spec.mode === 'counter-stance' ||
-      spec.mode === 'absorption-power-up'
+      spec.mode === 'absorption-power-up' ||
+      spec.mode === 'interruptible-wind-up'
         ? 92
         : -62),
   };

@@ -1,0 +1,122 @@
+{
+  "title": "可打断蓄力",
+  "subtitle": "提供清晰的取消窗口，而不是让每次命中都变成硬直。",
+  "variant": "先用剑打断一次，再让符文重击完整释放",
+  "summary": "带有标记的蓄力可在截止前被符合条件的玩家行动取消。",
+  "overview": "可打断蓄力把进攻变成限时的防御应对。Kern在环形重击前亮出破坏符文；Tavi第一次蓄势剑击将其取消，并换来短暂输出窗口。第二次蓄力超过期限，预告的圆环随即生效。信号、合格行动、截止时间、取消结果和备用应对必须分别清楚。",
+  "learning": "定义打断信号、合格行动、截止时间、取消收益、完整威胁和恢复阶段。",
+  "category": "防御",
+  "readTime": "4 分钟",
+  "demo": {
+    "title": "比较被打断的施放与完整完成的同一施放",
+    "timeline": "打断窗口时间线",
+    "step": "打断状态",
+    "phaseNames": ["读懂信号并赶上期限", "确认取消和收益", "让第二个期限结束"],
+    "phaseDescriptions": [
+      "0.72秒时，Kern举起破坏符文并显示期限条。Tavi确定挥剑，1.58秒的接触在1.82秒截止前提供足够的打断强度。",
+      "符文于接触时破碎，预告圆环没有变成危险区，Kern保持踉跄至2.55秒。没有释放攻击以及开放姿态共同确认成功。",
+      "3.02秒时Kern重复同一蓄力。Tavi不攻击并离开半径。窗口在4.18秒关闭，圆环危险至4.56秒，之后进入普通恢复。"
+    ],
+    "boss": "Boss",
+    "player": "玩家",
+    "danger": "只有第二次期限结束后，预告圆环才会变成危险区",
+    "locked": "破坏符文开启时，一次具有足够打断强度的确定剑击必须命中",
+    "safe": "在截止前打断，或完整离开圆环并等待恢复",
+    "reducedMotion": "减少动态时自动播放关闭。可拖动滑块比较窗口、取消、释放和恢复。",
+    "diagramDescription": "石头Boss在破坏符文和填充期限条下准备环形重击。持剑玩家靠近并打碎第一次施放，使Boss踉跄且圆环不生效。第二次玩家后退；条填满后整个圆环变危险，而玩家留在边缘之外。"
+  },
+  "steps": [
+    {
+      "title": "什么在提示可打断行动？",
+      "body": "给窗口一个不会与普通危险复用的稳定信号：这里在0.72至1.82秒显示破坏符文和填充条。圆环仍预告最终威胁，让玩家能在打断和撤离之间选择。请在特效、镜头运动、色觉滤镜和减少动态下测试。"
+    },
+    {
+      "title": "什么行动能在何时打断？",
+      "body": "在逻辑中明确所需行动、冲击值、碰撞目标和精确边界。Tavi的确定剑击在1.58秒命中并提供一点打断；轻触、落空或1.82秒后的命中不会取消。以确定顺序处理边界同帧事件，并把强度不足与成功分别表现。"
+    },
+    {
+      "title": "两个分支各自发生什么？",
+      "body": "成功时立即移除待发生的伤害，并让Kern开放至2.55秒。失败时关闭打断标记，在4.18至4.56秒启用与预告完全一致的圆环，之后保留普通恢复。两个路径都要测试，完整后果必须与取消同样具体。"
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "任何伤害都会意外取消",
+      "body": "若持续伤害和偶然弹体也触发同一结果，主动应对就变成被动控制。应要求明确的打断标签或强度阈值，并为被拒绝的命中保留普通伤害反馈。"
+    },
+    {
+      "title": "期限条与判定规则不一致",
+      "body": "外观看似开放但已经不接收输入会制造虚假失败。让标记、输入规则、待释放攻击和音效截止共享一个时间边界，并测试边界前一帧、当帧和后一帧。"
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "让取消成为原子操作",
+      "body": "合格命中结算时，在一次状态转移中标记取消、移除未来伤害、播放破坏反馈并开始踉跄。跳转和回滚必须重建该状态，不能让旧事件稍后触发。"
+    },
+    {
+      "title": "为接近定价",
+      "body": "Tavi必须在期限前进入剑的距离，以安全空间换取踉跄收益。一起调整距离与持续时间，确保最慢的受支持移动在识别信号和输入延迟后仍有可行路线。"
+    },
+    {
+      "title": "保留备用应对",
+      "body": "错过打断不应自动等于受伤。同一预告圆环传达第二个有效应对：离开范围。这样没有合格动作的构筑仍可处理，而主动接近者得到更高收益。"
+    },
+    {
+      "title": "测试归属与边界",
+      "body": "检查同时命中、多人控制总和、无敌与阶段切换、排队技能、蓄力时死亡、截止帧、回滚、暂停、慢动作，以及跳转后被删除伤害是否重现。"
+    }
+  ],
+  "story": {
+    "title": "封印前可以击碎的符文",
+    "body": "石之力量在地面聚集时，Kern举起明亮的破坏符文。Tavi的剑劈开第一个，未完成圆环消散。第二个完成封印，把力量送入完整圆环。"
+  },
+  "adaptation": {
+    "title": "使用Tavi已有的剑动作",
+    "body": "示例不需要特殊道具：确定剑击携带打断标签。其他游戏可使用重击、格挡、法术或团队控制总量，但必须在要求紧迫期限前教会合格动作和强度。"
+  },
+  "distinction": {
+    "title": "是可取消行动，不是通用眩晕",
+    "body": "普通蓄力只预告行动何时结算；架势条跨多次攻击累计。可打断蓄力为一个待发生行动打开有限状态，只有窗口内的合格命中会删除其计划结果。"
+  },
+  "lensNotes": [
+    { "id": "telegraphing", "body": "破坏符文标识打断机会，地面圆环则另行预告后果。" },
+    { "id": "counterplay", "body": "Tavi可确定使用合格剑击，也可保持距离应对完整圆环。" },
+    { "id": "risk-reward", "body": "进入近战范围有错过期限的风险，但比单纯躲避获得更长踉跄。" },
+    { "id": "rule-exception", "body": "记录哪些行动提供打断强度、需要多少，以及截止帧如何结算。" }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "Sea of Stars",
+      "boss": "Dweller of Strife",
+      "video": "https://www.youtube.com/watch?v=8d6NqM5FDk0&t=100s",
+      "videoDurationSeconds": 1067,
+      "screenshot": "https://i.ytimg.com/vi/8d6NqM5FDk0/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=8d6NqM5FDk0&t=100s",
+      "body": "Sea of Stars在敌方行动上显示带类型的锁；官方战斗说明指出，打破全部锁会取消该行动。Dweller of Strife提供多锁案例，可观察期限、所需动作和部分进度如何保持清楚。"
+    },
+    {
+      "dimension": "3D",
+      "game": "Guild Wars 2",
+      "boss": "The Shatterer",
+      "video": "https://www.youtube.com/watch?v=-3RwfWoO0GE&t=90s",
+      "videoDurationSeconds": 710,
+      "screenshot": "https://i.ytimg.com/vi/-3RwfWoO0GE/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=-3RwfWoO0GE&t=90s",
+      "body": "ArenaNet说明Shard Storm期间会出现蔑视条，及时控制可阻止毁灭攻击。大型公共战斗展现共享打断需求，贡献反馈和清晰施放边界与最终取消同样重要。"
+    },
+    {
+      "dimension": "3D",
+      "game": "Outriders",
+      "boss": "Gauss",
+      "video": "https://www.youtube.com/watch?v=Cn_FnoYeS-Y&t=48s",
+      "videoDurationSeconds": 186,
+      "screenshot": "https://i.ytimg.com/vi/Cn_FnoYeS-Y/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=Cn_FnoYeS-Y&t=48s",
+      "body": "Gauss会显示包括Lightning Storm在内的具名施放条，打断技能可在完成前停止它。短片便于比较重复施放，也说明连续控制的临时抗性必须另有信号。"
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

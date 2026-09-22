@@ -1,0 +1,24 @@
+{
+  "id": "interruptible-wind-up",
+  "number": 60,
+  "published": true,
+  "sourceLocale": "en",
+  "contentVersion": 1,
+  "animation": "interruptible-wind-up",
+  "lenses": ["telegraphing", "counterplay", "risk-reward", "rule-exception"],
+  "related": ["counter-stance", "delayed-activation", "telegraph"],
+  "sources": [
+    {
+      "title": "PlayStation Blog · Sea of Stars lock system and move cancellation",
+      "url": "https://blog.playstation.com/2022/07/07/a-closer-look-at-the-turn-based-combat-in-sea-of-stars/"
+    },
+    {
+      "title": "Guild Wars 2 · Meet the New Shatterer",
+      "url": "https://www.guildwars2.com/en/news/meet-the-new-shatterer/"
+    },
+    {
+      "title": "Twinfinite · Interrupting Gauss's Lightning Storm",
+      "url": "https://twinfinite.net/guides/outriders-beat-gauss-how-to/"
+    }
+  ]
+}

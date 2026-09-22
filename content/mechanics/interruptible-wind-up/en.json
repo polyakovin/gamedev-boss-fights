@@ -1,0 +1,138 @@
+{
+  "title": "Interruptible wind-up",
+  "subtitle": "Offer a clear cancellation window without making every hit a stun.",
+  "variant": "One sword interrupt, then one completed rune slam",
+  "summary": "A marked wind-up can be cancelled by a qualifying player action before its deadline.",
+  "overview": "An interruptible wind-up turns offense into a timed defensive response. Kern exposes a break rune before a radial slam; Tavi's first committed sword hit cancels it and opens a short punish. The second wind-up expires and the announced ring fires. Signal, qualifying action, deadline, cancellation, and fallback must remain distinct.",
+  "learning": "Define the interrupt signal, qualifying action, deadline, cancellation payoff, completed threat, and recovery.",
+  "category": "Defense",
+  "readTime": "4 min",
+  "demo": {
+    "title": "Compare an interrupted cast with the same cast allowed to finish",
+    "timeline": "Interrupt window timeline",
+    "step": "Interrupt states",
+    "phaseNames": [
+      "Read and meet the deadline",
+      "Confirm cancellation and payoff",
+      "Let the same deadline close"
+    ],
+    "phaseDescriptions": [
+      "At 0.72 s Kern raises a break rune and a deadline gauge. Tavi commits to a sword strike; contact at 1.58 s meets the required impact before the 1.82 s cutoff.",
+      "The rune breaks at contact, the announced ring never becomes dangerous, and Kern remains staggered until 2.55 s. The missing release and open posture both confirm that the interrupt succeeded.",
+      "Kern starts the same wind-up at 3.02 s. Tavi withholds the hit and clears the shown radius. The window closes at 4.18 s, the ring is dangerous until 4.56 s, and Kern then enters ordinary recovery."
+    ],
+    "boss": "Boss",
+    "player": "Player",
+    "danger": "The previewed ring becomes dangerous only when the second deadline expires",
+    "locked": "One committed sword hit with enough interrupt impact must connect while the break rune is open",
+    "safe": "Interrupt before the cutoff, or clear the full ring and wait for recovery if the window closes",
+    "reducedMotion": "Autoplay is disabled by reduced motion. Scrub to compare the open window, cancellation, completed release, and recovery.",
+    "diagramDescription": "A stone boss charges a radial slam beneath a break rune and filling deadline gauge. A sword-bearing player closes in and breaks the first cast, leaving the boss staggered and the ring inactive. During a repeated cast the player retreats instead; the gauge fills, the full ring flashes as dangerous, and the player remains beyond its edge."
+  },
+  "steps": [
+    {
+      "title": "What announces an interruptible action?",
+      "body": "Give the window a stable sign that is not reused for ordinary danger: here a break rune and filling bar appear from 0.72–1.82 s. The ring still previews the eventual threat, so the player can choose between interrupting and moving. Test the signal against effects, camera motion, color-vision filters, and reduced motion."
+    },
+    {
+      "title": "Which action interrupts, and when?",
+      "body": "Specify the required action, impact value, collision target, and inclusive deadline in game logic. Tavi's committed sword hit connects at 1.58 s and supplies one interrupt point; a light touch, miss, or hit after 1.82 s does not cancel the cast. Resolve simultaneous cutoff events deterministically and show insufficient impact differently from success."
+    },
+    {
+      "title": "What happens on both branches?",
+      "body": "On success, remove the pending hitbox immediately and hold Kern open until 2.55 s. On failure, close the interrupt marker, activate the exact previewed ring from 4.18–4.56 s, and keep an ordinary recovery afterward. Test both paths: a cancellation is legible only when the completed consequence is equally concrete."
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "Any damage accidentally cancels the cast",
+      "body": "If chip damage and incidental projectiles trigger the same result, the mechanic becomes passive crowd control rather than a deliberate response. Gate cancellation on an explicit interrupt tag or impact threshold and retain ordinary damage feedback for rejected hits."
+    },
+    {
+      "title": "The deadline and hitbox disagree",
+      "body": "A bar that looks open after interruption has stopped accepting input creates false failures. Drive the marker, input rule, pending attack, and audio cutoff from one timeline boundary, then test hits one frame before, on, and after it."
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "Keep cancellation transactional",
+      "body": "When the qualified hit resolves, atomically mark the cast cancelled, remove its future damage event, play the break response, and start stagger. Seeking or rollback must reconstruct that state rather than firing the old event later."
+    },
+    {
+      "title": "Price the approach",
+      "body": "Tavi must enter sword range before the deadline, trading safer spacing for the stagger reward. Tune approach distance and wind-up duration together; the slowest supported movement route still needs a feasible response after recognition and input latency."
+    },
+    {
+      "title": "Preserve a fallback response",
+      "body": "Missing an interrupt should not automatically mean damage. The same preview communicates a second valid response: leave the ring. This keeps the mechanic useful for builds without the qualifying verb while preserving the stronger reward for players who commit."
+    },
+    {
+      "title": "Test ownership and edge cases",
+      "body": "Check simultaneous hits, multiplayer impact sums, invulnerable and phase-transition states, queued casts, death during wind-up, interruption on the cutoff frame, rollback, pause, slow motion, and whether removed damage can reappear after seeking."
+    }
+  ],
+  "story": {
+    "title": "A rune that can be cracked before it seals",
+    "body": "Kern lifts one bright break rune while stone energy gathers in the floor. Tavi's sword splits the first rune and the unfinished ring fades. The second rune seals, sending the stored force through the completed circle; one prop explains both opportunity and consequence."
+  },
+  "adaptation": {
+    "title": "Use Tavi's existing sword verb",
+    "body": "The example needs no special counter item: a committed sword hit carries the interrupt tag. Other games can use a heavy attack, parry, spell, or team crowd-control total, but the accepted verb and its strength must be taught before a tight deadline is demanded."
+  },
+  "distinction": {
+    "title": "A cancellable action, not a universal stun",
+    "body": "A normal wind-up only announces when an action will resolve. A posture gauge accumulates progress across attacks. An interruptible wind-up exposes a bounded state on one pending action: a qualifying hit inside that state deletes the scheduled result and grants a defined cancellation response."
+  },
+  "lensNotes": [
+    {
+      "id": "telegraphing",
+      "body": "The break rune identifies the interrupt opportunity while the floor ring separately previews the consequence."
+    },
+    {
+      "id": "counterplay",
+      "body": "Tavi can commit to the qualified sword hit or preserve distance and answer the completed ring."
+    },
+    {
+      "id": "risk-reward",
+      "body": "Entering melee range risks missing the cutoff but earns a longer stagger than merely avoiding the release."
+    },
+    {
+      "id": "rule-exception",
+      "body": "Document which actions supply interrupt impact, how much is required, and how the exact cutoff frame resolves."
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "Sea of Stars",
+      "boss": "Dweller of Strife",
+      "video": "https://www.youtube.com/watch?v=8d6NqM5FDk0&t=100s",
+      "videoDurationSeconds": 1067,
+      "screenshot": "https://i.ytimg.com/vi/8d6NqM5FDk0/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=8d6NqM5FDk0&t=100s",
+      "body": "Sea of Stars shows type-marked locks above an enemy action; the official combat explanation says breaking every lock cancels the move. The Dweller of Strife encounter presents a multi-lock version, useful for studying how the deadline, required verbs, and partial progress remain readable."
+    },
+    {
+      "dimension": "3D",
+      "game": "Guild Wars 2",
+      "boss": "The Shatterer",
+      "video": "https://www.youtube.com/watch?v=-3RwfWoO0GE&t=90s",
+      "videoDurationSeconds": 710,
+      "screenshot": "https://i.ytimg.com/vi/-3RwfWoO0GE/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=-3RwfWoO0GE&t=90s",
+      "body": "ArenaNet describes a defiance bar during Shard Storm: timely crowd control prevents the devastating attack. The large public encounter demonstrates a shared interrupt requirement, where contribution feedback and a clearly bounded cast matter as much as the final cancellation."
+    },
+    {
+      "dimension": "3D",
+      "game": "Outriders",
+      "boss": "Gauss",
+      "video": "https://www.youtube.com/watch?v=Cn_FnoYeS-Y&t=48s",
+      "videoDurationSeconds": 186,
+      "screenshot": "https://i.ytimg.com/vi/Cn_FnoYeS-Y/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=Cn_FnoYeS-Y&t=48s",
+      "body": "Gauss exposes named cast bars, including Lightning Storm, that an interrupt skill can stop before completion. The focused fight clip makes the bar and repeated casts easy to compare; it also highlights why temporary resistance to repeated control must be communicated separately from the cast itself."
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

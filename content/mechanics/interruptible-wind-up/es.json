@@ -1,0 +1,138 @@
+{
+  "title": "Preparación interrumpible",
+  "subtitle": "Ofrece una ventana de cancelación clara sin convertir cada golpe en aturdimiento.",
+  "variant": "Una interrupción con espada y después un golpe rúnico completo",
+  "summary": "Una preparación marcada puede cancelarse con una acción válida del jugador antes del límite.",
+  "overview": "Una preparación interrumpible convierte la ofensiva en una respuesta defensiva cronometrada. Kern muestra una runa antes de un golpe radial; el primer espadazo de Tavi lo cancela y abre un castigo breve. La segunda preparación vence y activa el círculo anunciado. Señal, acción válida, límite, cancelación y alternativa deben leerse por separado.",
+  "learning": "Define la señal, la acción válida, el límite, la recompensa por cancelar, la amenaza completa y la recuperación.",
+  "category": "Defensa",
+  "readTime": "4 min",
+  "demo": {
+    "title": "Compara un lanzamiento interrumpido con el mismo lanzamiento completado",
+    "timeline": "Línea de tiempo de interrupción",
+    "step": "Estados de interrupción",
+    "phaseNames": [
+      "Leer la señal y llegar a tiempo",
+      "Confirmar la cancelación",
+      "Dejar que venza el segundo límite"
+    ],
+    "phaseDescriptions": [
+      "A los 0,72 s Kern levanta una runa de ruptura y un medidor de tiempo. Tavi se compromete con la espada; el contacto a 1,58 s aporta el impacto necesario antes del corte de 1,82 s.",
+      "La runa se rompe, el círculo anunciado nunca se vuelve peligroso y Kern queda vulnerable hasta 2,55 s. La ausencia del ataque y la postura abierta confirman el éxito.",
+      "Kern repite la preparación a 3,02 s. Tavi no golpea y sale del radio. La ventana cierra a 4,18 s, el círculo daña hasta 4,56 s y después llega la recuperación normal."
+    ],
+    "boss": "Jefe",
+    "player": "Jugador",
+    "danger": "El círculo previsto solo se vuelve peligroso al vencer el segundo plazo",
+    "locked": "Un espadazo comprometido con suficiente impacto debe conectar mientras la runa esté abierta",
+    "safe": "Interrumpe antes del límite o sal por completo del círculo y espera la recuperación",
+    "reducedMotion": "Con movimiento reducido no hay reproducción automática. Usa el control para comparar ventana, cancelación, ataque y recuperación.",
+    "diagramDescription": "Un jefe de piedra carga un golpe radial bajo una runa de ruptura y un medidor. El jugador con espada rompe el primer lanzamiento y deja al jefe vulnerable. En la repetición se retira; el medidor se llena, el círculo completo se vuelve peligroso y el jugador queda fuera."
+  },
+  "steps": [
+    {
+      "title": "¿Qué anuncia una acción interrumpible?",
+      "body": "Da a la ventana una señal estable distinta del peligro normal: aquí aparecen una runa y una barra entre 0,72 y 1,82 s. El círculo sigue mostrando la amenaza futura, de modo que se puede elegir entre atacar o alejarse. Prueba la señal con efectos, cámara, filtros de color y movimiento reducido."
+    },
+    {
+      "title": "¿Qué acción interrumpe y cuándo?",
+      "body": "Define en la lógica la acción, su impacto, el objetivo y el límite exacto. El espadazo de Tavi conecta a 1,58 s y aporta un punto; un roce, un fallo o un golpe posterior a 1,82 s no cancela. Resuelve de forma determinista los eventos simultáneos y diferencia el impacto insuficiente del éxito."
+    },
+    {
+      "title": "¿Qué ocurre en ambas ramas?",
+      "body": "Al acertar, elimina de inmediato el daño pendiente y deja a Kern abierto hasta 2,55 s. Al fallar, cierra la marca, activa exactamente el círculo previsto entre 4,18 y 4,56 s y conserva una recuperación normal. Prueba ambos caminos para que la consecuencia completada sea tan concreta como la cancelación."
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "Cualquier daño cancela por accidente",
+      "body": "Si el daño residual o proyectiles incidentales causan el mismo efecto, la decisión se vuelve control pasivo. Exige una etiqueta o umbral de interrupción y conserva la respuesta de daño normal para los golpes rechazados."
+    },
+    {
+      "title": "El medidor y la regla no coinciden",
+      "body": "Una barra que parece abierta cuando ya no acepta entrada produce fallos falsos. Haz que señal, entrada, ataque pendiente y corte de audio compartan el mismo límite, y prueba un fotograma antes, en el límite y después."
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "Haz atómica la cancelación",
+      "body": "Al resolver el golpe válido, marca el lanzamiento como cancelado, elimina su evento de daño, reproduce la ruptura e inicia el tambaleo en una sola transición. La búsqueda y el rollback deben reconstruir ese estado."
+    },
+    {
+      "title": "Pon precio al acercamiento",
+      "body": "Tavi entra al alcance de espada antes del límite, cambiando distancia segura por la recompensa. Ajusta distancia y duración juntas para que el movimiento más lento aún tenga margen tras reconocer la señal."
+    },
+    {
+      "title": "Conserva una respuesta alternativa",
+      "body": "Fallar la interrupción no tiene que equivaler a recibir daño. El mismo círculo enseña una segunda respuesta: salir. Así las configuraciones sin el verbo válido siguen teniendo contrajuego."
+    },
+    {
+      "title": "Prueba bordes y propiedad",
+      "body": "Comprueba golpes simultáneos, suma de control en multijugador, invulnerabilidad, cambios de fase, muerte, el fotograma límite, rollback, pausa, cámara lenta y que el daño eliminado no reaparezca al buscar."
+    }
+  ],
+  "story": {
+    "title": "Una runa que se rompe antes de sellarse",
+    "body": "Kern alza una runa brillante mientras la fuerza se reúne en el suelo. La espada de Tavi parte la primera y el círculo se apaga. La segunda se sella y libera la fuerza por el círculo completo."
+  },
+  "adaptation": {
+    "title": "Usa la espada existente de Tavi",
+    "body": "No hace falta un objeto especial: el espadazo comprometido lleva la etiqueta de interrupción. Otros juegos pueden usar ataque pesado, parada, hechizo o control de equipo, pero deben enseñar antes el verbo y su fuerza."
+  },
+  "distinction": {
+    "title": "Una acción cancelable, no un aturdimiento universal",
+    "body": "Una preparación normal solo anuncia la resolución. Una barra de postura acumula progreso. Esta mecánica abre un estado limitado en una acción pendiente: un golpe válido elimina su resultado programado y activa una respuesta definida."
+  },
+  "lensNotes": [
+    {
+      "id": "telegraphing",
+      "body": "La runa marca la oportunidad y el círculo del suelo muestra por separado la consecuencia."
+    },
+    {
+      "id": "counterplay",
+      "body": "Tavi puede comprometer el espadazo válido o mantener distancia y responder al círculo."
+    },
+    {
+      "id": "risk-reward",
+      "body": "Acercarse arriesga perder el plazo, pero concede un tambaleo más largo que solo esquivar."
+    },
+    {
+      "id": "rule-exception",
+      "body": "Documenta las acciones válidas, el impacto requerido y la resolución del fotograma límite."
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "Sea of Stars",
+      "boss": "Dweller of Strife",
+      "video": "https://www.youtube.com/watch?v=8d6NqM5FDk0&t=100s",
+      "videoDurationSeconds": 1067,
+      "screenshot": "https://i.ytimg.com/vi/8d6NqM5FDk0/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=8d6NqM5FDk0&t=100s",
+      "body": "Sea of Stars muestra candados de tipos sobre una acción enemiga; su explicación oficial dice que romperlos todos cancela el movimiento. Dweller of Strife ofrece un caso con varios candados donde deben leerse plazo, verbos y progreso parcial."
+    },
+    {
+      "dimension": "3D",
+      "game": "Guild Wars 2",
+      "boss": "The Shatterer",
+      "video": "https://www.youtube.com/watch?v=-3RwfWoO0GE&t=90s",
+      "videoDurationSeconds": 710,
+      "screenshot": "https://i.ytimg.com/vi/-3RwfWoO0GE/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=-3RwfWoO0GE&t=90s",
+      "body": "ArenaNet describe una barra de desafío durante Shard Storm: el control a tiempo evita el ataque. El encuentro público muestra una interrupción compartida, donde el aporte y el límite claro importan tanto como la cancelación."
+    },
+    {
+      "dimension": "3D",
+      "game": "Outriders",
+      "boss": "Gauss",
+      "video": "https://www.youtube.com/watch?v=Cn_FnoYeS-Y&t=48s",
+      "videoDurationSeconds": 186,
+      "screenshot": "https://i.ytimg.com/vi/Cn_FnoYeS-Y/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=Cn_FnoYeS-Y&t=48s",
+      "body": "Gauss muestra barras con nombre, como Lightning Storm, que una habilidad puede interrumpir. El clip permite comparar lanzamientos repetidos y demuestra por qué la resistencia temporal al control necesita una señal aparte."
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

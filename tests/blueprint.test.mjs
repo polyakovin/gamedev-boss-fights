@@ -14,6 +14,8 @@ import {
   blueprintSpec,
   damageTypeResistanceDamage,
   directionalShieldOutcome,
+  interruptibleWindUpOutcome,
+  interruptibleWindUpState,
   partBreakCanFire,
   partBreakState,
   situationalImmunityOutcome,
@@ -24,8 +26,8 @@ import {
   renderBlueprintThumbnail,
 } from '../lib/blueprint-view.mjs';
 
-test('all 53 promoted lesson animations have distinct rule modes and complete moving frames', () => {
-  assert.equal(BLUEPRINT_MECHANIC_IDS.length, 53);
+test('all 54 promoted lesson animations have distinct rule modes and complete moving frames', () => {
+  assert.equal(BLUEPRINT_MECHANIC_IDS.length, 54);
   const modes = new Set();
   for (const id of BLUEPRINT_MECHANIC_IDS) {
     for (let time = 0; time <= BLUEPRINT_DURATION; time += 0.1) {
@@ -46,7 +48,7 @@ test('all 53 promoted lesson animations have distinct rule modes and complete mo
           assert.ok(Number.isFinite(value), `${id} has an invalid ${primitive.type}`);
     }
   }
-  assert.equal(modes.size, 53);
+  assert.equal(modes.size, 54);
 });
 
 test('every blueprint exposes signal, committed action, and recovery without player teleports', () => {
@@ -57,7 +59,12 @@ test('every blueprint exposes signal, committed action, and recovery without pla
   for (const id of BLUEPRINT_MECHANIC_IDS) {
     assert.equal(blueprintFrame(id, 1.59).committed, false, id);
     assert.equal(blueprintFrame(id, 1.6).committed, true, id);
-    if (id !== 'part-break' && id !== 'counter-stance' && id !== 'absorption-power-up')
+    if (
+      id !== 'part-break' &&
+      id !== 'counter-stance' &&
+      id !== 'absorption-power-up' &&
+      id !== 'interruptible-wind-up'
+    )
       assert.equal(blueprintFrame(id, 3).dangerActive, true, id);
     assert.equal(blueprintFrame(id, 3).playerSafe, true, id);
     let previous = blueprintFrame(id, 0).player;
@@ -127,7 +134,8 @@ test('every damaging promoted animation derives safety from its own active geome
       id !== 'situational-immunity' &&
       id !== 'part-break' &&
       id !== 'counter-stance' &&
-      id !== 'absorption-power-up',
+      id !== 'absorption-power-up' &&
+      id !== 'interruptible-wind-up',
   )) {
     const frame = blueprintFrame(id, 3);
     let point = unsafePoints[id];
@@ -1202,5 +1210,52 @@ test('absorption stores two eligible hits, spends the charge on one marked ring,
   assert.match(
     renderBlueprintThumbnail(id, 'test-absorption'),
     /data-blueprint-preview="absorption-power-up"/,
+  );
+});
+
+test('interruptible wind-up accepts one qualified hit before the deadline and releases when missed', () => {
+  const id = 'interruptible-wind-up';
+  assert.equal(interruptibleWindUpOutcome(0.6), 'closed');
+  assert.equal(interruptibleWindUpOutcome(1.2, 0.5), 'insufficient-impact');
+  assert.equal(interruptibleWindUpOutcome(1.2, 1), 'interrupted');
+  assert.equal(interruptibleWindUpOutcome(1.7, 1), 'interrupted');
+  assert.equal(interruptibleWindUpOutcome(1.82, 1), 'closed');
+  assert.equal(interruptibleWindUpOutcome(3.5, 1), 'interrupted');
+  assert.equal(interruptibleWindUpOutcome(4.18, 1), 'closed');
+  assert.deepEqual([0, 1, 1.8, 2.2, 3.5, 4.3, 4.8].map(interruptibleWindUpState), [
+    'idle',
+    'wind-up-open',
+    'interrupted-open',
+    'interrupted-open',
+    'wind-up-open',
+    'released',
+    'recovery',
+  ]);
+
+  const open = blueprintFrame(id, 1.3);
+  assert.equal(open.windUpState, 'wind-up-open');
+  assert.equal(open.interruptible, true);
+  assert.ok(
+    open.primitives[0].opacity > 0,
+    'the final radius is previewed while interruption is open',
+  );
+  assert.ok(open.primitives[3].width > 0, 'the deadline gauge visibly advances');
+
+  const interrupted = blueprintFrame(id, 1.58);
+  assert.equal(interrupted.interruptHit, true);
+  assert.equal(interrupted.windUpState, 'interrupted-open');
+  assert.ok(interrupted.primitives[7].opacity > 0, 'the cancellation mark appears at contact');
+  assert.equal(interrupted.dangerActive, false);
+
+  const released = blueprintFrame(id, 4.3);
+  assert.equal(released.windUpState, 'released');
+  assert.equal(released.threatReleased, true);
+  assert.equal(released.dangerActive, true);
+  assert.equal(released.playerSafe, true);
+  assert.equal(blueprintPointSafe(id, 4.3, released.boss), false);
+  assert.equal(blueprintFrame(id, 4.8).windUpState, 'recovery');
+  assert.match(
+    renderBlueprintThumbnail(id, 'test-interruptible-wind-up'),
+    /data-blueprint-preview="interruptible-wind-up"/,
   );
 });
