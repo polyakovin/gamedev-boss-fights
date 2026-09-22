@@ -293,9 +293,46 @@ test('predictive aiming freezes its forecast while the shot follows a fixed line
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
 });
 
-test('catalog and builder reuse the 40 promoted rule-specific previews', async ({ page }) => {
+test('source tracking shows a harmless moving guide and a fixed damaging beam', async ({
+  page,
+}) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.goto('en/mechanics/source-tracking/');
+  const widget = page.locator('[data-blueprint-demo]');
+  const timeline = widget.locator('[data-blueprint-timeline]');
+  const guide = widget.locator('[data-blueprint-primitive="2"] line');
+  const beam = widget.locator('[data-blueprint-primitive="3"] line');
+  await expect(page.locator('.lesson-title-line h1')).toHaveText('Source tracking');
+  await expect(page.locator('.wip-badge, .draft-profile')).toHaveCount(0);
+  await expect(page.locator('.game-example')).toHaveCount(3);
+  await expect(widget).toHaveAttribute('data-blueprint-ready', 'true');
+  await expect(widget).toHaveAttribute('data-blueprint-playing', 'false');
+  const seek = (milliseconds) =>
+    timeline.evaluate((element, value) => {
+      element.value = String(value);
+      element.dispatchEvent(new Event('input', { bubbles: true }));
+    }, milliseconds);
+  await seek(600);
+  const movingEnd = await guide.getAttribute('x2');
+  await seek(1500);
+  expect(await guide.getAttribute('x2')).not.toBe(movingEnd);
+  await expect(beam).toHaveAttribute('opacity', '0');
+  await seek(2350);
+  const lockedEnd = await guide.getAttribute('x2');
+  await expect(beam).toHaveAttribute('opacity', '0');
+  await seek(3000);
+  await expect(widget).toHaveAttribute('data-blueprint-outcome', 'safe');
+  await expect(beam).toHaveAttribute('x2', lockedEnd);
+  expect(Number(await beam.getAttribute('opacity'))).toBeGreaterThan(0.9);
+  await seek(3900);
+  await expect(beam).toHaveAttribute('opacity', '0');
+  await page.setViewportSize({ width: 375, height: 812 });
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+});
+
+test('catalog and builder reuse the 41 promoted rule-specific previews', async ({ page }) => {
   await page.goto('en/');
-  await expect(page.locator('[data-blueprint-preview]')).toHaveCount(40);
+  await expect(page.locator('[data-blueprint-preview]')).toHaveCount(41);
   const catalogLayouts = await page.locator('[data-blueprint-preview]').evaluateAll((previews) =>
     previews.map((preview) => {
       const boss = preview.querySelector('[data-character-art-preview="kern"]');
@@ -319,7 +356,7 @@ test('catalog and builder reuse the 40 promoted rule-specific previews', async (
   expect(new Set(catalogLayouts.map(({ layout }) => layout)).size).toBeGreaterThanOrEqual(18);
 
   await page.goto('en/builder/');
-  await expect(page.locator('[data-blueprint-preview]')).toHaveCount(40);
+  await expect(page.locator('[data-blueprint-preview]')).toHaveCount(41);
   const builderLayouts = await page.locator('[data-blueprint-preview]').evaluateAll((previews) =>
     previews.map((preview) => {
       const boss = preview.querySelector('[data-character-art-preview="kern"]');

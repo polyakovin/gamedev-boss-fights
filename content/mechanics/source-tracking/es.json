@@ -1,0 +1,138 @@
+{
+  "title": "Seguimiento desde la fuente",
+  "subtitle": "Gira el origen del ataque hacia el jugador y fija su dirección antes de disparar.",
+  "variant": "Kern orienta un emisor rúnico mientras Tavi se mueve",
+  "summary": "Una fuente visible sigue la posición actual del jugador durante el aviso y después se compromete con una trayectoria fija.",
+  "overview": "Tavi va a la izquierda y el emisor de Kern gira tras él. El rayo fino solo avisa. Kern fija el ángulo y lanza un rayo ancho por esa línea. Tavi cambia de rumbo después de la fijación y sale con movimiento normal, incluyendo todo su cuerpo. La fuente no gira durante el daño ni salta al reiniciar el ciclo.",
+  "learning": "Define el pivote y la velocidad de giro, muestra el seguimiento, señala cuándo se fija el ángulo y comprueba que todo el cuerpo pueda salir antes del daño.",
+  "category": "Apuntado y ritmo",
+  "readTime": "5 min",
+  "demo": {
+    "title": "Observa el ángulo del emisor",
+    "timeline": "Cronología del ataque",
+    "step": "Fases del ataque",
+    "phaseNames": ["Seguir al jugador", "Fijar y disparar", "Restablecer la fuente"],
+    "phaseDescriptions": [
+      "Tavi va a la izquierda; el emisor y el rayo fino de aviso apuntan a su posición actual. El aviso no hace daño.",
+      "El emisor deja de girar al fijarse. Tavi se mueve a la derecha antes del rayo ancho; la zona peligrosa permanece inmóvil.",
+      "El rayo se apaga, desaparece el aviso y ambos vuelven sin saltos a sus posiciones iniciales."
+    ],
+    "boss": "Jefe",
+    "player": "Jugador",
+    "danger": "Solo el rayo ancho tiene zona de daño activa",
+    "locked": "El ángulo queda fijo antes de empezar el daño",
+    "safe": "Saca todo el cuerpo del jugador de la trayectoria fija",
+    "reducedMotion": "Con movimiento reducido no hay reproducción automática. Mueve el control para comparar seguimiento, fijación y disparo.",
+    "diagramDescription": "El emisor de Kern sigue a Tavi hacia la izquierda con un rayo fino e inocuo. Kern fija el ángulo; Tavi corre a la derecha y el rayo ancho pasa por la dirección inmóvil antes de un retorno continuo."
+  },
+  "steps": [
+    {
+      "title": "¿Dónde está la fuente?",
+      "body": "Pon un pivote reconocible en el jefe. Apunta la guía a la posición actual del jugador con velocidad angular limitada; no gires todo el cuerpo del jefe."
+    },
+    {
+      "title": "¿Cuándo termina el seguimiento?",
+      "body": "Marca la fijación con luz o sonido, guarda el ángulo y mantenlo durante la preparación y el rayo activo. La guía fina advierte, no tiene un área de daño oculta."
+    },
+    {
+      "title": "¿Se puede salir de la trayectoria?",
+      "body": "Deja tiempo para superar la mitad del ancho del rayo más el radio completo del jugador con movimiento normal. Prueba distancias, velocidades y cambios de sentido, y reserva una recuperación útil."
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "La fuente sigue girando durante el daño",
+      "body": "Un rayo que corrige su rumbo después de fijarse invalida la trayectoria anunciada. Si quieres un barrido posterior, anúncialo como otra regla y prueba su área móvil."
+    },
+    {
+      "title": "La guía decorativa causa daño",
+      "body": "Si la línea fina hiere al tocarla, el lenguaje visual contradice la regla. Distingue guía y rayo activo por grosor, intensidad y tiempo, no solo por color."
+    },
+    {
+      "title": "Solo se salva el centro del jugador",
+      "body": "El centro puede estar fuera mientras el borde del cuerpo aún toca el rayo. Incluye el radio del jugador y comprueba ángulos próximos a los límites de la arena."
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "Limita el pivote",
+      "body": "Expón como parámetros la posición de la fuente, velocidad máxima de giro, longitud de la guía, instante de fijación, semiancho y duración del rayo. Evita correcciones instantáneas tras un giro brusco del jugador."
+    },
+    {
+      "title": "Una regla por fase",
+      "body": "Antes del compromiso cambia el ángulo; al disparar se usa el ángulo guardado. No es un proyectil dirigido, un barrido activo ni una simple marca de posición."
+    },
+    {
+      "title": "Calcula una respuesta justa",
+      "body": "Mide la distancia perpendicular del cuerpo completo al segmento fijo. El tiempo entre fijación y disparo debe bastar a una velocidad plausible y dejar margen para percibir la señal."
+    }
+  ],
+  "story": {
+    "title": "Qué comunica la mecánica",
+    "body": "El ojo rúnico de Kern sigue visiblemente a Tavi y se endurece en un canal de disparo inmóvil. Tavi gana espacio al responder al compromiso, no al adivinar dónde apunta un arma invisible."
+  },
+  "adaptation": {
+    "title": "Adáptala a las acciones del jugador",
+    "body": "El movimiento normal es la salida básica. Una esquiva rápida puede ampliar el margen y una guardia ofrecer otra respuesta; ninguna debe ser obligatoria sin disponibilidad garantizada y enseñanza clara."
+  },
+  "distinction": {
+    "title": "Distingue esta regla",
+    "body": "Aquí gira la fuente antes de soltar el ataque. Fijar objetivo marca una posición, apuntar con adelanto usa la velocidad observada y un rayo explorador cambia de dirección mientras daña. Este ángulo queda inmóvil al fijarse."
+  },
+  "lensNotes": [
+    {
+      "id": "telegraphing",
+      "body": "La guía fina y la runa giratoria muestran la fuente sin que el aviso sea dañino."
+    },
+    {
+      "id": "commitment",
+      "body": "La señal de fijación indica cuándo dejan de cambiar el ángulo y la futura zona de daño."
+    },
+    {
+      "id": "counterplay",
+      "body": "Tavi cambia de rumbo después de la fijación y saca todo su cuerpo antes del disparo."
+    },
+    {
+      "id": "threat-geometry",
+      "body": "La colisión usa el segmento activo, el semiancho del rayo y el radio del jugador, no los píxeles de la guía."
+    },
+    {
+      "id": "difficulty-rhythm",
+      "body": "Velocidad de giro, demora del disparo, ancho y recuperación determinan juntos la presión."
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "Cuphead",
+      "boss": "Dr. Kahl's Robot",
+      "screenshot": "https://i.ytimg.com/vi/6anMOwVo7tc/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=6anMOwVo7tc&t=10s",
+      "body": "El láser de la cabeza marca al jugador con una guía fina antes de ensancharse. Fuente y cambio de grosor hacen legible el peligro; la demostración de Kern añade una fijación explícita del ángulo.",
+      "video": "https://www.youtube.com/watch?v=6anMOwVo7tc&t=10s",
+      "videoDurationSeconds": 137
+    },
+    {
+      "dimension": "2D",
+      "game": "Terraria",
+      "boss": "Moon Lord",
+      "screenshot": "https://i.ytimg.com/vi/RIVHPmKQgV4/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=RIVHPmKQgV4&t=12s",
+      "body": "El ojo de la cabeza carga antes del Phantasmal Deathray; el lado donde está el objetivo determina el inicio y sentido del barrido. Contrasta una fuente legible con un rayo activo que sí se mueve, a diferencia del de Kern.",
+      "video": "https://www.youtube.com/watch?v=RIVHPmKQgV4&t=12s",
+      "videoDurationSeconds": 21
+    },
+    {
+      "dimension": "3D",
+      "game": "Armored Core VI: Fires of Rubicon",
+      "boss": "STRIDER Eye",
+      "screenshot": "https://www.gamerevolution.com/wp-content/uploads/sites/2/2023/08/Armored-Core-6-Strider-Boss-Eye-Laser.jpg?w=1024",
+      "screenshotSource": "https://www.gamerevolution.com/guides/944861-armored-core-6-strider-boss-fight-destroy-generators-eye-laser",
+      "body": "El gran Ojo del STRIDER identifica claramente el origen físico del láser lejano. Movimiento y coberturas condicionan el acercamiento; el esquema de Kern aísla seguimiento, compromiso y salida de la trayectoria.",
+      "video": "https://www.youtube.com/watch?v=L0NLtPJMb48&t=43s",
+      "videoDurationSeconds": 450
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

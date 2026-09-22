@@ -1,0 +1,138 @@
+{
+  "title": "Source tracking",
+  "subtitle": "Turn the attack source toward the moving player, then freeze its direction before firing.",
+  "variant": "Kern pivots one rune emitter as Tavi moves around him",
+  "summary": "A visible firing source follows the player's current position during the tell, then commits to a fixed lane.",
+  "overview": "Tavi moves left while Kern's rune emitter turns to follow him. The narrow guide ray is only a warning. Kern fixes the angle, brightens the cue, and fires a wide beam along that exact line. Tavi changes course after the lock and clears the beam with ordinary movement. The source does not turn during damage or snap back between loops.",
+  "learning": "Set an emitter pivot and turn speed, expose the tracking cue, choose a lock instant, and test full-body clearance before the beam becomes dangerous.",
+  "category": "Targeting and rhythm",
+  "readTime": "5 min",
+  "demo": {
+    "title": "Follow the emitter's angle",
+    "timeline": "Attack timeline",
+    "step": "Attack phases",
+    "phaseNames": ["Track the player", "Lock and fire", "Reset the source"],
+    "phaseDescriptions": [
+      "Tavi moves left; Kern's emitter and thin warning ray turn toward Tavi's current position. The thin ray does not damage.",
+      "The source stops turning at the lock cue. Tavi moves right before the wide beam fires; its entire active lane stays fixed.",
+      "The beam goes dark, the locked cue clears, and Tavi and the emitter return continuously to their starting poses."
+    ],
+    "boss": "Boss",
+    "player": "Player",
+    "danger": "Only the wide beam has an active hitbox",
+    "locked": "The emitter angle freezes before damage begins",
+    "safe": "Move the entire player body clear of the fixed lane",
+    "reducedMotion": "Autoplay is disabled by reduced-motion settings. Scrub to compare tracking, lock, and beam.",
+    "diagramDescription": "Kern's rune emitter turns toward Tavi as Tavi moves left. A thin non-damaging ray tracks him. The emitter locks; Tavi runs right. A wide beam fires along the fixed angle and misses before both reset smoothly."
+  },
+  "steps": [
+    {
+      "title": "Where is the source?",
+      "body": "Place a readable pivot on the boss, not an unexplained line from screen space. Aim its guide ray at the player's current position with a bounded angular speed; keep the boss's full body unrotated."
+    },
+    {
+      "title": "When does tracking stop?",
+      "body": "Use a distinct lock flash or sound, store the final emitter angle, and hold it through the startup and active beam. The thin guide ray is a warning, not a hidden hitbox."
+    },
+    {
+      "title": "Can the player clear the lane?",
+      "body": "After lock, allow enough time for ordinary movement to leave the beam half-width plus the full player radius. Test near, far, slow, and direction-reversal starts; then leave a useful recovery."
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "The source keeps tracking during damage",
+      "body": "A beam that quietly turns after the lock invalidates the announced lane. If a later sweeping phase is intended, signal it as a separate rule and test its moving hitbox."
+    },
+    {
+      "title": "A cosmetic ray implies unsafe space",
+      "body": "When a faint tracking guide damages on contact, the visual language contradicts the rule. Distinguish warning from the wide active beam with thickness, brightness, and timing, not color alone."
+    },
+    {
+      "title": "Only the player's center clears",
+      "body": "A center point outside the line can still overlap a thick beam. Include the player's collision radius and test the worst lock angle near arena edges."
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "Bound the pivot",
+      "body": "Expose emitter position, maximum turn speed, guide length, lock time, beam half-width, and active duration as tuning parameters. Avoid instantaneous correction to a sudden player turn."
+    },
+    {
+      "title": "Keep one rule per phase",
+      "body": "Tracking changes the source angle before commitment; firing uses the stored angle. This differs from a homing projectile, a sweeping active beam, and a marker that simply locks a location."
+    },
+    {
+      "title": "Budget a fair response",
+      "body": "Measure perpendicular distance from the complete player body to the committed beam segment. The lock-to-fire window must cover that distance at a plausible movement speed, with a little margin for perception."
+    }
+  ],
+  "story": {
+    "title": "What the mechanic communicates",
+    "body": "Kern's rune eye visibly follows Tavi, then hardens into a fixed stone firing channel. Tavi wins space by reacting to the commitment, not by guessing where an invisible weapon points."
+  },
+  "adaptation": {
+    "title": "Adapt it to the player verbs",
+    "body": "Ordinary movement is the baseline escape. A dash can widen the margin, while a guard may offer an alternate response; neither should be required unless its availability is guaranteed and clearly taught."
+  },
+  "distinction": {
+    "title": "Keep the mechanic distinct",
+    "body": "Source tracking moves the emitter before release. Target lock marks a location, predictive aiming leads observed velocity, and scanning beam changes its direction while already active. This example holds its angle once locked."
+  },
+  "lensNotes": [
+    {
+      "id": "telegraphing",
+      "body": "The narrow guide ray and turning rune show exactly which source will fire without making the cue itself harmful."
+    },
+    {
+      "id": "commitment",
+      "body": "The visible lock is the point after which both the emitter angle and the eventual damage lane stop changing."
+    },
+    {
+      "id": "counterplay",
+      "body": "Tavi changes course after the lock and leaves the full-body danger corridor before the beam starts."
+    },
+    {
+      "id": "threat-geometry",
+      "body": "Collision uses distance to the active beam segment plus the beam half-width and player radius, not the guide ray's pixels."
+    },
+    {
+      "id": "difficulty-rhythm",
+      "body": "Pivot speed, lock-to-fire delay, beam width, and recovery set pressure independently and must be tested together."
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "Cuphead",
+      "boss": "Dr. Kahl's Robot",
+      "screenshot": "https://i.ytimg.com/vi/6anMOwVo7tc/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=6anMOwVo7tc&t=10s",
+      "body": "The robot's head uses a thin tracer that targets the player before expanding into a wide laser. Its visible source and growing width make the aim-to-danger transition legible; Kern's isolated demo adds an explicit fixed-angle lock.",
+      "video": "https://www.youtube.com/watch?v=6anMOwVo7tc&t=10s",
+      "videoDurationSeconds": 137
+    },
+    {
+      "dimension": "2D",
+      "game": "Terraria",
+      "boss": "Moon Lord",
+      "screenshot": "https://i.ytimg.com/vi/RIVHPmKQgV4/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=RIVHPmKQgV4&t=12s",
+      "body": "The head eye charges before its Phantasmal Deathray; the target's side determines the sweep's starting angle and direction. This is a useful contrast: the source-based aim is readable, but its active ray sweeps, unlike Kern's fixed beam.",
+      "video": "https://www.youtube.com/watch?v=RIVHPmKQgV4&t=12s",
+      "videoDurationSeconds": 21
+    },
+    {
+      "dimension": "3D",
+      "game": "Armored Core VI: Fires of Rubicon",
+      "boss": "STRIDER Eye",
+      "screenshot": "https://www.gamerevolution.com/wp-content/uploads/sites/2/2023/08/Armored-Core-6-Strider-Boss-Eye-Laser.jpg?w=1024",
+      "screenshotSource": "https://www.gamerevolution.com/guides/944861-armored-core-6-strider-boss-fight-destroy-generators-eye-laser",
+      "body": "The STRIDER's large Eye gives its long-range laser an unmistakable physical source. Movement and cover shape the approach to that source; Kern's diagram removes the terrain and isolates tracking, commitment, and beam clearance.",
+      "video": "https://www.youtube.com/watch?v=L0NLtPJMb48&t=43s",
+      "videoDurationSeconds": 450
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

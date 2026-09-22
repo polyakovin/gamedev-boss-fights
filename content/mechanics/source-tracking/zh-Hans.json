@@ -1,0 +1,126 @@
+{
+  "title": "攻击源追踪",
+  "subtitle": "让攻击源转向移动中的玩家，并在发射前锁定方向。",
+  "variant": "克恩转动符文发射器，追随塔维的位置",
+  "summary": "可见的发射源在预警阶段追踪玩家当前位置，随后固定一条攻击路线。",
+  "overview": "塔维向左移动时，克恩身上的符文发射器缓缓跟随。细光线只是预警，不造成伤害。克恩锁住角度、强化信号，再沿完全相同的方向发出宽光束。塔维在锁定后改变方向，用普通移动让全身离开危险带。伤害阶段发射源不再转动，循环衔接也没有跳变。",
+  "learning": "设定发射点、转速、追踪提示和锁定时刻，并验证宽光束生效前玩家全身有足够空间离开。",
+  "category": "瞄准与节奏",
+  "readTime": "5 分钟",
+  "demo": {
+    "title": "观察发射器角度",
+    "timeline": "攻击时间轴",
+    "step": "攻击阶段",
+    "phaseNames": ["追踪玩家", "锁定并发射", "恢复初始状态"],
+    "phaseDescriptions": [
+      "塔维向左走；克恩的发射器和细预警光线转向塔维的当前位置。细光线没有伤害。",
+      "发射源在锁定提示出现时停止旋转。塔维在宽光束发射前向右移动；危险路线始终固定。",
+      "宽光束熄灭，锁定提示消失，塔维与发射器连续地返回起始姿态。"
+    ],
+    "boss": "首领",
+    "player": "玩家",
+    "danger": "只有宽光束具有有效伤害判定",
+    "locked": "伤害开始前，发射器角度已锁定",
+    "safe": "让玩家全身离开固定的光束路线",
+    "reducedMotion": "启用减少动态效果后自动播放关闭。拖动时间轴比较追踪、锁定与发射。",
+    "diagramDescription": "克恩的符文发射器用无伤害的细光线追踪向左移动的塔维。锁定后塔维向右跑，宽光束沿固定方向射出并落空，随后双方平滑复位。"
+  },
+  "steps": [
+    {
+      "title": "攻击源在哪里？",
+      "body": "在首领身上放置清楚可见的旋转支点。让提示线以受限角速度指向玩家当前位置，不要旋转整个首领身体。"
+    },
+    {
+      "title": "追踪何时停止？",
+      "body": "用独立的闪光或音效表示锁定，保存最终角度，在准备和光束生效期间保持不变。细提示线不是隐藏的伤害判定。"
+    },
+    {
+      "title": "玩家能离开攻击路线吗？",
+      "body": "锁定后留出足够时间，让普通移动越过光束半宽加玩家完整半径。测试远近位置、不同速度、转向，以及有意义的收招时间。"
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "造成伤害时仍在追踪",
+      "body": "锁定后悄悄转向会让已预告的路线失效。如果需要后续扫射，应作为另一条明确提示的规则，并测试移动中的判定区域。"
+    },
+    {
+      "title": "装饰性细线却会伤人",
+      "body": "细提示线触碰就受伤，视觉语言便与规则冲突。用粗细、亮度和出现时间区分预警与生效光束，不要只靠颜色。"
+    },
+    {
+      "title": "只检查玩家中心",
+      "body": "中心离开直线时，身体边缘仍可能碰到宽光束。计入玩家半径，特别测试靠近场地边界的锁定角。"
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "限制旋转",
+      "body": "将发射点、最大转速、提示线长度、锁定时刻、光束半宽和持续时间设为可调参数。玩家突然转向时，不要瞬间修正。"
+    },
+    {
+      "title": "分清阶段规则",
+      "body": "锁定前发射源改变角度；发射时使用已保存的角度。它不是追踪弹、伤害期间扫动的光束，也不只是位置标记。"
+    },
+    {
+      "title": "计算公平的应对窗口",
+      "body": "测量玩家完整身体到固定光束线段的垂直距离。锁定至发射的时间应足以按合理速度移动，还要给辨认提示留余量。"
+    }
+  ],
+  "story": {
+    "title": "机制传达了什么",
+    "body": "克恩的符文之眼明显跟随塔维，随后凝成固定的石质发射通道。塔维通过回应锁定争取空间，而不是猜测看不见的武器朝向。"
+  },
+  "adaptation": {
+    "title": "适配玩家动作",
+    "body": "普通移动是基本逃脱方式。冲刺可以增加容错，格挡也可成为另一种应对；除非保证可用且已清楚教学，否则都不应成为硬性要求。"
+  },
+  "distinction": {
+    "title": "与相邻机制区分",
+    "body": "攻击源追踪在发射前转动发射器。目标锁定标记一个位置，提前瞄准依据已观察的速度预测，扫描光束则在生效后仍转向。此处锁定后角度不变。"
+  },
+  "lensNotes": [
+    { "id": "telegraphing", "body": "细提示线与转动的符文标明攻击源，同时让预警本身保持安全。" },
+    { "id": "commitment", "body": "可见的锁定信号说明从何时起发射角和未来危险路线都不再改变。" },
+    { "id": "counterplay", "body": "塔维在锁定后改变方向，并在发射前让全身离开光束区域。" },
+    {
+      "id": "threat-geometry",
+      "body": "碰撞依据生效光束线段、光束半宽及玩家半径计算，不依据细提示线的像素。"
+    },
+    { "id": "difficulty-rhythm", "body": "转速、锁定后延迟、光束宽度与收招时间共同决定压力。" }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "Cuphead",
+      "boss": "Dr. Kahl's Robot",
+      "screenshot": "https://i.ytimg.com/vi/6anMOwVo7tc/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=6anMOwVo7tc&t=10s",
+      "body": "机器人头部先用细追踪线瞄准玩家，然后将其扩展为宽激光。可见的攻击源和宽度变化让危险转换易于辨认；克恩的演示另外明确了锁定角度的时刻。",
+      "video": "https://www.youtube.com/watch?v=6anMOwVo7tc&t=10s",
+      "videoDurationSeconds": 137
+    },
+    {
+      "dimension": "2D",
+      "game": "Terraria",
+      "boss": "Moon Lord",
+      "screenshot": "https://i.ytimg.com/vi/RIVHPmKQgV4/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=RIVHPmKQgV4&t=12s",
+      "body": "头部眼睛会在 Phantasmal Deathray 前蓄力；目标位于哪一侧决定光束的起始角和扫射方向。这形成对比：攻击源清晰可见，但伤害光束会移动，克恩的光束则固定。",
+      "video": "https://www.youtube.com/watch?v=RIVHPmKQgV4&t=12s",
+      "videoDurationSeconds": 21
+    },
+    {
+      "dimension": "3D",
+      "game": "Armored Core VI: Fires of Rubicon",
+      "boss": "STRIDER Eye",
+      "screenshot": "https://www.gamerevolution.com/wp-content/uploads/sites/2/2023/08/Armored-Core-6-Strider-Boss-Eye-Laser.jpg?w=1024",
+      "screenshotSource": "https://www.gamerevolution.com/guides/944861-armored-core-6-strider-boss-fight-destroy-generators-eye-laser",
+      "body": "STRIDER 巨大的眼睛明确展示远程激光的实体来源。移动与掩体影响玩家如何接近它；克恩的图示去掉地形，单独展示追踪、锁定及离开光束。",
+      "video": "https://www.youtube.com/watch?v=L0NLtPJMb48&t=43s",
+      "videoDurationSeconds": 450
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

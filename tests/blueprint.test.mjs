@@ -6,6 +6,7 @@ import {
   blueprintFrame,
   blueprintPhaseAt,
   blueprintPointSafe,
+  blueprintSpec,
 } from '../src/blueprint-model.mjs';
 import {
   blueprintPreviewLayout,
@@ -13,8 +14,8 @@ import {
   renderBlueprintThumbnail,
 } from '../lib/blueprint-view.mjs';
 
-test('all 40 promoted lesson animations have distinct rule modes and complete moving frames', () => {
-  assert.equal(BLUEPRINT_MECHANIC_IDS.length, 40);
+test('all 41 promoted lesson animations have distinct rule modes and complete moving frames', () => {
+  assert.equal(BLUEPRINT_MECHANIC_IDS.length, 41);
   const modes = new Set();
   for (const id of BLUEPRINT_MECHANIC_IDS) {
     for (let time = 0; time <= BLUEPRINT_DURATION; time += 0.1) {
@@ -35,7 +36,7 @@ test('all 40 promoted lesson animations have distinct rule modes and complete mo
           assert.ok(Number.isFinite(value), `${id} has an invalid ${primitive.type}`);
     }
   }
-  assert.equal(modes.size, 40);
+  assert.equal(modes.size, 41);
 });
 
 test('every blueprint exposes signal, committed action, and recovery without player teleports', () => {
@@ -75,6 +76,7 @@ test('every promoted animation derives safety from its own active geometry', () 
     'threat-generator': null,
     decoy: { x: 190, y: 425 },
     'predictive-aiming': null,
+    'source-tracking': null,
     'wide-swing': { x: 280, y: 515 },
     lunge: { x: 300, y: 440 },
     grab: { x: 390, y: 485 },
@@ -155,6 +157,9 @@ test('every promoted animation derives safety from its own active geometry', () 
     } else if (!point && id === 'predictive-aiming') {
       const shot = frame.primitives[3];
       point = { x: shot.x, y: shot.y };
+    } else if (!point && id === 'source-tracking') {
+      const beam = frame.primitives[3];
+      point = { x: (beam.x1 + beam.x2) / 2, y: (beam.y1 + beam.y2) / 2 };
     }
     assert.equal(blueprintPointSafe(id, 3, point), false, `${id} accepts an unsafe point`);
     assert.equal(frame.playerSafe, true, `${id} does not clear its own active geometry`);
@@ -670,6 +675,39 @@ test('predictive aiming commits an observable forecast and only its travelling s
   assert.match(page, /data-blueprint-id="predictive-aiming"/);
   assert.match(page, /data-character-art="kern"/);
   assert.match(preview, /data-character-art-preview="tavi"/);
+});
+
+test('source tracking turns its emitter before lock and keeps the damaging beam fixed', () => {
+  const id = 'source-tracking';
+  const spec = blueprintSpec(id);
+  const start = blueprintFrame(id, 0);
+  const lock = blueprintFrame(id, 1.6);
+  const cue = blueprintFrame(id, 2.35);
+  const active = blueprintFrame(id, 3);
+  const end = blueprintFrame(id, 3.81);
+  assert.ok(lock.sourceAngle > start.sourceAngle);
+  for (let time = 0.02; time <= 1.6; time += 0.02) {
+    const previous = blueprintFrame(id, time - 0.02);
+    const current = blueprintFrame(id, time);
+    assert.ok(
+      (current.sourceAngle - previous.sourceAngle) / 0.02 <= spec.maximumTurnRate + 0.01,
+      `emitter exceeds its turn speed at ${time}`,
+    );
+  }
+  assert.equal(cue.sourceAngle, lock.sourceAngle);
+  assert.equal(active.sourceAngle, lock.sourceAngle);
+  assert.equal(cue.primitives[3].opacity, 0);
+  assert.ok(active.primitives[3].opacity > 0.9);
+  assert.equal(end.primitives[3].opacity, 0);
+  assert.equal(blueprintPointSafe(id, 1.3, blueprintFrame(id, 1.3).player), true);
+  const beam = active.primitives[3];
+  assert.equal(
+    blueprintPointSafe(id, 3, { x: (beam.x1 + beam.x2) / 2, y: (beam.y1 + beam.y2) / 2 }),
+    false,
+  );
+  assert.equal(active.playerSafe, true);
+  assert.deepEqual(start.player, blueprintFrame(id, 6).player);
+  assert.equal(start.sourceAngle, blueprintFrame(id, 6).sourceAngle);
 });
 
 test('blueprint pages and previews reuse Tavi and Kern with accessible localized data', () => {

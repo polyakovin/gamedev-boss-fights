@@ -167,6 +167,17 @@ const SPECS = {
     leadSeconds: 1.6,
     shotRadius: 22,
   },
+  'source-tracking': {
+    mode: 'source-track',
+    boss: [280, 295],
+    player: [400, 655],
+    target: [420, 655],
+    emitter: [282, 281],
+    lock: [255, 655],
+    beamLength: 640,
+    beamHalfWidth: 18,
+    maximumTurnRate: 0.6,
+  },
   'wide-swing': { mode: 'arc', boss: [280, 310], player: [410, 470], target: [470, 650] },
   lunge: { mode: 'lunge', boss: [170, 290], player: [390, 590], target: [470, 660] },
   grab: { mode: 'grab', boss: [280, 300], player: [390, 485], target: [470, 610] },
@@ -1168,6 +1179,20 @@ function primitivesFor(spec, frame) {
       circle(player.x, player.y, 31, phase === 0 ? 0.42 : 0, 'accent', 4),
     ];
   }
+  if (mode === 'source-track') {
+    const source = point(spec.emitter);
+    const end = polar(source, spec.beamLength, frame.sourceAngle);
+    const tip = polar(source, 42, frame.sourceAngle);
+    const cue = phase === 0 ? 0.44 + prepare * 0.32 : frame.time < 2.4 ? 0.84 : 0;
+    const beam = frame.dangerActive ? 0.96 : 0;
+    return [
+      circle(source.x, source.y, 21, 0.95, 'accent', 5, 0.16),
+      line(source.x, source.y, tip.x, tip.y, 0.98, 'accent', 11),
+      line(source.x, source.y, end.x, end.y, cue, 'accent', 5, '12 11'),
+      line(source.x, source.y, end.x, end.y, beam, 'signal', spec.beamHalfWidth * 2),
+      circle(source.x, source.y, 28, beam * 0.8, 'signal', 7),
+    ];
+  }
   if (mode === 'arc')
     return [
       path(arcPath(boss, 205, -1.15, 2.25), preview, 'accent', 20, 0, '12 10'),
@@ -1534,6 +1559,13 @@ function pointClearsThreat(spec, frame, value, radius = BLUEPRINT_PLAYER_RADIUS)
       Math.hypot(value.x - shot.x, value.y - shot.y) > spec.shotRadius + radius
     );
   }
+  if (mode === 'source-track') {
+    const beam = frame.primitives[3];
+    return (
+      distanceToSegment(value, { x: beam.x1, y: beam.y1 }, { x: beam.x2, y: beam.y2 }) >
+      spec.beamHalfWidth + radius
+    );
+  }
   if (mode === 'spiral')
     return (
       distanceFromBoss > 52 + radius &&
@@ -1711,6 +1743,7 @@ export function blueprintFrame(id, time) {
   else if (spec.mode === 'threat-generator') responseProgress = smooth((t - 0.42) / 1.2);
   else if (spec.mode === 'decoy') responseProgress = smooth((t - 1.35) / 1.72);
   else if (spec.mode === 'predictive-aim') responseProgress = smooth((t - 1.6) / 1.05);
+  else if (spec.mode === 'source-track') responseProgress = smooth((t - 1.6) / 0.84);
   else if (spec.mode === 'knockback')
     responseProgress = phase === 0 ? 0 : phase === 1 ? smooth(action) : 1;
   else if (spec.mode === 'target-lock')
@@ -1743,6 +1776,16 @@ export function blueprintFrame(id, time) {
           : mix(mix(lockX, targetPlayer.x, responseProgress), startPlayer.x, returnProgress),
       y: startPlayer.y,
     };
+  }
+  if (spec.mode === 'source-track') {
+    const lock = point(spec.lock);
+    player =
+      phase === 0
+        ? { x: mix(startPlayer.x, lock.x, prepare), y: startPlayer.y }
+        : {
+            x: mix(mix(lock.x, targetPlayer.x, responseProgress), startPlayer.x, returnProgress),
+            y: startPlayer.y,
+          };
   }
   if (spec.mode === 'rotating' && phase === 0) {
     const initialPosition = polar(boss, 255, Math.PI / 3);
@@ -1819,6 +1862,13 @@ export function blueprintFrame(id, time) {
           y: startPlayer.y,
         }
       : null;
+  const sourceAngle =
+    spec.mode === 'source-track'
+      ? Math.atan2(
+          (phase === 0 ? player : point(spec.lock)).y - spec.emitter[1],
+          (phase === 0 ? player : point(spec.lock)).x - spec.emitter[0],
+        )
+      : null;
   const committed = t >= BLUEPRINT_PHASE_ENDS[0];
   const dangerActive =
     spec.mode === 'landing'
@@ -1835,7 +1885,9 @@ export function blueprintFrame(id, time) {
                 )
               : spec.mode === 'predictive-aim'
                 ? phase === 1 && t <= 3.75
-                : phase === 1;
+                : spec.mode === 'source-track'
+                  ? phase === 1 && t >= 2.4 && t <= 3.8
+                  : phase === 1;
   const frame = {
     id,
     mode: spec.mode,
@@ -1851,6 +1903,7 @@ export function blueprintFrame(id, time) {
     player,
     decoy,
     predicted,
+    sourceAngle,
     bossVisible,
     bossScale:
       spec.mode === 'phase'
