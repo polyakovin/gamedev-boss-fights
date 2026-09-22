@@ -92,6 +92,14 @@ export function initializeBlueprint(widget) {
         : frame.secondAttempt
           ? 'attack-disabled'
           : frame.partState;
+    if (mechanicId === 'attack-reflection')
+      widget.dataset.blueprintReflection = frame.meleeStrike
+        ? 'open-hit'
+        : frame.reflectedShot
+          ? 'returning-danger'
+          : frame.outgoingShot
+            ? 'player-shot'
+            : frame.reflectionState;
     boss.setAttribute(
       'transform',
       `translate(${frame.boss.x} ${frame.boss.y}) scale(${frame.bossScale})`,

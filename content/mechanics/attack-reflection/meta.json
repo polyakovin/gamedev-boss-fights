@@ -1,0 +1,24 @@
+{
+  "id": "attack-reflection",
+  "number": 57,
+  "published": true,
+  "sourceLocale": "en",
+  "contentVersion": 1,
+  "animation": "attack-reflection",
+  "lenses": ["counterplay", "progress-clarity", "risk-reward", "rule-exception"],
+  "related": ["directional-shield", "situational-immunity", "ricochet-projectile"],
+  "sources": [
+    {
+      "title": "Dead Cells Wiki · the Queen collects and returns incoming projectiles",
+      "url": "https://deadcells.wiki.gg/wiki/Queen"
+    },
+    {
+      "title": "Dark Souls II guide · Looking Glass Knight's shield reflects spells",
+      "url": "https://www.gamepressure.com/ds2/looking-glass-knight/z463b9"
+    },
+    {
+      "title": "Zelda Dungeon · the Dead Man's Volley returns a shared projectile",
+      "url": "https://www.zeldadungeon.net/wiki/Dead_Man%27s_Volley"
+    }
+  ]
+}

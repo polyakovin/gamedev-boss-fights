@@ -405,9 +405,9 @@ test('volley releases three parallel bolts on one beat and clears its outside ro
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
 });
 
-test('catalog and builder reuse the 50 promoted rule-specific previews', async ({ page }) => {
+test('catalog and builder reuse the 51 promoted rule-specific previews', async ({ page }) => {
   await page.goto('en/');
-  await expect(page.locator('[data-blueprint-preview]')).toHaveCount(50);
+  await expect(page.locator('[data-blueprint-preview]')).toHaveCount(51);
   const catalogLayouts = await page.locator('[data-blueprint-preview]').evaluateAll((previews) =>
     previews.map((preview) => {
       const boss = preview.querySelector('[data-character-art-preview="kern"]');
@@ -431,7 +431,7 @@ test('catalog and builder reuse the 50 promoted rule-specific previews', async (
   expect(new Set(catalogLayouts.map(({ layout }) => layout)).size).toBeGreaterThanOrEqual(18);
 
   await page.goto('en/builder/');
-  await expect(page.locator('[data-blueprint-preview]')).toHaveCount(50);
+  await expect(page.locator('[data-blueprint-preview]')).toHaveCount(51);
   const builderLayouts = await page.locator('[data-blueprint-preview]').evaluateAll((previews) =>
     previews.map((preview) => {
       const boss = preview.querySelector('[data-character-art-preview="kern"]');
@@ -809,6 +809,89 @@ test('part break keeps its arm component and both actors visible on dark RTL mob
       });
     });
     expect(bounds.every(Boolean), `visible actor, label, or part at ${milliseconds}ms`).toBe(true);
+  }
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+});
+
+test('attack reflection replaces the sword pulse with one hostile return and opens for melee', async ({
+  page,
+}) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.goto('en/mechanics/attack-reflection/');
+  const widget = page.locator('[data-blueprint-demo]');
+  const timeline = widget.locator('[data-blueprint-timeline]');
+  const seek = (milliseconds) =>
+    timeline.evaluate((element, value) => {
+      element.value = String(value);
+      element.dispatchEvent(new Event('input', { bubbles: true }));
+    }, milliseconds);
+  await expect(page.locator('.lesson-title-line h1')).toHaveText('Attack reflection');
+  await expect(page.locator('.wip-badge, .draft-profile')).toHaveCount(0);
+  await expect(page.locator('.game-example')).toHaveCount(3);
+  await expect(widget).toHaveAttribute('data-blueprint-playing', 'false');
+  await seek(2050);
+  await expect(widget).toHaveAttribute('data-blueprint-reflection', 'player-shot');
+  await expect(widget.locator('[data-blueprint-primitive="3"] circle')).not.toHaveAttribute(
+    'opacity',
+    '0',
+  );
+  await seek(2350);
+  await expect(widget).toHaveAttribute('data-blueprint-reflection', 'returning-danger');
+  await expect(widget.locator('[data-blueprint-primitive="3"] circle')).toHaveAttribute(
+    'opacity',
+    '0',
+  );
+  await expect(widget.locator('[data-blueprint-primitive="6"] circle')).not.toHaveAttribute(
+    'opacity',
+    '0',
+  );
+  await seek(2900);
+  await expect(widget).toHaveAttribute('data-blueprint-outcome', 'safe');
+  await seek(4720);
+  await expect(widget).toHaveAttribute('data-blueprint-reflection', 'open-hit');
+  await expect(widget.locator('[data-blueprint-primitive="8"] circle')).not.toHaveAttribute(
+    'opacity',
+    '0',
+  );
+  await seek(5630);
+  await expect(widget).toHaveAttribute('data-blueprint-reflection', 'guarded');
+});
+
+test('attack reflection keeps its mirror and actors in frame on dark RTL mobile', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 375, height: 812 });
+  await page.emulateMedia({ reducedMotion: 'reduce', colorScheme: 'dark' });
+  await page.goto('ar/mechanics/attack-reflection/');
+  const widget = page.locator('[data-blueprint-demo]');
+  await expect(page.locator('html')).toHaveAttribute('dir', 'rtl');
+  const timeline = widget.locator('[data-blueprint-timeline]');
+  for (const milliseconds of [0, 2050, 2350, 2900, 4720, 5630]) {
+    await timeline.evaluate((element, value) => {
+      element.value = String(value);
+      element.dispatchEvent(new Event('input', { bubbles: true }));
+    }, milliseconds);
+    const bounds = await widget.evaluate((element) => {
+      const svg = element.querySelector('svg').getBoundingClientRect();
+      return [
+        '[data-blueprint-boss]',
+        '[data-blueprint-player]',
+        '[data-blueprint-boss-label]',
+        '[data-blueprint-player-label]',
+        '[data-blueprint-primitive="1"]',
+      ].map((selector) => {
+        const rect = element.querySelector(selector).getBoundingClientRect();
+        return (
+          rect.left >= svg.left - 2 &&
+          rect.right <= svg.right + 2 &&
+          rect.top >= svg.top - 2 &&
+          rect.bottom <= svg.bottom + 2
+        );
+      });
+    });
+    expect(bounds.every(Boolean), `visible actors, labels, and mirror at ${milliseconds}ms`).toBe(
+      true,
+    );
   }
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
 });

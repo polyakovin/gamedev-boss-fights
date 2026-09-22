@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import {
   BLUEPRINT_DURATION,
   BLUEPRINT_MECHANIC_IDS,
+  attackReflectionState,
   blueprintFrame,
   blueprintPhaseAt,
   blueprintPointSafe,
@@ -19,8 +20,8 @@ import {
   renderBlueprintThumbnail,
 } from '../lib/blueprint-view.mjs';
 
-test('all 50 promoted lesson animations have distinct rule modes and complete moving frames', () => {
-  assert.equal(BLUEPRINT_MECHANIC_IDS.length, 50);
+test('all 51 promoted lesson animations have distinct rule modes and complete moving frames', () => {
+  assert.equal(BLUEPRINT_MECHANIC_IDS.length, 51);
   const modes = new Set();
   for (const id of BLUEPRINT_MECHANIC_IDS) {
     for (let time = 0; time <= BLUEPRINT_DURATION; time += 0.1) {
@@ -41,7 +42,7 @@ test('all 50 promoted lesson animations have distinct rule modes and complete mo
           assert.ok(Number.isFinite(value), `${id} has an invalid ${primitive.type}`);
     }
   }
-  assert.equal(modes.size, 50);
+  assert.equal(modes.size, 51);
 });
 
 test('every blueprint exposes signal, committed action, and recovery without player teleports', () => {
@@ -87,6 +88,7 @@ test('every damaging promoted animation derives safety from its own active geome
     'delayed-activation': { x: 350, y: 630 },
     'speed-change': null,
     'limited-spread': null,
+    'attack-reflection': null,
     'wide-swing': { x: 280, y: 515 },
     lunge: { x: 300, y: 440 },
     grab: { x: 390, y: 485 },
@@ -132,6 +134,9 @@ test('every damaging promoted animation derives safety from its own active geome
       point = frame.boss;
     } else if (!point && id === 'limited-spread') {
       const projectile = frame.primitives[3];
+      point = { x: projectile.x, y: projectile.y };
+    } else if (!point && id === 'attack-reflection') {
+      const projectile = frame.primitives[6];
       point = { x: projectile.x, y: projectile.y };
     } else if (!point && id === 'crossfire') {
       const projectile = frame.primitives[4];
@@ -1045,6 +1050,41 @@ test('breaking the arm launcher removes its exact attack until a visible repair'
   assert.match(
     renderBlueprintThumbnail(id, 'test-part-break'),
     /data-blueprint-preview="part-break"/,
+  );
+});
+
+test('reflection transfers one sword pulse into a dodgeable hostile return', () => {
+  const id = 'attack-reflection';
+  const spec = blueprintSpec(id);
+  assert.equal(attackReflectionState(2.34), 'guarded');
+  assert.equal(attackReflectionState(2.35), 'reflected');
+  assert.equal(attackReflectionState(3.35), 'guarded');
+  assert.equal(attackReflectionState(4.3), 'open');
+  assert.equal(attackReflectionState(5.28), 'raising');
+  assert.equal(attackReflectionState(5.63), 'guarded');
+  const outgoing = blueprintFrame(id, 2.05);
+  const contact = blueprintFrame(id, spec.reflected[0]);
+  const returnShot = blueprintFrame(id, 2.9);
+  const open = blueprintFrame(id, spec.meleeStrike);
+  assert.equal(outgoing.outgoingShot, true);
+  assert.equal(outgoing.dangerActive, false);
+  assert.ok(outgoing.primitives[3].opacity > 0.9);
+  assert.equal(outgoing.primitives[6].opacity, 0);
+  assert.equal(contact.primitives[3].opacity, 0);
+  assert.ok(contact.primitives[4].opacity > 0.9);
+  assert.equal(returnShot.reflectedShot, true);
+  assert.equal(returnShot.primitives[3].opacity, 0);
+  assert.ok(returnShot.primitives[6].opacity > 0.9);
+  assert.equal(blueprintPointSafe(id, 2.9, { x: returnShot.primitives[6].x, y: 405 }), false);
+  assert.equal(returnShot.playerSafe, true);
+  assert.ok(returnShot.player.y > 405 + spec.boltRadius + 24);
+  assert.equal(open.reflectionState, 'open');
+  assert.equal(open.meleeStrike, true);
+  assert.ok(open.primitives[8].opacity > 0.9);
+  assert.deepEqual(blueprintFrame(id, 0).player, blueprintFrame(id, 6).player);
+  assert.match(
+    renderBlueprintThumbnail(id, 'test-attack-reflection'),
+    /data-blueprint-preview="attack-reflection"/,
   );
 });
 

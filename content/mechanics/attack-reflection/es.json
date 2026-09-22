@@ -1,0 +1,134 @@
+{
+  "title": "Reflejo de ataques",
+  "subtitle": "Convierte un disparo del jugador en una amenaza de regreso legible.",
+  "variant": "Un espejo devuelve el pulso de la espada",
+  "summary": "Un jefe protegido invierte un ataque entrante y vuelve peligroso su trayecto de regreso.",
+  "overview": "Kern levanta un espejo rúnico. Tavi lanza un pulso con la espada; el espejo lo captura y devuelve un proyectil distinto por el mismo carril. Tavi sale de la trayectoria y se acerca cuando baja el espejo. Reflejar cambia la dirección y el dueño del ataque: no es solo bloquear o reducir daño.",
+  "learning": "Vincula la ventana de guardia, el impacto, el nuevo dueño del proyectil, la ruta de escape y la apertura para atacar.",
+  "category": "Defensa",
+  "readTime": "4 min",
+  "demo": {
+    "title": "Sigue el pulso de la espada en ambos sentidos",
+    "timeline": "Línea de tiempo del reflejo",
+    "step": "Estados del reflejo",
+    "phaseNames": ["Lee el espejo", "Observa el regreso", "Usa la apertura"],
+    "phaseDescriptions": [
+      "Kern sostiene un espejo brillante frente al cuerpo. La espada de Tavi apunta al mismo carril; el pulso sale a los 1,72 s.",
+      "El pulso alcanza el espejo a los 2,35 s. Un destello marca un nuevo proyectil hostil que vuelve hacia Tavi, quien baja fuera de su trayectoria antes de que llegue.",
+      "Tras pasar el proyectil, Kern baja el espejo a los 4,30 s. Tavi se acerca y conecta un golpe normal de espada a los 4,72 s. El espejo vuelve a subir antes de reiniciar el ciclo."
+    ],
+    "boss": "Jefe",
+    "player": "Jugador",
+    "danger": "El proyectil devuelto es peligroso al viajar del espejo al jugador",
+    "locked": "El espejo levantado captura este pulso y cambia su dueño",
+    "safe": "Sal del carril de regreso y aprovecha la ventana con el espejo bajo",
+    "reducedMotion": "La reproducción automática se desactiva con movimiento reducido. Usa el control de tiempo para ver la salida, el reflejo y la apertura.",
+    "diagramDescription": "Un jefe de piedra enfrenta a un jugador con espada y sostiene un espejo rúnico. Un pulso pequeño viaja de la espada al espejo y destella al tocarlo. Un proyectil de otro color vuelve hacia el jugador, que baja fuera del carril. El jefe baja el espejo, recibe un golpe cercano y lo levanta antes de repetir."
+  },
+  "steps": [
+    {
+      "title": "¿Qué se refleja exactamente?",
+      "body": "Define qué ataques entrantes acepta el espejo. Aquí refleja el pulso visible de la espada de Tavi, pero no el tajo cercano posterior. El pulso saliente no daña a Tavi. En el contacto de 2,35 s, retíralo y crea un solo proyectil hostil en el espejo; no dejes activas ambas versiones."
+    },
+    {
+      "title": "¿Puede el jugador leer y abandonar el carril?",
+      "body": "Fija la trayectoria de regreso tras el contacto. Un color nuevo y el movimiento inverso comunican el cambio de dueño. El vuelo entre 2,35 y 3,35 s permite que Tavi baje del carril. Comprueba el espacio con todo el cuerpo y con la menor velocidad de movimiento prevista."
+    },
+    {
+      "title": "¿Cuándo vuelve a servir atacar?",
+      "body": "Baja el espejo a los 4,30 s y permite que un golpe normal conecte a los 4,72 s. Restaura la guardia visiblemente antes del siguiente ciclo. La apertura evita que el reflejo prohíba por completo un ataque ya conocido."
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "Un disparo bloqueado causa daño sin aviso",
+      "body": "El reflejo necesita un contacto visible, un objeto de regreso separado y un cambio simultáneo de bando en las colisiones. Nunca causes daño en una ruta inversa invisible."
+    },
+    {
+      "title": "El espejo refleja todo para siempre",
+      "body": "Si rebotan todos los golpes, proyectiles y ángulos sin una apertura, el repertorio del jugador pierde sentido. Define las clases aceptadas y muestra una forma fiable de bajar el espejo."
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "Haz explícito el cambio de dueño",
+      "body": "Usa entidades distintas para la ida y la vuelta, o transfiere el dueño de forma atómica. En el contacto, cambia juntos facción de daño, máscara de colisión, color, dirección del rastro y sonido. Conserva solo propiedades prometidas por la regla, como velocidad o efectos de estado."
+    },
+    {
+      "title": "Ajusta un tiempo de escape justo",
+      "body": "Compara el vuelo de regreso con el tiempo de reconocimiento, reacción, arranque de movimiento y salida completa del cuerpo. Evita crear el proyectil encima de Tavi o hacerlo seguir a quien ya eligió una ruta de escape."
+    },
+    {
+      "title": "Mantén una elección de ataque útil",
+      "body": "Este espejo captura un pulso de espada, pero no un tajo cercano tras bajar la guardia. Con otras configuraciones, decide si ataques pesados, perforantes o no proyectiles lo superan y enseña las excepciones antes de exigirlas."
+    },
+    {
+      "title": "Prueba cada transición fotograma a fotograma",
+      "body": "Comprueba antes y después del contacto a los 2,35 s, el final del regreso a los 3,35 s, la apertura a los 4,30 s y el espejo levantado después de 5,63 s. Buscar en la línea de tiempo y reducir movimiento deben mostrar la misma regla."
+    }
+  ],
+  "story": {
+    "title": "Una runa orientada hacia fuera",
+    "body": "La runa central mira a Tavi mientras el espejo está armado. El contacto produce un único destello; el proyectil devuelto brilla distinto del pulso original. Al bajar el espejo, la runa se mueve con él y no queda flotando como una defensa engañosa."
+  },
+  "adaptation": {
+    "title": "Respeta las acciones aprendidas",
+    "body": "Tavi ya lleva espada: el pulso didáctico sale de ella y la apertura acepta un tajo normal. Si el juego carece de ataques a distancia, refleja una onda de golpe cercano claramente definida o elige otra defensa; no regales un proyectil exclusivo para justificar el reflejo."
+  },
+  "distinction": {
+    "title": "Un ataque devuelto no es solo un bloqueo",
+    "body": "El escudo direccional detiene un golpe frontal sin crear otra amenaza. La postura de contraataque inicia una respuesta propia del jefe tras un disparador. El reflejo invierte el objeto entrante del jugador, cambia su bando y vuelve peligroso el antiguo carril de tiro durante el regreso."
+  },
+  "lensNotes": [
+    {
+      "id": "counterplay",
+      "body": "El jugador puede salir del carril conocido y atacar mientras el espejo está abajo."
+    },
+    {
+      "id": "progress-clarity",
+      "body": "El destello, el nuevo color y el movimiento inverso confirman el cambio de dueño."
+    },
+    {
+      "id": "risk-reward",
+      "body": "Disparar a la guardia crea peligro, pero sobrevivir al regreso abre un ataque cercano."
+    },
+    {
+      "id": "rule-exception",
+      "body": "Especifica ataques, ángulos y estados reflejados; muestra las excepciones antes de decidir."
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "Dead Cells",
+      "boss": "The Queen",
+      "video": "https://www.youtube.com/watch?v=NpB2I3tLGbU&t=2115s",
+      "videoDurationSeconds": 2169,
+      "screenshot": "https://i.ytimg.com/vi/NpB2I3tLGbU/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=NpB2I3tLGbU&t=2115s",
+      "body": "La Reina puede recoger proyectiles entrantes durante su defensa y devolverlos. El intervalo enlazado lo muestra dentro de un combate más complejo; Kern aísla un pulso y un trayecto predecible."
+    },
+    {
+      "dimension": "3D",
+      "game": "Dark Souls II",
+      "boss": "Looking Glass Knight",
+      "video": "https://www.youtube.com/watch?v=mzME-ya4iu4&t=100s",
+      "videoDurationSeconds": 397,
+      "screenshot": "https://i.ytimg.com/vi/mzME-ya4iu4/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=mzME-ya4iu4&t=100s",
+      "body": "El escudo de espejo refleja hechizos que alcanzan su lado protegido. En la demostración se ven el lanzador y el escudo; su orientación importa más que en el único carril de Kern."
+    },
+    {
+      "dimension": "3D",
+      "game": "The Legend of Zelda: Ocarina of Time",
+      "boss": "Ganondorf",
+      "video": "https://www.youtube.com/watch?v=aDcKlOzbFns&t=165s",
+      "videoDurationSeconds": 394,
+      "screenshot": "https://i.ytimg.com/vi/aDcKlOzbFns/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=aDcKlOzbFns&t=165s",
+      "body": "Ganondorf y el jugador se devuelven un proyectil luminoso con golpes. Aquí el objeto nace del jefe, a diferencia del pulso de Tavi; ambos diseños convierten el regreso en otra prueba de ritmo."
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

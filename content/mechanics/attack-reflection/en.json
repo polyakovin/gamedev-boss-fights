@@ -1,0 +1,134 @@
+{
+  "title": "Attack reflection",
+  "subtitle": "Turn a player's shot into a readable return threat.",
+  "variant": "A mirror guard sends a sword pulse back",
+  "summary": "A guarded boss reverses an incoming attack, making its return path dangerous to the player.",
+  "overview": "Kern raises a rune mirror. Tavi sends a pulse from the sword; the mirror catches it and sends a distinct bolt back along the lane. Tavi steps clear, then approaches when the mirror lowers. Reflection changes the shot's ownership and direction; it is more than a block or damage reduction.",
+  "learning": "Connect the guard window, impact, new projectile ownership, escape space, and open punish window.",
+  "category": "Defense",
+  "readTime": "4 min",
+  "demo": {
+    "title": "Follow a sword pulse out and back",
+    "timeline": "Attack-reflection timeline",
+    "step": "Reflection states",
+    "phaseNames": ["Read the mirror", "See the bolt return", "Use the open window"],
+    "phaseDescriptions": [
+      "Kern holds a bright mirror in front of the body. Tavi's sword is aimed down the same lane; the outgoing pulse begins at 1.72 s.",
+      "The pulse reaches the mirror at 2.35 s. A bright contact flash marks a new hostile bolt moving toward Tavi. Tavi moves below the return path before it arrives.",
+      "After the bolt passes, Kern lowers the mirror at 4.30 s. Tavi closes in for a normal sword hit at 4.72 s. The mirror visibly rises again before the loop restarts."
+    ],
+    "boss": "Boss",
+    "player": "Player",
+    "danger": "The returned bolt is dangerous on its trip from mirror to player",
+    "locked": "The guarded mirror catches this sword pulse and reverses its ownership",
+    "safe": "Move out of the marked return lane, then use the lowered-mirror window",
+    "reducedMotion": "Autoplay is disabled by the reduced-motion setting. Use the timeline slider to inspect the outgoing, reflected, and open states.",
+    "diagramDescription": "A stone boss faces a sword-bearing player with a rune mirror. A small pulse travels from the sword to the mirror and flashes on contact. A different-colored bolt returns toward the player; the player steps below its lane. The boss then lowers the mirror, allowing a close sword hit, and raises it again before the loop."
+  },
+  "steps": [
+    {
+      "title": "What gets reflected?",
+      "body": "Declare which incoming attacks the mirror accepts. This example reflects Tavi's visible sword pulse, not the later close slash. The outgoing pulse is harmless to Tavi. At the 2.35-second contact, remove that pulse and spawn one hostile return bolt from the mirror; do not leave both versions active."
+    },
+    {
+      "title": "Can the player read and leave the return lane?",
+      "body": "Keep the return trajectory fixed after contact and use a new color and motion direction to show that ownership changed. The 2.35–3.35 s flight gives Tavi time to step below the lane. Test clearance with the full player body and with the slowest intended movement speed."
+    },
+    {
+      "title": "When does attacking become useful again?",
+      "body": "Lower the mirror at 4.30 s and let a normal sword strike connect at 4.72 s. Restore the guard visibly before the next loop. The opening prevents reflection from becoming a blanket ban on the player's established attack verb."
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "A blocked shot silently becomes damage",
+      "body": "A reflection must have a visible contact, a separate returning object, and collision that switches allegiance at the same instant. Never apply damage along an invisible reverse path."
+    },
+    {
+      "title": "The mirror reflects everything forever",
+      "body": "If melee strikes, every projectile type, and every angle all rebound without an opening, the player's kit loses meaning. Define accepted attack classes and show a reliable route to the lowered-mirror state."
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "Make ownership explicit",
+      "body": "Use separate outgoing and return entities or an atomic ownership transfer. At contact, switch damage faction, collision mask, color, trail direction, and sound together. Preserve only properties that the rule promises, such as speed or status effects."
+    },
+    {
+      "title": "Tune a fair escape budget",
+      "body": "Measure the return bolt's travel time against recognition, reaction, movement startup, and full-body clearance. Avoid a reflection that spawns on top of Tavi or tracks after the player has committed to an escape."
+    },
+    {
+      "title": "Keep a useful attack choice",
+      "body": "This mirror accepts a sword pulse but not a close slash after the guard drops. In a game with other builds, decide whether heavy, piercing, or non-projectile attacks bypass the mirror and teach those exceptions before they matter."
+    },
+    {
+      "title": "Test transitions frame by frame",
+      "body": "Check the frame before and after contact at 2.35 s, the return-bolt endpoint at 3.35 s, the open guard at 4.30 s, and the re-raised mirror after 5.63 s. Seeking and reduced motion must show the same rule as playback."
+    }
+  ],
+  "story": {
+    "title": "A rune that turns outward",
+    "body": "The mirror's central rune faces Tavi while armed. Contact produces a single bright flare; the returned bolt uses a different glow from the outgoing pulse. When Kern lowers the mirror, the rune drops with it rather than remaining as a misleading floating shield."
+  },
+  "adaptation": {
+    "title": "Respect the player's established verbs",
+    "body": "Tavi already carries a sword, so the teaching pulse comes from that sword and the opening accepts an ordinary slash. If a game has no ranged attack, reflect a clearly defined melee wave or choose another defense mechanic; do not grant a one-off projectile just to justify reflection."
+  },
+  "distinction": {
+    "title": "A returned attack is not merely a blocked attack",
+    "body": "Directional shield stops a front hit without creating a new threat. Counter stance triggers the boss's own response after a trigger. Attack reflection takes the player's incoming object, reverses its direction and allegiance, and makes the old firing lane dangerous on the return trip."
+  },
+  "lensNotes": [
+    {
+      "id": "counterplay",
+      "body": "The player can leave the known return lane and attack during the mirror's visible downtime."
+    },
+    {
+      "id": "progress-clarity",
+      "body": "Impact flash, changed bolt color, and reversed movement prove that ownership changed."
+    },
+    {
+      "id": "risk-reward",
+      "body": "Sending a pulse into the guard creates danger, but surviving the return leads to a close opening."
+    },
+    {
+      "id": "rule-exception",
+      "body": "Specify which attacks, angles, and statuses the mirror returns; show exceptions before players commit."
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "Dead Cells",
+      "boss": "The Queen",
+      "video": "https://www.youtube.com/watch?v=NpB2I3tLGbU&t=2115s",
+      "videoDurationSeconds": 2169,
+      "screenshot": "https://i.ytimg.com/vi/NpB2I3tLGbU/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=NpB2I3tLGbU&t=2115s",
+      "body": "The Queen can collect incoming player projectiles in a defensive stance and send them back. The linked short interval shows that return amid a busier fight; Kern isolates a single incoming pulse and one predictable path."
+    },
+    {
+      "dimension": "3D",
+      "game": "Dark Souls II",
+      "boss": "Looking Glass Knight",
+      "video": "https://www.youtube.com/watch?v=mzME-ya4iu4&t=100s",
+      "videoDurationSeconds": 397,
+      "screenshot": "https://i.ytimg.com/vi/mzME-ya4iu4/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=mzME-ya4iu4&t=100s",
+      "body": "The mirror shield reflects spells that meet its guarded face. The caster and shield are visible in the linked demonstration; its facing requirement makes this example more positional than Kern's one-lane return."
+    },
+    {
+      "dimension": "3D",
+      "game": "The Legend of Zelda: Ocarina of Time",
+      "boss": "Ganondorf",
+      "video": "https://www.youtube.com/watch?v=aDcKlOzbFns&t=165s",
+      "videoDurationSeconds": 394,
+      "screenshot": "https://i.ytimg.com/vi/aDcKlOzbFns/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=aDcKlOzbFns&t=165s",
+      "body": "Ganondorf and the player exchange a glowing projectile by striking it back and forth. Here the reflected object begins as the boss's shot, unlike Tavi's sword pulse; both designs make a return trip into a new timing demand."
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}
