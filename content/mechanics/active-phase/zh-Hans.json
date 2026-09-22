@@ -1,0 +1,122 @@
+{
+  "title": "生效阶段",
+  "subtitle": "明确攻击能够造成伤害的精确区间。",
+  "variant": "碰撞早于后摇动作结束的固定近战通道",
+  "summary": "生效阶段是攻击碰撞能够产生玩法效果的有限时间区间。",
+  "overview": "生效阶段是攻击能够产生玩法效果的有限时间区间。Kern 先预告一条固定近战通道，仅在 1.60–2.18 秒令其危险，碰撞结束后仍继续可见的随势动作；Tavi 离开生效通道，再于无害动作中重新进入。两个边界闪光让首末生效时刻都可检查。",
+  "learning": "用一份攻击记录定义启动、首末生效时刻、碰撞几何、接触规则、随势动作与恢复。",
+  "category": "结构与可读性",
+  "readTime": "4 分钟",
+  "demo": {
+    "title": "把短暂生效的碰撞与更长的可见挥击分开",
+    "timeline": "生效阶段时间轴",
+    "step": "生效阶段状态",
+    "phaseNames": ["读取启动并离开", "验证边界并重新进入", "保持恢复并重置"],
+    "phaseDescriptions": [
+      "0.55–1.60 秒，Kern 后撤蓄力，虚线矩形预告完整通道。Tavi 用普通移动在首个生效时刻前让整个身体离开通道。",
+      "1.60 秒通道变为实线并危险至 2.18 秒。第二次闪光移除碰撞，但姿态和虚线残影持续至 2.92 秒。Tavi 只在明确截止后穿回，并于 3.28 秒抵达 Kern。",
+      "Kern 直至 4.80 秒都不能开始新动作。通道保持无害，Tavi 的回应形成清晰剑击窗口，双方在六秒循环重启前连续走回。"
+    ],
+    "boss": "Boss",
+    "player": "玩家",
+    "danger": "只有 1.60–2.18 秒的实线通道具有碰撞",
+    "locked": "启动阶段固定通道和首末生效时刻",
+    "safe": "激活前完全离开，并在结束闪光后重新进入",
+    "reducedMotion": "减少动态效果时自动播放关闭。拖动经过 1.60 与 2.18 秒检查两个碰撞边界。",
+    "diagramDescription": "石制 Boss 准备横向攻击，虚线矩形显示其范围。持剑玩家完全移到通道上方。矩形在短暂固定区间内变为实线危险区域，随后变回无害虚线残影，而 Boss 继续随势动作。玩家穿过旧通道，在恢复期攻击，双方连续复位。"
+  },
+  "steps": [
+    {
+      "title": "什么开始并结束生效阶段？",
+      "body": "在攻击定义中保存明确的首末生效时间或状态转换。1.60 秒启用通道并发出一次开始事件；2.18 秒禁用并发出结束事件。明确边界包含规则、模拟顺序、打击停顿及慢动作的游戏时间语义，不要交给动画采样决定。"
+    },
+    {
+      "title": "区间内存在哪种几何？",
+      "body": "预告、碰撞、调试和测试都使用从 (282, 406) 到 (548, 454) 的同一矩形，并检查 Tavi 完整的 24 单位半径。若武器在生效期平移或旋转，就连续采样同一权威形状并测试扫掠体积，而非只测起止姿态。"
+    },
+    {
+      "title": "接触时和截止后发生什么？",
+      "body": "声明一个目标是每次攻击命中一次、每个生效段一次，还是按冷却重复，并在攻击实例中记录已消费接触。截止时即使动作继续也要移除碰撞。保留足够恢复时间，让成功回应改变距离或形成有意的攻击窗口。"
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "碰撞持续整个攻击动画",
+      "body": "武器可以在有效打击区间后继续运动。若 hitbox 覆盖全部随势帧，Tavi 会在进入姿态承诺的窗口时受击。给碰撞独立的有限状态，让后续动作表达重量而不暗中延长危险。"
+    },
+    {
+      "title": "视觉与玩法边界来自不同时钟",
+      "body": "动画通知、特效计时、网络事件和物理在混合、低帧率、暂停、回滚或定位时可能分歧。用同一确定性攻击时间驱动碰撞、闪光、声音、结果与回放，并测试两个边界之前、当下和之后。"
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "把攻击表示为有序状态",
+      "body": "使用启动 → 生效 → 随势 → 恢复，而非一个攻击标志。定义合法转换与取消所有权，并让状态进入只执行一次启用或清理，避免中断、死亡、换阶段或丢失目标时残留 hitbox。"
+    },
+    {
+      "title": "分离持续时间与覆盖范围",
+      "body": "更长的生效区间和更大的 hitbox 解决不同问题。分别调整时长、距离、宽度、移动与旋转，再用最慢支持回应和多种起始距离测试早、中、晚接触。"
+    },
+    {
+      "title": "选择重复命中规则",
+      "body": "一个区间包含多个模拟 tick。给攻击实例 ID 并记录已影响目标，或定义有意的重复节奏。不要让帧率、重叠 hurtbox 或打击停顿意外倍增伤害。"
+    },
+    {
+      "title": "保留可见的调试真相",
+      "body": "在工具和回放中公开状态、实例 ID、碰撞形状、接触集与边界时间。设计师应能停在 1.59、1.60、2.17、2.18 秒并解释每个视觉与碰撞结果。"
+    }
+  ],
+  "story": {
+    "title": "只燃烧一个计量节拍的符文裂缝",
+    "body": "Kern 将力量注入地面矩形裂缝。启动时裂缝冷却且断续，生效期只作为实线带燃烧，随后碎成无害残影，而石臂完成挥击。材质变化无需额外 HUD 就能解释碰撞边界。"
+  },
+  "adaptation": {
+    "title": "让 Tavi 在边界两侧都能行动",
+    "body": "Tavi 无需冲刺或无敌：普通移动可在激活前完全离开 48 单位宽通道。结束闪光后，同样的移动穿过仍可见的攻击并在恢复期进入剑击距离。更快能力只增加余量，不应重定义 hitbox 时间。"
+  },
+  "distinction": {
+    "title": "伤害区间，而非准备或停机",
+    "body": "蓄力是释放前的可读准备；攻击锁定冻结选定参数；生效阶段仅指可应用效果的区间；恢复是 Boss 再次行动前的后置时间。一段可见动作可以横跨四者，动画总长度不能自行定义边界。"
+  },
+  "lensNotes": [
+    { "id": "telegraphing", "body": "虚线预告同一通道，开始闪光改变图案并激活碰撞。" },
+    { "id": "threat-geometry", "body": "只有生效区间内，权威矩形和 Tavi 的完整半径才决定接触。" },
+    { "id": "commitment", "body": "通道和两个边界在释放前固定，不会为追随 Tavi 后续路线而延长。" },
+    { "id": "counterplay", "body": "普通移动能离开生效通道，明确截止使随势期间重新进入可靠。" }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "Hollow Knight",
+      "boss": "Mantis Lords",
+      "screenshot": "https://i.ytimg.com/vi/VG3h6uVtWyY/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=VG3h6uVtWyY&t=19s",
+      "body": "Mantis Lord 的紧凑侧视斩击区分预备姿态、武器经过范围与站稳收势。清楚轮廓适合逐帧检查宽幅可见动作何时真正应有碰撞。",
+      "video": "https://www.youtube.com/watch?v=VG3h6uVtWyY&t=19s",
+      "videoDurationSeconds": 148
+    },
+    {
+      "dimension": "3D",
+      "game": "Dark Souls III",
+      "boss": "Dancer of the Boreal Valley",
+      "screenshot": "https://i.ytimg.com/vi/vCWh1bhHNKo/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=vCWh1bhHNKo&t=38s",
+      "body": "Dancer 的长剑弧在最接近玩家空间之前和之后仍具表现力。3D 镜头适合把可见拖尾时长与碰撞体积及其精确生效区间分开。",
+      "video": "https://www.youtube.com/watch?v=vCWh1bhHNKo&t=38s",
+      "videoDurationSeconds": 190
+    },
+    {
+      "dimension": "3D",
+      "game": "Sekiro: Shadows Die Twice",
+      "boss": "Corrupted Monk",
+      "screenshot": "https://i.ytimg.com/vi/bSI6RWT8WUw/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=bSI6RWT8WUw&t=5s",
+      "body": "Corrupted Monk 的长兵器横扫结合大范围、可见准备和随势动作，适合检查生效时间内的采样或扫掠体积，而不把完整身体动画的每帧都当成危险。",
+      "video": "https://www.youtube.com/watch?v=bSI6RWT8WUw&t=5s",
+      "videoDurationSeconds": 74
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

@@ -1,0 +1,24 @@
+{
+  "id": "active-phase",
+  "number": 64,
+  "published": true,
+  "sourceLocale": "en",
+  "contentVersion": 1,
+  "animation": "active-phase",
+  "lenses": ["telegraphing", "threat-geometry", "commitment", "counterplay"],
+  "related": ["wind-up", "attack-lock", "wide-swing"],
+  "sources": [
+    {
+      "title": "SF Seminar · Capcom — startup, active frames, and recovery",
+      "url": "https://game.capcom.com/cfn/sfv/column/131432?lang=en"
+    },
+    {
+      "title": "Designer article · Mike Stout — readable pre-attack communication",
+      "url": "https://www.gamedeveloper.com/design/enemy-attacks-and-telegraphing"
+    },
+    {
+      "title": "Developer talk · Rebecca Vessal — telegraph, attack, and recovery chains",
+      "url": "https://www.gdcvault.com/play/1028927/AI-Summit-Crafting-Epic-Boss"
+    }
+  ]
+}

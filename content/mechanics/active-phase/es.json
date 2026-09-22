@@ -1,0 +1,138 @@
+{
+  "title": "Fase activa",
+  "subtitle": "Define el intervalo exacto en que un ataque puede infligir daño.",
+  "variant": "Un carril de cuerpo a cuerpo fijo cuya colisión termina antes que la animación de seguimiento",
+  "summary": "La fase activa es el intervalo limitado en que la colisión de un ataque puede producir su efecto de juego.",
+  "overview": "La fase activa es el intervalo limitado en que un ataque produce su efecto. Kern vuelve peligroso un carril anticipado solo entre 1,60 y 2,18 s y continúa el movimiento visible tras acabar la colisión. Tavi lo despeja y vuelve durante el movimiento inocuo; dos destellos muestran ambos límites activos.",
+  "learning": "Define preparación, primer y último instante activos, geometría, política de contacto, seguimiento y recuperación en un único registro de ataque.",
+  "category": "Estructura y legibilidad",
+  "readTime": "4 min",
+  "demo": {
+    "title": "Separa un hitbox activo breve de un golpe visible más largo",
+    "timeline": "Cronología de la fase activa",
+    "step": "Estados de la fase activa",
+    "phaseNames": [
+      "Leer y despejar",
+      "Comprobar límites y volver",
+      "Mantener recuperación y reiniciar"
+    ],
+    "phaseDescriptions": [
+      "Entre 0,55 y 1,60 s Kern prepara el golpe mientras un rectángulo discontinuo promete todo el carril. Tavi usa movimiento normal para sacar el cuerpo completo antes del primer instante activo.",
+      "A 1,60 s el carril se vuelve sólido y peligroso hasta 2,18 s. Otro destello elimina la colisión mientras la pose y un residuo discontinuo continúan hasta 2,92 s. Tavi cruza después del corte y llega a Kern a 3,28 s.",
+      "Kern no puede iniciar otra acción hasta 4,80 s. El carril sigue siendo inocuo, la respuesta de Tavi produce una apertura visible para la espada y ambos vuelven caminando antes de repetirse el bucle."
+    ],
+    "boss": "Jefe",
+    "player": "Jugador",
+    "danger": "Solo el carril sólido entre 1,60 y 2,18 s tiene colisión",
+    "locked": "La preparación fija el carril y los dos límites activos",
+    "safe": "Despeja todo el carril antes de activarse y vuelve tras el destello final",
+    "reducedMotion": "La reproducción automática se desactiva con movimiento reducido. Recorre 1,60 y 2,18 s para inspeccionar ambos límites.",
+    "diagramDescription": "Un jefe de piedra prepara un golpe horizontal y un rectángulo discontinuo muestra su alcance. Un jugador con espada sale por completo. El rectángulo se vuelve sólido y peligroso durante un intervalo breve, y luego queda como residuo discontinuo inocuo mientras el jefe completa el movimiento. El jugador cruza, ataca durante la recuperación y ambos regresan sin saltos."
+  },
+  "steps": [
+    {
+      "title": "¿Qué inicia y termina la fase activa?",
+      "body": "Guarda tiempos o transiciones explícitos junto a la definición. A 1,60 s activa el carril y emite un evento inicial; a 2,18 s desactívalo y emite uno final. Define inclusión de límites, orden de simulación, hit-stop y tiempo lento en tiempo de juego, sin delegarlos al muestreo de animación."
+    },
+    {
+      "title": "¿Qué geometría existe durante el intervalo?",
+      "body": "Usa el mismo rectángulo de (282, 406) a (548, 454) para anticipación, colisión, depuración y pruebas. Mide el radio completo de 24 unidades de Tavi. Si el arma se mueve o gira, muestrea continuamente la forma autoritativa y comprueba el volumen barrido, no solo las poses extremas."
+    },
+    {
+      "title": "¿Qué ocurre al contactar y después del corte?",
+      "body": "Declara si un objetivo recibe un golpe por ataque, por segmento o según una cadencia, y guarda los contactos consumidos en la instancia. Elimina la colisión al terminar aunque continúe el movimiento. Conserva recuperación suficiente para cambiar la distancia o crear una apertura intencionada."
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "La colisión dura toda la animación",
+      "body": "El arma puede seguir moviéndose tras su intervalo útil. Si el hitbox vive durante todo el seguimiento, Tavi recibe daño al entrar en la apertura prometida. Da a la colisión un estado limitado y deja que el movimiento posterior comunique peso sin alargar el peligro."
+    },
+    {
+      "title": "Los límites visuales y jugables usan relojes distintos",
+      "body": "Una notificación de animación, un temporizador, la red y la física pueden divergir con mezclas, baja tasa de cuadros, pausa, rollback o búsqueda. Deriva colisión, destellos, sonido, resultado y repetición del mismo tiempo determinista y prueba antes, en y después de ambos límites."
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "Representa el ataque como estados ordenados",
+      "body": "Usa preparación → activo → seguimiento → recuperación en vez de un solo indicador. Define transiciones y cancelaciones, y activa o limpia una sola vez al entrar en cada estado para evitar hitboxes persistentes al interrumpir, morir o cambiar de fase."
+    },
+    {
+      "title": "Separa duración y cobertura",
+      "body": "Un intervalo más largo y un hitbox mayor resuelven problemas distintos. Ajusta duración, alcance, anchura, movimiento y giro por separado; prueba contactos tempranos, medios y tardíos con la respuesta más lenta y varias distancias."
+    },
+    {
+      "title": "Elige una política de golpes repetidos",
+      "body": "Un intervalo contiene muchos ticks. Asigna un ID a la instancia y registra objetivos ya afectados, o define una cadencia deliberada. No permitas que cuadros, hurtboxes solapados o hit-stop multipliquen el daño por accidente."
+    },
+    {
+      "title": "Mantén visible la verdad de depuración",
+      "body": "Expón estado, ID, forma, contactos y tiempos límite en herramientas y repeticiones. Un diseñador debe pausar en 1,59, 1,60, 2,17 y 2,18 s y explicar cada resultado visual y de colisión sin adivinar."
+    }
+  ],
+  "story": {
+    "title": "Una costura rúnica arde durante un pulso medido",
+    "body": "Kern concentra fuerza en una costura rectangular. Está fría y rota durante la preparación, arde como una banda sólida durante el intervalo activo y se fractura en una estela inocua mientras el brazo de piedra completa el golpe. El material explica el límite sin añadir HUD."
+  },
+  "adaptation": {
+    "title": "Deja que Tavi actúe a ambos lados del límite",
+    "body": "Tavi no necesita carrera ni invulnerabilidad: el movimiento normal despeja el carril de 48 unidades antes de activarse. Tras el destello final, cruza el golpe aún visible y alcanza la distancia de espada durante la recuperación. Los verbos rápidos amplían el margen, no redefinen el hitbox."
+  },
+  "distinction": {
+    "title": "Intervalo de daño, no preparación ni inactividad",
+    "body": "La preparación comunica antes del golpe; el bloqueo de ataque congela parámetros; la fase activa es solo cuando se aplica el efecto; la recuperación es el tiempo posterior antes de actuar otra vez. Un movimiento visible puede abarcar los cuatro estados y no define sus límites por sí solo."
+  },
+  "lensNotes": [
+    {
+      "id": "telegraphing",
+      "body": "La vista discontinua anuncia el mismo carril antes de que el destello inicial cambie el patrón y active la colisión."
+    },
+    {
+      "id": "threat-geometry",
+      "body": "Un rectángulo autoritativo y el radio completo de Tavi determinan el contacto solo durante el intervalo activo."
+    },
+    {
+      "id": "commitment",
+      "body": "El carril y ambos límites se fijan antes del golpe y no se alargan para seguir la ruta posterior de Tavi."
+    },
+    {
+      "id": "counterplay",
+      "body": "El movimiento normal despeja el carril y el corte explícito permite volver durante el seguimiento de forma fiable."
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "Hollow Knight",
+      "boss": "Mantis Lords",
+      "screenshot": "https://i.ytimg.com/vi/VG3h6uVtWyY/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=VG3h6uVtWyY&t=19s",
+      "body": "El tajo compacto de Mantis Lord separa anticipación, paso del arma y final plantado. La silueta lateral facilita inspeccionar cuadro a cuadro cuándo un movimiento amplio debe poseer colisión.",
+      "video": "https://www.youtube.com/watch?v=VG3h6uVtWyY&t=19s",
+      "videoDurationSeconds": 148
+    },
+    {
+      "dimension": "3D",
+      "game": "Dark Souls III",
+      "boss": "Dancer of the Boreal Valley",
+      "screenshot": "https://i.ytimg.com/vi/vCWh1bhHNKo/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=vCWh1bhHNKo&t=38s",
+      "body": "Los arcos largos de Dancer siguen siendo expresivos antes y después de pasar por el espacio del jugador. La cámara 3D ayuda a separar la estela visible del volumen de colisión y su intervalo activo.",
+      "video": "https://www.youtube.com/watch?v=vCWh1bhHNKo&t=38s",
+      "videoDurationSeconds": 190
+    },
+    {
+      "dimension": "3D",
+      "game": "Sekiro: Shadows Die Twice",
+      "boss": "Corrupted Monk",
+      "screenshot": "https://i.ytimg.com/vi/bSI6RWT8WUw/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=bSI6RWT8WUw&t=5s",
+      "body": "Los barridos de Corrupted Monk combinan gran cobertura, preparación y seguimiento visibles. Sirven para comprobar el volumen barrido durante el tiempo activo sin tratar cada cuadro de la animación completa como peligroso.",
+      "video": "https://www.youtube.com/watch?v=bSI6RWT8WUw&t=5s",
+      "videoDurationSeconds": 74
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

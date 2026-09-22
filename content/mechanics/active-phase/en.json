@@ -1,0 +1,138 @@
+{
+  "title": "Active phase",
+  "subtitle": "Define the exact interval when an attack can deal damage.",
+  "variant": "A fixed melee lane whose collision ends before the follow-through animation",
+  "summary": "The active phase is the bounded interval in which an attack's collision can produce its gameplay effect.",
+  "overview": "The active phase is the bounded interval in which an attack can produce its gameplay effect. Kern makes one previewed lane dangerous only from 1.60–2.18 seconds, then continues the visible follow-through after collision ends. Tavi clears the live lane and re-enters during harmless motion; boundary flashes expose both active limits.",
+  "learning": "Define startup, first active instant, last active instant, collision geometry, contact policy, follow-through, and recovery from one attack record.",
+  "category": "Structure and readability",
+  "readTime": "4 min",
+  "demo": {
+    "title": "Separate a short live hitbox from a longer visible strike",
+    "timeline": "Active-phase timeline",
+    "step": "Active-phase states",
+    "phaseNames": [
+      "Read startup and clear",
+      "Verify active limits and re-enter",
+      "Hold recovery and reset"
+    ],
+    "phaseDescriptions": [
+      "From 0.55–1.60 s Kern draws back while a dashed rectangle promises the complete lane. Tavi uses ordinary movement to place the whole body above it before the first active instant.",
+      "At 1.60 s the lane becomes solid and dangerous; it stays active through 2.18 s. A second boundary flash removes collision while Kern's pose and a dashed residue continue to 2.92 s. Tavi crosses back only after that exact cutoff and reaches Kern at 3.28 s.",
+      "Kern remains unable to start another action through 4.80 s. The lane stays harmless, Tavi's response produces a visible sword opening, and both actors walk back before the six-second loop repeats."
+    ],
+    "boss": "Boss",
+    "player": "Player",
+    "danger": "Only the solid lane from 1.60–2.18 seconds has collision",
+    "locked": "Startup fixes the lane and the first and last active instants",
+    "safe": "Clear the full lane before activation, then re-enter after the end flash",
+    "reducedMotion": "Autoplay is disabled by reduced motion. Scrub across 1.60 and 2.18 seconds to inspect both collision boundaries.",
+    "diagramDescription": "A stone boss prepares a horizontal strike while a dashed rectangular lane shows its reach. A sword-bearing player steps fully above the lane. The rectangle becomes solid and dangerous for a short fixed interval, then changes to a harmless dashed residue while the boss visibly follows through. The player crosses the old lane, attacks during recovery, and both characters reset continuously."
+  },
+  "steps": [
+    {
+      "title": "What starts and ends the active phase?",
+      "body": "Store explicit first-active and last-active times or state transitions beside the attack definition. At 1.60 s, enable the lane and emit one start event; at 2.18 s, disable it and emit one end event. Decide inclusive and exclusive frame semantics, simulation ordering, hit-stop behavior, and whether slow motion changes game-time duration rather than leaving those details to animation sampling."
+    },
+    {
+      "title": "Which geometry exists during that interval?",
+      "body": "Use one rectangular lane from (282, 406) to (548, 454) for preview, collision, debug drawing, and tests. Measure Tavi's complete 24-unit radius against every edge. If the weapon translates or rotates during active time, sample that same authoritative shape continuously and test the swept volume instead of checking only its first and last poses."
+    },
+    {
+      "title": "What happens on contact and after cutoff?",
+      "body": "Declare whether one target can be hit once, once per active segment, or repeatedly on a cooldown, then store the consumed contacts with the attack instance. At cutoff, remove collision even though the follow-through remains visible. Preserve enough recovery for the successful response to change spacing or create a deliberate attack opening."
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "Collision lasts for the entire attack animation",
+      "body": "A weapon can keep moving after its useful striking interval. If the hitbox survives through every follow-through frame, Tavi is hit while entering an opening the pose appears to promise. Give collision its own bounded state, and let the later motion communicate weight without silently extending danger."
+    },
+    {
+      "title": "Visual and gameplay boundaries come from different clocks",
+      "body": "An animation notification, effect timer, network event, and physics update can disagree at blends, low frame rates, pause, rollback, or seeking. Drive collision, boundary flashes, sound, result labels, and replay data from the same deterministic attack time, then assert the frames immediately before, at, and after both boundaries."
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "Represent the attack as ordered states",
+      "body": "Use startup → active → follow-through → recovery rather than a single attacking flag. Define legal transitions and cancellation ownership, and make state entry perform activation or cleanup exactly once. This keeps hitboxes from leaking when the boss is interrupted, dies, changes phase, or loses its target."
+    },
+    {
+      "title": "Separate duration from coverage",
+      "body": "A longer active interval and a larger hitbox solve different design problems. Tune duration, reach, width, movement, and rotation independently; then test early, middle, and late contact against the slowest supported response and several starting distances."
+    },
+    {
+      "title": "Choose a repeat-hit policy",
+      "body": "One active interval may contain many simulation ticks. Give each attack instance an ID and record targets already affected, or define an intentional repeat cadence. Do not let frame rate, overlapping hurtboxes, or hit-stop multiply damage accidentally."
+    },
+    {
+      "title": "Keep debug truth available",
+      "body": "Expose the current state, attack-instance ID, collision shape, contact set, and boundary timestamps in developer tools and replays. A designer should be able to pause on 1.59, 1.60, 2.17, and 2.18 seconds and explain every visual and collision result without guessing."
+    }
+  ],
+  "story": {
+    "title": "A rune seam that burns for one measured beat",
+    "body": "Kern draws force into a rectangular seam across the floor. The seam is broken and cool during startup, burns as one solid band only during the active interval, then fractures into a harmless afterimage while Kern's stone arm completes its swing. The material change explains the collision boundary without adding a separate HUD."
+  },
+  "adaptation": {
+    "title": "Let Tavi act on both sides of the boundary",
+    "body": "Tavi needs no dash or invulnerability: ordinary movement clears the full 48-unit lane before activation. After the end flash, the same movement crosses the still-visible strike and reaches sword range during recovery. Faster verbs may increase margin, but they must not redefine when the hitbox exists."
+  },
+  "distinction": {
+    "title": "Damage interval, not preparation or downtime",
+    "body": "Wind-up is the readable preparation before release; attack lock freezes selected parameters; the active phase is only the interval in which the attack can apply its effect; recovery is the post-action period before the boss can act again. A visible motion may span all four, so animation length alone does not define any boundary."
+  },
+  "lensNotes": [
+    {
+      "id": "telegraphing",
+      "body": "The dashed preview announces the same lane before a start flash changes its pattern and activates collision."
+    },
+    {
+      "id": "threat-geometry",
+      "body": "One authoritative rectangle and Tavi's complete radius determine contact only during the active interval."
+    },
+    {
+      "id": "commitment",
+      "body": "The lane and both active boundaries are fixed before release and cannot stretch to follow Tavi's later route."
+    },
+    {
+      "id": "counterplay",
+      "body": "Ordinary movement clears the live lane and the explicit cutoff makes re-entry during follow-through dependable."
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "Hollow Knight",
+      "boss": "Mantis Lords",
+      "screenshot": "https://i.ytimg.com/vi/VG3h6uVtWyY/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=VG3h6uVtWyY&t=19s",
+      "body": "A Mantis Lord's compact side-view slash separates an anticipatory pose, the weapon's passing reach, and a planted finish. The clear silhouette makes this sequence useful for frame-by-frame inspection of when a broad visible motion should actually own collision.",
+      "video": "https://www.youtube.com/watch?v=VG3h6uVtWyY&t=19s",
+      "videoDurationSeconds": 148
+    },
+    {
+      "dimension": "3D",
+      "game": "Dark Souls III",
+      "boss": "Dancer of the Boreal Valley",
+      "screenshot": "https://i.ytimg.com/vi/vCWh1bhHNKo/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=vCWh1bhHNKo&t=38s",
+      "body": "The Dancer's long sword arcs remain visually expressive before and after their closest passage through the player space. The 3D camera makes the encounter a useful reference for separating visible trail duration from the collision volume and its exact active interval.",
+      "video": "https://www.youtube.com/watch?v=vCWh1bhHNKo&t=38s",
+      "videoDurationSeconds": 190
+    },
+    {
+      "dimension": "3D",
+      "game": "Sekiro: Shadows Die Twice",
+      "boss": "Corrupted Monk",
+      "screenshot": "https://i.ytimg.com/vi/bSI6RWT8WUw/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=bSI6RWT8WUw&t=5s",
+      "body": "Corrupted Monk's polearm sweeps combine large spatial coverage with visible preparation and follow-through. They are useful for checking sampled or swept hitbox coverage across active time without treating every frame of the complete body animation as damaging.",
+      "video": "https://www.youtube.com/watch?v=bSI6RWT8WUw&t=5s",
+      "videoDurationSeconds": 74
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

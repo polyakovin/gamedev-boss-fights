@@ -405,9 +405,9 @@ test('volley releases three parallel bolts on one beat and clears its outside ro
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
 });
 
-test('catalog and builder reuse the 57 promoted rule-specific previews', async ({ page }) => {
+test('catalog and builder reuse the 58 promoted rule-specific previews', async ({ page }) => {
   await page.goto('en/');
-  await expect(page.locator('[data-blueprint-preview]')).toHaveCount(57);
+  await expect(page.locator('[data-blueprint-preview]')).toHaveCount(58);
   const catalogLayouts = await page.locator('[data-blueprint-preview]').evaluateAll((previews) =>
     previews.map((preview) => {
       const boss = preview.querySelector('[data-character-art-preview="kern"]');
@@ -431,7 +431,7 @@ test('catalog and builder reuse the 57 promoted rule-specific previews', async (
   expect(new Set(catalogLayouts.map(({ layout }) => layout)).size).toBeGreaterThanOrEqual(18);
 
   await page.goto('en/builder/');
-  await expect(page.locator('[data-blueprint-preview]')).toHaveCount(57);
+  await expect(page.locator('[data-blueprint-preview]')).toHaveCount(58);
   const builderLayouts = await page.locator('[data-blueprint-preview]').evaluateAll((previews) =>
     previews.map((preview) => {
       const boss = preview.querySelector('[data-character-art-preview="kern"]');
@@ -1498,6 +1498,100 @@ test('attack lock keeps tracking, captured rays, and actors inside dark RTL mobi
     expect(
       bounds.every(Boolean),
       `actors, aim marker, and committed ray remain in frame at ${milliseconds}ms`,
+    ).toBe(true);
+  }
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+});
+
+test('active phase separates startup, live collision, harmless follow-through, and recovery', async ({
+  page,
+}) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.goto('en/mechanics/active-phase/');
+  const widget = page.locator('[data-blueprint-demo]');
+  const timeline = widget.locator('[data-blueprint-timeline]');
+  const seek = (milliseconds) =>
+    timeline.evaluate((element, value) => {
+      element.value = String(value);
+      element.dispatchEvent(new Event('input', { bubbles: true }));
+    }, milliseconds);
+
+  await expect(page.locator('.lesson-title-line h1')).toHaveText('Active phase');
+  await expect(page.locator('.wip-badge, .draft-profile')).toHaveCount(0);
+  await expect(page.locator('.game-example')).toHaveCount(3);
+  await expect(widget).toHaveAttribute('data-blueprint-playing', 'false');
+
+  await seek(900);
+  await expect(widget).toHaveAttribute('data-blueprint-active-phase', 'startup');
+  await expect(widget).toHaveAttribute('data-blueprint-hitbox-active', 'false');
+  await expect(widget.locator('[data-blueprint-primitive="0"] path')).not.toHaveAttribute(
+    'opacity',
+    '0',
+  );
+
+  await seek(1900);
+  await expect(widget).toHaveAttribute('data-blueprint-active-phase', 'active');
+  await expect(widget).toHaveAttribute('data-blueprint-hitbox-active', 'true');
+  await expect(widget).toHaveAttribute('data-blueprint-outcome', 'safe');
+  await expect(widget.locator('[data-blueprint-primitive="1"] rect')).not.toHaveAttribute(
+    'opacity',
+    '0',
+  );
+
+  await seek(2500);
+  await expect(widget).toHaveAttribute('data-blueprint-active-phase', 'follow-through');
+  await expect(widget).toHaveAttribute('data-blueprint-hitbox-active', 'false');
+  await expect(widget).toHaveAttribute('data-blueprint-follow-through', 'true');
+  await expect(widget.locator('[data-blueprint-primitive="2"] line')).not.toHaveAttribute(
+    'opacity',
+    '0',
+  );
+
+  await seek(3280);
+  await expect(widget).toHaveAttribute('data-blueprint-active-phase', 'recovery');
+  await expect(widget).toHaveAttribute('data-blueprint-punish-strike', 'true');
+  await expect(widget).toHaveAttribute('data-blueprint-outcome', 'safe');
+
+  await seek(5100);
+  await expect(widget).toHaveAttribute('data-blueprint-active-phase', 'reset');
+});
+
+test('active phase keeps lane boundaries and both actors inside dark RTL mobile', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 375, height: 812 });
+  await page.emulateMedia({ reducedMotion: 'reduce', colorScheme: 'dark' });
+  await page.goto('ar/mechanics/active-phase/');
+  const widget = page.locator('[data-blueprint-demo]');
+  await expect(page.locator('html')).toHaveAttribute('dir', 'rtl');
+  const timeline = widget.locator('[data-blueprint-timeline]');
+  for (const milliseconds of [0, 900, 1600, 1900, 2180, 2500, 3280, 4500, 5100]) {
+    await timeline.evaluate((element, value) => {
+      element.value = String(value);
+      element.dispatchEvent(new Event('input', { bubbles: true }));
+    }, milliseconds);
+    const bounds = await widget.evaluate((element) => {
+      const svg = element.querySelector('svg').getBoundingClientRect();
+      return [
+        '[data-blueprint-boss]',
+        '[data-blueprint-player]',
+        '[data-blueprint-boss-label]',
+        '[data-blueprint-player-label]',
+        '[data-blueprint-primitive="0"]',
+        '[data-blueprint-primitive="4"]',
+      ].map((selector) => {
+        const rect = element.querySelector(selector).getBoundingClientRect();
+        return (
+          rect.left >= svg.left - 2 &&
+          rect.right <= svg.right + 2 &&
+          rect.top >= svg.top - 2 &&
+          rect.bottom <= svg.bottom + 2
+        );
+      });
+    });
+    expect(
+      bounds.every(Boolean),
+      `actors and active lane boundaries remain in frame at ${milliseconds}ms`,
     ).toBe(true);
   }
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);

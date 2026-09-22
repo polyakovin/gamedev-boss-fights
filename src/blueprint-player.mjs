@@ -142,6 +142,12 @@ export function initializeBlueprint(widget) {
       widget.dataset.blueprintAimX = frame.attackLockTarget.x.toFixed(1);
       widget.dataset.blueprintAimY = frame.attackLockTarget.y.toFixed(1);
     }
+    if (mechanicId === 'active-phase') {
+      widget.dataset.blueprintActivePhase = frame.activePhaseState;
+      widget.dataset.blueprintHitboxActive = String(frame.hitboxActive);
+      widget.dataset.blueprintFollowThrough = String(frame.followThroughVisible);
+      widget.dataset.blueprintPunishStrike = String(frame.punishStrike);
+    }
     boss.setAttribute(
       'transform',
       `translate(${frame.boss.x} ${frame.boss.y}) scale(${frame.bossScale})`,

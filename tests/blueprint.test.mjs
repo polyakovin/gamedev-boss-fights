@@ -5,6 +5,7 @@ import {
   BLUEPRINT_MECHANIC_IDS,
   absorptionCharge,
   absorptionOutcome,
+  activePhaseState,
   attackLockState,
   attackReflectionState,
   counterStanceOutcome,
@@ -31,8 +32,8 @@ import {
   renderBlueprintThumbnail,
 } from '../lib/blueprint-view.mjs';
 
-test('all 57 promoted lesson animations have distinct rule modes and complete moving frames', () => {
-  assert.equal(BLUEPRINT_MECHANIC_IDS.length, 57);
+test('all 58 promoted lesson animations have distinct rule modes and complete moving frames', () => {
+  assert.equal(BLUEPRINT_MECHANIC_IDS.length, 58);
   const modes = new Set();
   for (const id of BLUEPRINT_MECHANIC_IDS) {
     for (let time = 0; time <= BLUEPRINT_DURATION; time += 0.1) {
@@ -53,7 +54,7 @@ test('all 57 promoted lesson animations have distinct rule modes and complete mo
           assert.ok(Number.isFinite(value), `${id} has an invalid ${primitive.type}`);
     }
   }
-  assert.equal(modes.size, 57);
+  assert.equal(modes.size, 58);
 });
 
 test('every blueprint exposes signal, committed action, and recovery without player teleports', () => {
@@ -71,7 +72,8 @@ test('every blueprint exposes signal, committed action, and recovery without pla
       id !== 'interruptible-wind-up' &&
       id !== 'loadout-adaptation' &&
       id !== 'wind-up' &&
-      id !== 'attack-lock'
+      id !== 'attack-lock' &&
+      id !== 'active-phase'
     )
       assert.equal(blueprintFrame(id, 3).dangerActive, true, id);
     assert.equal(blueprintFrame(id, 3).playerSafe, true, id);
@@ -146,7 +148,8 @@ test('every damaging promoted animation derives safety from its own active geome
       id !== 'interruptible-wind-up' &&
       id !== 'loadout-adaptation' &&
       id !== 'wind-up' &&
-      id !== 'attack-lock',
+      id !== 'attack-lock' &&
+      id !== 'active-phase',
   )) {
     const frame = blueprintFrame(id, 3);
     let point = unsafePoints[id];
@@ -1414,5 +1417,48 @@ test('attack lock captures a moving aim point and preserves it through each rele
   assert.match(
     renderBlueprintThumbnail(id, 'test-attack-lock'),
     /data-blueprint-preview="attack-lock"/,
+  );
+});
+
+test('active phase is dangerous only inside its explicit collision window', () => {
+  const id = 'active-phase';
+  assert.deepEqual([0, 0.8, 1.9, 2.5, 3.2, 4.5, 5.2].map(activePhaseState), [
+    'idle',
+    'startup',
+    'active',
+    'follow-through',
+    'recovery',
+    'recovery',
+    'reset',
+  ]);
+
+  const startup = blueprintFrame(id, 0.9);
+  assert.equal(startup.dangerActive, false);
+  assert.equal(startup.hitboxActive, false);
+  assert.ok(startup.primitives[0].opacity > 0, 'startup previews the complete lane');
+  assert.equal(startup.primitives[1].opacity, 0, 'startup does not expose the live hitbox');
+
+  const active = blueprintFrame(id, 1.9);
+  assert.equal(active.activePhaseState, 'active');
+  assert.equal(active.hitboxActive, true);
+  assert.equal(active.playerSafe, true);
+  assert.equal(blueprintPointSafe(id, 1.9, { x: 400, y: 430 }), false);
+  assert.ok(active.primitives[1].opacity > 0, 'the active collision window is solid');
+  assert.equal(active.primitives[6].opacity, 0, 'the end flash cannot precede the cutoff');
+
+  const followThrough = blueprintFrame(id, 2.5);
+  assert.equal(followThrough.activePhaseState, 'follow-through');
+  assert.equal(followThrough.hitboxActive, false);
+  assert.equal(blueprintPointSafe(id, 2.5, { x: 400, y: 430 }), true);
+  assert.ok(followThrough.primitives[2].opacity > 0, 'harmless motion remains visible');
+  assert.ok(blueprintFrame(id, 2.2).primitives[6].opacity > 0, 'the end flash follows the cutoff');
+
+  const punish = blueprintFrame(id, 3.28);
+  assert.equal(punish.activePhaseState, 'recovery');
+  assert.equal(punish.punishStrike, true);
+  assert.equal(punish.playerSafe, true);
+  assert.match(
+    renderBlueprintThumbnail(id, 'test-active-phase'),
+    /data-blueprint-preview="active-phase"/,
   );
 });
