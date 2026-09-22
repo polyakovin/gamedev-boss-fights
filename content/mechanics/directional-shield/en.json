@@ -1,0 +1,134 @@
+{
+  "title": "Directional shield",
+  "subtitle": "Let a visible guard reject one approach while another stays useful.",
+  "variant": "Fixed frontal guard with a reachable flank",
+  "summary": "A raised shield blocks attacks from a fixed front sector, but an ordinary move around its edge leaves the boss exposed.",
+  "overview": "A directional shield tests an attack's origin against the boss's guarded facing, not all-around immunity. The boss fixes a frontal guard; the player's first sword strike rebounds, then a walk around the edge opens a side hit. The visible block teaches the boundary without cancelling the sword or requiring invulnerability.",
+  "learning": "Tune guard angle, facing lock, sword reach, side-route distance, block feedback, and recovery as one legible rule.",
+  "category": "Defense",
+  "readTime": "4 min",
+  "demo": {
+    "title": "Test the shield angle",
+    "timeline": "Guard timeline",
+    "step": "Guard phases",
+    "phaseNames": ["Raise and aim", "Block, then flank", "Lower the shield"],
+    "phaseDescriptions": [
+      "Kern lifts a stone shield and marks a front-facing sector of about 52 degrees to either side. Tavi faces him with an ordinary sword.",
+      "The facing locks at 1.6 s. Tavi's frontal strike at 2.05 s flashes and stops at the shield; she walks around the right boundary and a side strike lands at 3.55 s.",
+      "The guard ends at 3.85 s, its bright rim disappears, and Kern lowers the shield. Tavi and Kern settle, then visibly reset for another loop."
+    ],
+    "boss": "Boss",
+    "player": "Player",
+    "danger": "A sword strike from inside the guarded sector is blocked",
+    "locked": "The guard continues facing down; it does not track the flank",
+    "safe": "A side strike reaches the unguarded body",
+    "reducedMotion": "Autoplay is disabled by the reduced-motion setting. Use the timeline slider to inspect the loop.",
+    "diagramDescription": "Kern raises a rune-cut stone shield in a marked frontal sector. Tavi strikes it from the front and a visible spark shows the block. Kern keeps the same facing while Tavi walks around the right edge and strikes the exposed side. The glowing guard ends, the shield lowers, and both return to their starting positions."
+  },
+  "steps": [
+    {
+      "title": "What does the shield actually cover?",
+      "body": "Resolve the attack's incoming angle relative to Kern's committed facing. This example blocks only within plus or minus 0.9 radians, roughly 52 degrees on each side. Draw the same two boundaries that the hit rule uses; do not secretly block from behind."
+    },
+    {
+      "title": "Can the player observe the failed route?",
+      "body": "At 2.05 seconds Tavi attacks from the front within a 132-unit reach. Show the sword meeting the stone plate, a distinct impact flash, and no boss damage. A silent miss would make the rule look like broken hit detection."
+    },
+    {
+      "title": "Is the alternate route achievable?",
+      "body": "Tavi travels 110 units right and 105 units upward from 2.22 to 3.4 seconds without a dash. At (390, 430), her sword remains within reach but arrives about 90 degrees from the shield's facing, so the strike at 3.55 seconds lands."
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "The painted edge and block test disagree",
+      "body": "A narrow visual shield paired with a broad invisible immunity cone rejects a plausible flank. Derive the guard rim and angle test from the same half-angle; check borderline attacks on both edges."
+    },
+    {
+      "title": "The boss tracks a player who already committed",
+      "body": "If Kern instantly rotates with Tavi after raising the shield, the right-side route disappears. Lock facing for this beat or give turn-rate and re-aiming their own clear signals and timings."
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "Bound the guarded sector",
+      "body": "The lower-facing shield uses a 0.9-radian half-angle and a 132-unit attack reach. A front strike 105 units below Kern is blocked; a strike 110 units to his right is within reach but outside the guarded sector."
+    },
+    {
+      "title": "Make a block different from a whiff",
+      "body": "Keep the sword, shield, and collision flash visible together at 2.05 seconds. A blocked hit should give a clear material response, while the successful flank should cause a different body reaction."
+    },
+    {
+      "title": "Preserve ordinary movement",
+      "body": "The demonstrated route is 215 units long and takes 1.18 seconds, about 182 units per second on average. Leave comparable floor space outside the guarded edge; never make a special dash the only route unless it is an explicit prerequisite."
+    },
+    {
+      "title": "End protection before recovery is called open",
+      "body": "The guard remains active through the side hit and turns off at 3.85 seconds. Its bright boundary then disappears while the physical shield lowers; the following recovery is not mislabeled as another blocked interval."
+    }
+  ],
+  "story": {
+    "title": "One slab, one readable side",
+    "body": "Kern raises a rune-cut stone plate in front of his chest. Its lit arc shows where a sword will stop, while the rest of his body remains plainly uncovered. A spark at the slab and a separate stagger at the side make the two outcomes easy to compare."
+  },
+  "adaptation": {
+    "title": "Keep weapon choice and movement useful",
+    "body": "Test short and long melee ranges against the same angular boundary. A longer sword may connect from farther away, but should not ignore the shield merely because its tip is distant. If a build gains shield-break or piercing, present it as an optional second response rather than silently disabling the basic flank."
+  },
+  "distinction": {
+    "title": "Direction is not a health phase",
+    "body": "An invulnerability phase blocks every approach for a period; a directional shield blocks only incoming attacks from a facing sector. A weak point adds a positive target to hit, while a directional shield first defines a negative surface to avoid. Reflecting a projectile is a further effect, not required by this rule."
+  },
+  "lensNotes": [
+    {
+      "id": "telegraphing",
+      "body": "The raised plate and lit rim announce the exact guarded side before the first sword strike."
+    },
+    {
+      "id": "commitment",
+      "body": "Kern fixes his facing at 1.6 seconds; the shield cannot silently rotate to follow Tavi's flank."
+    },
+    {
+      "id": "counterplay",
+      "body": "The first blocked strike is feedback, and ordinary movement around the right edge remains a useful answer."
+    },
+    {
+      "id": "risk-reward",
+      "body": "Moving to the side takes time near the boss but yields a sword-range opening that the frontal route lacks."
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "Hades",
+      "boss": "Theseus",
+      "video": "https://www.youtube.com/watch?v=iTV6y_0GBfg&t=215s",
+      "videoDurationSeconds": 321,
+      "screenshot": "https://1.bp.blogspot.com/-I3grwcEvwvg/YRdBtKpSfjI/AAAAAAAAPKk/0rsC92_hTDwne3uXjnwfYhJHaVMoTQR5gCNcBGAsYHQ/s1920/hades-screen-03-ps4-en-09jun21.jpg",
+      "screenshotSource": "https://www.gameblast.com.br/2021/08/jogatina-de-fds-194.html",
+      "body": "Theseus carries a shield that denies frontal attacks in the isometric arena. Unlike Kern's brief locked guard, he keeps defending as his spear pattern and the second boss change the player's approach."
+    },
+    {
+      "dimension": "3D",
+      "game": "Dark Souls II",
+      "boss": "Looking Glass Knight",
+      "video": "https://www.youtube.com/watch?v=YAWTLTE-1mk&t=45s",
+      "videoDurationSeconds": 169,
+      "screenshot": "https://i.ytimg.com/vi/YAWTLTE-1mk/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=YAWTLTE-1mk&t=45s",
+      "body": "The huge mirror shield makes one side of the knight visibly different from the other. The clip shows how a physical guard can occupy the boss silhouette; its spell reflection is an additional behavior outside this lesson's basic block rule."
+    },
+    {
+      "dimension": "3D",
+      "game": "Dark Souls III",
+      "boss": "Dragonslayer Armour",
+      "video": "https://www.youtube.com/watch?v=5sk-e0uokOI&t=51s",
+      "videoDurationSeconds": 186,
+      "screenshot": "https://i.ytimg.com/vi/5sk-e0uokOI/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=5sk-e0uokOI&t=51s",
+      "body": "The boss's massive shield closes a frontal approach while axe attacks and shield bashes complicate the side route. That combination differs from Kern's isolated guard beat, but makes the front-versus-flank distinction legible in 3D."
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

@@ -1,0 +1,134 @@
+{
+  "title": "定向护盾",
+  "subtitle": "让清晰可见的防护挡住一侧，同时保留另一条有效路线。",
+  "variant": "朝向锁定的正面防护与可接近的侧翼",
+  "summary": "举起的护盾挡住固定正面扇区内的攻击；正常移动绕过边缘即可攻击首领。",
+  "overview": "定向护盾根据攻击相对于首领朝向的来向决定是否格挡，而不是提供全方位无敌。凯恩先展示并锁定正面防护：塔维的第一剑明显被弹开，随后她绕过边缘，在防护结束前击中开放的侧翼。清晰的格挡反馈说明边界，也不会废除玩家的剑。",
+  "learning": "将防护角度、朝向锁定、剑的距离、侧翼路线、格挡反馈和恢复时间作为同一规则调整。",
+  "category": "防御",
+  "readTime": "4 分钟",
+  "demo": {
+    "title": "检验护盾角度",
+    "timeline": "攻击时间轴",
+    "step": "攻击阶段",
+    "phaseNames": ["举盾并瞄准", "格挡后绕侧", "放下护盾"],
+    "phaseDescriptions": [
+      "凯恩举起石盾，标出正面左右各约 52 度的扇区。塔维持普通剑站在前方。",
+      "朝向在 1.6 秒锁定。塔维 2.05 秒的正面攻击撞上护盾；她绕过右边界，3.55 秒的侧面攻击命中。",
+      "防护在 3.85 秒结束，发光边缘消失。凯恩放下盾，两人明显返回循环起点。"
+    ],
+    "boss": "首领",
+    "player": "玩家",
+    "danger": "来自防护扇区的剑击会被格挡",
+    "locked": "护盾朝向固定，不再追踪侧翼",
+    "safe": "侧面攻击命中未受保护的身体",
+    "reducedMotion": "减少动态效果已关闭自动播放。请用时间轴滑块检查整个循环。",
+    "diagramDescription": "凯恩举起符文石盾并标出正面防护扇区。塔维从正面挥剑，火花显示格挡。她绕过右边界攻击开放侧面。亮起的防护消失，盾放下，两人回到初始位置。"
+  },
+  "steps": [
+    {
+      "title": "护盾实际覆盖哪里？",
+      "body": "用攻击来向与凯恩锁定的朝向比较。此例只格挡左右各 0.9 弧度、约 52 度的扇区。可见边缘和命中判定必须一致，不能暗中挡住背后攻击。"
+    },
+    {
+      "title": "失败的攻击是否有反馈？",
+      "body": "2.05 秒时塔维在 132 单位的攻击距离内从正面出剑。让剑碰到石盾、出现独立火花，并且首领不受伤。无声落空会像命中检测错误。"
+    },
+    {
+      "title": "替代路线是否走得到？",
+      "body": "塔维在 2.22–3.4 秒间普通步行向右 110 单位、向上 105 单位。到 (390, 430) 时仍在剑距内，但攻击与护盾朝向约成 90 度，因此 3.55 秒命中。"
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "绘制边界与格挡不符",
+      "body": "窄小的可见护盾配上宽大的隐藏免疫扇区，会否定合理的侧翼路线。用同一个角度生成边缘和判定，并测试两侧边界。"
+    },
+    {
+      "title": "锁定后首领仍瞬间转向",
+      "body": "若凯恩举盾后立即随塔维旋转，侧翼路线就消失。固定本次朝向，或另行清楚提示再瞄准。"
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "限定防护扇区",
+      "body": "半角为 0.9 弧度，攻击距离为 132 单位。正前方 105 单位处的攻击被挡住；右侧 110 单位处的攻击仍能命中。"
+    },
+    {
+      "title": "区分格挡与挥空",
+      "body": "在 2.05 秒同时显示剑、盾和接触火花；侧击成功时用另一种身体反应。"
+    },
+    {
+      "title": "保留普通移动",
+      "body": "示例路线长 215 单位，耗时 1.18 秒，平均约每秒 182 单位。护盾边缘外要留出空间，不应暗中要求冲刺。"
+    },
+    {
+      "title": "让防护先于恢复结束",
+      "body": "防护持续到 3.85 秒。亮边随后消失，实体护盾放下，恢复阶段不再像仍在格挡。"
+    }
+  ],
+  "story": {
+    "title": "一块石板，一侧空隙",
+    "body": "凯恩把符文石板举在胸前。发光弧线显示剑会被挡住的范围，其他部位仍然开放。正面的火花与侧面的踉跄让两种结果清楚可比。"
+  },
+  "adaptation": {
+    "title": "让剑和移动继续有用",
+    "body": "用同一角度边界测试长短不同的近战武器。长剑能从更远处触及，但不应仅因距离而穿过盾。破盾能力可作为额外选项，不能悄悄取代基本绕侧路线。"
+  },
+  "distinction": {
+    "title": "方向防护不是无敌阶段",
+    "body": "暂时无敌封锁所有方向，定向护盾只挡住正面扇区。弱点提供应攻击的目标；护盾首先标出不该击打的表面。反弹投射物是另加效果，并非本规则必需。"
+  },
+  "lensNotes": [
+    {
+      "id": "telegraphing",
+      "body": "举起的石板与亮弧在首次挥剑前标出防护方向。"
+    },
+    {
+      "id": "commitment",
+      "body": "凯恩在 1.6 秒锁定朝向，护盾不会暗中跟随塔维的绕侧。"
+    },
+    {
+      "id": "counterplay",
+      "body": "第一次格挡提供反馈；普通步行绕过右边缘仍有效。"
+    },
+    {
+      "id": "risk-reward",
+      "body": "靠近首领绕到侧面需要时间，但换来正面没有的剑击机会。"
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "Hades",
+      "boss": "Theseus",
+      "video": "https://www.youtube.com/watch?v=iTV6y_0GBfg&t=215s",
+      "videoDurationSeconds": 321,
+      "screenshot": "https://1.bp.blogspot.com/-I3grwcEvwvg/YRdBtKpSfjI/AAAAAAAAPKk/0rsC92_hTDwne3uXjnwfYhJHaVMoTQR5gCNcBGAsYHQ/s1920/hades-screen-03-ps4-en-09jun21.jpg",
+      "screenshotSource": "https://www.gameblast.com.br/2021/08/jogatina-de-fds-194.html",
+      "body": "忒修斯在等距视角竞技场用盾阻挡正面攻击。与凯恩短暂的固定防护不同，他在长矛招式和另一名首领改变局势时仍持续防守。"
+    },
+    {
+      "dimension": "3D",
+      "game": "Dark Souls II",
+      "boss": "Looking Glass Knight",
+      "video": "https://www.youtube.com/watch?v=YAWTLTE-1mk&t=45s",
+      "videoDurationSeconds": 169,
+      "screenshot": "https://i.ytimg.com/vi/YAWTLTE-1mk/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=YAWTLTE-1mk&t=45s",
+      "body": "巨大的镜盾让骑士受保护的一侧十分明显。反射法术是基本定向格挡之外的额外行为。"
+    },
+    {
+      "dimension": "3D",
+      "game": "Dark Souls III",
+      "boss": "Dragonslayer Armour",
+      "video": "https://www.youtube.com/watch?v=5sk-e0uokOI&t=51s",
+      "videoDurationSeconds": 186,
+      "screenshot": "https://i.ytimg.com/vi/5sk-e0uokOI/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=5sk-e0uokOI&t=51s",
+      "body": "巨大护盾封住正面，斧击和盾击又使绕侧更复杂。它比凯恩单独的防护节拍复杂，但清楚展示 3D 中正面与侧面的差别。"
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

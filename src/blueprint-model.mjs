@@ -236,6 +236,18 @@ const SPECS = {
     flight: 1.3,
     shotLength: 590,
   },
+  'directional-shield': {
+    mode: 'directional-shield',
+    boss: [280, 430],
+    player: [280, 535],
+    target: [390, 430],
+    guardAngle: Math.PI / 2,
+    guardHalfAngle: 0.9,
+    guardEnd: 3.85,
+    attackReach: 132,
+    frontStrike: 2.05,
+    sideStrike: 3.55,
+  },
   'wide-swing': { mode: 'arc', boss: [280, 310], player: [410, 470], target: [470, 650] },
   lunge: { mode: 'lunge', boss: [170, 290], player: [390, 590], target: [470, 660] },
   grab: { mode: 'grab', boss: [280, 300], player: [390, 485], target: [470, 610] },
@@ -400,6 +412,7 @@ const limitedSpreadShots = (spec, time) =>
       active: time >= release && time < release + spec.flight,
     };
   });
+const strikePulse = (time, event, width = 0.22) => Math.max(0, 1 - Math.abs(time - event) / width);
 const chainExplosionIndex = (action) =>
   CHAIN_EXPLOSION_WINDOWS.findIndex(([start, end]) => action >= start && action <= end);
 const localTime = (time) => {
@@ -496,6 +509,20 @@ const distanceToPolyline = (value, points) =>
   Math.min(...points.slice(1).map((end, index) => distanceToSegment(value, points[index], end)));
 
 const angleDifference = (from, to) => Math.atan2(Math.sin(from - to), Math.cos(from - to));
+
+export function directionalShieldOutcome(time, attacker) {
+  const spec = SPECS['directional-shield'];
+  const t = localTime(time);
+  const boss = point(spec.boss);
+  const distance = Math.hypot(attacker.x - boss.x, attacker.y - boss.y);
+  if (distance > spec.attackReach) return 'out-of-range';
+  const incomingAngle = Math.atan2(attacker.y - boss.y, attacker.x - boss.x);
+  const guarded =
+    t >= BLUEPRINT_PHASE_ENDS[0] &&
+    t < spec.guardEnd &&
+    Math.abs(angleDifference(incomingAngle, spec.guardAngle)) <= spec.guardHalfAngle;
+  return guarded ? 'blocked' : 'hit';
+}
 
 const pointInPolygon = (value, points) => {
   let inside = false;
@@ -662,6 +689,42 @@ function primitivesFor(spec, frame) {
         'signal',
         7,
       ),
+    ];
+  }
+  if (mode === 'directional-shield') {
+    const guarded = frame.time >= BLUEPRINT_PHASE_ENDS[0] && frame.time < spec.guardEnd;
+    const arcStart = spec.guardAngle - spec.guardHalfAngle;
+    const arcEnd = spec.guardAngle + spec.guardHalfAngle;
+    const frontFlash = strikePulse(frame.time, spec.frontStrike);
+    const sideFlash = strikePulse(frame.time, spec.sideStrike);
+    const leftEdge = polar(boss, 160, arcStart);
+    const rightEdge = polar(boss, 160, arcEnd);
+    return [
+      path(
+        `M ${boss.x} ${boss.y} L ${leftEdge.x} ${leftEdge.y} A 160 160 0 0 1 ${rightEdge.x} ${rightEdge.y} Z`,
+        guarded ? 0.34 : phase === 0 ? 0.12 + prepare * 0.16 : 0,
+        'accent',
+        2,
+        0.05,
+        '9 11',
+      ),
+      path(
+        arcPath(boss, 80, arcStart, arcEnd),
+        guarded ? 0.98 : phase === 0 ? 0.3 + prepare * 0.5 : 0,
+        'accent',
+        11,
+      ),
+      path(
+        `M ${boss.x - 37} ${boss.y + 12} Q ${boss.x} ${boss.y - 2} ${boss.x + 37} ${boss.y + 12} L ${boss.x + 31} ${boss.y + 61} Q ${boss.x} ${boss.y + 80} ${boss.x - 31} ${boss.y + 61} Z`,
+        phase === 0 ? 0.45 + prepare * 0.42 : phase === 1 ? 0.9 : 0.55,
+        'accent',
+        5,
+        0.36,
+      ),
+      line(player.x, player.y - 35, boss.x, boss.y + 60, frontFlash, 'signal', 6),
+      circle(boss.x, boss.y + 60, 18 + frontFlash * 19, frontFlash, 'signal', 7),
+      line(player.x - 35, player.y, boss.x + 47, boss.y, sideFlash, 'signal', 6),
+      circle(boss.x + 47, boss.y, 14 + sideFlash * 19, sideFlash, 'signal', 7),
     ];
   }
   if (mode === 'landing') {
@@ -1872,6 +1935,7 @@ function pointClearsThreat(spec, frame, value, radius = BLUEPRINT_PLAYER_RADIUS)
       (shot) =>
         !shot.active || Math.hypot(value.x - shot.x, value.y - shot.y) > shot.radius + radius,
     );
+  if (mode === 'directional-shield') return true;
   if (mode === 'spiral')
     return (
       distanceFromBoss > 52 + radius &&
@@ -2069,6 +2133,7 @@ export function blueprintFrame(id, time) {
   else if (spec.mode === 'delayed-activation') responseProgress = smooth((t - 1.7) / 0.9);
   else if (spec.mode === 'speed-change') responseProgress = smooth((t - 1.6) / 0.7);
   else if (spec.mode === 'limited-spread') responseProgress = smooth((t - 1.6) / 0.68);
+  else if (spec.mode === 'directional-shield') responseProgress = smooth((t - 2.22) / 1.18);
   else if (spec.mode === 'knockback')
     responseProgress = phase === 0 ? 0 : phase === 1 ? smooth(action) : 1;
   else if (spec.mode === 'target-lock')
@@ -2111,6 +2176,14 @@ export function blueprintFrame(id, time) {
             x: mix(mix(lock.x, targetPlayer.x, responseProgress), startPlayer.x, returnProgress),
             y: startPlayer.y,
           };
+  }
+  if (spec.mode === 'directional-shield') {
+    const route = [startPlayer, { x: spec.target[0], y: startPlayer.y }, targetPlayer];
+    const advanced = pointAlongPolyline(route, responseProgress);
+    player = {
+      x: mix(advanced.x, startPlayer.x, returnProgress),
+      y: mix(advanced.y, startPlayer.y, returnProgress),
+    };
   }
   if (spec.mode === 'rotating' && phase === 0) {
     const initialPosition = polar(boss, 255, Math.PI / 3);
@@ -2224,7 +2297,9 @@ export function blueprintFrame(id, time) {
                             ? spec.releases.some(
                                 (release) => t >= release && t < release + spec.flight,
                               )
-                            : phase === 1;
+                            : spec.mode === 'directional-shield'
+                              ? t >= BLUEPRINT_PHASE_ENDS[0] && t < spec.guardEnd
+                              : phase === 1;
   const frame = {
     id,
     mode: spec.mode,
@@ -2255,7 +2330,10 @@ export function blueprintFrame(id, time) {
         ? (Math.atan2(spec.landing[1] - spec.boss[1], spec.landing[0] - spec.boss[0]) * 180) /
           Math.PI
         : 90,
-    playerFacing: -90,
+    playerFacing:
+      spec.mode === 'directional-shield'
+        ? mix(-90, -180, smooth((t - 2.7) / 0.68)) * (1 - returnProgress) - 90 * returnProgress
+        : -90,
     bossMotion: motion({
       lean:
         spec.mode === 'landing'
@@ -2292,11 +2370,13 @@ export function blueprintFrame(id, time) {
       impact:
         spec.mode === 'landing'
           ? pulse(clamp((action - 0.42) / 0.22))
-          : spec.mode === 'shockwave' || spec.mode === 'knockback'
-            ? pulse(action * 3)
-            : spec.mode === 'chain-explosions'
-              ? pulse((action * 5) % 1)
-              : 0,
+          : spec.mode === 'directional-shield'
+            ? strikePulse(t, spec.sideStrike, 0.27)
+            : spec.mode === 'shockwave' || spec.mode === 'knockback'
+              ? pulse(action * 3)
+              : spec.mode === 'chain-explosions'
+                ? pulse((action * 5) % 1)
+                : 0,
     }),
     playerMotion: motion({
       gait: (route * responseProgress + route * returnProgress) / 20,
@@ -2305,18 +2385,30 @@ export function blueprintFrame(id, time) {
       crouch: stride * 0.16,
       dodge: phase === 0 ? pulse(responseProgress) * 0.45 : 0,
       attack:
-        spec.mode === 'decoy' && phase === 1
-          ? pulse(clamp((action - 0.52) / 0.3))
-          : spec.mode === 'weak-point' && phase === 1
-            ? pulse(action * 1.5)
-            : 0,
+        spec.mode === 'directional-shield'
+          ? Math.max(strikePulse(t, spec.frontStrike, 0.3), strikePulse(t, spec.sideStrike, 0.3))
+          : spec.mode === 'decoy' && phase === 1
+            ? pulse(clamp((action - 0.52) / 0.3))
+            : spec.mode === 'weak-point' && phase === 1
+              ? pulse(action * 1.5)
+              : 0,
     }),
   };
+  if (spec.mode === 'directional-shield') {
+    frame.frontStrike =
+      strikePulse(t, spec.frontStrike) > 0.5 && directionalShieldOutcome(t, player) === 'blocked';
+    frame.sideStrike =
+      strikePulse(t, spec.sideStrike) > 0.5 && directionalShieldOutcome(t, player) === 'hit';
+  }
   frame.primitives = primitivesFor(spec, frame);
   frame.playerSafe = pointClearsThreat(spec, frame, player);
   frame.bossLabel = {
     x: boss.x,
     y: boss.y + BLUEPRINT_BOSS_LABEL_OFFSET_Y * frame.bossScale,
+  };
+  frame.playerLabel = {
+    x: player.x,
+    y: player.y + (spec.mode === 'directional-shield' ? 92 : -62),
   };
   return Object.freeze(frame);
 }

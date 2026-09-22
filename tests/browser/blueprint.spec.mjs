@@ -405,9 +405,9 @@ test('volley releases three parallel bolts on one beat and clears its outside ro
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
 });
 
-test('catalog and builder reuse the 46 promoted rule-specific previews', async ({ page }) => {
+test('catalog and builder reuse the 47 promoted rule-specific previews', async ({ page }) => {
   await page.goto('en/');
-  await expect(page.locator('[data-blueprint-preview]')).toHaveCount(46);
+  await expect(page.locator('[data-blueprint-preview]')).toHaveCount(47);
   const catalogLayouts = await page.locator('[data-blueprint-preview]').evaluateAll((previews) =>
     previews.map((preview) => {
       const boss = preview.querySelector('[data-character-art-preview="kern"]');
@@ -431,7 +431,7 @@ test('catalog and builder reuse the 46 promoted rule-specific previews', async (
   expect(new Set(catalogLayouts.map(({ layout }) => layout)).size).toBeGreaterThanOrEqual(18);
 
   await page.goto('en/builder/');
-  await expect(page.locator('[data-blueprint-preview]')).toHaveCount(46);
+  await expect(page.locator('[data-blueprint-preview]')).toHaveCount(47);
   const builderLayouts = await page.locator('[data-blueprint-preview]').evaluateAll((previews) =>
     previews.map((preview) => {
       const boss = preview.querySelector('[data-character-art-preview="kern"]');
@@ -561,6 +561,46 @@ test('limited spread keeps its previewed cone while distinct live shots remain i
   await seek(4250);
   await expect(widget).toHaveAttribute('data-blueprint-outcome', 'safe');
   for (const shot of shots) await expect(shot).toHaveAttribute('opacity', '0');
+  await page.setViewportSize({ width: 375, height: 812 });
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+});
+
+test('directional shield visibly blocks the front strike and opens a side hit', async ({
+  page,
+}) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.goto('en/mechanics/directional-shield/');
+  const widget = page.locator('[data-blueprint-demo]');
+  const timeline = widget.locator('[data-blueprint-timeline]');
+  const seek = (milliseconds) =>
+    timeline.evaluate((element, value) => {
+      element.value = String(value);
+      element.dispatchEvent(new Event('input', { bubbles: true }));
+    }, milliseconds);
+  await expect(page.locator('.lesson-title-line h1')).toHaveText('Directional shield');
+  await expect(page.locator('.wip-badge, .draft-profile')).toHaveCount(0);
+  await expect(page.locator('.game-example')).toHaveCount(3);
+  await expect(widget).toHaveAttribute('data-blueprint-playing', 'false');
+  await seek(2050);
+  await expect(widget).toHaveAttribute('data-blueprint-guard', 'blocked');
+  await expect(widget.locator('[data-blueprint-primitive="1"] path')).not.toHaveAttribute(
+    'opacity',
+    '0',
+  );
+  const frontHit = widget.locator('[data-blueprint-primitive="4"] circle');
+  await expect(frontHit).not.toHaveAttribute('opacity', '0');
+  await seek(3550);
+  await expect(widget).toHaveAttribute('data-blueprint-guard', 'flank-hit');
+  await expect(widget.locator('[data-blueprint-primitive="6"] circle')).not.toHaveAttribute(
+    'opacity',
+    '0',
+  );
+  await seek(3850);
+  await expect(widget).toHaveAttribute('data-blueprint-guard', 'idle');
+  await expect(widget.locator('[data-blueprint-primitive="1"] path')).toHaveAttribute(
+    'opacity',
+    '0',
+  );
   await page.setViewportSize({ width: 375, height: 812 });
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
 });

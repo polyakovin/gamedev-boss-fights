@@ -66,6 +66,12 @@ export function initializeBlueprint(widget) {
     widget.dataset.blueprintPhase = String(frame.phase);
     widget.dataset.blueprintCommitted = String(frame.committed);
     widget.dataset.blueprintOutcome = frame.playerSafe ? 'safe' : 'danger';
+    if (mechanicId === 'directional-shield')
+      widget.dataset.blueprintGuard = frame.frontStrike
+        ? 'blocked'
+        : frame.sideStrike
+          ? 'flank-hit'
+          : 'idle';
     boss.setAttribute(
       'transform',
       `translate(${frame.boss.x} ${frame.boss.y}) scale(${frame.bossScale})`,
@@ -83,8 +89,8 @@ export function initializeBlueprint(widget) {
     bossLabel.setAttribute('x', frame.bossLabel.x);
     bossLabel.setAttribute('y', frame.bossLabel.y);
     bossLabel.setAttribute('opacity', String(frame.bossVisible));
-    playerLabel.setAttribute('x', frame.player.x);
-    playerLabel.setAttribute('y', frame.player.y - 62);
+    playerLabel.setAttribute('x', frame.playerLabel.x);
+    playerLabel.setAttribute('y', frame.playerLabel.y);
     primitives.forEach((primitive, index) => updatePrimitive(primitive, frame.primitives[index]));
     phaseName.textContent = config.phaseNames[frame.phase];
     phaseTooltip.textContent = config.phaseDescriptions[frame.phase];

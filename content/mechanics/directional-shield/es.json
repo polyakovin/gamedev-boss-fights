@@ -1,0 +1,134 @@
+{
+  "title": "Escudo direccional",
+  "subtitle": "Una defensa visible rechaza un enfoque y deja otro viable.",
+  "variant": "Guardia frontal fija con flanco accesible",
+  "summary": "Un escudo alzado bloquea ataques de un sector frontal fijo, pero rodear su borde deja expuesto al jefe.",
+  "overview": "Un escudo direccional comprueba el origen del ataque respecto al frente protegido del jefe, en vez de dar inmunidad total. Kern anuncia y fija la guardia: el primer golpe de Tavi rebota visiblemente, y luego ella bordea el límite y golpea el costado abierto. El bloqueo enseña la regla sin inutilizar la espada.",
+  "learning": "Ajusta el ángulo de guardia, la orientación fija, el alcance, la ruta lateral, la reacción de bloqueo y la recuperación como una sola regla.",
+  "category": "Defensa",
+  "readTime": "4 min",
+  "demo": {
+    "title": "Comprobar el ángulo del escudo",
+    "timeline": "Línea temporal del ataque",
+    "step": "Fases del ataque",
+    "phaseNames": ["Alzar y orientar", "Bloquear y flanquear", "Bajar el escudo"],
+    "phaseDescriptions": [
+      "Kern alza un escudo de piedra y marca un sector frontal de unos 52 grados a cada lado. Tavi se sitúa ante él con una espada.",
+      "La orientación se fija a los 1,6 s. El golpe frontal a los 2,05 s choca con el escudo; Tavi rodea el borde derecho y golpea el costado a los 3,55 s.",
+      "La guardia termina a los 3,85 s y desaparece su borde luminoso. Kern baja el escudo y ambos vuelven al inicio del ciclo."
+    ],
+    "boss": "Jefe",
+    "player": "Jugador",
+    "danger": "Se bloquea el golpe que llega desde el sector protegido",
+    "locked": "El escudo no gira tras el flanqueo",
+    "safe": "Un golpe lateral alcanza el cuerpo expuesto",
+    "reducedMotion": "La preferencia de movimiento reducido desactiva la reproducción automática. Usa el control temporal para revisar el ciclo.",
+    "diagramDescription": "Kern alza un escudo rúnico y marca el sector frontal. La espada de Tavi choca de frente y aparece una chispa. Ella rodea el lado derecho, golpea el costado descubierto, el escudo baja y ambos regresan al inicio."
+  },
+  "steps": [
+    {
+      "title": "¿Qué cubre realmente el escudo?",
+      "body": "Compara el ángulo del golpe con la orientación fijada de Kern. Aquí solo se bloquea un sector de ±0,9 radianes, unos 52 grados por lado. El borde visual y la prueba de impacto deben coincidir; no bloquees golpes por detrás."
+    },
+    {
+      "title": "¿Se entiende el intento fallido?",
+      "body": "A los 2,05 s Tavi ataca de frente dentro de un alcance de 132 unidades. Muestra contacto de espada y piedra, un destello propio y ningún daño al jefe. Un fallo silencioso parecería un error."
+    },
+    {
+      "title": "¿Es alcanzable la alternativa?",
+      "body": "Tavi recorre 110 unidades a la derecha y 105 hacia arriba entre 2,22 y 3,4 s sin impulso especial. En (390, 430) la espada llega, pero el golpe entra a unos 90 grados del escudo y acierta a los 3,55 s."
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "Borde visible y bloqueo incoherentes",
+      "body": "Un escudo visual estrecho con un cono invisible amplio invalida un flanqueo plausible. Deriva ambas pruebas del mismo ángulo y comprueba los extremos."
+    },
+    {
+      "title": "El jefe gira después de fijarse",
+      "body": "Si Kern sigue instantáneamente a Tavi, desaparece la ruta lateral. Fija su orientación o señala un nuevo apuntado por separado."
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "Limita el sector protegido",
+      "body": "El semiángulo es 0,9 radianes y el alcance, 132 unidades. Un golpe frontal a 105 unidades se bloquea; otro a 110 unidades por la derecha alcanza el cuerpo."
+    },
+    {
+      "title": "Distingue bloqueo y fallo",
+      "body": "A los 2,05 s deben verse espada, escudo y chispa juntos; el golpe lateral exitoso provoca otra reacción corporal."
+    },
+    {
+      "title": "Conserva el movimiento normal",
+      "body": "La ruta de 215 unidades dura 1,18 s, unos 182 por segundo. Deja espacio fuera del borde; no exijas un impulso sin avisar."
+    },
+    {
+      "title": "Cierra la guardia antes de la recuperación",
+      "body": "La protección dura hasta los 3,85 s. El borde brillante desaparece, baja el escudo físico y la recuperación queda abierta."
+    }
+  ],
+  "story": {
+    "title": "Una losa, un lado legible",
+    "body": "Kern alza una losa rúnica ante el pecho. Su arco luminoso indica dónde se detiene la espada, mientras el resto del cuerpo queda descubierto. Una chispa frontal y un tambaleo lateral distinguen los resultados."
+  },
+  "adaptation": {
+    "title": "Mantén útiles espada y movimiento",
+    "body": "Prueba armas cortas y largas con el mismo límite angular. Una espada larga no debería atravesar el escudo solo por su alcance. Romper la guardia puede ser una segunda respuesta opcional sin borrar el flanqueo."
+  },
+  "distinction": {
+    "title": "La dirección no es una fase invulnerable",
+    "body": "La invulnerabilidad temporal cierra todos los enfoques; el escudo direccional bloquea solo golpes del sector frontal. Un punto débil señala un objetivo, mientras el escudo marca una superficie que evitar. Reflejar proyectiles es otro efecto opcional."
+  },
+  "lensNotes": [
+    {
+      "id": "telegraphing",
+      "body": "La losa alzada y el arco brillante anuncian el lado protegido antes del primer golpe."
+    },
+    {
+      "id": "commitment",
+      "body": "Kern fija la orientación a los 1,6 s y no sigue silenciosamente el flanqueo."
+    },
+    {
+      "id": "counterplay",
+      "body": "El primer bloqueo informa; caminar alrededor del borde sigue siendo útil."
+    },
+    {
+      "id": "risk-reward",
+      "body": "Llegar al costado lleva tiempo cerca del jefe, pero abre un golpe de espada."
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "Hades",
+      "boss": "Theseus",
+      "video": "https://www.youtube.com/watch?v=iTV6y_0GBfg&t=215s",
+      "videoDurationSeconds": 321,
+      "screenshot": "https://1.bp.blogspot.com/-I3grwcEvwvg/YRdBtKpSfjI/AAAAAAAAPKk/0rsC92_hTDwne3uXjnwfYhJHaVMoTQR5gCNcBGAsYHQ/s1920/hades-screen-03-ps4-en-09jun21.jpg",
+      "screenshotSource": "https://www.gameblast.com.br/2021/08/jogatina-de-fds-194.html",
+      "body": "Teseo lleva un escudo que niega ataques frontales en la arena isométrica. A diferencia de la breve guardia fija de Kern, sigue defendiéndose mientras la lanza y el segundo jefe cambian el acercamiento."
+    },
+    {
+      "dimension": "3D",
+      "game": "Dark Souls II",
+      "boss": "Looking Glass Knight",
+      "video": "https://www.youtube.com/watch?v=YAWTLTE-1mk&t=45s",
+      "videoDurationSeconds": 169,
+      "screenshot": "https://i.ytimg.com/vi/YAWTLTE-1mk/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=YAWTLTE-1mk&t=45s",
+      "body": "El enorme escudo-espejo distingue un lado protegido del otro. Reflejar hechizos es una propiedad adicional fuera de la regla básica."
+    },
+    {
+      "dimension": "3D",
+      "game": "Dark Souls III",
+      "boss": "Dragonslayer Armour",
+      "video": "https://www.youtube.com/watch?v=5sk-e0uokOI&t=51s",
+      "videoDurationSeconds": 186,
+      "screenshot": "https://i.ytimg.com/vi/5sk-e0uokOI/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=5sk-e0uokOI&t=51s",
+      "body": "El gran escudo cierra el frente, mientras el hacha y los golpes con escudo complican el flanco. Es más complejo que el compás aislado de Kern, pero aclara la diferencia entre frente y lado en 3D."
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

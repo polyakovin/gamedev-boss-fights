@@ -1,0 +1,20 @@
+{
+  "id": "directional-shield",
+  "number": 53,
+  "published": true,
+  "sourceLocale": "en",
+  "contentVersion": 1,
+  "animation": "directional-shield",
+  "lenses": ["telegraphing", "commitment", "counterplay", "risk-reward"],
+  "related": ["weak-point", "target-lock", "sweep"],
+  "sources": [
+    {
+      "title": "Game Creator shield documentation · the blocking angle, reaction, and impact effect",
+      "url": "https://docs.gamecreator.io/melee/shields/"
+    },
+    {
+      "title": "Nintendo Iwata Asks · directional guard and choosing an unprotected sword angle",
+      "url": "https://www.nintendo.com/en-gb/Iwata-Asks/Iwata-Asks-The-Legend-of-Zelda-Skyward-Sword/Vol-3-The-Dense-Volcano-and-Enemy-Monsters/3-Fight-with-Your-Eyes-on-Your-Opponent/3-Fight-with-Your-Eyes-on-Your-Opponent-208359.html"
+    }
+  ]
+}

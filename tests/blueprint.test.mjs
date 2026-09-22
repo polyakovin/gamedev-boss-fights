@@ -7,6 +7,7 @@ import {
   blueprintPhaseAt,
   blueprintPointSafe,
   blueprintSpec,
+  directionalShieldOutcome,
 } from '../src/blueprint-model.mjs';
 import {
   blueprintPreviewLayout,
@@ -14,8 +15,8 @@ import {
   renderBlueprintThumbnail,
 } from '../lib/blueprint-view.mjs';
 
-test('all 46 promoted lesson animations have distinct rule modes and complete moving frames', () => {
-  assert.equal(BLUEPRINT_MECHANIC_IDS.length, 46);
+test('all 47 promoted lesson animations have distinct rule modes and complete moving frames', () => {
+  assert.equal(BLUEPRINT_MECHANIC_IDS.length, 47);
   const modes = new Set();
   for (const id of BLUEPRINT_MECHANIC_IDS) {
     for (let time = 0; time <= BLUEPRINT_DURATION; time += 0.1) {
@@ -36,7 +37,7 @@ test('all 46 promoted lesson animations have distinct rule modes and complete mo
           assert.ok(Number.isFinite(value), `${id} has an invalid ${primitive.type}`);
     }
   }
-  assert.equal(modes.size, 46);
+  assert.equal(modes.size, 47);
 });
 
 test('every blueprint exposes signal, committed action, and recovery without player teleports', () => {
@@ -58,7 +59,7 @@ test('every blueprint exposes signal, committed action, and recovery without pla
   }
 });
 
-test('every promoted animation derives safety from its own active geometry', () => {
+test('every damaging promoted animation derives safety from its own active geometry', () => {
   const unsafePoints = {
     'landing-jump': { x: 365, y: 600 },
     'single-shot': null,
@@ -108,7 +109,7 @@ test('every promoted animation derives safety from its own active geometry', () 
     enrage: { x: 280, y: 350 },
   };
 
-  for (const id of BLUEPRINT_MECHANIC_IDS) {
+  for (const id of BLUEPRINT_MECHANIC_IDS.filter((id) => id !== 'directional-shield')) {
     const frame = blueprintFrame(id, 3);
     let point = unsafePoints[id];
     if (!point && id === 'homing-projectile') {
@@ -908,6 +909,35 @@ test('limited spread varies shot directions inside a fixed visible cone and clea
   assert.match(
     renderBlueprintThumbnail(id, 'test-limited-spread'),
     /data-blueprint-preview="limited-spread"/,
+  );
+});
+
+test('directional shield blocks its marked front arc but permits a reachable flank', () => {
+  const id = 'directional-shield';
+  const spec = blueprintSpec(id);
+  assert.equal(spec.guardHalfAngle, 0.9);
+  assert.equal(directionalShieldOutcome(2.05, { x: 280, y: 535 }), 'blocked');
+  assert.equal(directionalShieldOutcome(2.05, { x: 390, y: 430 }), 'hit');
+  assert.equal(directionalShieldOutcome(2.05, { x: 500, y: 430 }), 'out-of-range');
+  assert.equal(directionalShieldOutcome(3.84, { x: 280, y: 535 }), 'blocked');
+  assert.equal(directionalShieldOutcome(3.85, { x: 280, y: 535 }), 'hit');
+  const front = blueprintFrame(id, 2.05);
+  const flank = blueprintFrame(id, 3.55);
+  assert.equal(front.frontStrike, true);
+  assert.equal(front.sideStrike, false);
+  assert.equal(flank.frontStrike, false);
+  assert.equal(flank.sideStrike, true);
+  assert.ok(front.primitives[1].opacity > 0.9);
+  assert.ok(front.primitives[4].opacity > 0);
+  assert.ok(flank.primitives[6].opacity > 0);
+  assert.ok(flank.player.x > front.player.x + 90);
+  assert.ok(flank.player.y < front.player.y - 90);
+  assert.equal(blueprintFrame(id, 3.84).dangerActive, true);
+  assert.equal(blueprintFrame(id, 3.85).dangerActive, false);
+  assert.deepEqual(blueprintFrame(id, 0).player, blueprintFrame(id, 6).player);
+  assert.match(
+    renderBlueprintThumbnail(id, 'test-directional-shield'),
+    /data-blueprint-preview="directional-shield"/,
   );
 });
 
