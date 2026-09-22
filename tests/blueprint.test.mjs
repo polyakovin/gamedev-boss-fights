@@ -14,8 +14,8 @@ import {
   renderBlueprintThumbnail,
 } from '../lib/blueprint-view.mjs';
 
-test('all 42 promoted lesson animations have distinct rule modes and complete moving frames', () => {
-  assert.equal(BLUEPRINT_MECHANIC_IDS.length, 42);
+test('all 43 promoted lesson animations have distinct rule modes and complete moving frames', () => {
+  assert.equal(BLUEPRINT_MECHANIC_IDS.length, 43);
   const modes = new Set();
   for (const id of BLUEPRINT_MECHANIC_IDS) {
     for (let time = 0; time <= BLUEPRINT_DURATION; time += 0.1) {
@@ -36,7 +36,7 @@ test('all 42 promoted lesson animations have distinct rule modes and complete mo
           assert.ok(Number.isFinite(value), `${id} has an invalid ${primitive.type}`);
     }
   }
-  assert.equal(modes.size, 42);
+  assert.equal(modes.size, 43);
 });
 
 test('every blueprint exposes signal, committed action, and recovery without player teleports', () => {
@@ -78,6 +78,7 @@ test('every promoted animation derives safety from its own active geometry', () 
     'predictive-aiming': null,
     'source-tracking': null,
     'burst-fire': null,
+    volley: null,
     'wide-swing': { x: 280, y: 515 },
     lunge: { x: 300, y: 440 },
     grab: { x: 390, y: 485 },
@@ -163,6 +164,9 @@ test('every promoted animation derives safety from its own active geometry', () 
       point = { x: (beam.x1 + beam.x2) / 2, y: (beam.y1 + beam.y2) / 2 };
     } else if (!point && id === 'burst-fire') {
       const shot = frame.primitives[2];
+      point = { x: shot.x, y: shot.y };
+    } else if (!point && id === 'volley') {
+      const shot = frame.primitives[7];
       point = { x: shot.x, y: shot.y };
     }
     assert.equal(blueprintPointSafe(id, 3, point), false, `${id} accepts an unsafe point`);
@@ -758,6 +762,36 @@ test('burst fire emits three separate fixed-lane shots and remains unsafe until 
     renderBlueprintThumbnail(id, 'test-burst-fire'),
     /data-blueprint-preview="burst-fire"/,
   );
+});
+
+test('volley launches three parallel bolts together with a reachable outer edge', () => {
+  const id = 'volley';
+  const spec = blueprintSpec(id);
+  const shotsAt = (time) => blueprintFrame(id, time).primitives.slice(7, 10);
+  assert.equal(shotsAt(1.99).filter((shot) => shot.opacity > 0).length, 0);
+  assert.equal(shotsAt(2.01).filter((shot) => shot.opacity > 0).length, 3);
+  for (const time of [2.01, 2.8, 3.49]) {
+    const frame = blueprintFrame(id, time);
+    const shots = shotsAt(time);
+    assert.deepEqual(
+      shots.map((shot) => shot.x),
+      spec.lanes,
+    );
+    assert.equal(new Set(shots.map((shot) => shot.y)).size, 1);
+    assert.equal(frame.playerSafe, true);
+    assert.equal(frame.dangerActive, true);
+    for (const shot of shots) {
+      assert.ok(shot.opacity > 0.9);
+      assert.equal(blueprintPointSafe(id, time, shot), false);
+    }
+  }
+  const crossingY = shotsAt(2.8)[0].y;
+  assert.equal(blueprintPointSafe(id, 2.8, { x: 235, y: crossingY }), false);
+  assert.equal(blueprintPointSafe(id, 2.8, { x: 475, y: crossingY }), true);
+  assert.equal(blueprintFrame(id, 3.51).dangerActive, false);
+  assert.equal(shotsAt(3.51).filter((shot) => shot.opacity > 0).length, 0);
+  assert.deepEqual(blueprintFrame(id, 0).player, blueprintFrame(id, 6).player);
+  assert.match(renderBlueprintThumbnail(id, 'test-volley'), /data-blueprint-preview="volley"/);
 });
 
 test('blueprint pages and previews reuse Tavi and Kern with accessible localized data', () => {

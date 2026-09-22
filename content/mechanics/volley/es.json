@@ -1,0 +1,134 @@
+{
+  "title": "Salva",
+  "subtitle": "Diseña un lanzamiento simultáneo como una formación legible.",
+  "variant": "Tres proyectiles rúnicos paralelos",
+  "summary": "El jefe marca tres trayectorias paralelas, las fija y lanza los proyectiles a la vez; el jugador sale por un extremo de la formación.",
+  "overview": "Una salva convierte varios proyectiles en una decisión temporal. Kern muestra tres runas, fija sus trayectorias paralelas y las lanza a la vez. Tavi sale por el extremo derecho antes de que lleguen. Las guías discontinuas no hacen daño; solo los proyectiles en movimiento son peligrosos. La recuperación empieza cuando sale toda la formación.",
+  "learning": "Ajusta como una sola regla la anchura, el número de trayectorias, el instante de lanzamiento, el tamaño y la velocidad de los proyectiles, el espacio exterior y la recuperación.",
+  "category": "Puntería y ritmo",
+  "readTime": "4 min",
+  "demo": {
+    "title": "Prueba la salva",
+    "timeline": "Cronología del ataque",
+    "step": "Fases del ataque",
+    "phaseNames": ["Aviso", "Salva", "Recuperación"],
+    "phaseDescriptions": [
+      "Kern carga tres runas visibles y muestra toda la anchura y la dirección fija de la formación.",
+      "Los tres proyectiles salen juntos. Tavi supera el extremo derecho antes de que lleguen.",
+      "Los proyectiles abandonan la arena antes de que Kern y Tavi vuelvan a sus posiciones."
+    ],
+    "boss": "Jefe",
+    "player": "Jugador",
+    "danger": "Se anuncia la formación completa de tres trayectorias",
+    "locked": "Las trayectorias están fijadas y los proyectiles viajan juntos",
+    "safe": "La salva completa ya ha pasado",
+    "reducedMotion": "La reproducción automática está desactivada por la preferencia de movimiento reducido. Usa el control de la cronología para examinar el ciclo.",
+    "diagramDescription": "Diagrama en bucle de una salva. Kern muestra tres trayectorias paralelas, fija la formación y dispara tres proyectiles rúnicos a la vez. Tavi sale por el extremo derecho; después ambos vuelven al inicio."
+  },
+  "steps": [
+    {
+      "title": "¿Se puede leer toda la formación?",
+      "body": "Muestra cada trayectoria ocupada y los dos límites exteriores durante el aviso. Indicar solo el proyectil central oculta el ancho real de la salva."
+    },
+    {
+      "title": "¿Se puede llegar al extremo con el movimiento normal?",
+      "body": "Mide desde la posición inicial del jugador hasta fuera de la trayectoria exterior, incluyendo los radios completos del jugador y del proyectil. Debe quedar tiempo suficiente entre la lectura del aviso y la llegada del primer proyectil."
+    },
+    {
+      "title": "¿Termina toda la salva antes de la recuperación?",
+      "body": "Los tres proyectiles comparten instante y velocidad. No prometas una oportunidad segura mientras alguno siga cruzando la ruta útil."
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "Los proyectiles laterales aparecen solo al disparar",
+      "body": "Una única línea de aviso no explica tres trayectorias ocupadas. Anticipa los extremos con tanta claridad como el centro."
+    },
+    {
+      "title": "El extremo parece libre, pero el jugador no cabe",
+      "body": "Debe caber toda la colisión del jugador más allá del proyectil exterior, no solo verse un hueco entre dibujos. Comprueba la separación al cruzar."
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "Sincroniza el lanzamiento",
+      "body": "Usa un mismo fotograma y acento sonoro para los tres proyectiles. Si separas los lanzamientos, creas una ráfaga secuencial que exige seguir un ritmo más largo."
+    },
+    {
+      "title": "Mantén las trayectorias paralelas en esta variante",
+      "body": "La separación constante convierte la formación en una anchura móvil. Los ángulos divergentes formarían un abanico con huecos que cambian según la distancia."
+    },
+    {
+      "title": "Ajusta la anchura antes que la velocidad",
+      "body": "Comprueba primero que el movimiento básico llega al extremo; después aumenta la velocidad solo si conserva una ventana de reacción medible. Más proyectiles pueden ensanchar la exigencia sin acelerarla a escondidas."
+    },
+    {
+      "title": "Escala con una nueva formación anunciada",
+      "body": "La siguiente salva puede mover o ampliar las trayectorias, pero debe mostrar sus nuevos límites antes de salir. La formación actual no debe perseguir a Tavi."
+    }
+  ],
+  "story": {
+    "title": "Haz que las runas prometan la forma",
+    "body": "Las tres runas flotantes de Kern muestran tanto el origen como la cantidad de proyectiles. Mantén sus siluetas visibles contra la arena antes del disparo."
+  },
+  "adaptation": {
+    "title": "Conserva una respuesta básica",
+    "body": "En el diagrama, Tavi despeja el extremo derecho con movimiento lateral normal. Escudos, impulsos o bloqueos pueden añadir opciones, pero la ruta básica debe ser posible."
+  },
+  "distinction": {
+    "title": "Distingue la salva de sus variantes",
+    "body": "Una salva libera varios proyectiles a la vez. Aquí las trayectorias son paralelas y la salida está fuera de la formación. Un abanico diverge desde un origen, una salva con hueco ofrece una abertura interior deliberada y una ráfaga secuencial separa los disparos en el tiempo."
+  },
+  "lensNotes": [
+    {
+      "id": "telegraphing",
+      "body": "Las tres runas cargadas, las guías discontinuas y la anchura exterior anticipan todo el lanzamiento simultáneo."
+    },
+    {
+      "id": "threat-geometry",
+      "body": "La separación, los radios de proyectil y jugador y la anchura determinan si la salida exterior es real."
+    },
+    {
+      "id": "counterplay",
+      "body": "La formación fijada permite alcanzar el extremo anunciado con movimiento lateral normal antes del contacto."
+    },
+    {
+      "id": "difficulty-rhythm",
+      "body": "Un solo instante de disparo concentra la decisión; la recuperación empieza cuando pasan todos los proyectiles."
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "Cuphead",
+      "boss": "Wally Warbles",
+      "video": "https://www.youtube.com/watch?v=Ol3-4Y0eS9M&t=115s",
+      "videoDurationSeconds": 265,
+      "screenshot": "https://i.ytimg.com/vi/Ol3-4Y0eS9M/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=Ol3-4Y0eS9M&t=115s",
+      "body": "Wally libera grupos de plumas en un mismo pulso visible. Su geometría radial difiere de las trayectorias paralelas de Kern, pero el acento común convierte cada grupo en una sola decisión temporal."
+    },
+    {
+      "dimension": "2D",
+      "game": "Enter the Gungeon",
+      "boss": "High Dragun",
+      "video": "https://www.youtube.com/watch?v=aKALjUZqhXA&t=105s",
+      "videoDurationSeconds": 210,
+      "screenshot": "https://i.ytimg.com/vi/aKALjUZqhXA/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=aKALjUZqhXA&t=105s",
+      "body": "High Dragun envía amplias formaciones de balas por la arena. Sus huecos cambiantes son una variante más compleja; la fila simplificada de Kern aísla el lanzamiento común, la anchura fija y la salida exterior."
+    },
+    {
+      "dimension": "3D",
+      "game": "Returnal",
+      "boss": "Hyperion",
+      "video": "https://www.youtube.com/watch?v=TdnGpLzBaKA&t=117s",
+      "videoDurationSeconds": 170,
+      "screenshot": "https://blog.playstation.com/tachyon/2021/05/51192459805_f3dfca3cda_o-scaled.jpg?fit=1024%2C1024",
+      "screenshotSource": "https://blog.playstation.com/2021/05/28/returnal-the-making-of-that-unforgettable-hyperion-fight/",
+      "body": "Hyperion superpone grupos y oleadas desde el órgano. Sus creadores explican los patrones diferenciados por color; la salva paralela de Kern aísla una decisión de formación simultánea dentro de un combate 3D más complejo."
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

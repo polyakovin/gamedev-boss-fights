@@ -1,0 +1,128 @@
+{
+  "title": "齐射",
+  "subtitle": "把同时发射的弹群设计成清晰可读的阵形。",
+  "variant": "三枚平行符文弹",
+  "summary": "首领标出三条平行弹道，锁定后同时发射；玩家从阵形外侧离开。",
+  "overview": "齐射把多枚弹体变成同一次时机判断。克恩在可见的发射横列上蓄起三枚符文，锁定平行弹道后同拍发射。塔维须在弹体抵达前移到右侧边界之外。虚线只是安全的预告，只有飞行中的弹体造成伤害。整个阵形离开后才进入恢复。",
+  "learning": "把阵形宽度、弹道数量、发射时刻、弹体大小与速度、边缘净空和恢复时间作为同一规则调校。",
+  "category": "瞄准与节奏",
+  "readTime": "4 分钟",
+  "demo": {
+    "title": "测试齐射",
+    "timeline": "攻击时间轴",
+    "step": "攻击阶段",
+    "phaseNames": ["预告", "齐射", "恢复"],
+    "phaseDescriptions": [
+      "克恩点亮三枚符文，展示阵形完整宽度和固定方向。",
+      "三枚弹体同时离开发射线。塔维在它们到达前越过右侧边界。",
+      "弹体全部离开场地后，克恩与塔维回到起点。"
+    ],
+    "boss": "首领",
+    "player": "玩家",
+    "danger": "三条弹道组成的完整阵形已被标出",
+    "locked": "弹道已锁定，弹体同时前进",
+    "safe": "整轮齐射已离开",
+    "reducedMotion": "减少动态效果设置已关闭自动播放。可拖动时间轴查看循环。",
+    "diagramDescription": "循环播放的齐射示意图。克恩显示三条平行弹道，锁定阵形并同时发射三枚符文弹。塔维移出右侧边缘；弹群离开后双方复位。"
+  },
+  "steps": [
+    {
+      "title": "玩家能看清整个阵形吗？",
+      "body": "预告阶段显示每条占用的弹道和两侧外边界。只提示中央弹体会低估齐射覆盖的宽度。"
+    },
+    {
+      "title": "普通移动能越过边缘吗？",
+      "body": "测量玩家起点到最外侧弹道之外的距离，并计入玩家与弹体完整的碰撞半径。玩家看懂阵形后，到第一枚弹体抵达前应有足够时间。"
+    },
+    {
+      "title": "所有弹体离开后才恢复吗？",
+      "body": "三枚弹体在同一时刻以相同速度发射。仍有弹体穿过可用路线时，不要暗示已出现安全反击窗口。"
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "侧边弹体直到发射才出现",
+      "body": "一条警示线无法说明三条占用的弹道。外侧范围要像中央一样清楚地预告。"
+    },
+    {
+      "title": "边缘看似空着，玩家却过不去",
+      "body": "外侧弹体旁必须容得下完整的玩家碰撞体；画面上的细缝不够。检查实际穿越时的净空。"
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "同步发射",
+      "body": "三枚弹体共用一帧发射和一个音效重音。错开发射时刻会变成连发，要求玩家追踪更长的节奏。"
+    },
+    {
+      "title": "此变体保持弹道平行",
+      "body": "固定间距让阵形成为一个移动的宽度。发散角度会变成扇形，空隙随距离变化。"
+    },
+    {
+      "title": "先调宽度，再调速度",
+      "body": "先确认基础移动能到边缘，再提高速度，同时保留可测量的反应时间。增加弹体可以扩大覆盖范围，而不必暗中加速。"
+    },
+    {
+      "title": "用新的预告阵形升级",
+      "body": "后续齐射可以平移或加宽弹道，但新边界必须先显示。当前阵形不应追踪塔维。"
+    }
+  ],
+  "story": {
+    "title": "让符文成为承诺",
+    "body": "克恩悬浮的三枚符文同时表明发射源与弹体数量。让它们在场景背景前保持清晰，玩家才能在发射前数清。"
+  },
+  "adaptation": {
+    "title": "保留基础应对方式",
+    "body": "示意图中塔维靠普通侧移越过右边缘。护盾、冲刺或格挡可以增加选择，但基础路线仍须确实可行。"
+  },
+  "distinction": {
+    "title": "区分齐射与其他变体",
+    "body": "齐射指多枚弹体同时发射。这里的弹道平行，安全路线在阵形外侧。扇形从同一源头发散；留缺口的齐射有刻意设置的内部通路；连发则在时间上分开发射。"
+  },
+  "lensNotes": [
+    { "id": "telegraphing", "body": "三枚蓄力符文、虚线弹道和外侧范围共同预告完整的同时发射。" },
+    {
+      "id": "threat-geometry",
+      "body": "弹道间距、双方碰撞半径和阵形宽度决定外侧逃离是否真实可行。"
+    },
+    { "id": "counterplay", "body": "阵形锁定后，普通侧移可在接触前到达预告的外侧边缘。" },
+    {
+      "id": "difficulty-rhythm",
+      "body": "共同的发射节拍集中了一次判断；所有弹体通过后才开始恢复。"
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "Cuphead",
+      "boss": "Wally Warbles",
+      "video": "https://www.youtube.com/watch?v=Ol3-4Y0eS9M&t=115s",
+      "videoDurationSeconds": 265,
+      "screenshot": "https://i.ytimg.com/vi/Ol3-4Y0eS9M/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=Ol3-4Y0eS9M&t=115s",
+      "body": "Wally 在清晰的同一节拍放出一组羽毛。放射状几何与克恩的平行弹道不同，但共同的发射重音仍使每组成为一次时机判断。"
+    },
+    {
+      "dimension": "2D",
+      "game": "Enter the Gungeon",
+      "boss": "High Dragun",
+      "video": "https://www.youtube.com/watch?v=aKALjUZqhXA&t=105s",
+      "videoDurationSeconds": 210,
+      "screenshot": "https://i.ytimg.com/vi/aKALjUZqhXA/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=aKALjUZqhXA&t=105s",
+      "body": "High Dragun 把宽阔的弹幕阵形送过场地。变化的缺口是更复杂的变体；克恩的简化横列只突出共同发射、固定宽度和外侧逃离。"
+    },
+    {
+      "dimension": "3D",
+      "game": "Returnal",
+      "boss": "Hyperion",
+      "video": "https://www.youtube.com/watch?v=TdnGpLzBaKA&t=117s",
+      "videoDurationSeconds": 170,
+      "screenshot": "https://blog.playstation.com/tachyon/2021/05/51192459805_f3dfca3cda_o-scaled.jpg?fit=1024%2C1024",
+      "screenshotSource": "https://blog.playstation.com/2021/05/28/returnal-the-making-of-that-unforgettable-hyperion-fight/",
+      "body": "Hyperion 借助管风琴叠加弹群与波次。开发者说明了用颜色区分的攻击模式；克恩的平行齐射从更复杂的 3D 战斗中抽出一次同步阵形判断。"
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

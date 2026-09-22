@@ -1,0 +1,134 @@
+{
+  "title": "Volley",
+  "subtitle": "Design one simultaneous release as a readable formation.",
+  "variant": "Three parallel rune bolts",
+  "summary": "The boss marks three parallel lanes, commits them, and launches three projectiles together; the player leaves the formation at its edge.",
+  "overview": "A volley makes several projectiles one timing decision. Kern holds three runes on a visible launch rack, fixes their parallel lanes, and releases them on one beat. Tavi moves beyond the right edge before the bolts arrive. Dashed guides are harmless; only traveling bolts deal damage. Recovery begins after the entire formation clears.",
+  "learning": "Tune the formation width, number of lanes, release beat, projectile size and speed, edge clearance, and recovery as one rule.",
+  "category": "Targeting and rhythm",
+  "readTime": "4 min",
+  "demo": {
+    "title": "Test the volley",
+    "timeline": "Attack timeline",
+    "step": "Attack phases",
+    "phaseNames": ["Preview", "Volley", "Recovery"],
+    "phaseDescriptions": [
+      "Kern charges three visible runes and shows the full width and fixed direction of the formation.",
+      "All three bolts leave together. Tavi moves past the right edge before the parallel lanes arrive.",
+      "The last bolts leave the arena before Kern resets and Tavi returns."
+    ],
+    "boss": "Boss",
+    "player": "Player",
+    "danger": "The full three-lane formation is announced",
+    "locked": "All lanes are locked and the bolts travel together",
+    "safe": "The complete volley has cleared",
+    "reducedMotion": "Autoplay is disabled by the reduced-motion setting. Use the timeline slider to inspect the loop.",
+    "diagramDescription": "A looping diagram of a volley. Kern displays three parallel lanes, locks the formation, then releases three rune bolts simultaneously. Tavi walks beyond the right edge before they arrive; the volley clears and both reset."
+  },
+  "steps": [
+    {
+      "title": "Can the player read the whole formation?",
+      "body": "Show every occupied lane and both outer limits during the tell. A cue that reveals only the center shot understates the space the volley will cover."
+    },
+    {
+      "title": "Can ordinary movement clear an edge?",
+      "body": "Measure from the player's starting position to an outside lane with full player and projectile radii included. Leave enough time after the formation is legible and before the first bolt arrives."
+    },
+    {
+      "title": "Does the entire volley leave before recovery?",
+      "body": "All three projectiles share a release beat and speed. Do not promise a safe punish window while any bolt still crosses the useful route."
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "The side bolts appear at launch",
+      "body": "A single warning line cannot explain three occupied lanes. Preview the outer width as clearly as the center."
+    },
+    {
+      "title": "The edge looks open but cannot fit the player",
+      "body": "The full collision body needs room beyond the outer projectile, not merely an empty line between sprites. Test clearance at the actual crossing time."
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "Synchronize the release",
+      "body": "Give the three bolts one release frame and one audio accent. Staggered release times turn the decision into burst fire, which asks the player to track a longer cadence."
+    },
+    {
+      "title": "Keep the paths parallel in this variant",
+      "body": "Fixed spacing makes the formation read as one moving width. Diverging angles would create a fan with gaps that change size over distance."
+    },
+    {
+      "title": "Tune width before speed",
+      "body": "First ensure an edge is reachable with the base move, then increase travel speed only while the reaction window stays measurable. More bolts can widen the demand without secretly accelerating it."
+    },
+    {
+      "title": "Escalate with a new announced formation",
+      "body": "A later volley may shift or widen its lanes, but show the new outer limits before its release. Do not let the current formation home toward Tavi."
+    }
+  ],
+  "story": {
+    "title": "Make the rack the promise",
+    "body": "Kern's three floating runes are both the source and the count of the upcoming shots. Keep their silhouettes visible against the arena so the projectile count is known before launch."
+  },
+  "adaptation": {
+    "title": "Preserve a baseline answer",
+    "body": "The diagram uses ordinary lateral movement to clear the right edge. Shields, dashes, or parries may add choices, but the base route should remain demonstrably possible."
+  },
+  "distinction": {
+    "title": "Separate a volley from its variants",
+    "body": "A volley is one simultaneous release of several projectiles. This example uses parallel lanes and an outer-edge escape. A fan diverges from one source, a gap volley includes a deliberate internal opening, and burst fire separates releases over time."
+  },
+  "lensNotes": [
+    {
+      "id": "telegraphing",
+      "body": "The three charged runes, dashed lanes, and outer width preview the complete simultaneous release."
+    },
+    {
+      "id": "threat-geometry",
+      "body": "Lane spacing, projectile radius, full player radius, and formation width determine whether the edge escape is real."
+    },
+    {
+      "id": "counterplay",
+      "body": "A committed formation lets ordinary lateral movement reach the announced outer edge before contact."
+    },
+    {
+      "id": "difficulty-rhythm",
+      "body": "One shared release beat concentrates the decision; recovery starts only after all bolts have passed."
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "Cuphead",
+      "boss": "Wally Warbles",
+      "video": "https://www.youtube.com/watch?v=Ol3-4Y0eS9M&t=115s",
+      "videoDurationSeconds": 265,
+      "screenshot": "https://i.ytimg.com/vi/Ol3-4Y0eS9M/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=Ol3-4Y0eS9M&t=115s",
+      "body": "Wally's feather bursts release several threats as one visible beat. The radial geometry differs from Kern's parallel lanes, but the shared launch accent makes each cluster a single timing decision."
+    },
+    {
+      "dimension": "2D",
+      "game": "Enter the Gungeon",
+      "boss": "High Dragun",
+      "video": "https://www.youtube.com/watch?v=aKALjUZqhXA&t=105s",
+      "videoDurationSeconds": 210,
+      "screenshot": "https://i.ytimg.com/vi/aKALjUZqhXA/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=aKALjUZqhXA&t=105s",
+      "body": "High Dragun sends broad bullet formations across the arena. Its changing gaps are a more complex variant; Kern's simplified row isolates the shared release, fixed width, and outer-edge escape."
+    },
+    {
+      "dimension": "3D",
+      "game": "Returnal",
+      "boss": "Hyperion",
+      "video": "https://www.youtube.com/watch?v=TdnGpLzBaKA&t=117s",
+      "videoDurationSeconds": 170,
+      "screenshot": "https://blog.playstation.com/tachyon/2021/05/51192459805_f3dfca3cda_o-scaled.jpg?fit=1024%2C1024",
+      "screenshotSource": "https://blog.playstation.com/2021/05/28/returnal-the-making-of-that-unforgettable-hyperion-fight/",
+      "body": "Hyperion uses the organ to layer projectile clusters and waves. The developer describes distinct color-coded patterns; Kern's parallel three-shot volley extracts only the simultaneous-formation decision from that richer 3D fight."
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

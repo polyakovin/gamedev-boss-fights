@@ -189,6 +189,18 @@ const SPECS = {
     releases: [1.9, 2.45, 3],
     flight: 1.25,
   },
+  volley: {
+    mode: 'volley',
+    boss: [280, 285],
+    player: [280, 630],
+    target: [475, 630],
+    lanes: [190, 280, 370],
+    emitterY: 355,
+    shotEndY: 870,
+    shotRadius: 22,
+    release: 2,
+    flight: 1.5,
+  },
   'wide-swing': { mode: 'arc', boss: [280, 310], player: [410, 470], target: [470, 650] },
   lunge: { mode: 'lunge', boss: [170, 290], player: [390, 590], target: [470, 660] },
   grab: { mode: 'grab', boss: [280, 300], player: [390, 485], target: [470, 610] },
@@ -1250,6 +1262,49 @@ function primitivesFor(spec, frame) {
       ),
     ];
   }
+  if (mode === 'volley') {
+    const elapsed = frame.time - spec.release;
+    const progress = clamp(elapsed / spec.flight);
+    const visible = elapsed >= 0 && elapsed <= spec.flight;
+    return [
+      line(spec.lanes[0], spec.emitterY, spec.lanes[2], spec.emitterY, 0.72, 'accent', 5),
+      ...spec.lanes.map((x) =>
+        line(
+          x,
+          spec.emitterY,
+          x,
+          spec.shotEndY,
+          phase === 0 ? 0.3 + prepare * 0.36 : phase === 1 ? 0.12 : 0,
+          'accent',
+          4,
+          '13 12',
+        ),
+      ),
+      ...spec.lanes.map((x) =>
+        circle(x, spec.emitterY, 14, phase === 0 ? 0.65 + prepare * 0.28 : 0.35, 'accent', 4),
+      ),
+      ...spec.lanes.map((x) =>
+        circle(
+          x,
+          mix(spec.emitterY, spec.shotEndY, progress),
+          spec.shotRadius,
+          visible ? 0.98 : 0,
+          'signal',
+          6,
+          0.4,
+        ),
+      ),
+      line(
+        spec.lanes[0] - spec.shotRadius,
+        spec.emitterY - 32,
+        spec.lanes[2] + spec.shotRadius,
+        spec.emitterY - 32,
+        phase === 0 ? 0.4 + prepare * 0.48 : 0,
+        'signal',
+        5,
+      ),
+    ];
+  }
   if (mode === 'arc')
     return [
       path(arcPath(boss, 205, -1.15, 2.25), preview, 'accent', 20, 0, '12 10'),
@@ -1631,6 +1686,14 @@ function pointClearsThreat(spec, frame, value, radius = BLUEPRINT_PLAYER_RADIUS)
           shot.opacity === 0 ||
           Math.hypot(value.x - shot.x, value.y - shot.y) > shot.radius + radius,
       );
+  if (mode === 'volley')
+    return frame.primitives
+      .slice(7, 10)
+      .every(
+        (shot) =>
+          shot.opacity === 0 ||
+          Math.hypot(value.x - shot.x, value.y - shot.y) > shot.radius + radius,
+      );
   if (mode === 'spiral')
     return (
       distanceFromBoss > 52 + radius &&
@@ -1810,6 +1873,7 @@ export function blueprintFrame(id, time) {
   else if (spec.mode === 'predictive-aim') responseProgress = smooth((t - 1.6) / 1.05);
   else if (spec.mode === 'source-track') responseProgress = smooth((t - 1.6) / 0.84);
   else if (spec.mode === 'burst-fire') responseProgress = smooth((t - 1.6) / 0.75);
+  else if (spec.mode === 'volley') responseProgress = smooth((t - 1.6) / 0.68);
   else if (spec.mode === 'knockback')
     responseProgress = phase === 0 ? 0 : phase === 1 ? smooth(action) : 1;
   else if (spec.mode === 'target-lock')
@@ -1955,7 +2019,9 @@ export function blueprintFrame(id, time) {
                   ? phase === 1 && t >= 2.4 && t <= 3.8
                   : spec.mode === 'burst-fire'
                     ? spec.releases.some((release) => t >= release && t <= release + spec.flight)
-                    : phase === 1;
+                    : spec.mode === 'volley'
+                      ? t >= spec.release && t <= spec.release + spec.flight
+                      : phase === 1;
   const frame = {
     id,
     mode: spec.mode,
@@ -1999,13 +2065,15 @@ export function blueprintFrame(id, time) {
       crouch: spec.mode === 'landing' ? (phase === 0 ? 0.42 * prepare : 0) : 0.2 * prepare,
       lift: spec.mode === 'landing' && phase === 1 ? pulse(clamp(action / 0.52)) : 0,
       attack:
-        spec.mode === 'burst-fire' && phase === 1
-          ? Math.max(
-              ...spec.releases.map((release) => Math.max(0, 1 - Math.abs(t - release) / 0.32)),
-            )
-          : phase === 1
-            ? 0.75
-            : prepare * 0.35,
+        spec.mode === 'volley' && phase === 1
+          ? Math.max(0, 1 - Math.abs(t - spec.release) / 0.36)
+          : spec.mode === 'burst-fire' && phase === 1
+            ? Math.max(
+                ...spec.releases.map((release) => Math.max(0, 1 - Math.abs(t - release) / 0.32)),
+              )
+            : phase === 1
+              ? 0.75
+              : prepare * 0.35,
       impact:
         spec.mode === 'landing'
           ? pulse(clamp((action - 0.42) / 0.22))

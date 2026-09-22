@@ -1,0 +1,134 @@
+{
+  "title": "一斉射撃",
+  "subtitle": "同時に放つ弾を読みやすい隊形として設計する。",
+  "variant": "平行に進む三つのルーン弾",
+  "summary": "ボスが三本の平行な射線を示して固定し、弾を同時に放つ。プレイヤーは隊形の外側へ逃れる。",
+  "overview": "一斉射撃は複数の弾を一度のタイミング判断にまとめる。ケルンは見える発射列に三つのルーンを掲げ、平行な射線を固定して同時に放つ。タヴィは弾が届く前に右の外縁を越える。点線のガイドは無害で、移動する弾だけがダメージを与える。隊形全体が通過してから回復に入る。",
+  "learning": "隊形の幅、射線の数、発射時刻、弾の大きさと速度、外縁の余裕、回復時間を一つの規則として調整する。",
+  "category": "照準とリズム",
+  "readTime": "4 分",
+  "demo": {
+    "title": "一斉射撃を試す",
+    "timeline": "攻撃の時間軸",
+    "step": "攻撃フェーズ",
+    "phaseNames": ["予告", "一斉射撃", "回復"],
+    "phaseDescriptions": [
+      "ケルンが三つのルーンを充填し、隊形の全幅と固定方向を見せる。",
+      "三発が同時に出る。タヴィは到達前に右の外縁を越える。",
+      "すべての弾が場外へ抜けてから、ケルンとタヴィが初期位置へ戻る。"
+    ],
+    "boss": "ボス",
+    "player": "プレイヤー",
+    "danger": "三本の射線を持つ隊形全体が示された",
+    "locked": "射線は固定され、弾は同時に進む",
+    "safe": "一斉射撃がすべて通過した",
+    "reducedMotion": "動きを減らす設定により自動再生は停止しています。時間軸のスライダーでループを確認してください。",
+    "diagramDescription": "一斉射撃のループ図。ケルンが三本の平行な射線を示して固定し、三つのルーン弾を同時に放つ。タヴィは右の外側へ移り、弾が通過した後に双方が戻る。"
+  },
+  "steps": [
+    {
+      "title": "隊形全体が読めるか？",
+      "body": "予告中に占有するすべての射線と両端を示す。中央の弾だけを知らせると、実際に覆う幅が伝わらない。"
+    },
+    {
+      "title": "通常移動で外側へ出られるか？",
+      "body": "初期位置から最外側の射線を越える距離を、プレイヤーと弾の衝突半径を含めて測る。隊形を理解してから最初の弾が届くまでに十分な時間を残す。"
+    },
+    {
+      "title": "回復前にすべての弾が抜けるか？",
+      "body": "三発の発射時刻と速度は同じ。まだ使える経路を弾が横切る間は、安全な反撃機会を約束しない。"
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "側面の弾が発射時に初めて現れる",
+      "body": "一本の警告線では三本の射線を説明できない。中央だけでなく外側の幅も明確に予告する。"
+    },
+    {
+      "title": "外側は空いて見えるが体が入らない",
+      "body": "絵の隙間ではなく、外側の弾の向こうにプレイヤーの衝突判定全体が収まる空間が必要。横切る時点の余裕を確認する。"
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "発射を同期する",
+      "body": "三発に同じ発射フレームと一つの音のアクセントを使う。時刻をずらすと連射になり、長いリズムを追う判断へ変わる。"
+    },
+    {
+      "title": "この型では射線を平行に保つ",
+      "body": "一定の間隔により、隊形は一つの移動する幅として読める。角度が広がると、距離によって隙間が変わる扇形になる。"
+    },
+    {
+      "title": "速度より先に幅を調整する",
+      "body": "まず基本移動で外縁に届くことを確かめる。その後、測定可能な反応時間を保ちながら速度を上げる。弾数を増せば、隠れた加速なしに要求幅を広げられる。"
+    },
+    {
+      "title": "新たに予告する隊形で発展させる",
+      "body": "次の一斉射撃では射線をずらしたり広げたりできるが、新しい両端を発射前に示す。現在の隊形をタヴィへ追尾させない。"
+    }
+  ],
+  "story": {
+    "title": "ルーンを予告そのものにする",
+    "body": "ケルンの三つの浮遊ルーンは発射源と弾数を同時に伝える。発射前から背景に埋もれず輪郭が見えるようにする。"
+  },
+  "adaptation": {
+    "title": "基本の回答を残す",
+    "body": "図ではタヴィが通常の横移動で右の外縁を越える。盾、ダッシュ、受け流しを追加してもよいが、基本の経路は実際に成立させる。"
+  },
+  "distinction": {
+    "title": "一斉射撃と派生型を分ける",
+    "body": "一斉射撃は複数の弾を同時に放つこと。この例は平行射線で、逃げ道は隊形の外側にある。扇形は一点から広がり、隙間のある一斉射撃は内部に意図した通路があり、連射は発射を時間で分ける。"
+  },
+  "lensNotes": [
+    {
+      "id": "telegraphing",
+      "body": "充填した三つのルーン、点線の射線、外側の幅で同時発射の全体を事前に示す。"
+    },
+    {
+      "id": "threat-geometry",
+      "body": "射線の間隔、弾とプレイヤーの半径、隊形の幅で外側への退避が本当に可能か決まる。"
+    },
+    {
+      "id": "counterplay",
+      "body": "固定された隊形なら、通常の横移動で接触前に予告された外縁へ届く。"
+    },
+    {
+      "id": "difficulty-rhythm",
+      "body": "共通の発射拍が判断を一度に集中させ、すべての弾が通過してから回復が始まる。"
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "Cuphead",
+      "boss": "Wally Warbles",
+      "video": "https://www.youtube.com/watch?v=Ol3-4Y0eS9M&t=115s",
+      "videoDurationSeconds": 265,
+      "screenshot": "https://i.ytimg.com/vi/Ol3-4Y0eS9M/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=Ol3-4Y0eS9M&t=115s",
+      "body": "Wally は見える一拍で羽の群れを放つ。放射状の形はケルンの平行射線と異なるが、共通の発射アクセントにより一群が一度の時間判断になる。"
+    },
+    {
+      "dimension": "2D",
+      "game": "Enter the Gungeon",
+      "boss": "High Dragun",
+      "video": "https://www.youtube.com/watch?v=aKALjUZqhXA&t=105s",
+      "videoDurationSeconds": 210,
+      "screenshot": "https://i.ytimg.com/vi/aKALjUZqhXA/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=aKALjUZqhXA&t=105s",
+      "body": "High Dragun は広い弾の隊形を場内に送る。変化する隙間はより複雑な型であり、ケルンの単純な列は同時発射、固定幅、外縁への退避を切り出す。"
+    },
+    {
+      "dimension": "3D",
+      "game": "Returnal",
+      "boss": "Hyperion",
+      "video": "https://www.youtube.com/watch?v=TdnGpLzBaKA&t=117s",
+      "videoDurationSeconds": 170,
+      "screenshot": "https://blog.playstation.com/tachyon/2021/05/51192459805_f3dfca3cda_o-scaled.jpg?fit=1024%2C1024",
+      "screenshotSource": "https://blog.playstation.com/2021/05/28/returnal-the-making-of-that-unforgettable-hyperion-fight/",
+      "body": "Hyperion はオルガンで弾群と波を重ねる。開発者は色で区別する攻撃パターンを説明しており、ケルンの平行な一斉射撃は豊かな 3D 戦闘から同時隊形の判断だけを抽出する。"
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

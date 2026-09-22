@@ -1,0 +1,24 @@
+{
+  "id": "volley",
+  "number": 49,
+  "published": true,
+  "sourceLocale": "en",
+  "contentVersion": 1,
+  "animation": "volley",
+  "lenses": ["telegraphing", "threat-geometry", "counterplay", "difficulty-rhythm"],
+  "related": ["burst-fire", "projectile-fan", "gap-volley"],
+  "sources": [
+    {
+      "title": "Wally Warbles · Cuphead Wiki",
+      "url": "https://cuphead.fandom.com/wiki/Wally_Warbles"
+    },
+    {
+      "title": "High Dragun · Official Enter the Gungeon Wiki",
+      "url": "https://enterthegungeon.fandom.com/wiki/High_Dragun"
+    },
+    {
+      "title": "Returnal: the making of that unforgettable Hyperion fight · PlayStation Blog",
+      "url": "https://blog.playstation.com/2021/05/28/returnal-the-making-of-that-unforgettable-hyperion-fight/"
+    }
+  ]
+}
