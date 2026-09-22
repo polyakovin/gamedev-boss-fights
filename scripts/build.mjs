@@ -39,7 +39,7 @@ for (const m of mechanics)
   if (m.meta.animation && !animations[m.meta.animation])
     throw new Error(`Unknown animation: ${m.meta.animation}`);
 const out = path.join(ROOT, 'dist');
-await fs.rm(out, { recursive: true, force: true });
+await fs.rm(out, { recursive: true, force: true, maxRetries: 5, retryDelay: 100 });
 await fs.mkdir(path.join(out, 'assets'), { recursive: true });
 await fs.cp(path.join(ROOT, 'src'), path.join(out, 'assets'), { recursive: true });
 await fs.writeFile(path.join(out, '.nojekyll'), '');

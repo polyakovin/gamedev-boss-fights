@@ -1,0 +1,134 @@
+{
+  "title": "Inmunidad situacional",
+  "subtitle": "Haz visible la fuente de protección y permite que el jugador la desactive.",
+  "variant": "Una runa rompible abre una breve ventana de daño",
+  "summary": "Una runa vinculada impide dañar al jefe hasta que el jugador la desactiva.",
+  "overview": "La inmunidad situacional anula el daño de un golpe válido bajo una condición clara. Una runa visible sostiene el escudo de Kern. El primer espadazo de Tavi rebota; al cortar la runa desaparece la inmunidad y otro golpe daña el mismo cuerpo. El escudo vuelve tras una ventana legible: cambia el estado, no el lugar del impacto.",
+  "learning": "Ajusta conjuntamente la fuente de protección, la respuesta visual, el alcance de la runa, la ventana y el reinicio.",
+  "category": "Defensa",
+  "readTime": "4 min",
+  "demo": {
+    "title": "Rompe la runa y después golpea",
+    "timeline": "Cronología de inmunidad",
+    "step": "Estados de protección",
+    "phaseNames": ["Lee el escudo vinculado", "Desactiva la runa y golpea", "Restaura la runa"],
+    "phaseDescriptions": [
+      "Una runa brillante está unida de forma visible al escudo que rodea a Kern. Tavi se acerca con la espada; mientras dure el vínculo, golpear el cuerpo no causa daño.",
+      "A los 2,05 s la espada rebota en el escudo. A los 2,80 s Tavi corta la runa alcanzable y cae todo el escudo. A los 3,55 s la misma espada hiere el cuerpo de Kern.",
+      "La apertura sigue siendo legible durante el impacto. A los 4,30 s vuelven juntos la runa y el escudo; Tavi retrocede antes de repetir el ciclo."
+    ],
+    "boss": "Jefe",
+    "player": "Jugador",
+    "danger": "Los golpes al cuerpo no dañan mientras la runa vinculada está activa",
+    "locked": "Romper la runa cambia al jefe de inmune a vulnerable",
+    "safe": "Golpea el mismo cuerpo mientras el escudo está claramente caído",
+    "reducedMotion": "El movimiento reducido desactiva la reproducción automática. Usa el control temporal para examinar cada estado.",
+    "diagramDescription": "Un jefe de piedra está dentro de un escudo circular luminoso conectado con una runa flotante cercana. Un jugador con espada golpea primero el escudo y rebota. Luego corta la runa: se atenúan el vínculo y todo el escudo, y el siguiente golpe alcanza el mismo cuerpo. Tras la apertura, runa y escudo regresan juntos."
+  },
+  "steps": [
+    {
+      "title": "¿Qué otorga exactamente la inmunidad?",
+      "body": "La runa debe ser una fuente real de estado, no un adorno. Mientras esté activa, todos los espadazos ordinarios al jefe se bloquean sin importar dirección ni tipo. El golpe de los 2,05 s se detiene en el límite visible y no cambia la vida del jefe."
+    },
+    {
+      "title": "¿Puede el jugador cambiar ese estado?",
+      "body": "Pon la runa al alcance de la espada y muestra su conexión con el escudo. El corte de los 2,80 s desactiva runa y escudo en un instante determinista. Comprueba que el objetivo se reconozca sin temporizador oculto ni objeto nuevo."
+    },
+    {
+      "title": "¿Dura la apertura lo suficiente?",
+      "body": "Después de romper la runa se vuelve vulnerable el mismo cuerpo. El segundo golpe de Tavi llega a los 3,55 s antes de que vuelva la protección a los 4,30 s. Incluye desplazamiento, preparación del ataque, reacción y latencia en el presupuesto; prueba configuraciones lentas."
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "El golpe falla sin explicación",
+      "body": "Una barra de vida inmóvil parece un fallo de colisión. Muestra escudo, runa, vínculo y rebote antes del intento; no uses el mismo efecto para bloqueo y daño."
+    },
+    {
+      "title": "El escudo vuelve antes de una respuesta normal",
+      "body": "Una ventana más corta que un ataque crea una pausa frustrante. Mantén la exposición hasta un golpe útil y anuncia en combate el regreso de la protección."
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "Una sola fuente de verdad",
+      "body": "Guarda una vez el estado de la runa y deriva de él tanto el escudo visible como el permiso para dañar. Un vínculo apagado no debe ocultar inmunidad; un escudo visible no debe dejar pasar daño en secreto."
+    },
+    {
+      "title": "Cuenta toda la cadena de respuesta",
+      "body": "Kern queda expuesto de 2,80 a 4,30 s: 1,50 s. Mide el camino a la runa, la recuperación del corte, el inicio del siguiente ataque y su impacto; no ajustes la ventana a una prueba instantánea."
+    },
+    {
+      "title": "Limita la búsqueda de objetivos",
+      "body": "Basta una runa alcanzable para enseñar la regla. Otras runas pueden exigir búsqueda y movimiento, pero su identidad, posición y contribución deben verse antes de gastar un ciclo completo de ataque."
+    },
+    {
+      "title": "Comprueba las excepciones",
+      "body": "Decide si explosiones, daño periódico y proyectiles reflejados o ya lanzados ignoran la inmunidad, golpean la runa o desaparecen. Resuélvelos en el mismo límite de estado y documenta las excepciones."
+    }
+  ],
+  "story": {
+    "title": "Una runa protege todo el cuerpo",
+    "body": "La runa flotante y el anillo de Kern comparten color y pulso. Al cortarla Tavi, vínculo y anillo desaparecen antes del impacto válido. No es un punto débil del cuerpo: controla un estado global temporal."
+  },
+  "adaptation": {
+    "title": "Amplía el objetivo, no la espera",
+    "body": "En un encuentro largo, mueve o multiplica runas solo después de enseñar la primera. Si una runa queda fuera del alcance cuerpo a cuerpo, ofrece una ruta conocida u otra acción aprendida. No alargues la inmunidad para rellenar tiempo: acorta ciclos repetidos o permite evitarlos con habilidad."
+  },
+  "distinction": {
+    "title": "La inmunidad es un cero condicionado",
+    "body": "La resistencia por tipo deja daño reducido. El escudo direccional bloquea solo un arco, de modo que sirve rodearlo. Aquí todo el cuerpo está protegido hasta desactivar otra runa; un punto débil cambiaría el daño según dónde se golpea, no según un estado global."
+  },
+  "lensNotes": [
+    {
+      "id": "progress-clarity",
+      "body": "El vínculo y las distintas reacciones al bloqueo y al daño revelan objetivo y avance."
+    },
+    {
+      "id": "counterplay",
+      "body": "Cortar una runa externa alcanzable responde de forma concreta a la protección total."
+    },
+    {
+      "id": "difficulty-rhythm",
+      "body": "Una apertura breve pero útil alterna trabajo con el objetivo y daño, sin esperas vacías."
+    },
+    {
+      "id": "rule-exception",
+      "body": "En el estado protegido se bloquean los golpes normales al cuerpo; las excepciones se explicitan."
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "Hollow Knight",
+      "boss": "Uumuu",
+      "video": "https://www.youtube.com/watch?v=dMq29xa5hhA&t=129s",
+      "videoDurationSeconds": 156,
+      "screenshot": "https://i.ytimg.com/vi/dMq29xa5hhA/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=dMq29xa5hhA&t=129s",
+      "body": "La membrana exterior de Uumuu impide los golpes normales hasta que Quirrel la abre y expone el núcleo brevemente. Allí ayuda un personaje externo; Tavi puede cortar directamente la runa de Kern."
+    },
+    {
+      "dimension": "3D",
+      "game": "Elden Ring",
+      "boss": "Rennala, Queen of the Full Moon",
+      "video": "https://www.youtube.com/watch?v=ZaZ6UTxm9vI&t=90s",
+      "videoDurationSeconds": 484,
+      "screenshot": "https://i.ytimg.com/vi/ZaZ6UTxm9vI/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=ZaZ6UTxm9vI&t=90s",
+      "body": "En la primera fase de Rennala, la esfera protectora cae tras golpear a tres alumnas cantoras luminosas. El objetivo se reparte entre varias criaturas y la ventana se repite; una sola runa de Kern aísla la regla."
+    },
+    {
+      "dimension": "3D",
+      "game": "The Legend of Zelda: Breath of the Wild",
+      "boss": "Calamity Ganon",
+      "video": "https://www.youtube.com/watch?v=hYYFTIO88ZI&t=5s",
+      "videoDurationSeconds": 83,
+      "screenshot": "https://cdn.wikimg.net/en/zeldawiki/images/8/81/BotW_Calamity_Ganon_Model_3.png",
+      "screenshotSource": "https://zeldawiki.wiki/wiki/File:BotW_Calamity_Ganon_Model_3.png",
+      "body": "Un láser reflejado puede quitar el escudo de la segunda fase de Ganon. El clip es un speedrun que después lo mantiene aturdido: ese ritmo no es una pauta general; interesa la condición que retira el escudo."
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

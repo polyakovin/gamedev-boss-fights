@@ -9,6 +9,7 @@ import {
   blueprintSpec,
   damageTypeResistanceDamage,
   directionalShieldOutcome,
+  situationalImmunityOutcome,
 } from '../src/blueprint-model.mjs';
 import {
   blueprintPreviewLayout,
@@ -16,8 +17,8 @@ import {
   renderBlueprintThumbnail,
 } from '../lib/blueprint-view.mjs';
 
-test('all 48 promoted lesson animations have distinct rule modes and complete moving frames', () => {
-  assert.equal(BLUEPRINT_MECHANIC_IDS.length, 48);
+test('all 49 promoted lesson animations have distinct rule modes and complete moving frames', () => {
+  assert.equal(BLUEPRINT_MECHANIC_IDS.length, 49);
   const modes = new Set();
   for (const id of BLUEPRINT_MECHANIC_IDS) {
     for (let time = 0; time <= BLUEPRINT_DURATION; time += 0.1) {
@@ -38,7 +39,7 @@ test('all 48 promoted lesson animations have distinct rule modes and complete mo
           assert.ok(Number.isFinite(value), `${id} has an invalid ${primitive.type}`);
     }
   }
-  assert.equal(modes.size, 48);
+  assert.equal(modes.size, 49);
 });
 
 test('every blueprint exposes signal, committed action, and recovery without player teleports', () => {
@@ -111,7 +112,10 @@ test('every damaging promoted animation derives safety from its own active geome
   };
 
   for (const id of BLUEPRINT_MECHANIC_IDS.filter(
-    (id) => id !== 'directional-shield' && id !== 'damage-type-resistance',
+    (id) =>
+      id !== 'directional-shield' &&
+      id !== 'damage-type-resistance' &&
+      id !== 'situational-immunity',
   )) {
     const frame = blueprintFrame(id, 3);
     let point = unsafePoints[id];
@@ -970,6 +974,38 @@ test('damage-type resistance reduces a connected slash without changing the targ
   assert.match(
     renderBlueprintThumbnail(id, 'test-damage-type-resistance'),
     /data-blueprint-preview="damage-type-resistance"/,
+  );
+});
+
+test('situational immunity blocks the whole boss until the linked ward is cut', () => {
+  const id = 'situational-immunity';
+  const spec = blueprintSpec(id);
+  assert.equal(situationalImmunityOutcome(0), 'immune');
+  assert.equal(situationalImmunityOutcome(2.05), 'immune');
+  assert.equal(situationalImmunityOutcome(2.79, 'ward'), 'breakable');
+  assert.equal(situationalImmunityOutcome(2.8, 'ward'), 'broken');
+  assert.equal(situationalImmunityOutcome(2.8), 'vulnerable');
+  assert.equal(situationalImmunityOutcome(4.29), 'vulnerable');
+  assert.equal(situationalImmunityOutcome(4.3), 'immune');
+  assert.throws(() => situationalImmunityOutcome(2.8, 'head'), /unknown immunity target/i);
+  const blocked = blueprintFrame(id, spec.blockedStrike);
+  const ward = blueprintFrame(id, spec.wardStrike);
+  const exposed = blueprintFrame(id, spec.openStrike);
+  const restored = blueprintFrame(id, spec.shieldReturns);
+  assert.equal(blocked.blockedStrike, true);
+  assert.equal(ward.wardStrike, true);
+  assert.equal(exposed.openStrike, true);
+  assert.ok(blocked.primitives[0].opacity > 0.7);
+  assert.ok(blocked.primitives[6].opacity > 0.7);
+  assert.ok(ward.primitives[8].opacity > 0.7);
+  assert.ok(exposed.primitives[0].opacity < 0.1);
+  assert.ok(exposed.primitives[10].opacity > 0.7);
+  assert.ok(restored.primitives[0].opacity > 0.7);
+  assert.equal(exposed.primitives[10].x, spec.boss[0] + 38);
+  assert.deepEqual(blueprintFrame(id, 0).player, blueprintFrame(id, 6).player);
+  assert.match(
+    renderBlueprintThumbnail(id, 'test-situational-immunity'),
+    /data-blueprint-preview="situational-immunity"/,
   );
 });
 

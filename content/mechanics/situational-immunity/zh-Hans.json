@@ -1,0 +1,128 @@
+{
+  "title": "条件性免疫",
+  "subtitle": "让保护的来源清晰可见，并让玩家有办法解除它。",
+  "variant": "击碎一枚符文，开启短暂的伤害窗口",
+  "summary": "相连的符文使首领免受伤害，直到玩家将其关闭。",
+  "overview": "条件性免疫会在明确条件成立时，让本来命中的攻击无法对首领造成伤害。本例中，一枚可见的符文维持着凯恩的全身护盾。塔维的第一剑弹开；斩断符文后免疫消失，第二剑就能伤到同一身体。护盾会在可辨认的窗口之后恢复；规则改变的是状态，不是命中位置。",
+  "learning": "一起调整保护来源、受击反馈、符文距离、开放时间和重置节奏。",
+  "category": "防御",
+  "readTime": "4 分钟",
+  "demo": {
+    "title": "击碎符文，再攻击首领",
+    "timeline": "免疫时间线",
+    "step": "保护状态",
+    "phaseNames": ["认出相连护盾", "关闭符文并攻击", "恢复符文"],
+    "phaseDescriptions": [
+      "明亮的符文与包围凯恩的护盾有可见连线。塔维持剑靠近；只要连接存在，击中身体也不会造成伤害。",
+      "2.05 秒时剑被护盾弹回。2.80 秒时塔维斩断触手可及的符文，连线断开，整圈护盾消失。3.55 秒时同一把剑击中凯恩的身体。",
+      "命中期间，开放状态仍清楚可见。4.30 秒时符文与护盾同时恢复；塔维退回，随后循环重演。"
+    ],
+    "boss": "首领",
+    "player": "玩家",
+    "danger": "相连符文激活时，击中身体不会造成伤害",
+    "locked": "击碎符文会使首领从免疫切换为可受伤",
+    "safe": "护盾明显消失时，攻击同一身体",
+    "reducedMotion": "启用减少动态效果后不会自动播放。使用时间滑块查看各个护盾状态。",
+    "diagramDescription": "石质首领站在一圈明亮护盾内，护盾通过线条连接旁边悬浮的符文。持剑玩家先砍向护盾并被弹回，再斩断符文；连线和整圈护盾变暗，下一剑才伤到同一身体。窗口结束后，符文与护盾一起恢复。"
+  },
+  "steps": [
+    {
+      "title": "免疫究竟来自什么？",
+      "body": "符文必须是真正的状态来源，不只是装饰。它激活时，无论方向或伤害类型如何，普通剑击首领身体都应被挡住。2.05 秒的攻击停在可见护盾边缘，首领生命值不变。"
+    },
+    {
+      "title": "玩家能改变状态吗？",
+      "body": "把符文放在普通剑击可及之处，并显示它与护盾的联系。2.80 秒的斩击在确定时刻同时关闭符文和整圈护盾。检查玩家是否无需隐藏计时提示或新道具就能认出目标。"
+    },
+    {
+      "title": "窗口足够使用吗？",
+      "body": "符文被击碎后，同一身体变得可受伤。塔维在 3.55 秒的第二剑赶上 4.30 秒护盾恢复前。把移动、起手、受击反应和网络延迟都算进窗口，并测试较慢的玩家配置。"
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "攻击失效却没有解释",
+      "body": "生命条不动会像碰撞错误。攻击之前先展示护盾、符文、连线和弹回反馈；不要让格挡与成功命中使用同一种效果。"
+    },
+    {
+      "title": "正常追击前护盾就恢复",
+      "body": "开放时间比一次攻击还短，会变成令人沮丧的等待。保持暴露状态直到至少完成一次有效攻击，并在真实战斗中预告护盾恢复。"
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "只保留一个状态来源",
+      "body": "只储存一次符文激活状态，再由它决定护盾画面和首领能否受伤。连线消失后不能留下隐形免疫；护盾可见时也不该暗中允许伤害。"
+    },
+    {
+      "title": "计算完整的应对链",
+      "body": "本例中凯恩从 2.80 到 4.30 秒暴露，共 1.50 秒。测量到符文的路程、斩击收招、追击起手和命中时间，而不是用瞬时测试攻击来设定窗口。"
+    },
+    {
+      "title": "控制寻找目标的负担",
+      "body": "一枚可触及的符文足以教会规则。更多符文会增加搜索与移动压力，但玩家用完整次攻击前就应明白每枚符文的位置和对护盾的作用。"
+    },
+    {
+      "title": "明确测试例外",
+      "body": "决定爆炸、持续伤害、反射弹和已发射的弹体是绕过免疫、击中符文还是消失。按普通剑击相同的状态边界处理，并写明例外。"
+    }
+  ],
+  "story": {
+    "title": "一枚符文保护整个身体",
+    "body": "悬浮符文与凯恩的护盾同色、同频闪动。塔维斩断符文后，连线和护盾在成功攻击身体前消失。符文不是凯恩身上的弱点，而是控制临时全身保护状态的外部物体。"
+  },
+  "adaptation": {
+    "title": "扩大目标，而不是延长等待",
+    "body": "更长的遭遇可以在玩家学会第一条规则后移动或增加符文。若近战无法触及符文，应提供已知路线或已学会的动作。不要只为了拉长战斗增加免疫时间；缩短重复轮次，或允许熟练玩家跳过。"
+  },
+  "distinction": {
+    "title": "免疫是有条件的零伤害",
+    "body": "伤害类型抗性让命中仍造成较低伤害。方向性护盾只挡一个扇区，护盾未撤时也可绕到侧面。这里整个身体都受保护，直到另一枚符文被关闭；弱点则按命中位置而非全局状态改变伤害。"
+  },
+  "lensNotes": [
+    {
+      "id": "progress-clarity",
+      "body": "符文与护盾的连线，以及格挡和伤害的不同反应，让目标与进度可见。"
+    },
+    { "id": "counterplay", "body": "斩断可触及的外部符文，是针对全身保护的具体应对。" },
+    {
+      "id": "difficulty-rhythm",
+      "body": "短暂但能用的窗口让目标行动和输出交替，而不是让玩家空等。"
+    },
+    { "id": "rule-exception", "body": "受保护状态挡住所有普通身体攻击；例外必须明确说明。" }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "Hollow Knight",
+      "boss": "Uumuu",
+      "video": "https://www.youtube.com/watch?v=dMq29xa5hhA&t=129s",
+      "videoDurationSeconds": 156,
+      "screenshot": "https://i.ytimg.com/vi/dMq29xa5hhA/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=dMq29xa5hhA&t=129s",
+      "body": "Uumuu 的外膜阻挡普通攻击，直到奎若将它划开，短暂露出核心。那里由伙伴触发窗口，不同于塔维可亲自斩断的凯恩符文。"
+    },
+    {
+      "dimension": "3D",
+      "game": "Elden Ring",
+      "boss": "Rennala, Queen of the Full Moon",
+      "video": "https://www.youtube.com/watch?v=ZaZ6UTxm9vI&t=90s",
+      "videoDurationSeconds": 484,
+      "screenshot": "https://i.ytimg.com/vi/ZaZ6UTxm9vI/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=ZaZ6UTxm9vI&t=90s",
+      "body": "蕾娜菈第一阶段的防护球在三名发光唱歌的学生被击中后落下。目标分布在多个单位，伤害窗口会重复；凯恩的单枚符文把状态规则单独呈现。"
+    },
+    {
+      "dimension": "3D",
+      "game": "The Legend of Zelda: Breath of the Wild",
+      "boss": "Calamity Ganon",
+      "video": "https://www.youtube.com/watch?v=hYYFTIO88ZI&t=5s",
+      "videoDurationSeconds": 83,
+      "screenshot": "https://cdn.wikimg.net/en/zeldawiki/images/8/81/BotW_Calamity_Ganon_Model_3.png",
+      "screenshotSource": "https://zeldawiki.wiki/wiki/File:BotW_Calamity_Ganon_Model_3.png",
+      "body": "反射激光可以解除灾厄盖侬第二阶段的护盾。片段出自之后将首领连续眩晕的速通；后续节奏并非通用范例，可借鉴的是解除护盾的触发条件。"
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

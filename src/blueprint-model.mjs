@@ -258,6 +258,17 @@ const SPECS = {
     slashMultiplier: 0.2,
     baseDamage: 100,
   },
+  'situational-immunity': {
+    mode: 'situational-immunity',
+    boss: [280, 430],
+    player: [425, 430],
+    target: [390, 430],
+    ward: [410, 330],
+    blockedStrike: 2.05,
+    wardStrike: 2.8,
+    openStrike: 3.55,
+    shieldReturns: 4.3,
+  },
   'wide-swing': { mode: 'arc', boss: [280, 310], player: [410, 470], target: [470, 650] },
   lunge: { mode: 'lunge', boss: [170, 290], player: [390, 590], target: [470, 660] },
   grab: { mode: 'grab', boss: [280, 300], player: [390, 485], target: [470, 610] },
@@ -539,6 +550,14 @@ export function damageTypeResistanceDamage(type, baseDamage = 100) {
   return baseDamage * (type === 'slash' ? SPECS['damage-type-resistance'].slashMultiplier : 1);
 }
 
+export function situationalImmunityOutcome(time, target = 'boss') {
+  const spec = SPECS['situational-immunity'];
+  const t = localTime(time);
+  if (target === 'ward') return t < spec.wardStrike ? 'breakable' : 'broken';
+  if (target !== 'boss') throw new Error(`Unknown immunity target: ${target}`);
+  return t < spec.wardStrike || t >= spec.shieldReturns ? 'immune' : 'vulnerable';
+}
+
 const pointInPolygon = (value, points) => {
   let inside = false;
   for (let index = 0, previous = points.length - 1; index < points.length; previous = index++) {
@@ -764,6 +783,51 @@ function primitivesFor(spec, frame) {
       rect(350, 332, 100 * thrustRecorded, 12, thrustRecorded, 'signal', 0.8),
       line(328, 301, 338, 315, 0.72, 'accent', 5),
       line(328, 338, 340, 338, 0.72, 'signal', 5),
+    ];
+  }
+  if (mode === 'situational-immunity') {
+    const protectedBoss = situationalImmunityOutcome(frame.time) === 'immune';
+    const blockedFlash = strikePulse(frame.time, spec.blockedStrike);
+    const wardFlash = strikePulse(frame.time, spec.wardStrike);
+    const openFlash = strikePulse(frame.time, spec.openStrike);
+    const ward = point(spec.ward);
+    return [
+      circle(boss.x, boss.y, 88, protectedBoss ? 0.8 : 0.08, 'accent', 9, 0.1, '9 8'),
+      circle(ward.x, ward.y, 25, protectedBoss ? 0.8 : 0.18, 'accent', 5, 0.15),
+      line(
+        ward.x - 9,
+        ward.y - 10,
+        ward.x + 9,
+        ward.y + 10,
+        protectedBoss ? 0.9 : 0.16,
+        'accent',
+        6,
+      ),
+      line(
+        ward.x + 9,
+        ward.y - 10,
+        ward.x - 9,
+        ward.y + 10,
+        protectedBoss ? 0.9 : 0.16,
+        'accent',
+        6,
+      ),
+      line(
+        ward.x,
+        ward.y + 25,
+        boss.x + 64,
+        boss.y - 35,
+        protectedBoss ? 0.44 : 0.05,
+        'accent',
+        4,
+        '7 8',
+      ),
+      line(player.x - 35, player.y - 12, boss.x + 80, boss.y - 12, blockedFlash, 'muted', 8),
+      circle(boss.x + 80, boss.y - 12, 19 + blockedFlash * 15, blockedFlash, 'muted', 7),
+      line(player.x - 23, player.y - 38, ward.x, ward.y, wardFlash, 'signal', 8),
+      circle(ward.x, ward.y, 16 + wardFlash * 17, wardFlash, 'signal', 7),
+      line(player.x - 35, player.y - 12, boss.x + 38, boss.y - 12, openFlash, 'signal', 8),
+      circle(boss.x + 38, boss.y - 12, 18 + openFlash * 19, openFlash, 'signal', 7),
     ];
   }
   if (mode === 'landing') {
@@ -1976,6 +2040,7 @@ function pointClearsThreat(spec, frame, value, radius = BLUEPRINT_PLAYER_RADIUS)
     );
   if (mode === 'directional-shield') return true;
   if (mode === 'damage-type-resistance') return true;
+  if (mode === 'situational-immunity') return true;
   if (mode === 'spiral')
     return (
       distanceFromBoss > 52 + radius &&
@@ -2175,6 +2240,7 @@ export function blueprintFrame(id, time) {
   else if (spec.mode === 'limited-spread') responseProgress = smooth((t - 1.6) / 0.68);
   else if (spec.mode === 'directional-shield') responseProgress = smooth((t - 2.22) / 1.18);
   else if (spec.mode === 'damage-type-resistance') responseProgress = smooth((t - 1.6) / 0.42);
+  else if (spec.mode === 'situational-immunity') responseProgress = smooth((t - 1.6) / 0.42);
   else if (spec.mode === 'knockback')
     responseProgress = phase === 0 ? 0 : phase === 1 ? smooth(action) : 1;
   else if (spec.mode === 'target-lock')
@@ -2340,7 +2406,8 @@ export function blueprintFrame(id, time) {
                               )
                             : spec.mode === 'directional-shield'
                               ? t >= BLUEPRINT_PHASE_ENDS[0] && t < spec.guardEnd
-                              : spec.mode === 'damage-type-resistance'
+                              : spec.mode === 'damage-type-resistance' ||
+                                  spec.mode === 'situational-immunity'
                                 ? phase === 1
                                 : phase === 1;
   const frame = {
@@ -2376,7 +2443,7 @@ export function blueprintFrame(id, time) {
     playerFacing:
       spec.mode === 'directional-shield'
         ? mix(-90, -180, smooth((t - 2.7) / 0.68)) * (1 - returnProgress) - 90 * returnProgress
-        : spec.mode === 'damage-type-resistance'
+        : spec.mode === 'damage-type-resistance' || spec.mode === 'situational-immunity'
           ? -180
           : -90,
     bossMotion: motion({
@@ -2420,11 +2487,14 @@ export function blueprintFrame(id, time) {
             : spec.mode === 'damage-type-resistance'
               ? 0.18 * strikePulse(t, spec.slashStrike, 0.25) +
                 0.9 * strikePulse(t, spec.thrustStrike, 0.28)
-              : spec.mode === 'shockwave' || spec.mode === 'knockback'
-                ? pulse(action * 3)
-                : spec.mode === 'chain-explosions'
-                  ? pulse((action * 5) % 1)
-                  : 0,
+              : spec.mode === 'situational-immunity'
+                ? 0.12 * strikePulse(t, spec.blockedStrike, 0.25) +
+                  0.9 * strikePulse(t, spec.openStrike, 0.28)
+                : spec.mode === 'shockwave' || spec.mode === 'knockback'
+                  ? pulse(action * 3)
+                  : spec.mode === 'chain-explosions'
+                    ? pulse((action * 5) % 1)
+                    : 0,
     }),
     playerMotion: motion({
       gait: (route * responseProgress + route * returnProgress) / 20,
@@ -2440,11 +2510,17 @@ export function blueprintFrame(id, time) {
                 strikePulse(t, spec.slashStrike, 0.3),
                 strikePulse(t, spec.thrustStrike, 0.3),
               )
-            : spec.mode === 'decoy' && phase === 1
-              ? pulse(clamp((action - 0.52) / 0.3))
-              : spec.mode === 'weak-point' && phase === 1
-                ? pulse(action * 1.5)
-                : 0,
+            : spec.mode === 'situational-immunity'
+              ? Math.max(
+                  strikePulse(t, spec.blockedStrike, 0.3),
+                  strikePulse(t, spec.wardStrike, 0.3),
+                  strikePulse(t, spec.openStrike, 0.3),
+                )
+              : spec.mode === 'decoy' && phase === 1
+                ? pulse(clamp((action - 0.52) / 0.3))
+                : spec.mode === 'weak-point' && phase === 1
+                  ? pulse(action * 1.5)
+                  : 0,
     }),
   };
   if (spec.mode === 'directional-shield') {
@@ -2461,6 +2537,12 @@ export function blueprintFrame(id, time) {
       thrust: damageTypeResistanceDamage('thrust', spec.baseDamage),
     };
   }
+  if (spec.mode === 'situational-immunity') {
+    frame.immunity = situationalImmunityOutcome(t);
+    frame.blockedStrike = strikePulse(t, spec.blockedStrike) > 0.5;
+    frame.wardStrike = strikePulse(t, spec.wardStrike) > 0.5;
+    frame.openStrike = strikePulse(t, spec.openStrike) > 0.5;
+  }
   frame.primitives = primitivesFor(spec, frame);
   frame.playerSafe = pointClearsThreat(spec, frame, player);
   frame.bossLabel = {
@@ -2471,7 +2553,11 @@ export function blueprintFrame(id, time) {
     x: player.x,
     y:
       player.y +
-      (spec.mode === 'directional-shield' || spec.mode === 'damage-type-resistance' ? 92 : -62),
+      (spec.mode === 'directional-shield' ||
+      spec.mode === 'damage-type-resistance' ||
+      spec.mode === 'situational-immunity'
+        ? 92
+        : -62),
   };
   return Object.freeze(frame);
 }

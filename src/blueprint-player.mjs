@@ -78,6 +78,14 @@ export function initializeBlueprint(widget) {
         : frame.normalStrike
           ? 'normal'
           : 'idle';
+    if (mechanicId === 'situational-immunity')
+      widget.dataset.blueprintImmunity = frame.blockedStrike
+        ? 'blocked'
+        : frame.wardStrike
+          ? 'ward-broken'
+          : frame.openStrike
+            ? 'boss-hit'
+            : frame.immunity;
     boss.setAttribute(
       'transform',
       `translate(${frame.boss.x} ${frame.boss.y}) scale(${frame.bossScale})`,

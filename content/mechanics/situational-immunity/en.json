@@ -1,0 +1,134 @@
+{
+  "title": "Situational immunity",
+  "subtitle": "Make the source of protection visible and give the player a way to remove it.",
+  "variant": "One breakable ward opens a short damage window",
+  "summary": "A linked ward prevents damage to the boss until the player disables it.",
+  "overview": "Situational immunity makes a valid hit deal no damage while a stated condition holds. A visible rune sustains Kern's full-body shield. Tavi's first sword strike bounces off; cutting the rune ends immunity, so a second strike hurts the same body. The shield returns after a readable opening. The rule changes state, not hit location.",
+  "learning": "Tune the protection source, feedback, ward reach, open window, and reset together.",
+  "category": "Defense",
+  "readTime": "4 min",
+  "demo": {
+    "title": "Break the ward, then strike",
+    "timeline": "Immunity timeline",
+    "step": "Protection states",
+    "phaseNames": ["Read the linked shield", "Disable the ward and strike", "Restore the ward"],
+    "phaseDescriptions": [
+      "A bright ward is visibly linked to Kern's enclosing shield. Tavi approaches with a sword; attacking the body while the link remains cannot deal boss damage.",
+      "At 2.05 s a sword hit rebounds from the shield. At 2.80 s Tavi cuts the reachable ward, breaking the link and dropping the whole shield. At 3.55 s the same sword can strike Kern's body.",
+      "The opening stays legible through the hit. At 4.30 s the ward and shield return together; Tavi steps back before the loop repeats."
+    ],
+    "boss": "Boss",
+    "player": "Player",
+    "danger": "Body hits cause no damage while the linked ward is active",
+    "locked": "Breaking the ward switches the boss from immune to vulnerable",
+    "safe": "Strike the unchanged body while the shield is visibly down",
+    "reducedMotion": "Autoplay is disabled by the reduced-motion setting. Use the timeline slider to inspect each shield state.",
+    "diagramDescription": "A stone boss stands within a bright all-around shield connected by a line to a nearby floating rune. A sword-carrying player first strikes the shield and visibly rebounds. The player cuts the rune, causing the entire shield and link to dim, then strikes the same boss body successfully. The rune and shield return together after the opening."
+  },
+  "steps": [
+    {
+      "title": "What exactly grants immunity?",
+      "body": "Make the ward a real state source, not decorative art. While it is active, all ordinary sword hits on the boss resolve as blocked, regardless of attack direction or damage type. The 2.05-second hit should stop at the visible shield boundary and leave boss health unchanged."
+    },
+    {
+      "title": "Can the player change the state?",
+      "body": "Put the ward within ordinary sword reach and connect it visually to the shield. The 2.80-second cut disables the ward and the whole boss shield at one deterministic beat. Confirm the player can recognize the new objective without a hidden timing cue or required new item."
+    },
+    {
+      "title": "Is the opening long enough to use?",
+      "body": "The same boss body becomes vulnerable after the ward breaks; Tavi's second sword strike lands at 3.55 seconds before protection returns at 4.30. Budget travel, attack startup, hit reaction, and network latency inside the opening, then test with slower player builds."
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "A hit fails without explaining why",
+      "body": "A health bar that does not move can resemble a collision bug. Keep the shield, ward, connecting line, and bounce reaction readable before damage is attempted; do not use the same impact effect for blocked and successful hits."
+    },
+    {
+      "title": "The boss re-shields before any ordinary follow-up",
+      "body": "If the opening is shorter than a player attack, the rule becomes a frustrating animation lock. Let the exposed state last through a useful attack, and signal the return before protection resumes in a real encounter."
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "Represent one source of truth",
+      "body": "Store the ward's active state once and derive both shield visuals and boss damage permission from it. A disconnected glow must not grant invisible immunity; a visible shield must not secretly allow damage."
+    },
+    {
+      "title": "Budget the entire response chain",
+      "body": "The example exposes Kern from 2.80 to 4.30 seconds, a 1.50-second window. Measure the player's route to the ward, cut recovery, follow-up startup, and impact timing rather than tuning the window against an instant test hit."
+    },
+    {
+      "title": "Keep objective pressure bounded",
+      "body": "A single reachable ward is enough for this lesson. More ward sources can add search and movement pressure, but each must reveal its identity, position, and contribution to the shield before the player spends a full attack cycle."
+    },
+    {
+      "title": "Test exceptional damage explicitly",
+      "body": "Decide whether explosives, damage over time, reflected projectiles, and pre-existing projectiles ignore immunity, hit the ward, or disappear. Resolve those rules on the same state boundary as ordinary sword hits and document any exception."
+    }
+  ],
+  "story": {
+    "title": "A rune that protects the whole body",
+    "body": "The floating ward and Kern's ring share the same color and pulse. When Tavi cuts the ward, the link collapses and the ring vanishes before the successful body hit. The object is not a weak point on Kern; it controls a temporary global protection state."
+  },
+  "adaptation": {
+    "title": "Scale the objective, not the opacity",
+    "body": "For a longer encounter, move or multiply wards only after the first rule is learned. If a ward is inaccessible to a melee build, add a known route or a different learned verb. Do not stretch immunity simply to pad encounter time; shorten repeated cycles or allow skilled players to bypass them."
+  },
+  "distinction": {
+    "title": "Immunity is a conditional zero",
+    "body": "Damage-type resistance leaves a connected hit with reduced damage. A directional shield blocks only an arc, so a flank works while the guard stays raised. Here all body directions are protected until a separate ward is disabled; a weak point would change damage by hit location rather than by this global state."
+  },
+  "lensNotes": [
+    {
+      "id": "progress-clarity",
+      "body": "The ward-to-shield link and distinct blocked and successful hit reactions make the objective and progress visible."
+    },
+    {
+      "id": "counterplay",
+      "body": "Cutting a reachable external ward is a concrete response to otherwise complete boss protection."
+    },
+    {
+      "id": "difficulty-rhythm",
+      "body": "A brief but usable opening alternates objective work with damage, rather than leaving the player idle."
+    },
+    {
+      "id": "rule-exception",
+      "body": "All ordinary body hits are blocked in the protected state; exceptions must be stated, not inferred from visuals."
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "Hollow Knight",
+      "boss": "Uumuu",
+      "video": "https://www.youtube.com/watch?v=dMq29xa5hhA&t=129s",
+      "videoDurationSeconds": 156,
+      "screenshot": "https://i.ytimg.com/vi/dMq29xa5hhA/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=dMq29xa5hhA&t=129s",
+      "body": "Uumuu's outer membrane prevents ordinary hits until Quirrel cuts it open, creating a brief exposed-core window. That helper-triggered opening differs from Kern's ward that Tavi can strike directly."
+    },
+    {
+      "dimension": "3D",
+      "game": "Elden Ring",
+      "boss": "Rennala, Queen of the Full Moon",
+      "video": "https://www.youtube.com/watch?v=ZaZ6UTxm9vI&t=90s",
+      "videoDurationSeconds": 484,
+      "screenshot": "https://i.ytimg.com/vi/ZaZ6UTxm9vI/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=ZaZ6UTxm9vI&t=90s",
+      "body": "In Rennala's first phase, the protective sphere falls after three glowing, singing scholars are struck. The objective takes several targets and the damage window repeats; Kern's single ward isolates the state rule."
+    },
+    {
+      "dimension": "3D",
+      "game": "The Legend of Zelda: Breath of the Wild",
+      "boss": "Calamity Ganon",
+      "video": "https://www.youtube.com/watch?v=hYYFTIO88ZI&t=5s",
+      "videoDurationSeconds": 83,
+      "screenshot": "https://cdn.wikimg.net/en/zeldawiki/images/8/81/BotW_Calamity_Ganon_Model_3.png",
+      "screenshotSource": "https://zeldawiki.wiki/wiki/File:BotW_Calamity_Ganon_Model_3.png",
+      "body": "A reflected laser can drop Calamity Ganon's second-phase shield. The linked clip is a speedrun that then stun-locks the boss, so its post-opening pace is not a general design template; the shield-removal trigger is the useful comparison."
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

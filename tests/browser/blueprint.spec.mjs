@@ -405,9 +405,9 @@ test('volley releases three parallel bolts on one beat and clears its outside ro
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
 });
 
-test('catalog and builder reuse the 48 promoted rule-specific previews', async ({ page }) => {
+test('catalog and builder reuse the 49 promoted rule-specific previews', async ({ page }) => {
   await page.goto('en/');
-  await expect(page.locator('[data-blueprint-preview]')).toHaveCount(48);
+  await expect(page.locator('[data-blueprint-preview]')).toHaveCount(49);
   const catalogLayouts = await page.locator('[data-blueprint-preview]').evaluateAll((previews) =>
     previews.map((preview) => {
       const boss = preview.querySelector('[data-character-art-preview="kern"]');
@@ -431,7 +431,7 @@ test('catalog and builder reuse the 48 promoted rule-specific previews', async (
   expect(new Set(catalogLayouts.map(({ layout }) => layout)).size).toBeGreaterThanOrEqual(18);
 
   await page.goto('en/builder/');
-  await expect(page.locator('[data-blueprint-preview]')).toHaveCount(48);
+  await expect(page.locator('[data-blueprint-preview]')).toHaveCount(49);
   const builderLayouts = await page.locator('[data-blueprint-preview]').evaluateAll((previews) =>
     previews.map((preview) => {
       const boss = preview.querySelector('[data-character-art-preview="kern"]');
@@ -653,5 +653,86 @@ test('damage-type resistance shows two connected hits with unequal damage at one
     '0',
   );
   await page.setViewportSize({ width: 375, height: 812 });
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+});
+
+test('situational immunity links its blocked hit, broken ward, open hit, and return', async ({
+  page,
+}) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.goto('en/mechanics/situational-immunity/');
+  const widget = page.locator('[data-blueprint-demo]');
+  const timeline = widget.locator('[data-blueprint-timeline]');
+  const seek = (milliseconds) =>
+    timeline.evaluate((element, value) => {
+      element.value = String(value);
+      element.dispatchEvent(new Event('input', { bubbles: true }));
+    }, milliseconds);
+  await expect(page.locator('.lesson-title-line h1')).toHaveText('Situational immunity');
+  await expect(page.locator('.wip-badge, .draft-profile')).toHaveCount(0);
+  await expect(page.locator('.game-example')).toHaveCount(3);
+  await expect(widget).toHaveAttribute('data-blueprint-playing', 'false');
+  await seek(2050);
+  await expect(widget).toHaveAttribute('data-blueprint-immunity', 'blocked');
+  await expect(widget.locator('[data-blueprint-primitive="0"] circle')).not.toHaveAttribute(
+    'opacity',
+    '0',
+  );
+  await expect(widget.locator('[data-blueprint-primitive="6"] circle')).not.toHaveAttribute(
+    'opacity',
+    '0',
+  );
+  await seek(2800);
+  await expect(widget).toHaveAttribute('data-blueprint-immunity', 'ward-broken');
+  await expect(widget.locator('[data-blueprint-primitive="8"] circle')).not.toHaveAttribute(
+    'opacity',
+    '0',
+  );
+  await seek(3550);
+  await expect(widget).toHaveAttribute('data-blueprint-immunity', 'boss-hit');
+  await expect(widget.locator('[data-blueprint-primitive="10"] circle')).not.toHaveAttribute(
+    'opacity',
+    '0',
+  );
+  await seek(4300);
+  await expect(widget).toHaveAttribute('data-blueprint-immunity', 'immune');
+  await page.setViewportSize({ width: 375, height: 812 });
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+});
+
+test('situational immunity keeps both actors and labels visible on dark RTL mobile', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 375, height: 812 });
+  await page.emulateMedia({ reducedMotion: 'reduce', colorScheme: 'dark' });
+  await page.goto('ar/mechanics/situational-immunity/');
+  const widget = page.locator('[data-blueprint-demo]');
+  await expect(page.locator('html')).toHaveAttribute('dir', 'rtl');
+  await expect(widget).toHaveAttribute('data-blueprint-playing', 'false');
+  const timeline = widget.locator('[data-blueprint-timeline]');
+  for (const milliseconds of [0, 2050, 2800, 3550, 4300]) {
+    await timeline.evaluate((element, value) => {
+      element.value = String(value);
+      element.dispatchEvent(new Event('input', { bubbles: true }));
+    }, milliseconds);
+    const bounds = await widget.evaluate((element) => {
+      const svg = element.querySelector('svg').getBoundingClientRect();
+      return [
+        '[data-blueprint-boss]',
+        '[data-blueprint-player]',
+        '[data-blueprint-boss-label]',
+        '[data-blueprint-player-label]',
+      ].map((selector) => {
+        const rect = element.querySelector(selector).getBoundingClientRect();
+        return (
+          rect.left >= svg.left - 2 &&
+          rect.right <= svg.right + 2 &&
+          rect.top >= svg.top - 2 &&
+          rect.bottom <= svg.bottom + 2
+        );
+      });
+    });
+    expect(bounds.every(Boolean), `visible actor or label at ${milliseconds}ms`).toBe(true);
+  }
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
 });
