@@ -71,6 +71,10 @@ When the mechanics audit changes, run `npm run sync:mechanics-index` to rebuild 
 
 The default URL prefix is `/gamedev-boss-fights/`. `lib/config.mjs` defines the repository, site origin, and base path. Forks that publish their own site should update those values for their destination; normal contribution forks do not need deployment credentials.
 
+## Visitor analytics
+
+The GitHub Pages workflow includes Cloudflare Web Analytics for this repository. The public beacon token is used only in the final production build; local builds and forks omit the beacon unless `CLOUDFLARE_WEB_ANALYTICS_TOKEN` is explicitly set. The redirect at `/gamedev-boss-fights/` is excluded so it does not add a second page view before `/en/` loads.
+
 ## License
 
 Text, translations, and original SVG illustrations are licensed under **[CC BY 4.0](LICENSE-CONTENT.md)**. Source code is licensed under **[MIT](LICENSE-CODE)**. Externally hosted game screenshots and linked third-party works retain their owners’ rights and are excluded from the atlas license; each screenshot links to its source. Please keep attribution when reusing or adapting the lessons.

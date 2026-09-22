@@ -120,6 +120,14 @@ const themeHead = /* HTML */ `<meta name="color-scheme" content="light dark" />
       } catch {}
     })();
   </script>`;
+const analyticsToken = process.env.CLOUDFLARE_WEB_ANALYTICS_TOKEN?.trim();
+const analyticsScript = analyticsToken
+  ? /* HTML */ `<script
+      type="module"
+      src="https://static.cloudflareinsights.com/beacon.min.js"
+      data-cf-beacon="${e(JSON.stringify({ token: analyticsToken }))}"
+    ></script>`
+  : '';
 const localeFontFamily = {
   'zh-Hans': 'Noto+Sans+SC',
   hi: 'Noto+Sans+Devanagari',
@@ -260,6 +268,7 @@ function shell(
             >GitHub${icon('external-link', { className: 'icon--external' })}</a
           >
         </footer>
+        ${analyticsScript}
       </body>
     </html>`;
 }
@@ -1485,6 +1494,7 @@ const languageGatewayHtml = /* HTML */ `<!doctype html>
           >
         </p>
       </main>
+      ${analyticsScript}
     </body>
   </html>`;
 const defaultLanguageHref = link('en/');
