@@ -471,6 +471,26 @@ const SPECS = {
     laneEnd: [390, 790],
     laneHalfWidth: 28,
   },
+  'boundary-attack': {
+    mode: 'boundary-attack',
+    boss: [-55, 610],
+    player: [300, 610],
+    target: [365, 610],
+    safePosition: [300, 485],
+    signal: [0.55, 1.72],
+    active: [1.72, 2.28],
+    impactAt: 2.28,
+    punishAt: 3.15,
+    openingEnd: 3.75,
+    withdrawEnd: 4.15,
+    outerRoute: [4.15, 5.85],
+    laneStart: [0, 610],
+    laneEnd: [560, 610],
+    laneHalfWidth: 40,
+    leftBoundary: 58,
+    rightBoundary: 502,
+    impactPosition: [460, 610],
+  },
   'wide-swing': { mode: 'arc', boss: [280, 310], player: [410, 470], target: [470, 650] },
   lunge: { mode: 'lunge', boss: [170, 290], player: [390, 590], target: [470, 660] },
   grab: { mode: 'grab', boss: [280, 300], player: [390, 485], target: [470, 610] },
@@ -943,6 +963,17 @@ export function teleportState(time) {
   if (t < spec.active[1]) return 'follow-up-danger';
   if (t < spec.recoveryEnd) return 'opening';
   return 'reset';
+}
+
+export function boundaryAttackState(time) {
+  const spec = SPECS['boundary-attack'];
+  const t = localTime(time);
+  if (t < spec.signal[0]) return 'idle';
+  if (t < spec.active[0]) return 'edge-signal';
+  if (t < spec.active[1]) return 'boundary-crossing';
+  if (t < spec.punishAt) return 'boundary-stagger';
+  if (t < spec.openingEnd) return 'opening';
+  return 'outer-reset';
 }
 
 const pointInPolygon = (value, points) => {
@@ -1912,6 +1943,74 @@ function primitivesFor(spec, frame) {
       circle(destination.x, destination.y, 56 + arrivalFlash * 34, arrivalFlash, 'safe', 8),
       line(frame.player.x, frame.player.y, boss.x, boss.y, strike, 'safe', 9),
       circle(boss.x + 34, boss.y - 4, 12 + strike * 24, strike, 'safe', 7, 0.12),
+    ];
+  }
+  if (mode === 'boundary-attack') {
+    const signalProgress = clamp((frame.time - spec.signal[0]) / (spec.active[0] - spec.signal[0]));
+    const signalVisible = frame.time >= spec.signal[0] && frame.time < spec.active[0];
+    const activeWindow = frame.time >= spec.active[0] && frame.time < spec.active[1];
+    const impact = strikePulse(frame.time, spec.impactAt, 0.34);
+    const strike = strikePulse(frame.time, spec.punishAt, 0.38);
+    const resetVisible = frame.time >= spec.openingEnd;
+    return [
+      rect(
+        spec.leftBoundary,
+        400,
+        spec.rightBoundary - spec.leftBoundary,
+        380,
+        0.45,
+        'muted',
+        0.02,
+      ),
+      circle(
+        spec.leftBoundary,
+        spec.laneStart[1],
+        mix(34, 78, signalProgress),
+        signalVisible ? 0.82 : activeWindow ? 0.34 : 0.16,
+        activeWindow ? 'signal' : 'accent',
+        activeWindow ? 10 : 6,
+        0.04,
+        signalVisible ? '10 8' : '',
+      ),
+      rect(
+        spec.leftBoundary,
+        spec.laneStart[1] - spec.laneHalfWidth,
+        spec.rightBoundary - spec.leftBoundary,
+        spec.laneHalfWidth * 2,
+        signalVisible ? 0.68 : 0,
+        'accent',
+        0.08,
+      ),
+      rect(
+        spec.laneStart[0],
+        spec.laneStart[1] - spec.laneHalfWidth,
+        spec.laneEnd[0] - spec.laneStart[0],
+        spec.laneHalfWidth * 2,
+        activeWindow ? 0.94 : 0,
+        'signal',
+        0.32,
+      ),
+      path(
+        `M 18 ${spec.laneStart[1] - 54} L 46 ${spec.laneStart[1]} L 18 ${
+          spec.laneStart[1] + 54
+        } M 42 ${spec.laneStart[1] - 54} L 70 ${spec.laneStart[1]} L 42 ${spec.laneStart[1] + 54}`,
+        signalVisible ? 0.48 + 0.42 * signalProgress : activeWindow ? 0.92 : 0,
+        activeWindow ? 'signal' : 'accent',
+        8,
+      ),
+      circle(spec.rightBoundary, spec.laneEnd[1], 42 + impact * 42, impact, 'signal', 9, 0.08),
+      path(
+        `M ${spec.rightBoundary} ${spec.laneEnd[1]} L 525 270 L 35 270 L ${
+          spec.leftBoundary
+        } ${spec.laneStart[1]}`,
+        resetVisible ? 0.42 : 0,
+        'muted',
+        5,
+        0,
+        '12 12',
+      ),
+      line(frame.player.x, frame.player.y, boss.x, boss.y, strike, 'safe', 9),
+      circle(boss.x - 34, boss.y - 4, 12 + strike * 24, strike, 'safe', 7, 0.12),
     ];
   }
   if (mode === 'landing') {
@@ -3203,6 +3302,12 @@ function pointClearsThreat(spec, frame, value, radius = BLUEPRINT_PLAYER_RADIUS)
       distanceToSegment(value, point(spec.laneStart), point(spec.laneEnd)) >
         spec.laneHalfWidth + radius
     );
+  if (mode === 'boundary-attack')
+    return (
+      !frame.dangerActive ||
+      distanceToSegment(value, point(spec.laneStart), point(spec.laneEnd)) >
+        spec.laneHalfWidth + radius
+    );
   if (mode === 'spiral')
     return (
       distanceFromBoss > 52 + radius &&
@@ -3352,6 +3457,25 @@ export function blueprintFrame(id, time) {
     boss = { x, y: spec.laneY };
   } else if (spec.mode === 'teleport') {
     boss = t >= spec.absent[0] && t < spec.resetAbsent[0] ? point(spec.destination) : startBoss;
+  } else if (spec.mode === 'boundary-attack') {
+    if (t < spec.active[0]) boss = startBoss;
+    else if (t < spec.active[1]) {
+      const crossing = smooth((t - spec.active[0]) / (spec.active[1] - spec.active[0]));
+      boss = { x: mix(startBoss.x, spec.impactPosition[0], crossing), y: startBoss.y };
+    } else if (t < spec.openingEnd) boss = point(spec.impactPosition);
+    else if (t < spec.withdrawEnd) {
+      const withdraw = smooth((t - spec.openingEnd) / (spec.withdrawEnd - spec.openingEnd));
+      boss = { x: mix(spec.impactPosition[0], 640, withdraw), y: startBoss.y };
+    } else if (t < 4.55) {
+      const rise = smooth((t - spec.withdrawEnd) / (4.55 - spec.withdrawEnd));
+      boss = { x: 640, y: mix(startBoss.y, 270, rise) };
+    } else if (t < 5.35) {
+      const traverse = smooth((t - 4.55) / 0.8);
+      boss = { x: mix(640, -80, traverse), y: 270 };
+    } else if (t < spec.outerRoute[1]) {
+      const descend = smooth((t - 5.35) / (spec.outerRoute[1] - 5.35));
+      boss = { x: mix(-80, startBoss.x, descend), y: mix(270, startBoss.y, descend) };
+    }
   } else if (spec.mode === 'lunge') {
     const travel = phase === 0 ? 0 : phase === 1 ? smooth(action / 0.62) : 1 - recover;
     boss = { x: mix(170, 430, travel), y: mix(290, 590, travel) };
@@ -3419,6 +3543,7 @@ export function blueprintFrame(id, time) {
   else if (spec.mode === 'recovery') responseProgress = 0;
   else if (spec.mode === 'survival-phase') responseProgress = 0;
   else if (spec.mode === 'teleport') responseProgress = 0;
+  else if (spec.mode === 'boundary-attack') responseProgress = 0;
   else if (spec.mode === 'knockback')
     responseProgress = phase === 0 ? 0 : phase === 1 ? smooth(action) : 1;
   else if (spec.mode === 'target-lock')
@@ -3673,6 +3798,28 @@ export function blueprintFrame(id, time) {
       y: mix(punish.y, startPlayer.y, reset),
     };
   }
+  if (spec.mode === 'boundary-attack') {
+    const escape = smooth((t - 0.72) / 0.72);
+    const approach = smooth((t - spec.active[1]) / 0.62);
+    const retreat = smooth((t - (spec.punishAt + 0.2)) / 0.46);
+    const reset = smooth((t - 4.72) / 0.86);
+    const safe = {
+      x: mix(startPlayer.x, spec.safePosition[0], escape),
+      y: mix(startPlayer.y, spec.safePosition[1], escape),
+    };
+    const punish = {
+      x: mix(safe.x, targetPlayer.x, approach),
+      y: mix(safe.y, targetPlayer.y, approach),
+    };
+    const withdrew = {
+      x: mix(punish.x, safe.x, retreat),
+      y: mix(punish.y, safe.y, retreat),
+    };
+    player = {
+      x: mix(withdrew.x, startPlayer.x, reset),
+      y: mix(withdrew.y, startPlayer.y, reset),
+    };
+  }
   if (spec.mode === 'rotating' && phase === 0) {
     const initialPosition = polar(boss, 255, Math.PI / 3);
     player = {
@@ -3763,7 +3910,14 @@ export function blueprintFrame(id, time) {
                   ),
                 ) * 0.8,
               )
-            : pulse(responseProgress) + pulse(returnProgress) * 0.8;
+            : spec.mode === 'boundary-attack'
+              ? Math.max(
+                  pulse(smooth((t - 0.72) / 0.72)),
+                  pulse(smooth((t - spec.active[1]) / 0.62)),
+                  pulse(smooth((t - (spec.punishAt + 0.2)) / 0.46)),
+                  pulse(smooth((t - 4.72) / 0.86)) * 0.8,
+                )
+              : pulse(responseProgress) + pulse(returnProgress) * 0.8;
   const bossVisible =
     spec.mode === 'burrow' && phase === 1 && action < 0.68
       ? 0
@@ -3887,7 +4041,10 @@ export function blueprintFrame(id, time) {
                                                         )
                                                       : spec.mode === 'teleport'
                                                         ? t >= spec.active[0] && t < spec.active[1]
-                                                        : phase === 1;
+                                                        : spec.mode === 'boundary-attack'
+                                                          ? t >= spec.active[0] &&
+                                                            t < spec.active[1]
+                                                          : phase === 1;
   const frame = {
     id,
     mode: spec.mode,
@@ -3917,7 +4074,15 @@ export function blueprintFrame(id, time) {
       spec.mode === 'landing'
         ? (Math.atan2(spec.landing[1] - spec.boss[1], spec.landing[0] - spec.boss[0]) * 180) /
           Math.PI
-        : 90,
+        : spec.mode === 'boundary-attack'
+          ? t < spec.openingEnd
+            ? 0
+            : t < 4.55
+              ? -90
+              : t < 5.35
+                ? 180
+                : 90
+          : 90,
     playerFacing:
       spec.mode === 'directional-shield'
         ? mix(-90, -180, smooth((t - 2.7) / 0.68)) * (1 - returnProgress) - 90 * returnProgress
@@ -3929,17 +4094,19 @@ export function blueprintFrame(id, time) {
               ? (Math.atan2(boss.y - player.y, boss.x - player.x) * 180) / Math.PI
               : spec.mode === 'teleport'
                 ? (Math.atan2(boss.y - player.y, boss.x - player.x) * 180) / Math.PI
-                : spec.mode === 'damage-type-resistance' ||
-                    spec.mode === 'situational-immunity' ||
-                    spec.mode === 'part-break' ||
-                    spec.mode === 'attack-reflection' ||
-                    spec.mode === 'counter-stance' ||
-                    spec.mode === 'absorption-power-up' ||
-                    spec.mode === 'interruptible-wind-up' ||
-                    spec.mode === 'loadout-adaptation' ||
-                    spec.mode === 'wind-up'
-                  ? -180
-                  : -90,
+                : spec.mode === 'boundary-attack'
+                  ? (Math.atan2(boss.y - player.y, boss.x - player.x) * 180) / Math.PI
+                  : spec.mode === 'damage-type-resistance' ||
+                      spec.mode === 'situational-immunity' ||
+                      spec.mode === 'part-break' ||
+                      spec.mode === 'attack-reflection' ||
+                      spec.mode === 'counter-stance' ||
+                      spec.mode === 'absorption-power-up' ||
+                      spec.mode === 'interruptible-wind-up' ||
+                      spec.mode === 'loadout-adaptation' ||
+                      spec.mode === 'wind-up'
+                    ? -180
+                    : -90,
     bossMotion: motion({
       lean:
         spec.mode === 'landing'
@@ -3969,9 +4136,12 @@ export function blueprintFrame(id, time) {
                     Math.max(...spec.hazards.map(({ active }) => strikePulse(t, active[0], 0.34)))
                   : spec.mode === 'teleport'
                     ? 0.46 * strikePulse(t, spec.active[0], 0.66)
-                    : phase === 0
-                      ? -0.22 * prepare
-                      : 0.24 * pulse(action),
+                    : spec.mode === 'boundary-attack'
+                      ? 0.38 * strikePulse(t, spec.active[0], 0.7) +
+                        0.28 * strikePulse(t, spec.impactAt, 0.52)
+                      : phase === 0
+                        ? -0.22 * prepare
+                        : 0.24 * pulse(action),
       crouch:
         spec.mode === 'landing'
           ? phase === 0
@@ -3988,7 +4158,9 @@ export function blueprintFrame(id, time) {
                   Math.max(...spec.hazards.map(({ active }) => strikePulse(t, active[0], 0.34)))
                 : spec.mode === 'teleport'
                   ? 0.28 * strikePulse(t, spec.active[0], 0.66)
-                  : 0.2 * prepare,
+                  : spec.mode === 'boundary-attack'
+                    ? 0.3 * strikePulse(t, spec.impactAt, 0.55)
+                    : 0.2 * prepare,
       lift: spec.mode === 'landing' && phase === 1 ? pulse(clamp(action / 0.52)) : 0,
       attack:
         spec.mode === 'speed-change'
@@ -4058,9 +4230,11 @@ export function blueprintFrame(id, time) {
                                         )
                                       : spec.mode === 'teleport'
                                         ? strikePulse(t, spec.active[0], 0.68)
-                                        : phase === 1
-                                          ? 0.75
-                                          : prepare * 0.35,
+                                        : spec.mode === 'boundary-attack'
+                                          ? strikePulse(t, spec.active[0], 0.72)
+                                          : phase === 1
+                                            ? 0.75
+                                            : prepare * 0.35,
       impact:
         spec.mode === 'landing'
           ? pulse(clamp((action - 0.42) / 0.22))
@@ -4113,11 +4287,16 @@ export function blueprintFrame(id, time) {
                                           0.6 * strikePulse(t, spec.active[0], 0.3),
                                           0.85 * strikePulse(t, spec.punishAt, 0.3),
                                         )
-                                      : spec.mode === 'shockwave' || spec.mode === 'knockback'
-                                        ? pulse(action * 3)
-                                        : spec.mode === 'chain-explosions'
-                                          ? pulse((action * 5) % 1)
-                                          : 0,
+                                      : spec.mode === 'boundary-attack'
+                                        ? Math.max(
+                                            0.7 * strikePulse(t, spec.impactAt, 0.3),
+                                            0.85 * strikePulse(t, spec.punishAt, 0.3),
+                                          )
+                                        : spec.mode === 'shockwave' || spec.mode === 'knockback'
+                                          ? pulse(action * 3)
+                                          : spec.mode === 'chain-explosions'
+                                            ? pulse((action * 5) % 1)
+                                            : 0,
     }),
     playerMotion: motion({
       gait:
@@ -4129,7 +4308,9 @@ export function blueprintFrame(id, time) {
               ? t * 7 * stride
               : spec.mode === 'teleport'
                 ? t * 7 * stride
-                : (route * responseProgress + route * returnProgress) / 20,
+                : spec.mode === 'boundary-attack'
+                  ? t * 7 * stride
+                  : (route * responseProgress + route * returnProgress) / 20,
       stride,
       lean: stride * 0.45,
       crouch: stride * 0.16,
@@ -4178,11 +4359,13 @@ export function blueprintFrame(id, time) {
                                 ? strikePulse(t, spec.punishAt, 0.38)
                                 : spec.mode === 'teleport'
                                   ? strikePulse(t, spec.punishAt, 0.38)
-                                  : spec.mode === 'decoy' && phase === 1
-                                    ? pulse(clamp((action - 0.52) / 0.3))
-                                    : spec.mode === 'weak-point' && phase === 1
-                                      ? pulse(action * 1.5)
-                                      : 0,
+                                  : spec.mode === 'boundary-attack'
+                                    ? strikePulse(t, spec.punishAt, 0.38)
+                                    : spec.mode === 'decoy' && phase === 1
+                                      ? pulse(clamp((action - 0.52) / 0.3))
+                                      : spec.mode === 'weak-point' && phase === 1
+                                        ? pulse(action * 1.5)
+                                        : 0,
     }),
   };
   if (spec.mode === 'directional-shield') {
@@ -4279,6 +4462,14 @@ export function blueprintFrame(id, time) {
     frame.followThroughVisible = t >= spec.active[1] && t < spec.followThroughEnd;
     frame.punishStrike = strikePulse(t, spec.punishAt, 0.38) > 0.5;
   }
+  if (spec.mode === 'boundary-attack') {
+    frame.boundaryAttackState = boundaryAttackState(t);
+    frame.boundarySignalActive = t >= spec.signal[0] && t < spec.active[0];
+    frame.boundaryCrossingActive = dangerActive;
+    frame.boundarySourceOutside =
+      t < spec.active[0] || t >= spec.openingEnd || boss.x < spec.leftBoundary;
+    frame.punishStrike = strikePulse(t, spec.punishAt, 0.38) > 0.5;
+  }
   if (spec.mode === 'teleport') {
     frame.teleportState = teleportState(t);
     frame.teleportAbsent =
@@ -4333,7 +4524,8 @@ export function blueprintFrame(id, time) {
       spec.mode === 'active-phase' ||
       spec.mode === 'recovery' ||
       spec.mode === 'survival-phase' ||
-      spec.mode === 'teleport'
+      spec.mode === 'teleport' ||
+      spec.mode === 'boundary-attack'
         ? 92
         : -62),
   };

@@ -1,0 +1,28 @@
+{
+  "id": "boundary-attack",
+  "number": 68,
+  "published": true,
+  "sourceLocale": "en",
+  "contentVersion": 1,
+  "animation": "boundary-attack",
+  "lenses": ["telegraphing", "threat-geometry", "dramatic-framing", "counterplay"],
+  "related": ["teleport", "telegraph", "attack-lock"],
+  "sources": [
+    {
+      "title": "GDC · Itay Keren — Boss Battle Design Fundamentals and Retrospective",
+      "url": "https://www.gdcvault.com/play/1024921/Boss-Up-Boss-Battle-Design"
+    },
+    {
+      "title": "Xbox Wire — Escape Kuro's Clutches",
+      "url": "https://news.xbox.com/en-us/2019/09/20/pre-purchase-ori-and-the-blind-forest-definitive-edition-for-nintendo-switch/"
+    },
+    {
+      "title": "GameFAQs — Shriek",
+      "url": "https://gamefaqs.gamespot.com/xboxone/211254-ori-and-the-will-of-the-wisps/faqs/78217/willows-end"
+    },
+    {
+      "title": "Final Fantasy XIV Online Wiki — Eden's Gate: Inundation",
+      "url": "https://ffxiv.consolegameswiki.com/wiki/Eden%27s_Gate:_Inundation"
+    }
+  ]
+}

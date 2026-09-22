@@ -8,6 +8,7 @@ import {
   activePhaseState,
   attackLockState,
   attackReflectionState,
+  boundaryAttackState,
   counterStanceOutcome,
   counterStanceState,
   blueprintFrame,
@@ -35,8 +36,8 @@ import {
   renderBlueprintThumbnail,
 } from '../lib/blueprint-view.mjs';
 
-test('all 61 promoted lesson animations have distinct rule modes and complete moving frames', () => {
-  assert.equal(BLUEPRINT_MECHANIC_IDS.length, 61);
+test('all 62 promoted lesson animations have distinct rule modes and complete moving frames', () => {
+  assert.equal(BLUEPRINT_MECHANIC_IDS.length, 62);
   const modes = new Set();
   for (const id of BLUEPRINT_MECHANIC_IDS) {
     for (let time = 0; time <= BLUEPRINT_DURATION; time += 0.1) {
@@ -57,7 +58,7 @@ test('all 61 promoted lesson animations have distinct rule modes and complete mo
           assert.ok(Number.isFinite(value), `${id} has an invalid ${primitive.type}`);
     }
   }
-  assert.equal(modes.size, 61);
+  assert.equal(modes.size, 62);
 });
 
 test('every blueprint exposes signal, committed action, and recovery without player teleports', () => {
@@ -79,7 +80,8 @@ test('every blueprint exposes signal, committed action, and recovery without pla
       id !== 'active-phase' &&
       id !== 'recovery' &&
       id !== 'survival-phase' &&
-      id !== 'teleport'
+      id !== 'teleport' &&
+      id !== 'boundary-attack'
     )
       assert.equal(blueprintFrame(id, 3).dangerActive, true, id);
     assert.equal(blueprintFrame(id, 3).playerSafe, true, id);
@@ -158,7 +160,8 @@ test('every damaging promoted animation derives safety from its own active geome
       id !== 'active-phase' &&
       id !== 'recovery' &&
       id !== 'survival-phase' &&
-      id !== 'teleport',
+      id !== 'teleport' &&
+      id !== 'boundary-attack',
   )) {
     const frame = blueprintFrame(id, 3);
     let point = unsafePoints[id];
@@ -1616,4 +1619,48 @@ test('teleport reveals one destination, removes transit collision, and fixes its
   assert.deepEqual(blueprintFrame(id, 0).player, blueprintFrame(id, 6).player);
   assert.deepEqual(blueprintFrame(id, 0).boss, blueprintFrame(id, 6).boss);
   assert.match(renderBlueprintThumbnail(id, 'test-teleport'), /data-blueprint-preview="teleport"/);
+});
+
+test('boundary attack names one edge, crosses its fixed lane, and returns outside the arena', () => {
+  const id = 'boundary-attack';
+  assert.deepEqual([0, 0.8, 1.9, 2.5, 3.15, 4.5].map(boundaryAttackState), [
+    'idle',
+    'edge-signal',
+    'boundary-crossing',
+    'boundary-stagger',
+    'opening',
+    'outer-reset',
+  ]);
+
+  const signal = blueprintFrame(id, 0.9);
+  assert.equal(signal.boundarySignalActive, true);
+  assert.equal(signal.dangerActive, false);
+  assert.ok(signal.primitives[1].opacity > 0, 'the exact boundary source is visible early');
+  assert.ok(signal.primitives[2].opacity > 0, 'the stored crossing lane previews');
+  assert.equal(signal.primitives[3].opacity, 0, 'preview geometry is not active collision');
+
+  const active = blueprintFrame(id, 1.95);
+  assert.equal(active.boundaryCrossingActive, true);
+  assert.equal(active.playerSafe, true);
+  assert.ok(active.primitives[3].opacity > 0.9, 'the same fixed lane becomes solid');
+  assert.equal(blueprintPointSafe(id, 1.95, { x: 300, y: 610 }), false);
+
+  const impact = blueprintFrame(id, 2.28);
+  assert.equal(impact.dangerActive, false);
+  assert.ok(impact.primitives[5].opacity > 0.9, 'wall impact visibly ends the crossing');
+
+  const punish = blueprintFrame(id, 3.15);
+  assert.equal(punish.punishStrike, true);
+  assert.ok(punish.primitives[7].opacity > 0, 'the sword response begins after danger ends');
+
+  const outerRoute = blueprintFrame(id, 4.8);
+  assert.equal(outerRoute.boundarySourceOutside, true);
+  assert.equal(outerRoute.dangerActive, false);
+  assert.ok(outerRoute.primitives[6].opacity > 0, 'the non-damaging outer return is visible');
+  assert.deepEqual(blueprintFrame(id, 0).player, blueprintFrame(id, 6).player);
+  assert.deepEqual(blueprintFrame(id, 0).boss, blueprintFrame(id, 6).boss);
+  assert.match(
+    renderBlueprintThumbnail(id, 'test-boundary-attack'),
+    /data-blueprint-preview="boundary-attack"/,
+  );
 });

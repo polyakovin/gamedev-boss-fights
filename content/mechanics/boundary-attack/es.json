@@ -1,0 +1,134 @@
+{
+  "title": "Ataque desde el límite",
+  "subtitle": "Convierte el borde de la arena en un origen legible, no en una sorpresa invisible.",
+  "variant": "Una runa en el borde izquierdo anuncia un cruce horizontal fijo y una apertura en el muro opuesto",
+  "summary": "Un ataque desde el límite empieza fuera del espacio jugable habitual y entra por una pared, puerta, borde de arena o borde de cámara.",
+  "overview": "El ataque desde el límite incorpora el borde de la arena a la regla de amenaza. Desde 0,55 s, una runa izquierda marca la entrada de Kern y fija un corredor horizontal. Tavi lo abandona antes del cruce de 1,72–2,28 s y solo se acerca cuando Kern golpea el muro opuesto. Señal, cámara, colisión y apertura describen el mismo evento.",
+  "learning": "Implementa el origen exterior, la señal de entrada, el corredor comprometido, el cruce activo, el estado de salida, el apoyo de cámara y la ruta de retorno como una secuencia explícita cuya colisión coincida con la geometría visible.",
+  "category": "Espacio, movimiento y percepción",
+  "readTime": "5 min",
+  "demo": {
+    "title": "Muestra el borde antes de que entre el peligro",
+    "timeline": "Línea temporal del ataque desde el límite",
+    "step": "Estados del ataque desde el límite",
+    "phaseNames": ["Marca el borde de entrada", "Cruza y queda expuesto", "Regresa por fuera"],
+    "phaseDescriptions": [
+      "A los 0,55 s, la runa del límite izquierdo se expande y anticipa un corredor horizontal fijo. Tavi empieza a subir mientras Kern permanece fuera del rectángulo jugable; la señal comunica lado, dirección, anchura y momento de salida.",
+      "Kern cruza el corredor anunciado entre 1,72 y 2,28 s, con colisión corporal activa solo dentro de él. Todo el cuerpo de Tavi ya está fuera. El impacto contra el muro opuesto termina el peligro y deja a Kern expuesto a la espada a los 3,15 s.",
+      "Kern se retira tras el borde derecho, recorre de forma visible la ruta exterior y vuelve al origen izquierdo. Tavi se recoloca con movimiento normal, de modo que el bucle de seis segundos no oculta teletransportes ni giros inexplicables."
+    ],
+    "boss": "Jefe",
+    "player": "Jugador",
+    "danger": "Solo el corredor horizontal sólido inflige daño",
+    "locked": "El lado, la dirección y el corredor quedan fijados al resolverse la runa",
+    "safe": "Saca todo el cuerpo del jugador del corredor anticipado antes de la entrada",
+    "reducedMotion": "La reproducción automática se desactiva con movimiento reducido. Recorre 0,55, 1,72, 2,28, 3,15, 3,75, 4,55 y 5,35 segundos para inspeccionar el contrato del límite.",
+    "diagramDescription": "Un jefe de piedra rúnica espera parcialmente fuera del borde izquierdo de una arena rectangular. Aparecen una runa de límite y un corredor horizontal; el jugador con espada sube, el jefe cruza hasta el muro opuesto y después regresa visiblemente por fuera."
+  },
+  "steps": [
+    {
+      "title": "¿Cómo se identifica el origen invisible?",
+      "body": "Asocia el límite con una señal direccional legible antes de la entrada: runa, sombra, polvo, portal, silueta, audio panorámico o avance de cámara. Debe señalar el borde exacto y diferenciar un corredor de un efecto global. En el ejemplo, la runa izquierda aparece 1,17 s antes de la colisión."
+    },
+    {
+      "title": "¿Cuándo se vuelve peligroso el límite?",
+      "body": "Separa aviso y colisión en estados distintos. El corredor discontinuo solo informa; el sólido está activo entre 1,72 y 2,28 s y usa el mismo eje y anchura guardados. Termina la colisión cuando Kern golpea el muro, no cuando se desvanece el efecto, para que la apertura empiece con un suceso observable."
+    },
+    {
+      "title": "¿Qué debe conservar la cámara?",
+      "body": "El jugador necesita visión y tiempo para localizar el origen, entender la dirección y despejar toda su forma de colisión. Limita o adelanta la cámara para que la señal no quede tras la interfaz o fuera de cuadro. En multijugador, replica un único origen comprometido y señales equivalentes en espacio de mundo."
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "La primera evidencia es el golpe",
+      "body": "Un atacante fuera de pantalla que solo aparece tras el contacto pone a prueba memoria o suerte. Desplaza la señal hacia dentro, alarga el aviso, mueve la cámara o reserva el ataque para un límite visible."
+    },
+    {
+      "title": "Todos los bordes parecen peligrosos",
+      "body": "Un destello ambiguo vuelve inseguro todo el perímetro y elimina el valor de posicionarse. Marca un origen, una dirección y una huella; si pueden activarse varios bordes, anticipa el orden y conserva una respuesta alcanzable."
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "Separa el límite del mundo del límite de pantalla",
+      "body": "El ataque puede nacer tras un muro físico, fuera de la malla de navegación o solo fuera de la cámara actual. Guarda primero el origen en coordenadas de mundo y deriva después su presentación para cada cámara."
+    },
+    {
+      "title": "Reserva espacio de entrada",
+      "body": "Valida el corredor contra paredes, plataformas, invocaciones y apariciones antes del compromiso. No permitas que otro sistema cierre la única salida durante el aviso y decide si el origen puede interrumpirse antes de entrar."
+    },
+    {
+      "title": "Diseña la salida y la recuperación",
+      "body": "Un atacante fuera del área jugable necesita reglas explícitas de objetivo, colisión, recarga y retorno. Aquí el peligro termina en el muro, cabe un golpe de espada y Kern vuelve por una ruta exterior no dañina."
+    },
+    {
+      "title": "Prueba formatos y carga de atención",
+      "body": "Revisa móviles estrechos, pantallas ultraanchas, temblor, zoom, cooperativo local, subtítulos y zonas seguras de interfaz. Comprueba el primer aviso, el último instante de escape, la activación, la salida, interrupción, muerte y unión del bucle."
+    }
+  ],
+  "story": {
+    "title": "El muro de la arena es una puerta rúnica sellada",
+    "body": "Kern carga una runa tras el muro izquierdo, irrumpe por el corredor marcado y queda encajado en el sello opuesto. La arquitectura explica señal, trayectoria fija, apertura por impacto y ruta exterior de retorno."
+  },
+  "adaptation": {
+    "title": "Deja que Tavi responda antes de que entre Kern",
+    "body": "Tavi abandona el corredor con movimiento normal, sin invulnerabilidad ni adivinanzas fuera de pantalla. Tras acabar la colisión, el acercamiento breve al jefe encajado vuelve útil la espada sin convertir el aviso en una oportunidad de ataque."
+  },
+  "distinction": {
+    "title": "Una regla de origen, no solo un ataque ancho",
+    "body": "Un barrido o rayo ancho puede nacer de un jefe visible dentro de la arena. El ataque desde el límite se define por un origen fuera del espacio jugable y por la información que lo proyecta hacia dentro. El desplazamiento forzado mueve el cuadro; el teletransporte no recorre el corredor anunciado."
+  },
+  "lensNotes": [
+    {
+      "id": "telegraphing",
+      "body": "La runa comunica lado, dirección, anchura y salida antes de que Kern entre en el espacio jugable."
+    },
+    {
+      "id": "threat-geometry",
+      "body": "Un corredor horizontal guardado controla tanto el aviso como la colisión activa contra todo el cuerpo de Tavi."
+    },
+    {
+      "id": "dramatic-framing",
+      "body": "El encuadre da peso al borde hostil sin ocultar la ruta segura ni la consecuencia en el muro opuesto."
+    },
+    {
+      "id": "counterplay",
+      "body": "El movimiento normal hacia arriba despeja el cruce y el impacto visible crea una ventana de espada limitada."
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "Ori and the Blind Forest",
+      "boss": "Kuro finale",
+      "screenshot": "https://i.ytimg.com/vi/Kx9DPTIDB_0/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=Kx9DPTIDB_0&t=1s",
+      "body": "Kuro entra repetidamente en la ruta ardiente desde fuera del carril jugable. Su silueta, dirección de vuelo y las coberturas convierten el borde de pantalla en un origen diseñado mientras el avance sigue visible.",
+      "video": "https://www.youtube.com/watch?v=Kx9DPTIDB_0&t=1s",
+      "videoDurationSeconds": 419
+    },
+    {
+      "dimension": "2D",
+      "game": "Ori and the Will of the Wisps",
+      "boss": "Shriek",
+      "screenshot": "https://i.ytimg.com/vi/DvuB8cImPIg/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=DvuB8cImPIg&t=1165s",
+      "body": "Shriek sale de la arena y vuelve en pasadas horizontales. El movimiento oscuro del borde y el vuelo previo al fondo anuncian el origen, separando la advertencia direccional del cruce dañino en primer plano.",
+      "video": "https://www.youtube.com/watch?v=DvuB8cImPIg&t=1165s",
+      "videoDurationSeconds": 2061
+    },
+    {
+      "dimension": "3D",
+      "game": "Final Fantasy XIV",
+      "boss": "Leviathan (Eden's Gate: Inundation)",
+      "screenshot": "https://i.ytimg.com/vi/9H9-GJmVqGE/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=9H9-GJmVqGE&t=170s",
+      "body": "Durante Maelstrom, Leviathan deja de estar disponible y un gran portal exterior marca el origen de una embestida recta. El portal traduce un origen 3D fuera de la arena a una dirección legible por cámara, combinable con peligros del suelo.",
+      "video": "https://www.youtube.com/watch?v=9H9-GJmVqGE&t=170s",
+      "videoDurationSeconds": 248
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

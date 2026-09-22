@@ -1,0 +1,134 @@
+{
+  "title": "Boundary attack",
+  "subtitle": "Turn an arena edge into a readable attack origin instead of an unseen surprise.",
+  "variant": "A left-edge rune announces one fixed horizontal crossing and an opposite-wall opening",
+  "summary": "A boundary attack begins outside the ordinary playable space and enters through a wall, doorway, arena edge, or camera edge.",
+  "overview": "A boundary attack makes the arena edge part of the threat rule. A left rune marks Kern's entry from 0.55 seconds and fixes one horizontal lane. Tavi clears it before the 1.72–2.28 second crossing, then approaches only after Kern strikes the opposite wall. The cue, camera, collision, and opening all refer to the same boundary event.",
+  "learning": "Implement the boundary source, entry cue, committed lane, active crossing, exit state, camera support, and return route as one explicit sequence whose collision matches its visible geometry.",
+  "category": "Space, movement, and perception",
+  "readTime": "5 min",
+  "demo": {
+    "title": "Show the edge before danger enters from it",
+    "timeline": "Boundary attack timeline",
+    "step": "Boundary attack states",
+    "phaseNames": ["Mark the entry edge", "Cross and expose", "Return outside the arena"],
+    "phaseDescriptions": [
+      "At 0.55 s the left boundary rune expands and previews one fixed horizontal corridor. Tavi begins moving upward while Kern remains staged outside the playable rectangle; the warning identifies side, direction, width, and release timing.",
+      "Kern crosses the announced lane from 1.72–2.28 s with body collision active only inside that corridor. Tavi's whole body is already clear. The impact at the opposite wall ends danger and leaves Kern exposed for a sword response at 3.15 s.",
+      "Kern withdraws beyond the right edge, travels visibly around the arena's outer route, and returns to the left source. Tavi resets through ordinary movement, so the six-second loop contains no hidden teleport or unexplained facing change."
+    ],
+    "boss": "Boss",
+    "player": "Player",
+    "danger": "Only the solid horizontal crossing lane deals damage",
+    "locked": "Entry side, direction, and lane are fixed when the boundary rune resolves",
+    "safe": "Move the whole player body beyond the previewed lane before the source enters",
+    "reducedMotion": "Autoplay is disabled by reduced motion. Scrub across 0.55, 1.72, 2.28, 3.15, 3.75, 4.55, and 5.35 seconds to inspect the boundary contract.",
+    "diagramDescription": "A rune-marked stone boss waits partly beyond the left edge of a rectangular arena. A boundary rune and horizontal warning lane appear, the sword-bearing player moves above it, the boss crosses to the opposite wall, and later returns visibly around the outside."
+  },
+  "steps": [
+    {
+      "title": "How is the unseen source identified?",
+      "body": "Pair the boundary with a directional cue that remains readable before the attacker enters: a rune, shadow, dust wake, portal, silhouette, sound pan, or camera lead. The cue must identify the exact edge and distinguish a crossing lane from an arena-wide effect. In the example, the left rune starts 1.17 seconds before collision."
+    },
+    {
+      "title": "When does the boundary become dangerous?",
+      "body": "Keep warning and collision in separate states. The dashed corridor is information only; the solid lane is active from 1.72–2.28 seconds and uses the same stored centerline and width. End collision when Kern hits the opposite wall, not when the effect fades, so the promised opening begins on an observable event."
+    },
+    {
+      "title": "What must the camera preserve?",
+      "body": "The player needs enough view and time to locate the origin, understand direction, and move a full collision shape clear. Clamp or lead the camera so the cue cannot sit behind UI or outside the frame. For multiplayer and split views, replicate one committed source and provide equivalent world-space signals to every participant."
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "The first evidence is the hit",
+      "body": "An off-screen attacker that becomes visible only after contact tests memory or luck rather than spatial reading. Move the signal inward, extend the warning, pan the camera, or reserve the attack for a boundary the player can currently inspect."
+    },
+    {
+      "title": "Every edge is treated as dangerous",
+      "body": "A vague screen flash can make the whole perimeter feel unsafe and erase useful positioning. Mark one source, one direction, and one footprint; if several edges can activate, preview their order and leave a reachable response route."
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "Separate world boundary from screen boundary",
+      "body": "An attack may originate beyond a physical wall, outside the navigation mesh, or merely outside the current camera. Store the world-space source first, then derive presentation for each camera; otherwise camera motion can silently move the perceived attack origin."
+    },
+    {
+      "title": "Reserve entry clearance",
+      "body": "Validate the lane against walls, platforms, summons, and player spawn points before commitment. Do not let another system place an unavoidable hazard in the only exit during the warning, and decide whether the source can be intercepted before it enters."
+    },
+    {
+      "title": "Author exits and recovery",
+      "body": "An attacker that leaves the playable area needs explicit targetability, collision, cooldown, and return rules. The example ends danger at wall impact, permits one sword hit, then shows Kern taking a non-damaging outer route back to the source."
+    },
+    {
+      "title": "Test aspect ratios and attention load",
+      "body": "Inspect narrow phones, ultrawide displays, camera shake, zoom, local co-op, subtitles, and HUD-safe areas. Verify the first warning frame, the last escapable frame, the first active frame, the exit, interruption, death, and loop seam."
+    }
+  ],
+  "story": {
+    "title": "The arena wall is a sealed rune gate",
+    "body": "Kern charges a rune beyond the left wall, breaks through the marked corridor, and lodges in the opposite seal. The same architecture explains the entry signal, the fixed lane, the impact opening, and the outer path used to reset."
+  },
+  "adaptation": {
+    "title": "Let Tavi answer before Kern enters",
+    "body": "Tavi uses ordinary movement to leave the announced corridor, not invulnerability or an off-screen guess. After collision ends, the short approach to the lodged boss makes the sword relevant without turning the warning itself into an attack opportunity."
+  },
+  "distinction": {
+    "title": "An origin rule, not merely a wide attack",
+    "body": "A wide swing or beam may begin from a visible boss inside the arena. A boundary attack is defined by a source outside normal playable space and by the information needed to project that source inward. Forced scrolling moves the frame or arena continuously; teleport relocates without traversing the announced lane."
+  },
+  "lensNotes": [
+    {
+      "id": "telegraphing",
+      "body": "The boundary rune names the entry side, direction, width, and release before Kern crosses into playable space."
+    },
+    {
+      "id": "threat-geometry",
+      "body": "One stored horizontal corridor drives both the warning rectangle and the active collision check against Tavi's full body."
+    },
+    {
+      "id": "dramatic-framing",
+      "body": "The frame gives the hostile edge enough visual weight while preserving the safe route and the opposite-wall consequence."
+    },
+    {
+      "id": "counterplay",
+      "body": "Ordinary upward movement clears the crossing, and the visible wall impact creates a bounded sword opportunity afterward."
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "Ori and the Blind Forest",
+      "boss": "Kuro finale",
+      "screenshot": "https://i.ytimg.com/vi/Kx9DPTIDB_0/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=Kx9DPTIDB_0&t=1s",
+      "body": "Kuro repeatedly enters the burning route from beyond its playable lane. Her silhouette, flight direction, and environmental cover make the edge of the screen an authored attack origin while forward route progress remains visible.",
+      "video": "https://www.youtube.com/watch?v=Kx9DPTIDB_0&t=1s",
+      "videoDurationSeconds": 419
+    },
+    {
+      "dimension": "2D",
+      "game": "Ori and the Will of the Wisps",
+      "boss": "Shriek",
+      "screenshot": "https://i.ytimg.com/vi/DvuB8cImPIg/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=DvuB8cImPIg&t=1165s",
+      "body": "Shriek leaves the arena and returns in horizontal passes. Dark motion at the screen edge and the prior background fly-by communicate which boundary will become the source, separating directional warning from the damaging foreground crossing.",
+      "video": "https://www.youtube.com/watch?v=DvuB8cImPIg&t=1165s",
+      "videoDurationSeconds": 2061
+    },
+    {
+      "dimension": "3D",
+      "game": "Final Fantasy XIV",
+      "boss": "Leviathan (Eden's Gate: Inundation)",
+      "screenshot": "https://i.ytimg.com/vi/9H9-GJmVqGE/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=9H9-GJmVqGE&t=170s",
+      "body": "During Maelstrom, Leviathan becomes unavailable while a large portal outside the platform marks the origin of a straight dive-bomb. The portal translates an off-arena 3D source into a camera-readable direction that can be combined with hazards already on the floor.",
+      "video": "https://www.youtube.com/watch?v=9H9-GJmVqGE&t=170s",
+      "videoDurationSeconds": 248
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

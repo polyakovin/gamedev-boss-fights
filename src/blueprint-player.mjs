@@ -170,6 +170,13 @@ export function initializeBlueprint(widget) {
       widget.dataset.blueprintTeleportFollowUp = String(frame.teleportFollowUpActive);
       widget.dataset.blueprintPunishStrike = String(frame.punishStrike);
     }
+    if (mechanicId === 'boundary-attack') {
+      widget.dataset.blueprintBoundaryAttack = frame.boundaryAttackState;
+      widget.dataset.blueprintBoundarySignal = String(frame.boundarySignalActive);
+      widget.dataset.blueprintBoundaryCrossing = String(frame.boundaryCrossingActive);
+      widget.dataset.blueprintBoundarySourceOutside = String(frame.boundarySourceOutside);
+      widget.dataset.blueprintPunishStrike = String(frame.punishStrike);
+    }
     boss.setAttribute(
       'transform',
       `translate(${frame.boss.x} ${frame.boss.y}) scale(${frame.bossScale})`,

@@ -1,23 +1,19 @@
 import { test, expect } from '@playwright/test';
 
-test('Ori examples appear on WIP mechanics and remain usable on mobile', async ({ page }) => {
+test('Ori examples remain usable on the published boundary lesson and mobile', async ({ page }) => {
   await page.goto('ru/mechanics/boundary-attack/');
 
-  await expect(page.locator('.wip-badge')).toHaveText('WIP');
-  await expect(page.locator('.wip-examples')).toBeVisible();
-  await expect(page.locator('.wip-example-card')).toHaveCount(2);
-  await expect(page.locator('.wip-example-card__game')).toHaveText([
+  await expect(page.locator('.wip-badge, .draft-profile')).toHaveCount(0);
+  await expect(page.locator('.game-example')).toHaveCount(3);
+  await expect(page.locator('.game-example__game')).toHaveText([
     'Ori and the Blind Forest',
     'Ori and the Will of the Wisps',
+    'Final Fantasy XIV',
   ]);
-  await expect(page.locator('.wip-example-card footer a')).toHaveCount(4);
+  await expect(page.locator('.game-example__link')).toHaveCount(3);
 
   await page.setViewportSize({ width: 390, height: 844 });
-  expect(
-    await page
-      .locator('.wip-example-grid')
-      .evaluate((element) => getComputedStyle(element).gridTemplateColumns.split(' ').length),
-  ).toBe(1);
+  await expect(page.locator('.game-example')).toHaveCount(3);
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(
     true,
   );
