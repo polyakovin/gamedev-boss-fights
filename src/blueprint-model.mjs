@@ -373,6 +373,28 @@ const SPECS = {
     laneEnd: [560, 430],
     laneHalfWidth: 22,
   },
+  'attack-lock': {
+    mode: 'attack-lock',
+    boss: [280, 350],
+    player: [430, 620],
+    target: [70, 505],
+    firstTrack: [0.42, 1.18],
+    firstLock: 1.18,
+    firstRelease: [1.72, 2.12],
+    firstRecoveryEnd: 2.48,
+    firstLockPoint: [390, 560],
+    firstEscape: [500, 500],
+    secondSetup: 2.68,
+    secondTrack: [2.86, 3.58],
+    secondLock: 3.58,
+    secondRelease: [4.18, 4.58],
+    recoveryEnd: 5.25,
+    secondStart: [190, 620],
+    secondLockPoint: [180, 560],
+    secondEscape: [70, 505],
+    laneLength: 500,
+    laneHalfWidth: 18,
+  },
   'wide-swing': { mode: 'arc', boss: [280, 310], player: [410, 470], target: [470, 650] },
   lunge: { mode: 'lunge', boss: [170, 290], player: [390, 590], target: [470, 660] },
   grab: { mode: 'grab', boss: [280, 300], player: [390, 485], target: [470, 610] },
@@ -782,6 +804,20 @@ export function windUpState(time) {
   if (t >= spec.heldFrom && t < spec.secondRelease[0]) return 'held-ready';
   if (t >= spec.secondRelease[0] && t < spec.secondRelease[1]) return 'held-release';
   if (t >= spec.secondRelease[1] && t < spec.recoveryEnd) return 'held-recovery';
+  return 'idle';
+}
+
+export function attackLockState(time) {
+  const spec = SPECS['attack-lock'];
+  const t = localTime(time);
+  if (t >= spec.firstTrack[0] && t < spec.firstLock) return 'tracking-first';
+  if (t >= spec.firstLock && t < spec.firstRelease[0]) return 'locked-first';
+  if (t >= spec.firstRelease[0] && t < spec.firstRelease[1]) return 'released-first';
+  if (t >= spec.firstRelease[1] && t < spec.firstRecoveryEnd) return 'recovery-first';
+  if (t >= spec.secondTrack[0] && t < spec.secondLock) return 'tracking-second';
+  if (t >= spec.secondLock && t < spec.secondRelease[0]) return 'locked-second';
+  if (t >= spec.secondRelease[0] && t < spec.secondRelease[1]) return 'released-second';
+  if (t >= spec.secondRelease[1] && t < spec.recoveryEnd) return 'recovery-second';
   return 'idle';
 }
 
@@ -1443,6 +1479,77 @@ function primitivesFor(spec, frame) {
         8,
         '10 8',
       ),
+    ];
+  }
+  if (mode === 'attack-lock') {
+    const state = frame.attackLockState;
+    const tracking = state === 'tracking-first' || state === 'tracking-second';
+    const locked =
+      state === 'locked-first' ||
+      state === 'released-first' ||
+      state === 'recovery-first' ||
+      state === 'locked-second' ||
+      state === 'released-second' ||
+      state === 'recovery-second';
+    const lockFlash = Math.max(
+      strikePulse(frame.time, spec.firstLock, 0.34),
+      strikePulse(frame.time, spec.secondLock, 0.34),
+    );
+    return [
+      line(
+        boss.x,
+        boss.y,
+        frame.attackLockEnd.x,
+        frame.attackLockEnd.y,
+        tracking ? 0.5 : 0,
+        'accent',
+        5,
+        '8 10',
+      ),
+      line(
+        boss.x,
+        boss.y,
+        frame.attackLockEnd.x,
+        frame.attackLockEnd.y,
+        locked && !frame.dangerActive ? 0.72 : 0,
+        'safe',
+        7,
+        '14 8',
+      ),
+      line(
+        boss.x,
+        boss.y,
+        frame.attackLockEnd.x,
+        frame.attackLockEnd.y,
+        frame.dangerActive ? 0.92 : 0,
+        'signal',
+        spec.laneHalfWidth * 2,
+      ),
+      circle(
+        frame.attackLockTarget.x,
+        frame.attackLockTarget.y,
+        28,
+        tracking ? 0.58 : locked ? 0.88 : 0,
+        locked ? 'safe' : 'accent',
+        5,
+        0.05,
+        tracking ? '7 8' : '',
+      ),
+      path(
+        `M ${frame.attackLockTarget.x - 13} ${frame.attackLockTarget.y} L ${frame.attackLockTarget.x + 13} ${frame.attackLockTarget.y} M ${frame.attackLockTarget.x} ${frame.attackLockTarget.y - 13} L ${frame.attackLockTarget.x} ${frame.attackLockTarget.y + 13}`,
+        tracking || locked ? 0.86 : 0,
+        locked ? 'safe' : 'accent',
+        5,
+      ),
+      circle(
+        frame.attackLockTarget.x,
+        frame.attackLockTarget.y,
+        31 + lockFlash * 18,
+        lockFlash,
+        'signal',
+        6,
+      ),
+      circle(boss.x, boss.y, 22, tracking || locked ? 0.88 : 0, 'accent', 5, 0.12),
     ];
   }
   if (mode === 'landing') {
@@ -2699,6 +2806,11 @@ function pointClearsThreat(spec, frame, value, radius = BLUEPRINT_PLAYER_RADIUS)
       distanceToSegment(value, { x: frame.boss.x + 38, y: frame.boss.y }, point(spec.laneEnd)) >
         spec.laneHalfWidth + radius
     );
+  if (mode === 'attack-lock')
+    return (
+      !frame.dangerActive ||
+      distanceToSegment(value, frame.boss, frame.attackLockEnd) > spec.laneHalfWidth + radius
+    );
   if (mode === 'spiral')
     return (
       distanceFromBoss > 52 + radius &&
@@ -2908,6 +3020,7 @@ export function blueprintFrame(id, time) {
     responseProgress = smooth((t - spec.secondWindup[0]) / 0.64);
   else if (spec.mode === 'loadout-adaptation') responseProgress = 0;
   else if (spec.mode === 'wind-up') responseProgress = 0;
+  else if (spec.mode === 'attack-lock') responseProgress = 0;
   else if (spec.mode === 'knockback')
     responseProgress = phase === 0 ? 0 : phase === 1 ? smooth(action) : 1;
   else if (spec.mode === 'target-lock')
@@ -3048,6 +3161,40 @@ export function blueprintFrame(id, time) {
       y: mix(mix(afterShort.y, targetPlayer.y, clearHeld), startPlayer.y, reset),
     };
   }
+  if (spec.mode === 'attack-lock') {
+    const firstTrack = smooth((t - spec.firstTrack[0]) / (spec.firstLock - spec.firstTrack[0]));
+    const firstEscape = smooth((t - spec.firstLock) / 0.45);
+    const secondSetup = smooth(
+      (t - spec.firstRelease[1]) / (spec.secondSetup - spec.firstRelease[1]),
+    );
+    const secondTrack = smooth((t - spec.secondTrack[0]) / (spec.secondLock - spec.secondTrack[0]));
+    const secondEscape = smooth((t - spec.secondLock) / 0.45);
+    const reset = smooth((t - spec.recoveryEnd) / (BLUEPRINT_DURATION - spec.recoveryEnd));
+    const atFirstLock = {
+      x: mix(startPlayer.x, spec.firstLockPoint[0], firstTrack),
+      y: mix(startPlayer.y, spec.firstLockPoint[1], firstTrack),
+    };
+    const afterFirstEscape = {
+      x: mix(atFirstLock.x, spec.firstEscape[0], firstEscape),
+      y: mix(atFirstLock.y, spec.firstEscape[1], firstEscape),
+    };
+    const atSecondStart = {
+      x: mix(afterFirstEscape.x, spec.secondStart[0], secondSetup),
+      y: mix(afterFirstEscape.y, spec.secondStart[1], secondSetup),
+    };
+    const atSecondLock = {
+      x: mix(atSecondStart.x, spec.secondLockPoint[0], secondTrack),
+      y: mix(atSecondStart.y, spec.secondLockPoint[1], secondTrack),
+    };
+    const afterSecondEscape = {
+      x: mix(atSecondLock.x, spec.secondEscape[0], secondEscape),
+      y: mix(atSecondLock.y, spec.secondEscape[1], secondEscape),
+    };
+    player = {
+      x: mix(afterSecondEscape.x, startPlayer.x, reset),
+      y: mix(afterSecondEscape.y, startPlayer.y, reset),
+    };
+  }
   if (spec.mode === 'rotating' && phase === 0) {
     const initialPosition = polar(boss, 255, Math.PI / 3);
     player = {
@@ -3184,7 +3331,12 @@ export function blueprintFrame(id, time) {
                                                   t < spec.firstRelease[1]) ||
                                                 (t >= spec.secondRelease[0] &&
                                                   t < spec.secondRelease[1])
-                                              : phase === 1;
+                                              : spec.mode === 'attack-lock'
+                                                ? (t >= spec.firstRelease[0] &&
+                                                    t < spec.firstRelease[1]) ||
+                                                  (t >= spec.secondRelease[0] &&
+                                                    t < spec.secondRelease[1])
+                                                : phase === 1;
   const frame = {
     id,
     mode: spec.mode,
@@ -3299,9 +3451,14 @@ export function blueprintFrame(id, time) {
                                   strikePulse(t, spec.firstRelease[0], 0.62),
                                   strikePulse(t, spec.secondRelease[0], 0.62),
                                 )
-                              : phase === 1
-                                ? 0.75
-                                : prepare * 0.35,
+                              : spec.mode === 'attack-lock'
+                                ? Math.max(
+                                    strikePulse(t, spec.firstRelease[0], 0.6),
+                                    strikePulse(t, spec.secondRelease[0], 0.6),
+                                  )
+                                : phase === 1
+                                  ? 0.75
+                                  : prepare * 0.35,
       impact:
         spec.mode === 'landing'
           ? pulse(clamp((action - 0.42) / 0.22))
@@ -3329,11 +3486,17 @@ export function blueprintFrame(id, time) {
                                 strikePulse(t, spec.firstRelease[0], 0.28),
                                 strikePulse(t, spec.secondRelease[0], 0.28),
                               )
-                            : spec.mode === 'shockwave' || spec.mode === 'knockback'
-                              ? pulse(action * 3)
-                              : spec.mode === 'chain-explosions'
-                                ? pulse((action * 5) % 1)
-                                : 0,
+                            : spec.mode === 'attack-lock'
+                              ? 0.55 *
+                                Math.max(
+                                  strikePulse(t, spec.firstRelease[0], 0.28),
+                                  strikePulse(t, spec.secondRelease[0], 0.28),
+                                )
+                              : spec.mode === 'shockwave' || spec.mode === 'knockback'
+                                ? pulse(action * 3)
+                                : spec.mode === 'chain-explosions'
+                                  ? pulse((action * 5) % 1)
+                                  : 0,
     }),
     playerMotion: motion({
       gait: (route * responseProgress + route * returnProgress) / 20,
@@ -3459,6 +3622,19 @@ export function blueprintFrame(id, time) {
     frame.windUpBeat = Math.min(3, Math.floor(frame.windUpProgress * 3 + 0.001));
     frame.windUpRelease = dangerActive;
   }
+  if (spec.mode === 'attack-lock') {
+    frame.attackLockState = attackLockState(t);
+    const firstCycle = t < spec.secondSetup;
+    const locked = firstCycle ? t >= spec.firstLock : t >= spec.secondLock;
+    const captured = point(firstCycle ? spec.firstLockPoint : spec.secondLockPoint);
+    frame.attackLockTarget = locked ? captured : player;
+    const angle = Math.atan2(frame.attackLockTarget.y - boss.y, frame.attackLockTarget.x - boss.x);
+    frame.attackLockEnd = polar(boss, spec.laneLength, angle);
+    frame.attackLocked =
+      (t >= spec.firstLock && t < spec.firstRecoveryEnd) ||
+      (t >= spec.secondLock && t < spec.recoveryEnd);
+    frame.attackLockRelease = dangerActive;
+  }
   frame.primitives = primitivesFor(spec, frame);
   frame.playerSafe = pointClearsThreat(spec, frame, player);
   frame.bossLabel = {
@@ -3478,7 +3654,8 @@ export function blueprintFrame(id, time) {
       spec.mode === 'absorption-power-up' ||
       spec.mode === 'interruptible-wind-up' ||
       spec.mode === 'loadout-adaptation' ||
-      spec.mode === 'wind-up'
+      spec.mode === 'wind-up' ||
+      spec.mode === 'attack-lock'
         ? 92
         : -62),
   };

@@ -134,6 +134,14 @@ export function initializeBlueprint(widget) {
       widget.dataset.blueprintWindUpBeat = String(frame.windUpBeat);
       widget.dataset.blueprintWindUpProgress = frame.windUpProgress.toFixed(3);
     }
+    if (mechanicId === 'attack-lock') {
+      widget.dataset.blueprintAttackLock = frame.attackLockRelease
+        ? 'released-danger'
+        : frame.attackLockState;
+      widget.dataset.blueprintAimLocked = String(frame.attackLocked);
+      widget.dataset.blueprintAimX = frame.attackLockTarget.x.toFixed(1);
+      widget.dataset.blueprintAimY = frame.attackLockTarget.y.toFixed(1);
+    }
     boss.setAttribute(
       'transform',
       `translate(${frame.boss.x} ${frame.boss.y}) scale(${frame.bossScale})`,

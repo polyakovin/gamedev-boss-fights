@@ -1,0 +1,138 @@
+{
+  "title": "Attack lock",
+  "subtitle": "Declare the exact moment an attack stops following the player.",
+  "variant": "Two tracking guides captured into two immutable firing directions",
+  "summary": "Attack lock freezes selected attack parameters before release so the player's response remains valid.",
+  "overview": "Attack lock is the transition where chosen attack parameters stop updating. Kern tracks Tavi with a guide, captures one aim point, then fires along that unchanged ray after Tavi moves away; the second pass locks a different direction by the same rule. A visible capture flash makes the last useful movement decision understandable.",
+  "learning": "Define what tracks, the lock boundary, captured data, post-lock delay, active geometry, and reset rule.",
+  "category": "Structure and readability",
+  "readTime": "4 min",
+  "demo": {
+    "title": "Compare tracking before lock with two fixed rays after capture",
+    "timeline": "Attack-lock timeline",
+    "step": "Attack-lock states",
+    "phaseNames": [
+      "Move while aim tracks",
+      "Verify captured directions",
+      "Clear release and reset"
+    ],
+    "phaseDescriptions": [
+      "From 0.42–1.18 s Kern's dotted guide follows Tavi. A flash captures (390, 560); the guide becomes a fixed dashed ray while Tavi moves perpendicular to it. No direction updates are accepted after the lock.",
+      "The first ray is dangerous from 1.72–2.12 s and misses. Tavi repositions left; Kern tracks again from 2.86–3.58 s, then captures (180, 560). The second fixed ray points to a visibly different side of the arena.",
+      "The second ray activates from 4.18–4.58 s without steering toward Tavi's escape. Kern recovers through 5.25 s and discards the captured aim before a new cycle can begin."
+    ],
+    "boss": "Boss",
+    "player": "Player",
+    "danger": "Only the solid locked ray during its release is dangerous",
+    "locked": "The crosshair flash copies one aim point and freezes the complete ray",
+    "safe": "Wait for capture, then clear the fixed ray with ordinary perpendicular movement",
+    "reducedMotion": "Autoplay is disabled by reduced motion. Scrub to compare tracking, capture, fixed release, and reset.",
+    "diagramDescription": "A stone boss aims a dotted guide at a moving sword-bearing player. A crosshair flash captures the first point and turns the guide into a fixed dashed ray. The player moves away before a solid attack fires along the old direction. A second pass tracks from the opposite side, captures another point, and preserves that different ray through release and recovery."
+  },
+  "steps": [
+    {
+      "title": "Which parameters keep updating before lock?",
+      "body": "Whitelist the mutable data: this example updates only an aim point while Kern's origin, lane width, speed, and attack type are already chosen. Sample the player from the authoritative simulation, not rendered interpolation. If lead, destination, facing, or arena anchors also track, expose each dependency and test them independently."
+    },
+    {
+      "title": "What event captures the attack?",
+      "body": "At 1.18 or 3.58 s, copy the aim point into immutable attack state and emit one visible flash. The guide, fixed preview, active lane, boss facing, replay, and network message must read that same snapshot. Define event order for movement and lock on the same frame so local play, rollback, and replays agree."
+    },
+    {
+      "title": "Is there useful time after lock?",
+      "body": "Tavi needs the post-lock interval to act on the commitment: 0.54 s before the first release and 0.60 s before the second. Measure recognition, input, acceleration, and full-body clearance perpendicular to the captured ray. A lock that occurs at impact does not create counterplay even when its marker is visually clear."
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "The visual ray locks but collision keeps tracking",
+      "body": "Late gameplay steering invalidates the response promised by the frozen guide. Store one snapshot, derive preview and collision from it, and assert that the ray endpoint remains identical throughout delay and release while the player position changes."
+    },
+    {
+      "title": "Everything locks at one undocumented moment",
+      "body": "Aim, destination, attack choice, speed, and damage do not have to share a boundary. Hiding them behind one vague flag makes tuning and bugs opaque. Name each captured field, keep unrelated values live only when intended, and communicate every change that alters the player's answer."
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "Snapshot values, not object references",
+      "body": "Copy coordinates and chosen parameters into the pending attack. Do not retain a live player transform, target component, or mutable path node. Serialization, seeking, rollback, and deterministic tests should reconstruct the same ray from the stored snapshot alone."
+    },
+    {
+      "title": "Use one lock event across disciplines",
+      "body": "Gameplay freezes the aim, animation settles the pose, audio clicks, effects close the crosshair, and UI changes the guide pattern on one event. Offset presentation only deliberately; never let a cosmetic flash imply a later or earlier gameplay boundary."
+    },
+    {
+      "title": "Tune delay separately from tracking",
+      "body": "Tracking duration controls how long movement influences the attack; post-lock delay controls how long the player has to exploit commitment. Adjust them separately, then test the shortest legal delay at close range and the fastest legal tracking against abrupt direction changes."
+    },
+    {
+      "title": "Reset ownership explicitly",
+      "body": "Keep the captured point through the whole active interval and recovery, then clear it once. Check interruption, phase changes, death, target loss, multiplayer retargeting, pause, slow motion, rollback, and a new attack queued before the previous snapshot is released."
+    }
+  ],
+  "story": {
+    "title": "A stone sight that crystallizes one direction",
+    "body": "Kern's eye projects a loose dotted ray that follows Tavi. At capture, the crosshair hardens and the ray becomes a rigid rune seam through the floor. Kern releases force through that seam instead of chasing the new position; a second seam proves the stored direction belongs to each attack instance."
+  },
+  "adaptation": {
+    "title": "Give Tavi a movement decision after commitment",
+    "body": "Tavi can influence the guide before capture, then uses ordinary perpendicular movement after it. Faster movement gains margin but does not change the rule. If a game offers dashes, blocks, cover, or decoys, keep their interaction with the snapshot explicit rather than silently retargeting the ray."
+  },
+  "distinction": {
+    "title": "A state boundary, not a persistent target marker",
+    "body": "Target lock identifies or follows an entity; source tracking describes an emitter turning toward a target. Attack lock is the moment selected attack data becomes immutable. Predictive aiming may calculate a future point, but it still needs a declared lock boundary before the committed action resolves."
+  },
+  "lensNotes": [
+    {
+      "id": "telegraphing",
+      "body": "The dotted guide follows live aim, while the flash and dashed ray distinguish the captured state before danger."
+    },
+    {
+      "id": "commitment",
+      "body": "The stored aim point and ray endpoint remain unchanged through delay and release even as Tavi moves."
+    },
+    {
+      "id": "counterplay",
+      "body": "A measured post-lock delay lets ordinary perpendicular movement clear the complete active lane."
+    },
+    {
+      "id": "rule-exception",
+      "body": "Document exactly which fields freeze, same-frame ordering, and the events allowed to discard or replace a snapshot."
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "Hollow Knight",
+      "boss": "Hornet Protector",
+      "video": "https://www.youtube.com/watch?v=rwZmf4u366o&t=276s",
+      "videoDurationSeconds": 2832,
+      "screenshot": "https://i.ytimg.com/vi/rwZmf4u366o/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=rwZmf4u366o&t=276s",
+      "body": "Hornet's needle throw commits to one horizontal route before the projectile crosses the arena and returns. The side view makes it easy to inspect whether player movement after release can bend the route or only changes clearance from the stored line."
+    },
+    {
+      "dimension": "3D",
+      "game": "Returnal",
+      "boss": "Phrike",
+      "video": "https://www.youtube.com/watch?v=L1GZvUb5uoY&t=30s",
+      "videoDurationSeconds": 310,
+      "screenshot": "https://i.ytimg.com/vi/L1GZvUb5uoY/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=L1GZvUb5uoY&t=30s",
+      "body": "Phrike's luminous ranged releases preserve readable origins and trajectories while the player strafes through a 3D camera. The encounter is useful for comparing live facing during preparation with projectile paths that no longer inherit later target movement."
+    },
+    {
+      "dimension": "3D",
+      "game": "Elden Ring",
+      "boss": "Margit, the Fell Omen",
+      "video": "https://www.youtube.com/watch?v=m60ucpQggJ0&t=131s",
+      "videoDurationSeconds": 389,
+      "screenshot": "https://i.ytimg.com/vi/m60ucpQggJ0/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=m60ucpQggJ0&t=131s",
+      "body": "Margit's airborne hammer attack separates a long visible preparation from the committed landing. Camera perspective and player motion make the chosen destination valuable to inspect: once committed, the landing must remain stable enough for the escape to stay meaningful."
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

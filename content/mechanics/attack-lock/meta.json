@@ -1,0 +1,24 @@
+{
+  "id": "attack-lock",
+  "number": 63,
+  "published": true,
+  "sourceLocale": "en",
+  "contentVersion": 1,
+  "animation": "attack-lock",
+  "lenses": ["telegraphing", "commitment", "counterplay", "rule-exception"],
+  "related": ["target-lock", "predictive-aiming", "source-tracking"],
+  "sources": [
+    {
+      "title": "Designer article · Mike Stout — aim, wind-up, and telegraphing",
+      "url": "https://www.gamedeveloper.com/design/enemy-attacks-and-telegraphing"
+    },
+    {
+      "title": "Developer talk · Rebecca Vessal — modular boss maneuver timing",
+      "url": "https://www.gdcvault.com/play/1028927/AI-Summit-Crafting-Epic-Boss"
+    },
+    {
+      "title": "Boss Up: Boss Battle Design · GDC Vault",
+      "url": "https://www.gdcvault.com/play/1024921/Boss-Up-Boss-Battle-Design"
+    }
+  ]
+}

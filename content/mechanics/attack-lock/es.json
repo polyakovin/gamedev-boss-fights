@@ -1,0 +1,138 @@
+{
+  "title": "Bloqueo del ataque",
+  "subtitle": "Declara el momento exacto en que el ataque deja de seguir al jugador.",
+  "variant": "Dos guías móviles capturadas como direcciones de disparo inmutables",
+  "summary": "El bloqueo congela parámetros del ataque antes de salir para que la respuesta del jugador siga siendo válida.",
+  "overview": "El bloqueo del ataque es la transición en que los parámetros elegidos dejan de actualizarse. Kern sigue a Tavi con una guía, captura un punto y dispara por ese rayo sin cambiarlo cuando Tavi se aparta; la segunda pasada fija otra dirección con la misma regla. Un destello muestra la última decisión útil de movimiento.",
+  "learning": "Define qué sigue al jugador, el límite de bloqueo, los datos capturados, la demora, la geometría activa y el reinicio.",
+  "category": "Estructura y legibilidad",
+  "readTime": "4 min",
+  "demo": {
+    "title": "Compara el seguimiento previo con dos rayos fijos tras la captura",
+    "timeline": "Línea temporal del bloqueo",
+    "step": "Estados de bloqueo",
+    "phaseNames": [
+      "Moverse mientras apunta",
+      "Verificar direcciones capturadas",
+      "Despejar y reiniciar"
+    ],
+    "phaseDescriptions": [
+      "De 0,42 a 1,18 s la guía punteada de Kern sigue a Tavi. Un destello captura (390, 560); se vuelve un rayo fijo mientras Tavi cruza perpendicularmente. La dirección ya no se actualiza.",
+      "El primer rayo es peligroso de 1,72 a 2,12 s. Tavi pasa a la izquierda; Kern sigue de 2,86 a 3,58 s y captura (180, 560). El segundo rayo apunta a otro lado visible de la arena.",
+      "El segundo rayo se activa de 4,18 a 4,58 s sin perseguir la salida de Tavi. Kern se recupera hasta 5,25 s y descarta el punto antes del nuevo ciclo."
+    ],
+    "boss": "Jefe",
+    "player": "Jugador",
+    "danger": "Solo el rayo sólido bloqueado durante la salida es peligroso",
+    "locked": "El destello copia un punto y congela el rayo completo",
+    "safe": "Espera la captura y cruza perpendicularmente el rayo fijo con movimiento normal",
+    "reducedMotion": "La reproducción automática está desactivada por movimiento reducido. Usa la barra para comparar seguimiento, captura, salida y reinicio.",
+    "diagramDescription": "Un jefe de piedra apunta una guía punteada a un jugador móvil con espada. Un destello captura el punto y convierte la guía en un rayo fijo. El jugador se aparta antes de que una línea sólida dispare en la dirección antigua. Una segunda pasada captura otro punto y conserva ese nuevo rayo."
+  },
+  "steps": [
+    {
+      "title": "¿Qué parámetros siguen actualizándose antes del bloqueo?",
+      "body": "Limita los datos mutables: aquí solo cambia el punto de mira; origen, ancho, velocidad y tipo ya están elegidos. Lee al jugador de la simulación autoritativa. Si también siguen la predicción, destino, orientación o anclas, expón y prueba cada dependencia."
+    },
+    {
+      "title": "¿Qué evento captura el ataque?",
+      "body": "A 1,18 o 3,58 s copia el punto a un estado inmutable y emite un destello. Guía, vista previa, carril activo, pose, repetición y red deben leer la misma instantánea. Define el orden entre movimiento y bloqueo en el mismo fotograma."
+    },
+    {
+      "title": "¿Queda tiempo útil después del bloqueo?",
+      "body": "Tavi dispone de 0,54 s antes de la primera salida y 0,60 s antes de la segunda. Mide reconocimiento, entrada, aceleración y despeje corporal perpendicular. Bloquear al impactar no crea contrajuego aunque el marcador sea claro."
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "El rayo visual se fija pero la colisión sigue",
+      "body": "La corrección tardía invalida la respuesta prometida. Guarda una instantánea, deriva de ella vista previa y colisión y comprueba que el extremo no cambia durante demora y salida aunque el jugador se mueva."
+    },
+    {
+      "title": "Todo se bloquea en un instante no documentado",
+      "body": "Mira, destino, elección, velocidad y daño no necesitan compartir límite. Nombra cada campo capturado, deja vivos otros valores solo a propósito y comunica todo cambio que altere la respuesta."
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "Captura valores, no referencias",
+      "body": "Copia coordenadas y parámetros en el ataque pendiente. No guardes un transform vivo ni un nodo mutable. Serialización, búsqueda, rollback y pruebas deben reconstruir el mismo rayo solo desde la instantánea."
+    },
+    {
+      "title": "Usa un evento de bloqueo común",
+      "body": "La lógica congela, la animación planta la pose, el audio hace clic, el efecto cierra la mira y la guía cambia de patrón en un evento. No dejes que un destello cosmético mienta sobre el límite jugable."
+    },
+    {
+      "title": "Ajusta demora y seguimiento por separado",
+      "body": "El seguimiento define cuánto influye el movimiento; la demora define cuánto tiempo hay para explotar el compromiso. Prueba la demora mínima de cerca y el seguimiento más veloz contra cambios bruscos."
+    },
+    {
+      "title": "Reinicia la propiedad de forma explícita",
+      "body": "Conserva el punto durante actividad y recuperación y bórralo una vez. Prueba interrupción, fase, muerte, pérdida de objetivo, reasignación multijugador, pausa, cámara lenta, rollback y ataques en cola."
+    }
+  ],
+  "story": {
+    "title": "Una mira de piedra cristaliza una dirección",
+    "body": "El ojo de Kern sigue a Tavi con un rayo suelto. En la captura la mira se endurece y el rayo se vuelve una costura rúnica rígida. Kern descarga por esa costura sin perseguir la posición nueva; una segunda costura demuestra que cada ataque posee su dirección."
+  },
+  "adaptation": {
+    "title": "Da a Tavi una decisión tras el compromiso",
+    "body": "Tavi influye la guía antes de capturar y luego usa movimiento perpendicular normal. La velocidad añade margen sin cambiar la regla. Declara cómo interactúan carrera, bloqueo, cobertura o señuelos con la instantánea sin redirigirla en secreto."
+  },
+  "distinction": {
+    "title": "Un límite de estado, no un marcador persistente",
+    "body": "El bloqueo de objetivo identifica o sigue una entidad; el seguimiento de fuente gira un emisor. El bloqueo del ataque es el momento en que datos elegidos se vuelven inmutables. La predicción también necesita este límite antes de resolver."
+  },
+  "lensNotes": [
+    {
+      "id": "telegraphing",
+      "body": "La guía punteada sigue la mira viva; destello y rayo discontinuo distinguen la captura antes del peligro."
+    },
+    {
+      "id": "commitment",
+      "body": "El punto y extremo guardados no cambian durante demora y salida aunque Tavi se mueva."
+    },
+    {
+      "id": "counterplay",
+      "body": "La demora medida deja despejar todo el carril con movimiento perpendicular normal."
+    },
+    {
+      "id": "rule-exception",
+      "body": "Documenta campos congelados, orden del mismo fotograma y eventos que descartan o sustituyen la instantánea."
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "Hollow Knight",
+      "boss": "Hornet Protector",
+      "video": "https://www.youtube.com/watch?v=rwZmf4u366o&t=276s",
+      "videoDurationSeconds": 2832,
+      "screenshot": "https://i.ytimg.com/vi/rwZmf4u366o/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=rwZmf4u366o&t=276s",
+      "body": "La aguja de Hornet se compromete con una ruta horizontal antes de cruzar y volver. La vista lateral permite ver si el movimiento posterior curva la ruta o solo cambia la separación respecto a la línea guardada."
+    },
+    {
+      "dimension": "3D",
+      "game": "Returnal",
+      "boss": "Phrike",
+      "video": "https://www.youtube.com/watch?v=L1GZvUb5uoY&t=30s",
+      "videoDurationSeconds": 310,
+      "screenshot": "https://i.ytimg.com/vi/L1GZvUb5uoY/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=L1GZvUb5uoY&t=30s",
+      "body": "Los disparos luminosos de Phrike conservan orígenes y trayectorias legibles mientras el jugador se desplaza en 3D. Sirven para comparar orientación viva durante preparación con proyectiles que ya no heredan movimiento tardío."
+    },
+    {
+      "dimension": "3D",
+      "game": "Elden Ring",
+      "boss": "Margit, the Fell Omen",
+      "video": "https://www.youtube.com/watch?v=m60ucpQggJ0&t=131s",
+      "videoDurationSeconds": 389,
+      "screenshot": "https://i.ytimg.com/vi/m60ucpQggJ0/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=m60ucpQggJ0&t=131s",
+      "body": "El martillazo aéreo de Margit separa una preparación larga de un aterrizaje comprometido. Cámara y movimiento hacen visible por qué el destino debe quedar estable para que escapar conserve sentido."
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

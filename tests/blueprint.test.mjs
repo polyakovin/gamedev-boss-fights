@@ -5,6 +5,7 @@ import {
   BLUEPRINT_MECHANIC_IDS,
   absorptionCharge,
   absorptionOutcome,
+  attackLockState,
   attackReflectionState,
   counterStanceOutcome,
   counterStanceState,
@@ -30,8 +31,8 @@ import {
   renderBlueprintThumbnail,
 } from '../lib/blueprint-view.mjs';
 
-test('all 56 promoted lesson animations have distinct rule modes and complete moving frames', () => {
-  assert.equal(BLUEPRINT_MECHANIC_IDS.length, 56);
+test('all 57 promoted lesson animations have distinct rule modes and complete moving frames', () => {
+  assert.equal(BLUEPRINT_MECHANIC_IDS.length, 57);
   const modes = new Set();
   for (const id of BLUEPRINT_MECHANIC_IDS) {
     for (let time = 0; time <= BLUEPRINT_DURATION; time += 0.1) {
@@ -52,7 +53,7 @@ test('all 56 promoted lesson animations have distinct rule modes and complete mo
           assert.ok(Number.isFinite(value), `${id} has an invalid ${primitive.type}`);
     }
   }
-  assert.equal(modes.size, 56);
+  assert.equal(modes.size, 57);
 });
 
 test('every blueprint exposes signal, committed action, and recovery without player teleports', () => {
@@ -69,7 +70,8 @@ test('every blueprint exposes signal, committed action, and recovery without pla
       id !== 'absorption-power-up' &&
       id !== 'interruptible-wind-up' &&
       id !== 'loadout-adaptation' &&
-      id !== 'wind-up'
+      id !== 'wind-up' &&
+      id !== 'attack-lock'
     )
       assert.equal(blueprintFrame(id, 3).dangerActive, true, id);
     assert.equal(blueprintFrame(id, 3).playerSafe, true, id);
@@ -143,7 +145,8 @@ test('every damaging promoted animation derives safety from its own active geome
       id !== 'absorption-power-up' &&
       id !== 'interruptible-wind-up' &&
       id !== 'loadout-adaptation' &&
-      id !== 'wind-up',
+      id !== 'wind-up' &&
+      id !== 'attack-lock',
   )) {
     const frame = blueprintFrame(id, 3);
     let point = unsafePoints[id];
@@ -1366,4 +1369,50 @@ test('wind-up exposes readable buildup beats before both fixed release windows',
   assert.equal(secondRelease.playerSafe, true);
   assert.equal(blueprintPointSafe(id, 4.45, { x: 450, y: 430 }), false);
   assert.match(renderBlueprintThumbnail(id, 'test-wind-up'), /data-blueprint-preview="wind-up"/);
+});
+
+test('attack lock captures a moving aim point and preserves it through each release', () => {
+  const id = 'attack-lock';
+  assert.deepEqual([0, 0.8, 1.3, 1.9, 2.3, 3.1, 3.8, 4.35, 4.9, 5.6].map(attackLockState), [
+    'idle',
+    'tracking-first',
+    'locked-first',
+    'released-first',
+    'recovery-first',
+    'tracking-second',
+    'locked-second',
+    'released-second',
+    'recovery-second',
+    'idle',
+  ]);
+
+  const tracking = blueprintFrame(id, 0.8);
+  assert.equal(tracking.attackLocked, false);
+  assert.deepEqual(tracking.attackLockTarget, tracking.player);
+  assert.ok(tracking.primitives[0].opacity > 0, 'the guide follows Tavi before lock');
+
+  const firstLock = blueprintFrame(id, 1.3);
+  assert.equal(firstLock.attackLocked, true);
+  assert.deepEqual(firstLock.attackLockTarget, { x: 390, y: 560 });
+  assert.ok(firstLock.primitives[1].opacity > 0, 'the captured ray replaces the tracking guide');
+  assert.deepEqual(firstLock.attackLockEnd, blueprintFrame(id, 1.6).attackLockEnd);
+  assert.notDeepEqual(firstLock.player, blueprintFrame(id, 1.6).player);
+
+  const firstRelease = blueprintFrame(id, 1.9);
+  assert.equal(firstRelease.attackLockRelease, true);
+  assert.equal(firstRelease.playerSafe, true);
+  assert.equal(blueprintPointSafe(id, 1.9, firstRelease.attackLockTarget), false);
+
+  const secondLock = blueprintFrame(id, 3.8);
+  assert.deepEqual(secondLock.attackLockTarget, { x: 180, y: 560 });
+  assert.deepEqual(secondLock.attackLockEnd, blueprintFrame(id, 4.1).attackLockEnd);
+  assert.notDeepEqual(firstLock.attackLockEnd, secondLock.attackLockEnd);
+
+  const secondRelease = blueprintFrame(id, 4.35);
+  assert.equal(secondRelease.attackLockState, 'released-second');
+  assert.equal(secondRelease.playerSafe, true);
+  assert.match(
+    renderBlueprintThumbnail(id, 'test-attack-lock'),
+    /data-blueprint-preview="attack-lock"/,
+  );
 });

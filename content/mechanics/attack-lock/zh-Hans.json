@@ -1,0 +1,122 @@
+{
+  "title": "攻击锁定",
+  "subtitle": "声明攻击停止跟随玩家的确切时刻。",
+  "variant": "两次实时引导分别捕获为不可变射击方向",
+  "summary": "攻击锁定在释放前冻结选定参数，使玩家的回应保持有效。",
+  "overview": "攻击锁定是选定参数停止更新的状态转换。Kern用引导线跟随Tavi，捕获一点，并在Tavi离开后沿不变射线释放；第二轮以同一规则锁定另一个方向。可见捕获闪光说明最后一个有效移动决定。",
+  "learning": "定义跟随字段、锁定边界、捕获数据、锁后延迟、有效几何和重置规则。",
+  "category": "结构与可读性",
+  "readTime": "4分钟",
+  "demo": {
+    "title": "比较锁定前的跟随与捕获后的两条固定射线",
+    "timeline": "攻击锁定时间轴",
+    "step": "攻击锁定状态",
+    "phaseNames": ["在瞄准跟随时移动", "验证捕获方向", "离开释放并重置"],
+    "phaseDescriptions": [
+      "0.42至1.18秒Kern的点状引导跟随Tavi。闪光捕获(390, 560)，引导变成固定虚线，Tavi横向离开。锁定后方向不再更新。",
+      "第一条射线在1.72至2.12秒危险并落空。Tavi移到左侧；Kern从2.86至3.58秒再次跟随，并捕获(180, 560)。第二条射线明显指向竞技场另一侧。",
+      "第二条射线在4.18至4.58秒启动，不会转向Tavi的逃生路线。Kern恢复至5.25秒，并在新循环前丢弃捕获点。"
+    ],
+    "boss": "Boss",
+    "player": "玩家",
+    "danger": "只有释放期间的实线锁定射线危险",
+    "locked": "准星闪光复制一点并冻结整条射线",
+    "safe": "等待捕获，再用普通垂直移动离开固定射线",
+    "reducedMotion": "减少动态效果时自动播放关闭。拖动时间轴比较跟随、捕获、固定释放与重置。",
+    "diagramDescription": "石头Boss用点状引导瞄准移动的持剑玩家。准星闪光捕获第一点并把引导变为固定射线。玩家离开后，实线攻击仍沿旧方向释放。第二轮从另一侧捕获新点，并保持该射线直到释放与恢复。"
+  },
+  "steps": [
+    {
+      "title": "锁定前哪些参数持续更新？",
+      "body": "限制可变数据：本例只更新瞄准点，起点、宽度、速度和攻击类型已经选择。读取权威模拟而非渲染插值。若预判、目的地、朝向或场景锚点也跟随，应分别展示并测试。"
+    },
+    {
+      "title": "哪个事件捕获攻击？",
+      "body": "在1.18或3.58秒把瞄准点复制进不可变攻击状态并发出一次闪光。引导、预览、有效路线、Boss朝向、回放和网络必须读取同一快照。定义同帧移动与锁定的顺序。"
+    },
+    {
+      "title": "锁定后是否还有可用时间？",
+      "body": "Tavi在第一次释放前有0.54秒，第二次前有0.60秒。计入识别、输入、加速和全身垂直净空。若锁定发生在命中时，即使标记清楚也没有反制。"
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "视觉射线锁定但碰撞仍跟随",
+      "body": "游戏逻辑晚期转向会破坏冻结引导承诺的回应。保存一个快照，从中生成预览与碰撞，并断言玩家移动时射线末端在延迟和释放期间保持相同。"
+    },
+    {
+      "title": "所有内容在未说明的同一时刻锁定",
+      "body": "瞄准、地点、攻击选择、速度和伤害不必共用边界。命名每个捕获字段，其他值只在有意时保持实时，并沟通任何改变玩家回应的变化。"
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "保存值而不是引用",
+      "body": "把坐标和参数复制进待发攻击，不保留实时玩家变换或可变路径节点。序列化、拖动、回滚和确定性测试应只用快照重建同一射线。"
+    },
+    {
+      "title": "跨专业使用一个锁定事件",
+      "body": "逻辑冻结瞄准，动画稳定姿势，音频点击，效果闭合准星，界面切换线型，都由一个事件触发。表现偏移必须有意，不能让闪光谎报逻辑边界。"
+    },
+    {
+      "title": "分别调整延迟与跟随",
+      "body": "跟随时长决定移动影响攻击多久；锁后延迟决定利用承诺的时间。测试近距离最短延迟，以及最快跟随面对突然转向。"
+    },
+    {
+      "title": "明确重置快照所有权",
+      "body": "在整个有效期和恢复期保留捕获点，然后只清除一次。测试中断、阶段、死亡、失去目标、多人改目标、暂停、慢动作、回滚和新攻击排队。"
+    }
+  ],
+  "story": {
+    "title": "石头准镜把一个方向结晶",
+    "body": "Kern的眼睛用松散点状射线跟随Tavi。捕获时准星硬化，射线成为地面的刚性符文缝。Kern沿缝释放而不追逐新位置；第二条缝证明方向属于每次攻击实例。"
+  },
+  "adaptation": {
+    "title": "给Tavi一个承诺后的移动决定",
+    "body": "Tavi在捕获前影响引导，捕获后用普通垂直移动。更快移动增加余量但不改变规则。若游戏有冲刺、格挡、掩体或诱饵，应明确它们与快照的关系，不能暗中改向。"
+  },
+  "distinction": {
+    "title": "状态边界，不是持续目标标记",
+    "body": "目标锁定识别或跟随实体；来源跟踪让发射器朝向目标。攻击锁定是选定攻击数据变得不可变的时刻。预判瞄准可计算未来点，但在行动结算前仍需要声明锁定边界。"
+  },
+  "lensNotes": [
+    { "id": "telegraphing", "body": "点状引导跟随实时瞄准，闪光与虚线射线在危险前区分捕获状态。" },
+    { "id": "commitment", "body": "保存的点与射线末端在延迟和释放中保持不变，即使Tavi移动。" },
+    { "id": "counterplay", "body": "测量后的锁后延迟让普通垂直移动清除完整有效路线。" },
+    { "id": "rule-exception", "body": "记录冻结字段、同帧顺序以及可丢弃或替换快照的事件。" }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "Hollow Knight",
+      "boss": "Hornet Protector",
+      "video": "https://www.youtube.com/watch?v=rwZmf4u366o&t=276s",
+      "videoDurationSeconds": 2832,
+      "screenshot": "https://i.ytimg.com/vi/rwZmf4u366o/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=rwZmf4u366o&t=276s",
+      "body": "Hornet的飞针在穿越并返回前承诺一条水平路线。侧视图便于观察释放后玩家移动是弯曲路线，还是只改变与已保存直线的距离。"
+    },
+    {
+      "dimension": "3D",
+      "game": "Returnal",
+      "boss": "Phrike",
+      "video": "https://www.youtube.com/watch?v=L1GZvUb5uoY&t=30s",
+      "videoDurationSeconds": 310,
+      "screenshot": "https://i.ytimg.com/vi/L1GZvUb5uoY/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=L1GZvUb5uoY&t=30s",
+      "body": "Phrike的发光远程攻击在玩家横移与3D镜头中保持清晰起点和轨迹，可比较准备期实时朝向与不再继承后续目标移动的弹道。"
+    },
+    {
+      "dimension": "3D",
+      "game": "Elden Ring",
+      "boss": "Margit, the Fell Omen",
+      "video": "https://www.youtube.com/watch?v=m60ucpQggJ0&t=131s",
+      "videoDurationSeconds": 389,
+      "screenshot": "https://i.ytimg.com/vi/m60ucpQggJ0/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=m60ucpQggJ0&t=131s",
+      "body": "Margit的空中锤击把长准备与承诺的落点分开。镜头和移动强调：一旦锁定，落点必须足够稳定，逃生才有意义。"
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}
