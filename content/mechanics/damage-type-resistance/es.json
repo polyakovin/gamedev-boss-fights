@@ -1,0 +1,134 @@
+{
+  "title": "Resistencia a un tipo de daño",
+  "subtitle": "Un golpe reducido enseña la regla sin eliminar una alternativa útil.",
+  "variant": "Resistencia constante al corte con estocada disponible",
+  "summary": "El mismo cuerpo recibe menos daño de un corte que de una estocada; ambos golpes conectan.",
+  "overview": "La resistencia a un tipo de daño modifica un impacto por su tipo, no por el lugar ni el momento. El jefe reduce el corte de espada a una quinta parte del valor base, mientras que una estocada al mismo punto conserva el daño completo. Reacciones diferentes y barras comparables muestran la regla sin convertir el golpe reducido en un fallo.",
+  "learning": "Ajusta juntos el tipo resistido, el multiplicador, la alternativa, la respuesta visual y la duración del combate.",
+  "category": "Defensa",
+  "readTime": "4 min",
+  "demo": {
+    "title": "Compara dos golpes de espada",
+    "timeline": "Cronología de resistencia",
+    "step": "Fases de la comparación",
+    "phaseNames": ["Mostrar la resistencia", "Comparar dos impactos", "Reiniciar la comparación"],
+    "phaseDescriptions": [
+      "Las runas de Kern indican resistencia permanente al corte. Tavi se acerca con la misma espada; ambas barras empiezan vacías.",
+      "A los 2,05 s un corte golpea el torso, pero 100 puntos base producen 20. A los 3,55 s una estocada al mismo sitio produce 100; las dos barras quedan juntas.",
+      "Los resultados siguen visibles mientras ambos se recuperan. La resistencia no desaparece: solo se reinician las marcas comparativas."
+    ],
+    "boss": "Jefe",
+    "player": "Jugador",
+    "danger": "El corte se reduce, pero no se anula",
+    "locked": "El jefe y el punto de impacto son idénticos en ambos golpes",
+    "safe": "Una estocada con la misma espada conserva el daño normal",
+    "reducedMotion": "Con movimiento reducido se desactiva la reproducción automática. Usa el control temporal para inspeccionar cada golpe.",
+    "diagramDescription": "Un jefe de piedra rodeado de runas permanece quieto mientras se acerca la figura con espada. Un corte amplio golpea el torso con una reacción pequeña y llena una quinta parte de la primera barra. Una estocada recta llega al mismo punto, causa una reacción mayor y llena la segunda barra. Los dos resultados permanecen visibles hasta el reinicio."
+  },
+  "steps": [
+    {
+      "title": "¿Qué cambia al cambiar el tipo de daño?",
+      "body": "Mantén iguales objetivo, daño base, punto de impacto y alcance. Aplica 0,2 solo al corte: un golpe de 100 se convierte en 20; una estocada de 100 sigue siendo 100. Calcula por separado los componentes de ataques mixtos."
+    },
+    {
+      "title": "¿Se entiende que el golpe reducido conectó?",
+      "body": "Ambos ataques deben tocar al jefe de forma visible. El corte de los 2,05 s produce una pequeña astilla y una reacción breve; la estocada de los 3,55 s causa más impacto y tambaleo. Conserva ambos resultados juntos para que el daño bajo no parezca un fallo de colisión."
+    },
+    {
+      "title": "¿Existe una alternativa útil?",
+      "body": "Tavi usa otra acción con la misma espada, desde el mismo alcance y hacia el mismo objetivo. Comprueba el repertorio real del jugador. Si no hay alternativa, mantén viable la opción reducida o presenta antes una nueva respuesta accesible."
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "La resistencia parece inmunidad oculta",
+      "body": "Una reducción del 80 % puede parecer un fallo si el jefe no reacciona y la vida apenas cambia. Mantén el contacto y un resultado distinto de cero; enseña la inmunidad total como regla separada."
+    },
+    {
+      "title": "La comparación cambia varias variables",
+      "body": "Si el segundo golpe alcanza un punto débil, recibe un crítico o llega durante la recuperación, su cifra mayor ya no demuestra resistencia al tipo. Compara primero el mismo daño base en el mismo sitio."
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "Haz comprobable la proporción",
+      "body": "Aquí el multiplicador de corte es 0,2 y el de estocada, 1,0. Las barras registran 20 y 100 sobre una base de 100. Ajusta la diferencia en pruebas hasta que sea clara sin inutilizar el corte."
+    },
+    {
+      "title": "Separa contacto y daño",
+      "body": "Ambos golpes llegan al mismo punto del torso. Resuelve primero la colisión, después el multiplicador por tipo y finalmente el daño y su reacción. El corte no debe atravesar la piedra en silencio."
+    },
+    {
+      "title": "Conserva los componentes mixtos",
+      "body": "Si un arma causa daño físico y elemental, aplica cada resistencia antes de sumar. No reduzcas todo el golpe a una sola etiqueta ni dejes que un componente pequeño evite la resistencia del resto."
+    },
+    {
+      "title": "Comprueba la viabilidad de las configuraciones",
+      "body": "Mide cuánto dura el encuentro con configuraciones de corte, estocada y daño mixto. La adaptación puede ser valiosa sin invalidar inversiones previas; anuncia con antelación un cambio de tipo obligatorio."
+    }
+  ],
+  "story": {
+    "title": "Un cuerpo de piedra, dos marcas",
+    "body": "La piedra rúnica de Kern permanece en el mismo lugar durante ambos impactos. La pequeña astilla y el tambaleo mayor se comparan en barras contiguas; no aparece una nueva superficie ni una ventana temporal."
+  },
+  "adaptation": {
+    "title": "Respeta las acciones disponibles",
+    "body": "Una espada puede cortar y estocar sin sustituir el arma. Si el juego solo ofrece una acción de espada, proporciona otra fuente de daño ya conocida o reduce el multiplicador. Revisa la regla al incorporar daño mixto, perforación o conversión de tipo."
+  },
+  "distinction": {
+    "title": "El tipo no es dirección ni fase",
+    "body": "Un escudo direccional pregunta de dónde llega un golpe; esta regla pregunta qué tipo lleva un golpe que ya conectó. La inmunidad situacional depende del estado, pero aquí la reducción de corte persiste. Un punto débil depende del lugar, que en esta comparación no cambia."
+  },
+  "lensNotes": [
+    {
+      "id": "progress-clarity",
+      "body": "Las barras contiguas muestran que el corte acertó, pero causó una quinta parte del daño."
+    },
+    {
+      "id": "counterplay",
+      "body": "Una estocada desde el mismo lugar y alcance sigue siendo una respuesta útil."
+    },
+    {
+      "id": "player-expression",
+      "body": "La misma espada admite dos acciones: elegir importa sin exigir nuevo equipo."
+    },
+    {
+      "id": "risk-reward",
+      "body": "El corte familiar sigue dañando, mientras que cambiar de movimiento ofrece más resultado."
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "Stoneshard",
+      "boss": "Ascended Archon",
+      "video": "https://www.youtube.com/watch?v=hQHKLFnTQYo&t=453s",
+      "videoDurationSeconds": 681,
+      "screenshot": "https://d1lss44hh2trtw.cloudfront.net/assets/editorial/2020/02/stoneshard-ascended-archon.jpg",
+      "screenshotSource": "https://www.shacknews.com/article/116200/beat-the-ascended-archon-tutorial-boss-stoneshard",
+      "body": "La tabla oficial asigna valores muy distintos al daño impío y sagrado del Archon transformado. Su primera forma invulnerable es una regla de fases aparte; la comparación de tipos afecta a la forma que sí recibe daño."
+    },
+    {
+      "dimension": "3D",
+      "game": "Dark Souls III",
+      "boss": "Old Demon King",
+      "video": "https://www.youtube.com/watch?v=v80i_P843XA&t=35s",
+      "videoDurationSeconds": 186,
+      "screenshot": "https://i.ytimg.com/vi/v80i_P843XA/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=v80i_P843XA&t=35s",
+      "body": "La absorción de fuego del Old Demon King es mucho mayor que su absorción física. Su silueta ardiente sugiere la diferencia, pero hacen falta respuestas de impacto o estadísticas consultables para comunicarla con fiabilidad."
+    },
+    {
+      "dimension": "3D",
+      "game": "Monster Hunter: World",
+      "boss": "Teostra",
+      "video": "https://www.youtube.com/watch?v=y2iZHAR31Rg&t=30s",
+      "videoDurationSeconds": 180,
+      "screenshot": "https://image.thenerdstash.com/2024/01/Teostra-Fight.jpg",
+      "screenshotSource": "https://thenerdstash.com/how-to-defeat-teostra-in-monster-hunter-world-strategies-weaknesses/",
+      "body": "La identidad ígnea de Teostra acompaña su resistencia al fuego y su mayor vulnerabilidad al agua o al hielo. Monster Hunter sitúa esa elección en la preparación del arma para toda la caza, no en dos movimientos seguidos de una espada."
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

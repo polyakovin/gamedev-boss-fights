@@ -72,6 +72,12 @@ export function initializeBlueprint(widget) {
         : frame.sideStrike
           ? 'flank-hit'
           : 'idle';
+    if (mechanicId === 'damage-type-resistance')
+      widget.dataset.blueprintResistance = frame.resistedStrike
+        ? 'reduced'
+        : frame.normalStrike
+          ? 'normal'
+          : 'idle';
     boss.setAttribute(
       'transform',
       `translate(${frame.boss.x} ${frame.boss.y}) scale(${frame.bossScale})`,

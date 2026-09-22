@@ -248,6 +248,16 @@ const SPECS = {
     frontStrike: 2.05,
     sideStrike: 3.55,
   },
+  'damage-type-resistance': {
+    mode: 'damage-type-resistance',
+    boss: [280, 430],
+    player: [420, 430],
+    target: [395, 430],
+    slashStrike: 2.05,
+    thrustStrike: 3.55,
+    slashMultiplier: 0.2,
+    baseDamage: 100,
+  },
   'wide-swing': { mode: 'arc', boss: [280, 310], player: [410, 470], target: [470, 650] },
   lunge: { mode: 'lunge', boss: [170, 290], player: [390, 590], target: [470, 660] },
   grab: { mode: 'grab', boss: [280, 300], player: [390, 485], target: [470, 610] },
@@ -524,6 +534,11 @@ export function directionalShieldOutcome(time, attacker) {
   return guarded ? 'blocked' : 'hit';
 }
 
+export function damageTypeResistanceDamage(type, baseDamage = 100) {
+  if (type !== 'slash' && type !== 'thrust') throw new Error(`Unknown damage type: ${type}`);
+  return baseDamage * (type === 'slash' ? SPECS['damage-type-resistance'].slashMultiplier : 1);
+}
+
 const pointInPolygon = (value, points) => {
   let inside = false;
   for (let index = 0, previous = points.length - 1; index < points.length; previous = index++) {
@@ -725,6 +740,30 @@ function primitivesFor(spec, frame) {
       circle(boss.x, boss.y + 60, 18 + frontFlash * 19, frontFlash, 'signal', 7),
       line(player.x - 35, player.y, boss.x + 47, boss.y, sideFlash, 'signal', 6),
       circle(boss.x + 47, boss.y, 14 + sideFlash * 19, sideFlash, 'signal', 7),
+    ];
+  }
+  if (mode === 'damage-type-resistance') {
+    const slashFlash = strikePulse(frame.time, spec.slashStrike);
+    const thrustFlash = strikePulse(frame.time, spec.thrustStrike);
+    const slashRecorded = frame.time >= spec.slashStrike ? 1 : 0;
+    const thrustRecorded = frame.time >= spec.thrustStrike ? 1 : 0;
+    return [
+      circle(boss.x, boss.y, 79, 0.42 + 0.12 * Math.sin(frame.time * 2), 'accent', 4, 0, '7 8'),
+      path(
+        `M ${player.x - 10} ${player.y - 62} Q ${boss.x + 100} ${boss.y - 88} ${boss.x + 45} ${boss.y - 10}`,
+        slashFlash,
+        'accent',
+        10,
+      ),
+      circle(boss.x + 45, boss.y - 10, 10 + slashFlash * 8, slashFlash, 'muted', 4),
+      line(player.x - 28, player.y, boss.x + 45, boss.y - 10, thrustFlash, 'signal', 9),
+      circle(boss.x + 45, boss.y - 10, 16 + thrustFlash * 20, thrustFlash, 'signal', 7),
+      rect(350, 302, 100, 12, 0.36, 'muted', 0.06),
+      rect(350, 302, 20 * slashRecorded, 12, slashRecorded, 'accent', 0.8),
+      rect(350, 332, 100, 12, 0.36, 'muted', 0.06),
+      rect(350, 332, 100 * thrustRecorded, 12, thrustRecorded, 'signal', 0.8),
+      line(328, 301, 338, 315, 0.72, 'accent', 5),
+      line(328, 338, 340, 338, 0.72, 'signal', 5),
     ];
   }
   if (mode === 'landing') {
@@ -1936,6 +1975,7 @@ function pointClearsThreat(spec, frame, value, radius = BLUEPRINT_PLAYER_RADIUS)
         !shot.active || Math.hypot(value.x - shot.x, value.y - shot.y) > shot.radius + radius,
     );
   if (mode === 'directional-shield') return true;
+  if (mode === 'damage-type-resistance') return true;
   if (mode === 'spiral')
     return (
       distanceFromBoss > 52 + radius &&
@@ -2134,6 +2174,7 @@ export function blueprintFrame(id, time) {
   else if (spec.mode === 'speed-change') responseProgress = smooth((t - 1.6) / 0.7);
   else if (spec.mode === 'limited-spread') responseProgress = smooth((t - 1.6) / 0.68);
   else if (spec.mode === 'directional-shield') responseProgress = smooth((t - 2.22) / 1.18);
+  else if (spec.mode === 'damage-type-resistance') responseProgress = smooth((t - 1.6) / 0.42);
   else if (spec.mode === 'knockback')
     responseProgress = phase === 0 ? 0 : phase === 1 ? smooth(action) : 1;
   else if (spec.mode === 'target-lock')
@@ -2299,7 +2340,9 @@ export function blueprintFrame(id, time) {
                               )
                             : spec.mode === 'directional-shield'
                               ? t >= BLUEPRINT_PHASE_ENDS[0] && t < spec.guardEnd
-                              : phase === 1;
+                              : spec.mode === 'damage-type-resistance'
+                                ? phase === 1
+                                : phase === 1;
   const frame = {
     id,
     mode: spec.mode,
@@ -2333,7 +2376,9 @@ export function blueprintFrame(id, time) {
     playerFacing:
       spec.mode === 'directional-shield'
         ? mix(-90, -180, smooth((t - 2.7) / 0.68)) * (1 - returnProgress) - 90 * returnProgress
-        : -90,
+        : spec.mode === 'damage-type-resistance'
+          ? -180
+          : -90,
     bossMotion: motion({
       lean:
         spec.mode === 'landing'
@@ -2372,11 +2417,14 @@ export function blueprintFrame(id, time) {
           ? pulse(clamp((action - 0.42) / 0.22))
           : spec.mode === 'directional-shield'
             ? strikePulse(t, spec.sideStrike, 0.27)
-            : spec.mode === 'shockwave' || spec.mode === 'knockback'
-              ? pulse(action * 3)
-              : spec.mode === 'chain-explosions'
-                ? pulse((action * 5) % 1)
-                : 0,
+            : spec.mode === 'damage-type-resistance'
+              ? 0.18 * strikePulse(t, spec.slashStrike, 0.25) +
+                0.9 * strikePulse(t, spec.thrustStrike, 0.28)
+              : spec.mode === 'shockwave' || spec.mode === 'knockback'
+                ? pulse(action * 3)
+                : spec.mode === 'chain-explosions'
+                  ? pulse((action * 5) % 1)
+                  : 0,
     }),
     playerMotion: motion({
       gait: (route * responseProgress + route * returnProgress) / 20,
@@ -2387,11 +2435,16 @@ export function blueprintFrame(id, time) {
       attack:
         spec.mode === 'directional-shield'
           ? Math.max(strikePulse(t, spec.frontStrike, 0.3), strikePulse(t, spec.sideStrike, 0.3))
-          : spec.mode === 'decoy' && phase === 1
-            ? pulse(clamp((action - 0.52) / 0.3))
-            : spec.mode === 'weak-point' && phase === 1
-              ? pulse(action * 1.5)
-              : 0,
+          : spec.mode === 'damage-type-resistance'
+            ? Math.max(
+                strikePulse(t, spec.slashStrike, 0.3),
+                strikePulse(t, spec.thrustStrike, 0.3),
+              )
+            : spec.mode === 'decoy' && phase === 1
+              ? pulse(clamp((action - 0.52) / 0.3))
+              : spec.mode === 'weak-point' && phase === 1
+                ? pulse(action * 1.5)
+                : 0,
     }),
   };
   if (spec.mode === 'directional-shield') {
@@ -2399,6 +2452,14 @@ export function blueprintFrame(id, time) {
       strikePulse(t, spec.frontStrike) > 0.5 && directionalShieldOutcome(t, player) === 'blocked';
     frame.sideStrike =
       strikePulse(t, spec.sideStrike) > 0.5 && directionalShieldOutcome(t, player) === 'hit';
+  }
+  if (spec.mode === 'damage-type-resistance') {
+    frame.resistedStrike = strikePulse(t, spec.slashStrike) > 0.5;
+    frame.normalStrike = strikePulse(t, spec.thrustStrike) > 0.5;
+    frame.damageComparison = {
+      slash: damageTypeResistanceDamage('slash', spec.baseDamage),
+      thrust: damageTypeResistanceDamage('thrust', spec.baseDamage),
+    };
   }
   frame.primitives = primitivesFor(spec, frame);
   frame.playerSafe = pointClearsThreat(spec, frame, player);
@@ -2408,7 +2469,9 @@ export function blueprintFrame(id, time) {
   };
   frame.playerLabel = {
     x: player.x,
-    y: player.y + (spec.mode === 'directional-shield' ? 92 : -62),
+    y:
+      player.y +
+      (spec.mode === 'directional-shield' || spec.mode === 'damage-type-resistance' ? 92 : -62),
   };
   return Object.freeze(frame);
 }

@@ -1,0 +1,24 @@
+{
+  "id": "damage-type-resistance",
+  "number": 54,
+  "published": true,
+  "sourceLocale": "en",
+  "contentVersion": 1,
+  "animation": "damage-type-resistance",
+  "lenses": ["progress-clarity", "counterplay", "player-expression", "risk-reward"],
+  "related": ["directional-shield", "weak-point", "fight-phase"],
+  "sources": [
+    {
+      "title": "Stoneshard official wiki · single-type and group resistance formulas",
+      "url": "https://stoneshard.com/wiki/Combat_Formulas"
+    },
+    {
+      "title": "Stoneshard official wiki · Ascended Archon resistance table",
+      "url": "https://stoneshard.com/wiki/Ascended_Archon"
+    },
+    {
+      "title": "Wolcen Studio developer update · visible enemy type-resistance pools (alternative model)",
+      "url": "https://store.steampowered.com/news/posts/?appids=424370&enddate=1510254789&feed=steam_community_announcements"
+    }
+  ]
+}

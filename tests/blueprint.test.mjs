@@ -7,6 +7,7 @@ import {
   blueprintPhaseAt,
   blueprintPointSafe,
   blueprintSpec,
+  damageTypeResistanceDamage,
   directionalShieldOutcome,
 } from '../src/blueprint-model.mjs';
 import {
@@ -15,8 +16,8 @@ import {
   renderBlueprintThumbnail,
 } from '../lib/blueprint-view.mjs';
 
-test('all 47 promoted lesson animations have distinct rule modes and complete moving frames', () => {
-  assert.equal(BLUEPRINT_MECHANIC_IDS.length, 47);
+test('all 48 promoted lesson animations have distinct rule modes and complete moving frames', () => {
+  assert.equal(BLUEPRINT_MECHANIC_IDS.length, 48);
   const modes = new Set();
   for (const id of BLUEPRINT_MECHANIC_IDS) {
     for (let time = 0; time <= BLUEPRINT_DURATION; time += 0.1) {
@@ -37,7 +38,7 @@ test('all 47 promoted lesson animations have distinct rule modes and complete mo
           assert.ok(Number.isFinite(value), `${id} has an invalid ${primitive.type}`);
     }
   }
-  assert.equal(modes.size, 47);
+  assert.equal(modes.size, 48);
 });
 
 test('every blueprint exposes signal, committed action, and recovery without player teleports', () => {
@@ -109,7 +110,9 @@ test('every damaging promoted animation derives safety from its own active geome
     enrage: { x: 280, y: 350 },
   };
 
-  for (const id of BLUEPRINT_MECHANIC_IDS.filter((id) => id !== 'directional-shield')) {
+  for (const id of BLUEPRINT_MECHANIC_IDS.filter(
+    (id) => id !== 'directional-shield' && id !== 'damage-type-resistance',
+  )) {
     const frame = blueprintFrame(id, 3);
     let point = unsafePoints[id];
     if (!point && id === 'homing-projectile') {
@@ -938,6 +941,35 @@ test('directional shield blocks its marked front arc but permits a reachable fla
   assert.match(
     renderBlueprintThumbnail(id, 'test-directional-shield'),
     /data-blueprint-preview="directional-shield"/,
+  );
+});
+
+test('damage-type resistance reduces a connected slash without changing the target', () => {
+  const id = 'damage-type-resistance';
+  const spec = blueprintSpec(id);
+  assert.equal(damageTypeResistanceDamage('slash'), 20);
+  assert.equal(damageTypeResistanceDamage('thrust'), 100);
+  assert.throws(() => damageTypeResistanceDamage('fire'), /unknown damage type/i);
+  const slash = blueprintFrame(id, spec.slashStrike);
+  const thrust = blueprintFrame(id, spec.thrustStrike);
+  assert.equal(slash.resistedStrike, true);
+  assert.equal(slash.normalStrike, false);
+  assert.equal(thrust.resistedStrike, false);
+  assert.equal(thrust.normalStrike, true);
+  assert.deepEqual(slash.damageComparison, { slash: 20, thrust: 100 });
+  assert.equal(slash.primitives[2].x, thrust.primitives[4].x);
+  assert.equal(slash.primitives[2].y, thrust.primitives[4].y);
+  assert.ok(slash.primitives[2].opacity > 0);
+  assert.ok(thrust.primitives[4].opacity > 0);
+  assert.equal(slash.primitives[6].rectWidth, 20);
+  assert.equal(slash.primitives[8].rectWidth, 0);
+  assert.equal(thrust.primitives[6].rectWidth, 20);
+  assert.equal(thrust.primitives[8].rectWidth, 100);
+  assert.ok(blueprintFrame(id, 4.5).primitives[0].opacity > 0);
+  assert.deepEqual(blueprintFrame(id, 0).player, blueprintFrame(id, 6).player);
+  assert.match(
+    renderBlueprintThumbnail(id, 'test-damage-type-resistance'),
+    /data-blueprint-preview="damage-type-resistance"/,
   );
 });
 

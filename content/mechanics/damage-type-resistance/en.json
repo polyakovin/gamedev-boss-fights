@@ -1,0 +1,134 @@
+{
+  "title": "Damage-type resistance",
+  "subtitle": "Let a reduced hit teach a type rule while another attack remains useful.",
+  "variant": "Persistent slash resistance with an ordinary thrust alternative",
+  "summary": "The same boss body takes less damage from a slash than a thrust; both attacks still connect.",
+  "overview": "Damage-type resistance changes the damage of a hit according to its type, not its location or timing. The boss reduces a sword slash to one fifth of its base value while a thrust to the same body keeps full value. Distinct hit reactions and side-by-side damage marks expose the rule without making the resisted attack a miss.",
+  "learning": "Tune the resisted type, multiplier, alternate attack, feedback scale, and encounter length together.",
+  "category": "Defense",
+  "readTime": "4 min",
+  "demo": {
+    "title": "Compare two sword hits",
+    "timeline": "Resistance timeline",
+    "step": "Comparison phases",
+    "phaseNames": ["Show the resistance", "Compare two hits", "Reset the comparison"],
+    "phaseDescriptions": [
+      "Kern's runes identify a persistent slash-resistant body. Tavi approaches with the same sword; both damage bars begin empty.",
+      "At 2.05 s a slash lands on the torso but yields 20 of 100 base damage. At 3.55 s a thrust lands at the same spot and yields 100 of 100; the two bars remain together for comparison.",
+      "The different damage results stay visible while both characters settle. The resistance does not switch off during recovery; the loop resets the comparison marks only."
+    ],
+    "boss": "Boss",
+    "player": "Player",
+    "danger": "Slash damage is reduced, not cancelled",
+    "locked": "The boss and hit location do not change between the attacks",
+    "safe": "A thrust with the same sword keeps its normal damage",
+    "reducedMotion": "Autoplay is disabled by the reduced-motion setting. Use the timeline slider to inspect each hit.",
+    "diagramDescription": "A rune-ringed stone boss stands still while a sword-carrying player closes a short distance. A broad slash lands at one spot with a small impact and fills only one fifth of the first damage bar. A straight thrust lands on that same spot with a larger reaction and fills the second bar. Both results remain visible before the comparison resets."
+  },
+  "steps": [
+    {
+      "title": "What changes when the damage type changes?",
+      "body": "Hold the target, base damage, hit position, and attack reach constant. Apply a 0.2 multiplier only to slash damage; a 100-point slash resolves to 20, while a 100-point thrust resolves to 100. Test mixed-type attacks per component rather than assigning the entire hit the most favorable type."
+    },
+    {
+      "title": "Can the player read a reduced hit?",
+      "body": "Make both strikes visibly connect. The slash at 2.05 seconds makes a small chip and short recoil; the thrust at 3.55 seconds makes a larger impact and stagger. Show the two results together so low damage is not mistaken for broken hit detection."
+    },
+    {
+      "title": "Is a useful alternative available?",
+      "body": "Tavi uses a different attack motion with the same sword, at the same range and target. Check the actual player move set before choosing a resisted type. If no alternative exists, keep the resisted route viable or supply an accessible new response before this encounter."
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "Resistance becomes hidden immunity",
+      "body": "A nominal 80% reduction can feel like a non-hit if the boss never reacts and the health bar barely moves. Preserve contact feedback and a visible nonzero result, or explicitly teach immunity as a separate rule."
+    },
+    {
+      "title": "The comparison changes several variables",
+      "body": "If the second attack hits a weak point, gains a critical bonus, or lands during recovery, its larger number no longer demonstrates type resistance. Compare equal base damage at the same location before layering other systems."
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "Keep the ratio inspectable",
+      "body": "The illustrative slash multiplier is 0.2 and the thrust multiplier is 1.0. The paired bars record 20 and 100 from the same 100-point base. Adjust these values in playtests until the difference is legible without making the slash functionally useless."
+    },
+    {
+      "title": "Separate contact from damage",
+      "body": "Both hits resolve at the same torso point. Run hit detection first, then the per-type multiplier, then the corresponding damage and impact feedback. A slash should not pass through the stone silently."
+    },
+    {
+      "title": "Preserve mixed attacks",
+      "body": "For a weapon that deals both physical and elemental damage, apply resistance to each component before summing. Avoid collapsing all components into a single tag or allowing a small unresisted component to bypass the resisted one."
+    },
+    {
+      "title": "Check build viability",
+      "body": "Measure encounter length for a slash-focused build, a thrust-focused build, and a mixed build. A resistant boss may reward adaptation without invalidating a player's earlier investment; telegraph a required type switch before the fight if one is truly mandatory."
+    }
+  ],
+  "story": {
+    "title": "One stone body, two readable marks",
+    "body": "Kern's etched stone stays in the same place for both hits. The first short chip and second stronger stagger are compared in small adjacent bars; no new exposed surface or timed opening appears."
+  },
+  "adaptation": {
+    "title": "Respect the available attack verbs",
+    "body": "A sword can slash and thrust without adding a new weapon. If the actual game has only one sword verb, offer another already-learned damage source or soften the multiplier. Re-evaluate resistance when upgrades add split damage, armor piercing, or conversions."
+  },
+  "distinction": {
+    "title": "Type is not direction or phase",
+    "body": "A directional shield tests where a hit comes from; this rule tests what damage type a connected hit carries. Situational immunity switches protection according to a state, whereas this example keeps the slash multiplier throughout. A weak point changes value by target location, which stays fixed here."
+  },
+  "lensNotes": [
+    {
+      "id": "progress-clarity",
+      "body": "Two adjacent result bars reveal that the slash did connect but dealt only one fifth as much damage."
+    },
+    {
+      "id": "counterplay",
+      "body": "A thrust at the same range and position remains a useful response to the resistance."
+    },
+    {
+      "id": "player-expression",
+      "body": "The same sword supports two attack verbs; the rule rewards an intentional choice without demanding new gear."
+    },
+    {
+      "id": "risk-reward",
+      "body": "A familiar slash still deals some damage, while committing to the alternate motion can earn more."
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "Stoneshard",
+      "boss": "Ascended Archon",
+      "video": "https://www.youtube.com/watch?v=hQHKLFnTQYo&t=453s",
+      "videoDurationSeconds": 681,
+      "screenshot": "https://d1lss44hh2trtw.cloudfront.net/assets/editorial/2020/02/stoneshard-ascended-archon.jpg",
+      "screenshotSource": "https://www.shacknews.com/article/116200/beat-the-ascended-archon-tutorial-boss-stoneshard",
+      "body": "The official resistance table gives the transformed Archon very different values for Unholy and Sacred damage. Its first, invulnerable form is a separate phase rule; the type comparison applies to the damageable transformed boss, unlike Kern's slash-versus-thrust demonstration."
+    },
+    {
+      "dimension": "3D",
+      "game": "Dark Souls III",
+      "boss": "Old Demon King",
+      "video": "https://www.youtube.com/watch?v=v80i_P843XA&t=35s",
+      "videoDurationSeconds": 186,
+      "screenshot": "https://i.ytimg.com/vi/v80i_P843XA/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=v80i_P843XA&t=35s",
+      "body": "The Old Demon King's listed fire absorption is much higher than its physical absorption. The fire-lit silhouette hints at that distinction, but a designer still needs hit feedback or inspectable stats to make the damage difference reliable."
+    },
+    {
+      "dimension": "3D",
+      "game": "Monster Hunter: World",
+      "boss": "Teostra",
+      "video": "https://www.youtube.com/watch?v=y2iZHAR31Rg&t=30s",
+      "videoDurationSeconds": 180,
+      "screenshot": "https://image.thenerdstash.com/2024/01/Teostra-Fight.jpg",
+      "screenshotSource": "https://thenerdstash.com/how-to-defeat-teostra-in-monster-hunter-world-strategies-weaknesses/",
+      "body": "Teostra's fire identity accompanies resistance to fire and greater vulnerability to water or ice. Monster Hunter ties this choice to weapon preparation across a whole hunt, rather than to two successive moves of one sword."
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

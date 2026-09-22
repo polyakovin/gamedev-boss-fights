@@ -1,0 +1,122 @@
+{
+  "title": "伤害类型抗性",
+  "subtitle": "让削弱的命中说明类型规则，同时保留有效的替代攻击。",
+  "variant": "持续抗斩击，普通突刺仍然有效",
+  "summary": "同一处身体受到的斩击伤害低于突刺；两次攻击都确实命中。",
+  "overview": "伤害类型抗性按命中的伤害类型改变数值，而不是按位置或时机改变。首领把剑的斩击降为基础值的五分之一，同一身体位置受到突刺时仍承受完整伤害。不同的受击反应和并列伤害条让规则清楚可见，不会把抗性误认为未命中。",
+  "learning": "一起调整抗性类型、倍率、替代攻击、反馈幅度与战斗时长。",
+  "category": "防御",
+  "readTime": "4 分钟",
+  "demo": {
+    "title": "比较两次剑击",
+    "timeline": "抗性时间轴",
+    "step": "比较阶段",
+    "phaseNames": ["显示抗性", "比较两次命中", "重置比较"],
+    "phaseDescriptions": [
+      "凯恩的符文表明身体持续抗斩击。塔维持同一把剑靠近，两条伤害记录仍为空。",
+      "2.05 秒的斩击命中躯干，但基础 100 点只造成 20 点。3.55 秒的突刺命中同一点，造成完整 100 点；两条记录同时保留。",
+      "角色收势时仍能看见两种结果。恢复期间抗性没有消失，只重置比较用的伤害标记。"
+    ],
+    "boss": "首领",
+    "player": "玩家",
+    "danger": "斩击伤害减少，但不归零",
+    "locked": "首领与命中位置在两次攻击间保持不变",
+    "safe": "同一把剑的突刺保留普通伤害",
+    "reducedMotion": "开启减少动态效果后不会自动播放。可用时间轴滑块查看两次命中。",
+    "diagramDescription": "带符文光环的石头首领站在原处，持剑玩家短距离靠近。宽幅斩击命中同一处躯干，只有轻微反应，第一条伤害记录填满五分之一。直线突刺使首领明显后仰，第二条填满。两种结果在循环重置前保持可见。"
+  },
+  "steps": [
+    {
+      "title": "改变伤害类型时究竟改变什么？",
+      "body": "保持目标、基础伤害、命中位置和距离一致。只给斩击应用 0.2 倍率：100 点变成 20 点，而 100 点突刺仍是 100 点。混合伤害应按组成部分分别计算。"
+    },
+    {
+      "title": "玩家能看出削弱的命中吗？",
+      "body": "两次攻击都必须清楚接触目标。2.05 秒的斩击产生小碎屑和短暂反应，3.55 秒的突刺产生更大的冲击和失衡。并列显示结果，避免把低伤害看成命中检测错误。"
+    },
+    {
+      "title": "有效的替代动作是否可用？",
+      "body": "塔维在相同距离和目标上使用同一把剑的另一种动作。先核对玩家实际拥有的招式；若没有替代动作，应让受抗攻击仍可通关，或提前提供可学习的新应对。"
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "抗性看起来像隐藏免疫",
+      "body": "若首领毫无反应、生命条几乎不动，80% 的减伤会被理解为没有击中。保留接触反馈与非零结果；完全免疫应作为另一条规则清楚说明。"
+    },
+    {
+      "title": "比较同时改变了太多变量",
+      "body": "若第二击碰到弱点、触发暴击或赶上恢复窗口，较大数字就不能证明类型抗性。先以相同基础伤害比较同一位置。"
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "让倍率可以检查",
+      "body": "此例斩击倍率为 0.2，突刺为 1.0。并列记录显示同样 100 点基础伤害得到 20 与 100。通过测试把差异调到明显，但不要让斩击路线彻底失去价值。"
+    },
+    {
+      "title": "分开接触与伤害",
+      "body": "两次攻击都落在同一处躯干。先做命中判定，再按类型乘倍率，最后给出伤害和相应受击反馈。斩击不应悄无声息地穿过石头。"
+    },
+    {
+      "title": "保留混合伤害的组成",
+      "body": "若武器同时造成物理和元素伤害，应先对各组成部分应用抗性再相加。不要把整次命中压成一个类型，也不要让少量未受抗的伤害绕过其他部分的抗性。"
+    },
+    {
+      "title": "检查不同配装能否完成战斗",
+      "body": "分别测量偏斩击、偏突刺与混合配装的战斗时长。抗性可以奖励调整策略，但不应抹去先前投入；若必须换类型，应在开战前给出信号。"
+    }
+  ],
+  "story": {
+    "title": "同一石身，两种清楚的痕迹",
+    "body": "凯恩的符文石身在两次命中间保持原位。小碎屑与明显踉跄对应并列的伤害记录；这里没有新暴露的表面或限时窗口。"
+  },
+  "adaptation": {
+    "title": "尊重现有攻击动作",
+    "body": "同一把剑可以斩击和突刺，无需新武器。若游戏中的剑只有一种动作，应提供已学过的其他伤害来源，或降低抗性强度。加入混合伤害、穿甲或类型转换升级后需重新测试。"
+  },
+  "distinction": {
+    "title": "类型不是方向，也不是阶段",
+    "body": "定向护盾检查攻击来自何处；此规则检查已命中攻击携带的伤害类型。情境免疫随状态切换，而这里的斩击倍率始终存在。弱点按命中位置改变结果，此处位置固定。"
+  },
+  "lensNotes": [
+    { "id": "progress-clarity", "body": "两条并列记录表明斩击确实命中，但只造成五分之一的伤害。" },
+    { "id": "counterplay", "body": "同一距离、同一位置的突刺仍是有效应对。" },
+    { "id": "player-expression", "body": "同一把剑支持两种动作；选择很重要，却不要求更换装备。" },
+    { "id": "risk-reward", "body": "熟悉的斩击仍有伤害，改用另一动作则能获得更大收益。" }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "Stoneshard",
+      "boss": "Ascended Archon",
+      "video": "https://www.youtube.com/watch?v=hQHKLFnTQYo&t=453s",
+      "videoDurationSeconds": 681,
+      "screenshot": "https://d1lss44hh2trtw.cloudfront.net/assets/editorial/2020/02/stoneshard-ascended-archon.jpg",
+      "screenshotSource": "https://www.shacknews.com/article/116200/beat-the-ascended-archon-tutorial-boss-stoneshard",
+      "body": "官方抗性表显示变身后的 Archon 对不洁与神圣伤害有截然不同的数值。它最初的无敌形态属于另一条阶段规则；类型比较针对可受伤的变身形态。"
+    },
+    {
+      "dimension": "3D",
+      "game": "Dark Souls III",
+      "boss": "Old Demon King",
+      "video": "https://www.youtube.com/watch?v=v80i_P843XA&t=35s",
+      "videoDurationSeconds": 186,
+      "screenshot": "https://i.ytimg.com/vi/v80i_P843XA/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=v80i_P843XA&t=35s",
+      "body": "Old Demon King 的火焰吸收率远高于物理吸收率。燃烧的外形提供提示，但要让伤害差异可靠可读，仍需要受击反馈或可查看的属性。"
+    },
+    {
+      "dimension": "3D",
+      "game": "Monster Hunter: World",
+      "boss": "Teostra",
+      "video": "https://www.youtube.com/watch?v=y2iZHAR31Rg&t=30s",
+      "videoDurationSeconds": 180,
+      "screenshot": "https://image.thenerdstash.com/2024/01/Teostra-Fight.jpg",
+      "screenshotSource": "https://thenerdstash.com/how-to-defeat-teostra-in-monster-hunter-world-strategies-weaknesses/",
+      "body": "Teostra 的火焰形象与抗火、较易受水或冰伤害相呼应。Monster Hunter 把类型选择放在整场狩猎的武器准备上，而不是同一把剑连续两次动作上。"
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}
