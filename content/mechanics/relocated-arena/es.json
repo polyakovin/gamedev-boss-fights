@@ -1,0 +1,138 @@
+{
+  "title": "Arena anidada o reubicada",
+  "subtitle": "Traslada un mismo encuentro en curso a un espacio cuya geometría cambie las decisiones siguientes.",
+  "variant": "Kern derrumba el suelo marcado de la cantera y conserva el daño de su núcleo en una cámara rúnica más estrecha donde Tavi retoma la presión",
+  "summary": "Una arena reubicada traslada el combate activo a otro espacio jugable sin terminar ni reconstruir en secreto el encuentro.",
+  "overview": "A los 0,55 s las grietas y una sala inferior anuncian el destino. Entre 1,15 y 2,15 s cede el suelo y ambos actores realizan una transferencia sin colisión. El estado continúa abajo, pero las paredes estrechas y la runa central crean otro problema antes de que un elevador visible devuelva la demostración.",
+  "learning": "Implementa el disparador, la vista previa del destino, la autoridad de transferencia, el traspaso de estado, la validación de aparición, la nueva geometría, la cámara, la política multijugador y el reinicio como una transición del encuentro.",
+  "category": "Espacio, movimiento y percepción",
+  "readTime": "7 min",
+  "demo": {
+    "title": "Muestra la próxima arena antes de retirar el control",
+    "timeline": "Cronología de arena reubicada",
+    "step": "Estados de arena reubicada",
+    "phaseNames": [
+      "Previsualizar y abrir el suelo",
+      "Aterrizar y reanudar abajo",
+      "Volver para cerrar el bucle"
+    ],
+    "phaseDescriptions": [
+      "A los 0,55 s se agrieta el suelo y muestra la cámara inferior, los puntos de caída y las paredes estrechas. A los 1,15 s el suelo se abre y ambos actores inician rutas definidas sin colisión; el progreso del jefe sigue visible.",
+      "A los 2,15 s la transferencia termina en puntos fijos validados. La cámara estrecha y la runa central se activan, el encuentro conserva su estado y Tavi alcanza una apertura de espada a los 3,85 s.",
+      "La sala inferior sigue jugable tras el límite de fase. Después de 4,75 s, un elevador visible recoge a ambos y los devuelve sin cortes al estado inicial exacto para el bucle determinista."
+    ],
+    "boss": "Jefe",
+    "player": "Jugador",
+    "danger": "La transferencia no tiene colisión; el peligro vuelve solo cuando ambos ocupan puntos validados de la nueva arena",
+    "locked": "El disparador, destino, ruta, estado retenido, aterrizajes, geometría, cámara y retorno están definidos",
+    "safe": "Lee la vista previa, conserva la orientación durante la transferencia y reevalúa el movimiento ante los límites más estrechos",
+    "reducedMotion": "Con movimiento reducido no hay reproducción automática. Recorre 0,55, 1,15, 1,7, 2,15, 3,2, 3,85 y 4,75 s para inspeccionar el traspaso.",
+    "diagramDescription": "Dos salas apiladas muestran el suelo superior agrietándose sobre una cámara rúnica más estrecha. Kern y Tavi caen por rutas fijas, aterrizan en marcas conservando el progreso, reanudan el combate y luego suben en un elevador visible para el bucle."
+  },
+  "steps": [
+    {
+      "title": "¿Qué estado cruza el límite?",
+      "body": "Enumera salud, fases, partes rotas, entidades, estados, enfriamientos, recursos, música y progreso del objetivo. Decide qué persiste, se convierte, se pausa o se limpia y entrega todo de forma atómica. Debe sentirse como un encuentro: sin duplicar al jefe, restaurar valores ocultos ni borrar una decisión costosa."
+    },
+    {
+      "title": "¿Dónde puede llegar cada participante con seguridad?",
+      "body": "Previsualiza el destino antes del movimiento forzado, valida el cuerpo completo en cada punto y reserva espacio para invocaciones, compañeros, cámaras y grupos. Define la autoridad si alguien está muerto, en el aire, agarrado, desconectado, fuera del disparador o ya en destino. No resuelvas dentro de daño activo o navegación bloqueada."
+    },
+    {
+      "title": "¿Qué decisión nueva justifica el traslado?",
+      "body": "Cambia una regla espacial importante: anchura, altura, cobertura, recorrido, peligros, visión, gravedad, apoyo o acceso al jefe. Reencuadra la cámara y devuelve el control antes del peligro. Si la segunda sala se juega igual, la transición añade espectáculo y riesgo de carga sin una fase útil."
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "El corte oculta un reinicio o golpe inevitable",
+      "body": "Un fundido que restaura al jefe, coloca proyectiles sobre el jugador o reanuda un ataque antes del control rompe la confianza. Congela o resuelve amenazas, muestra el progreso retenido y añade un aterrizaje protegido con final visible."
+    },
+    {
+      "title": "La sala nueva solo cambia el fondo",
+      "body": "Si rangos, rutas, visión y verbos de respuesta son iguales, la reubicación cuesta producción sin retorno de diseño. Da al destino un cambio geométrico legible y ajusta el paquete del jefe en vez de importar cada ataque intacto."
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "Modela la reubicación como transacción",
+      "body": "Captura el estado, suspende la simulación, asigna el espacio, valida apariciones, mueve actores, reconstruye navegación y cámara, restaura estado y reanuda. Registra fallos para que una transferencia parcial no deje jefes duplicados, jugadores perdidos o autoridad divergente."
+    },
+    {
+      "title": "Presupuesta transición y pausa por separado",
+      "body": "Mide señal, movimiento forzado, asentamiento de cámara, devolución de control y primer peligro. Acelera la cinemática repetida sin perder la vista previa útil. La primera visita puede ser dramática; los reintentos necesitan una entrada estable."
+    },
+    {
+      "title": "Reajusta ataques a la nueva topología",
+      "body": "Recalcula holguras, vida de proyectiles, alcance de navegación, señales fuera de cámara, correas y rutas de recuperación. Un patrón justo en una plaza puede cerrar una cámara, y la cobertura puede anular un rayo creado para campo abierto."
+    },
+    {
+      "title": "Prueba uniones, muertes, puntos de control y cámara",
+      "body": "Prueba solo y grupo completo, entradas tardías, reanimaciones, jugadores separados, invocaciones, modo foto, fijación y puntos de control a ambos lados. Define retirada, reinicio tras derrota y recuperación ante fallos de carga o navegación."
+    }
+  ],
+  "story": {
+    "title": "Kern irrumpe en la cámara rúnica sellada",
+    "body": "La cantera superior cubre una cámara antigua que alimenta el núcleo de Kern. Las grietas anticipan la caída y las paredes estrechas con el conducto central explican el nuevo control espacial del mismo elemental."
+  },
+  "adaptation": {
+    "title": "Mantén legibles la posición y espada de Tavi durante la caída",
+    "body": "Tavi pierde el control solo mientras el suelo transfiere a ambos. Un aterrizaje marcado conserva orientación y distancia; después vuelven movimiento y espada antes del siguiente peligro de Kern. No hace falta un verbo exclusivo."
+  },
+  "distinction": {
+    "title": "Otro espacio jugable, no un teletransporte ni escape",
+    "body": "El teletransporte cambia la posición dentro de la regla espacial actual. El escape pregunta si el jefe alcanza una salida. La arena reubicada cruza un límite, entrega el encuentro a otra geometría y devuelve allí el control."
+  },
+  "lensNotes": [
+    {
+      "id": "phase-structure",
+      "body": "El traspaso espacial es un límite de fase cuyo estado retenido y reglas nuevas deben ser explícitos."
+    },
+    {
+      "id": "progress-clarity",
+      "body": "Destino previo, progreso estable, marcas de aterrizaje y reanudación protegida muestran que el encuentro continúa."
+    },
+    {
+      "id": "threat-geometry",
+      "body": "El destino se justifica al cambiar rutas, holguras, cobertura u otra restricción espacial medible."
+    },
+    {
+      "id": "dramatic-framing",
+      "body": "La transferencia puede ser espectacular si la cámara preserva orientación, destino y retorno del control."
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "The Binding of Isaac: Repentance",
+      "boss": "Rotgut",
+      "screenshot": "https://i.ytimg.com/vi/YvBpZmHWLGk/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=YvBpZmHWLGk&t=24s",
+      "body": "Al caer la forma exterior, Rotgut absorbe al jugador a un interior similar a una sala secreta y luego avanza a una cámara del corazón. El encuentro encadena contratos de sala: el movimiento cenital da paso a geometría vertical casi de plataformas y finalmente a un espacio cerrado de patrones.",
+      "video": "https://www.youtube.com/watch?v=YvBpZmHWLGk&t=24s",
+      "videoDurationSeconds": 80
+    },
+    {
+      "dimension": "3D",
+      "game": "Dark Souls III",
+      "boss": "Curse-Rotted Greatwood",
+      "screenshot": "https://i.ytimg.com/vi/XBLOdrk1LF0/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=XBLOdrk1LF0&t=84s",
+      "body": "Al romper el crecimiento central, Greatwood y el jugador atraviesan el suelo del patio hasta una cámara inferior. Persisten el daño y puntos débiles, desaparece la multitud y el pozo compacto añade una mano nueva y geometría más estricta para los golpes corporales.",
+      "video": "https://www.youtube.com/watch?v=XBLOdrk1LF0&t=84s",
+      "videoDurationSeconds": 157
+    },
+    {
+      "dimension": "3D",
+      "game": "Monster Hunter World: Iceborne",
+      "boss": "Safi'jiiva",
+      "screenshot": "https://i.ytimg.com/vi/o9-qavsmRBI/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=o9-qavsmRBI&t=180s",
+      "body": "Al agotarse la energía de cada nivel, Safi'jiiva desciende y el grupo sigue a otra capa de Secluded Valley. El asedio conserva daño de partes y progreso grupal, mientras cada piso cambia trampas, cobertura, presión de objetivo y condiciones del estado vulnerable final.",
+      "video": "https://www.youtube.com/watch?v=o9-qavsmRBI&t=180s",
+      "videoDurationSeconds": 726
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

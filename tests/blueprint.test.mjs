@@ -11,6 +11,7 @@ import {
   boundaryAttackState,
   chaseHerdingState,
   escapePhaseState,
+  relocatedArenaState,
   forcedScrollingOffset,
   forcedScrollingState,
   counterStanceOutcome,
@@ -40,8 +41,8 @@ import {
   renderBlueprintThumbnail,
 } from '../lib/blueprint-view.mjs';
 
-test('all 65 promoted lesson animations have distinct rule modes and complete moving frames', () => {
-  assert.equal(BLUEPRINT_MECHANIC_IDS.length, 65);
+test('all 66 promoted lesson animations have distinct rule modes and complete moving frames', () => {
+  assert.equal(BLUEPRINT_MECHANIC_IDS.length, 66);
   const modes = new Set();
   for (const id of BLUEPRINT_MECHANIC_IDS) {
     for (let time = 0; time <= BLUEPRINT_DURATION; time += 0.1) {
@@ -62,7 +63,7 @@ test('all 65 promoted lesson animations have distinct rule modes and complete mo
           assert.ok(Number.isFinite(value), `${id} has an invalid ${primitive.type}`);
     }
   }
-  assert.equal(modes.size, 65);
+  assert.equal(modes.size, 66);
 });
 
 test('every blueprint exposes signal, committed action, and recovery without player teleports', () => {
@@ -87,7 +88,8 @@ test('every blueprint exposes signal, committed action, and recovery without pla
       id !== 'teleport' &&
       id !== 'boundary-attack' &&
       id !== 'chase-herding' &&
-      id !== 'escape-phase'
+      id !== 'escape-phase' &&
+      id !== 'relocated-arena'
     )
       assert.equal(blueprintFrame(id, 3).dangerActive, true, id);
     assert.equal(blueprintFrame(id, 3).playerSafe, true, id);
@@ -170,7 +172,8 @@ test('every damaging promoted animation derives safety from its own active geome
       id !== 'teleport' &&
       id !== 'boundary-attack' &&
       id !== 'chase-herding' &&
-      id !== 'escape-phase',
+      id !== 'escape-phase' &&
+      id !== 'relocated-arena',
   )) {
     const frame = blueprintFrame(id, 3);
     let point = unsafePoints[id];
@@ -1803,5 +1806,55 @@ test('escape phase signals a finite route, supports interruption, and resolves i
   assert.match(
     renderBlueprintThumbnail(id, 'test-escape-phase'),
     /data-blueprint-preview="escape-phase"/,
+  );
+});
+
+test('relocated arena previews a destination, hands off retained state, and resumes in new geometry', () => {
+  const id = 'relocated-arena';
+  assert.deepEqual([0, 0.8, 1.7, 2.6, 3.6, 5.2].map(relocatedArenaState), [
+    'upper-combat',
+    'destination-preview',
+    'transfer',
+    'lower-entry',
+    'lower-combat',
+    'return-lift',
+  ]);
+
+  const preview = blueprintFrame(id, 0.8);
+  assert.equal(preview.relocatedDestinationRevealed, true);
+  assert.equal(preview.relocatedTransferActive, false);
+  assert.ok(
+    preview.primitives[2].opacity > 0.2,
+    'the lower chamber appears before control is lost',
+  );
+  assert.ok(preview.primitives[5].opacity > 0.4, 'the upper floor visibly cracks');
+
+  const transfer = blueprintFrame(id, 1.7);
+  assert.equal(transfer.relocatedArenaState, 'transfer');
+  assert.equal(transfer.relocatedTransferActive, true);
+  assert.equal(transfer.dangerActive, false);
+  assert.ok(transfer.boss.y > preview.boss.y);
+  assert.ok(transfer.player.y > preview.player.y);
+
+  const lower = blueprintFrame(id, 2.8);
+  assert.equal(lower.relocatedLowerActive, true);
+  assert.equal(lower.relocatedStateRetained, true);
+  assert.equal(lower.relocatedProgress, 0.62);
+  assert.deepEqual(lower.boss, { x: 250, y: 720 });
+  assert.deepEqual(lower.player, { x: 390, y: 755 });
+  assert.ok(lower.primitives[12].opacity > 0.8, 'retained encounter progress stays visible');
+
+  const punish = blueprintFrame(id, 3.85);
+  assert.equal(punish.punishStrike, true);
+  assert.ok(punish.primitives[15].opacity > 0, 'the sword opening resumes in the lower room');
+
+  const lift = blueprintFrame(id, 5.25);
+  assert.equal(lift.relocatedArenaState, 'return-lift');
+  assert.ok(lift.primitives[13].opacity > 0.8, 'the return lift is visible');
+  assert.deepEqual(blueprintFrame(id, 0).player, blueprintFrame(id, 6).player);
+  assert.deepEqual(blueprintFrame(id, 0).boss, blueprintFrame(id, 6).boss);
+  assert.match(
+    renderBlueprintThumbnail(id, 'test-relocated-arena'),
+    /data-blueprint-preview="relocated-arena"/,
   );
 });

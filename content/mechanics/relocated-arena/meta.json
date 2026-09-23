@@ -1,0 +1,32 @@
+{
+  "id": "relocated-arena",
+  "number": 72,
+  "published": true,
+  "sourceLocale": "en",
+  "contentVersion": 1,
+  "animation": "relocated-arena",
+  "lenses": ["phase-structure", "progress-clarity", "threat-geometry", "dramatic-framing"],
+  "related": ["fight-phase", "escape-phase", "platform-destruction"],
+  "sources": [
+    {
+      "title": "GDC · Itay Keren — Boss Battle Design Fundamentals and Retrospective",
+      "url": "https://www.gdcvault.com/play/1024921/Boss-Up-Boss-Battle-Design"
+    },
+    {
+      "title": "The Binding of Isaac: Rebirth Wiki — Rotgut behavior",
+      "url": "https://bindingofisaacrebirth.wiki.gg/wiki/Rotgut"
+    },
+    {
+      "title": "Prima Games — Curse-Rotted Greatwood stage transition",
+      "url": "https://primagames.com/eguides/dark-souls-iii-eguide-steam/walkthrough/boss-curse-rotted-greatwood"
+    },
+    {
+      "title": "Monster Hunter World Chronicles — Safi'jiiva siege objective",
+      "url": "https://mhw.poedb.tw/eng/monster/Safi%27jiiva"
+    },
+    {
+      "title": "GameWith — Safi'jiiva level energy and descent",
+      "url": "https://gamewith.net/monsterhunterworld-iceborne/article/show/14081"
+    }
+  ]
+}

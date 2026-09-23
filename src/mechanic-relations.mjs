@@ -183,7 +183,12 @@ const PROFILE_OVERRIDES = {
     signal: ['marker', 'state'],
     response: ['reposition', 'interrupt'],
   },
-  'relocated-arena': { geometry: ['arena'], signal: ['environment', 'state'] },
+  'relocated-arena': {
+    geometry: ['arena'],
+    dimensions: ['2d', '3d'],
+    signal: ['environment', 'state'],
+    response: ['reposition', 'manage'],
+  },
   'boss-as-terrain': { geometry: ['entity', 'arena'], dimensions: ['2d', '3d'] },
   'cover-line-of-sight': {
     geometry: ['line', 'arena'],
@@ -267,6 +272,7 @@ const COMPATIBLE_PAIRS = new Set(
     ['chase-herding', 'baited-self-hit'],
     ['escape-phase', 'target-lock'],
     ['escape-phase', 'external-healing-source'],
+    ['relocated-arena', 'cover-line-of-sight'],
     ['debuff-handoff', 'ordered-targets'],
   ].map(([left, right]) => pairKey(left, right)),
 );
@@ -280,6 +286,7 @@ const CONFLICT_PAIRS = new Set(
     ['forced-scrolling', 'cover-line-of-sight'],
     ['chase-herding', 'forced-scrolling'],
     ['escape-phase', 'forced-scrolling'],
+    ['relocated-arena', 'forced-scrolling'],
     ['forced-inertia', 'marked-area-strike'],
     ['shrinking-safe-area', 'platform-destruction'],
     ['gaze-check', 'secondary-cues-invisibility'],

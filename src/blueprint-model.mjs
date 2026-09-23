@@ -577,6 +577,44 @@ const SPECS = {
       [350, 620],
     ],
   },
+  'relocated-arena': {
+    mode: 'relocated-arena',
+    boss: [205, 500],
+    player: [365, 535],
+    target: [390, 755],
+    previewAt: 0.55,
+    transfer: [1.15, 2.15],
+    punishAt: 3.85,
+    resetAt: 4.75,
+    upperBoss: [205, 500],
+    upperPlayer: [365, 535],
+    lowerBoss: [250, 720],
+    lowerPlayer: [390, 755],
+    bossTransfer: [
+      [205, 500],
+      [215, 565],
+      [230, 645],
+      [250, 720],
+    ],
+    playerTransfer: [
+      [365, 535],
+      [368, 600],
+      [378, 680],
+      [390, 755],
+    ],
+    bossReset: [
+      [250, 720],
+      [105, 720],
+      [105, 500],
+      [205, 500],
+    ],
+    playerReset: [
+      [390, 755],
+      [225, 755],
+      [225, 535],
+      [365, 535],
+    ],
+  },
   'wide-swing': { mode: 'arc', boss: [280, 310], player: [410, 470], target: [470, 650] },
   lunge: { mode: 'lunge', boss: [170, 290], player: [390, 590], target: [470, 660] },
   grab: { mode: 'grab', boss: [280, 300], player: [390, 485], target: [470, 610] },
@@ -1106,6 +1144,17 @@ export function escapePhaseState(time) {
   if (t < spec.staggerEnd) return 'interrupted';
   if (t < spec.resetAt) return 'opening';
   return 'reset';
+}
+
+export function relocatedArenaState(time) {
+  const spec = SPECS['relocated-arena'];
+  const t = localTime(time);
+  if (t < spec.previewAt) return 'upper-combat';
+  if (t < spec.transfer[0]) return 'destination-preview';
+  if (t < spec.transfer[1]) return 'transfer';
+  if (t < 3.2) return 'lower-entry';
+  if (t < spec.resetAt) return 'lower-combat';
+  return 'return-lift';
 }
 
 const pointInPolygon = (value, points) => {
@@ -2379,6 +2428,99 @@ function primitivesFor(spec, frame) {
         'signal',
         5,
         0.08,
+      ),
+    ];
+  }
+  if (mode === 'relocated-arena') {
+    const state = frame.relocatedArenaState;
+    const previewed = frame.relocatedDestinationRevealed;
+    const transferring = frame.relocatedTransferActive;
+    const lowerActive = frame.relocatedLowerActive;
+    const returning = state === 'return-lift';
+    const previewProgress = smooth(
+      (frame.time - spec.previewAt) / (spec.transfer[0] - spec.previewAt),
+    );
+    const transferProgress = smooth(
+      (frame.time - spec.transfer[0]) / (spec.transfer[1] - spec.transfer[0]),
+    );
+    const returnProgress = smooth(
+      (frame.time - spec.resetAt) / (BLUEPRINT_DURATION - spec.resetAt),
+    );
+    const lowerOpacity = lowerActive ? 0.88 : previewed ? 0.2 + previewProgress * 0.48 : 0.08;
+    const upperOpacity = lowerActive && !returning ? 0.22 : 0.7;
+    const strike = strikePulse(frame.time, spec.punishAt, 0.38);
+    const landingPulse = strikePulse(frame.time, spec.transfer[1], 0.45);
+    const meterX = 318;
+    const meterWidth = 148;
+    return [
+      rect(58, 386, 444, 202, upperOpacity, 'muted', 0.03),
+      line(58, 585, 502, 585, upperOpacity, 'accent', 7),
+      rect(98, 626, 364, 220, lowerOpacity, 'muted', lowerActive ? 0.08 : 0.02),
+      line(98, 626, 98, 846, lowerOpacity, lowerActive ? 'signal' : 'accent', 8),
+      line(462, 626, 462, 846, lowerOpacity, lowerActive ? 'signal' : 'accent', 8),
+      path(
+        'M 122 585 L 166 568 L 205 585 L 246 562 L 284 585 L 326 566 L 374 585 L 426 564 L 474 585',
+        previewed ? 0.45 + previewProgress * 0.42 : 0.14,
+        transferring ? 'signal' : 'accent',
+        transferring ? 10 : 6,
+      ),
+      path(
+        `M ${spec.bossTransfer.map(([x, y]) => `${x} ${y}`).join(' L ')}`,
+        previewed && !lowerActive ? 0.58 : transferring ? 0.78 : 0.16,
+        'accent',
+        5,
+        0,
+        '10 9',
+      ),
+      path(
+        `M ${spec.playerTransfer.map(([x, y]) => `${x} ${y}`).join(' L ')}`,
+        previewed && !lowerActive ? 0.48 : transferring ? 0.72 : 0.16,
+        'safe',
+        5,
+        0,
+        '9 9',
+      ),
+      circle(250, 720, 26 + landingPulse * 17, lowerOpacity, 'accent', 6, 0.08, '8 7'),
+      circle(390, 755, 22 + landingPulse * 14, lowerOpacity, 'safe', 5, 0.06, '8 7'),
+      circle(
+        280,
+        786,
+        42 + Math.sin(frame.time * 2.4) ** 2 * 8,
+        lowerOpacity,
+        lowerActive ? 'signal' : 'accent',
+        6,
+        lowerActive ? 0.13 : 0.03,
+        '9 8',
+      ),
+      rect(meterX, 654, meterWidth, 15, previewed ? 0.72 : 0.25, 'muted', 0.08),
+      rect(
+        meterX,
+        654,
+        meterWidth * 0.62,
+        15,
+        previewed ? 0.9 : 0.35,
+        lowerActive ? 'safe' : 'accent',
+        0.46,
+      ),
+      path(
+        'M 82 810 L 82 470 L 248 470 L 248 810',
+        returning ? 0.82 : lowerActive ? 0.26 : 0.12,
+        returning ? 'safe' : 'accent',
+        returning ? 8 : 4,
+        0,
+        '12 9',
+      ),
+      rect(84, mix(790, 490, returnProgress), 162, 18, returning ? 0.92 : 0.18, 'safe', 0.32),
+      line(frame.player.x, frame.player.y, frame.boss.x, frame.boss.y, strike, 'safe', 10),
+      circle(frame.boss.x + 30, frame.boss.y - 8, 12 + strike * 24, strike, 'safe', 7, 0.12),
+      circle(
+        280,
+        720,
+        34 + transferProgress * 18,
+        transferring ? 0.28 + transferProgress * 0.35 : landingPulse * 0.62,
+        'signal',
+        5,
+        0.05,
       ),
     ];
   }
@@ -3680,6 +3822,7 @@ function pointClearsThreat(spec, frame, value, radius = BLUEPRINT_PLAYER_RADIUS)
   if (mode === 'forced-scrolling') return !frame.dangerActive || value.y + radius < spec.hazardTop;
   if (mode === 'chase-herding') return true;
   if (mode === 'escape-phase') return true;
+  if (mode === 'relocated-arena') return true;
   if (mode === 'spiral')
     return (
       distanceFromBoss > 52 + radius &&
@@ -3884,6 +4027,17 @@ export function blueprintFrame(id, time) {
         y: mix(interrupted.y, startBoss.y, reset),
       };
     }
+  } else if (spec.mode === 'relocated-arena') {
+    const lowerBoss = point(spec.lowerBoss);
+    if (t < spec.transfer[0]) boss = startBoss;
+    else if (t < spec.transfer[1]) {
+      const transfer = smooth((t - spec.transfer[0]) / (spec.transfer[1] - spec.transfer[0]));
+      boss = pointAlongPolyline(spec.bossTransfer.map(point), transfer);
+    } else if (t < spec.resetAt) boss = lowerBoss;
+    else {
+      const reset = smooth((t - spec.resetAt) / (BLUEPRINT_DURATION - spec.resetAt));
+      boss = pointAlongPolyline(spec.bossReset.map(point), reset);
+    }
   } else if (spec.mode === 'lunge') {
     const travel = phase === 0 ? 0 : phase === 1 ? smooth(action / 0.62) : 1 - recover;
     boss = { x: mix(170, 430, travel), y: mix(290, 590, travel) };
@@ -3955,6 +4109,7 @@ export function blueprintFrame(id, time) {
   else if (spec.mode === 'forced-scrolling') responseProgress = 0;
   else if (spec.mode === 'chase-herding') responseProgress = 0;
   else if (spec.mode === 'escape-phase') responseProgress = 0;
+  else if (spec.mode === 'relocated-arena') responseProgress = 0;
   else if (spec.mode === 'knockback')
     responseProgress = phase === 0 ? 0 : phase === 1 ? smooth(action) : 1;
   else if (spec.mode === 'target-lock')
@@ -4268,6 +4423,18 @@ export function blueprintFrame(id, time) {
       y: mix(intercept.y, startPlayer.y, reset),
     };
   }
+  if (spec.mode === 'relocated-arena') {
+    const lowerPlayer = point(spec.lowerPlayer);
+    if (t < spec.transfer[0]) player = startPlayer;
+    else if (t < spec.transfer[1]) {
+      const transfer = smooth((t - spec.transfer[0]) / (spec.transfer[1] - spec.transfer[0]));
+      player = pointAlongPolyline(spec.playerTransfer.map(point), transfer);
+    } else if (t < spec.resetAt) player = lowerPlayer;
+    else {
+      const reset = smooth((t - spec.resetAt) / (BLUEPRINT_DURATION - spec.resetAt));
+      player = pointAlongPolyline(spec.playerReset.map(point), reset);
+    }
+  }
   if (spec.mode === 'rotating' && phase === 0) {
     const initialPosition = polar(boss, 255, Math.PI / 3);
     player = {
@@ -4383,7 +4550,15 @@ export function blueprintFrame(id, time) {
                         pulse(smooth((t - spec.resetAt) / (BLUEPRINT_DURATION - spec.resetAt))) *
                           0.8,
                       )
-                    : pulse(responseProgress) + pulse(returnProgress) * 0.8;
+                    : spec.mode === 'relocated-arena'
+                      ? Math.max(
+                          pulse(
+                            smooth((t - spec.transfer[0]) / (spec.transfer[1] - spec.transfer[0])),
+                          ) * 0.45,
+                          pulse(smooth((t - spec.resetAt) / (BLUEPRINT_DURATION - spec.resetAt))) *
+                            0.8,
+                        )
+                      : pulse(responseProgress) + pulse(returnProgress) * 0.8;
   const bossVisible =
     spec.mode === 'burrow' && phase === 1 && action < 0.68
       ? 0
@@ -4517,7 +4692,9 @@ export function blueprintFrame(id, time) {
                                                               ? false
                                                               : spec.mode === 'escape-phase'
                                                                 ? false
-                                                                : phase === 1;
+                                                                : spec.mode === 'relocated-arena'
+                                                                  ? false
+                                                                  : phase === 1;
   const frame = {
     id,
     mode: spec.mode,
@@ -4581,22 +4758,30 @@ export function blueprintFrame(id, time) {
                       ? (Math.atan2(boss.y - player.y, boss.x - player.x) * 180) / Math.PI
                       : spec.mode === 'escape-phase'
                         ? (Math.atan2(boss.y - player.y, boss.x - player.x) * 180) / Math.PI
-                        : spec.mode === 'damage-type-resistance' ||
-                            spec.mode === 'situational-immunity' ||
-                            spec.mode === 'part-break' ||
-                            spec.mode === 'attack-reflection' ||
-                            spec.mode === 'counter-stance' ||
-                            spec.mode === 'absorption-power-up' ||
-                            spec.mode === 'interruptible-wind-up' ||
-                            spec.mode === 'loadout-adaptation' ||
-                            spec.mode === 'wind-up'
-                          ? -180
-                          : -90,
+                        : spec.mode === 'relocated-arena'
+                          ? (Math.atan2(boss.y - player.y, boss.x - player.x) * 180) / Math.PI
+                          : spec.mode === 'damage-type-resistance' ||
+                              spec.mode === 'situational-immunity' ||
+                              spec.mode === 'part-break' ||
+                              spec.mode === 'attack-reflection' ||
+                              spec.mode === 'counter-stance' ||
+                              spec.mode === 'absorption-power-up' ||
+                              spec.mode === 'interruptible-wind-up' ||
+                              spec.mode === 'loadout-adaptation' ||
+                              spec.mode === 'wind-up'
+                            ? -180
+                            : -90,
     bossMotion: motion({
-      gait: spec.mode === 'chase-herding' || spec.mode === 'escape-phase' ? t * 6 : 0,
+      gait:
+        spec.mode === 'chase-herding' ||
+        spec.mode === 'escape-phase' ||
+        spec.mode === 'relocated-arena'
+          ? t * 6
+          : 0,
       stride:
         (spec.mode === 'chase-herding' && t >= spec.active[0] && t < spec.active[1]) ||
-        (spec.mode === 'escape-phase' && t >= spec.escape[0] && t < spec.escape[1])
+        (spec.mode === 'escape-phase' && t >= spec.escape[0] && t < spec.escape[1]) ||
+        (spec.mode === 'relocated-arena' && t >= spec.resetAt)
           ? 0.72
           : 0,
       lean:
@@ -4643,9 +4828,11 @@ export function blueprintFrame(id, time) {
                                 smooth((t - spec.triggerAt) / 0.5) *
                                 (1 - smooth((t - spec.escape[1]) / 0.42)) +
                               0.4 * strikePulse(t, spec.escape[1], 0.58)
-                            : phase === 0
-                              ? -0.22 * prepare
-                              : 0.24 * pulse(action),
+                            : spec.mode === 'relocated-arena'
+                              ? 0.38 * strikePulse(t, spec.transfer[1], 0.56)
+                              : phase === 0
+                                ? -0.22 * prepare
+                                : 0.24 * pulse(action),
       crouch:
         spec.mode === 'landing'
           ? phase === 0
@@ -4676,8 +4863,15 @@ export function blueprintFrame(id, time) {
                           ? 0.2 *
                             smooth((t - spec.triggerAt) / 0.5) *
                             (1 - smooth((t - spec.escape[1]) / 0.45))
-                          : 0.2 * prepare,
-      lift: spec.mode === 'landing' && phase === 1 ? pulse(clamp(action / 0.52)) : 0,
+                          : spec.mode === 'relocated-arena'
+                            ? 0.22 * strikePulse(t, spec.transfer[1], 0.52)
+                            : 0.2 * prepare,
+      lift:
+        spec.mode === 'landing' && phase === 1
+          ? pulse(clamp(action / 0.52))
+          : spec.mode === 'relocated-arena' && t >= spec.transfer[0] && t < spec.transfer[1]
+            ? pulse(smooth((t - spec.transfer[0]) / (spec.transfer[1] - spec.transfer[0])))
+            : 0,
       attack:
         spec.mode === 'speed-change'
           ? dangerActive
@@ -4754,9 +4948,11 @@ export function blueprintFrame(id, time) {
                                                   (spec.active[0] - spec.signal[0]),
                                               ) *
                                               (1 - smooth((t - spec.active[1]) / 0.4))
-                                            : phase === 1
-                                              ? 0.75
-                                              : prepare * 0.35,
+                                            : spec.mode === 'relocated-arena'
+                                              ? 0
+                                              : phase === 1
+                                                ? 0.75
+                                                : prepare * 0.35,
       impact:
         spec.mode === 'landing'
           ? pulse(clamp((action - 0.42) / 0.22))
@@ -4829,12 +5025,14 @@ export function blueprintFrame(id, time) {
                                                   0.72 * strikePulse(t, spec.escape[1], 0.32),
                                                   0.85 * strikePulse(t, spec.punishAt, 0.3),
                                                 )
-                                              : spec.mode === 'shockwave' ||
-                                                  spec.mode === 'knockback'
-                                                ? pulse(action * 3)
-                                                : spec.mode === 'chain-explosions'
-                                                  ? pulse((action * 5) % 1)
-                                                  : 0,
+                                              : spec.mode === 'relocated-arena'
+                                                ? 0.72 * strikePulse(t, spec.transfer[1], 0.32)
+                                                : spec.mode === 'shockwave' ||
+                                                    spec.mode === 'knockback'
+                                                  ? pulse(action * 3)
+                                                  : spec.mode === 'chain-explosions'
+                                                    ? pulse((action * 5) % 1)
+                                                    : 0,
     }),
     playerMotion: motion({
       gait:
@@ -4854,7 +5052,9 @@ export function blueprintFrame(id, time) {
                       ? t * 7 * stride
                       : spec.mode === 'escape-phase'
                         ? t * 7 * stride
-                        : (route * responseProgress + route * returnProgress) / 20,
+                        : spec.mode === 'relocated-arena'
+                          ? t * 7 * stride
+                          : (route * responseProgress + route * returnProgress) / 20,
       stride,
       lean: stride * 0.45,
       crouch: stride * 0.16,
@@ -4914,11 +5114,13 @@ export function blueprintFrame(id, time) {
                                               strikePulse(t, spec.escape[1], 0.38),
                                               strikePulse(t, spec.punishAt, 0.38),
                                             )
-                                          : spec.mode === 'decoy' && phase === 1
-                                            ? pulse(clamp((action - 0.52) / 0.3))
-                                            : spec.mode === 'weak-point' && phase === 1
-                                              ? pulse(action * 1.5)
-                                              : 0,
+                                          : spec.mode === 'relocated-arena'
+                                            ? strikePulse(t, spec.punishAt, 0.38)
+                                            : spec.mode === 'decoy' && phase === 1
+                                              ? pulse(clamp((action - 0.52) / 0.3))
+                                              : spec.mode === 'weak-point' && phase === 1
+                                                ? pulse(action * 1.5)
+                                                : 0,
     }),
   };
   if (spec.mode === 'directional-shield') {
@@ -5013,6 +5215,15 @@ export function blueprintFrame(id, time) {
     frame.activePhaseState = activePhaseState(t);
     frame.hitboxActive = dangerActive;
     frame.followThroughVisible = t >= spec.active[1] && t < spec.followThroughEnd;
+    frame.punishStrike = strikePulse(t, spec.punishAt, 0.38) > 0.5;
+  }
+  if (spec.mode === 'relocated-arena') {
+    frame.relocatedArenaState = relocatedArenaState(t);
+    frame.relocatedDestinationRevealed = t >= spec.previewAt;
+    frame.relocatedTransferActive = t >= spec.transfer[0] && t < spec.transfer[1];
+    frame.relocatedLowerActive = t >= spec.transfer[1] && t < spec.resetAt;
+    frame.relocatedStateRetained = true;
+    frame.relocatedProgress = 0.62;
     frame.punishStrike = strikePulse(t, spec.punishAt, 0.38) > 0.5;
   }
   if (spec.mode === 'forced-scrolling') {

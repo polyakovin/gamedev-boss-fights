@@ -201,6 +201,15 @@ export function initializeBlueprint(widget) {
       widget.dataset.blueprintEscapeInterruptStrike = String(frame.escapeInterruptStrike);
       widget.dataset.blueprintPunishStrike = String(frame.punishStrike);
     }
+    if (mechanicId === 'relocated-arena') {
+      widget.dataset.blueprintRelocatedArena = frame.relocatedArenaState;
+      widget.dataset.blueprintRelocationDestination = String(frame.relocatedDestinationRevealed);
+      widget.dataset.blueprintRelocationActive = String(frame.relocatedTransferActive);
+      widget.dataset.blueprintRelocationLowerActive = String(frame.relocatedLowerActive);
+      widget.dataset.blueprintRelocationStateRetained = String(frame.relocatedStateRetained);
+      widget.dataset.blueprintRelocationProgress = frame.relocatedProgress.toFixed(2);
+      widget.dataset.blueprintPunishStrike = String(frame.punishStrike);
+    }
     boss.setAttribute(
       'transform',
       `translate(${frame.boss.x} ${frame.boss.y}) scale(${frame.bossScale})`,

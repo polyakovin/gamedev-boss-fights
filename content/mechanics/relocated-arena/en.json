@@ -1,0 +1,134 @@
+{
+  "title": "Nested / relocated arena",
+  "subtitle": "Move one continuing encounter into a new space whose geometry changes the next decisions.",
+  "variant": "Kern collapses a marked quarry floor, carrying the same core damage into a narrower rune chamber where Tavi can resume pressure",
+  "summary": "A relocated arena transfers the active boss fight into another playable space without ending or silently rebuilding the encounter.",
+  "overview": "At 0.55 seconds cracks and a lower-room outline announce the destination. From 1.15–2.15 seconds the marked floor gives way and both actors make one collision-free transfer. The encounter state resumes below, but narrower walls and a central rune create a new spatial problem before a visible lift returns the deterministic demonstration.",
+  "learning": "Implement the relocation trigger, destination preview, transfer ownership, state handoff, spawn validation, new geometry, camera behavior, multiplayer policy, and reset as one encounter transition.",
+  "category": "Space, movement, and perception",
+  "readTime": "7 min",
+  "demo": {
+    "title": "Show the next arena before taking control away",
+    "timeline": "Relocated arena timeline",
+    "step": "Relocated arena states",
+    "phaseNames": ["Preview and open the floor", "Land and resume below", "Return for the loop"],
+    "phaseDescriptions": [
+      "At 0.55 s the quarry floor cracks and outlines the lower rune chamber, landing marks, and tighter walls. At 1.15 s the floor opens and both actors begin collision-free authored fall paths while boss progress stays visible.",
+      "The transfer ends at 2.15 s on fixed valid landing points. The narrower chamber and central rune become active, retained encounter state resumes, and Tavi reaches a sword opening at 3.85 s.",
+      "The lower room stays playable through the phase boundary. After 4.75 s a visible lift collects both actors and returns them continuously to their exact starting state for the deterministic loop."
+    ],
+    "boss": "Boss",
+    "player": "Player",
+    "danger": "The transfer is collision-free; danger resumes only after both actors occupy validated points in the new arena",
+    "locked": "Trigger, destination, transfer path, retained state, landing points, geometry set, camera framing, and return policy are authored",
+    "safe": "Read the destination preview, preserve orientation through the transfer, and reassess movement against the lower room's tighter boundaries",
+    "reducedMotion": "Autoplay is disabled by reduced motion. Scrub across 0.55, 1.15, 1.7, 2.15, 3.2, 3.85, and 4.75 seconds to inspect the complete handoff.",
+    "diagramDescription": "Two stacked rooms show an upper quarry floor cracking above a narrower rune chamber. Kern and Tavi fall along separate fixed paths, land on marked points with encounter progress preserved, resume combat below, and later ride a visible lift back for the loop."
+  },
+  "steps": [
+    {
+      "title": "What state crosses the boundary?",
+      "body": "List health, phase counters, broken parts, spawned entities, status effects, cooldowns, resources, music position, and objective progress. Choose what persists, converts, pauses, or clears, then make that handoff atomic. A relocated arena should feel like one authored encounter; it should not duplicate the boss, restore a hidden default, or discard a costly player decision."
+    },
+    {
+      "title": "Where can every participant safely arrive?",
+      "body": "Preview the destination before forced movement, validate full-body clearance at each landing point, and reserve space for summons, companions, cameras, and multiplayer groups. Decide who owns the transfer if someone is dead, airborne, grabbed, disconnected, outside the trigger volume, or already inside the destination. Never resolve the move inside active damage or blocked navigation."
+    },
+    {
+      "title": "What new decision justifies the move?",
+      "body": "Change a meaningful spatial rule: width, height, cover, traversal, hazards, line of sight, gravity, footing, or access to the boss. Reframe the camera and reintroduce control before danger resumes. If the second room plays identically, the transition adds spectacle and loading risk without adding a useful phase."
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "The cut hides a reset or unavoidable hit",
+      "body": "A black frame that restores boss state, moves projectiles onto the player, or resumes an attack before control returns breaks trust. Freeze or resolve live threats explicitly, expose retained progress, and add a protected landing beat whose end is visibly signaled."
+    },
+    {
+      "title": "The new room is only a different backdrop",
+      "body": "If ranges, routes, sight lines, and response verbs are unchanged, relocation becomes production cost without design return. Give the destination one legible geometry change and retune the boss package around it instead of importing every old attack unchanged."
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "Model relocation as a transaction",
+      "body": "Capture encounter state, suspend simulation, assign destination space, validate spawns, move actors, rebuild navigation and camera bounds, restore retained state, then resume. Log failures at each boundary so a partial transfer cannot leave duplicate bosses, missing players, or divergent multiplayer authority."
+    },
+    {
+      "title": "Budget transition time separately from downtime",
+      "body": "Measure signal, forced motion, camera settle, input restoration, and first danger. Skip or accelerate repeated cinematics while preserving the decision-relevant preview. The first visit may carry drama; retries need a stable, readable route back into play."
+    },
+    {
+      "title": "Retune attacks against the new topology",
+      "body": "Recalculate full-body clearances, projectile lifetimes, navigation reachability, off-screen tells, leash distances, and recovery routes in the destination. A pattern that was fair in a broad plaza may become a wall in a narrow chamber, while cover can trivialize a beam authored for open ground."
+    },
+    {
+      "title": "Test joins, deaths, checkpoints, and camera ownership",
+      "body": "Exercise solo and full parties, late joins, revives, split players, summons, photo modes, lock-on, and every checkpoint on both sides of the boundary. Define whether retreat is possible, where a wipe restarts, and how the game recovers if destination streaming or navigation fails."
+    }
+  ],
+  "story": {
+    "title": "Kern breaks into the sealed rune chamber",
+    "body": "The upper quarry is a shell over an older chamber that feeds Kern's core. Cracks preview the drop, and the lower room's tighter walls and central conduit explain why the same elemental changes its spatial pressure without becoming a new creature."
+  },
+  "adaptation": {
+    "title": "Keep Tavi's position and sword legible through the fall",
+    "body": "Tavi loses control only while the floor transfers both actors. A marked landing preserves facing and distance, then ordinary movement and the familiar sword resume before Kern's next rule becomes dangerous. No transition-only verb is required."
+  },
+  "distinction": {
+    "title": "A new playable space, not a teleport or escape",
+    "body": "Teleport changes an actor's position inside the current spatial rule. Escape phase asks whether the boss reaches an exit and applies a consequence. Relocated arena moves the continuing encounter across a boundary, hands state to a different geometry set, and restores control there."
+  },
+  "lensNotes": [
+    {
+      "id": "phase-structure",
+      "body": "The spatial handoff is a phase boundary whose retained state and changed rules must be explicit."
+    },
+    {
+      "id": "progress-clarity",
+      "body": "Destination preview, stable boss progress, landing marks, and a protected resume beat explain that the encounter continues."
+    },
+    {
+      "id": "threat-geometry",
+      "body": "The destination earns its place by changing routes, clearances, cover, or another measurable spatial constraint."
+    },
+    {
+      "id": "dramatic-framing",
+      "body": "The transfer can deliver spectacle while its camera path still preserves orientation, destination, and the return of control."
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "The Binding of Isaac: Repentance",
+      "boss": "Rotgut",
+      "screenshot": "https://i.ytimg.com/vi/YvBpZmHWLGk/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=YvBpZmHWLGk&t=24s",
+      "body": "After the outer form is defeated, Rotgut pulls the player into a crawl-space-like interior, then advances into a separate heart chamber. The same boss encounter becomes a sequence of room contracts: top-down movement gives way to platform-like vertical geometry before a final enclosed pattern space.",
+      "video": "https://www.youtube.com/watch?v=YvBpZmHWLGk&t=24s",
+      "videoDurationSeconds": 80
+    },
+    {
+      "dimension": "3D",
+      "game": "Dark Souls III",
+      "boss": "Curse-Rotted Greatwood",
+      "screenshot": "https://i.ytimg.com/vi/XBLOdrk1LF0/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=XBLOdrk1LF0&t=84s",
+      "body": "Bursting the central growth causes the Greatwood and player to break through the courtyard floor into a lower chamber. Boss damage and remaining weak points persist, while the crowd disappears and the compact pit introduces a new hand and tighter body-slam geometry.",
+      "video": "https://www.youtube.com/watch?v=XBLOdrk1LF0&t=84s",
+      "videoDurationSeconds": 157
+    },
+    {
+      "dimension": "3D",
+      "game": "Monster Hunter World: Iceborne",
+      "boss": "Safi'jiiva",
+      "screenshot": "https://i.ytimg.com/vi/o9-qavsmRBI/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=o9-qavsmRBI&t=180s",
+      "body": "As each level's energy is exhausted, Safi'jiiva descends and the hunting party follows into another layer of the Secluded Valley. The siege retains part damage and group progress while each tier changes environmental traps, cover, targeting pressure, and the conditions of the final vulnerable state.",
+      "video": "https://www.youtube.com/watch?v=o9-qavsmRBI&t=180s",
+      "videoDurationSeconds": 726
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

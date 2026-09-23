@@ -405,9 +405,9 @@ test('volley releases three parallel bolts on one beat and clears its outside ro
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
 });
 
-test('catalog and builder reuse the 65 promoted rule-specific previews', async ({ page }) => {
+test('catalog and builder reuse the 66 promoted rule-specific previews', async ({ page }) => {
   await page.goto('en/');
-  await expect(page.locator('[data-blueprint-preview]')).toHaveCount(65);
+  await expect(page.locator('[data-blueprint-preview]')).toHaveCount(66);
   const catalogLayouts = await page.locator('[data-blueprint-preview]').evaluateAll((previews) =>
     previews.map((preview) => {
       const boss = preview.querySelector('[data-character-art-preview="kern"]');
@@ -431,7 +431,7 @@ test('catalog and builder reuse the 65 promoted rule-specific previews', async (
   expect(new Set(catalogLayouts.map(({ layout }) => layout)).size).toBeGreaterThanOrEqual(18);
 
   await page.goto('en/builder/');
-  await expect(page.locator('[data-blueprint-preview]')).toHaveCount(65);
+  await expect(page.locator('[data-blueprint-preview]')).toHaveCount(66);
   const builderLayouts = await page.locator('[data-blueprint-preview]').evaluateAll((previews) =>
     previews.map((preview) => {
       const boss = preview.querySelector('[data-character-art-preview="kern"]');
@@ -2143,6 +2143,61 @@ test('escape phase exposes its exit tell, progress limit, interruption, and puni
   await expect(widget).toHaveAttribute('data-blueprint-escape-phase', 'opening');
   await expect(widget).toHaveAttribute('data-blueprint-punish-strike', 'true');
   await expect(widget.locator('[data-blueprint-primitive="10"] line')).not.toHaveAttribute(
+    'opacity',
+    '0',
+  );
+
+  await page.setViewportSize({ width: 375, height: 812 });
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+});
+
+test('relocated arena previews its destination and preserves encounter state across geometry', async ({
+  page,
+}) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.goto('en/mechanics/relocated-arena/');
+  const widget = page.locator('[data-blueprint-demo]');
+  const timeline = widget.locator('[data-blueprint-timeline]');
+  const seek = (milliseconds) =>
+    timeline.evaluate((element, value) => {
+      element.value = String(value);
+      element.dispatchEvent(new Event('input', { bubbles: true }));
+    }, milliseconds);
+
+  await expect(page.locator('.lesson-title-line h1')).toHaveText('Nested / relocated arena');
+  await expect(page.locator('.wip-badge, .draft-profile')).toHaveCount(0);
+  await expect(page.locator('.game-example')).toHaveCount(3);
+  await expect(widget).toHaveAttribute('data-blueprint-playing', 'false');
+
+  await seek(800);
+  await expect(widget).toHaveAttribute('data-blueprint-relocated-arena', 'destination-preview');
+  await expect(widget).toHaveAttribute('data-blueprint-relocation-destination', 'true');
+  await expect(widget.locator('[data-blueprint-primitive="2"] rect')).not.toHaveAttribute(
+    'opacity',
+    '0',
+  );
+
+  await seek(1700);
+  await expect(widget).toHaveAttribute('data-blueprint-relocated-arena', 'transfer');
+  await expect(widget).toHaveAttribute('data-blueprint-relocation-active', 'true');
+
+  await seek(2800);
+  await expect(widget).toHaveAttribute('data-blueprint-relocated-arena', 'lower-entry');
+  await expect(widget).toHaveAttribute('data-blueprint-relocation-lower-active', 'true');
+  await expect(widget).toHaveAttribute('data-blueprint-relocation-state-retained', 'true');
+  await expect(widget).toHaveAttribute('data-blueprint-relocation-progress', '0.62');
+
+  await seek(3850);
+  await expect(widget).toHaveAttribute('data-blueprint-relocated-arena', 'lower-combat');
+  await expect(widget).toHaveAttribute('data-blueprint-punish-strike', 'true');
+  await expect(widget.locator('[data-blueprint-primitive="15"] line')).not.toHaveAttribute(
+    'opacity',
+    '0',
+  );
+
+  await seek(5250);
+  await expect(widget).toHaveAttribute('data-blueprint-relocated-arena', 'return-lift');
+  await expect(widget.locator('[data-blueprint-primitive="13"] path')).not.toHaveAttribute(
     'opacity',
     '0',
   );
