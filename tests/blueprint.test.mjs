@@ -3107,13 +3107,23 @@ test('instant kill resolves one terminal predicate without ordinary damage', () 
   const execution = blueprintFrame(id, 2.9);
   assert.equal(execution.dangerActive, true);
   assert.equal(execution.playerSafe, false);
-  assert.equal(blueprintPointSafe(id, 2.9, { x: 455, y: 720 }), true);
+  assert.equal(blueprintPointSafe(id, 2.9, { x: 450, y: 750 }), true);
+  const trap = execution.primitives.find(
+    (primitive) =>
+      primitive.type === 'circle' &&
+      primitive.x === 280 &&
+      primitive.y === 660 &&
+      primitive.radius === 92,
+  );
+  assert.ok(trap, 'the filled trap matches the execution condition');
+  assert.equal(trap.width, 0);
   assert.equal(execution.instantKillExecuted, true);
   assert.equal(execution.instantKillDamageApplied, 0);
   assert.equal(execution.instantKillResultCount, 1);
   assert.equal(execution.instantKillResultId, 'instant-kill-1');
   assert.equal(execution.instantKillFirstAvoided, false);
   assert.equal(blueprintFrame(id, 3.2).instantKillAttemptEnded, true);
+  assert.equal(blueprintFrame(id, 3.2).playerMotion.crouch, 0.85);
   assert.deepEqual(blueprintFrame(id, 0).player, blueprintFrame(id, 6).player);
   assert.match(
     renderBlueprintThumbnail(id, 'test-instant-kill'),

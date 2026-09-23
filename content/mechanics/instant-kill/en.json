@@ -17,7 +17,7 @@
       "Hold the result, restore safely, and reset authority"
     ],
     "phaseDescriptions": [
-      "Kern marks a fixed execution seal at 0.30 s. Tavi's full body clears its 92-unit radius before the first resolution at 0.98 s, so the condition evaluates false and no health, result, or reward changes. The safe check remains visible before Tavi returns.",
+      "Kern marks a fixed execution seal at 0.30 s. Tavi's full body clears its 92-unit radius before the first resolution at 0.98 s, so the condition evaluates false and no health, result, or reward changes. The empty trap remains visible before Tavi returns.",
       "The same seal appears again at 1.82 s, with six countdown runes and a distinct lock at 2.58 s. Tavi remains inside when it resolves at 2.86 s. The encounter reserves result instant-kill-1 once, applies zero ordinary damage, and ends the attempt even though health was 100 immediately beforehand.",
       "The ended state remains visible until restoration begins at 4.18 s, so the cause cannot be confused with damage or disconnection. Control and collision return only after the safe restore window at 4.72 s; result authority clears when the complete demonstration resets after 5.20 s."
     ],
@@ -27,7 +27,7 @@
     "locked": "Condition id, target snapshot, geometry, telegraph, lock time, resolution tick, valid answers, immunity policy, result id, revival policy, and reward authority are encounter-owned",
     "safe": "Use a fixed boundary, countdown segments, lock pulse, distinct terminal mark, sound and caption; never hide an instant-kill behind ordinary hit feedback or a visually identical nonlethal attack",
     "reducedMotion": "Autoplay is disabled by reduced motion. Scrub across 0.30, 0.48, 0.88, 0.98, 1.82, 2.58, 2.86, 3.02, 4.18, 4.72, and 5.20 seconds to inspect warning, escape, lock, execution, result, restore, and reset.",
-    "diagramDescription": "Kern stands above a fixed circular seal around Tavi. Six outer runes count down. During the first cast Tavi moves completely beyond the boundary and a green check confirms the avoided condition. During the second cast Tavi remains inside; the boundary locks, a pulse resolves, the still-full health bar is crossed out, and one large terminal mark identifies the ended attempt before a safe reset."
+    "diagramDescription": "Kern arms a circular stone execution trap beneath Tavi. Six rune-carved blades count down around its exact danger area. Tavi fully clears the first activation, then stands inside the second. The blades close over the crouching player while the heart and full health strip above remain intact, showing that the attempt ends from the condition rather than ordinary damage."
   },
   "steps": [
     {

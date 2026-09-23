@@ -27,7 +27,7 @@
     "locked": "Identificador, objetivo, geometría, aviso, fijación, instante de resolución, respuestas, inmunidad, resultado, resurrección y recompensa pertenecen al encuentro",
     "safe": "Usa límite fijo, cuenta atrás, pulso de fijación, marca terminal, sonido y texto; no ocultes la ejecución tras feedback de daño normal",
     "reducedMotion": "Con movimiento reducido no hay reproducción automática. Recorre 0,30, 0,48, 0,88, 0,98, 1,82, 2,58, 2,86, 3,02, 4,18, 4,72 y 5,20 s.",
-    "diagramDescription": "Kern está sobre un sello circular fijo con seis runas. Primero Tavi sale por completo y una marca verde confirma la evasión. Después permanece dentro: el borde se fija, el pulso resuelve, la barra de salud llena se tacha y una marca terminal conserva la causa antes del reinicio."
+    "diagramDescription": "Kern activa una trampa de piedra circular bajo Tavi. Seis cuchillas grabadas con runas marcan la cuenta atrás alrededor del área peligrosa. Tavi sale por completo de la primera activación, pero permanece dentro de la segunda. Las cuchillas se cierran sobre el jugador agachado mientras el corazón y la barra de salud llena siguen intactos: el intento termina por la condición, sin daño normal."
   },
   "steps": [
     {

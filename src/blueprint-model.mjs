@@ -1250,12 +1250,12 @@ const SPECS = {
   },
   'instant-kill': {
     mode: 'instant-kill',
-    boss: [300, 375],
-    player: [300, 610],
-    target: [455, 720],
-    arena: [55, 310, 450, 570],
-    executionCenter: [300, 610],
-    safePoint: [455, 720],
+    boss: [280, 245],
+    player: [280, 660],
+    target: [450, 750],
+    arena: [40, 145, 480, 715],
+    executionCenter: [280, 660],
+    safePoint: [450, 750],
     executionRadius: 92,
     firstTelegraph: [0.3, 0.96],
     firstEscape: [0.48, 0.88],
@@ -5807,10 +5807,6 @@ function primitivesFor(spec, frame) {
     const firstTelegraph = frame.time >= spec.firstTelegraph[0] && frame.time < spec.firstResolveAt;
     const secondTelegraph = frame.time >= spec.secondTelegraph[0] && frame.time < spec.executeAt;
     const telegraph = firstTelegraph || secondTelegraph;
-    const resolvePulse = Math.max(
-      strikePulse(frame.time, spec.firstResolveAt, 0.36),
-      strikePulse(frame.time, spec.executeAt, 0.48),
-    );
     const countdown = secondTelegraph
       ? clamp((frame.time - spec.secondTelegraph[0]) / (spec.executeAt - spec.secondTelegraph[0]))
       : firstTelegraph
@@ -5818,77 +5814,92 @@ function primitivesFor(spec, frame) {
             (frame.time - spec.firstTelegraph[0]) / (spec.firstResolveAt - spec.firstTelegraph[0]),
           )
         : 0;
+    const resolvePulse = Math.max(
+      strikePulse(frame.time, spec.firstResolveAt, 0.36),
+      strikePulse(frame.time, spec.executeAt, 0.48),
+    );
+    const trapOpacity = telegraph
+      ? 0.64
+      : frame.instantKillConditionLocked
+        ? 0.85
+        : frame.instantKillFirstAvoided
+          ? 0.12
+          : 0.28;
+    const bladeOpacity = frame.instantKillAttemptEnded ? 0.98 : resolvePulse * 0.76;
+    const tetherOpacity = telegraph || frame.instantKillConditionLocked ? 0.66 : 0;
     return [
-      rect(...spec.arena, frame.instantKillAttemptEnded ? 0.28 : 0.52, 'muted', 0.025),
-      rect(178, 318, 244, 20, 0.64, 'muted', 0.035),
-      rect(182, 322, 236, 12, 0.96, 'safe', 0.18),
-      line(182, 344, 418, 344, frame.instantKillAttemptEnded ? 0.96 : 0.18, 'signal', 6),
-      line(182, 314, 418, 348, frame.instantKillAttemptEnded ? 0.96 : 0, 'signal', 7),
+      path('M 120 93 H 440 V 117 H 120 Z', 0.72, 'muted', 0, 0.64),
+      path('M 120 93 H 440 V 117 H 120 Z', 0.98, 'safe', 0, 0.9),
+      path(
+        'M 86 95 C 74 82 55 96 61 112 L 86 136 L 111 112 C 117 96 98 82 86 95 Z',
+        0.96,
+        'safe',
+        0,
+        0.86,
+      ),
+      path(
+        `M ${frame.boss.x - 34} ${frame.boss.y + 24} L ${center.x - 92} ${center.y - 92} L ${center.x - 82} ${center.y - 88} L ${frame.boss.x - 23} ${frame.boss.y + 28} Z`,
+        tetherOpacity,
+        'muted',
+        0,
+        0.76,
+      ),
+      path(
+        `M ${frame.boss.x + 34} ${frame.boss.y + 24} L ${center.x + 92} ${center.y - 92} L ${center.x + 82} ${center.y - 88} L ${frame.boss.x + 23} ${frame.boss.y + 28} Z`,
+        tetherOpacity,
+        'muted',
+        0,
+        0.76,
+      ),
       circle(
         center.x,
         center.y,
         spec.executionRadius,
-        telegraph ? 0.86 : frame.instantKillAttemptEnded ? 0.28 : 0.12,
-        frame.instantKillConditionLocked || frame.instantKillExecuted ? 'signal' : 'accent',
-        frame.instantKillConditionLocked ? 11 : 6,
-        telegraph ? 0.08 : 0.015,
-        frame.instantKillConditionLocked ? '' : '11 9',
-      ),
-      circle(
-        center.x,
-        center.y,
-        spec.executionRadius * (1 - 0.48 * countdown),
-        telegraph ? 0.7 : 0,
-        'signal',
-        5,
-        0.02,
+        trapOpacity,
+        frame.instantKillConditionLocked ? 'signal' : 'accent',
+        0,
+        telegraph ? 0.3 : 0.18,
       ),
       ...Array.from({ length: 6 }, (_, index) => {
-        const angle = (Math.PI * 2 * index) / 6 - Math.PI / 2;
-        const x = center.x + Math.cos(angle) * 116;
-        const y = center.y + Math.sin(angle) * 116;
-        return path(
-          `M ${x - 9} ${y} L ${x} ${y - 9} L ${x + 9} ${y} L ${x} ${y + 9} Z`,
-          telegraph && index / 6 <= countdown ? 0.96 : 0.2,
-          telegraph && index / 6 <= countdown ? 'signal' : 'muted',
-          4,
-          telegraph && index / 6 <= countdown ? 0.15 : 0.02,
-        );
-      }),
-      circle(center.x, center.y, 30 + resolvePulse * 78, resolvePulse, 'signal', 12, 0.07),
-      circle(
-        spec.safePoint[0],
-        spec.safePoint[1] - 34,
-        34,
-        frame.instantKillFirstAvoided ? 0.86 : 0,
-        'safe',
-        6,
-        0.04,
-        '8 7',
+        const angle = (index * Math.PI) / 3 - Math.PI / 2;
+        const radialX = Math.cos(angle);
+        const radialY = Math.sin(angle);
+        const tangentX = -radialY;
+        const tangentY = radialX;
+        const tipX = center.x + radialX * 73;
+        const tipY = center.y + radialY * 73;
+        const baseX = center.x + radialX * 116;
+        const baseY = center.y + radialY * 116;
+        const active = telegraph && index < Math.ceil(countdown * 6);
+        return [
+          path(
+            `M ${baseX + tangentX * 12} ${baseY + tangentY * 12} L ${tipX} ${tipY} L ${baseX - tangentX * 12} ${baseY - tangentY * 12} Z`,
+            frame.instantKillConditionLocked ? 0.98 : active ? 0.94 : telegraph ? 0.38 : 0.18,
+            frame.instantKillConditionLocked || active ? 'signal' : 'muted',
+            0,
+            0.85,
+          ),
+          path(
+            `M ${center.x + radialX * 106} ${center.y + radialY * 106} L ${center.x + radialX * 92} ${center.y + radialY * 92}`,
+            frame.instantKillConditionLocked || active ? 0.96 : 0.28,
+            'accent',
+            3,
+          ),
+        ];
+      }).flat(),
+      path(
+        `M ${center.x - 100} ${center.y - 84} L ${center.x - 10} ${center.y - 36} L ${center.x - 84} ${center.y + 24} Z`,
+        bladeOpacity,
+        'signal',
+        0,
+        0.86,
       ),
       path(
-        `M ${spec.safePoint[0] - 14} ${spec.safePoint[1] - 35} L ${spec.safePoint[0] - 3} ${spec.safePoint[1] - 24} L ${spec.safePoint[0] + 18} ${spec.safePoint[1] - 49}`,
-        frame.instantKillFirstAvoided ? 0.98 : 0,
-        'safe',
-        6,
-      ),
-      line(
-        frame.player.x - 42,
-        frame.player.y - 108,
-        frame.player.x + 42,
-        frame.player.y - 24,
-        frame.instantKillAttemptEnded ? 0.98 : 0,
+        `M ${center.x + 100} ${center.y - 84} L ${center.x + 10} ${center.y - 36} L ${center.x + 84} ${center.y + 24} Z`,
+        bladeOpacity,
         'signal',
-        10,
-      ),
-      line(
-        frame.player.x + 42,
-        frame.player.y - 108,
-        frame.player.x - 42,
-        frame.player.y - 24,
-        frame.instantKillAttemptEnded ? 0.98 : 0,
-        'signal',
-        10,
+        0,
+        0.86,
       ),
     ];
   }
@@ -10921,6 +10932,7 @@ export function blueprintFrame(id, time) {
     frame.playerMotion.attack = 0;
     frame.playerMotion.dodge = strikePulse(t, spec.firstResolveAt, 0.44);
     frame.playerMotion.impact = strikePulse(t, spec.executeAt, 0.42);
+    frame.playerMotion.crouch = frame.instantKillAttemptEnded ? 0.85 : 0;
     frame.bossMotion.attack = Math.max(
       strikePulse(t, spec.firstResolveAt, 0.36),
       strikePulse(t, spec.executeAt, 0.42),
@@ -11323,7 +11335,8 @@ export function blueprintFrame(id, time) {
       player.y +
       (spec.mode === 'resource-steal' ||
       spec.mode === 'ability-lock' ||
-      spec.mode === 'maximum-health-reduction'
+      spec.mode === 'maximum-health-reduction' ||
+      spec.mode === 'instant-kill'
         ? 55
         : spec.mode === 'directional-shield' ||
             spec.mode === 'damage-type-resistance' ||
