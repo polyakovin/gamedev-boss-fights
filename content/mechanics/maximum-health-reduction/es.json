@@ -27,7 +27,7 @@
     "locked": "Los identificadores de fuente e impacto, daño, cantidad o proporción perdida, mínimo, acumulación, orden de límite, duración, limpieza, persistencia y autoridad pertenecen a la lógica del encuentro",
     "safe": "Mantén visibles la salud actual, la máxima, la capacidad perdida y el marcador de límite con formas y etiquetas redundantes; nunca comuniques una pérdida de aspecto permanente solo con color",
     "reducedMotion": "Con movimiento reducido no hay reproducción automática. Recorre 0,30, 0,88, 1,00, 1,82, 2,68, 3,08, 3,28, 3,72, 4,08, 4,48, 4,96 y 5,40 s para revisar escape, impacto, pérdida, curación bloqueada, restauración, relleno y reinicio.",
-    "diagramDescription": "Kern proyecta una línea rúnica estrecha a través de Tavi. Sobre la arena, un marco de salud separa la salud actual verde de una cola naranja de capacidad inutilizable y un marcador móvil de máximo. La primera línea falla. La segunda quita salud y encoge el límite; la curación se detiene en el marcador hasta que los anillos de limpieza recuperan el segmento perdido."
+    "diagramDescription": "Kern marca una franja vertical de corte que atraviesa a Tavi. Tavi esquiva el primer golpe, pero recibe el segundo. La barra con un corazón conserva su longitud original: baja la salud verde y un tramo naranja sellado detiene la curación en la marca del límite. Un frasco cura hasta esa marca, luego su carga purificadora devuelve la capacidad y otra curación la llena."
   },
   "steps": [
     {

@@ -1271,12 +1271,12 @@ const SPECS = {
   },
   'maximum-health-reduction': {
     mode: 'maximum-health-reduction',
-    boss: [300, 375],
-    player: [300, 635],
-    target: [455, 720],
-    arena: [55, 310, 450, 570],
+    boss: [300, 245],
+    player: [300, 660],
+    target: [450, 750],
+    arena: [40, 145, 480, 715],
     attackEnd: [300, 830],
-    safePoint: [455, 720],
+    safePoint: [450, 750],
     laneHalfWidth: 68,
     firstTelegraph: [0.3, 0.96],
     firstEscape: [0.5, 0.88],
@@ -5893,9 +5893,9 @@ function primitivesFor(spec, frame) {
     ];
   }
   if (mode === 'maximum-health-reduction') {
-    const firstTelegraph = frame.time >= spec.firstTelegraph[0] && frame.time < spec.firstResolveAt;
-    const secondTelegraph = frame.time >= spec.secondTelegraph[0] && frame.time < spec.hitAt;
-    const telegraph = firstTelegraph || secondTelegraph;
+    const telegraph =
+      (frame.time >= spec.firstTelegraph[0] && frame.time < spec.firstResolveAt) ||
+      (frame.time >= spec.secondTelegraph[0] && frame.time < spec.hitAt);
     const hitPulse = strikePulse(frame.time, spec.hitAt, 0.48);
     const healPulse = pulse(
       smooth((frame.time - spec.healAttempt[0]) / (spec.healAttempt[1] - spec.healAttempt[0])),
@@ -5903,103 +5903,110 @@ function primitivesFor(spec, frame) {
     const cleansePulse = pulse(
       smooth((frame.time - spec.cleanse[0]) / (spec.cleanse[1] - spec.cleanse[0])),
     );
-    const currentWidth = 236 * (frame.maximumHealthCurrent / spec.maxHealthBefore);
-    const maximumWidth = 236 * (frame.maximumHealthMaximum / spec.maxHealthBefore);
-    const capX = 182 + maximumWidth;
-    const lostWidth = Math.max(0, 236 - maximumWidth);
-    const laneOpacity = telegraph ? 0.72 : hitPulse * 0.94;
+    const fullHealPulse = pulse(
+      smooth((frame.time - spec.fullHeal[0]) / (spec.fullHeal[1] - spec.fullHeal[0])),
+    );
+    const currentEnd = 120 + (320 * frame.maximumHealthCurrent) / spec.maxHealthBefore;
+    const capX = 120 + (320 * frame.maximumHealthMaximum) / spec.maxHealthBefore;
+    const bottleX = frame.player.x - 92;
+    const bottleY = frame.player.y - 89;
+    const bottleVisible = frame.time >= spec.healAttempt[0] && frame.time < spec.fullHeal[1];
+    const bottleTone =
+      frame.time >= spec.cleanse[0] && frame.time < spec.cleanse[1] ? 'accent' : 'safe';
+    const streamOpacity = Math.max(healPulse, cleansePulse, fullHealPulse) * 0.9;
     return [
-      rect(...spec.arena, 0.52, 'muted', 0.025),
-      rect(178, 318, 244, 24, 0.74, 'muted', 0.035),
-      rect(182, 322, currentWidth, 16, 0.96, 'safe', 0.2),
-      rect(capX, 322, lostWidth, 16, frame.maximumHealthReduced ? 0.58 : 0, 'signal', 0.16),
-      line(capX, 314, capX, 346, frame.maximumHealthReduced ? 0.98 : 0.22, 'signal', 6),
-      line(182, 350, 418, 350, 0.5, 'muted', 3, '8 8'),
-      line(
-        spec.boss[0] - spec.laneHalfWidth,
-        spec.boss[1] + 48,
-        spec.attackEnd[0] - spec.laneHalfWidth,
-        spec.attackEnd[1],
-        laneOpacity,
+      path('M 120 93 H 440 V 117 H 120 Z', 0.72, 'muted', 0, 0.64),
+      path(`M 120 93 H ${currentEnd} V 117 H 120 Z`, 0.98, 'safe', 0, 0.9),
+      path(
+        `M ${capX} 93 H 440 V 117 H ${capX} Z`,
+        frame.maximumHealthReduced ? 0.88 : 0,
         'signal',
-        6,
-        telegraph ? '13 10' : '',
+        0,
+        0.78,
       ),
-      line(
-        spec.boss[0] + spec.laneHalfWidth,
-        spec.boss[1] + 48,
-        spec.attackEnd[0] + spec.laneHalfWidth,
-        spec.attackEnd[1],
-        laneOpacity,
+      path(
+        `M ${capX - 4} 85 H ${capX + 4} V 125 H ${capX - 4} Z`,
+        frame.maximumHealthReduced ? 0.98 : 0,
         'signal',
-        6,
-        telegraph ? '13 10' : '',
+        0,
+        0.96,
       ),
-      ...Array.from({ length: 4 }, (_, index) => {
-        const progress = (index + 1) / 5;
-        const y = mix(spec.boss[1] + 76, frame.player.y - 40, progress);
-        const width = mix(16, spec.laneHalfWidth - 8, progress);
-        return path(
-          `M ${spec.attackEnd[0] - width} ${y - 10} L ${spec.attackEnd[0]} ${y + 7} L ${spec.attackEnd[0] + width} ${y - 10}`,
-          laneOpacity,
-          'signal',
-          5,
-        );
-      }),
-      circle(frame.player.x, frame.player.y - 34, 28 + hitPulse * 78, hitPulse, 'signal', 11, 0.06),
+      path(
+        'M 86 95 C 74 82 55 96 61 112 L 86 136 L 111 112 C 117 96 98 82 86 95 Z',
+        0.96,
+        'safe',
+        0,
+        0.86,
+      ),
+      path(
+        `M ${spec.boss[0] - spec.laneHalfWidth} ${spec.boss[1] + 55} H ${spec.boss[0] + spec.laneHalfWidth} V ${spec.attackEnd[1]} H ${spec.boss[0] - spec.laneHalfWidth} Z`,
+        telegraph ? 0.46 : hitPulse * 0.92,
+        'signal',
+        0,
+        telegraph ? 0.38 : 0.65,
+      ),
+      path(
+        `M ${spec.boss[0] - 18} ${spec.boss[1] + 60} L ${spec.boss[0] + 14} ${spec.attackEnd[1]} H ${spec.boss[0] - 24} Z`,
+        telegraph ? 0.26 : hitPulse * 0.9,
+        'signal',
+        0,
+        0.48,
+      ),
       circle(
         frame.player.x,
         frame.player.y - 34,
-        47 + pulse(frame.time * 2.2) * 6,
-        frame.maximumHealthReduced ? 0.64 : 0,
+        34 + hitPulse * 40,
+        hitPulse * 0.55,
         'signal',
-        7,
-        0.04,
-        '9 8',
-      ),
-      circle(
-        spec.safePoint[0],
-        spec.safePoint[1] - 34,
-        34,
-        frame.maximumHealthFirstAvoided ? 0.86 : 0,
-        'safe',
-        6,
-        0.04,
-        '8 7',
+        0,
+        0.32,
       ),
       path(
-        `M ${spec.safePoint[0] - 14} ${spec.safePoint[1] - 35} L ${spec.safePoint[0] - 3} ${spec.safePoint[1] - 24} L ${spec.safePoint[0] + 18} ${spec.safePoint[1] - 49}`,
-        frame.maximumHealthFirstAvoided ? 0.98 : 0,
-        'safe',
-        6,
+        `M ${bottleX - 9} ${bottleY - 27} H ${bottleX + 9} V ${bottleY - 13} L ${bottleX + 20} ${bottleY - 2} V ${bottleY + 23} Q ${bottleX} ${bottleY + 36} ${bottleX - 20} ${bottleY + 23} V ${bottleY - 2} L ${bottleX - 9} ${bottleY - 13} Z`,
+        bottleVisible ? 0.98 : 0,
+        'muted',
+        0,
+        0.9,
       ),
-      circle(frame.player.x, frame.player.y - 34, 36 + healPulse * 52, healPulse, 'safe', 7, 0.04),
       path(
-        `M ${capX - 12} 304 L ${capX} 292 L ${capX + 12} 304 M ${capX} 292 L ${capX} 318`,
-        frame.maximumHealthHealingBlocked ? 0.98 : 0,
+        `M ${bottleX - 14} ${bottleY + 5} H ${bottleX + 14} V ${bottleY + 19} Q ${bottleX} ${bottleY + 28} ${bottleX - 14} ${bottleY + 19} Z`,
+        bottleVisible ? 0.98 : 0,
+        bottleTone,
+        0,
+        0.9,
+      ),
+      path(
+        `M ${bottleX - 12} ${bottleY - 37} H ${bottleX + 12} V ${bottleY - 27} H ${bottleX - 12} Z`,
+        bottleVisible ? 0.98 : 0,
+        'muted',
+        0,
+        0.95,
+      ),
+      path(
+        `M ${bottleX - 5} ${bottleY - 4} H ${bottleX + 5} M ${bottleX} ${bottleY - 9} V ${bottleY + 1}`,
+        bottleVisible ? 0.9 : 0,
+        bottleTone,
+        3,
+      ),
+      path(
+        `M ${bottleX + 14} ${bottleY + 15} Q ${frame.player.x - 27} ${frame.player.y - 111} ${frame.player.x - 7} ${frame.player.y - 51} L ${frame.player.x + 2} ${frame.player.y - 48} Q ${frame.player.x - 33} ${frame.player.y - 125} ${bottleX + 19} ${bottleY + 10} Z`,
+        streamOpacity,
+        bottleTone,
+        0,
+        0.78,
+      ),
+      path(
+        `M ${capX + 5} 81 L ${capX + 21} 89 L ${capX + 12} 98 L ${capX + 30} 110 L ${capX + 13} 119`,
+        frame.maximumHealthHealingBlocked ? 0.96 : 0,
         'signal',
         5,
       ),
-      circle(
-        frame.player.x,
-        frame.player.y - 34,
-        44 + cleansePulse * 82,
-        cleansePulse,
-        'safe',
-        10,
-        0.06,
-      ),
-      ...Array.from({ length: 3 }, (_, index) =>
-        circle(
-          frame.player.x,
-          frame.player.y - 34,
-          62 + index * 24,
-          cleansePulse * (0.92 - index * 0.2),
-          'safe',
-          5,
-          0.02,
-          '7 9',
-        ),
+      path(
+        `M ${capX} 93 H ${capX + (440 - capX) * cleansePulse} V 117 H ${capX} Z`,
+        cleansePulse * 0.96,
+        'accent',
+        0,
+        0.84,
       ),
     ];
   }
@@ -11314,7 +11321,9 @@ export function blueprintFrame(id, time) {
     x: player.x,
     y:
       player.y +
-      (spec.mode === 'resource-steal' || spec.mode === 'ability-lock'
+      (spec.mode === 'resource-steal' ||
+      spec.mode === 'ability-lock' ||
+      spec.mode === 'maximum-health-reduction'
         ? 55
         : spec.mode === 'directional-shield' ||
             spec.mode === 'damage-type-resistance' ||

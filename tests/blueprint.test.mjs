@@ -3172,7 +3172,13 @@ test('maximum health reduction separates damage, the reduced cap, blocked healin
   const hit = blueprintFrame(id, 2.68);
   assert.equal(hit.dangerActive, true);
   assert.equal(hit.playerSafe, false);
-  assert.equal(blueprintPointSafe(id, 2.68, { x: 455, y: 720 }), true);
+  assert.equal(blueprintPointSafe(id, 2.68, { x: 450, y: 750 }), true);
+  const lane = hit.primitives.find(
+    (primitive) =>
+      primitive.type === 'path' && primitive.data.includes('M 232 300 H 368 V 830 H 232 Z'),
+  );
+  assert.ok(lane, 'the filled danger lane matches the collision width and reaches the far edge');
+  assert.equal(lane.width, 0);
   const reduced = blueprintFrame(id, 3.1);
   assert.equal(reduced.maximumHealthCurrent, 60);
   assert.equal(reduced.maximumHealthMaximum, 65);

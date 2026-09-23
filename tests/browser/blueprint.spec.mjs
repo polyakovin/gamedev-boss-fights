@@ -3467,6 +3467,8 @@ test('maximum health reduction shows an avoided cut, a smaller cap, blocked heal
     }, milliseconds);
 
   await expect(page.locator('.lesson-title-line h1')).toHaveText('Maximum-health reduction');
+  await expect(widget).toHaveAttribute('data-blueprint-full-height', 'true');
+  expect((await widget.boundingBox()).height).toBeGreaterThan(800);
   await expect(page.locator('.wip-badge, .draft-profile')).toHaveCount(0);
   await expect(page.locator('.game-example')).toHaveCount(3);
   await seek(1050);

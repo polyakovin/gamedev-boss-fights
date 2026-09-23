@@ -27,7 +27,7 @@
     "locked": "Source id, hit id, damage, cap-loss amount or ratio, minimum cap, stacking, clamp order, duration, cleanse, persistence, and authority belong to encounter logic",
     "safe": "Keep current health, maximum health, lost capacity, and the cap marker visible with redundant shapes and labels; never communicate permanent-looking loss with color alone",
     "reducedMotion": "Autoplay is disabled by reduced motion. Scrub across 0.30, 0.88, 1.00, 1.82, 2.68, 3.08, 3.28, 3.72, 4.08, 4.48, 4.96, and 5.40 seconds to inspect escape, hit, cap loss, blocked healing, restoration, refill, and reset.",
-    "diagramDescription": "Kern projects a narrow rune lane through Tavi. Above the arena, a framed health track separates green current health from an orange tail of unusable capacity and a moving maximum marker. The first lane misses. The second removes ordinary health and shrinks the frame's usable cap; a heal stops at that marker until cleansing rings restore the missing segment and a later heal fills it."
+    "diagramDescription": "Kern marks a vertical cutting lane through Tavi. Tavi clears the first cut but takes the second. A heart-marked health strip keeps the original capacity visible: green current health falls, an orange sealed tail blocks healing at the cap marker. Tavi uses a flask to heal up to that marker, then its cleansing charge restores the lost capacity before another heal fills it."
   },
   "steps": [
     {
