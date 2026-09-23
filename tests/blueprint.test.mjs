@@ -2144,7 +2144,7 @@ test('wraparound projectile preserves one shot across linked boundaries before c
   assert.equal(preview.wraparoundBoundaryLinked, true);
   assert.equal(preview.wraparoundRouteVisible, true);
   assert.equal(preview.dangerActive, false);
-  assert.ok(preview.primitives[4].opacity > 0.8, 'the first route segment is previewed');
+  assert.ok(preview.primitives[6].opacity > 0.5, 'the floor groove previews the route');
 
   const first = blueprintFrame(id, 1.7);
   assert.equal(first.wraparoundFirstPass, true);
@@ -2152,14 +2152,15 @@ test('wraparound projectile preserves one shot across linked boundaries before c
   assert.equal(first.dangerActive, true);
   assert.equal(first.playerSafe, true);
   assert.equal(blueprintPointSafe(id, 1.7, first.wraparoundProjectilePoint), false);
-  assert.ok(first.primitives[7].opacity > 0.9, 'the original projectile is visible');
+  assert.ok(first.primitives[11].opacity > 0.9, 'the original projectile is visible');
 
   const crossing = blueprintFrame(id, 2.3);
   assert.equal(crossing.wraparoundCrossing, true);
   assert.equal(crossing.wraparoundLap, 1);
   assert.equal(crossing.wraparoundProjectilePoints.length, 2);
-  assert.ok(crossing.primitives[8].opacity > 0.7, 'the exit seam holds the same shot');
-  assert.ok(crossing.primitives[9].opacity > 0.7, 'the linked entry announces re-entry');
+  assert.ok(crossing.primitives[12].opacity > 0.7, 'the exit seam holds the same shot');
+  assert.ok(crossing.primitives[13].opacity > 0.7, 'the linked entry announces re-entry');
+  assert.equal(crossing.primitives[11].opacity, 0, 'no third projectile appears during crossing');
 
   const second = blueprintFrame(id, 2.8);
   assert.equal(second.wraparoundSecondPass, true);
@@ -2174,7 +2175,7 @@ test('wraparound projectile preserves one shot across linked boundaries before c
 
   const punish = blueprintFrame(id, 4.22);
   assert.equal(punish.punishStrike, true);
-  assert.ok(punish.primitives[12].opacity > 0.9, 'the sword response follows the clear beat');
+  assert.ok(punish.primitives[15].opacity > 0.9, 'the sword response follows the clear beat');
 
   assert.deepEqual(blueprintFrame(id, 0).player, blueprintFrame(id, 6).player);
   assert.deepEqual(blueprintFrame(id, 0).boss, blueprintFrame(id, 6).boss);

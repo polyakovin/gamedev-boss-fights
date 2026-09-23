@@ -2472,12 +2472,14 @@ test('wraparound projectile signals its linked seams, preserves one shot, and cl
   await expect(page.locator('.wip-badge, .draft-profile')).toHaveCount(0);
   await expect(page.locator('.game-example')).toHaveCount(3);
   await expect(widget).toHaveAttribute('data-blueprint-playing', 'false');
+  await expect(widget).toHaveAttribute('data-blueprint-full-height', 'true');
+  expect((await widget.boundingBox()).height).toBeGreaterThan(800);
 
   await seek(1000);
   await expect(widget).toHaveAttribute('data-blueprint-wraparound-projectile', 'route-preview');
   await expect(widget).toHaveAttribute('data-blueprint-wrap-boundary', 'true');
   await expect(widget).toHaveAttribute('data-blueprint-wrap-route', 'true');
-  await expect(widget.locator('[data-blueprint-primitive="4"] line')).not.toHaveAttribute(
+  await expect(widget.locator('[data-blueprint-primitive="6"] path')).not.toHaveAttribute(
     'opacity',
     '0',
   );
@@ -2487,7 +2489,7 @@ test('wraparound projectile signals its linked seams, preserves one shot, and cl
   await expect(widget).toHaveAttribute('data-blueprint-wrap-first-pass', 'true');
   await expect(widget).toHaveAttribute('data-blueprint-wrap-lap', '1');
   await expect(widget).toHaveAttribute('data-blueprint-outcome', 'safe');
-  await expect(widget.locator('[data-blueprint-primitive="7"] circle')).not.toHaveAttribute(
+  await expect(widget.locator('[data-blueprint-primitive="11"] path')).not.toHaveAttribute(
     'opacity',
     '0',
   );
@@ -2495,11 +2497,11 @@ test('wraparound projectile signals its linked seams, preserves one shot, and cl
   await seek(2300);
   await expect(widget).toHaveAttribute('data-blueprint-wraparound-projectile', 'boundary-crossing');
   await expect(widget).toHaveAttribute('data-blueprint-wrap-crossing', 'true');
-  await expect(widget.locator('[data-blueprint-primitive="8"] circle')).not.toHaveAttribute(
+  await expect(widget.locator('[data-blueprint-primitive="12"] path')).not.toHaveAttribute(
     'opacity',
     '0',
   );
-  await expect(widget.locator('[data-blueprint-primitive="9"] circle')).not.toHaveAttribute(
+  await expect(widget.locator('[data-blueprint-primitive="13"] path')).not.toHaveAttribute(
     'opacity',
     '0',
   );
@@ -2517,7 +2519,7 @@ test('wraparound projectile signals its linked seams, preserves one shot, and cl
   await seek(4220);
   await expect(widget).toHaveAttribute('data-blueprint-wraparound-projectile', 'counter-window');
   await expect(widget).toHaveAttribute('data-blueprint-punish-strike', 'true');
-  await expect(widget.locator('[data-blueprint-primitive="12"] line')).not.toHaveAttribute(
+  await expect(widget.locator('[data-blueprint-primitive="15"] line')).not.toHaveAttribute(
     'opacity',
     '0',
   );

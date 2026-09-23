@@ -17,7 +17,7 @@
       "Clear the corridor and counter"
     ],
     "phaseDescriptions": [
-      "At 0.48 s the left and right rune seams light as a pair. At 0.82 s a dashed line crosses both seams, and Tavi moves fully below the marked corridor before Kern releases at 1.36 s.",
+      "At 0.48 s the left and right rune seams light as a pair. At 0.82 s the floor groove glows between both seams, and Tavi moves fully below the marked corridor before Kern releases at 1.36 s.",
       "The bolt reaches the right seam at 2.22 s and reappears at the left by 2.50 s without changing speed or heading. Its second pass follows the same corridor until the authored lap ends at 3.58 s.",
       "Both seams and the lane visibly discharge when the projectile expires. Tavi enters only after that state change, strikes at 4.22 s, and the encounter resets after 5.02 s."
     ],
