@@ -847,10 +847,9 @@ const SPECS = {
   },
   'sound-detection': {
     mode: 'sound-detection',
-    boss: [150, 390],
-    player: [430, 700],
+    boss: [150, 290],
+    player: [130, 700],
     target: [350, 585],
-    arena: [56, 350, 448, 540],
     quietAt: 0.52,
     noiseAt: 1.36,
     heardAt: 1.5,
@@ -860,15 +859,16 @@ const SPECS = {
     searchEndsAt: 3.72,
     punishAt: 4.28,
     resetAt: 5.12,
-    hearingRadius: 360,
+    hearingRadius: 500,
     soundPoint: [380, 650],
     investigatePoint: [330, 575],
     hidePoint: [480, 790],
     strikePoint: [350, 585],
     dangerRadius: 76,
     approachRoute: [
-      [430, 700],
-      [410, 680],
+      [130, 700],
+      [210, 680],
+      [300, 660],
       [380, 650],
     ],
     silentRoute: [
@@ -879,9 +879,9 @@ const SPECS = {
     ],
     resetRoute: [
       [350, 585],
-      [380, 620],
-      [410, 660],
-      [430, 700],
+      [280, 600],
+      [200, 660],
+      [130, 700],
     ],
   },
   'objective-linked-invulnerability': {
@@ -4593,76 +4593,74 @@ function primitivesFor(spec, frame) {
   }
   if (mode === 'sound-detection') {
     const sound = point(spec.soundPoint);
-    const safe = point(spec.hidePoint);
     const heard = frame.soundDetectionHeard;
     const active = frame.soundDetectionAttackActive;
     const strike = strikePulse(frame.time, spec.punishAt, 0.38);
+    const wave = frame.soundDetectionWaveProgress;
+    const soundOpacity = frame.soundDetectionNoiseVisible ? 0.84 * (1 - wave * 0.68) : 0;
     return [
-      rect(...spec.arena, 0.52, 'muted', 0.025),
-      rect(76, 560, 210, 250, 0.24, 'safe', 0.025),
-      rect(286, 560, 198, 250, 0.22, 'accent', 0.025),
-      circle(
-        frame.boss.x,
-        frame.boss.y,
-        spec.hearingRadius,
-        heard ? 0.22 : 0.09,
+      path('M 62 360 L 150 342 L 238 360 L 212 378 H 88 Z', 0.65, 'muted', 0, 0.78),
+      path('M 58 555 H 258 V 742 H 508 V 832 H 58 Z', 0.82, 'safe', 0, 0.22),
+      path(
+        'M 75 583 H 238 M 75 623 H 238 M 75 663 H 238 M 75 703 H 238 M 75 743 H 238 M 276 771 H 488 M 276 803 H 488',
+        0.32,
+        'muted',
+        3,
+      ),
+      path('M 280 550 L 363 537 L 372 618 L 284 626 Z', 0.44, 'muted', 0, 0.48),
+      path('M 372 539 L 500 558 L 495 635 L 378 618 Z', 0.42, 'muted', 0, 0.54),
+      path('M 285 632 L 375 625 L 493 640 L 495 736 L 277 731 Z', 0.48, 'muted', 0, 0.58),
+      path(
+        `M ${sound.x - 26} ${sound.y - 13} L ${sound.x - 8} ${sound.y + 2} L ${sound.x + 5} ${sound.y - 16} L ${sound.x + 22} ${sound.y + 11} M ${sound.x - 6} ${sound.y + 2} L ${sound.x - 1} ${sound.y + 21}`,
+        frame.time >= spec.noiseAt && frame.time < spec.searchEndsAt ? 0.74 : 0,
         'accent',
         5,
+      ),
+      path(
+        `M ${sound.x - 16} ${sound.y - 27} L ${sound.x - 3} ${sound.y - 46} L ${sound.x + 10} ${sound.y - 25} Z`,
+        strikePulse(frame.time, spec.noiseAt, 0.42),
+        'signal',
         0,
-        '12 14',
+        0.9,
       ),
-      ...[0, 0.18, 0.36].map((offset) =>
-        circle(
-          sound.x,
-          sound.y,
-          20 + 155 * clamp(frame.soundDetectionWaveProgress - offset),
-          frame.soundDetectionNoiseVisible
-            ? Math.max(0, 0.88 - clamp(frame.soundDetectionWaveProgress - offset) * 0.72)
-            : 0,
-          'accent',
-          6,
-        ),
+      path(arcPath(sound, 50 + 132 * wave, -2.9, -1.45), soundOpacity, 'accent', 7),
+      path(arcPath(sound, 32 + 98 * wave, -2.8, -1.5), soundOpacity * 0.6, 'accent', 5),
+      path(
+        `M ${frame.boss.x - 14} ${frame.boss.y - 91} L ${frame.boss.x - 24} ${frame.boss.y - 106} L ${frame.boss.x - 8} ${frame.boss.y - 100} Z M ${frame.boss.x + 14} ${frame.boss.y - 91} L ${frame.boss.x + 24} ${frame.boss.y - 106} L ${frame.boss.x + 8} ${frame.boss.y - 100} Z`,
+        heard ? 0.88 : 0,
+        'signal',
+        0,
+        0.82,
       ),
-      line(frame.boss.x, frame.boss.y, sound.x, sound.y, heard ? 0.68 : 0, 'accent', 5, '10 9'),
-      circle(sound.x, sound.y, 34, heard ? 0.86 : 0.14, 'accent', 7, 0.08, '7 7'),
+      path(
+        `M ${sound.x - 13} ${sound.y - 8} H ${sound.x + 12} L ${sound.x + 22} ${sound.y + 8} H ${sound.x - 20} Z`,
+        frame.soundDetectionSourceLocked ? 0.88 : 0,
+        'signal',
+        0,
+        0.42,
+      ),
       circle(
         sound.x,
         sound.y,
         spec.dangerRadius,
-        active ? 0.96 : frame.soundDetectionSourceLocked ? 0.46 : 0.08,
+        active ? 0.86 : frame.soundDetectionSourceLocked ? 0.42 : 0,
         active ? 'signal' : 'accent',
-        active ? 12 : 6,
-        active ? 0.24 : 0.04,
-      ),
-      circle(safe.x, safe.y, 40, heard ? 0.72 : 0.16, 'safe', 6, 0.08, '8 7'),
-      circle(
-        frame.player.x,
-        frame.player.y,
-        18 + frame.soundDetectionQuietNoise * 28,
-        frame.soundDetectionQuietMove ? 0.42 : 0,
-        'safe',
-        4,
-        0.03,
-      ),
-      rect(82, 842, 196, 18, 0.44, 'muted', 0.03),
-      rect(
-        82,
-        842,
-        196 * frame.soundDetectionNoiseLevel,
-        18,
-        0.92,
-        heard ? 'accent' : 'safe',
-        0.12,
-      ),
-      line(frame.player.x, frame.player.y, frame.boss.x, frame.boss.y, strike, 'safe', 10),
-      circle(frame.boss.x + 26, frame.boss.y - 16, 12 + strike * 24, strike, 'safe', 7, 0.14),
-      path(
-        'M 102 600 L 102 785 M 122 600 L 122 785 M 146 600 L 146 785 M 176 600 L 176 785 M 210 600 L 210 785 M 246 600 L 246 785',
-        0.18,
-        'safe',
-        5,
         0,
-        '9 13',
+        active ? 0.48 : 0.24,
+      ),
+      path('M 453 828 L 475 816 L 514 828 L 503 846 H 457 Z', 0.58, 'muted', 0, 0.78),
+      path(
+        `M ${frame.player.x + 17} ${frame.player.y - 24} L ${frame.boss.x + 18} ${frame.boss.y - 27}`,
+        strike,
+        'safe',
+        8,
+      ),
+      path(
+        `M ${frame.boss.x + 6} ${frame.boss.y - 36} L ${frame.boss.x + 27} ${frame.boss.y - 49} L ${frame.boss.x + 38} ${frame.boss.y - 21} Z`,
+        strike,
+        'signal',
+        0,
+        0.88,
       ),
     ];
   }

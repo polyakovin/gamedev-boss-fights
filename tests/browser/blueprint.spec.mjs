@@ -2686,6 +2686,8 @@ test('sound detection attacks a recorded event while a quiet player relocates', 
   await expect(page.locator('.wip-badge, .draft-profile')).toHaveCount(0);
   await expect(page.locator('.game-example')).toHaveCount(3);
   await expect(widget).toHaveAttribute('data-blueprint-playing', 'false');
+  await expect(widget).toHaveAttribute('data-blueprint-full-height', 'true');
+  expect((await widget.boundingBox()).height).toBeGreaterThan(800);
 
   await seek(800);
   await expect(widget).toHaveAttribute('data-blueprint-sound-detection', 'quiet-movement');
@@ -2694,7 +2696,7 @@ test('sound detection attacks a recorded event while a quiet player relocates', 
   await seek(1400);
   await expect(widget).toHaveAttribute('data-blueprint-sound-detection', 'noise-emitted');
   await expect(widget).toHaveAttribute('data-blueprint-sound-noise-visible', 'true');
-  await expect(widget.locator('[data-blueprint-primitive="4"] circle')).not.toHaveAttribute(
+  await expect(widget.locator('[data-blueprint-primitive="8"] path')).not.toHaveAttribute(
     'opacity',
     '0',
   );
@@ -2706,7 +2708,7 @@ test('sound detection attacks a recorded event while a quiet player relocates', 
   );
   await expect(widget).toHaveAttribute('data-blueprint-sound-heard', 'true');
   await expect(widget).toHaveAttribute('data-blueprint-sound-live-position', 'false');
-  await expect(widget.locator('[data-blueprint-primitive="7"] line')).not.toHaveAttribute(
+  await expect(widget.locator('[data-blueprint-primitive="10"] path')).not.toHaveAttribute(
     'opacity',
     '0',
   );
@@ -2719,7 +2721,7 @@ test('sound detection attacks a recorded event while a quiet player relocates', 
   await expect(widget).toHaveAttribute('data-blueprint-sound-detection', 'source-attack');
   await expect(widget).toHaveAttribute('data-blueprint-sound-attack', 'true');
   await expect(widget).toHaveAttribute('data-blueprint-outcome', 'safe');
-  await expect(widget.locator('[data-blueprint-primitive="9"] circle')).not.toHaveAttribute(
+  await expect(widget.locator('[data-blueprint-primitive="12"] circle')).not.toHaveAttribute(
     'opacity',
     '0',
   );
@@ -2727,7 +2729,7 @@ test('sound detection attacks a recorded event while a quiet player relocates', 
   await seek(4280);
   await expect(widget).toHaveAttribute('data-blueprint-sound-detection', 'counter-window');
   await expect(widget).toHaveAttribute('data-blueprint-punish-strike', 'true');
-  await expect(widget.locator('[data-blueprint-primitive="14"] line')).not.toHaveAttribute(
+  await expect(widget.locator('[data-blueprint-primitive="14"] path')).not.toHaveAttribute(
     'opacity',
     '0',
   );

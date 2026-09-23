@@ -27,7 +27,7 @@
     "locked": "Noise origin, loudness, material modifier, attenuation, hearing threshold, memory lifetime, investigation route, attack geometry, search expiry, counter, and reset are authored",
     "safe": "Keep quiet actions below the visible threshold, relocate after a loud event, clear the full radius around its stored origin, and approach only after the search state ends",
     "reducedMotion": "Autoplay is disabled by reduced motion. Scrub across 0.52, 1.36, 1.50, 1.68, 2.58, 2.92, 3.32, 3.72, 4.28, and 5.12 seconds to inspect quiet output, emission, registration, investigation, source lock, attack, search expiry, counter, and reset.",
-    "diagramDescription": "A soft rune mat and loud bare-stone area divide the quarry floor. Tavi creates expanding sound rings at one point, then moves quietly to a distant safe marker. Kern follows a dashed line to the stored source and attacks that circle rather than turning toward Tavi, then opens for a sword counter."
+    "diagramDescription": "A woven rune mat forms a quiet route across the stone quarry floor. Tavi leaves it for one loud sword impact on a bare slab, cracking the stone and sending two sound arcs outward. Kern reacts to the recorded spot while Tavi moves along the quiet runner to the far side. Kern attacks the old impact mark rather than Tavi’s new position, then becomes open to a close sword counter."
   },
   "steps": [
     {

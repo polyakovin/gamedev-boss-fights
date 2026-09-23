@@ -2311,16 +2311,17 @@ test('sound detection commits to an audible event instead of the live player pos
   const quiet = blueprintFrame(id, 0.8);
   assert.equal(quiet.soundDetectionQuietMove, true);
   assert.ok(quiet.soundDetectionNoiseLevel < 0.3);
+  assert.ok(quiet.player.x < 260, 'quiet movement begins on the muffling mat');
 
   const emitted = blueprintFrame(id, 1.4);
   assert.equal(emitted.soundDetectionNoiseVisible, true);
   assert.equal(emitted.soundDetectionNoiseLevel, 1);
-  assert.ok(emitted.primitives[4].opacity > 0, 'the emitted event expands from its source');
+  assert.ok(emitted.primitives[8].opacity > 0, 'the emitted event expands from its source');
 
   const investigating = blueprintFrame(id, 2);
   assert.equal(investigating.soundDetectionHeard, true);
   assert.equal(investigating.soundDetectionBossHasLivePlayerPosition, false);
-  assert.ok(investigating.primitives[7].opacity > 0, 'the boss follows the stored source');
+  assert.ok(investigating.primitives[10].opacity > 0, 'the boss reacts to the stored source');
 
   const locked = blueprintFrame(id, 2.7);
   assert.equal(locked.soundDetectionSourceLocked, true);
@@ -2331,7 +2332,7 @@ test('sound detection commits to an audible event instead of the live player pos
   assert.equal(active.playerSafe, true);
   assert.equal(blueprintPointSafe(id, 3.05, { x: 380, y: 650 }), false);
   assert.equal(blueprintPointSafe(id, 3.05, { x: 480, y: 790 }), true);
-  assert.ok(active.primitives[9].opacity > 0.9, 'the attack stays on the stale sound source');
+  assert.ok(active.primitives[12].opacity > 0.8, 'the attack stays on the stale sound source');
 
   const punish = blueprintFrame(id, 4.28);
   assert.equal(punish.punishStrike, true);

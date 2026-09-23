@@ -27,7 +27,7 @@
     "locked": "Se diseñan el origen, volumen, material, atenuación, umbral, memoria, ruta de investigación, geometría de ataque, fin de búsqueda, respuesta y reinicio",
     "safe": "Mantén las acciones silenciosas bajo el umbral visible, recolócate tras un evento fuerte, abandona por completo el radio guardado y acércate solo al terminar la búsqueda",
     "reducedMotion": "Con movimiento reducido, la reproducción automática se desactiva. Recorre 0,52; 1,36; 1,50; 1,68; 2,58; 2,92; 3,32; 3,72; 4,28 y 5,12 segundos para inspeccionar silencio, emisión, registro, investigación, fijación, ataque, fin de búsqueda, contraataque y reinicio.",
-    "diagramDescription": "Una alfombra rúnica blanda y una zona de piedra ruidosa dividen la cantera. Tavi crea ondas de sonido en un punto y se desplaza en silencio hasta una marca segura lejana. Kern sigue una línea discontinua hasta la fuente guardada y ataca ese círculo sin girarse hacia Tavi, antes de quedar abierto a la espada."
+    "diagramDescription": "Una alfombra rúnica tejida forma una ruta silenciosa sobre el suelo de piedra. Tavi sale de ella y da un golpe fuerte con la espada en una losa desnuda: queda una grieta y salen dos arcos sonoros. Kern reacciona al punto recordado mientras Tavi se aleja por el corredor silencioso. Kern ataca la vieja marca de impacto en vez de la nueva posición de Tavi, y queda abierto a un contraataque cercano."
   },
   "steps": [
     {
