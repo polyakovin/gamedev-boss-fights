@@ -2755,6 +2755,8 @@ test('objective-linked invulnerability requires the complete ledger before damag
   await expect(page.locator('.wip-badge, .draft-profile')).toHaveCount(0);
   await expect(page.locator('.game-example')).toHaveCount(3);
   await expect(widget).toHaveAttribute('data-blueprint-playing', 'false');
+  await expect(widget).toHaveAttribute('data-blueprint-full-height', 'true');
+  expect((await widget.boundingBox()).height).toBeGreaterThan(800);
 
   await seek(620);
   await expect(widget).toHaveAttribute(
@@ -2763,7 +2765,7 @@ test('objective-linked invulnerability requires the complete ledger before damag
   );
   await expect(widget).toHaveAttribute('data-blueprint-objective-blocked', 'true');
   await expect(widget).toHaveAttribute('data-blueprint-objective-shielded', 'true');
-  await expect(widget.locator('[data-blueprint-primitive="12"] line')).not.toHaveAttribute(
+  await expect(widget.locator('[data-blueprint-primitive="19"] line')).not.toHaveAttribute(
     'opacity',
     '0',
   );
@@ -2796,7 +2798,7 @@ test('objective-linked invulnerability requires the complete ledger before damag
     'data-blueprint-objective-linked-invulnerability',
     'protection-releasing',
   );
-  await expect(widget.locator('[data-blueprint-primitive="16"] circle')).not.toHaveAttribute(
+  await expect(widget.locator('[data-blueprint-primitive="16"] path')).not.toHaveAttribute(
     'opacity',
     '0',
   );
@@ -2808,7 +2810,7 @@ test('objective-linked invulnerability requires the complete ledger before damag
   );
   await expect(widget).toHaveAttribute('data-blueprint-objective-shielded', 'false');
   await expect(widget).toHaveAttribute('data-blueprint-objective-vulnerable', 'true');
-  await expect(widget.locator('[data-blueprint-primitive="11"] circle')).not.toHaveAttribute(
+  await expect(widget.locator('[data-blueprint-primitive="18"] path')).not.toHaveAttribute(
     'opacity',
     '0',
   );
@@ -2819,7 +2821,7 @@ test('objective-linked invulnerability requires the complete ledger before damag
     'boss-hit',
   );
   await expect(widget).toHaveAttribute('data-blueprint-objective-boss-hit', 'true');
-  await expect(widget.locator('[data-blueprint-primitive="17"] line')).not.toHaveAttribute(
+  await expect(widget.locator('[data-blueprint-primitive="24"] line')).not.toHaveAttribute(
     'opacity',
     '0',
   );

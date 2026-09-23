@@ -886,10 +886,9 @@ const SPECS = {
   },
   'objective-linked-invulnerability': {
     mode: 'objective-linked-invulnerability',
-    boss: [280, 400],
-    player: [420, 500],
-    target: [220, 515],
-    arena: [56, 350, 448, 540],
+    boss: [280, 290],
+    player: [365, 400],
+    target: [220, 410],
     blockedStrike: 0.62,
     objectiveHits: [1.18, 1.92, 2.68],
     gateDropsAt: 2.88,
@@ -899,16 +898,16 @@ const SPECS = {
     resetAt: 5.1,
     shieldRadius: 86,
     objectives: [
-      [445, 680],
-      [280, 800],
-      [115, 680],
+      [445, 640],
+      [280, 790],
+      [115, 640],
     ],
-    strikePoint: [220, 515],
-    retreatPoint: [390, 610],
+    strikePoint: [220, 410],
+    retreatPoint: [390, 560],
     resetRoute: [
-      [390, 610],
-      [420, 560],
-      [420, 500],
+      [390, 560],
+      [405, 480],
+      [365, 400],
     ],
   },
   'wave-clear-objective': {
@@ -4669,134 +4668,90 @@ function primitivesFor(spec, frame) {
   }
   if (mode === 'objective-linked-invulnerability') {
     const objectives = spec.objectives.map(point);
-    const activeObjective =
-      frame.objectiveHitIndex >= 0 ? objectives[frame.objectiveHitIndex] : objectives[0];
-    const objectivePulse = Math.max(
-      ...spec.objectiveHits.map((hit) => strikePulse(frame.time, hit, 0.3)),
-    );
-    const gatePulse = strikePulse(frame.time, spec.gateDropsAt, 0.5);
     const bossStrike = strikePulse(frame.time, spec.bossStrike, 0.36);
     const blocked = strikePulse(frame.time, spec.blockedStrike, 0.34);
+    const protection = frame.objectiveShieldOpacity;
+    const conduitPaths = [
+      'M 314 350 L 394 468 L 445 600',
+      'M 280 370 V 750',
+      'M 246 350 L 166 468 L 115 600',
+    ];
     return [
-      rect(...spec.arena, 0.52, 'muted', 0.025),
-      ...objectives.map((objective, index) =>
-        line(
-          frame.boss.x,
-          frame.boss.y + 28,
-          objective.x,
-          objective.y,
-          index < frame.objectiveCompletedCount ? 0.1 : frame.objectiveShielded ? 0.66 : 0,
-          index < frame.objectiveCompletedCount ? 'muted' : 'accent',
-          5,
-          '9 9',
-        ),
+      path('M 156 365 L 280 342 L 404 365 L 372 384 H 188 Z', 0.64, 'muted', 0, 0.78),
+      ...conduitPaths.map((data) => path(data, 0.58, 'muted', 7)),
+      ...conduitPaths.map((data, index) =>
+        path(data, index < frame.objectiveCompletedCount ? 0 : protection * 0.9, 'safe', 5),
       ),
-      ...objectives.map((objective, index) =>
-        circle(
-          objective.x,
-          objective.y,
-          40,
-          index < frame.objectiveCompletedCount ? 0.68 : 0.92,
-          index < frame.objectiveCompletedCount ? 'safe' : 'accent',
-          index < frame.objectiveCompletedCount ? 6 : 8,
-          index < frame.objectiveCompletedCount ? 0.08 : 0.15,
-        ),
-      ),
-      ...objectives.map((objective, index) =>
+      ...objectives.map(({ x, y }) =>
         path(
-          `M ${objective.x} ${objective.y - 19} L ${objective.x + 19} ${objective.y} L ${objective.x} ${objective.y + 19} L ${objective.x - 19} ${objective.y} Z`,
-          index < frame.objectiveCompletedCount ? 0.9 : 0.72,
-          index < frame.objectiveCompletedCount ? 'safe' : 'accent',
-          5,
-          index < frame.objectiveCompletedCount ? 0.2 : 0.05,
+          `M ${x - 35} ${y + 18} H ${x + 35} L ${x + 44} ${y + 40} H ${x - 44} Z`,
+          0.86,
+          'muted',
+          0,
+          0.84,
         ),
       ),
-      circle(
-        frame.boss.x,
-        frame.boss.y,
-        spec.shieldRadius,
-        frame.objectiveShieldOpacity,
+      ...objectives.map(({ x, y }) =>
+        path(`M ${x - 19} ${y - 12} H ${x + 19} V ${y + 20} H ${x - 19} Z`, 0.92, 'accent', 0, 0.8),
+      ),
+      ...objectives.map(({ x, y }, index) =>
+        path(
+          index < frame.objectiveCompletedCount
+            ? `M ${x - 17} ${y - 17} L ${x - 4} ${y - 27} L ${x + 2} ${y - 13} L ${x + 13} ${y - 20} L ${x + 17} ${y - 7} H ${x - 17} Z`
+            : `M ${x} ${y - 54} L ${x + 20} ${y - 23} L ${x} ${y - 4} L ${x - 20} ${y - 23} Z`,
+          0.96,
+          index < frame.objectiveCompletedCount ? 'muted' : 'safe',
+          0,
+          0.9,
+        ),
+      ),
+      path(
+        'M 280 174 L 368 226 L 376 316 L 280 372 L 184 316 L 192 226 Z',
+        protection,
         'accent',
-        frame.objectiveShielded ? 11 : 5,
-        frame.objectiveShielded ? 0.16 : 0.03,
-        '10 8',
+        0,
+        0.23,
       ),
-      circle(
-        frame.boss.x,
-        frame.boss.y - 8,
-        34 + 16 * pulse(frame.objectiveVulnerabilityProgress),
-        frame.objectiveVulnerable ? 0.92 : 0.18,
-        frame.objectiveVulnerable ? 'safe' : 'muted',
-        7,
-        frame.objectiveVulnerable ? 0.18 : 0.03,
+      path(
+        'M 280 174 L 280 372 M 192 226 L 376 316 M 368 226 L 184 316',
+        protection * 0.45,
+        'accent',
+        4,
       ),
-      line(
-        spec.player[0],
-        spec.player[1],
-        frame.boss.x + 44,
-        frame.boss.y + 28,
-        blocked,
-        'safe',
-        9,
+      path(
+        `M ${frame.boss.x} ${frame.boss.y - 46} L ${frame.boss.x + 19} ${frame.boss.y - 24} L ${frame.boss.x} ${frame.boss.y - 2} L ${frame.boss.x - 19} ${frame.boss.y - 24} Z`,
+        frame.objectiveVulnerable ? 0.98 : 0,
+        'signal',
+        0,
+        0.86,
       ),
-      circle(frame.boss.x + 45, frame.boss.y + 28, 16 + blocked * 26, blocked, 'accent', 8, 0.08),
-      line(
-        frame.player.x,
-        frame.player.y,
-        activeObjective.x,
-        activeObjective.y,
-        objectivePulse,
-        'safe',
-        9,
-      ),
-      circle(
-        activeObjective.x,
-        activeObjective.y,
-        16 + objectivePulse * 26,
-        objectivePulse,
-        'safe',
-        7,
-        0.12,
-      ),
-      circle(frame.boss.x, frame.boss.y, 70 + gatePulse * 70, gatePulse, 'safe', 8, 0.04),
-      line(
-        frame.player.x,
-        frame.player.y,
-        frame.boss.x - 24,
-        frame.boss.y + 20,
-        bossStrike,
-        'safe',
-        11,
-      ),
-      circle(
-        frame.boss.x - 24,
-        frame.boss.y + 20,
-        14 + bossStrike * 30,
-        bossStrike,
-        'safe',
-        8,
-        0.16,
-      ),
-      ...objectives.map((_, index) =>
-        circle(
-          248 + index * 32,
-          520,
-          10,
-          0.92,
-          index < frame.objectiveCompletedCount ? 'safe' : 'accent',
-          4,
-          index < frame.objectiveCompletedCount ? 0.24 : 0.04,
+      line(350, 365, 330, 349, blocked, 'safe', 9),
+      path('M 318 337 L 337 343 L 342 363 L 326 356 Z', blocked, 'signal', 0, 0.9),
+      ...objectives.map(({ x, y }, index) =>
+        path(
+          `M ${x - 27} ${y - 29} L ${x - 14} ${y - 42} M ${x + 16} ${y - 39} L ${x + 29} ${y - 25}`,
+          strikePulse(frame.time, spec.objectiveHits[index], 0.28),
+          'safe',
+          6,
         ),
       ),
-      rect(182, 548, 196, 14, frame.objectiveVulnerable ? 0.5 : 0.18, 'muted', 0.025),
-      rect(
-        182,
-        548,
-        196 * frame.objectiveWindowRemaining,
-        14,
-        frame.objectiveVulnerable ? 0.92 : 0,
+      line(
+        frame.player.x + 18,
+        frame.player.y - 22,
+        frame.boss.x - 15,
+        frame.boss.y - 8,
+        bossStrike,
         'safe',
-        0.16,
+        9,
+      ),
+      path('M 245 264 L 265 242 L 283 261 L 265 284 Z', bossStrike, 'signal', 0, 0.92),
+      path('M 182 60 H 378 V 76 H 182 Z', frame.objectiveVulnerable ? 0.6 : 0, 'muted', 0, 0.78),
+      path(
+        `M 182 60 H ${182 + 196 * frame.objectiveWindowRemaining} V 76 H 182 Z`,
+        frame.objectiveVulnerable ? 0.96 : 0,
+        'safe',
+        0,
+        0.9,
       ),
     ];
   }

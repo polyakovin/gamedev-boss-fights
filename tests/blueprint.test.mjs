@@ -2371,12 +2371,13 @@ test('objective-linked invulnerability opens only after every protection objecti
   assert.equal(blocked.objectiveBlockedStrike, true);
   assert.equal(blocked.objectiveShielded, true);
   assert.equal(objectiveLinkedInvulnerabilityOutcome(0.62), 'immune');
-  assert.ok(blocked.primitives[12].opacity > 0.8, 'the first sword strike visibly stops');
+  assert.ok(blocked.primitives[19].opacity > 0.8, 'the first sword strike visibly stops');
 
   const first = blueprintFrame(id, 1.3);
   assert.equal(first.objectiveCompletedCount, 1);
   assert.equal(objectiveLinkedInvulnerabilityOutcome(1.3, 'objective-1'), 'complete');
-  assert.ok(first.primitives[1].opacity < 0.2, 'the completed seal severs its protection link');
+  assert.equal(first.primitives[4].opacity, 0, 'the completed pylon cuts its powered conduit');
+  assert.equal(first.primitives[13].tone, 'muted', 'the crystal breaks after completion');
 
   const complete = blueprintFrame(id, 2.75);
   assert.equal(complete.objectiveCompletedCount, 3);
@@ -2385,18 +2386,21 @@ test('objective-linked invulnerability opens only after every protection objecti
 
   const releasing = blueprintFrame(id, 2.95);
   assert.ok(releasing.objectiveShieldOpacity > 0 && releasing.objectiveShieldOpacity < 1);
-  assert.ok(releasing.primitives[16].opacity > 0, 'the final ledger emits a release pulse');
+  assert.ok(
+    releasing.primitives[16].opacity > 0,
+    'the shield plates remain visible as they release',
+  );
 
   const vulnerable = blueprintFrame(id, 3.2);
   assert.equal(objectiveLinkedInvulnerabilityOutcome(3.2), 'vulnerable');
   assert.equal(vulnerable.objectiveShielded, false);
   assert.ok(vulnerable.objectiveWindowRemaining > 0);
-  assert.ok(vulnerable.primitives[11].opacity > 0.7, 'the exposed core is readable');
+  assert.ok(vulnerable.primitives[18].opacity > 0.7, 'the exposed core is readable');
 
   const hit = blueprintFrame(id, 3.46);
   assert.equal(hit.objectiveBossStrike, true);
-  assert.ok(hit.primitives[17].opacity > 0.8, 'the sword crosses the boss during the window');
-  assert.ok(hit.primitives[18].opacity > 0.8, 'the accepted hit confirms at the core');
+  assert.ok(hit.primitives[24].opacity > 0.8, 'the sword crosses the boss during the window');
+  assert.ok(hit.primitives[25].opacity > 0.8, 'the accepted hit confirms at the core');
 
   const closing = blueprintFrame(id, 4.1);
   assert.equal(closing.objectiveLinkedInvulnerabilityState, 'window-closing');
