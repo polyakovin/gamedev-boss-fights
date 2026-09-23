@@ -23,6 +23,16 @@
     "locked": "Direction locked",
     "safe": "Outside the lane",
     "reducedMotion": "Autoplay is disabled by the reduced-motion setting. Use the timeline slider to inspect the loop.",
+    "gamePrompt": "Press an arrow key or WASD to play.",
+    "gameControls": "Arrows / WASD: move · Space: strike during recovery · Esc: return to demo",
+    "gamePlayerHealth": "Player health",
+    "gameBossHealth": "Boss health",
+    "gamePlaying": "Dodge the locked charge, then strike during recovery.",
+    "gameWon": "Boss defeated!",
+    "gameLost": "The boss won this round.",
+    "gameRestart": "Play again",
+    "gameHit": "The charge hit you.",
+    "gameStrike": "You hit the boss.",
     "diagramDescription": "A looping charge diagram. The boss alternates attacks from above and below while the player always moves sideways out of the lane."
   },
   "steps": [

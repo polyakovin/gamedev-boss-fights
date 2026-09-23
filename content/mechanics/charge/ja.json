@@ -23,6 +23,16 @@
     "locked": "方向固定済み",
     "safe": "進路の外",
     "reducedMotion": "システムのモーションを減らす設定により、自動再生は無効です。スライダーでループを確認できます。",
+    "gamePrompt": "矢印キーか WASD を押すと戦闘が始まります。",
+    "gameControls": "矢印キー / WASD：移動 · スペース：硬直中に攻撃 · Esc：デモに戻る",
+    "gamePlayerHealth": "プレイヤーの体力",
+    "gameBossHealth": "ボスの体力",
+    "gamePlaying": "方向が固定された突進を避け、硬直中にボスを攻撃しよう。",
+    "gameWon": "ボスを倒した！",
+    "gameLost": "このラウンドはボスの勝ち。",
+    "gameRestart": "もう一度遊ぶ",
+    "gameHit": "突進を受けた。",
+    "gameStrike": "ボスに攻撃が当たった。",
     "diagramDescription": "ループする突進の図。ボスは上と下から交互に攻撃し、プレイヤーは毎回横へ移動して危険な帯を外れます。"
   },
   "steps": [

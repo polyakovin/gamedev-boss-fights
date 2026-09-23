@@ -115,7 +115,7 @@ for (const locale of registry) {
     await expect(page.locator('.charge-demo__phase-label')).toHaveCount(1);
     await expect(page.locator('[data-charge-phase-name]')).toHaveCount(1);
     await expect(page.locator('.charge-demo__phase-tooltip')).toHaveCount(1);
-    await expect(page.locator('.charge-demo button')).toHaveCount(0);
+    await expect(page.locator('[data-charge-restart]')).toBeHidden();
     await expect(page.locator('.charge-demo input')).toHaveCount(1);
     await expect(page.locator('.charge-demo input')).toHaveAttribute('type', 'range');
     await expect(page.locator('.lesson-category')).toHaveAttribute(
@@ -313,7 +313,7 @@ test('every mechanic page links its localized category to the matching catalog s
     }
   }
 });
-test('the loop autoplays, alternates sides, shows the current phase, and keeps only the slider', async ({
+test('the loop autoplays, alternates sides, and keeps its timeline in the scene', async ({
   page,
 }) => {
   await page.emulateMedia({ reducedMotion: 'no-preference' });
@@ -380,10 +380,14 @@ test('the loop autoplays, alternates sides, shows the current phase, and keeps o
     backdropFilter: 'none',
   });
   expect(Math.abs(simulationBox.height - (1000 - simulationBox.y - 24))).toBeLessThan(2);
-  expect(diagramBox.height).toBeGreaterThan(simulationBox.height - 10);
+  const gameBarBox = await page.locator('.charge-demo__game-bar').boundingBox();
+  expect(diagramBox.height + gameBarBox.height).toBeGreaterThan(simulationBox.height - 10);
+  const demoBox = await demo.boundingBox();
+  expect(gameBarBox.y + gameBarBox.height).toBeLessThanOrEqual(demoBox.y + demoBox.height + 1);
+  await expect(page.locator('[data-charge-game-message]')).toBeVisible();
   await expect(page.locator('[data-charge-phase-name]')).toHaveText('Aim');
   await expect(page.locator('.charge-demo__description')).toHaveCount(0);
-  await expect(page.locator('.charge-demo button')).toHaveCount(0);
+  await expect(page.locator('[data-charge-restart]')).toBeHidden();
   await expect(page.locator('.charge-demo input[type="range"]')).toHaveCount(1);
   await expect(page.locator('.charge-demo output, [data-charge-time]')).toHaveCount(0);
   await expect(page.locator('.charge-demo [stroke="var(--diagram-corners)"]')).toHaveCount(0);

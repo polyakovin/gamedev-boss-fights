@@ -23,6 +23,16 @@
     "locked": "Dirección fijada",
     "safe": "Fuera de la franja",
     "reducedMotion": "La configuración de movimiento reducido desactiva la reproducción automática. Usa el control deslizante de la línea de tiempo para revisar el ciclo.",
+    "gamePrompt": "Pulsa una flecha o WASD para jugar.",
+    "gameControls": "Flechas / WASD: mover · Espacio: atacar durante la recuperación · Esc: volver a la demostración",
+    "gamePlayerHealth": "Salud del jugador",
+    "gameBossHealth": "Salud del jefe",
+    "gamePlaying": "Esquiva la embestida fijada y ataca durante la recuperación.",
+    "gameWon": "¡Jefe derrotado!",
+    "gameLost": "El jefe ganó esta ronda.",
+    "gameRestart": "Jugar de nuevo",
+    "gameHit": "La embestida te alcanzó.",
+    "gameStrike": "Golpeaste al jefe.",
     "diagramDescription": "Diagrama cíclico de una embestida. El jefe alterna ataques desde arriba y abajo mientras el jugador siempre se aparta lateralmente de la franja."
   },
   "steps": [

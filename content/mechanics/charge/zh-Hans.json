@@ -23,6 +23,16 @@
     "locked": "方向已锁定",
     "safe": "已离开危险通道",
     "reducedMotion": "系统的减少动态效果设置已关闭自动播放。请使用时间轴滑块查看循环。",
+    "gamePrompt": "按方向键或 WASD 开始战斗。",
+    "gameControls": "方向键 / WASD：移动 · 空格：恢复期间攻击 · Esc：返回演示",
+    "gamePlayerHealth": "玩家生命值",
+    "gameBossHealth": "首领生命值",
+    "gamePlaying": "躲开锁定方向的冲锋，在首领恢复时攻击。",
+    "gameWon": "首领被击败！",
+    "gameLost": "首领赢得了这一回合。",
+    "gameRestart": "再玩一次",
+    "gameHit": "冲锋击中了你。",
+    "gameStrike": "你击中了首领。",
     "diagramDescription": "循环冲锋示意图。首领交替从上方和下方发起攻击，玩家每次都横向移出危险通道。"
   },
   "steps": [

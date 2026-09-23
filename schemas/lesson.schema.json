@@ -127,6 +127,16 @@
           "type": "string",
           "minLength": 1
         },
+        "gamePrompt": { "type": "string", "minLength": 1 },
+        "gameControls": { "type": "string", "minLength": 1 },
+        "gamePlayerHealth": { "type": "string", "minLength": 1 },
+        "gameBossHealth": { "type": "string", "minLength": 1 },
+        "gamePlaying": { "type": "string", "minLength": 1 },
+        "gameWon": { "type": "string", "minLength": 1 },
+        "gameLost": { "type": "string", "minLength": 1 },
+        "gameRestart": { "type": "string", "minLength": 1 },
+        "gameHit": { "type": "string", "minLength": 1 },
+        "gameStrike": { "type": "string", "minLength": 1 },
         "diagramDescription": {
           "type": "string",
           "minLength": 1

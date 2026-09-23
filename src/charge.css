@@ -10,6 +10,8 @@
   background: var(--surface);
   border: 1px solid var(--charge-border);
   border-radius: 18px;
+  display: flex;
+  flex-direction: column;
 }
 :root[dir='rtl'] .charge-demo {
   --charge-progress-direction: to left;
@@ -33,7 +35,14 @@
 .charge-demo__canvas {
   position: relative;
   isolation: isolate;
+  flex: 1;
+  min-height: 0;
   padding: 0.35rem 0.35rem 0;
+}
+@media (min-width: 961px) {
+  .simulation-section .charge-demo__canvas {
+    height: auto;
+  }
 }
 .charge-demo__scene-timeline {
   position: absolute;
@@ -184,6 +193,60 @@
   border-radius: 5px;
   font-size: 0.7rem;
   line-height: 1.45;
+}
+.charge-demo__game-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.25rem 0.8rem;
+  padding: 0.55rem 0.8rem 0.7rem;
+  border-top: 1px solid var(--line);
+  flex: none;
+  font-size: 0.72rem;
+  line-height: 1.45;
+}
+.charge-demo__game-bar p {
+  margin: 0;
+}
+.charge-demo__game-bar [data-charge-game-controls] {
+  color: var(--muted);
+}
+.charge-demo__game-score {
+  display: flex;
+  gap: 0.9rem;
+  width: 100%;
+  color: var(--ink);
+}
+.charge-demo__game-score strong {
+  font-variant-numeric: tabular-nums;
+}
+.charge-demo__game-bar button {
+  padding: 0.3rem 0.7rem;
+  color: var(--paper);
+  background: var(--accent-soft);
+  border: 1px solid var(--accent);
+  border-radius: 5px;
+  cursor: pointer;
+  font: inherit;
+}
+.charge-demo:focus-visible,
+.charge-demo__game-bar button:focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: 2px;
+}
+.charge-demo[data-charge-mode='game'] .charge-demo__scene-timeline,
+.charge-demo[data-charge-mode='won'] .charge-demo__scene-timeline,
+.charge-demo[data-charge-mode='lost'] .charge-demo__scene-timeline {
+  display: none;
+}
+.charge-demo[data-charge-mode='game'] [data-charge-dodge],
+.charge-demo[data-charge-mode='won'] [data-charge-dodge],
+.charge-demo[data-charge-mode='lost'] [data-charge-dodge] {
+  display: none;
+}
+.charge-demo__game-score[hidden],
+.charge-demo__game-bar button[hidden] {
+  display: none;
 }
 @media (max-width: 650px) {
   .charge-demo {
