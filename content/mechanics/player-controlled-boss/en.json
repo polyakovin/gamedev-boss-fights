@@ -1,0 +1,142 @@
+{
+  "title": "Player-controlled boss",
+  "subtitle": "Put a human opponent inside a boss contract without losing encounter clarity",
+  "variant": "Match · assign · constrain · fall back",
+  "summary": "The system assigns a real player as the boss opponent and substitutes AI when no candidate is available.",
+  "overview": "A player-controlled boss combines authored encounter structure with an opponent who can improvise. The boss role needs an explicit assignment flow, a bounded move set, readable telegraphs, encounter-owned health and rewards, and an AI fallback that preserves the same contract when matchmaking fails or the controller disconnects.",
+  "learning": "Define eligibility, consent, matchmaking timeout, role handoff, boss loadout normalization, legal actions, telegraph floors, health and resource authority, challenger scaling, latency compensation, disconnect and AFK detection, AI takeover, rematch rules, grief prevention, rewards, accessibility, privacy-safe telemetry, and deterministic tests for every transition.",
+  "category": "Encounter goals and vulnerability",
+  "readTime": "10 min",
+  "demo": {
+    "title": "Show control ownership without changing the fight's promises",
+    "timeline": "Player-controlled boss timeline",
+    "step": "Player-controlled boss states",
+    "phaseNames": [
+      "Search for an eligible controller and assign the boss role",
+      "Route human inputs through the authored boss move set",
+      "Detect loss of control and hand the same contract to AI"
+    ],
+    "phaseDescriptions": [
+      "The encounter opens in a matching state. At 0.70 s an eligible remote controller appears; at 1.20 s the crown token moves onto Kern and the role becomes authoritative. Tavi remains outside danger until the assignment is visible and complete.",
+      "From 1.55 s the human controller chooses only encounter-approved actions. A committed lane attack is queued at 2.05 s, telegraphed from 2.18 to 2.68 s, and resolves from 2.68 to 3.08 s. Tavi sidesteps the same readable lane that an AI boss would have authored.",
+      "A heartbeat is lost at 3.55 s. Inputs freeze before another attack can begin, the AI token replaces the human token at 3.95 s, and the boss resumes with the same health, position, cooldowns, and move grammar. The encounter resets after 5.20 s without duplicating rewards or restarting progress."
+    ],
+    "boss": "Boss",
+    "player": "Player",
+    "danger": "A human chooses Kern's timing and move, but cannot bypass the lane telegraph, active window, recovery, or encounter bounds",
+    "locked": "Eligibility, assignment, authority, allowed move set, telegraph minimum, health, cooldowns, heartbeat, freeze, AI takeover, rewards, and reset are encounter-owned",
+    "safe": "Show who controls the boss, preserve the same response cues under human and AI control, freeze safely on disconnect, and never require voice or color alone to identify ownership",
+    "reducedMotion": "Autoplay is disabled by reduced motion. Scrub across 0.70, 1.20, 1.55, 2.05, 2.18, 2.68, 3.08, 3.55, 3.95, 4.45, and 5.20 seconds to inspect matching, assignment, input, telegraph, attack, recovery, disconnect, AI takeover, continuation, and reset.",
+    "diagramDescription": "Tavi faces Kern inside a bounded arena. A remote-player token travels from a matchmaking panel to a crown above Kern. Three permitted move icons feed one selected lane attack, whose dashed preview becomes a solid danger lane while Tavi moves aside. The connection then breaks, inputs freeze, an AI token takes the crown, and Kern continues from the same health state."
+  },
+  "steps": [
+    {
+      "title": "Who may become the boss, and when does authority begin?",
+      "body": "Define opt-in, region, latency, progression, party, rank, repeat-opponent, and platform rules before searching. Time out into a known AI rather than holding the challenger at a door. Make one server-authoritative transition assign the controller, normalize their boss package, close late joins, announce the role to both sides, and start danger only after clients acknowledge the same state."
+    },
+    {
+      "title": "What can the human control without breaking the encounter?",
+      "body": "Give the controller meaningful choices inside authored constraints: select moves, aim within bounds, vary spacing, manage a boss resource, or coordinate limbs. Keep minimum startups, collision shapes, active windows, recovery, arena limits, health, phase gates, and forbidden exploits encounter-owned. Normalize imported builds or replace them with a role kit so matchmaking does not become an invisible difficulty roll."
+    },
+    {
+      "title": "How does the fight survive absence, latency, or abuse?",
+      "body": "Track heartbeat, input age, AFK duration, packet loss, illegal commands, surrender, and disconnect. On failure, stop accepting remote commands, freeze into a safe non-damaging beat, transfer the same state to AI, then resume without healing, repeating the intro, or duplicating rewards. Test reconnect policy, co-op scaling, host migration, rollback, grief stalls, intentional disconnects, and both victory orders."
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "The human boss can erase telegraphs or bring an arbitrary build",
+      "body": "Unbounded cancel timing, animation swaps, status stacks, or imported equipment turn the authored fight into ordinary PvP with a boss health bar. Route every command through an encounter action graph, enforce startup and recovery on the authority, normalize stats, and reject commands that cannot be represented by the visible state."
+    },
+    {
+      "title": "Matchmaking or disconnect can stall progress",
+      "body": "A rare controller must not become a required external dependency. Set a short, communicated search budget, preload the fallback, preserve boss health and phase state during takeover, and make reward ownership idempotent. Simulate no candidate, late candidate, AFK, high latency, disconnect during startup and active frames, and both clients leaving."
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "Separate human expression from boss invariants",
+      "body": "Write two lists. Expression includes move choice, target selection, spacing, feints that still pay their startup, and resource timing. Invariants include telegraph floors, hit geometry, recovery, arena bounds, phase progression, health, and reward authority. The controller can surprise through choices, not by hiding the rules."
+    },
+    {
+      "title": "Normalize difficulty before scaling health",
+      "body": "Compare experienced and novice controllers, solo and co-op challengers, latency bands, controller input rates, and AI fallback. Prefer a bounded role kit, cooldown economy, poise or resistance budget, and challenger-count modifiers over copying a player's full build. Cap stall tools and healing so survival cannot replace engagement."
+    },
+    {
+      "title": "Make ownership and fallback visible but diegetic",
+      "body": "Use a crown, aura shape, nameplate label, arrival animation, announcer line, caption, and HUD state to show that another player has the boss role. When AI takes over, change the ownership marker without changing the boss silhouette or response vocabulary. Do not reveal private account data beyond the game's normal multiplayer identity."
+    },
+    {
+      "title": "Instrument the authority handoff",
+      "body": "Log search time, assignment source, normalized kit, command acceptance, telegraph start, authoritative hit, heartbeat age, takeover cause, transferred health and cooldowns, outcome, rematch, and reward grant. Automated tests should prove that one controller owns Kern at a time, illegal inputs do nothing, every damaging action was visibly announced, and each result pays once."
+    }
+  ],
+  "story": {
+    "title": "A distant will wakes inside Kern",
+    "body": "The quarry's crown searches the old rune network and finds another challenger. Its sigil settles above Kern, whose familiar stone body now waits, baits, and commits with a human rhythm—but every rune still lights before danger. When the link breaks, the crown dims to an amber machine-glyph and the elemental continues from the same cracked core."
+  },
+  "adaptation": {
+    "title": "Keep the opponent human without making access depend on perfect networking",
+    "body": "Use opt-in matchmaking, a visible search timeout, input buffering, generous but fixed telegraph floors, captions for ownership and connection state, non-color icons, an AI fallback, and a complete offline path. Let players hide remote names, reduce social signals, or choose AI-only play without changing progression rewards."
+  },
+  "distinction": {
+    "title": "Authored asymmetric PvP, not an ordinary invasion or scripted mimic",
+    "body": "An invasion adds a hostile player to the world under general PvP rules. A player-controlled boss assigns that person the encounter's boss slot, health, move constraints, arena, phase gates, and rewards. A mimic or adaptive AI only imitates player behavior; here a real participant supplies decisions, while AI exists as a contract-compatible fallback."
+  },
+  "lensNotes": [
+    {
+      "id": "encounter-purpose",
+      "body": "The mechanic makes unpredictability and social presence the encounter's purpose while preserving a finishable offline or no-candidate path."
+    },
+    {
+      "id": "player-expression",
+      "body": "The boss controller expresses intent through move, spacing, aim, and resource choices; the challenger expresses reads and adaptation against a human rhythm."
+    },
+    {
+      "id": "counterplay",
+      "body": "Counterplay remains authored because human-selected moves still expose fixed signals, geometry, active windows, recovery, and arena limits."
+    },
+    {
+      "id": "progress-clarity",
+      "body": "Matching, assignment, controller identity, legal action, hit result, disconnect, AI takeover, health continuity, and reward resolution form one visible state chain."
+    },
+    {
+      "id": "difficulty-rhythm",
+      "body": "Human timing varies local rhythm, so the encounter constrains telegraph and recovery floors and uses cooldowns to protect the overall pressure budget."
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "Crawl",
+      "boss": "Kourok",
+      "screenshot": "https://i.ytimg.com/vi/BQYB4ipIlR4/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=BQYB4ipIlR4&t=480s",
+      "body": "At the final portal, the human challenger fights a multi-part boss whose limbs are controlled cooperatively by the other local players; empty roles can be filled by bots. Splitting the boss action set across controllers creates coordinated expression while the arena, shared body, attack packages, health, and victory condition remain authored.",
+      "video": "https://www.youtube.com/watch?v=BQYB4ipIlR4&t=480s",
+      "videoDurationSeconds": 606
+    },
+    {
+      "dimension": "3D",
+      "game": "Demon's Souls",
+      "boss": "Old Monk",
+      "screenshot": "https://i.ytimg.com/vi/YPYsdO_avAg/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=YPYsdO_avAg&t=1s",
+      "body": "The Old Monk can summon an actual network player as the Black Phantom boss. If the host is offline or no suitable participant is found, an NPC fills the role. The encounter demonstrates explicit role substitution: a human supplies combat decisions, while the arena, boss objective, health framing, reward, and fallback remain system-owned.",
+      "video": "https://www.youtube.com/watch?v=YPYsdO_avAg&t=1s",
+      "videoDurationSeconds": 91
+    },
+    {
+      "dimension": "3D",
+      "game": "Dark Souls III",
+      "boss": "Spear of the Church",
+      "screenshot": "https://i.ytimg.com/vi/0fPhPSWLRA0/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=0fPhPSWLRA0&t=1s",
+      "body": "Online, the ritual can summon another player into the boss role instead of the NPC Halflight. The summoned Spear receives encounter-specific support and constraints rather than merely invading an open level; offline or failed matchmaking restores Halflight. The swap preserves progression while producing a distinct human cadence.",
+      "video": "https://www.youtube.com/watch?v=0fPhPSWLRA0&t=1s",
+      "videoDurationSeconds": 135
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

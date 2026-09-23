@@ -1,0 +1,142 @@
+{
+  "title": "Jefe controlado por otro jugador",
+  "subtitle": "Integrar a un rival humano sin perder la claridad del encuentro",
+  "variant": "Emparejar · asignar · limitar · sustituir",
+  "summary": "El sistema asigna a una persona como rival jefe y usa una IA cuando no hay candidato.",
+  "overview": "Un jefe controlado por un jugador combina una estructura diseñada con un rival capaz de improvisar. El rol necesita asignación explícita, movimientos acotados, señales legibles, vida y recompensas bajo autoridad del encuentro, y una IA compatible cuando falla el emparejamiento o se corta la conexión.",
+  "learning": "Define elegibilidad, consentimiento, tiempo límite, transferencia de rol, normalización del equipo, acciones legales, mínimos de anticipación, autoridad de vida y recursos, escalado, latencia, AFK y desconexión, toma de control por IA, revancha, prevención de sabotaje, recompensas, accesibilidad, telemetría segura y pruebas deterministas.",
+  "category": "Objetivos del encuentro y vulnerabilidad",
+  "readTime": "10 min",
+  "demo": {
+    "title": "Mostrar quién controla sin cambiar las promesas del combate",
+    "timeline": "Línea temporal del jefe controlado",
+    "step": "Estados del control del jefe",
+    "phaseNames": [
+      "Buscar un controlador elegible y asignarle el rol",
+      "Pasar la entrada humana por el repertorio diseñado",
+      "Detectar la pérdida de control y transferir el contrato a la IA"
+    ],
+    "phaseDescriptions": [
+      "El encuentro empieza buscando. A 0,70 s aparece un participante remoto; a 1,20 s la corona llega a Kern y el rol obtiene autoridad. Tavi permanece fuera de peligro hasta que la asignación es visible.",
+      "Desde 1,55 s la persona solo elige acciones permitidas. Ordena un ataque de carril a 2,05 s, se anuncia de 2,18 a 2,68 s y se resuelve de 2,68 a 3,08 s. Tavi se aparta del mismo carril legible que usaría la IA.",
+      "El heartbeat se pierde a 3,55 s. La entrada se congela antes de otra acción, la ficha de IA sustituye a la humana a 3,95 s y el jefe continúa con la misma vida, posición, recargas y gramática. El reinicio llega después de 5,20 s sin repetir progreso ni recompensa."
+    ],
+    "boss": "Jefe",
+    "player": "Jugador",
+    "danger": "Una persona elige el momento y el movimiento de Kern, pero no puede omitir la señal, la ventana activa, la recuperación ni los límites",
+    "locked": "La elegibilidad, asignación, autoridad, repertorio, anticipación mínima, vida, recargas, heartbeat, congelación, relevo de IA, recompensas y reinicio pertenecen al encuentro",
+    "safe": "Muestra quién controla, conserva las mismas señales con humano e IA, congela con seguridad al desconectar y no dependas solo del color o la voz",
+    "reducedMotion": "Con movimiento reducido se desactiva la reproducción. Recorre 0,70, 1,20, 1,55, 2,05, 2,18, 2,68, 3,08, 3,55, 3,95, 4,45 y 5,20 segundos para revisar búsqueda, asignación, entrada, señal, ataque, recuperación, desconexión, relevo, continuación y reinicio.",
+    "diagramDescription": "Tavi mira a Kern dentro de una arena cerrada. Una ficha remota viaja desde el panel de emparejamiento hasta una corona sobre Kern. Tres movimientos permitidos alimentan un ataque de carril; la vista previa discontinua se vuelve peligro sólido mientras Tavi se aparta. La conexión se rompe, la entrada se congela, la IA toma la corona y Kern conserva su vida."
+  },
+  "steps": [
+    {
+      "title": "¿Quién puede ser jefe y cuándo comienza su autoridad?",
+      "body": "Define opt-in, región, latencia, progreso, grupo, rango, repetición y plataforma. Tras un tiempo límite usa una IA conocida, no retengas al retador. Una transición autoritativa debe asignar, normalizar el equipo, cerrar entradas tardías, anunciar el rol y habilitar peligro solo cuando ambos clientes comparten estado."
+    },
+    {
+      "title": "¿Qué controla la persona sin romper el encuentro?",
+      "body": "Ofrece decisiones dentro de límites: movimiento, puntería acotada, distancia, recurso o coordinación de partes. Mantén bajo autoridad del encuentro los startups mínimos, colisiones, ventanas activas, recuperación, límites, vida, fases y prohibiciones. Normaliza configuraciones importadas o sustitúyelas por un kit de rol."
+    },
+    {
+      "title": "¿Cómo sobrevive el combate a ausencia, latencia o abuso?",
+      "body": "Vigila heartbeat, antigüedad de entrada, AFK, paquetes, órdenes ilegales, rendición y desconexión. Ante un fallo deja de aceptar órdenes, congela en un compás seguro, transfiere el mismo estado a la IA y continúa sin curar, repetir la entrada ni duplicar premios. Prueba reconexión, cooperativo, migración, rollback y abandono."
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "El jefe humano puede borrar señales o importar cualquier equipo",
+      "body": "Cancelaciones sin límite, cambios de animación y configuraciones importadas convierten el encuentro en PvP común con barra de jefe. Enruta toda orden por el grafo del encuentro, aplica startup y recuperación, normaliza estadísticas y rechaza lo que no tenga estado visible."
+    },
+    {
+      "title": "El emparejamiento o la desconexión bloquean el progreso",
+      "body": "Un controlador raro no debe ser una dependencia obligatoria. Comunica un tiempo breve, precarga la IA, conserva vida y fase, y concede la recompensa de forma idempotente. Simula ausencia, llegada tardía, AFK, latencia, desconexión en startup y activo, y salida de ambos lados."
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "Separa expresión humana e invariantes",
+      "body": "La expresión incluye elección, objetivo, espacio, fintas que pagan su startup y uso de recursos. Los invariantes incluyen mínimos de señal, geometría, recuperación, límites, fases, vida y recompensas. La sorpresa debe venir de decisiones, no de ocultar reglas."
+    },
+    {
+      "title": "Normaliza la dificultad antes de aumentar vida",
+      "body": "Compara controladores expertos y novatos, solo y cooperativo, bandas de latencia, tasa de entrada e IA. Prefiere un kit acotado, economía de recargas, presupuesto de resistencia y modificadores por retadores a copiar una configuración completa. Limita curación y estancamiento."
+    },
+    {
+      "title": "Haz visible la propiedad y el relevo",
+      "body": "Usa corona, forma de aura, etiqueta, llegada, voz, subtítulo y HUD para mostrar el rol. Al tomar el control la IA cambia el marcador, no la silueta ni el vocabulario de respuesta. No expongas datos privados más allá de la identidad multijugador normal."
+    },
+    {
+      "title": "Instrumenta la transferencia de autoridad",
+      "body": "Registra búsqueda, origen, kit, órdenes aceptadas, señal, impacto autoritativo, heartbeat, causa del relevo, vida y recargas transferidas, resultado, revancha y premio. Las pruebas deben garantizar un dueño, ignorar entrada ilegal, anunciar todo daño y pagar una vez."
+    }
+  ],
+  "story": {
+    "title": "Una voluntad distante despierta en Kern",
+    "body": "La corona de la cantera busca en la antigua red rúnica y encuentra otro aspirante. El signo se posa sobre Kern: su cuerpo de piedra espera y se compromete con ritmo humano, pero cada runa aún se enciende antes del peligro. Al romperse el vínculo, la corona toma un glifo ámbar de máquina y el elemental continúa con el mismo núcleo agrietado."
+  },
+  "adaptation": {
+    "title": "Conserva al rival humano sin exigir una red perfecta",
+    "body": "Usa emparejamiento voluntario, tiempo visible, búfer de entrada, mínimos generosos, subtítulos de propiedad y conexión, iconos no cromáticos, IA de reserva y ruta offline completa. Permite ocultar nombres, reducir señales sociales o elegir solo IA sin cambiar las recompensas."
+  },
+  "distinction": {
+    "title": "PvP asimétrico diseñado, no invasión común ni imitación",
+    "body": "Una invasión añade un enemigo con reglas generales. Aquí ocupa el puesto de jefe, con vida, repertorio, arena, fases y premios del encuentro. Una IA adaptativa imita conducta; aquí decide una persona real y la IA solo preserva el contrato cuando falta."
+  },
+  "lensNotes": [
+    {
+      "id": "encounter-purpose",
+      "body": "La imprevisibilidad y la presencia social son el propósito, sin bloquear una ruta offline o sin candidato."
+    },
+    {
+      "id": "player-expression",
+      "body": "El controlador se expresa con movimientos, espacio, puntería y recursos; el retador con lectura y adaptación al ritmo humano."
+    },
+    {
+      "id": "counterplay",
+      "body": "La respuesta sigue diseñada porque cada movimiento conserva señal, geometría, ventana activa, recuperación y límites."
+    },
+    {
+      "id": "progress-clarity",
+      "body": "Búsqueda, asignación, propiedad, acción, resultado, desconexión, IA, continuidad de vida y premio forman una cadena visible."
+    },
+    {
+      "id": "difficulty-rhythm",
+      "body": "El ritmo humano varía, así que mínimos de señal, recuperación y recargas protegen el presupuesto de presión."
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "Crawl",
+      "boss": "Kourok",
+      "screenshot": "https://i.ytimg.com/vi/BQYB4ipIlR4/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=BQYB4ipIlR4&t=480s",
+      "body": "En el portal final, el héroe combate un jefe multipartes controlado cooperativamente por los demás jugadores locales; los bots cubren puestos vacíos. La coordinación es humana, pero arena, cuerpo, ataques, vida y victoria siguen diseñados.",
+      "video": "https://www.youtube.com/watch?v=BQYB4ipIlR4&t=480s",
+      "videoDurationSeconds": 606
+    },
+    {
+      "dimension": "3D",
+      "game": "Demon's Souls",
+      "boss": "Old Monk",
+      "screenshot": "https://i.ytimg.com/vi/YPYsdO_avAg/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=YPYsdO_avAg&t=1s",
+      "body": "Old Monk puede invocar a una persona como jefe Black Phantom; sin conexión o candidato lo sustituye un NPC. La persona decide, mientras arena, objetivo, vida, recompensa y respaldo pertenecen al sistema.",
+      "video": "https://www.youtube.com/watch?v=YPYsdO_avAg&t=1s",
+      "videoDurationSeconds": 91
+    },
+    {
+      "dimension": "3D",
+      "game": "Dark Souls III",
+      "boss": "Spear of the Church",
+      "screenshot": "https://i.ytimg.com/vi/0fPhPSWLRA0/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=0fPhPSWLRA0&t=1s",
+      "body": "En línea, el ritual puede asignar el rol de jefe a otra persona en lugar de Halflight. Recibe apoyo y límites del encuentro; offline o sin emparejamiento vuelve Halflight, conservando el progreso con un ritmo distinto.",
+      "video": "https://www.youtube.com/watch?v=0fPhPSWLRA0&t=1s",
+      "videoDurationSeconds": 135
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

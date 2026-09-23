@@ -336,6 +336,20 @@ export function initializeBlueprint(widget) {
       widget.dataset.blueprintEncounterToolPackage = frame.encounterToolActionPackage;
       widget.dataset.blueprintEncounterToolDamageSource = frame.encounterToolDamageSource;
     }
+    if (mechanicId === 'player-controlled-boss') {
+      widget.dataset.blueprintPlayerControlledBoss = frame.playerControlledBossState;
+      widget.dataset.blueprintPlayerBossCandidate = String(frame.playerBossCandidateFound);
+      widget.dataset.blueprintPlayerBossAssigned = String(frame.playerBossAssigned);
+      widget.dataset.blueprintPlayerBossController = frame.playerBossController;
+      widget.dataset.blueprintPlayerBossCommand = String(frame.playerBossCommandAccepted);
+      widget.dataset.blueprintPlayerBossTelegraph = String(frame.playerBossTelegraphVisible);
+      widget.dataset.blueprintPlayerBossAttack = String(frame.playerBossAttackActive);
+      widget.dataset.blueprintPlayerBossHeartbeatLost = String(frame.playerBossHeartbeatLost);
+      widget.dataset.blueprintPlayerBossFrozen = String(frame.playerBossFrozen);
+      widget.dataset.blueprintPlayerBossAiTakeover = String(frame.playerBossAiTakeover);
+      widget.dataset.blueprintPlayerBossHealthPreserved = String(frame.playerBossHealthPreserved);
+      widget.dataset.blueprintPlayerBossRewardGrants = String(frame.playerBossRewardGrants);
+    }
     boss.setAttribute(
       'transform',
       `translate(${frame.boss.x} ${frame.boss.y}) scale(${frame.bossScale})`,

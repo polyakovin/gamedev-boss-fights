@@ -405,9 +405,9 @@ test('volley releases three parallel bolts on one beat and clears its outside ro
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
 });
 
-test('catalog and builder reuse the 78 promoted rule-specific previews', async ({ page }) => {
+test('catalog and builder reuse the 79 promoted rule-specific previews', async ({ page }) => {
   await page.goto('en/');
-  await expect(page.locator('[data-blueprint-preview]')).toHaveCount(78);
+  await expect(page.locator('[data-blueprint-preview]')).toHaveCount(79);
   const catalogLayouts = await page.locator('[data-blueprint-preview]').evaluateAll((previews) =>
     previews.map((preview) => {
       const boss = preview.querySelector('[data-character-art-preview="kern"]');
@@ -431,7 +431,7 @@ test('catalog and builder reuse the 78 promoted rule-specific previews', async (
   expect(new Set(catalogLayouts.map(({ layout }) => layout)).size).toBeGreaterThanOrEqual(18);
 
   await page.goto('en/builder/');
-  await expect(page.locator('[data-blueprint-preview]')).toHaveCount(78);
+  await expect(page.locator('[data-blueprint-preview]')).toHaveCount(79);
   const builderLayouts = await page.locator('[data-blueprint-preview]').evaluateAll((previews) =>
     previews.map((preview) => {
       const boss = preview.querySelector('[data-character-art-preview="kern"]');
@@ -3045,6 +3045,55 @@ test('encounter-specific tool is acquired, carried, charged, fired, and restored
   await seek(4800);
   await expect(widget).toHaveAttribute('data-blueprint-encounter-tool-expired', 'true');
   await expect(widget).toHaveAttribute('data-blueprint-encounter-tool-package', 'sword');
+
+  await page.setViewportSize({ width: 375, height: 812 });
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+});
+
+test('player-controlled boss hands a bounded action from a human controller to AI', async ({
+  page,
+}) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.goto('en/mechanics/player-controlled-boss/');
+  const widget = page.locator('[data-blueprint-demo]');
+  const timeline = widget.locator('[data-blueprint-timeline]');
+  const seek = (milliseconds) =>
+    timeline.evaluate((element, value) => {
+      element.value = String(value);
+      element.dispatchEvent(new Event('input', { bubbles: true }));
+    }, milliseconds);
+
+  await expect(page.locator('.lesson-title-line h1')).toHaveText('Player-controlled boss');
+  await expect(page.locator('.wip-badge, .draft-profile')).toHaveCount(0);
+  await expect(page.locator('.game-example')).toHaveCount(3);
+
+  await seek(1600);
+  await expect(widget).toHaveAttribute('data-blueprint-player-boss-assigned', 'true');
+  await expect(widget).toHaveAttribute('data-blueprint-player-boss-controller', 'human');
+  await expect(widget).toHaveAttribute('data-blueprint-player-boss-health-preserved', 'true');
+
+  await seek(2300);
+  await expect(widget).toHaveAttribute('data-blueprint-player-boss-command', 'true');
+  await expect(widget).toHaveAttribute('data-blueprint-player-boss-telegraph', 'true');
+  await expect(widget).toHaveAttribute('data-blueprint-player-controlled-boss', 'attack-telegraph');
+  await expect(widget.locator('[data-blueprint-primitive="17"] path')).not.toHaveAttribute(
+    'opacity',
+    '0',
+  );
+
+  await seek(2800);
+  await expect(widget).toHaveAttribute('data-blueprint-player-boss-attack', 'true');
+  await expect(widget).toHaveAttribute('data-blueprint-player-controlled-boss', 'attack-active');
+
+  await seek(3700);
+  await expect(widget).toHaveAttribute('data-blueprint-player-boss-heartbeat-lost', 'true');
+  await expect(widget).toHaveAttribute('data-blueprint-player-boss-frozen', 'true');
+  await expect(widget).toHaveAttribute('data-blueprint-player-boss-controller', 'none');
+
+  await seek(4100);
+  await expect(widget).toHaveAttribute('data-blueprint-player-boss-ai-takeover', 'true');
+  await expect(widget).toHaveAttribute('data-blueprint-player-boss-controller', 'ai');
+  await expect(widget).toHaveAttribute('data-blueprint-player-boss-reward-grants', '0');
 
   await page.setViewportSize({ width: 375, height: 812 });
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);

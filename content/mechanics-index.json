@@ -1353,7 +1353,7 @@
         "en": {
           "title": "Player-controlled boss",
           "category": "Encounter goals and vulnerability",
-          "summary": "Draft outline for the player-controlled boss mechanic. Rules, tuning guidance, and examples are still in progress."
+          "summary": "The system assigns a real player as the boss opponent and substitutes AI when no candidate is available."
         },
         "ru": {
           "title": "Босс под управлением другого игрока",

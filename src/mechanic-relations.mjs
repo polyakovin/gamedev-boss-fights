@@ -273,6 +273,19 @@ const PROFILE_OVERRIDES = {
       'risk-reward',
     ],
   },
+  'player-controlled-boss': {
+    geometry: ['entity', 'line', 'arena'],
+    signal: ['state', 'marker', 'trajectory'],
+    response: ['dodge', 'reposition', 'manage'],
+    dimensions: ['2d', '3d'],
+    lenses: [
+      'encounter-purpose',
+      'player-expression',
+      'counterplay',
+      'progress-clarity',
+      'difficulty-rhythm',
+    ],
+  },
   'projectile-rally': {
     geometry: ['line'],
     signal: ['trajectory', 'rhythm'],

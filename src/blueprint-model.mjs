@@ -1057,6 +1057,34 @@ const SPECS = {
     toolExpiresAt: 4.6,
     resetAt: 5.2,
   },
+  'player-controlled-boss': {
+    mode: 'player-controlled-boss',
+    boss: [300, 350],
+    player: [95, 720],
+    target: [430, 720],
+    arena: [55, 310, 450, 570],
+    controllerPanel: [105, 465],
+    crown: [300, 235],
+    attackEnd: [95, 820],
+    laneHalfWidth: 36,
+    playerRoute: [
+      [95, 720],
+      [180, 760],
+      [300, 790],
+      [430, 720],
+    ],
+    candidateAt: 0.7,
+    assignedAt: 1.2,
+    controllerActiveAt: 1.55,
+    actionQueuedAt: 2.05,
+    telegraph: [2.18, 2.68],
+    active: [2.68, 3.08],
+    recoveryEndsAt: 3.42,
+    heartbeatLostAt: 3.55,
+    aiTakeoverAt: 3.95,
+    aiContinueAt: 4.45,
+    resetAt: 5.2,
+  },
   'wide-swing': { mode: 'arc', boss: [280, 310], player: [410, 470], target: [470, 650] },
   lunge: { mode: 'lunge', boss: [170, 290], player: [390, 590], target: [470, 660] },
   grab: { mode: 'grab', boss: [280, 300], player: [390, 485], target: [470, 610] },
@@ -1816,6 +1844,24 @@ export function encounterSpecificToolState(time) {
   if (t < spec.recoveryAt) return 'tool-hit';
   if (t < spec.toolExpiresAt) return 'recovery';
   if (t < spec.resetAt) return 'tool-expired';
+  return 'reset';
+}
+
+export function playerControlledBossState(time) {
+  const spec = SPECS['player-controlled-boss'];
+  const t = localTime(time);
+  if (t < spec.candidateAt) return 'matching';
+  if (t < spec.assignedAt) return 'candidate-found';
+  if (t < spec.controllerActiveAt) return 'assigning-controller';
+  if (t < spec.actionQueuedAt) return 'human-controlled';
+  if (t < spec.telegraph[0]) return 'action-queued';
+  if (t < spec.telegraph[1]) return 'attack-telegraph';
+  if (t < spec.active[1]) return 'attack-active';
+  if (t < spec.recoveryEndsAt) return 'human-recovery';
+  if (t < spec.heartbeatLostAt) return 'human-controlled';
+  if (t < spec.aiTakeoverAt) return 'connection-lost';
+  if (t < spec.aiContinueAt) return 'ai-takeover';
+  if (t < spec.resetAt) return 'ai-controlled';
   return 'reset';
 }
 
@@ -4236,6 +4282,123 @@ function primitivesFor(spec, frame) {
       ),
     ];
   }
+  if (mode === 'player-controlled-boss') {
+    const panel = point(spec.controllerPanel);
+    const crown = point(spec.crown);
+    const assignment = smooth(
+      (frame.time - spec.candidateAt) / (spec.assignedAt - spec.candidateAt),
+    );
+    const remoteToken = {
+      x: mix(panel.x, crown.x, assignment),
+      y: mix(panel.y, crown.y, assignment),
+    };
+    const humanVisible =
+      frame.playerBossCandidateFound &&
+      !frame.playerBossHeartbeatLost &&
+      !frame.playerBossAiTakeover;
+    const laneVisible = frame.playerBossTelegraphVisible || frame.playerBossAttackActive;
+    const heartbeatPulse = frame.playerBossHeartbeatLost
+      ? 0
+      : 0.65 + pulse(frame.time * 3.5) * 0.35;
+    const takeoverPulse = strikePulse(frame.time, spec.aiTakeoverAt, 0.52);
+    return [
+      rect(...spec.arena, 0.52, 'muted', 0.025),
+      rect(72, 400, 110, 132, 0.68, 'muted', 0.055),
+      circle(panel.x, panel.y, 28, 0.9, 'accent', 6, 0.12),
+      circle(panel.x, panel.y - 9, 8, 0.92, 'accent', 5, 0.18),
+      path(
+        `M ${panel.x - 15} ${panel.y + 18} Q ${panel.x} ${panel.y + 3} ${panel.x + 15} ${panel.y + 18}`,
+        0.9,
+        'accent',
+        6,
+      ),
+      path(
+        `M ${panel.x + 30} ${panel.y - 10} C 190 390 230 290 ${crown.x - 22} ${crown.y}`,
+        frame.playerBossCandidateFound ? 0.72 : 0.2,
+        frame.playerBossAssigned ? 'safe' : 'accent',
+        6,
+        0,
+        '10 10',
+      ),
+      circle(remoteToken.x, remoteToken.y, 16, humanVisible ? 0.98 : 0, 'safe', 6, 0.2),
+      path(
+        `M ${crown.x - 34} ${crown.y + 8} L ${crown.x - 27} ${crown.y - 20} L ${crown.x - 9} ${crown.y - 3} L ${crown.x} ${crown.y - 28} L ${crown.x + 9} ${crown.y - 3} L ${crown.x + 27} ${crown.y - 20} L ${crown.x + 34} ${crown.y + 8} Z`,
+        frame.playerBossAssigned ? 0.96 : 0.35,
+        frame.playerBossController === 'ai' ? 'signal' : 'safe',
+        frame.playerBossAssigned ? 8 : 5,
+        frame.playerBossAssigned ? 0.16 : 0.03,
+      ),
+      circle(
+        crown.x,
+        crown.y,
+        46 + takeoverPulse * 24,
+        frame.playerBossAssigned ? 0.7 : 0.22,
+        frame.playerBossController === 'ai' ? 'signal' : 'safe',
+        5,
+        0.02,
+        '8 8',
+      ),
+      rect(370, 382, 112, 126, frame.playerBossAssigned ? 0.82 : 0.28, 'muted', 0.05),
+      line(390, 416, 458, 416, frame.playerBossAssigned ? 0.7 : 0.2, 'accent', 10),
+      circle(424, 452, 25, frame.playerBossAssigned ? 0.72 : 0.2, 'accent', 6, 0.08),
+      path('M 392 482 Q 424 446 456 482', frame.playerBossAssigned ? 0.72 : 0.2, 'accent', 7),
+      circle(
+        424,
+        452,
+        35 + pulse(frame.time * 2.2) * 5,
+        frame.playerBossCommandAccepted ? 0.94 : 0,
+        'safe',
+        7,
+        0.08,
+      ),
+      path(
+        `M 78 560 L 92 560 L 101 ${560 - heartbeatPulse * 18} L 112 ${560 + heartbeatPulse * 20} L 124 ${560 - heartbeatPulse * 12} L 135 560 L 166 560`,
+        frame.playerBossAssigned ? 0.84 : 0.24,
+        frame.playerBossHeartbeatLost ? 'signal' : 'safe',
+        7,
+      ),
+      path(
+        'M 100 540 L 150 580 M 150 540 L 100 580',
+        frame.playerBossHeartbeatLost ? 0.94 : 0,
+        'signal',
+        8,
+      ),
+      circle(crown.x, crown.y, 15, frame.playerBossAiTakeover ? 0.98 : 0, 'signal', 7, 0.28),
+      path(
+        `M ${frame.boss.x} ${frame.boss.y} L ${spec.attackEnd[0]} ${spec.attackEnd[1]}`,
+        laneVisible ? (frame.playerBossAttackActive ? 0.96 : 0.72) : 0,
+        frame.playerBossAttackActive ? 'signal' : 'accent',
+        frame.playerBossAttackActive ? spec.laneHalfWidth * 2 : 8,
+        frame.playerBossAttackActive ? 0.18 : 0,
+        frame.playerBossAttackActive ? '' : '14 11',
+      ),
+      path(
+        'M 95 720 L 180 760 L 300 790 L 430 720',
+        frame.playerBossTelegraphVisible ? 0.78 : 0.18,
+        'safe',
+        6,
+        0,
+        '10 10',
+      ),
+      rect(214, 492, 172, 14, 0.56, 'muted', 0.03),
+      rect(214, 492, 172, frame.playerBossHealthPreserved ? 14 : 0, 0.92, 'safe', 0.16),
+      circle(
+        frame.boss.x,
+        frame.boss.y,
+        76 + takeoverPulse * 45,
+        frame.playerBossAssigned ? 0.68 : 0,
+        frame.playerBossController === 'ai' ? 'signal' : 'safe',
+        7,
+        0.025,
+      ),
+      path(
+        'M 278 205 L 322 249 M 322 205 L 278 249',
+        frame.playerBossFrozen ? 0.9 : 0,
+        'signal',
+        8,
+      ),
+    ];
+  }
   if (mode === 'encounter-specific-tool') {
     const pedestal = point(spec.pedestal);
     const spearBase = { x: frame.player.x - 8, y: frame.player.y - 22 };
@@ -5700,6 +5863,11 @@ function pointClearsThreat(spec, frame, value, radius = BLUEPRINT_PLAYER_RADIUS)
   if (mode === 'wave-clear-objective') return true;
   if (mode === 'environmental-weapon') return true;
   if (mode === 'encounter-specific-tool') return true;
+  if (mode === 'player-controlled-boss')
+    return (
+      !frame.dangerActive ||
+      distanceToSegment(value, frame.boss, point(spec.attackEnd)) > spec.laneHalfWidth + radius
+    );
   if (mode === 'spiral')
     return (
       distanceFromBoss > 52 + radius &&
@@ -6049,6 +6217,7 @@ export function blueprintFrame(id, time) {
   else if (spec.mode === 'wave-clear-objective') responseProgress = 0;
   else if (spec.mode === 'environmental-weapon') responseProgress = 0;
   else if (spec.mode === 'encounter-specific-tool') responseProgress = 0;
+  else if (spec.mode === 'player-controlled-boss') responseProgress = 0;
   else if (spec.mode === 'knockback')
     responseProgress = phase === 0 ? 0 : phase === 1 ? smooth(action) : 1;
   else if (spec.mode === 'target-lock')
@@ -6691,6 +6860,17 @@ export function blueprintFrame(id, time) {
       player = pointAlongPolyline(spec.resetRoute.map(point), reset);
     } else player = startPlayer;
   }
+  if (spec.mode === 'player-controlled-boss') {
+    if (t < spec.telegraph[0]) player = startPlayer;
+    else if (t < spec.active[0]) {
+      const dodge = clamp((t - spec.telegraph[0]) / (spec.active[0] - spec.telegraph[0]));
+      player = pointAlongPolyline(spec.playerRoute.map(point), dodge);
+    } else if (t < spec.resetAt) player = point(spec.playerRoute.at(-1));
+    else {
+      const reset = smooth((t - spec.resetAt) / (BLUEPRINT_DURATION - spec.resetAt));
+      player = pointAlongPolyline([...spec.playerRoute].reverse().map(point), reset);
+    }
+  }
   if (spec.mode === 'rotating' && phase === 0) {
     const initialPosition = polar(boss, 255, Math.PI / 3);
     player = {
@@ -6746,125 +6926,119 @@ export function blueprintFrame(id, time) {
   }
   const route = Math.hypot(targetPlayer.x - startPlayer.x, targetPlayer.y - startPlayer.y);
   const stride =
-    spec.mode === 'active-phase'
+    spec.mode === 'player-controlled-boss'
       ? Math.max(
-          pulse(smooth((t - 0.72) / 0.68)),
-          pulse(smooth((t - spec.active[1]) / (spec.followThroughEnd - spec.active[1]))),
-          pulse(smooth((t - spec.recoveryEnd) / (BLUEPRINT_DURATION - spec.recoveryEnd))) * 0.8,
+          pulse(smooth((t - spec.telegraph[0]) / (spec.active[0] - spec.telegraph[0]))),
+          pulse(smooth((t - spec.resetAt) / (BLUEPRINT_DURATION - spec.resetAt))) * 0.8,
         )
-      : spec.mode === 'recovery'
+      : spec.mode === 'active-phase'
         ? Math.max(
-            pulse(smooth((t - 0.62) / 0.58)),
-            pulse(smooth((t - spec.recovery[0]) / 1.42)),
-            pulse(smooth((t - spec.resetAt) / (BLUEPRINT_DURATION - spec.resetAt))) * 0.8,
+            pulse(smooth((t - 0.72) / 0.68)),
+            pulse(smooth((t - spec.active[1]) / (spec.followThroughEnd - spec.active[1]))),
+            pulse(smooth((t - spec.recoveryEnd) / (BLUEPRINT_DURATION - spec.recoveryEnd))) * 0.8,
           )
-        : spec.mode === 'survival-phase'
+        : spec.mode === 'recovery'
           ? Math.max(
-              ...spec.hazards.map(({ preview, active }) =>
-                pulse(smooth((t - (preview[0] + 0.015)) / (active[0] - preview[0] - 0.03))),
-              ),
-              pulse(smooth((t - spec.shieldDropsAt) / 0.58)),
+              pulse(smooth((t - 0.62) / 0.58)),
+              pulse(smooth((t - spec.recovery[0]) / 1.42)),
               pulse(smooth((t - spec.resetAt) / (BLUEPRINT_DURATION - spec.resetAt))) * 0.8,
             )
-          : spec.mode === 'teleport'
+          : spec.mode === 'survival-phase'
             ? Math.max(
-                pulse(
-                  smooth(
-                    (t - (spec.destinationPreview[0] + 0.08)) /
-                      (spec.active[0] - spec.destinationPreview[0] - 0.26),
-                  ),
+                ...spec.hazards.map(({ preview, active }) =>
+                  pulse(smooth((t - (preview[0] + 0.015)) / (active[0] - preview[0] - 0.03))),
                 ),
-                pulse(smooth((t - spec.active[1]) / 0.64)),
-                pulse(
-                  smooth(
-                    (t - spec.resetDeparture[0]) / (BLUEPRINT_DURATION - spec.resetDeparture[0]),
-                  ),
-                ) * 0.8,
+                pulse(smooth((t - spec.shieldDropsAt) / 0.58)),
+                pulse(smooth((t - spec.resetAt) / (BLUEPRINT_DURATION - spec.resetAt))) * 0.8,
               )
-            : spec.mode === 'boundary-attack'
+            : spec.mode === 'teleport'
               ? Math.max(
-                  pulse(smooth((t - 0.72) / 0.72)),
-                  pulse(smooth((t - spec.active[1]) / 0.62)),
-                  pulse(smooth((t - (spec.punishAt + 0.2)) / 0.46)),
-                  pulse(smooth((t - 4.72) / 0.86)) * 0.8,
+                  pulse(
+                    smooth(
+                      (t - (spec.destinationPreview[0] + 0.08)) /
+                        (spec.active[0] - spec.destinationPreview[0] - 0.26),
+                    ),
+                  ),
+                  pulse(smooth((t - spec.active[1]) / 0.64)),
+                  pulse(
+                    smooth(
+                      (t - spec.resetDeparture[0]) / (BLUEPRINT_DURATION - spec.resetDeparture[0]),
+                    ),
+                  ) * 0.8,
                 )
-              : spec.mode === 'forced-scrolling'
+              : spec.mode === 'boundary-attack'
                 ? Math.max(
-                    pulse(smooth((t - 0.72) / (spec.active[1] - 0.72))),
+                    pulse(smooth((t - 0.72) / 0.72)),
                     pulse(smooth((t - spec.active[1]) / 0.62)),
-                    pulse(smooth((t - spec.resetAt) / (BLUEPRINT_DURATION - spec.resetAt))) * 0.8,
+                    pulse(smooth((t - (spec.punishAt + 0.2)) / 0.46)),
+                    pulse(smooth((t - 4.72) / 0.86)) * 0.8,
                   )
-                : spec.mode === 'chase-herding'
+                : spec.mode === 'forced-scrolling'
                   ? Math.max(
                       pulse(smooth((t - 0.72) / (spec.active[1] - 0.72))),
-                      pulse(smooth((t - spec.active[1]) / 0.72)),
+                      pulse(smooth((t - spec.active[1]) / 0.62)),
                       pulse(smooth((t - spec.resetAt) / (BLUEPRINT_DURATION - spec.resetAt))) * 0.8,
                     )
-                  : spec.mode === 'escape-phase'
+                  : spec.mode === 'chase-herding'
                     ? Math.max(
-                        pulse(smooth((t - 0.72) / (spec.escape[1] - 0.72))),
+                        pulse(smooth((t - 0.72) / (spec.active[1] - 0.72))),
+                        pulse(smooth((t - spec.active[1]) / 0.72)),
                         pulse(smooth((t - spec.resetAt) / (BLUEPRINT_DURATION - spec.resetAt))) *
                           0.8,
                       )
-                    : spec.mode === 'relocated-arena'
+                    : spec.mode === 'escape-phase'
                       ? Math.max(
-                          pulse(
-                            smooth((t - spec.transfer[0]) / (spec.transfer[1] - spec.transfer[0])),
-                          ) * 0.45,
+                          pulse(smooth((t - 0.72) / (spec.escape[1] - 0.72))),
                           pulse(smooth((t - spec.resetAt) / (BLUEPRINT_DURATION - spec.resetAt))) *
                             0.8,
                         )
-                      : spec.mode === 'control-mode-shift'
+                      : spec.mode === 'relocated-arena'
                         ? Math.max(
-                            pulse(smooth(t / spec.previewAt)) * 0.72,
                             pulse(
-                              smooth((t - spec.previewAt) / (spec.handoff[0] - spec.previewAt)),
-                            ) * 0.55,
-                            pulse(smooth((t - spec.wave[1]) / (spec.punishAt - spec.wave[1]))) *
-                              0.65,
+                              smooth(
+                                (t - spec.transfer[0]) / (spec.transfer[1] - spec.transfer[0]),
+                              ),
+                            ) * 0.45,
                             pulse(
                               smooth((t - spec.resetAt) / (BLUEPRINT_DURATION - spec.resetAt)),
                             ) * 0.8,
                           )
-                        : spec.mode === 'boss-as-terrain'
+                        : spec.mode === 'control-mode-shift'
                           ? Math.max(
-                              pulse(smooth((t - spec.revealAt) / (spec.mountAt - spec.revealAt))),
-                              pulse(smooth((t - spec.mountAt) / (spec.shake[0] - spec.mountAt))),
+                              pulse(smooth(t / spec.previewAt)) * 0.72,
                               pulse(
-                                smooth(
-                                  (t - spec.shake[1]) / (spec.weakPointOpensAt - spec.shake[1]),
-                                ),
-                              ),
-                              pulse(smooth((t - spec.drop[0]) / (spec.drop[1] - spec.drop[0]))),
+                                smooth((t - spec.previewAt) / (spec.handoff[0] - spec.previewAt)),
+                              ) * 0.55,
+                              pulse(smooth((t - spec.wave[1]) / (spec.punishAt - spec.wave[1]))) *
+                                0.65,
                               pulse(
                                 smooth((t - spec.resetAt) / (BLUEPRINT_DURATION - spec.resetAt)),
                               ) * 0.8,
                             )
-                          : spec.mode === 'forced-inertia'
+                          : spec.mode === 'boss-as-terrain'
                             ? Math.max(
+                                pulse(smooth((t - spec.revealAt) / (spec.mountAt - spec.revealAt))),
+                                pulse(smooth((t - spec.mountAt) / (spec.shake[0] - spec.mountAt))),
                                 pulse(
-                                  smooth((t - spec.vectorAt) / (spec.commitAt - spec.vectorAt)),
-                                ) * 0.45,
-                                pulse(
-                                  clamp((t - spec.slide[0]) / (spec.slide[1] - spec.slide[0])),
-                                ) * 0.38,
-                                pulse(
-                                  smooth((t - spec.brake[1]) / (spec.punishAt - spec.brake[1])),
+                                  smooth(
+                                    (t - spec.shake[1]) / (spec.weakPointOpensAt - spec.shake[1]),
+                                  ),
                                 ),
+                                pulse(smooth((t - spec.drop[0]) / (spec.drop[1] - spec.drop[0]))),
                                 pulse(
                                   smooth((t - spec.resetAt) / (BLUEPRINT_DURATION - spec.resetAt)),
                                 ) * 0.8,
                               )
-                            : spec.mode === 'wraparound-projectile'
+                            : spec.mode === 'forced-inertia'
                               ? Math.max(
                                   pulse(
-                                    smooth((t - spec.signalAt) / (spec.releaseAt - spec.signalAt)),
-                                  ),
+                                    smooth((t - spec.vectorAt) / (spec.commitAt - spec.vectorAt)),
+                                  ) * 0.45,
                                   pulse(
-                                    smooth(
-                                      (t - spec.secondPass[1]) /
-                                        (spec.punishAt - spec.secondPass[1]),
-                                    ),
+                                    clamp((t - spec.slide[0]) / (spec.slide[1] - spec.slide[0])),
+                                  ) * 0.38,
+                                  pulse(
+                                    smooth((t - spec.brake[1]) / (spec.punishAt - spec.brake[1])),
                                   ),
                                   pulse(
                                     smooth(
@@ -6872,14 +7046,17 @@ export function blueprintFrame(id, time) {
                                     ),
                                   ) * 0.8,
                                 )
-                              : spec.mode === 'beat-synced-attack'
+                              : spec.mode === 'wraparound-projectile'
                                 ? Math.max(
-                                    ...Array.from({ length: 9 }, (_, index) =>
-                                      pulse(
-                                        smooth(
-                                          (t - (spec.beatOrigin + index * spec.beatInterval)) /
-                                            0.22,
-                                        ),
+                                    pulse(
+                                      smooth(
+                                        (t - spec.signalAt) / (spec.releaseAt - spec.signalAt),
+                                      ),
+                                    ),
+                                    pulse(
+                                      smooth(
+                                        (t - spec.secondPass[1]) /
+                                          (spec.punishAt - spec.secondPass[1]),
                                       ),
                                     ),
                                     pulse(
@@ -6888,14 +7065,14 @@ export function blueprintFrame(id, time) {
                                       ),
                                     ) * 0.8,
                                   )
-                                : spec.mode === 'secondary-cues-invisibility'
+                                : spec.mode === 'beat-synced-attack'
                                   ? Math.max(
-                                      pulse(
-                                        smooth((t - spec.hiddenAt) / (spec.lockAt - spec.hiddenAt)),
-                                      ),
-                                      pulse(
-                                        smooth(
-                                          (t - spec.attack[1]) / (spec.punishAt - spec.attack[1]),
+                                      ...Array.from({ length: 9 }, (_, index) =>
+                                        pulse(
+                                          smooth(
+                                            (t - (spec.beatOrigin + index * spec.beatInterval)) /
+                                              0.22,
+                                          ),
                                         ),
                                       ),
                                       pulse(
@@ -6904,20 +7081,16 @@ export function blueprintFrame(id, time) {
                                         ),
                                       ) * 0.8,
                                     )
-                                  : spec.mode === 'sound-detection'
+                                  : spec.mode === 'secondary-cues-invisibility'
                                     ? Math.max(
                                         pulse(
                                           smooth(
-                                            (t - spec.quietAt) / (spec.noiseAt - spec.quietAt),
+                                            (t - spec.hiddenAt) / (spec.lockAt - spec.hiddenAt),
                                           ),
                                         ),
                                         pulse(
-                                          smooth((t - spec.heardAt) / (spec.lockAt - spec.heardAt)),
-                                        ),
-                                        pulse(
                                           smooth(
-                                            (t - spec.searchEndsAt) /
-                                              (spec.punishAt - spec.searchEndsAt),
+                                            (t - spec.attack[1]) / (spec.punishAt - spec.attack[1]),
                                           ),
                                         ),
                                         pulse(
@@ -6927,26 +7100,22 @@ export function blueprintFrame(id, time) {
                                           ),
                                         ) * 0.8,
                                       )
-                                    : spec.mode === 'objective-linked-invulnerability'
+                                    : spec.mode === 'sound-detection'
                                       ? Math.max(
-                                          pulse(smooth((t - 0.74) / 0.44)),
                                           pulse(
                                             smooth(
-                                              (t - spec.objectiveHits[0]) /
-                                                (spec.objectiveHits[1] - spec.objectiveHits[0]),
+                                              (t - spec.quietAt) / (spec.noiseAt - spec.quietAt),
                                             ),
                                           ),
                                           pulse(
                                             smooth(
-                                              (t - spec.objectiveHits[1]) /
-                                                (spec.objectiveHits[2] - spec.objectiveHits[1]),
+                                              (t - spec.heardAt) / (spec.lockAt - spec.heardAt),
                                             ),
                                           ),
-                                          pulse(smooth((t - spec.objectiveHits[2]) / 0.62)),
                                           pulse(
                                             smooth(
-                                              (t - spec.vulnerable[1]) /
-                                                (spec.shieldReturns - spec.vulnerable[1]),
+                                              (t - spec.searchEndsAt) /
+                                                (spec.punishAt - spec.searchEndsAt),
                                             ),
                                           ),
                                           pulse(
@@ -6956,26 +7125,26 @@ export function blueprintFrame(id, time) {
                                             ),
                                           ) * 0.8,
                                         )
-                                      : spec.mode === 'wave-clear-objective'
+                                      : spec.mode === 'objective-linked-invulnerability'
                                         ? Math.max(
-                                            ...spec.waveSpawns.map((spawn, index) =>
-                                              pulse(
-                                                smooth(
-                                                  (t -
-                                                    (index === 0
-                                                      ? 0.55
-                                                      : spec.waveClears[index - 1])) /
-                                                    (spec.waveKills[index].at(-1) -
-                                                      (index === 0
-                                                        ? 0.55
-                                                        : spec.waveClears[index - 1])),
-                                                ),
+                                            pulse(smooth((t - 0.74) / 0.44)),
+                                            pulse(
+                                              smooth(
+                                                (t - spec.objectiveHits[0]) /
+                                                  (spec.objectiveHits[1] - spec.objectiveHits[0]),
                                               ),
                                             ),
                                             pulse(
                                               smooth(
-                                                (t - spec.waveClears.at(-1)) /
-                                                  (spec.rewardAt - spec.waveClears.at(-1)),
+                                                (t - spec.objectiveHits[1]) /
+                                                  (spec.objectiveHits[2] - spec.objectiveHits[1]),
+                                              ),
+                                            ),
+                                            pulse(smooth((t - spec.objectiveHits[2]) / 0.62)),
+                                            pulse(
+                                              smooth(
+                                                (t - spec.vulnerable[1]) /
+                                                  (spec.shieldReturns - spec.vulnerable[1]),
                                               ),
                                             ),
                                             pulse(
@@ -6985,24 +7154,26 @@ export function blueprintFrame(id, time) {
                                               ),
                                             ) * 0.8,
                                           )
-                                        : spec.mode === 'environmental-weapon'
+                                        : spec.mode === 'wave-clear-objective'
                                           ? Math.max(
-                                              pulse(
-                                                smooth(
-                                                  (t - spec.routeStartsAt) /
-                                                    (spec.powerReachedAt - spec.routeStartsAt),
+                                              ...spec.waveSpawns.map((spawn, index) =>
+                                                pulse(
+                                                  smooth(
+                                                    (t -
+                                                      (index === 0
+                                                        ? 0.55
+                                                        : spec.waveClears[index - 1])) /
+                                                      (spec.waveKills[index].at(-1) -
+                                                        (index === 0
+                                                          ? 0.55
+                                                          : spec.waveClears[index - 1])),
+                                                  ),
                                                 ),
                                               ),
                                               pulse(
                                                 smooth(
-                                                  (t - spec.deviceRouteAt) /
-                                                    (spec.deviceReachedAt - spec.deviceRouteAt),
-                                                ),
-                                              ),
-                                              pulse(
-                                                smooth(
-                                                  (t - spec.spentAt) /
-                                                    (spec.rewardAt - spec.spentAt),
+                                                  (t - spec.waveClears.at(-1)) /
+                                                    (spec.rewardAt - spec.waveClears.at(-1)),
                                                 ),
                                               ),
                                               pulse(
@@ -7012,28 +7183,56 @@ export function blueprintFrame(id, time) {
                                                 ),
                                               ) * 0.8,
                                             )
-                                          : spec.mode === 'encounter-specific-tool'
+                                          : spec.mode === 'environmental-weapon'
                                             ? Math.max(
                                                 pulse(
                                                   smooth(
                                                     (t - spec.routeStartsAt) /
-                                                      (spec.toolReachedAt - spec.routeStartsAt),
+                                                      (spec.powerReachedAt - spec.routeStartsAt),
                                                   ),
                                                 ),
                                                 pulse(
                                                   smooth(
-                                                    (t - spec.carryStartsAt) /
-                                                      (spec.combatReachedAt - spec.carryStartsAt),
+                                                    (t - spec.deviceRouteAt) /
+                                                      (spec.deviceReachedAt - spec.deviceRouteAt),
                                                   ),
                                                 ),
                                                 pulse(
                                                   smooth(
-                                                    (t - spec.toolExpiresAt) /
-                                                      (spec.resetAt - spec.toolExpiresAt),
+                                                    (t - spec.spentAt) /
+                                                      (spec.rewardAt - spec.spentAt),
                                                   ),
                                                 ),
+                                                pulse(
+                                                  smooth(
+                                                    (t - spec.resetAt) /
+                                                      (BLUEPRINT_DURATION - spec.resetAt),
+                                                  ),
+                                                ) * 0.8,
                                               )
-                                            : pulse(responseProgress) + pulse(returnProgress) * 0.8;
+                                            : spec.mode === 'encounter-specific-tool'
+                                              ? Math.max(
+                                                  pulse(
+                                                    smooth(
+                                                      (t - spec.routeStartsAt) /
+                                                        (spec.toolReachedAt - spec.routeStartsAt),
+                                                    ),
+                                                  ),
+                                                  pulse(
+                                                    smooth(
+                                                      (t - spec.carryStartsAt) /
+                                                        (spec.combatReachedAt - spec.carryStartsAt),
+                                                    ),
+                                                  ),
+                                                  pulse(
+                                                    smooth(
+                                                      (t - spec.toolExpiresAt) /
+                                                        (spec.resetAt - spec.toolExpiresAt),
+                                                    ),
+                                                  ),
+                                                )
+                                              : pulse(responseProgress) +
+                                                pulse(returnProgress) * 0.8;
   const bossVisible =
     spec.mode === 'secondary-cues-invisibility'
       ? t < spec.vanishAt
@@ -7222,7 +7421,15 @@ export function blueprintFrame(id, time) {
                                                                                         .attack[0] &&
                                                                                     t <
                                                                                       spec.attack[1]
-                                                                                  : phase === 1;
+                                                                                  : spec.mode ===
+                                                                                      'player-controlled-boss'
+                                                                                    ? t >=
+                                                                                        spec
+                                                                                          .active[0] &&
+                                                                                      t <
+                                                                                        spec
+                                                                                          .active[1]
+                                                                                    : phase === 1;
   const frame = {
     id,
     mode: spec.mode,
@@ -7284,79 +7491,86 @@ export function blueprintFrame(id, time) {
     playerFacing:
       spec.mode === 'directional-shield'
         ? mix(-90, -180, smooth((t - 2.7) / 0.68)) * (1 - returnProgress) - 90 * returnProgress
-        : spec.mode === 'active-phase'
+        : spec.mode === 'player-controlled-boss'
           ? (Math.atan2(boss.y - player.y, boss.x - player.x) * 180) / Math.PI
-          : spec.mode === 'recovery'
+          : spec.mode === 'active-phase'
             ? (Math.atan2(boss.y - player.y, boss.x - player.x) * 180) / Math.PI
-            : spec.mode === 'survival-phase'
+            : spec.mode === 'recovery'
               ? (Math.atan2(boss.y - player.y, boss.x - player.x) * 180) / Math.PI
-              : spec.mode === 'teleport'
+              : spec.mode === 'survival-phase'
                 ? (Math.atan2(boss.y - player.y, boss.x - player.x) * 180) / Math.PI
-                : spec.mode === 'boundary-attack'
+                : spec.mode === 'teleport'
                   ? (Math.atan2(boss.y - player.y, boss.x - player.x) * 180) / Math.PI
-                  : spec.mode === 'forced-scrolling'
+                  : spec.mode === 'boundary-attack'
                     ? (Math.atan2(boss.y - player.y, boss.x - player.x) * 180) / Math.PI
-                    : spec.mode === 'chase-herding'
+                    : spec.mode === 'forced-scrolling'
                       ? (Math.atan2(boss.y - player.y, boss.x - player.x) * 180) / Math.PI
-                      : spec.mode === 'escape-phase'
+                      : spec.mode === 'chase-herding'
                         ? (Math.atan2(boss.y - player.y, boss.x - player.x) * 180) / Math.PI
-                        : spec.mode === 'relocated-arena'
+                        : spec.mode === 'escape-phase'
                           ? (Math.atan2(boss.y - player.y, boss.x - player.x) * 180) / Math.PI
-                          : spec.mode === 'cover-line-of-sight'
+                          : spec.mode === 'relocated-arena'
                             ? (Math.atan2(boss.y - player.y, boss.x - player.x) * 180) / Math.PI
-                            : spec.mode === 'forced-inertia'
+                            : spec.mode === 'cover-line-of-sight'
                               ? (Math.atan2(boss.y - player.y, boss.x - player.x) * 180) / Math.PI
-                              : spec.mode === 'wraparound-projectile'
+                              : spec.mode === 'forced-inertia'
                                 ? (Math.atan2(boss.y - player.y, boss.x - player.x) * 180) / Math.PI
-                                : spec.mode === 'beat-synced-attack'
+                                : spec.mode === 'wraparound-projectile'
                                   ? (Math.atan2(boss.y - player.y, boss.x - player.x) * 180) /
                                     Math.PI
-                                  : spec.mode === 'secondary-cues-invisibility'
+                                  : spec.mode === 'beat-synced-attack'
                                     ? (Math.atan2(boss.y - player.y, boss.x - player.x) * 180) /
                                       Math.PI
-                                    : spec.mode === 'sound-detection'
+                                    : spec.mode === 'secondary-cues-invisibility'
                                       ? (Math.atan2(boss.y - player.y, boss.x - player.x) * 180) /
                                         Math.PI
-                                      : spec.mode === 'objective-linked-invulnerability'
+                                      : spec.mode === 'sound-detection'
                                         ? (Math.atan2(boss.y - player.y, boss.x - player.x) * 180) /
                                           Math.PI
-                                        : spec.mode === 'wave-clear-objective'
+                                        : spec.mode === 'objective-linked-invulnerability'
                                           ? (Math.atan2(boss.y - player.y, boss.x - player.x) *
                                               180) /
                                             Math.PI
-                                          : spec.mode === 'environmental-weapon'
+                                          : spec.mode === 'wave-clear-objective'
                                             ? (Math.atan2(boss.y - player.y, boss.x - player.x) *
                                                 180) /
                                               Math.PI
-                                            : spec.mode === 'encounter-specific-tool'
+                                            : spec.mode === 'environmental-weapon'
                                               ? (Math.atan2(boss.y - player.y, boss.x - player.x) *
                                                   180) /
                                                 Math.PI
-                                              : spec.mode === 'boss-as-terrain'
+                                              : spec.mode === 'encounter-specific-tool'
                                                 ? (Math.atan2(
                                                     boss.y - player.y,
                                                     boss.x - player.x,
                                                   ) *
                                                     180) /
                                                   Math.PI
-                                                : spec.mode === 'control-mode-shift'
+                                                : spec.mode === 'boss-as-terrain'
                                                   ? (Math.atan2(
                                                       boss.y - player.y,
                                                       boss.x - player.x,
                                                     ) *
                                                       180) /
                                                     Math.PI
-                                                  : spec.mode === 'damage-type-resistance' ||
-                                                      spec.mode === 'situational-immunity' ||
-                                                      spec.mode === 'part-break' ||
-                                                      spec.mode === 'attack-reflection' ||
-                                                      spec.mode === 'counter-stance' ||
-                                                      spec.mode === 'absorption-power-up' ||
-                                                      spec.mode === 'interruptible-wind-up' ||
-                                                      spec.mode === 'loadout-adaptation' ||
-                                                      spec.mode === 'wind-up'
-                                                    ? -180
-                                                    : -90,
+                                                  : spec.mode === 'control-mode-shift'
+                                                    ? (Math.atan2(
+                                                        boss.y - player.y,
+                                                        boss.x - player.x,
+                                                      ) *
+                                                        180) /
+                                                      Math.PI
+                                                    : spec.mode === 'damage-type-resistance' ||
+                                                        spec.mode === 'situational-immunity' ||
+                                                        spec.mode === 'part-break' ||
+                                                        spec.mode === 'attack-reflection' ||
+                                                        spec.mode === 'counter-stance' ||
+                                                        spec.mode === 'absorption-power-up' ||
+                                                        spec.mode === 'interruptible-wind-up' ||
+                                                        spec.mode === 'loadout-adaptation' ||
+                                                        spec.mode === 'wind-up'
+                                                      ? -180
+                                                      : -90,
     bossMotion: motion({
       gait:
         spec.mode === 'chase-herding' ||
@@ -7373,61 +7587,64 @@ export function blueprintFrame(id, time) {
           ? 0.72
           : 0,
       lean:
-        spec.mode === 'landing'
-          ? phase === 0
-            ? -0.3 * prepare
-            : 0.36 * pulse(clamp(action / 0.52))
-          : spec.mode === 'wind-up'
-            ? -0.34 * windUpProgress(t) +
-              0.46 *
-                Math.max(
-                  strikePulse(t, spec.firstRelease[0], 0.5),
-                  strikePulse(t, spec.secondRelease[0], 0.5),
-                )
-            : spec.mode === 'active-phase'
-              ? -0.28 * smooth((t - spec.startup[0]) / (spec.active[0] - spec.startup[0])) +
-                0.5 *
-                  smooth((t - spec.active[0]) / (spec.followThroughEnd - spec.active[0])) *
-                  (1 - smooth((t - spec.followThroughEnd) / 0.68))
-              : spec.mode === 'recovery'
+        spec.mode === 'player-controlled-boss'
+          ? -0.22 * smooth((t - spec.actionQueuedAt) / (spec.active[0] - spec.actionQueuedAt)) +
+            0.48 * strikePulse(t, spec.active[0], 0.62)
+          : spec.mode === 'landing'
+            ? phase === 0
+              ? -0.3 * prepare
+              : 0.36 * pulse(clamp(action / 0.52))
+            : spec.mode === 'wind-up'
+              ? -0.34 * windUpProgress(t) +
+                0.46 *
+                  Math.max(
+                    strikePulse(t, spec.firstRelease[0], 0.5),
+                    strikePulse(t, spec.secondRelease[0], 0.5),
+                  )
+              : spec.mode === 'active-phase'
                 ? -0.28 * smooth((t - spec.startup[0]) / (spec.active[0] - spec.startup[0])) +
-                  0.5 * strikePulse(t, spec.active[0], 0.72) +
-                  0.24 *
-                    smooth((t - spec.recovery[0]) / 0.34) *
-                    (1 - smooth((t - spec.recovery[1]) / 0.34))
-                : spec.mode === 'survival-phase'
-                  ? 0.12 *
-                    Math.max(...spec.hazards.map(({ active }) => strikePulse(t, active[0], 0.34)))
-                  : spec.mode === 'teleport'
-                    ? 0.46 * strikePulse(t, spec.active[0], 0.66)
-                    : spec.mode === 'boundary-attack'
-                      ? 0.38 * strikePulse(t, spec.active[0], 0.7) +
-                        0.28 * strikePulse(t, spec.impactAt, 0.52)
-                      : spec.mode === 'forced-scrolling'
-                        ? -0.18 * smooth((t - spec.signal[0]) / 0.5) +
-                          0.35 * strikePulse(t, spec.active[1], 0.62)
-                        : spec.mode === 'chase-herding'
-                          ? -0.28 *
-                              smooth((t - spec.signal[0]) / 0.5) *
-                              (1 - smooth((t - spec.active[1]) / 0.42)) +
-                            0.32 * strikePulse(t, spec.active[1], 0.58)
-                          : spec.mode === 'escape-phase'
-                            ? -0.3 *
-                                smooth((t - spec.triggerAt) / 0.5) *
-                                (1 - smooth((t - spec.escape[1]) / 0.42)) +
-                              0.4 * strikePulse(t, spec.escape[1], 0.58)
-                            : spec.mode === 'relocated-arena'
-                              ? 0.38 * strikePulse(t, spec.transfer[1], 0.56)
-                              : spec.mode === 'control-mode-shift'
-                                ? -0.28 *
-                                    smooth(
-                                      (t - spec.previewAt) / (spec.handoff[1] - spec.previewAt),
-                                    ) *
-                                    (1 - smooth((t - spec.wave[0]) / 0.45)) +
-                                  0.34 * strikePulse(t, spec.wave[0], 0.58)
-                                : phase === 0
-                                  ? -0.22 * prepare
-                                  : 0.24 * pulse(action),
+                  0.5 *
+                    smooth((t - spec.active[0]) / (spec.followThroughEnd - spec.active[0])) *
+                    (1 - smooth((t - spec.followThroughEnd) / 0.68))
+                : spec.mode === 'recovery'
+                  ? -0.28 * smooth((t - spec.startup[0]) / (spec.active[0] - spec.startup[0])) +
+                    0.5 * strikePulse(t, spec.active[0], 0.72) +
+                    0.24 *
+                      smooth((t - spec.recovery[0]) / 0.34) *
+                      (1 - smooth((t - spec.recovery[1]) / 0.34))
+                  : spec.mode === 'survival-phase'
+                    ? 0.12 *
+                      Math.max(...spec.hazards.map(({ active }) => strikePulse(t, active[0], 0.34)))
+                    : spec.mode === 'teleport'
+                      ? 0.46 * strikePulse(t, spec.active[0], 0.66)
+                      : spec.mode === 'boundary-attack'
+                        ? 0.38 * strikePulse(t, spec.active[0], 0.7) +
+                          0.28 * strikePulse(t, spec.impactAt, 0.52)
+                        : spec.mode === 'forced-scrolling'
+                          ? -0.18 * smooth((t - spec.signal[0]) / 0.5) +
+                            0.35 * strikePulse(t, spec.active[1], 0.62)
+                          : spec.mode === 'chase-herding'
+                            ? -0.28 *
+                                smooth((t - spec.signal[0]) / 0.5) *
+                                (1 - smooth((t - spec.active[1]) / 0.42)) +
+                              0.32 * strikePulse(t, spec.active[1], 0.58)
+                            : spec.mode === 'escape-phase'
+                              ? -0.3 *
+                                  smooth((t - spec.triggerAt) / 0.5) *
+                                  (1 - smooth((t - spec.escape[1]) / 0.42)) +
+                                0.4 * strikePulse(t, spec.escape[1], 0.58)
+                              : spec.mode === 'relocated-arena'
+                                ? 0.38 * strikePulse(t, spec.transfer[1], 0.56)
+                                : spec.mode === 'control-mode-shift'
+                                  ? -0.28 *
+                                      smooth(
+                                        (t - spec.previewAt) / (spec.handoff[1] - spec.previewAt),
+                                      ) *
+                                      (1 - smooth((t - spec.wave[0]) / 0.45)) +
+                                    0.34 * strikePulse(t, spec.wave[0], 0.58)
+                                  : phase === 0
+                                    ? -0.22 * prepare
+                                    : 0.24 * pulse(action),
       crouch:
         spec.mode === 'landing'
           ? phase === 0
@@ -7684,51 +7901,53 @@ export function blueprintFrame(id, time) {
     }),
     playerMotion: motion({
       gait:
-        spec.mode === 'active-phase'
+        spec.mode === 'player-controlled-boss'
           ? t * 7 * stride
-          : spec.mode === 'recovery'
+          : spec.mode === 'active-phase'
             ? t * 7 * stride
-            : spec.mode === 'survival-phase'
+            : spec.mode === 'recovery'
               ? t * 7 * stride
-              : spec.mode === 'teleport'
+              : spec.mode === 'survival-phase'
                 ? t * 7 * stride
-                : spec.mode === 'boundary-attack'
+                : spec.mode === 'teleport'
                   ? t * 7 * stride
-                  : spec.mode === 'forced-scrolling'
+                  : spec.mode === 'boundary-attack'
                     ? t * 7 * stride
-                    : spec.mode === 'chase-herding'
+                    : spec.mode === 'forced-scrolling'
                       ? t * 7 * stride
-                      : spec.mode === 'escape-phase'
+                      : spec.mode === 'chase-herding'
                         ? t * 7 * stride
-                        : spec.mode === 'relocated-arena'
+                        : spec.mode === 'escape-phase'
                           ? t * 7 * stride
-                          : spec.mode === 'control-mode-shift'
+                          : spec.mode === 'relocated-arena'
                             ? t * 7 * stride
-                            : spec.mode === 'boss-as-terrain'
+                            : spec.mode === 'control-mode-shift'
                               ? t * 7 * stride
-                              : spec.mode === 'cover-line-of-sight'
+                              : spec.mode === 'boss-as-terrain'
                                 ? t * 7 * stride
-                                : spec.mode === 'forced-inertia'
+                                : spec.mode === 'cover-line-of-sight'
                                   ? t * 7 * stride
-                                  : spec.mode === 'wraparound-projectile'
+                                  : spec.mode === 'forced-inertia'
                                     ? t * 7 * stride
-                                    : spec.mode === 'beat-synced-attack'
+                                    : spec.mode === 'wraparound-projectile'
                                       ? t * 7 * stride
-                                      : spec.mode === 'secondary-cues-invisibility'
+                                      : spec.mode === 'beat-synced-attack'
                                         ? t * 7 * stride
-                                        : spec.mode === 'sound-detection'
+                                        : spec.mode === 'secondary-cues-invisibility'
                                           ? t * 7 * stride
-                                          : spec.mode === 'objective-linked-invulnerability'
+                                          : spec.mode === 'sound-detection'
                                             ? t * 7 * stride
-                                            : spec.mode === 'wave-clear-objective'
+                                            : spec.mode === 'objective-linked-invulnerability'
                                               ? t * 7 * stride
-                                              : spec.mode === 'environmental-weapon'
+                                              : spec.mode === 'wave-clear-objective'
                                                 ? t * 7 * stride
-                                                : spec.mode === 'encounter-specific-tool'
+                                                : spec.mode === 'environmental-weapon'
                                                   ? t * 7 * stride
-                                                  : (route * responseProgress +
-                                                      route * returnProgress) /
-                                                    20,
+                                                  : spec.mode === 'encounter-specific-tool'
+                                                    ? t * 7 * stride
+                                                    : (route * responseProgress +
+                                                        route * returnProgress) /
+                                                      20,
       stride,
       lean: stride * 0.45,
       crouch:
@@ -8034,6 +8253,25 @@ export function blueprintFrame(id, time) {
     frame.encounterToolDamageSource = frame.encounterToolBossDamaged ? 'encounter-tool' : 'none';
     frame.encounterToolProjectileProgress = clamp((t - spec.fireAt) / (spec.hitAt - spec.fireAt));
   }
+  if (spec.mode === 'player-controlled-boss') {
+    frame.playerControlledBossState = playerControlledBossState(t);
+    frame.playerBossCandidateFound = t >= spec.candidateAt && t < spec.resetAt;
+    frame.playerBossAssigned = t >= spec.assignedAt && t < spec.resetAt;
+    frame.playerBossController =
+      t >= spec.aiTakeoverAt && t < spec.resetAt
+        ? 'ai'
+        : t >= spec.assignedAt && t < spec.heartbeatLostAt
+          ? 'human'
+          : 'none';
+    frame.playerBossCommandAccepted = t >= spec.actionQueuedAt && t < spec.recoveryEndsAt;
+    frame.playerBossTelegraphVisible = t >= spec.telegraph[0] && t < spec.active[0];
+    frame.playerBossAttackActive = t >= spec.active[0] && t < spec.active[1];
+    frame.playerBossHeartbeatLost = t >= spec.heartbeatLostAt && t < spec.aiTakeoverAt;
+    frame.playerBossFrozen = t >= spec.heartbeatLostAt && t < spec.aiTakeoverAt;
+    frame.playerBossAiTakeover = t >= spec.aiTakeoverAt && t < spec.resetAt;
+    frame.playerBossHealthPreserved = t >= spec.assignedAt && t < spec.resetAt;
+    frame.playerBossRewardGrants = 0;
+  }
   if (spec.mode === 'sound-detection') {
     frame.soundDetectionState = soundDetectionState(t);
     frame.soundDetectionHeard = t >= spec.heardAt && t < spec.resetAt;
@@ -8310,7 +8548,8 @@ export function blueprintFrame(id, time) {
       spec.mode === 'objective-linked-invulnerability' ||
       spec.mode === 'wave-clear-objective' ||
       spec.mode === 'environmental-weapon' ||
-      spec.mode === 'encounter-specific-tool'
+      spec.mode === 'encounter-specific-tool' ||
+      spec.mode === 'player-controlled-boss'
         ? 92
         : -62),
   };

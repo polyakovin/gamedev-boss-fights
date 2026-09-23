@@ -29,6 +29,7 @@ import {
   waveClearObjectiveState,
   environmentalWeaponState,
   encounterSpecificToolState,
+  playerControlledBossState,
   counterStanceOutcome,
   counterStanceState,
   blueprintFrame,
@@ -56,8 +57,8 @@ import {
   renderBlueprintThumbnail,
 } from '../lib/blueprint-view.mjs';
 
-test('all 78 promoted lesson animations have distinct rule modes and complete moving frames', () => {
-  assert.equal(BLUEPRINT_MECHANIC_IDS.length, 78);
+test('all 79 promoted lesson animations have distinct rule modes and complete moving frames', () => {
+  assert.equal(BLUEPRINT_MECHANIC_IDS.length, 79);
   const modes = new Set();
   for (const id of BLUEPRINT_MECHANIC_IDS) {
     for (let time = 0; time <= BLUEPRINT_DURATION; time += 0.1) {
@@ -78,7 +79,7 @@ test('all 78 promoted lesson animations have distinct rule modes and complete mo
           assert.ok(Number.isFinite(value), `${id} has an invalid ${primitive.type}`);
     }
   }
-  assert.equal(modes.size, 78);
+  assert.equal(modes.size, 79);
 });
 
 test('every blueprint exposes signal, committed action, and recovery without player teleports', () => {
@@ -186,6 +187,7 @@ test('every damaging promoted animation derives safety from its own active geome
       id !== 'wave-clear-objective' &&
       id !== 'environmental-weapon' &&
       id !== 'encounter-specific-tool' &&
+      id !== 'player-controlled-boss' &&
       id !== 'part-break' &&
       id !== 'counter-stance' &&
       id !== 'absorption-power-up' &&
@@ -2581,5 +2583,61 @@ test('encounter-specific tool moves with its owner and temporarily replaces the 
   assert.match(
     renderBlueprintThumbnail(id, 'test-encounter-specific-tool'),
     /data-blueprint-preview="encounter-specific-tool"/,
+  );
+});
+
+test('player-controlled boss preserves authored attacks through human and AI ownership', () => {
+  const id = 'player-controlled-boss';
+  assert.deepEqual(
+    [0, 0.8, 1.3, 1.7, 2.1, 2.3, 2.8, 3.2, 3.7, 4.1, 4.6, 5.3].map(playerControlledBossState),
+    [
+      'matching',
+      'candidate-found',
+      'assigning-controller',
+      'human-controlled',
+      'action-queued',
+      'attack-telegraph',
+      'attack-active',
+      'human-recovery',
+      'connection-lost',
+      'ai-takeover',
+      'ai-controlled',
+      'reset',
+    ],
+  );
+
+  const assigned = blueprintFrame(id, 1.6);
+  assert.equal(assigned.playerBossAssigned, true);
+  assert.equal(assigned.playerBossController, 'human');
+  assert.equal(assigned.playerBossHealthPreserved, true);
+
+  const telegraph = blueprintFrame(id, 2.3);
+  assert.equal(telegraph.playerBossCommandAccepted, true);
+  assert.equal(telegraph.playerBossTelegraphVisible, true);
+  assert.equal(telegraph.dangerActive, false);
+  assert.ok(telegraph.primitives[17].opacity > 0.7, 'the authored lane is announced');
+
+  const active = blueprintFrame(id, 2.8);
+  assert.equal(active.playerBossAttackActive, true);
+  assert.equal(active.dangerActive, true);
+  assert.equal(active.playerSafe, true, 'Tavi clears the lane before it becomes active');
+  assert.equal(blueprintPointSafe(id, 2.8, { x: 95, y: 720 }), false);
+
+  const lost = blueprintFrame(id, 3.7);
+  assert.equal(lost.playerBossHeartbeatLost, true);
+  assert.equal(lost.playerBossFrozen, true);
+  assert.equal(lost.playerBossController, 'none');
+
+  const takeover = blueprintFrame(id, 4.1);
+  assert.equal(takeover.playerBossAiTakeover, true);
+  assert.equal(takeover.playerBossController, 'ai');
+  assert.equal(takeover.playerBossHealthPreserved, true);
+  assert.equal(takeover.playerBossRewardGrants, 0);
+
+  assert.deepEqual(blueprintFrame(id, 0).player, blueprintFrame(id, 6).player);
+  assert.deepEqual(blueprintFrame(id, 0).boss, blueprintFrame(id, 6).boss);
+  assert.match(
+    renderBlueprintThumbnail(id, 'test-player-controlled-boss'),
+    /data-blueprint-preview="player-controlled-boss"/,
   );
 });

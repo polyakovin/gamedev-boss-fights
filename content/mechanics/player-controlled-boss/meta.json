@@ -1,0 +1,43 @@
+{
+  "id": "player-controlled-boss",
+  "number": 85,
+  "published": true,
+  "sourceLocale": "en",
+  "contentVersion": 1,
+  "animation": "player-controlled-boss",
+  "lenses": [
+    "encounter-purpose",
+    "player-expression",
+    "counterplay",
+    "progress-clarity",
+    "difficulty-rhythm"
+  ],
+  "related": [
+    "loadout-adaptation",
+    "encounter-specific-tool",
+    "wave-clear-objective",
+    "survival-phase"
+  ],
+  "sources": [
+    {
+      "title": "Boss Up: Boss Battle Design",
+      "url": "https://media.gdcvault.com/gdc2018/presentations/Keren_Itay_BossUp.pdf"
+    },
+    {
+      "title": "Crawl gameplay video — Powerhoof",
+      "url": "https://www.powerhoof.com/crawl-gameplay-video/"
+    },
+    {
+      "title": "Crawl bosses — Crawl Wiki",
+      "url": "https://crawl.fandom.com/wiki/Bosses"
+    },
+    {
+      "title": "Old Monk summon — Demon's Souls English Wiki",
+      "url": "https://demonssouls.wikidot.com/black-phantoms#toc4"
+    },
+    {
+      "title": "Spear of the Church — Dark Souls III Wiki",
+      "url": "https://darksouls3.wikidot.com/bosses:spear-of-the-church"
+    }
+  ]
+}
