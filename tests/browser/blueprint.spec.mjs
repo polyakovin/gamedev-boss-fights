@@ -405,9 +405,9 @@ test('volley releases three parallel bolts on one beat and clears its outside ro
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
 });
 
-test('catalog and builder reuse the 69 promoted rule-specific previews', async ({ page }) => {
+test('catalog and builder reuse the 70 promoted rule-specific previews', async ({ page }) => {
   await page.goto('en/');
-  await expect(page.locator('[data-blueprint-preview]')).toHaveCount(69);
+  await expect(page.locator('[data-blueprint-preview]')).toHaveCount(70);
   const catalogLayouts = await page.locator('[data-blueprint-preview]').evaluateAll((previews) =>
     previews.map((preview) => {
       const boss = preview.querySelector('[data-character-art-preview="kern"]');
@@ -431,7 +431,7 @@ test('catalog and builder reuse the 69 promoted rule-specific previews', async (
   expect(new Set(catalogLayouts.map(({ layout }) => layout)).size).toBeGreaterThanOrEqual(18);
 
   await page.goto('en/builder/');
-  await expect(page.locator('[data-blueprint-preview]')).toHaveCount(69);
+  await expect(page.locator('[data-blueprint-preview]')).toHaveCount(70);
   const builderLayouts = await page.locator('[data-blueprint-preview]').evaluateAll((previews) =>
     previews.map((preview) => {
       const boss = preview.querySelector('[data-character-art-preview="kern"]');
@@ -2379,6 +2379,72 @@ test('cover and line of sight visibly stops the beam on the pillar before the co
 
   await seek(3920);
   await expect(widget).toHaveAttribute('data-blueprint-cover-line-of-sight', 'counter-window');
+  await expect(widget).toHaveAttribute('data-blueprint-punish-strike', 'true');
+  await expect(widget.locator('[data-blueprint-primitive="12"] line')).not.toHaveAttribute(
+    'opacity',
+    '0',
+  );
+
+  await page.setViewportSize({ width: 375, height: 812 });
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+});
+
+test('forced inertia previews one endpoint, preserves the slide, and restores control before the counter', async ({
+  page,
+}) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.goto('en/mechanics/forced-inertia/');
+  const widget = page.locator('[data-blueprint-demo]');
+  const timeline = widget.locator('[data-blueprint-timeline]');
+  const seek = (milliseconds) =>
+    timeline.evaluate((element, value) => {
+      element.value = String(value);
+      element.dispatchEvent(new Event('input', { bubbles: true }));
+    }, milliseconds);
+
+  await expect(page.locator('.lesson-title-line h1')).toHaveText('Forced inertia');
+  await expect(page.locator('.wip-badge, .draft-profile')).toHaveCount(0);
+  await expect(page.locator('.game-example')).toHaveCount(3);
+  await expect(widget).toHaveAttribute('data-blueprint-playing', 'false');
+
+  await seek(1100);
+  await expect(widget).toHaveAttribute('data-blueprint-forced-inertia', 'endpoint-preview');
+  await expect(widget).toHaveAttribute('data-blueprint-inertia-frozen', 'true');
+  await expect(widget).toHaveAttribute('data-blueprint-inertia-vector', 'true');
+  await expect(widget).toHaveAttribute('data-blueprint-inertia-committed', 'false');
+  await expect(widget.locator('[data-blueprint-primitive="3"] line')).not.toHaveAttribute(
+    'opacity',
+    '0',
+  );
+
+  await seek(2200);
+  await expect(widget).toHaveAttribute('data-blueprint-forced-inertia', 'unsteerable-slide');
+  await expect(widget).toHaveAttribute('data-blueprint-inertia-committed', 'true');
+  await expect(widget).toHaveAttribute('data-blueprint-inertia-sliding', 'true');
+  await expect(widget).toHaveAttribute('data-blueprint-inertia-speed', '1.000');
+  await expect(widget).toHaveAttribute('data-blueprint-outcome', 'safe');
+  await expect(widget.locator('[data-blueprint-primitive="7"] line')).not.toHaveAttribute(
+    'opacity',
+    '0',
+  );
+
+  await seek(3000);
+  await expect(widget).toHaveAttribute('data-blueprint-forced-inertia', 'braking-zone');
+  await expect(widget).toHaveAttribute('data-blueprint-inertia-braking', 'true');
+  expect(Number(await widget.getAttribute('data-blueprint-inertia-speed'))).toBeGreaterThan(0);
+  expect(Number(await widget.getAttribute('data-blueprint-inertia-speed'))).toBeLessThan(1);
+
+  await seek(3500);
+  await expect(widget).toHaveAttribute('data-blueprint-forced-inertia', 'control-restored');
+  await expect(widget).toHaveAttribute('data-blueprint-inertia-control', 'true');
+  await expect(widget).toHaveAttribute('data-blueprint-inertia-speed', '0.000');
+  await expect(widget.locator('[data-blueprint-primitive="16"] circle')).not.toHaveAttribute(
+    'opacity',
+    '0',
+  );
+
+  await seek(3720);
+  await expect(widget).toHaveAttribute('data-blueprint-forced-inertia', 'counter-window');
   await expect(widget).toHaveAttribute('data-blueprint-punish-strike', 'true');
   await expect(widget.locator('[data-blueprint-primitive="12"] line')).not.toHaveAttribute(
     'opacity',

@@ -18,6 +18,7 @@ import {
   relocatedArenaState,
   forcedScrollingOffset,
   forcedScrollingState,
+  forcedInertiaState,
   counterStanceOutcome,
   counterStanceState,
   blueprintFrame,
@@ -45,8 +46,8 @@ import {
   renderBlueprintThumbnail,
 } from '../lib/blueprint-view.mjs';
 
-test('all 69 promoted lesson animations have distinct rule modes and complete moving frames', () => {
-  assert.equal(BLUEPRINT_MECHANIC_IDS.length, 69);
+test('all 70 promoted lesson animations have distinct rule modes and complete moving frames', () => {
+  assert.equal(BLUEPRINT_MECHANIC_IDS.length, 70);
   const modes = new Set();
   for (const id of BLUEPRINT_MECHANIC_IDS) {
     for (let time = 0; time <= BLUEPRINT_DURATION; time += 0.1) {
@@ -67,7 +68,7 @@ test('all 69 promoted lesson animations have distinct rule modes and complete mo
           assert.ok(Number.isFinite(value), `${id} has an invalid ${primitive.type}`);
     }
   }
-  assert.equal(modes.size, 69);
+  assert.equal(modes.size, 70);
 });
 
 test('every blueprint exposes signal, committed action, and recovery without player teleports', () => {
@@ -94,7 +95,8 @@ test('every blueprint exposes signal, committed action, and recovery without pla
       id !== 'chase-herding' &&
       id !== 'escape-phase' &&
       id !== 'relocated-arena' &&
-      id !== 'boss-as-terrain'
+      id !== 'boss-as-terrain' &&
+      id !== 'forced-inertia'
     )
       assert.equal(blueprintFrame(id, 3).dangerActive, true, id);
     assert.equal(blueprintFrame(id, 3).playerSafe, true, id);
@@ -181,7 +183,8 @@ test('every damaging promoted animation derives safety from its own active geome
       id !== 'chase-herding' &&
       id !== 'escape-phase' &&
       id !== 'relocated-arena' &&
-      id !== 'boss-as-terrain',
+      id !== 'boss-as-terrain' &&
+      id !== 'forced-inertia',
   )) {
     const frame = blueprintFrame(id, 3);
     let point = unsafePoints[id];
@@ -2006,5 +2009,57 @@ test('cover and line of sight derives safety from the blocker and ends the beam 
   assert.match(
     renderBlueprintThumbnail(id, 'test-cover-line-of-sight'),
     /data-blueprint-preview="cover-line-of-sight"/,
+  );
+});
+
+test('forced inertia preserves one committed vector until the authored braking patch', () => {
+  const id = 'forced-inertia';
+  assert.deepEqual([0, 0.6, 1, 1.5, 2.2, 3, 3.5, 4.1, 5.4].map(forcedInertiaState), [
+    'stable-footing',
+    'surface-freezing',
+    'endpoint-preview',
+    'direction-committed',
+    'unsteerable-slide',
+    'braking-zone',
+    'control-restored',
+    'counter-window',
+    'reset',
+  ]);
+
+  const preview = blueprintFrame(id, 1.1);
+  assert.equal(preview.forcedInertiaFrozen, true);
+  assert.equal(preview.forcedInertiaVectorVisible, true);
+  assert.equal(preview.forcedInertiaCommitted, false);
+  assert.ok(preview.primitives[3].opacity > 0.7, 'the complete slide vector is visible');
+  assert.ok(preview.primitives[5].opacity > 0.8, 'the braking endpoint is visible');
+
+  const sliding = blueprintFrame(id, 2.2);
+  assert.equal(sliding.forcedInertiaState, 'unsteerable-slide');
+  assert.equal(sliding.forcedInertiaCommitted, true);
+  assert.equal(sliding.forcedInertiaSliding, true);
+  assert.equal(sliding.forcedInertiaSpeed, 1);
+  assert.equal(sliding.dangerActive, true);
+  assert.equal(sliding.playerSafe, true);
+  assert.equal(blueprintPointSafe(id, 2.2, { x: 492, y: 620 }), false);
+  assert.ok(sliding.primitives[7].opacity > 0.7, 'the preserved momentum trail is visible');
+
+  const braking = blueprintFrame(id, 3);
+  assert.equal(braking.forcedInertiaBraking, true);
+  assert.ok(braking.forcedInertiaSpeed > 0 && braking.forcedInertiaSpeed < 1);
+
+  const restored = blueprintFrame(id, 3.5);
+  assert.equal(restored.forcedInertiaControlRestored, true);
+  assert.equal(restored.forcedInertiaSpeed, 0);
+  assert.ok(restored.primitives[16].opacity > 0.7, 'control return is explicit');
+
+  const punish = blueprintFrame(id, 3.72);
+  assert.equal(punish.punishStrike, true);
+  assert.ok(punish.primitives[12].opacity > 0.9, 'the sword response follows control return');
+
+  assert.deepEqual(blueprintFrame(id, 0).player, blueprintFrame(id, 6).player);
+  assert.deepEqual(blueprintFrame(id, 0).boss, blueprintFrame(id, 6).boss);
+  assert.match(
+    renderBlueprintThumbnail(id, 'test-forced-inertia'),
+    /data-blueprint-preview="forced-inertia"/,
   );
 });

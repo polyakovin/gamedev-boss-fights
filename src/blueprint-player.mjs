@@ -239,6 +239,17 @@ export function initializeBlueprint(widget) {
       widget.dataset.blueprintCoverExit = String(frame.coverExitOpen);
       widget.dataset.blueprintPunishStrike = String(frame.punishStrike);
     }
+    if (mechanicId === 'forced-inertia') {
+      widget.dataset.blueprintForcedInertia = frame.forcedInertiaState;
+      widget.dataset.blueprintInertiaFrozen = String(frame.forcedInertiaFrozen);
+      widget.dataset.blueprintInertiaVector = String(frame.forcedInertiaVectorVisible);
+      widget.dataset.blueprintInertiaCommitted = String(frame.forcedInertiaCommitted);
+      widget.dataset.blueprintInertiaSliding = String(frame.forcedInertiaSliding);
+      widget.dataset.blueprintInertiaBraking = String(frame.forcedInertiaBraking);
+      widget.dataset.blueprintInertiaControl = String(frame.forcedInertiaControlRestored);
+      widget.dataset.blueprintInertiaSpeed = frame.forcedInertiaSpeed.toFixed(3);
+      widget.dataset.blueprintPunishStrike = String(frame.punishStrike);
+    }
     boss.setAttribute(
       'transform',
       `translate(${frame.boss.x} ${frame.boss.y}) scale(${frame.bossScale})`,

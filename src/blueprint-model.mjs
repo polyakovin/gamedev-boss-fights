@@ -700,6 +700,45 @@ const SPECS = {
       [470, 850],
     ],
   },
+  'forced-inertia': {
+    mode: 'forced-inertia',
+    boss: [300, 330],
+    player: [118, 790],
+    target: [300, 430],
+    entryPoint: [152, 754],
+    brakePoint: [392, 554],
+    strikePoint: [300, 430],
+    frostAt: 0.44,
+    vectorAt: 0.82,
+    commitAt: 1.34,
+    slide: [1.62, 2.82],
+    brake: [2.82, 3.28],
+    punishAt: 3.72,
+    resetAt: 4.85,
+    dangerX: 492,
+    slideRoute: [
+      [152, 754],
+      [212, 704],
+      [272, 654],
+      [332, 604],
+      [392, 554],
+    ],
+    strikeRoute: [
+      [392, 554],
+      [366, 512],
+      [338, 470],
+      [300, 430],
+    ],
+    resetRoute: [
+      [300, 430],
+      [326, 492],
+      [352, 554],
+      [316, 626],
+      [254, 690],
+      [188, 746],
+      [118, 790],
+    ],
+  },
   'wide-swing': { mode: 'arc', boss: [280, 310], player: [410, 470], target: [470, 650] },
   lunge: { mode: 'lunge', boss: [170, 290], player: [390, 590], target: [470, 660] },
   grab: { mode: 'grab', boss: [280, 300], player: [390, 485], target: [470, 610] },
@@ -1274,6 +1313,20 @@ export function coverLineOfSightState(time) {
   if (t < spec.beam[0]) return 'fully-covered';
   if (t < spec.beam[1]) return 'beam-blocked';
   if (t < spec.punishAt) return 'safe-exit';
+  if (t < spec.resetAt) return 'counter-window';
+  return 'reset';
+}
+
+export function forcedInertiaState(time) {
+  const spec = SPECS['forced-inertia'];
+  const t = localTime(time);
+  if (t < spec.frostAt) return 'stable-footing';
+  if (t < spec.vectorAt) return 'surface-freezing';
+  if (t < spec.commitAt) return 'endpoint-preview';
+  if (t < spec.slide[0]) return 'direction-committed';
+  if (t < spec.slide[1]) return 'unsteerable-slide';
+  if (t < spec.brake[1]) return 'braking-zone';
+  if (t < spec.punishAt) return 'control-restored';
   if (t < spec.resetAt) return 'counter-window';
   return 'reset';
 }
@@ -2926,6 +2979,109 @@ function primitivesFor(spec, frame) {
       path('M 390 430 Q 326 370 260 420', exitOpen ? 0.58 : 0.12, 'accent', 5, 0, '9 9'),
     ];
   }
+  if (mode === 'forced-inertia') {
+    const frozen = frame.forcedInertiaFrozen;
+    const vectorVisible = frame.forcedInertiaVectorVisible;
+    const sliding = frame.forcedInertiaSliding;
+    const braking = frame.forcedInertiaBraking;
+    const controlRestored = frame.forcedInertiaControlRestored;
+    const strike = strikePulse(frame.time, spec.punishAt, 0.38);
+    const entry = point(spec.entryPoint);
+    const brake = point(spec.brakePoint);
+    const speed = frame.forcedInertiaSpeed;
+    return [
+      rect(
+        56,
+        350,
+        448,
+        540,
+        frozen ? 0.78 : 0.34,
+        frozen ? 'accent' : 'muted',
+        frozen ? 0.1 : 0.025,
+      ),
+      rect(spec.dangerX, 350, 18, 540, frozen ? 0.9 : 0.34, 'signal', frozen ? 0.18 : 0.04),
+      path(
+        'M 492 382 L 508 398 L 492 414 M 492 462 L 508 478 L 492 494 M 492 542 L 508 558 L 492 574 M 492 622 L 508 638 L 492 654 M 492 702 L 508 718 L 492 734 M 492 782 L 508 798 L 492 814',
+        frozen ? 0.88 : 0.22,
+        'signal',
+        5,
+      ),
+      line(entry.x, entry.y, brake.x, brake.y, vectorVisible ? 0.76 : 0, 'accent', 5, '11 9'),
+      path('M 356 570 L 392 554 L 376 590', vectorVisible ? 0.92 : 0, 'accent', 7),
+      circle(brake.x, brake.y, 35, vectorVisible ? 0.88 : 0, 'safe', braking ? 9 : 6, 0.12, '8 7'),
+      path(
+        'M 360 536 L 375 551 M 376 523 L 391 538 M 392 510 L 407 525 M 378 570 L 393 585 M 394 557 L 409 572 M 410 544 L 425 559',
+        vectorVisible ? 0.74 : 0,
+        'safe',
+        4,
+      ),
+      line(
+        frame.player.x - 54,
+        frame.player.y + 45,
+        frame.player.x + 10,
+        frame.player.y - 9,
+        sliding ? 0.78 : 0,
+        'safe',
+        8,
+      ),
+      line(
+        frame.player.x - 80,
+        frame.player.y + 65,
+        frame.player.x - 18,
+        frame.player.y + 13,
+        sliding ? 0.44 : 0,
+        'accent',
+        5,
+      ),
+      line(82, 858, 246, 858, frozen ? 0.42 : 0.14, 'muted', 8),
+      line(
+        82,
+        858,
+        82 + 164 * speed,
+        858,
+        sliding || braking ? 0.92 : 0,
+        braking ? 'safe' : 'accent',
+        8,
+      ),
+      circle(
+        82 + 164 * speed,
+        858,
+        9,
+        sliding || braking ? 0.94 : 0,
+        braking ? 'safe' : 'accent',
+        5,
+        0.12,
+      ),
+      line(frame.player.x, frame.player.y, frame.boss.x, frame.boss.y, strike, 'safe', 10),
+      circle(frame.boss.x + 24, frame.boss.y - 18, 12 + strike * 24, strike, 'safe', 7, 0.14),
+      circle(
+        frame.boss.x,
+        frame.boss.y,
+        48 + 34 * pulse(frame.forcedInertiaFrostProgress),
+        frozen ? 0.64 : 0,
+        'accent',
+        6,
+        0.06,
+      ),
+      path(
+        'M 104 410 Q 144 382 184 410 M 216 430 Q 256 402 296 430 M 332 392 Q 372 364 412 392 M 114 610 Q 154 582 194 610 M 278 770 Q 318 742 358 770',
+        frozen ? 0.24 : 0,
+        'accent',
+        4,
+        0,
+        '9 12',
+      ),
+      circle(
+        brake.x,
+        brake.y,
+        controlRestored ? 52 : 40,
+        controlRestored ? 0.74 : 0,
+        'safe',
+        6,
+        0.06,
+      ),
+    ];
+  }
   if (mode === 'landing') {
     const landing = point(spec.landing);
     const contact = phase === 1 ? clamp(1 - Math.abs(action - 0.52) / 0.2) : 0;
@@ -4230,6 +4386,7 @@ function pointClearsThreat(spec, frame, value, radius = BLUEPRINT_PLAYER_RADIUS)
   if (mode === 'boss-as-terrain') return !frame.dangerActive || frame.bossAsTerrainHolding;
   if (mode === 'cover-line-of-sight')
     return !frame.dangerActive || coverLineOfSightBlocked(frame.time, value, radius);
+  if (mode === 'forced-inertia') return !frame.dangerActive || value.x + radius < spec.dangerX;
   if (mode === 'spiral')
     return (
       distanceFromBoss > 52 + radius &&
@@ -4537,6 +4694,7 @@ export function blueprintFrame(id, time) {
   else if (spec.mode === 'control-mode-shift') responseProgress = 0;
   else if (spec.mode === 'boss-as-terrain') responseProgress = 0;
   else if (spec.mode === 'cover-line-of-sight') responseProgress = 0;
+  else if (spec.mode === 'forced-inertia') responseProgress = 0;
   else if (spec.mode === 'knockback')
     responseProgress = phase === 0 ? 0 : phase === 1 ? smooth(action) : 1;
   else if (spec.mode === 'target-lock')
@@ -4956,6 +5114,31 @@ export function blueprintFrame(id, time) {
       player = pointAlongPolyline(spec.resetRoute.map(point), reset);
     }
   }
+  if (spec.mode === 'forced-inertia') {
+    const entry = point(spec.entryPoint);
+    const brake = point(spec.brakePoint);
+    const strike = point(spec.strikePoint);
+    if (t < spec.vectorAt) player = startPlayer;
+    else if (t < spec.commitAt) {
+      const approach = smooth((t - spec.vectorAt) / (spec.commitAt - spec.vectorAt));
+      player = {
+        x: mix(startPlayer.x, entry.x, approach),
+        y: mix(startPlayer.y, entry.y, approach),
+      };
+    } else if (t < spec.slide[0]) player = entry;
+    else if (t < spec.slide[1]) {
+      const slide = clamp((t - spec.slide[0]) / (spec.slide[1] - spec.slide[0]));
+      player = pointAlongPolyline(spec.slideRoute.map(point), slide);
+    } else if (t < spec.brake[1]) player = brake;
+    else if (t < spec.punishAt) {
+      const control = smooth((t - spec.brake[1]) / (spec.punishAt - spec.brake[1]));
+      player = pointAlongPolyline(spec.strikeRoute.map(point), control);
+    } else if (t < spec.resetAt) player = strike;
+    else {
+      const reset = clamp((t - spec.resetAt) / (BLUEPRINT_DURATION - spec.resetAt));
+      player = pointAlongPolyline(spec.resetRoute.map(point), reset);
+    }
+  }
   if (spec.mode === 'rotating' && phase === 0) {
     const initialPosition = polar(boss, 255, Math.PI / 3);
     player = {
@@ -5105,7 +5288,22 @@ export function blueprintFrame(id, time) {
                                 smooth((t - spec.resetAt) / (BLUEPRINT_DURATION - spec.resetAt)),
                               ) * 0.8,
                             )
-                          : pulse(responseProgress) + pulse(returnProgress) * 0.8;
+                          : spec.mode === 'forced-inertia'
+                            ? Math.max(
+                                pulse(
+                                  smooth((t - spec.vectorAt) / (spec.commitAt - spec.vectorAt)),
+                                ) * 0.45,
+                                pulse(
+                                  clamp((t - spec.slide[0]) / (spec.slide[1] - spec.slide[0])),
+                                ) * 0.38,
+                                pulse(
+                                  smooth((t - spec.brake[1]) / (spec.punishAt - spec.brake[1])),
+                                ),
+                                pulse(
+                                  smooth((t - spec.resetAt) / (BLUEPRINT_DURATION - spec.resetAt)),
+                                ) * 0.8,
+                              )
+                            : pulse(responseProgress) + pulse(returnProgress) * 0.8;
   const bossVisible =
     spec.mode === 'burrow' && phase === 1 && action < 0.68
       ? 0
@@ -5253,7 +5451,11 @@ export function blueprintFrame(id, time) {
                                                                           'cover-line-of-sight'
                                                                         ? t >= spec.beam[0] &&
                                                                           t < spec.beam[1]
-                                                                        : phase === 1;
+                                                                        : spec.mode ===
+                                                                            'forced-inertia'
+                                                                          ? t >= spec.slide[0] &&
+                                                                            t < spec.slide[1]
+                                                                          : phase === 1;
   const frame = {
     id,
     mode: spec.mode,
@@ -5335,21 +5537,24 @@ export function blueprintFrame(id, time) {
                           ? (Math.atan2(boss.y - player.y, boss.x - player.x) * 180) / Math.PI
                           : spec.mode === 'cover-line-of-sight'
                             ? (Math.atan2(boss.y - player.y, boss.x - player.x) * 180) / Math.PI
-                            : spec.mode === 'boss-as-terrain'
+                            : spec.mode === 'forced-inertia'
                               ? (Math.atan2(boss.y - player.y, boss.x - player.x) * 180) / Math.PI
-                              : spec.mode === 'control-mode-shift'
+                              : spec.mode === 'boss-as-terrain'
                                 ? (Math.atan2(boss.y - player.y, boss.x - player.x) * 180) / Math.PI
-                                : spec.mode === 'damage-type-resistance' ||
-                                    spec.mode === 'situational-immunity' ||
-                                    spec.mode === 'part-break' ||
-                                    spec.mode === 'attack-reflection' ||
-                                    spec.mode === 'counter-stance' ||
-                                    spec.mode === 'absorption-power-up' ||
-                                    spec.mode === 'interruptible-wind-up' ||
-                                    spec.mode === 'loadout-adaptation' ||
-                                    spec.mode === 'wind-up'
-                                  ? -180
-                                  : -90,
+                                : spec.mode === 'control-mode-shift'
+                                  ? (Math.atan2(boss.y - player.y, boss.x - player.x) * 180) /
+                                    Math.PI
+                                  : spec.mode === 'damage-type-resistance' ||
+                                      spec.mode === 'situational-immunity' ||
+                                      spec.mode === 'part-break' ||
+                                      spec.mode === 'attack-reflection' ||
+                                      spec.mode === 'counter-stance' ||
+                                      spec.mode === 'absorption-power-up' ||
+                                      spec.mode === 'interruptible-wind-up' ||
+                                      spec.mode === 'loadout-adaptation' ||
+                                      spec.mode === 'wind-up'
+                                    ? -180
+                                    : -90,
     bossMotion: motion({
       gait:
         spec.mode === 'chase-herding' ||
@@ -5543,17 +5748,22 @@ export function blueprintFrame(id, time) {
                                                     strikePulse(t, spec.handoff[0], 0.72),
                                                     strikePulse(t, spec.wave[0], 0.68),
                                                   )
-                                                : spec.mode === 'cover-line-of-sight'
-                                                  ? dangerActive
-                                                    ? 1
-                                                    : 0.25 *
-                                                      smooth(
-                                                        (t - spec.lockAt) /
-                                                          (spec.beam[0] - spec.lockAt),
-                                                      )
-                                                  : phase === 1
-                                                    ? 0.75
-                                                    : prepare * 0.35,
+                                                : spec.mode === 'forced-inertia'
+                                                  ? Math.max(
+                                                      strikePulse(t, spec.frostAt, 0.72),
+                                                      strikePulse(t, spec.slide[0], 0.62),
+                                                    )
+                                                  : spec.mode === 'cover-line-of-sight'
+                                                    ? dangerActive
+                                                      ? 1
+                                                      : 0.25 *
+                                                        smooth(
+                                                          (t - spec.lockAt) /
+                                                            (spec.beam[0] - spec.lockAt),
+                                                        )
+                                                    : phase === 1
+                                                      ? 0.75
+                                                      : prepare * 0.35,
       impact:
         spec.mode === 'landing'
           ? pulse(clamp((action - 0.42) / 0.22))
@@ -5630,14 +5840,19 @@ export function blueprintFrame(id, time) {
                                                 ? 0.72 * strikePulse(t, spec.transfer[1], 0.32)
                                                 : spec.mode === 'control-mode-shift'
                                                   ? 0.85 * strikePulse(t, spec.punishAt, 0.3)
-                                                  : spec.mode === 'cover-line-of-sight'
-                                                    ? 0.85 * strikePulse(t, spec.punishAt, 0.3)
-                                                    : spec.mode === 'shockwave' ||
-                                                        spec.mode === 'knockback'
-                                                      ? pulse(action * 3)
-                                                      : spec.mode === 'chain-explosions'
-                                                        ? pulse((action * 5) % 1)
-                                                        : 0,
+                                                  : spec.mode === 'forced-inertia'
+                                                    ? Math.max(
+                                                        0.55 * strikePulse(t, spec.frostAt, 0.36),
+                                                        0.85 * strikePulse(t, spec.punishAt, 0.3),
+                                                      )
+                                                    : spec.mode === 'cover-line-of-sight'
+                                                      ? 0.85 * strikePulse(t, spec.punishAt, 0.3)
+                                                      : spec.mode === 'shockwave' ||
+                                                          spec.mode === 'knockback'
+                                                        ? pulse(action * 3)
+                                                        : spec.mode === 'chain-explosions'
+                                                          ? pulse((action * 5) % 1)
+                                                          : 0,
     }),
     playerMotion: motion({
       gait:
@@ -5665,7 +5880,9 @@ export function blueprintFrame(id, time) {
                               ? t * 7 * stride
                               : spec.mode === 'cover-line-of-sight'
                                 ? t * 7 * stride
-                                : (route * responseProgress + route * returnProgress) / 20,
+                                : spec.mode === 'forced-inertia'
+                                  ? t * 7 * stride
+                                  : (route * responseProgress + route * returnProgress) / 20,
       stride,
       lean: stride * 0.45,
       crouch:
@@ -5680,7 +5897,11 @@ export function blueprintFrame(id, time) {
               ? t >= spec.coveredAt && t < spec.beam[1]
                 ? 0.2
                 : stride * 0.16
-              : stride * 0.16,
+              : spec.mode === 'forced-inertia'
+                ? t >= spec.slide[0] && t < spec.brake[1]
+                  ? 0.26
+                  : stride * 0.16
+                : stride * 0.16,
       lift:
         spec.mode === 'control-mode-shift' && t >= spec.handoff[1] && t < spec.wave[1]
           ? Math.sin(clamp((t - spec.handoff[1]) / (spec.wave[1] - spec.handoff[1])) * Math.PI)
@@ -5750,11 +5971,13 @@ export function blueprintFrame(id, time) {
                                                 ? strikePulse(t, spec.punishAt, 0.38)
                                                 : spec.mode === 'cover-line-of-sight'
                                                   ? strikePulse(t, spec.punishAt, 0.38)
-                                                  : spec.mode === 'decoy' && phase === 1
-                                                    ? pulse(clamp((action - 0.52) / 0.3))
-                                                    : spec.mode === 'weak-point' && phase === 1
-                                                      ? pulse(action * 1.5)
-                                                      : 0,
+                                                  : spec.mode === 'forced-inertia'
+                                                    ? strikePulse(t, spec.punishAt, 0.38)
+                                                    : spec.mode === 'decoy' && phase === 1
+                                                      ? pulse(clamp((action - 0.52) / 0.3))
+                                                      : spec.mode === 'weak-point' && phase === 1
+                                                        ? pulse(action * 1.5)
+                                                        : 0,
     }),
   };
   if (spec.mode === 'directional-shield') {
@@ -5849,6 +6072,22 @@ export function blueprintFrame(id, time) {
     frame.activePhaseState = activePhaseState(t);
     frame.hitboxActive = dangerActive;
     frame.followThroughVisible = t >= spec.active[1] && t < spec.followThroughEnd;
+    frame.punishStrike = strikePulse(t, spec.punishAt, 0.38) > 0.5;
+  }
+  if (spec.mode === 'forced-inertia') {
+    frame.forcedInertiaState = forcedInertiaState(t);
+    frame.forcedInertiaFrostProgress = smooth((t - spec.frostAt) / (spec.vectorAt - spec.frostAt));
+    frame.forcedInertiaFrozen = t >= spec.frostAt && t < spec.resetAt;
+    frame.forcedInertiaVectorVisible = t >= spec.vectorAt && t < spec.resetAt;
+    frame.forcedInertiaCommitted = t >= spec.commitAt && t < spec.brake[1];
+    frame.forcedInertiaSliding = t >= spec.slide[0] && t < spec.slide[1];
+    frame.forcedInertiaBraking = t >= spec.brake[0] && t < spec.brake[1];
+    frame.forcedInertiaControlRestored = t >= spec.brake[1] && t < spec.resetAt;
+    frame.forcedInertiaSpeed = frame.forcedInertiaSliding
+      ? 1
+      : frame.forcedInertiaBraking
+        ? 1 - smooth((t - spec.brake[0]) / (spec.brake[1] - spec.brake[0]))
+        : 0;
     frame.punishStrike = strikePulse(t, spec.punishAt, 0.38) > 0.5;
   }
   if (spec.mode === 'control-mode-shift') {
@@ -5988,7 +6227,8 @@ export function blueprintFrame(id, time) {
       spec.mode === 'chase-herding' ||
       spec.mode === 'escape-phase' ||
       spec.mode === 'boss-as-terrain' ||
-      spec.mode === 'cover-line-of-sight'
+      spec.mode === 'cover-line-of-sight' ||
+      spec.mode === 'forced-inertia'
         ? 92
         : -62),
   };

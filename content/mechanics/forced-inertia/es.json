@@ -1,0 +1,138 @@
+{
+  "title": "Inercia forzada",
+  "subtitle": "Sustituye temporalmente la parada precisa por movimiento comprometido para que el jugador elija dirección y destino antes de moverse.",
+  "variant": "Kern congela el suelo de la cantera, Tavi lee un vector fijo, se compromete una vez, se desliza sin dirigir, frena sobre piedra rúnica rugosa y ataca al recuperar el control",
+  "summary": "Una superficie o efecto arrastra al jugador tras soltar el control y convierte la distancia de frenado en la regla principal de posición.",
+  "overview": "La inercia forzada cambia el significado del control de movimiento. Empezar implica compromiso: dirección, velocidad de entrada, fricción, colisiones y destino importan más que dirigir cada fotograma. La regla es justa si la superficie alterada resulta inequívoca, el final puede estimarse y el control vuelve en un momento visible.",
+  "learning": "Implementa entrada en la superficie, captura de velocidad, aceleración reducida, dirección limitada, desaceleración determinista, colisiones, previsión del final, margen de frenado, recuperación de control y siguiente acción como un solo contrato.",
+  "category": "Espacio, movimiento y percepción",
+  "readTime": "8 min",
+  "demo": {
+    "title": "Muestra el destino antes de iniciar el deslizamiento",
+    "timeline": "Cronología de inercia",
+    "step": "Estados de inercia forzada",
+    "phaseNames": [
+      "Congelar el suelo y anticipar el vector",
+      "Comprometer una vez y conservar el impulso",
+      "Frenar, devolver el control y responder"
+    ],
+    "phaseDescriptions": [
+      "A los 0,44 s, la runa de Kern congela la cantera. A los 0,82 s, una línea recta y la zona rugosa revelan dónde acabará Tavi; llega a la entrada antes de fijar la dirección a los 1,34 s.",
+      "El deslizamiento empieza a los 1,62 s. Tavi conserva la dirección y velocidad capturadas aun al soltar el control y cruza el hielo en línea legible hasta la zona de frenado a los 2,82 s.",
+      "La piedra rúnica rugosa reduce la velocidad a cero a los 3,28 s y devuelve claramente la dirección. Tavi elige otra ruta, golpea a los 3,72 s y el suelo se reinicia tras 4,85 s."
+    ],
+    "boss": "Jefe",
+    "player": "Jugador",
+    "danger": "La superficie helada conserva la velocidad comprometida; un destino más allá de la zona segura alcanza el borde letal de la cantera",
+    "locked": "Se definen límites, dirección capturada, velocidad de entrada, autoridad de giro, fricción, zona de parada, borde peligroso, retorno del control y reinicio",
+    "safe": "Lee todo el recorrido previsto, entra con el ángulo indicado, deja terminar el deslizamiento sin corregir y muévete solo tras el pulso de control recuperado",
+    "reducedMotion": "Con movimiento reducido no hay reproducción automática. Recorre 0,44, 0,82, 1,34, 1,62, 2,82, 3,28, 3,72 y 4,85 s para revisar congelación, compromiso, deslizamiento, frenado y reinicio.",
+    "diagramDescription": "Kern congela una arena rectangular con un borde exterior letal. Una diagonal discontinua anticipa la parada de Tavi en una zona rúnica rugosa; Tavi se compromete, se desliza por la línea fija con un indicador de velocidad, frena, recupera el control y corre hacia Kern para dar un espadazo."
+  },
+  "steps": [
+    {
+      "title": "¿Qué se captura al comprometer el movimiento?",
+      "body": "Define el evento exacto de entrada y guarda lo que persiste: dirección, velocidad, aporte de aceleración, orientación e impulso de carrera o empuje. Decide si el control posterior no dirige, dirige débilmente o solo frena. Mantén la regla igual para teclado, mando, tacto, IA, repeticiones y predicción de red."
+    },
+    {
+      "title": "¿Puede el jugador predecir dónde se detendrá?",
+      "body": "Expón la superficie cambiada antes del primer movimiento obligatorio y usa señales estables: grano de hielo, huellas, trayectoria fantasma o marcador final. Calcula la previsión con las mismas reglas de integración y colisión del cuerpo real. Incluye el radio del jugador y un margen visible para que un centro seguro no deje la silueta tocando el borde letal."
+    },
+    {
+      "title": "¿Cuándo y cómo vuelve el control normal?",
+      "body": "Marca el retorno con pérdida de velocidad, sonido, pose, cambio de suelo o pulso. Define cómo afectan al impulso las zonas rugosas, paredes, saltos, ataques, limpiezas y la invulnerabilidad. Ofrece una continuación valiosa al detenerse para que la mecánica cree una llegada planeada y no solo retrase el acceso al jefe."
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "El deslizamiento parece retraso de entrada",
+      "body": "Si la superficie se lee mal o la capacidad de dirigir cambia sin respuesta, el jugador interpreta la velocidad conservada como un mando torpe. Cambia de estado en un momento definido, exagera el primer derrape, muestra la velocidad restante y sincroniza animación, partículas, sonido, cámara y colisión con la velocidad real."
+    },
+    {
+      "title": "Un plan correcto aún muere en el borde",
+      "body": "Variaciones mínimas de fricción, pasos de tiempo irregulares, pendientes ocultas, empujes o corrección de colisión pueden mover el final tras comprometerse. Usa paso fijo o desaceleración analítica, anula velocidades mínimas, crea zonas amplias y prueba impulsos externos. La precisión puede ser maestría; la deriva indeterminista no."
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "Elige un modelo de velocidad resoluble",
+      "body": "Prefiere una máquina explícita pequeña: movimiento normal, captura de entrada, deslizamiento, frenado y control restaurado. La desaceleración constante o por tramos hace predecible y ajustable la parada. Si queda dirección, exprésala como aceleración lateral limitada, no como sustitución secreta del rumbo capturado."
+    },
+    {
+      "title": "Haz intencional cada colisión",
+      "body": "Decide si una pared detiene, refleja, redirige, daña o conserva velocidad tangencial. Prueba esquinas, uniones, plataformas móviles, pendientes, pasos estrechos y varios contactos por fotograma. El límite visible debe coincidir con la colisión y un corte de cámara no debe ocultar la distancia restante."
+    },
+    {
+      "title": "Ajusta hacia atrás desde destinos alcanzables",
+      "body": "Coloca primero zonas de parada útiles y deriva distancias y velocidades que lleguen con margen. Prueba intensidades mínima y máxima, ayudas, mejoras, penalizaciones, latencia y tasas de fotogramas. Si una configuración cambia la velocidad, actualiza la previsión o la zona para conservar la legibilidad."
+    },
+    {
+      "title": "Combina solo amenazas que respeten el compromiso",
+      "body": "Durante el intervalo sin dirección, las amenazas deben leerse antes de deslizar o formar un problema estable de carriles. No generes un área reactiva bajo un destino ya fijado sin otra respuesta garantizada. Las buenas combinaciones prueban planificación; las malas exigen el control que la propia mecánica retiró."
+    }
+  ],
+  "story": {
+    "title": "Kern convierte el polvo de cantera en hielo rúnico",
+    "body": "El elemental empuja un glifo frío por los antiguos canales de pulido del suelo. La piedra lisa brilla azul y una zona inacabada conserva marcas de cincel, explicando tanto el largo deslizamiento como el lugar donde Tavi recupera apoyo."
+  },
+  "adaptation": {
+    "title": "Usa el movimiento y la espada normales de Tavi",
+    "body": "Tavi no necesita una esquiva especial ni control aéreo. La previsión usa la velocidad de carrera actual, la zona de frenado admite todo el cuerpo con margen y el control vuelve a tiempo para una ruta corta y un golpe antes de que Kern congele otra vez."
+  },
+  "distinction": {
+    "title": "Velocidad conservada, no desplazamiento instantáneo",
+    "body": "El empuje aplica un impulso externo, el desplazamiento forzado mueve el marco de referencia y un cambio de control reasigna acciones. La inercia forzada conserva el movimiento propio tras soltar la entrada y convierte el futuro punto de parada en la decisión."
+  },
+  "lensNotes": [
+    {
+      "id": "commitment",
+      "body": "El movimiento intercambia dirección inmediata por un destino futuro predecible, así que la decisión ocurre antes de completar el viaje."
+    },
+    {
+      "id": "threat-geometry",
+      "body": "Punto inicial, vector de velocidad, fricción, radio del cuerpo y límites definen todo el recorrido peligroso."
+    },
+    {
+      "id": "telegraphing",
+      "body": "Superficie, previsión, huella de derrape, pérdida de velocidad y pulso de retorno deben describir el mismo estado."
+    },
+    {
+      "id": "counterplay",
+      "body": "La respuesta es elegir rumbo y zona de parada seguros antes de comprometerse y aprovechar la llegada cuando vuelve el control."
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "Mega Man",
+      "boss": "Ice Man",
+      "screenshot": "https://i.ytimg.com/vi/lTRIaXXPRfs/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=lTRIaXXPRfs&t=1s",
+      "body": "La sala lateral y compacta de Ice Man combina un suelo resbaladizo con una secuencia fija de ondas Ice Slasher. La baja fricción cambia el tiempo de pequeñas correcciones y saltos, modificando un patrón simple sin reemplazar las acciones básicas de Mega Man.",
+      "video": "https://www.youtube.com/watch?v=lTRIaXXPRfs&t=1s",
+      "videoDurationSeconds": 50
+    },
+    {
+      "dimension": "3D",
+      "game": "Croc: Legend of the Gobbos",
+      "boss": "Demon Itsy",
+      "screenshot": "https://i.ytimg.com/vi/It3Yjfd_Ojw/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=It3Yjfd_Ojw&t=1s",
+      "body": "Demon Itsy se combate sobre una placa de hielo claramente resbaladiza. Croc alinea acercamientos y coletazos mientras el jefe se divide en cuerpos menores y más rápidos; la distancia de frenado y la corrección respecto a cámara importan más con cada objetivo móvil.",
+      "video": "https://www.youtube.com/watch?v=It3Yjfd_Ojw&t=1s",
+      "videoDurationSeconds": 115
+    },
+    {
+      "dimension": "3D",
+      "game": "Final Fantasy XIV",
+      "boss": "Shiva",
+      "screenshot": "https://i.ytimg.com/vi/qK9YaAE-oRk/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=qK9YaAE-oRk&t=380s",
+      "body": "Permafrost aplica Thin Ice: iniciar un movimiento hace que el personaje se deslice sin control en esa dirección, mientras el borde congela a quien lo alcance. Una entrada pequeña compromete todo el recorrido; hay que quedarse quieto o escoger una línea que termine dentro del círculo.",
+      "video": "https://www.youtube.com/watch?v=qK9YaAE-oRk&t=380s",
+      "videoDurationSeconds": 653
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

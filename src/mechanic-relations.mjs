@@ -207,6 +207,12 @@ const PROFILE_OVERRIDES = {
     signal: ['marker', 'environment', 'state'],
     response: ['reposition', 'interact', 'attack'],
   },
+  'forced-inertia': {
+    geometry: ['line', 'arena'],
+    dimensions: ['2d', '3d'],
+    signal: ['trajectory', 'environment', 'state'],
+    response: ['reposition', 'manage'],
+  },
   'wraparound-projectile': { geometry: ['line', 'arena'], dimensions: ['2d'] },
   'beat-synced-attack': { geometry: ['arena'], signal: ['rhythm'], response: ['dodge', 'manage'] },
   'secondary-cues-invisibility': {
@@ -285,6 +291,8 @@ const COMPATIBLE_PAIRS = new Set(
     ['escape-phase', 'target-lock'],
     ['escape-phase', 'external-healing-source'],
     ['relocated-arena', 'cover-line-of-sight'],
+    ['forced-inertia', 'telegraph'],
+    ['forced-inertia', 'hazard-trail'],
     ['debuff-handoff', 'ordered-targets'],
   ].map(([left, right]) => pairKey(left, right)),
 );

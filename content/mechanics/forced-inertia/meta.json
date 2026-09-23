@@ -1,0 +1,28 @@
+{
+  "id": "forced-inertia",
+  "number": 76,
+  "published": true,
+  "sourceLocale": "en",
+  "contentVersion": 1,
+  "animation": "forced-inertia",
+  "lenses": ["commitment", "threat-geometry", "telegraphing", "counterplay"],
+  "related": ["knockback", "hazard-trail", "control-mode-shift"],
+  "sources": [
+    {
+      "title": "GDC · Itay Keren — Boss Battle Design Fundamentals and Retrospective",
+      "url": "https://www.gdcvault.com/play/1024921/Boss-Up-Boss-Battle-Design"
+    },
+    {
+      "title": "Final Fantasy XIV Online Wiki — The Akh Afah Amphitheatre (Extreme)",
+      "url": "https://ffxiv.consolegameswiki.com/wiki/The_Akh_Afah_Amphitheatre_(Extreme)"
+    },
+    {
+      "title": "StrategyWiki — Mega Man / Ice Man",
+      "url": "https://strategywiki.org/wiki/Mega_Man/Ice_Man"
+    },
+    {
+      "title": "StrategyWiki — Croc / Demon Itsy's Ice Palace",
+      "url": "https://strategywiki.org/wiki/Croc:_Legend_of_the_Gobbos/Demon_Itsy%27s_Ice_Palace"
+    }
+  ]
+}

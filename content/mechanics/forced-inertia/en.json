@@ -1,0 +1,138 @@
+{
+  "title": "Forced inertia",
+  "subtitle": "Temporarily replace precise stopping with committed motion, so the player must choose a direction and endpoint before moving.",
+  "variant": "Kern freezes the quarry floor, Tavi reads a fixed slide vector, commits once, coasts without steering, brakes on rough rune stone, and uses the restored control to strike",
+  "summary": "A surface or effect carries the player past ordinary input release and turns stopping distance into the central positioning rule.",
+  "overview": "Forced inertia changes what movement input means. Starting is a commitment: heading, entry speed, friction, collision, and the eventual stopping point matter more than frame-by-frame steering. The rule is fair when the altered surface is unmistakable, the endpoint can be estimated, and control returns on a visible beat.",
+  "learning": "Implement surface entry, velocity capture, reduced acceleration, limited steering, deterministic deceleration, collision behavior, endpoint preview, a safe braking margin, control restoration, and the next action as one movement contract.",
+  "category": "Space, movement, and perception",
+  "readTime": "8 min",
+  "demo": {
+    "title": "Show the endpoint before the slide begins",
+    "timeline": "Inertia timeline",
+    "step": "Forced-inertia states",
+    "phaseNames": [
+      "Freeze the floor and preview the vector",
+      "Commit once and preserve momentum",
+      "Brake, restore control, and answer"
+    ],
+    "phaseDescriptions": [
+      "At 0.44 s Kern's rune freezes the quarry. At 0.82 s a straight vector and rough stopping patch reveal where Tavi will finish; Tavi reaches the entry point before direction locks at 1.34 s.",
+      "The slide begins at 1.62 s. Tavi keeps one captured heading and speed even after movement input is released, crossing the ice on a straight readable path until the braking patch at 2.82 s.",
+      "The rough rune stone bleeds speed to zero by 3.28 s and visibly returns steering. Tavi then chooses a new route, strikes at 3.72 s, and the floor resets after 4.85 s."
+    ],
+    "boss": "Boss",
+    "player": "Player",
+    "danger": "The frozen surface preserves the committed velocity; an endpoint beyond the marked safe patch reaches the lethal quarry edge",
+    "locked": "Surface bounds, captured heading, entry speed, steering authority, friction, stopping patch, danger edge, control-return beat, and reset are authored",
+    "safe": "Read the complete projected path, enter at the shown angle, let the slide finish without corrective inputs, then move only after the control-return pulse",
+    "reducedMotion": "Autoplay is disabled by reduced motion. Scrub across 0.44, 0.82, 1.34, 1.62, 2.82, 3.28, 3.72, and 4.85 seconds to inspect freezing, commitment, sliding, braking, and reset.",
+    "diagramDescription": "Kern freezes a rectangular arena with a lethal outer edge. A dashed diagonal predicts Tavi's stopping point on a rough rune patch; Tavi commits, slides along that fixed line with a visible speed gauge, brakes, regains control, and runs to Kern for one sword strike."
+  },
+  "steps": [
+    {
+      "title": "What is captured when movement commits?",
+      "body": "Define the exact entry event and snapshot the quantities that survive it: direction, speed, acceleration contribution, facing, and any dash or knockback velocity. Decide whether later input offers no steering, weak steering, or only braking. Keep the rule identical for keyboard, stick, touch, AI, replay, and network prediction instead of letting each controller produce a different trajectory."
+    },
+    {
+      "title": "Can the player predict the stopping point?",
+      "body": "Expose the changed surface before the first required move and provide stable visual motion cues: frost grain, skid streaks, a trajectory ghost, or a destination marker. Calculate the preview from the same integration and collision rules as the live body. Include the player's radius and a visible margin so a mathematically safe center does not leave the silhouette touching a lethal edge."
+    },
+    {
+      "title": "When and how does ordinary control return?",
+      "body": "Use a readable speed loss, sound, pose, floor change, or pulse to mark the transition back to normal movement. Define how rough patches, walls, jumps, attacks, status cleanses, and invulnerability affect momentum. Give the player a meaningful follow-up after stopping so the mechanic produces a planned arrival rather than only delaying access to the boss."
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "The slide feels like input lag",
+      "body": "If the surface cue is weak or steering authority changes gradually without feedback, the player reads preserved velocity as an unresponsive controller. Switch the movement state on a named beat, exaggerate the first skid, show the remaining speed, and keep animation, particles, audio, camera, and collision synchronized with the actual velocity."
+    },
+    {
+      "title": "A correct plan still dies at the edge",
+      "body": "Tiny friction differences, uneven frame steps, hidden slopes, enemy pushes, or collision depenetration can shift the endpoint after commitment. Use fixed-step or analytic deceleration, clamp negligible velocity, author generous stopping zones, and test external impulses explicitly. Precision may be part of mastery; nondeterministic drift should not be."
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "Choose a velocity model designers can solve",
+      "body": "Prefer a small explicit state machine: normal movement, entry capture, committed slide, braking, and restored control. Constant or piecewise deceleration makes stopping distance predictable and tunable. If steering remains, express it as a capped lateral acceleration rather than silently replacing the captured heading with the latest input."
+    },
+    {
+      "title": "Make collision outcomes intentional",
+      "body": "Decide whether a wall stops, reflects, redirects, damages, or preserves tangential velocity. Test corners, seams, moving platforms, slopes, narrow passages, and several contacts in one frame. A visible boundary must agree with the collision surface, and a camera cut must not hide the remaining travel distance."
+    },
+    {
+      "title": "Tune from reachable endpoints backward",
+      "body": "Place useful stopping regions first, then derive entry distances and speeds that reach them with margin. Test minimum and maximum input magnitudes, accessibility assists, movement upgrades, debuffs, latency, and every supported frame rate. If one build changes speed, update either the preview or the stopping region so the rule stays legible."
+    },
+    {
+      "title": "Combine only with threats that respect commitment",
+      "body": "During an unsteerable interval, hazards must be readable before the slide begins or arranged as a stable lane problem. Avoid spawning a reactive marked area under the already committed endpoint unless another guaranteed answer exists. Good combinations test planning; bad combinations ask for steering the mechanic has explicitly removed."
+    }
+  ],
+  "story": {
+    "title": "Kern turns quarry dust into rune ice",
+    "body": "The elemental drives a cold glyph through old polishing channels in the floor. Smooth stone flashes blue while one unfinished patch keeps its rough chisel marks, explaining both the long glide and the deliberate place where Tavi can regain footing."
+  },
+  "adaptation": {
+    "title": "Use Tavi's ordinary movement and sword",
+    "body": "Tavi needs no special dodge or air control. The preview uses the current run speed, the braking patch accepts the complete body with margin, and normal control returns early enough to take a short sword route to Kern before the arena freezes again."
+  },
+  "distinction": {
+    "title": "Preserved velocity, not an instant displacement",
+    "body": "Knockback applies an external impulse, forced scrolling moves the reference frame, and a control-mode shift remaps available actions. Forced inertia specifically carries the player's own committed motion after input release, making the eventual stopping point the decision."
+  },
+  "lensNotes": [
+    {
+      "id": "commitment",
+      "body": "Movement input trades immediate steering for a predictable future endpoint, so the decision is made before the travel completes."
+    },
+    {
+      "id": "threat-geometry",
+      "body": "A start point, velocity vector, friction value, body radius, and boundaries define the complete dangerous route."
+    },
+    {
+      "id": "telegraphing",
+      "body": "Surface appearance, path preview, skid feedback, speed loss, and the control-return pulse must describe the same motion state."
+    },
+    {
+      "id": "counterplay",
+      "body": "The response is to choose a safe heading and stopping region before commitment, then exploit the planned arrival after control returns."
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "Mega Man",
+      "boss": "Ice Man",
+      "screenshot": "https://i.ytimg.com/vi/lTRIaXXPRfs/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=lTRIaXXPRfs&t=1s",
+      "body": "Ice Man's compact side-view room uses a slippery floor beneath a fixed sequence of Ice Slasher waves. Low friction changes the timing of short corrections and jump setup, so the arena surface modifies an otherwise simple projectile pattern without changing Mega Man's basic actions.",
+      "video": "https://www.youtube.com/watch?v=lTRIaXXPRfs&t=1s",
+      "videoDurationSeconds": 50
+    },
+    {
+      "dimension": "3D",
+      "game": "Croc: Legend of the Gobbos",
+      "boss": "Demon Itsy",
+      "screenshot": "https://i.ytimg.com/vi/It3Yjfd_Ojw/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=It3Yjfd_Ojw&t=1s",
+      "body": "Demon Itsy is fought on a visibly slippery ice sheet. Croc must line up approaches and tail attacks while the boss repeatedly divides into smaller, faster bodies, making braking distance and camera-relative correction increasingly important as the number of moving contacts grows.",
+      "video": "https://www.youtube.com/watch?v=It3Yjfd_Ojw&t=1s",
+      "videoDurationSeconds": 115
+    },
+    {
+      "dimension": "3D",
+      "game": "Final Fantasy XIV",
+      "boss": "Shiva",
+      "screenshot": "https://i.ytimg.com/vi/qK9YaAE-oRk/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=qK9YaAE-oRk&t=380s",
+      "body": "Permafrost applies Thin Ice: beginning a move sends the character sliding uncontrollably in that direction while the arena edge can freeze anyone who reaches it. The encounter turns a small input into a full-path commitment, so players must either remain still or choose a line whose endpoint stays inside the circular boundary.",
+      "video": "https://www.youtube.com/watch?v=qK9YaAE-oRk&t=380s",
+      "videoDurationSeconds": 653
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}
