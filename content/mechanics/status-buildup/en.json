@@ -19,7 +19,7 @@
     "phaseDescriptions": [
       "Tavi enters Kern's radial field and receives 38 buildup at 0.72 s. Leaving the field stops new exposure, but the gauge holds until its 1.08 s decay delay and then falls to 14 by 1.72 s, making the grace period and recovery rate separately visible.",
       "Tavi re-enters before the remainder clears. Contacts at 2.14 s and 2.60 s raise the same gauge to 55 and then 100. The threshold crossing reserves one status effect; the rune lock begins at 2.72 s and lasts until 3.72 s while ordinary health remains a separate concern.",
-      "When the effect ends, buildup resets to zero and a short immunity ring lasts until 4.42 s. A contact during that ring is ignored rather than silently starting another effect. Tavi then leaves the field and the complete system returns to its clear state after 5.20 s."
+      "When the effect ends, buildup resets to zero and a solid shield marks immunity until 4.42 s. A contact while the shield is present is ignored rather than starting another effect. Tavi then leaves the field and the system returns to its clear state after 5.20 s."
     ],
     "boss": "Boss",
     "player": "Player",
@@ -27,7 +27,7 @@
     "locked": "Source id, buildup amount, threshold comparison, decay delay, decay rate, resistance modifier, effect id, duration, cleansing, immunity, and reapplication authority are encounter-owned",
     "safe": "Show current buildup, threshold, decay direction, active effect, cleanse, and immunity as distinct shapes and states; never communicate all of them with one changing color",
     "reducedMotion": "Autoplay is disabled by reduced motion. Scrub across 0.72, 1.08, 1.72, 2.14, 2.60, 2.72, 3.72, 4.42, and 5.20 seconds to inspect exposure, decay, threshold, effect, immunity, and reset.",
-    "diagramDescription": "Kern stands inside a dashed radial rune field while Tavi moves in and out. A segmented gauge above the arena rises after the first pulse, partially decays outside the field, then fills after two close pulses. At the threshold, rune shards orbit Tavi for one effect window. The gauge clears and a separate protective ring marks temporary immunity before the loop resets."
+    "diagramDescription": "Four rune stones anchor Kern’s filled exposure field while Tavi enters and leaves it. The solid gauge above the arena rises after contact, partly decays away from the field, then reaches its threshold on two further contacts. Stone shackles appear beside Tavi for one status effect. When the gauge clears, a solid shield beside Tavi marks brief immunity and blocks another contact."
   },
   "steps": [
     {

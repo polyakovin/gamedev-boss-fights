@@ -3050,6 +3050,15 @@ test('status buildup decays partial exposure and emits one effect at the thresho
   assert.equal(firstContact.statusBuildupValue, 38);
   assert.equal(firstContact.dangerActive, true);
   assert.equal(firstContact.playerSafe, false, 'the demonstration intentionally applies buildup');
+  const field = firstContact.primitives.find(
+    (primitive) =>
+      primitive.type === 'circle' &&
+      primitive.x === 280 &&
+      primitive.y === 300 &&
+      primitive.radius === 235,
+  );
+  assert.ok(field, 'the filled rune field matches the exposure radius');
+  assert.equal(field.width, 0);
   assert.equal(blueprintPointSafe(id, 0.72, { x: 470, y: 780 }), true);
   assert.equal(Math.round(blueprintFrame(id, 1.72).statusBuildupValue), 14);
   assert.equal(Math.round(blueprintFrame(id, 2.2).statusBuildupValue), 55);

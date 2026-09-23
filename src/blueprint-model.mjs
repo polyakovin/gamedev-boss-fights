@@ -1223,11 +1223,11 @@ const SPECS = {
   },
   'status-buildup': {
     mode: 'status-buildup',
-    boss: [300, 375],
-    player: [470, 720],
-    target: [390, 555],
-    arena: [55, 310, 450, 570],
-    exposurePoint: [390, 555],
+    boss: [280, 300],
+    player: [415, 700],
+    target: [350, 520],
+    arena: [40, 145, 480, 715],
+    exposurePoint: [350, 520],
     auraRadius: 235,
     approach: [0.28, 0.62],
     contacts: [0.72, 2.14, 2.6],
@@ -5707,98 +5707,103 @@ function primitivesFor(spec, frame) {
     const contactPulse = Math.max(
       ...spec.contacts.map((contact) => strikePulse(frame.time, contact, 0.34)),
     );
-    const thresholdPulse = strikePulse(frame.time, spec.thresholdAt, 0.52);
     const ignoredPulse = strikePulse(frame.time, spec.immuneProbeAt, 0.36);
-    const auraOpacity = frame.statusBuildupContactActive ? 0.9 : 0.2;
-    const effectOpacity = frame.statusBuildupEffectActive ? 0.78 + pulse(frame.time * 3) * 0.18 : 0;
-    const immunityProgress = frame.statusBuildupImmune
-      ? clamp(
-          1 -
-            (frame.time - spec.effectEndsAt) /
-              Math.max(0.01, spec.immunityEndsAt - spec.effectEndsAt),
-        )
-      : 0;
+    const effectOpacity = frame.statusBuildupEffectActive ? 0.96 : 0;
+    const shieldOpacity = frame.statusBuildupImmune ? 0.96 : 0;
+    const gaugeEnd = 120 + (320 * frame.statusBuildupValue) / 100;
+    const shieldX = frame.player.x + 72;
+    const shieldY = frame.player.y - 102;
     return [
-      rect(...spec.arena, 0.52, 'muted', 0.025),
       circle(
         frame.boss.x,
         frame.boss.y,
         spec.auraRadius,
-        auraOpacity,
+        frame.statusBuildupContactActive ? 0.66 : 0.36,
         frame.statusBuildupContactActive ? 'signal' : 'accent',
-        frame.statusBuildupContactActive ? 14 : 5,
-        frame.statusBuildupContactActive ? 0.08 : 0.015,
-        frame.statusBuildupContactActive ? '' : '12 10',
+        0,
+        frame.statusBuildupContactActive ? 0.34 : 0.16,
       ),
-      circle(
-        frame.boss.x,
-        frame.boss.y,
-        spec.auraRadius * (0.32 + 0.68 * contactPulse),
-        contactPulse,
-        'signal',
-        10,
-        0.03,
-      ),
-      rect(178, 318, 244, 24, 0.64, 'muted', 0.035),
-      rect(
-        182,
-        322,
-        236 * (frame.statusBuildupValue / 100),
-        16,
-        0.96,
+      ...Array.from({ length: 4 }, (_, index) => {
+        const angle = (-3 * Math.PI) / 4 + (index * Math.PI) / 2;
+        const x = frame.boss.x + Math.cos(angle) * 216;
+        const y = frame.boss.y + Math.sin(angle) * 216;
+        return [
+          path(
+            `M ${x - 15} ${y - 15} L ${x + 10} ${y - 18} L ${x + 17} ${y - 3} L ${x + 13} ${y + 15} L ${x - 12} ${y + 17} L ${x - 17} ${y - 2} Z`,
+            0.9,
+            'muted',
+            0,
+            0.86,
+          ),
+          path(
+            `M ${x - 7} ${y - 6} L ${x} ${y + 4} L ${x + 7} ${y - 7} M ${x} ${y + 4} L ${x} ${y + 10}`,
+            frame.statusBuildupContactActive ? 0.98 : 0.6,
+            'accent',
+            3,
+          ),
+        ];
+      }).flat(),
+      path('M 120 90 H 440 V 116 H 120 Z', 0.76, 'muted', 0, 0.72),
+      path(
+        `M 120 90 H ${gaugeEnd} V 116 H 120 Z`,
+        frame.statusBuildupValue > 0 ? 0.98 : 0,
         frame.statusBuildupThresholdReached ? 'signal' : 'accent',
-        0.2,
+        0,
+        0.92,
       ),
-      ...Array.from({ length: 4 }, (_, index) =>
-        line(241 + index * 59, 321, 241 + index * 59, 339, 0.82, 'muted', 3),
-      ),
-      line(418, 315, 418, 345, 0.96, 'signal', 5),
-      circle(418, 330, 20 + thresholdPulse * 30, thresholdPulse, 'signal', 7, 0.06),
-      circle(
-        frame.player.x,
-        frame.player.y - 34,
-        42 + pulse(frame.time * 2.4) * 7,
-        effectOpacity,
+      path('M 450 87 L 465 96 L 461 114 L 448 122 L 438 111 L 440 94 Z', 0.94, 'muted', 0, 0.86),
+      path(
+        'M 449 95 L 455 103 L 446 114 M 455 103 L 461 100',
+        frame.statusBuildupThresholdReached ? 0.98 : 0.68,
         'signal',
-        8,
-        0.08,
-      ),
-      ...Array.from({ length: 5 }, (_, index) => {
-        const angle = (Math.PI * 2 * index) / 5 + frame.time;
-        const x = frame.player.x + Math.cos(angle) * 56;
-        const y = frame.player.y - 34 + Math.sin(angle) * 34;
-        return path(
-          `M ${x - 8} ${y} L ${x} ${y - 8} L ${x + 8} ${y} L ${x} ${y + 8} Z`,
-          effectOpacity,
-          'signal',
-          4,
-          0.14,
-        );
-      }),
-      circle(
-        frame.player.x,
-        frame.player.y - 34,
-        54,
-        frame.statusBuildupImmune ? 0.82 : 0,
-        'safe',
-        7,
-        0.03,
-        '9 7',
-      ),
-      circle(
-        frame.player.x,
-        frame.player.y - 34,
-        32 + ignoredPulse * 74,
-        ignoredPulse,
-        'safe',
-        9,
-        0.03,
+        3,
       ),
       path(
-        `M ${frame.player.x - 34} ${frame.player.y - 112} L ${frame.player.x} ${frame.player.y - 132} L ${frame.player.x + 34} ${frame.player.y - 112}`,
-        immunityProgress,
+        `M ${frame.boss.x - 23} ${frame.boss.y + 17} Q ${frame.boss.x + 43} ${frame.boss.y + 130} ${frame.player.x - 34} ${frame.player.y - 41} L ${frame.player.x - 16} ${frame.player.y - 45} Q ${frame.boss.x + 54} ${frame.boss.y + 113} ${frame.boss.x - 13} ${frame.boss.y + 16} Z`,
+        contactPulse * 0.72,
+        'signal',
+        0,
+        0.68,
+      ),
+      path(
+        `M ${frame.player.x - 52} ${frame.player.y - 56} L ${frame.player.x - 26} ${frame.player.y - 59} L ${frame.player.x - 23} ${frame.player.y - 20} L ${frame.player.x - 48} ${frame.player.y - 17} Z`,
+        effectOpacity,
+        'signal',
+        0,
+        0.92,
+      ),
+      path(
+        `M ${frame.player.x + 52} ${frame.player.y - 56} L ${frame.player.x + 26} ${frame.player.y - 59} L ${frame.player.x + 23} ${frame.player.y - 20} L ${frame.player.x + 48} ${frame.player.y - 17} Z`,
+        effectOpacity,
+        'signal',
+        0,
+        0.92,
+      ),
+      path(
+        `M ${frame.player.x - 43} ${frame.player.y - 47} L ${frame.player.x - 32} ${frame.player.y - 29} M ${frame.player.x + 43} ${frame.player.y - 47} L ${frame.player.x + 32} ${frame.player.y - 29}`,
+        effectOpacity,
+        'muted',
+        4,
+      ),
+      path(
+        `M ${shieldX} ${shieldY - 32} L ${shieldX + 28} ${shieldY - 17} L ${shieldX + 24} ${shieldY + 19} L ${shieldX} ${shieldY + 35} L ${shieldX - 24} ${shieldY + 19} L ${shieldX - 28} ${shieldY - 17} Z`,
+        shieldOpacity,
         'safe',
-        7,
+        0,
+        0.88,
+      ),
+      path(
+        `M ${shieldX - 11} ${shieldY - 1} L ${shieldX - 2} ${shieldY + 9} L ${shieldX + 13} ${shieldY - 13}`,
+        shieldOpacity,
+        'muted',
+        5,
+      ),
+      path(
+        `M ${shieldX - 53} ${shieldY - 6} L ${shieldX - 29} ${shieldY - 16} L ${shieldX - 29} ${shieldY + 4} Z`,
+        ignoredPulse * 0.9,
+        'signal',
+        0,
+        0.9,
       ),
     ];
   }
@@ -11336,7 +11341,8 @@ export function blueprintFrame(id, time) {
       (spec.mode === 'resource-steal' ||
       spec.mode === 'ability-lock' ||
       spec.mode === 'maximum-health-reduction' ||
-      spec.mode === 'instant-kill'
+      spec.mode === 'instant-kill' ||
+      spec.mode === 'status-buildup'
         ? 55
         : spec.mode === 'directional-shield' ||
             spec.mode === 'damage-type-resistance' ||

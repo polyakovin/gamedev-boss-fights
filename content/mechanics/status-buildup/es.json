@@ -19,7 +19,7 @@
     "phaseDescriptions": [
       "Tavi entra en el campo radial de Kern y recibe 38 puntos a los 0,72 s. Salir detiene la exposición, pero la barra espera hasta 1,08 s antes de bajar a 14 en 1,72 s, haciendo visibles por separado la gracia y la recuperación.",
       "Tavi vuelve antes de que desaparezca el resto. Los contactos de 2,14 y 2,60 s llevan la misma barra a 55 y 100. El cruce reserva un solo efecto; el bloqueo rúnico dura de 2,72 a 3,72 s y la salud común sigue siendo otro sistema.",
-      "Al terminar el efecto, la barra vuelve a cero y un anillo de inmunidad dura hasta 4,42 s. Un contacto dentro de esa ventana se ignora. Tavi sale y todo vuelve al estado limpio después de 5,20 s."
+      "Al terminar el efecto, la barra vuelve a cero y un escudo sólido señala la inmunidad hasta 4,42 s. Un contacto mientras está presente se ignora. Tavi sale y todo vuelve al estado limpio después de 5,20 s."
     ],
     "boss": "Jefe",
     "player": "Jugador",
@@ -27,7 +27,7 @@
     "locked": "La fuente, cantidad, comparación del umbral, retraso y ritmo de decaimiento, resistencia, efecto, duración, limpieza, inmunidad y reaplicación pertenecen al encuentro",
     "safe": "Muestra acumulación, umbral, dirección del decaimiento, efecto, limpieza e inmunidad con formas y estados distintos, no solo con color",
     "reducedMotion": "Con movimiento reducido no hay reproducción automática. Recorre 0,72, 1,08, 1,72, 2,14, 2,60, 2,72, 3,72, 4,42 y 5,20 s para revisar exposición, decaimiento, umbral, efecto, inmunidad y reinicio.",
-    "diagramDescription": "Kern ocupa un campo rúnico radial discontinuo mientras Tavi entra y sale. Una barra segmentada sube, decae parcialmente y se llena con dos pulsos cercanos. En el umbral, fragmentos rúnicos rodean a Tavi; después la barra se vacía y un anillo separado marca la inmunidad temporal."
+    "diagramDescription": "Cuatro piedras rúnicas delimitan el campo lleno de Kern, al que Tavi entra y del que sale. La barra continua superior sube con el contacto, decae parcialmente fuera y alcanza el umbral tras dos contactos más. Unos grilletes de piedra junto a Tavi muestran un único efecto. Después la barra se vacía y un escudo sólido indica inmunidad breve y bloquea otro contacto."
   },
   "steps": [
     {
