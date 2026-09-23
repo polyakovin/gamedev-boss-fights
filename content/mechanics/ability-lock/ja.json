@@ -1,0 +1,142 @@
+{
+  "title": "アビリティ／回復ロック",
+  "subtitle": "操作全体を壊さず、一つの動詞だけを一時停止する",
+  "variant": "予告 · 封印 · 拒否 · 復帰",
+  "summary": "印の攻撃は指定された一つの行動だけを一時的に拒否し、移動と他の手段は残す。",
+  "overview": "アビリティロックは回復、詠唱、防御、ダッシュなど特定の行動の可否を変える。公平な実装は発生源、対象、開始、残り時間、拒否入力、復帰を示し、無関係な行動を通常どおり保つ。",
+  "learning": "対象、付与イベント、時間、更新と重複、耐性と解除、入力バッファ、コスト、キャンセル、フェーズと死亡での持続、通信権限、UI、同時刻の順序を定義する。",
+  "category": "状態・リソース・スケーリング",
+  "readTime": "9分",
+  "demo": {
+    "title": "Kern の最初の回復封印を避け、二回目を受けてロック中と使用可能な行動を試す",
+    "timeline": "アビリティロックのタイムライン",
+    "step": "行動の可否状態",
+    "phaseNames": [
+      "対象行動を予告し回避を示す",
+      "一つの時間制ロックで回復だけを拒否する",
+      "攻撃を残し、終了後に再び回復する"
+    ],
+    "phaseDescriptions": [
+      "0.30秒に半径96の封印を予告。Tavi は0.98秒までに離れ、20回復して体力55から75になる。",
+      "1.90秒に再予告し2.66秒に命中。20ダメージと4.28秒までの回復ロックを付与し、3.02秒の回復は消費なしで拒否される。",
+      "移動は常に可能で3.75秒の剣攻撃も成功する。ルーンが消え、4.86秒までに同じ回復が55から75へ戻す。"
+    ],
+    "boss": "ボス",
+    "player": "プレイヤー",
+    "danger": "解決した封印との接触だけが状態を付与し、命中、ロック、拒否、他行動、終了、再回復は別イベント",
+    "locked": "発生源、動詞、状態 id、開始終了 tick、更新、コスト、バッファ、解除、耐性、持続、権限は戦闘ロジックが持つ",
+    "safe": "対象行動と残り時間を示し、拒否理由と使用可能な行動を色以外でも伝える",
+    "reducedMotion": "視差軽減では自動再生しない。0.30、0.98、1.38、2.66、3.02、3.75、4.28、4.86、5.36秒を確認する。",
+    "diagramDescription": "Kern の橙色六角封印は一度目に外れ、緑の回復が成功する。二度目は回復アイコンを斜線と六つのルーンで封じるが、剣は使え、終了後に回復が戻る。"
+  },
+  "steps": [
+    {
+      "title": "どの行動を、どのイベントがロックするか？",
+      "body": "入力全体ではなく能力タグを使い、一度の接触から安定した発生源と終了 tick を持つ状態を一つ作る。"
+    },
+    {
+      "title": "ロック中の入力をどう処理するか？",
+      "body": "リソース消費やクールダウン開始前に理由を返し、終了までバッファするか決める。"
+    },
+    {
+      "title": "どう決定的に終了するか？",
+      "body": "時間、解除、更新、重複、フェーズ、協力権限、終了と入力が同 tick の順序を定義する。"
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "汎用沈黙アイコンで対象操作が不明",
+      "body": "正確な行動を印し、他の表示を通常に保ち、使える応答を実演する。"
+    },
+    {
+      "title": "拒否してもリソースを消費する",
+      "body": "支払い前に可否を調べ、連打、長押し、バッファ入力をテストする。"
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "最小限の能力をロックする",
+      "body": "回復や一系統だけなら、全面停止より主体性を残せる。"
+    },
+    {
+      "title": "機会に対して時間を調整する",
+      "body": "秒数ではなく失われる回復・移動機会を数える。"
+    },
+    {
+      "title": "状態と入力を一致させる",
+      "body": "UI、入力、アニメ、支払い、通信が同じ可否照会を使う。"
+    },
+    {
+      "title": "付与と拒否を計測する",
+      "body": "発生源、対象、時間、誤消費、解除、死亡、終了後の初回成功を記録する。"
+    }
+  ],
+  "story": {
+    "title": "Kern は Tavi の回復ルーンだけを封じる",
+    "body": "六角印は緑の印だけを消す。Tavi は六つのルーンが消えるまで走り剣を振り、最後に回復が戻る。"
+  },
+  "adaptation": {
+    "title": "対象と残り時間を重ねて伝える",
+    "body": "アイコン、斜線、分割表示、文字、音、振動を組み合わせ、長い予告、短いロック、音声理由を用意する。"
+  },
+  "distinction": {
+    "title": "使用不可は、資源不足やスタンではない",
+    "body": "資源と再使用時間は能力自身、スタンは広い操作を奪う。ロックは準備済みでも一つの動詞を拒む外部規則である。"
+  },
+  "lensNotes": [
+    {
+      "id": "progress-clarity",
+      "body": "対象、残り時間、拒否、復帰を別々に読める。"
+    },
+    {
+      "id": "counterplay",
+      "body": "発生源を避け、解除し、他行動を続けられる。"
+    },
+    {
+      "id": "rule-exception",
+      "body": "バッファ、進行中の行動、再生、吸収、消耗品、フェーズには明示的な例外が要る。"
+    },
+    {
+      "id": "risk-reward",
+      "body": "欲張ると現在体力だけでなく次の回復機会を失う。"
+    },
+    {
+      "id": "telegraphing",
+      "body": "一貫した印と行動記号が通常ダメージと区別する。"
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "Terraria",
+      "boss": "Moon Lord",
+      "screenshot": "https://i.ytimg.com/vi/W5NUXcvW_G8/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=W5NUXcvW_G8&t=1s",
+      "video": "https://www.youtube.com/watch?v=W5NUXcvW_G8&t=1s",
+      "videoDurationSeconds": 35,
+      "body": "Moon Bite は武器のライフスティールだけを止め、他の再生は残すため、狭い対象を明示する必要がある。"
+    },
+    {
+      "dimension": "3D",
+      "game": "Sekiro: Shadows Die Twice",
+      "boss": "Great Shinobi Owl",
+      "screenshot": "https://i.ytimg.com/vi/FPYv1C5OUEw/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=FPYv1C5OUEw&t=3s",
+      "video": "https://www.youtube.com/watch?v=FPYv1C5OUEw&t=3s",
+      "videoDurationSeconds": 14,
+      "body": "Owl の緑の煙は Healing Gourd を一時停止するが、剣、防御、移動は残る。"
+    },
+    {
+      "dimension": "2D",
+      "game": "Hollow Knight: Silksong",
+      "boss": "Groal the Great",
+      "screenshot": "https://i.ytimg.com/vi/3MSBlnkdHJw/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=3MSBlnkdHJw&t=240s",
+      "video": "https://www.youtube.com/watch?v=3MSBlnkdHJw&t=240s",
+      "videoDurationSeconds": 468,
+      "body": "Groal の感染床と幼虫は Bind を無効にする。空間的原因を示し、Wreath of Purity を事前の例外にする。"
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

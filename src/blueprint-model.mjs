@@ -1296,6 +1296,33 @@ const SPECS = {
     damageApplied: 20,
     currentHealthAfter: 60,
   },
+  'ability-lock': {
+    mode: 'ability-lock',
+    boss: [300, 375],
+    player: [300, 635],
+    target: [455, 720],
+    arena: [55, 310, 450, 570],
+    sealCenter: [300, 635],
+    safePoint: [455, 720],
+    sealRadius: 96,
+    firstTelegraph: [0.3, 0.94],
+    firstEscape: [0.48, 0.86],
+    firstResolveAt: 0.98,
+    firstHeal: [1.06, 1.38],
+    return: [1.42, 1.74],
+    secondTelegraph: [1.9, 2.56],
+    hitAt: 2.66,
+    hitWindow: [2.56, 2.78],
+    lockEndsAt: 4.28,
+    rejectedHeal: [3.02, 3.42],
+    swordProof: [3.56, 3.94],
+    restoredHeal: [4.42, 4.86],
+    settleAt: 5.04,
+    resetAt: 5.36,
+    healthBefore: 55,
+    healAmount: 20,
+    hitDamage: 20,
+  },
   'wide-swing': { mode: 'arc', boss: [280, 310], player: [410, 470], target: [470, 650] },
   lunge: { mode: 'lunge', boss: [170, 290], player: [390, 590], target: [470, 660] },
   grab: { mode: 'grab', boss: [280, 300], player: [390, 485], target: [470, 610] },
@@ -2359,6 +2386,66 @@ const maximumHealthValuesAt = (spec, time) => {
     current: mix(spec.maxHealthBefore, spec.currentHealthBefore, reset),
     maximum: spec.maxHealthBefore,
   };
+};
+
+export function abilityLockState(time) {
+  const spec = SPECS['ability-lock'];
+  const t = localTime(time);
+  if (t < spec.firstTelegraph[0]) return 'ready';
+  if (t < spec.firstResolveAt) return 'first-telegraph';
+  if (t < spec.firstHeal[0]) return 'first-avoided';
+  if (t < spec.firstHeal[1]) return 'healing-allowed';
+  if (t < spec.secondTelegraph[0]) return 'repositioning';
+  if (t < spec.hitAt) return 'second-telegraph';
+  if (t < spec.rejectedHeal[0]) return 'healing-locked';
+  if (t < spec.rejectedHeal[1]) return 'healing-rejected';
+  if (t < spec.swordProof[1]) return 'other-actions-available';
+  if (t < spec.lockEndsAt) return 'lock-countdown';
+  if (t < spec.restoredHeal[0]) return 'lock-expired';
+  if (t < spec.restoredHeal[1]) return 'healing-restored';
+  if (t < spec.resetAt) return 'recovered';
+  return 'reset';
+}
+
+export function abilityLockResolve({
+  locked = false,
+  ability = 'heal',
+  requestedAmount = 20,
+} = {}) {
+  const normalizedAbility = String(ability);
+  const amount = Math.max(0, Number(requestedAmount) || 0);
+  const blocked = locked && normalizedAbility === 'heal';
+  return Object.freeze({
+    ability: normalizedAbility,
+    allowed: !blocked,
+    requestedAmount: amount,
+    appliedAmount: blocked ? 0 : normalizedAbility === 'heal' ? amount : 0,
+    reason: blocked ? 'healing-locked' : 'allowed',
+  });
+}
+
+const abilityLockHealthAt = (spec, time) => {
+  if (time < spec.firstHeal[0]) return spec.healthBefore;
+  if (time < spec.firstHeal[1])
+    return mix(
+      spec.healthBefore,
+      spec.healthBefore + spec.healAmount,
+      smooth((time - spec.firstHeal[0]) / (spec.firstHeal[1] - spec.firstHeal[0])),
+    );
+  if (time < spec.hitAt) return spec.healthBefore + spec.healAmount;
+  if (time < spec.restoredHeal[0]) return spec.healthBefore;
+  if (time < spec.restoredHeal[1])
+    return mix(
+      spec.healthBefore,
+      spec.healthBefore + spec.healAmount,
+      smooth((time - spec.restoredHeal[0]) / (spec.restoredHeal[1] - spec.restoredHeal[0])),
+    );
+  if (time < spec.settleAt) return spec.healthBefore + spec.healAmount;
+  return mix(
+    spec.healthBefore + spec.healAmount,
+    spec.healthBefore,
+    smooth((time - spec.settleAt) / (spec.resetAt - spec.settleAt)),
+  );
 };
 
 const projectileRallyLegAt = (spec, time) => {
@@ -5780,6 +5867,122 @@ function primitivesFor(spec, frame) {
       ),
     ];
   }
+  if (mode === 'ability-lock') {
+    const center = point(spec.sealCenter);
+    const firstTelegraph = frame.time >= spec.firstTelegraph[0] && frame.time < spec.firstResolveAt;
+    const secondTelegraph = frame.time >= spec.secondTelegraph[0] && frame.time < spec.hitAt;
+    const telegraph = firstTelegraph || secondTelegraph;
+    const telegraphStart = firstTelegraph ? spec.firstTelegraph[0] : spec.secondTelegraph[0];
+    const telegraphEnd = firstTelegraph ? spec.firstResolveAt : spec.hitAt;
+    const telegraphProgress = telegraph
+      ? clamp((frame.time - telegraphStart) / (telegraphEnd - telegraphStart))
+      : 0;
+    const hitPulse = strikePulse(frame.time, spec.hitAt, 0.46);
+    const firstHealPulse = pulse(
+      smooth((frame.time - spec.firstHeal[0]) / (spec.firstHeal[1] - spec.firstHeal[0])),
+    );
+    const restoredHealPulse = pulse(
+      smooth((frame.time - spec.restoredHeal[0]) / (spec.restoredHeal[1] - spec.restoredHeal[0])),
+    );
+    const rejectPulse = pulse(
+      smooth((frame.time - spec.rejectedHeal[0]) / (spec.rejectedHeal[1] - spec.rejectedHeal[0])),
+    );
+    const healPulse = Math.max(firstHealPulse, restoredHealPulse);
+    const healthWidth = 236 * (frame.abilityLockCurrentHealth / 100);
+    const badgeX = frame.player.x - 68;
+    const badgeY = frame.player.y - 132;
+    return [
+      rect(...spec.arena, 0.52, 'muted', 0.025),
+      rect(178, 318, 244, 24, 0.74, 'muted', 0.035),
+      rect(182, 322, healthWidth, 16, 0.96, 'safe', 0.2),
+      line(182 + healthWidth, 314, 182 + healthWidth, 346, 0.78, 'safe', 4),
+      circle(
+        center.x,
+        center.y,
+        spec.sealRadius,
+        telegraph ? 0.82 : hitPulse * 0.94,
+        'signal',
+        telegraph ? 7 : 11,
+        telegraph ? 0.05 : 0.1,
+        telegraph ? '12 9' : '',
+      ),
+      circle(
+        center.x,
+        center.y,
+        spec.sealRadius * (1 - 0.46 * telegraphProgress),
+        telegraph ? 0.72 : 0,
+        'accent',
+        5,
+        0.02,
+      ),
+      ...Array.from({ length: 6 }, (_, index) => {
+        const angle = (Math.PI * 2 * index) / 6 - Math.PI / 2;
+        const x = center.x + Math.cos(angle) * 116;
+        const y = center.y + Math.sin(angle) * 116;
+        return path(
+          `M ${x - 9} ${y} L ${x} ${y - 9} L ${x + 9} ${y} L ${x} ${y + 9} Z`,
+          telegraph && index / 6 <= telegraphProgress ? 0.96 : 0.2,
+          telegraph && index / 6 <= telegraphProgress ? 'signal' : 'muted',
+          4,
+          0.12,
+        );
+      }),
+      circle(
+        spec.safePoint[0],
+        spec.safePoint[1] - 34,
+        34,
+        frame.abilityLockFirstAvoided ? 0.86 : 0,
+        'safe',
+        6,
+        0.04,
+        '8 7',
+      ),
+      path(
+        `M ${spec.safePoint[0] - 14} ${spec.safePoint[1] - 35} L ${spec.safePoint[0] - 3} ${spec.safePoint[1] - 24} L ${spec.safePoint[0] + 18} ${spec.safePoint[1] - 49}`,
+        frame.abilityLockFirstAvoided ? 0.98 : 0,
+        'safe',
+        6,
+      ),
+      circle(frame.player.x, frame.player.y - 34, 34 + healPulse * 56, healPulse, 'safe', 7, 0.04),
+      circle(badgeX, badgeY, 30, frame.abilityLockHealLocked ? 0.96 : 0.72, 'muted', 5, 0.08),
+      line(badgeX - 13, badgeY, badgeX + 13, badgeY, 0.96, 'safe', 7),
+      line(badgeX, badgeY - 13, badgeX, badgeY + 13, 0.96, 'safe', 7),
+      circle(badgeX, badgeY, 37, frame.abilityLockHealLocked ? 0.96 : 0, 'signal', 7, 0.03, '8 6'),
+      line(
+        badgeX - 24,
+        badgeY - 24,
+        badgeX + 24,
+        badgeY + 24,
+        frame.abilityLockHealLocked ? 0.98 : 0,
+        'signal',
+        8,
+      ),
+      line(badgeX + 24, badgeY - 24, badgeX - 24, badgeY + 24, rejectPulse, 'signal', 8),
+      ...Array.from({ length: 6 }, (_, index) => {
+        const angle = (Math.PI * 2 * index) / 6 - Math.PI / 2;
+        const remainingSegments = Math.ceil(frame.abilityLockSecondsRemaining * 3.7);
+        return circle(
+          frame.player.x + Math.cos(angle) * 72,
+          frame.player.y - 34 + Math.sin(angle) * 56,
+          7,
+          frame.abilityLockHealLocked && index < remainingSegments ? 0.9 : 0.16,
+          frame.abilityLockHealLocked && index < remainingSegments ? 'signal' : 'muted',
+          3,
+          0.08,
+        );
+      }),
+      path(
+        `M ${frame.player.x + 42} ${frame.player.y - 88} L ${frame.player.x + 92} ${frame.player.y - 138} M ${frame.player.x + 76} ${frame.player.y - 130} L ${frame.player.x + 100} ${frame.player.y - 106}`,
+        frame.abilityLockAttackAvailable &&
+          frame.time >= spec.swordProof[0] &&
+          frame.time < spec.swordProof[1]
+          ? 0.96
+          : 0,
+        'accent',
+        8,
+      ),
+    ];
+  }
   if (mode === 'encounter-specific-tool') {
     const pedestal = point(spec.pedestal);
     const spearBase = { x: frame.player.x - 8, y: frame.player.y - 22 };
@@ -7281,6 +7484,12 @@ function pointClearsThreat(spec, frame, value, radius = BLUEPRINT_PLAYER_RADIUS)
       distanceToSegment(value, point(spec.boss), point(spec.attackEnd)) >
         spec.laneHalfWidth + radius
     );
+  if (mode === 'ability-lock')
+    return (
+      !frame.dangerActive ||
+      Math.hypot(value.x - spec.sealCenter[0], value.y - spec.sealCenter[1]) >
+        spec.sealRadius + radius
+    );
   if (mode === 'projectile-rally')
     return (
       !frame.dangerActive ||
@@ -7665,6 +7874,7 @@ export function blueprintFrame(id, time) {
   else if (spec.mode === 'status-buildup') responseProgress = 0;
   else if (spec.mode === 'instant-kill') responseProgress = 0;
   else if (spec.mode === 'maximum-health-reduction') responseProgress = 0;
+  else if (spec.mode === 'ability-lock') responseProgress = 0;
   else if (spec.mode === 'knockback')
     responseProgress = phase === 0 ? 0 : phase === 1 ? smooth(action) : 1;
   else if (spec.mode === 'target-lock')
@@ -8552,6 +8762,23 @@ export function blueprintFrame(id, time) {
       };
     } else player = startPlayer;
   }
+  if (spec.mode === 'ability-lock') {
+    const safe = point(spec.safePoint);
+    if (t < spec.firstEscape[0]) player = startPlayer;
+    else if (t < spec.firstEscape[1]) {
+      const escape = smooth(
+        (t - spec.firstEscape[0]) / (spec.firstEscape[1] - spec.firstEscape[0]),
+      );
+      player = { x: mix(startPlayer.x, safe.x, escape), y: mix(startPlayer.y, safe.y, escape) };
+    } else if (t < spec.return[0]) player = safe;
+    else if (t < spec.return[1]) {
+      const returning = smooth((t - spec.return[0]) / (spec.return[1] - spec.return[0]));
+      player = {
+        x: mix(safe.x, startPlayer.x, returning),
+        y: mix(safe.y, startPlayer.y, returning),
+      };
+    } else player = startPlayer;
+  }
   if (spec.mode === 'rotating' && phase === 0) {
     const initialPosition = polar(boss, 255, Math.PI / 3);
     player = {
@@ -8975,6 +9202,11 @@ export function blueprintFrame(id, time) {
       pulse(smooth((t - spec.firstEscape[0]) / (spec.firstEscape[1] - spec.firstEscape[0]))),
       pulse(smooth((t - spec.return[0]) / (spec.return[1] - spec.return[0]))),
     );
+  if (spec.mode === 'ability-lock')
+    stride = Math.max(
+      pulse(smooth((t - spec.firstEscape[0]) / (spec.firstEscape[1] - spec.firstEscape[0]))),
+      pulse(smooth((t - spec.return[0]) / (spec.return[1] - spec.return[0]))),
+    );
   const bossVisible =
     spec.mode === 'secondary-cues-invisibility'
       ? t < spec.vanishAt
@@ -9241,7 +9473,8 @@ export function blueprintFrame(id, time) {
             spec.mode === 'persistent-progress' ||
             spec.mode === 'status-buildup' ||
             spec.mode === 'instant-kill' ||
-            spec.mode === 'maximum-health-reduction'
+            spec.mode === 'maximum-health-reduction' ||
+            spec.mode === 'ability-lock'
           ? (Math.atan2(boss.y - player.y, boss.x - player.x) * 180) / Math.PI
           : spec.mode === 'active-phase'
             ? (Math.atan2(boss.y - player.y, boss.x - player.x) * 180) / Math.PI
@@ -10291,6 +10524,41 @@ export function blueprintFrame(id, time) {
       strikePulse(t, spec.hitAt, 0.42),
     );
   }
+  if (spec.mode === 'ability-lock') {
+    frame.abilityLockState = abilityLockState(t);
+    frame.abilityLockFirstAvoided = t >= spec.firstResolveAt && t < spec.secondTelegraph[0];
+    frame.abilityLockHealLocked = t >= spec.hitAt && t < spec.lockEndsAt;
+    frame.abilityLockMovementAvailable = true;
+    frame.abilityLockAttackAvailable = true;
+    frame.abilityLockInputAttempts =
+      t >= spec.firstHeal[0]
+        ? 1 + (t >= spec.rejectedHeal[0] ? 1 : 0) + (t >= spec.restoredHeal[0] ? 1 : 0)
+        : 0;
+    frame.abilityLockRejectedInputs = t >= spec.rejectedHeal[0] && t < spec.resetAt ? 1 : 0;
+    frame.abilityLockHealSuccessCount =
+      (t >= spec.firstHeal[1] ? 1 : 0) + (t >= spec.restoredHeal[1] && t < spec.resetAt ? 1 : 0);
+    frame.abilityLockCurrentHealth = abilityLockHealthAt(spec, t);
+    frame.abilityLockHealRequested =
+      (t >= spec.firstHeal[0] && t < spec.firstHeal[1]) ||
+      (t >= spec.rejectedHeal[0] && t < spec.rejectedHeal[1]) ||
+      (t >= spec.restoredHeal[0] && t < spec.restoredHeal[1])
+        ? spec.healAmount
+        : 0;
+    frame.abilityLockHealApplied =
+      frame.abilityLockHealRequested > 0 && !frame.abilityLockHealLocked ? spec.healAmount : 0;
+    frame.abilityLockSecondsRemaining = frame.abilityLockHealLocked
+      ? Math.max(0, spec.lockEndsAt - t)
+      : 0;
+    frame.abilityLockStatusId = frame.abilityLockHealLocked ? 'healing-lock-1' : 'none';
+    frame.dangerActive = t >= spec.hitWindow[0] && t < spec.hitWindow[1];
+    frame.playerMotion.attack = strikePulse(t, (spec.swordProof[0] + spec.swordProof[1]) / 2, 0.42);
+    frame.playerMotion.dodge = strikePulse(t, spec.firstResolveAt, 0.42);
+    frame.playerMotion.impact = strikePulse(t, spec.hitAt, 0.44);
+    frame.bossMotion.attack = Math.max(
+      strikePulse(t, spec.firstResolveAt, 0.36),
+      strikePulse(t, spec.hitAt, 0.42),
+    );
+  }
   if (spec.mode === 'sound-detection') {
     frame.soundDetectionState = soundDetectionState(t);
     frame.soundDetectionHeard = t >= spec.heardAt && t < spec.resetAt;
@@ -10576,7 +10844,8 @@ export function blueprintFrame(id, time) {
       spec.mode === 'persistent-progress' ||
       spec.mode === 'status-buildup' ||
       spec.mode === 'instant-kill' ||
-      spec.mode === 'maximum-health-reduction'
+      spec.mode === 'maximum-health-reduction' ||
+      spec.mode === 'ability-lock'
         ? 92
         : -62),
   };

@@ -1,0 +1,142 @@
+{
+  "title": "能力或治疗封锁",
+  "subtitle": "暂时移除一个动作，而不是让整套操作失灵",
+  "variant": "标记 · 封印 · 拒绝 · 恢复",
+  "summary": "被标记的命中会暂时拒绝一个指定动作，同时保留移动和其余能力。",
+  "overview": "能力封锁改变治疗、施法、防御或冲刺等特定动作的可用性。公平的规则应显示来源、被封动作、起止时间、被拒输入和恢复时刻，其余动作保持正常。",
+  "learning": "明确封锁目标、应用事件、持续时间、叠加与刷新、免疫与净化、输入缓冲、资源费用、动作取消、阶段和死亡持久性、联机权威、界面与同帧顺序。",
+  "category": "状态、资源与成长",
+  "readTime": "9 分钟",
+  "demo": {
+    "title": "躲开 Kern 的第一次治疗封印，承受第二次，再测试封锁与可用动作",
+    "timeline": "能力封锁时间线",
+    "step": "动作可用状态",
+    "phaseNames": [
+      "提示一个动作并证明可以躲避",
+      "施加定时封锁并只拒绝治疗",
+      "保留攻击，到期后再次治疗"
+    ],
+    "phaseDescriptions": [
+      "Kern 在 0.30 秒标记半径 96 的封印。Tavi 在 0.98 秒结算前离开，随后治疗 20 点，生命从 55 升到 75。",
+      "封印在 1.90 秒返回并于 2.66 秒命中，造成 20 伤害并封锁治疗至 4.28 秒。3.02 秒的同一治疗请求被无消耗拒绝。",
+      "移动始终可用，Tavi 在 3.75 秒挥剑。符文逐个熄灭，4.86 秒时同一治疗再次把生命从 55 提升至 75。"
+    ],
+    "boss": "Boss",
+    "player": "玩家",
+    "danger": "只有封印结算时的接触会施加状态；命中、封锁、拒绝、其他动作、到期和再次治疗是独立事件",
+    "locked": "来源、动作、状态 id、起止 tick、刷新、费用、缓冲、净化、免疫、持久性与权威属于战斗逻辑",
+    "safe": "明确显示被封动作与倒计时，解释拒绝原因，并用颜色以外的方式确认其他动作可用",
+    "reducedMotion": "减少动态效果时关闭自动播放。检查 0.30、0.98、1.38、2.66、3.02、3.75、4.28、4.86 与 5.36 秒。",
+    "diagramDescription": "Kern 投射橙色六边形封印。第一次落空，绿色治疗成功；第二次命中后治疗图标被划掉，六枚符文倒计时，但剑仍能攻击，符文消失后治疗恢复。"
+  },
+  "steps": [
+    {
+      "title": "究竟封锁哪个动作，哪个事件拥有状态？",
+      "body": "使用能力标签而非关闭整个输入层；一次接触只创建一个带稳定来源和结束 tick 的状态。"
+    },
+    {
+      "title": "按下被封动作时发生什么？",
+      "body": "在扣除资源或启动冷却前返回明确拒绝原因，并规定输入是否缓冲到期。"
+    },
+    {
+      "title": "封锁如何确定地结束？",
+      "body": "规定时长或净化、刷新叠加、阶段转换、协作权威，以及到期与输入同 tick 时的顺序。"
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "通用沉默图标隐藏了失效的控制",
+      "body": "标记准确动作，让其他图标保持正常，并展示一种仍可用的应对。"
+    },
+    {
+      "title": "被拒输入仍消耗资源",
+      "body": "在付款和启动前检查可用性，并测试重复、长按与缓冲输入。"
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "封锁最小的有效能力",
+      "body": "封锁治疗或一类技能比全面失控更能保留玩家能动性。"
+    },
+    {
+      "title": "按战斗机会调整时长",
+      "body": "统计错过的治疗或机动窗口，而不只看秒数。"
+    },
+    {
+      "title": "统一状态与输入系统",
+      "body": "界面、输入、动画、费用和网络必须查询同一能力。"
+    },
+    {
+      "title": "记录施加与拒绝尝试",
+      "body": "记录来源、动作、持续、错误费用、净化、死亡及到期后的首次成功。"
+    }
+  ],
+  "story": {
+    "title": "Kern 只封印 Tavi 的治疗符文",
+    "body": "六边形标记只划掉绿色符号；Tavi 仍能跑动挥剑，六枚符文熄灭后治疗重新生效。"
+  },
+  "adaptation": {
+    "title": "重复表达动作与剩余时间",
+    "body": "结合图标、斜线、分段、文字、声音和震动，并提供更长预警、更短封锁或语音拒绝原因。"
+  },
+  "distinction": {
+    "title": "动作不可用，不是资源不足或眩晕",
+    "body": "资源与冷却属于技能自身，眩晕移除广泛控制；能力封锁是即使资源就绪也拒绝一个动作的外部规则。"
+  },
+  "lensNotes": [
+    {
+      "id": "progress-clarity",
+      "body": "被封动作、剩余时间、拒绝尝试与恢复时刻分别可读。"
+    },
+    {
+      "id": "counterplay",
+      "body": "玩家能躲开来源、使用净化并继续其他动作。"
+    },
+    {
+      "id": "rule-exception",
+      "body": "缓冲、进行中动作、再生、吸血、消耗品与阶段都需明确例外。"
+    },
+    {
+      "id": "risk-reward",
+      "body": "贪输出可能失去下一次治疗窗口，而不只是当前生命。"
+    },
+    {
+      "id": "telegraphing",
+      "body": "稳定标记和动作符号把封锁与普通伤害区分开。"
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "Terraria",
+      "boss": "Moon Lord",
+      "screenshot": "https://i.ytimg.com/vi/W5NUXcvW_G8/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=W5NUXcvW_G8&t=1s",
+      "video": "https://www.youtube.com/watch?v=W5NUXcvW_G8&t=1s",
+      "videoDurationSeconds": 35,
+      "body": "Moon Bite 只阻止武器吸血，不影响其他生命恢复，因此必须清楚命名这一狭窄类别。"
+    },
+    {
+      "dimension": "3D",
+      "game": "Sekiro: Shadows Die Twice",
+      "boss": "Great Shinobi Owl",
+      "screenshot": "https://i.ytimg.com/vi/FPYv1C5OUEw/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=FPYv1C5OUEw&t=3s",
+      "video": "https://www.youtube.com/watch?v=FPYv1C5OUEw&t=3s",
+      "videoDurationSeconds": 14,
+      "body": "Owl 的绿色反恢复烟雾暂时禁用 Healing Gourd，但剑、防御与移动仍可使用。"
+    },
+    {
+      "dimension": "2D",
+      "game": "Hollow Knight: Silksong",
+      "boss": "Groal the Great",
+      "screenshot": "https://i.ytimg.com/vi/3MSBlnkdHJw/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=3MSBlnkdHJw&t=240s",
+      "video": "https://www.youtube.com/watch?v=3MSBlnkdHJw&t=240s",
+      "videoDurationSeconds": 468,
+      "body": "Groal 场地中的感染池和蛆会禁用 Bind；空间因果必须清楚，Wreath of Purity 提供战前例外。"
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

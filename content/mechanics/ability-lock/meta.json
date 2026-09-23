@@ -1,0 +1,33 @@
+{
+  "id": "ability-lock",
+  "number": 94,
+  "published": true,
+  "sourceLocale": "en",
+  "contentVersion": 1,
+  "animation": "ability-lock",
+  "lenses": ["progress-clarity", "counterplay", "rule-exception", "risk-reward", "telegraphing"],
+  "related": [
+    "status-buildup",
+    "situational-immunity",
+    "encounter-specific-tool",
+    "damage-type-resistance"
+  ],
+  "sources": [
+    {
+      "title": "Boss Up: Boss Battle Design",
+      "url": "https://media.gdcvault.com/gdc2018/presentations/Keren_Itay_BossUp.pdf"
+    },
+    {
+      "title": "Moon Bite — Official Terraria Wiki",
+      "url": "https://terraria.wiki.gg/wiki/Moon_Bite"
+    },
+    {
+      "title": "Great Shinobi Owl strategy — GameWith",
+      "url": "https://gamewith.net/sekiro/article/show/8639"
+    },
+    {
+      "title": "Silksong Bilewater and Groal maggots — PC Gamer",
+      "url": "https://www.pcgamer.com/games/action/silksong-bilewater-groal-maggots/"
+    }
+  ]
+}

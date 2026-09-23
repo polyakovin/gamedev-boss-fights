@@ -1495,9 +1495,9 @@
       "number": 94,
       "translations": {
         "en": {
-          "title": "Ability",
+          "title": "Ability or healing lock",
           "category": "States, resources, and scaling",
-          "summary": "Draft outline for the ability mechanic. Rules, tuning guidance, and examples are still in progress."
+          "summary": "A marked contact temporarily rejects one named action while movement and the rest of the player kit remain available."
         },
         "ru": {
           "title": "Блокировка способности или лечения",

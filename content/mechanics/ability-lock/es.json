@@ -1,0 +1,142 @@
+{
+  "title": "Bloqueo de habilidad o curación",
+  "subtitle": "Quitar temporalmente un verbo sin romper todo el control",
+  "variant": "Marca · sello · rechazo · restauración",
+  "summary": "Un contacto marcado rechaza una acción concreta mientras conserva el movimiento y el resto del kit.",
+  "overview": "Un bloqueo cambia la disponibilidad de un verbo específico: curar, lanzar, bloquear o esquivar. Una versión justa muestra fuente, verbo, inicio, duración, entrada rechazada y restauración sin alterar las demás acciones.",
+  "learning": "Define objetivo, aplicación, duración, acumulación, limpieza, búfer, coste, cancelación, persistencia, autoridad multijugador, interfaz, accesibilidad y orden determinista al expirar.",
+  "category": "Estados, recursos y escalado",
+  "readTime": "9 min",
+  "demo": {
+    "title": "Esquiva el primer sello de Kern, recibe el segundo y prueba acciones bloqueadas y disponibles",
+    "timeline": "Línea temporal del bloqueo",
+    "step": "Estados de disponibilidad",
+    "phaseNames": [
+      "Señalar un verbo y demostrar la evasión",
+      "Aplicar un bloqueo y rechazar solo la curación",
+      "Conservar el ataque, expirar y volver a curar"
+    ],
+    "phaseDescriptions": [
+      "Kern marca un sello de 96 unidades a 0,30 s. Tavi sale antes de 0,98 s y cura 20 puntos, de 55 a 75.",
+      "El sello vuelve a 1,90 s e impacta a 2,66 s: hace 20 de daño y bloquea curar hasta 4,28 s. La petición de 3,02 s se rechaza sin coste.",
+      "Tavi se mueve y ataca a 3,75 s. Las runas se apagan y la misma curación vuelve a subir la vida de 55 a 75 a 4,86 s."
+    ],
+    "boss": "Jefe",
+    "player": "Jugador",
+    "danger": "Solo el contacto con el sello resuelto aplica el estado; golpe, bloqueo, rechazo, otras acciones, expiración y curación son eventos separados",
+    "locked": "Fuente, verbo, id, ticks, renovación, coste, búfer, limpieza, inmunidad, persistencia y autoridad pertenecen a la lógica",
+    "safe": "Nombra el verbo, conserva la cuenta atrás, explica el rechazo y confirma las acciones disponibles sin depender solo del color",
+    "reducedMotion": "Con movimiento reducido se desactiva la reproducción. Revisa 0,30; 0,98; 1,38; 2,66; 3,02; 3,75; 4,28; 4,86 y 5,36 s.",
+    "diagramDescription": "Kern proyecta un sello naranja. El primero falla y la curación verde funciona. El segundo impacta: el icono queda tachado y seis runas cuentan el tiempo, pero la espada sigue funcionando."
+  },
+  "steps": [
+    {
+      "title": "¿Qué verbo se bloquea y qué evento posee el estado?",
+      "body": "Usa etiquetas de capacidad, resuelve un contacto una vez y crea un estado con fuente y tick final estables."
+    },
+    {
+      "title": "¿Qué ocurre al pulsar la acción bloqueada?",
+      "body": "Devuelve una razón antes de gastar recurso o iniciar recarga; decide si la entrada se almacena hasta expirar."
+    },
+    {
+      "title": "¿Cómo termina de forma determinista?",
+      "body": "Fija duración, limpieza, renovación, fases, autoridad cooperativa y orden cuando expiración y entrada coinciden."
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "Un silencio genérico oculta qué control falló",
+      "body": "Marca el verbo exacto y demuestra una respuesta que sigue disponible."
+    },
+    {
+      "title": "La entrada rechazada aún consume recursos",
+      "body": "Comprueba disponibilidad antes del pago y prueba entradas repetidas, mantenidas y almacenadas."
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "Bloquea la capacidad mínima útil",
+      "body": "Curación o una familia de habilidades conserva más agencia que un apagado total."
+    },
+    {
+      "title": "Ajusta duración a las oportunidades",
+      "body": "Cuenta ventanas perdidas, no solo segundos."
+    },
+    {
+      "title": "Unifica estado y entrada",
+      "body": "UI, entrada, animación, pago y red deben consultar la misma capacidad."
+    },
+    {
+      "title": "Registra intentos rechazados",
+      "body": "Mide fuente, verbo, duración, costes erróneos, limpiezas y primer uso tras expirar."
+    }
+  ],
+  "story": {
+    "title": "Kern sella la runa de curación, no todo el kit",
+    "body": "La marca tacha solo el glifo verde; Tavi corre y golpea mientras se apagan seis runas, y después la curación vuelve."
+  },
+  "adaptation": {
+    "title": "Redunda verbo y tiempo",
+    "body": "Combina icono, tachado, segmentos, texto, sonido y vibración; ofrece aviso largo, bloqueo corto o razón hablada."
+  },
+  "distinction": {
+    "title": "Acción no disponible, no recurso vacío ni aturdimiento",
+    "body": "El recurso y la recarga pertenecen a la habilidad; el aturdimiento quita control amplio. El bloqueo es una regla externa sobre un verbo."
+  },
+  "lensNotes": [
+    {
+      "id": "progress-clarity",
+      "body": "Verbo, tiempo, rechazo y restauración son hechos separados."
+    },
+    {
+      "id": "counterplay",
+      "body": "Se puede esquivar, limpiar y seguir usando otras acciones."
+    },
+    {
+      "id": "rule-exception",
+      "body": "Búfer, acciones activas, regeneración, consumibles y fases requieren excepciones."
+    },
+    {
+      "id": "risk-reward",
+      "body": "Arriesgarse puede perder la siguiente ventana de curación."
+    },
+    {
+      "id": "telegraphing",
+      "body": "La marca y el símbolo distinguen el bloqueo del daño normal."
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "Terraria",
+      "boss": "Moon Lord",
+      "screenshot": "https://i.ytimg.com/vi/W5NUXcvW_G8/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=W5NUXcvW_G8&t=1s",
+      "video": "https://www.youtube.com/watch?v=W5NUXcvW_G8&t=1s",
+      "videoDurationSeconds": 35,
+      "body": "Moon Bite impide el robo de vida con armas pero deja otra regeneración; la interfaz debe nombrar esa categoría estrecha."
+    },
+    {
+      "dimension": "3D",
+      "game": "Sekiro: Shadows Die Twice",
+      "boss": "Great Shinobi Owl",
+      "screenshot": "https://i.ytimg.com/vi/FPYv1C5OUEw/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=FPYv1C5OUEw&t=3s",
+      "video": "https://www.youtube.com/watch?v=FPYv1C5OUEw&t=3s",
+      "videoDurationSeconds": 14,
+      "body": "La nube verde de Owl impide temporalmente Healing Gourd, mientras espada, guardia y movimiento siguen disponibles."
+    },
+    {
+      "dimension": "2D",
+      "game": "Hollow Knight: Silksong",
+      "boss": "Groal the Great",
+      "screenshot": "https://i.ytimg.com/vi/3MSBlnkdHJw/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=3MSBlnkdHJw&t=240s",
+      "video": "https://www.youtube.com/watch?v=3MSBlnkdHJw&t=240s",
+      "videoDurationSeconds": 468,
+      "body": "Los charcos y larvas de Groal desactivan Bind; la causa espacial debe ser clara y Wreath of Purity funciona como excepción previa."
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

@@ -43,6 +43,8 @@ import {
   instantKillResolve,
   maximumHealthReductionState,
   maximumHealthReductionResolve,
+  abilityLockState,
+  abilityLockResolve,
   counterStanceOutcome,
   counterStanceState,
   blueprintFrame,
@@ -70,8 +72,8 @@ import {
   renderBlueprintThumbnail,
 } from '../lib/blueprint-view.mjs';
 
-test('all 87 promoted lesson animations have distinct rule modes and complete moving frames', () => {
-  assert.equal(BLUEPRINT_MECHANIC_IDS.length, 87);
+test('all 88 promoted lesson animations have distinct rule modes and complete moving frames', () => {
+  assert.equal(BLUEPRINT_MECHANIC_IDS.length, 88);
   const modes = new Set();
   for (const id of BLUEPRINT_MECHANIC_IDS) {
     for (let time = 0; time <= BLUEPRINT_DURATION; time += 0.1) {
@@ -92,7 +94,7 @@ test('all 87 promoted lesson animations have distinct rule modes and complete mo
           assert.ok(Number.isFinite(value), `${id} has an invalid ${primitive.type}`);
     }
   }
-  assert.equal(modes.size, 87);
+  assert.equal(modes.size, 88);
 });
 
 test('every blueprint exposes signal, committed action, and recovery without player teleports', () => {
@@ -129,7 +131,8 @@ test('every blueprint exposes signal, committed action, and recovery without pla
       id !== 'persistent-progress' &&
       id !== 'status-buildup' &&
       id !== 'instant-kill' &&
-      id !== 'maximum-health-reduction'
+      id !== 'maximum-health-reduction' &&
+      id !== 'ability-lock'
     )
       assert.equal(blueprintFrame(id, 3).dangerActive, true, id);
     assert.equal(blueprintFrame(id, 3).playerSafe, true, id);
@@ -216,6 +219,7 @@ test('every damaging promoted animation derives safety from its own active geome
       id !== 'status-buildup' &&
       id !== 'instant-kill' &&
       id !== 'maximum-health-reduction' &&
+      id !== 'ability-lock' &&
       id !== 'part-break' &&
       id !== 'counter-stance' &&
       id !== 'absorption-power-up' &&
@@ -3181,5 +3185,66 @@ test('maximum health reduction separates damage, the reduced cap, blocked healin
   assert.match(
     renderBlueprintThumbnail(id, 'test-maximum-health-reduction'),
     /data-blueprint-preview="maximum-health-reduction"/,
+  );
+});
+
+test('ability lock rejects healing only while preserving movement and attack', () => {
+  const id = 'ability-lock';
+  assert.deepEqual(
+    [0, 0.5, 1, 1.2, 1.6, 2.1, 2.7, 3.2, 3.7, 4.1, 4.35, 4.6, 5.1, 5.5].map(abilityLockState),
+    [
+      'ready',
+      'first-telegraph',
+      'first-avoided',
+      'healing-allowed',
+      'repositioning',
+      'second-telegraph',
+      'healing-locked',
+      'healing-rejected',
+      'other-actions-available',
+      'lock-countdown',
+      'lock-expired',
+      'healing-restored',
+      'recovered',
+      'reset',
+    ],
+  );
+  assert.deepEqual(abilityLockResolve({ locked: true, ability: 'heal' }), {
+    ability: 'heal',
+    allowed: false,
+    requestedAmount: 20,
+    appliedAmount: 0,
+    reason: 'healing-locked',
+  });
+  assert.equal(abilityLockResolve({ locked: true, ability: 'attack' }).allowed, true);
+  assert.equal(abilityLockResolve({ locked: true, ability: 'move' }).allowed, true);
+  assert.equal(abilityLockResolve({ locked: false, ability: 'heal' }).appliedAmount, 20);
+
+  const avoided = blueprintFrame(id, 1.2);
+  assert.equal(avoided.abilityLockFirstAvoided, true);
+  assert.equal(avoided.abilityLockHealLocked, false);
+  const hit = blueprintFrame(id, 2.66);
+  assert.equal(hit.dangerActive, true);
+  assert.equal(hit.playerSafe, false);
+  assert.equal(blueprintPointSafe(id, 2.66, { x: 455, y: 720 }), true);
+  const rejected = blueprintFrame(id, 3.2);
+  assert.equal(rejected.abilityLockHealLocked, true);
+  assert.equal(rejected.abilityLockCurrentHealth, 55);
+  assert.equal(rejected.abilityLockHealRequested, 20);
+  assert.equal(rejected.abilityLockHealApplied, 0);
+  assert.equal(rejected.abilityLockRejectedInputs, 1);
+  assert.equal(rejected.abilityLockStatusId, 'healing-lock-1');
+  const attack = blueprintFrame(id, 3.7);
+  assert.equal(attack.abilityLockAttackAvailable, true);
+  assert.ok(attack.playerMotion.attack > 0);
+  const restored = blueprintFrame(id, 4.86);
+  assert.equal(restored.abilityLockHealLocked, false);
+  assert.equal(restored.abilityLockCurrentHealth, 75);
+  assert.equal(restored.abilityLockHealSuccessCount, 2);
+  assert.equal(restored.abilityLockStatusId, 'none');
+  assert.deepEqual(blueprintFrame(id, 0).player, blueprintFrame(id, 6).player);
+  assert.match(
+    renderBlueprintThumbnail(id, 'test-ability-lock'),
+    /data-blueprint-preview="ability-lock"/,
   );
 });

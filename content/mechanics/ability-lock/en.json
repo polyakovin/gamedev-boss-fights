@@ -1,0 +1,142 @@
+{
+  "title": "Ability or healing lock",
+  "subtitle": "Temporarily remove one verb without making the whole control set feel broken",
+  "variant": "Mark · seal · reject · restore",
+  "summary": "A marked contact temporarily rejects one named action while movement and the rest of the player kit remain available.",
+  "overview": "An ability lock changes the availability of a specific player verb: healing, casting, guarding, dashing, or another named action. A fair lock identifies the source, affected verb, start, remaining duration, rejected input, and restoration moment while unrelated actions keep their normal behavior.",
+  "learning": "Define the lock target, application event, duration, stacking and refresh policy, immunity and cleanse rules, input buffering, resource cost, action cancellation, phase and death persistence, multiplayer authority, interface feedback, accessibility alternatives, and deterministic tests for simultaneous expiry and input.",
+  "category": "States, resources, and scaling",
+  "readTime": "9 min",
+  "demo": {
+    "title": "Dodge Kern's first healing seal, take the second, then test locked and available actions",
+    "timeline": "Ability-lock timeline",
+    "step": "Verb availability states",
+    "phaseNames": [
+      "Signal one affected verb and prove avoidance",
+      "Apply one timed lock and reject only healing",
+      "Keep attack available, expire the lock, and heal again"
+    ],
+    "phaseDescriptions": [
+      "Kern marks a fixed 96-unit seal at 0.30 s. Tavi clears it before the 0.98 s resolve, then a 20-point heal succeeds from 55 to 75. The first pass teaches both the danger geometry and the green healing icon before any input is denied.",
+      "The seal returns at 1.90 s and hits at 2.66 s, dealing 20 damage and creating one authoritative healing-lock status until 4.28 s. At 3.02 s the same 20-point heal request is shown, rejected, and charged zero resource; health stays at 55.",
+      "Movement remains available throughout, and Tavi's sword attack at 3.75 s proves the lock is scoped to healing. Segmented runes count down the remaining duration. After expiry, the same heal succeeds from 55 to 75 by 4.86 s before the loop resets."
+    ],
+    "boss": "Boss",
+    "player": "Player",
+    "danger": "Only contact with the resolved seal applies the status; the hit, status application, rejected heal, other actions, expiry, and later successful heal are separate events",
+    "locked": "Source id, target verb, status id, start and end ticks, refresh or stack rule, cost policy, input buffer, cleanse, immunity, persistence, and authority belong to encounter logic",
+    "safe": "Name and depict the affected verb, retain a visible countdown, explain why an input was rejected, and confirm still-available actions with more than color alone",
+    "reducedMotion": "Autoplay is disabled by reduced motion. Scrub across 0.30, 0.86, 0.98, 1.06, 1.38, 1.90, 2.66, 3.02, 3.42, 3.75, 4.28, 4.42, 4.86, and 5.36 seconds to inspect avoidance, application, rejection, available attack, expiry, restored healing, and reset.",
+    "diagramDescription": "Kern projects a hexagonal orange seal around Tavi's initial position. The first seal misses and a green healing pulse fills the health track. The second seal hits; a slashed healing badge and six countdown runes remain beside Tavi. A sword swing still works, the runes expire, and the unslashed healing badge succeeds again."
+  },
+  "steps": [
+    {
+      "title": "Which exact verb is locked, and what event owns the status?",
+      "body": "Use an allowlist or capability tag rather than disabling a whole input layer. Resolve contact once, create one status instance with a stable source and end tick, and specify whether an action already in progress completes, cancels, refunds, or becomes immune to late application."
+    },
+    {
+      "title": "What happens when the player presses the locked action?",
+      "body": "Return a named rejection reason without spending charges, starting cooldown, consuming stamina, or swallowing the input silently unless that cost is an intentional rule. Decide whether the input buffers until expiry, and make the icon, avatar feedback, sound, and text identify the same blocked verb."
+    },
+    {
+      "title": "How does the lock end and remain deterministic?",
+      "body": "Choose fixed duration, cleanse, phase completion, source defeat, or another explicit release. Define refresh, stacking, resistance, save and checkpoint behavior, co-op ownership, host migration, and same-tick ordering when expiry, input, damage, and cleansing arrive together."
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "A generic silence icon hides which control stopped working",
+      "body": "If every ability appears suspect, players test controls instead of reading the fight. Mark the exact verb, leave unaffected controls visually normal, and demonstrate at least one still-available response during the lock."
+    },
+    {
+      "title": "Rejected input still spends the resource or begins cooldown",
+      "body": "That converts a readable temporary restriction into an invisible double penalty. Validate availability before payment and activation, emit one rejection result, and test repeated inputs, held inputs, buffered inputs, and expiry on the same simulation tick."
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "Lock the smallest useful capability",
+      "body": "Prefer healing, lifesteal, one spell family, or one movement tool over a total control shutdown. A narrow lock changes planning while preserving agency and gives the player meaningful choices during its duration."
+    },
+    {
+      "title": "Tune duration against encounter opportunities",
+      "body": "Measure how many safe healing windows, casts, or mobility checks occur while locked, not duration in isolation. A short seal that covers the only recovery window can be stronger than a long seal during downtime."
+    },
+    {
+      "title": "Keep status and input systems in agreement",
+      "body": "Expose one capability query to UI, AI assistance, input handling, animation, resource payment, and networking. Duplicate checks create frames where the icon says locked but the action fires, or the action fails after cost is paid."
+    },
+    {
+      "title": "Instrument applications and rejected attempts",
+      "body": "Track source, affected verb, avoid rate, lock uptime, rejected inputs, accidental costs, cleanses, deaths during lock, and first successful use after expiry. This distinguishes a learned planning constraint from an unexplained control failure."
+    }
+  ],
+  "story": {
+    "title": "Kern seals the healing rune, not Tavi's whole kit",
+    "body": "A hexagonal brand crosses out only the green healing glyph. Tavi can still run and swing the sword while six runes extinguish one by one. When the last rune fades, the glyph opens and the same healing spark reaches the health track."
+  },
+  "adaptation": {
+    "title": "Make the affected verb and remaining time redundant",
+    "body": "Combine the verb icon, slash shape, countdown segments, text, distinct audio, and controller feedback. Offer longer warnings, shorter locks, automatic cleanse, no resource loss, simplified status lists, spoken rejection reasons, or a substitute action, and declare those assists before combat."
+  },
+  "distinction": {
+    "title": "Unavailable action, not depleted resource or global stun",
+    "body": "Resource depletion still permits an attempt that fails for insufficient cost, while cooldown schedules the ability's own next use. A stun removes broad control. An ability lock adds an external rule that rejects one named verb even when its resource and cooldown would otherwise allow it."
+  },
+  "lensNotes": [
+    {
+      "id": "progress-clarity",
+      "body": "The affected verb, remaining duration, rejected attempt, and exact restoration moment stay readable as separate facts."
+    },
+    {
+      "id": "counterplay",
+      "body": "The player can avoid the marked source, use an explicit cleanse or immunity where provided, and continue acting with unaffected verbs."
+    },
+    {
+      "id": "rule-exception",
+      "body": "Buffered inputs, actions already in progress, passive regeneration, lifesteal, consumables, revives, and phase transitions need explicit inclusion or exclusion."
+    },
+    {
+      "id": "risk-reward",
+      "body": "Remaining in range for damage risks losing the next recovery opportunity, so greed changes future options rather than only current health."
+    },
+    {
+      "id": "telegraphing",
+      "body": "A stable mark and verb-specific symbol distinguish a capability-locking contact from visually similar attacks that only deal damage."
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "Terraria",
+      "boss": "Moon Lord",
+      "screenshot": "https://i.ytimg.com/vi/W5NUXcvW_G8/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=W5NUXcvW_G8&t=1s",
+      "body": "Moon Bite prevents weapon lifesteal after the Moon Leech tongue connects while leaving other health regeneration intact. The narrow category makes the exception useful: the encounter must identify lifesteal as blocked without implying that every recovery source has failed.",
+      "video": "https://www.youtube.com/watch?v=W5NUXcvW_G8&t=1s",
+      "videoDurationSeconds": 35
+    },
+    {
+      "dimension": "3D",
+      "game": "Sekiro: Shadows Die Twice",
+      "boss": "Great Shinobi Owl",
+      "screenshot": "https://i.ytimg.com/vi/FPYv1C5OUEw/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=FPYv1C5OUEw&t=3s",
+      "body": "Owl throws a small green anti-recovery charm whose cloud temporarily prevents Healing Gourd use. The compact area, persistent status symbol, and rejected gourd attempt connect source to consequence while sword, guard, and movement remain available.",
+      "video": "https://www.youtube.com/watch?v=FPYv1C5OUEw&t=3s",
+      "videoDurationSeconds": 14
+    },
+    {
+      "dimension": "2D",
+      "game": "Hollow Knight: Silksong",
+      "boss": "Groal the Great",
+      "screenshot": "https://i.ytimg.com/vi/3MSBlnkdHJw/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=3MSBlnkdHJw&t=240s",
+      "body": "Infected pools and maggots in Groal's arena can disable Bind healing. Because the restriction comes from arena material rather than a single strike, the status must preserve spatial causality; Wreath of Purity supplies a pre-fight exception instead of making the rule disappear.",
+      "video": "https://www.youtube.com/watch?v=3MSBlnkdHJw&t=240s",
+      "videoDurationSeconds": 468
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

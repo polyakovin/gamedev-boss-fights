@@ -405,9 +405,9 @@ test('volley releases three parallel bolts on one beat and clears its outside ro
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
 });
 
-test('catalog and builder reuse the 87 promoted rule-specific previews', async ({ page }) => {
+test('catalog and builder reuse the 88 promoted rule-specific previews', async ({ page }) => {
   await page.goto('en/');
-  await expect(page.locator('[data-blueprint-preview]')).toHaveCount(87);
+  await expect(page.locator('[data-blueprint-preview]')).toHaveCount(88);
   const catalogLayouts = await page.locator('[data-blueprint-preview]').evaluateAll((previews) =>
     previews.map((preview) => {
       const boss = preview.querySelector('[data-character-art-preview="kern"]');
@@ -431,7 +431,7 @@ test('catalog and builder reuse the 87 promoted rule-specific previews', async (
   expect(new Set(catalogLayouts.map(({ layout }) => layout)).size).toBeGreaterThanOrEqual(18);
 
   await page.goto('en/builder/');
-  await expect(page.locator('[data-blueprint-preview]')).toHaveCount(87);
+  await expect(page.locator('[data-blueprint-preview]')).toHaveCount(88);
   const builderLayouts = await page.locator('[data-blueprint-preview]').evaluateAll((previews) =>
     previews.map((preview) => {
       const boss = preview.querySelector('[data-character-art-preview="kern"]');
@@ -3490,6 +3490,45 @@ test('maximum health reduction shows an avoided cut, a smaller cap, blocked heal
   await expect(widget).toHaveAttribute('data-blueprint-maximum-health-current', '100');
   await expect(widget).toHaveAttribute('data-blueprint-maximum-health-maximum', '100');
   await expect(widget).toHaveAttribute('data-blueprint-maximum-health-restored', 'true');
+  await page.setViewportSize({ width: 375, height: 812 });
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+});
+
+test('ability lock rejects one verb, keeps attack available, and restores healing on expiry', async ({
+  page,
+}) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.goto('en/mechanics/ability-lock/');
+  const widget = page.locator('[data-blueprint-demo]');
+  const timeline = widget.locator('[data-blueprint-timeline]');
+  const seek = (milliseconds) =>
+    timeline.evaluate((element, value) => {
+      element.value = String(value);
+      element.dispatchEvent(new Event('input', { bubbles: true }));
+    }, milliseconds);
+
+  await expect(page.locator('.lesson-title-line h1')).toHaveText('Ability or healing lock');
+  await expect(page.locator('.wip-badge, .draft-profile')).toHaveCount(0);
+  await expect(page.locator('.game-example')).toHaveCount(3);
+  await seek(1200);
+  await expect(widget).toHaveAttribute('data-blueprint-ability-lock-first-avoided', 'true');
+  await expect(widget).toHaveAttribute('data-blueprint-ability-lock-current-health', '63');
+  await seek(2660);
+  await expect(widget).toHaveAttribute('data-blueprint-ability-lock-heal-locked', 'true');
+  await expect(widget).toHaveAttribute('data-blueprint-ability-lock-current-health', '55');
+  await seek(3200);
+  await expect(widget).toHaveAttribute('data-blueprint-ability-lock-heal-requested', '20');
+  await expect(widget).toHaveAttribute('data-blueprint-ability-lock-heal-applied', '0');
+  await expect(widget).toHaveAttribute('data-blueprint-ability-lock-rejected-inputs', '1');
+  await expect(widget).toHaveAttribute('data-blueprint-ability-lock-status-id', 'healing-lock-1');
+  await seek(3700);
+  await expect(widget).toHaveAttribute('data-blueprint-ability-lock-attack-available', 'true');
+  await expect(widget).toHaveAttribute('data-blueprint-ability-lock-movement-available', 'true');
+  await seek(4860);
+  await expect(widget).toHaveAttribute('data-blueprint-ability-lock-heal-locked', 'false');
+  await expect(widget).toHaveAttribute('data-blueprint-ability-lock-current-health', '75');
+  await expect(widget).toHaveAttribute('data-blueprint-ability-lock-heal-success-count', '2');
+  await expect(widget).toHaveAttribute('data-blueprint-ability-lock-status-id', 'none');
   await page.setViewportSize({ width: 375, height: 812 });
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
 });

@@ -473,6 +473,29 @@ export function initializeBlueprint(widget) {
       );
       widget.dataset.blueprintMaximumHealthRestored = String(frame.maximumHealthRestored);
     }
+    if (mechanicId === 'ability-lock') {
+      widget.dataset.blueprintAbilityLock = frame.abilityLockState;
+      widget.dataset.blueprintAbilityLockFirstAvoided = String(frame.abilityLockFirstAvoided);
+      widget.dataset.blueprintAbilityLockHealLocked = String(frame.abilityLockHealLocked);
+      widget.dataset.blueprintAbilityLockMovementAvailable = String(
+        frame.abilityLockMovementAvailable,
+      );
+      widget.dataset.blueprintAbilityLockAttackAvailable = String(frame.abilityLockAttackAvailable);
+      widget.dataset.blueprintAbilityLockInputAttempts = String(frame.abilityLockInputAttempts);
+      widget.dataset.blueprintAbilityLockRejectedInputs = String(frame.abilityLockRejectedInputs);
+      widget.dataset.blueprintAbilityLockHealSuccessCount = String(
+        frame.abilityLockHealSuccessCount,
+      );
+      widget.dataset.blueprintAbilityLockCurrentHealth = String(
+        Math.round(frame.abilityLockCurrentHealth),
+      );
+      widget.dataset.blueprintAbilityLockHealRequested = String(frame.abilityLockHealRequested);
+      widget.dataset.blueprintAbilityLockHealApplied = String(frame.abilityLockHealApplied);
+      widget.dataset.blueprintAbilityLockSecondsRemaining = String(
+        Math.round(frame.abilityLockSecondsRemaining * 100) / 100,
+      );
+      widget.dataset.blueprintAbilityLockStatusId = frame.abilityLockStatusId;
+    }
     boss.setAttribute(
       'transform',
       `translate(${frame.boss.x} ${frame.boss.y}) scale(${frame.bossScale})`,
