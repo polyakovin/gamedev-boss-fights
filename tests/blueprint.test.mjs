@@ -51,6 +51,8 @@ import {
   onHitHealingResolve,
   selfHealCastState,
   selfHealCastResolve,
+  externalHealingSourceState,
+  externalHealingSourceResolve,
   counterStanceOutcome,
   counterStanceState,
   blueprintFrame,
@@ -78,8 +80,8 @@ import {
   renderBlueprintThumbnail,
 } from '../lib/blueprint-view.mjs';
 
-test('all 91 promoted lesson animations have distinct rule modes and complete moving frames', () => {
-  assert.equal(BLUEPRINT_MECHANIC_IDS.length, 91);
+test('all 92 promoted lesson animations have distinct rule modes and complete moving frames', () => {
+  assert.equal(BLUEPRINT_MECHANIC_IDS.length, 92);
   const modes = new Set();
   for (const id of BLUEPRINT_MECHANIC_IDS) {
     for (let time = 0; time <= BLUEPRINT_DURATION; time += 0.1) {
@@ -100,7 +102,7 @@ test('all 91 promoted lesson animations have distinct rule modes and complete mo
           assert.ok(Number.isFinite(value), `${id} has an invalid ${primitive.type}`);
     }
   }
-  assert.equal(modes.size, 91);
+  assert.equal(modes.size, 92);
 });
 
 test('every blueprint exposes signal, committed action, and recovery without player teleports', () => {
@@ -141,7 +143,8 @@ test('every blueprint exposes signal, committed action, and recovery without pla
       id !== 'ability-lock' &&
       id !== 'resource-steal' &&
       id !== 'on-hit-healing' &&
-      id !== 'self-heal-cast'
+      id !== 'self-heal-cast' &&
+      id !== 'external-healing-source'
     )
       assert.equal(blueprintFrame(id, 3).dangerActive, true, id);
     assert.equal(blueprintFrame(id, 3).playerSafe, true, id);
@@ -232,6 +235,7 @@ test('every damaging promoted animation derives safety from its own active geome
       id !== 'resource-steal' &&
       id !== 'on-hit-healing' &&
       id !== 'self-heal-cast' &&
+      id !== 'external-healing-source' &&
       id !== 'part-break' &&
       id !== 'counter-stance' &&
       id !== 'absorption-power-up' &&
@@ -3438,5 +3442,85 @@ test('self-heal cast distinguishes an interruption from one completed heal', () 
   assert.match(
     renderBlueprintThumbnail(id, 'test-self-heal-cast'),
     /data-blueprint-preview="self-heal-cast"/,
+  );
+});
+
+test('external healing sources separate interception from one delivered heal', () => {
+  const id = 'external-healing-source';
+  assert.deepEqual(
+    [0, 0.5, 0.9, 1.55, 2.1, 2.6, 3.5, 4.2, 4.7, 5.2, 5.5].map(externalHealingSourceState),
+    [
+      'ready',
+      'sources-signaled',
+      'first-packet-travelling',
+      'first-source-destroyed',
+      'repositioning',
+      'second-source-signaled',
+      'second-packet-travelling',
+      'packet-delivered',
+      'boss-healed',
+      'recovery',
+      'reset',
+    ],
+  );
+  assert.deepEqual(externalHealingSourceResolve({ sourceActive: true, packetArrived: true }), {
+    healthBefore: 42,
+    healthAfter: 60,
+    requested: 18,
+    applied: 18,
+    sourceActive: true,
+    packetArrived: true,
+    sourceId: 'healing-source-2',
+    eventCount: 1,
+    resultId: 'external-heal-healing-source-2',
+  });
+  assert.equal(
+    externalHealingSourceResolve({ sourceActive: false, packetArrived: true }).applied,
+    0,
+  );
+  assert.equal(
+    externalHealingSourceResolve({ sourceActive: true, packetArrived: false }).eventCount,
+    0,
+  );
+  assert.equal(
+    externalHealingSourceResolve({
+      currentHealth: 94,
+      healAmount: 18,
+      sourceActive: true,
+      packetArrived: true,
+    }).applied,
+    6,
+  );
+  assert.equal(
+    externalHealingSourceResolve({
+      sourceActive: true,
+      packetArrived: true,
+      alreadyResolved: true,
+    }).eventCount,
+    0,
+  );
+
+  const intercepted = blueprintFrame(id, 1.55);
+  assert.equal(intercepted.externalHealingSourceFirstDestroyed, true);
+  assert.equal(intercepted.externalHealingSourceFirstPacketCancelled, true);
+  assert.equal(intercepted.externalHealingSourceBossHealth, 42);
+  assert.equal(intercepted.externalHealingSourceEventCount, 0);
+  assert.equal(intercepted.externalHealingSourceActiveCount, 1);
+  const travelling = blueprintFrame(id, 3.5);
+  assert.equal(travelling.externalHealingSourceSecondPacketActive, true);
+  assert.equal(travelling.externalHealingSourceDelivered, false);
+  const healing = blueprintFrame(id, 4.25);
+  assert.equal(healing.externalHealingSourceDelivered, true);
+  assert.equal(healing.externalHealingSourceHealing, true);
+  assert.equal(healing.externalHealingSourceEventCount, 1);
+  assert.ok(healing.externalHealingSourceBossHealth > 42);
+  const healed = blueprintFrame(id, 4.7);
+  assert.equal(healed.externalHealingSourceBossHealth, 60);
+  assert.equal(healed.externalHealingSourceSourceId, 'healing-source-2');
+  assert.equal(healed.externalHealingSourceResultId, 'external-heal-healing-source-2');
+  assert.deepEqual(blueprintFrame(id, 0).player, blueprintFrame(id, 6).player);
+  assert.match(
+    renderBlueprintThumbnail(id, 'test-external-healing-source'),
+    /data-blueprint-preview="external-healing-source"/,
   );
 });

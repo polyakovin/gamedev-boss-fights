@@ -1,0 +1,138 @@
+{
+  "title": "Fuentes de curación interceptables",
+  "subtitle": "Convierte la recuperación del jefe en un problema externo de prioridad de objetivos",
+  "variant": "Aparición · ruta · intercepción · una entrega",
+  "summary": "Una entidad o recurso separado envía curación al jefe, y destruir la fuente o su proyectil evita esa entrega limitada.",
+  "overview": "Una fuente externa lleva la recuperación fuera del jefe y la coloca en la arena. El jugador debe identificar qué objeto posee la cura, leer su ruta y plazo, y decidir si alejarse del jefe merece conservar el progreso. Cada fuente necesita vida útil, regla de intercepción, evento de entrega, cantidad y reinicio explícitos.",
+  "learning": "Define identidad, aparición, señal, vida de la fuente, propiedad del proyectil, ruta, condición de intercepción, fotograma de entrega, cura solicitada y aplicada, exceso, deduplicación, limpieza, fases, rollback y telemetría que una un source id con un resultado.",
+  "category": "Estados, recursos y escalado",
+  "readTime": "9 min",
+  "demo": {
+    "title": "Destruye una runa antes de que su paquete llegue a Kern y deja que la segunda cure",
+    "timeline": "Cronología de entrega de curación externa",
+    "step": "Señal, intercepción, transferencia y recuperación",
+    "phaseNames": [
+      "Identifica las fuentes de curación",
+      "Intercepta una transferencia",
+      "Resuelve una entrega superviviente"
+    ],
+    "phaseDescriptions": [
+      "A los 0,28 s, dos runas romboidales se encienden y conectan con Kern mientras su vida permanece en 42. Sus cuerpos separados y rutas discontinuas muestran que los objetos de la arena poseen la recuperación pendiente.",
+      "Tavi llega a la runa izquierda y la destruye a los 1,42 s. Su paquete desaparece, quedan una de dos fuentes y Kern conserva 42 de vida.",
+      "La runa derecha vuelve a señalar a los 2,46 s y envía un paquete de 2,90 a 4,08 s. Como sobrevive, se resuelve una cura de 18 y Kern sube de 42 a 60 antes de recuperarse."
+    ],
+    "boss": "Jefe",
+    "player": "Jugador",
+    "danger": "Solo una fuente activa cuyo paquete llega al jefe puede curar; fuentes destruidas, paquetes cancelados y callbacks repetidos aplican cero",
+    "locked": "Source id, vida, ruta, plazo, intercepciones válidas, cantidad, límite, limpieza, cambio de fase, rollback y persistencia pertenecen a la lógica del encuentro",
+    "safe": "Da a cada fuente cuerpo, conexión, movimiento, respuesta al destruirse, pulso de entrega y resultado visible en la vida del jefe",
+    "reducedMotion": "Con movimiento reducido no hay reproducción automática. Revisa 0,28; 0,72; 1,20; 1,42; 1,78; 2,46; 2,90; 4,08; 4,50; 5,08 y 5,36 s.",
+    "diagramDescription": "Dos runas de curación romboidales enlazan con Kern. Tavi corta la izquierda y cancela su paquete; la derecha envía un paquete visible y la vida del jefe sube una vez de 42 a 60."
+  },
+  "steps": [
+    {
+      "title": "¿Qué posee la recuperación?",
+      "body": "Representa al sanador, objeto, proyectil u objetivo como entidad separada con id estable. Muestra su relación con el jefe antes de curar para que la prioridad de objetivo sea legible."
+    },
+    {
+      "title": "¿Dónde puede el jugador interrumpir la entrega?",
+      "body": "Decide si se ataca el cuerpo de la fuente, el paquete viajero o ambos. Ajusta tiempo de viaje, resistencia, distancia y amenazas simultáneas a los verbos que el jugador realmente posee."
+    },
+    {
+      "title": "¿Qué se resuelve en el destino?",
+      "body": "Al llegar, verifica que la fuente siga activa, aplica una cura limitada una vez, registra ids de fuente y resultado y consume o reinicia la fuente. Entregas rechazadas o duplicadas no cambian la vida."
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "El efecto parece venir del jefe",
+      "body": "Sin cuerpo o ruta legibles, la subida de vida parece una autocuración inexplicable. Mantén una conexión visible y muestra que destruir la fuente cancela la transferencia."
+    },
+    {
+      "title": "Cada fuente borra una ventana completa de daño",
+      "body": "Demasiada resistencia, frecuencia o curación convierte la prioridad en limpieza obligatoria. Limita lo restaurado y compara la intercepción con daño esperado, movimiento y exposición."
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "Trata la entrega como transacción con dueño",
+      "body": "Guarda sourceId, packetId, spawnedAt, interceptedAt, arrivedAt, healRequested, healApplied y result. Así una fuente destruida no completa mediante un callback obsoleto y el rollback es determinista."
+    },
+    {
+      "title": "Haz legible la prioridad de objetivos",
+      "body": "Separa las fuentes, limita el ruido simultáneo y señala cuál está activa. Si varias curan, comunica orden, plazos compartidos y si una intercepción parcial sigue importando."
+    },
+    {
+      "title": "Mide el coste de desviarse",
+      "body": "Registra apariciones, tiempo de respuesta, fuentes destruidas, paquetes interceptados, entregas, vida restaurada, daño perdido, distancia, recursos y muertes tras una entrega."
+    }
+  ],
+  "story": {
+    "title": "Tavi corta una de las líneas de vida prestadas de Kern",
+    "body": "Dos piedras despiertan y trazan hilos pálidos hacia las grietas del pecho de Kern. Tavi rompe la runa cercana antes de que salga su luz; la lejana sobrevive y sella parte del elemental con un pulso final."
+  },
+  "adaptation": {
+    "title": "Expón fuente, ruta y plazo por varios canales",
+    "body": "Combina silueta, enlace, movimiento, cadencia, número de fuentes y respuesta de la barra de vida. Ofrece fuentes débiles, paquetes lentos, menos objetivos, ayuda de puntería o aviso de intercepción sin cambiar la regla."
+  },
+  "distinction": {
+    "title": "Un sanador separado, no un lanzamiento del jefe",
+    "body": "La entidad externa posee la entrega y puede atacarse aparte. La autocuración interrumpible pertenece a la acción del jefe; la curación al golpear exige contacto válido con un objetivo."
+  },
+  "lensNotes": [
+    {
+      "id": "progress-clarity",
+      "body": "Número de fuentes, paquete viajero, cambio de vida e id estable muestran exactamente el progreso conservado o restaurado."
+    },
+    {
+      "id": "counterplay",
+      "body": "Destruir una fuente o paquete permite evitar directamente la recuperación antes de resolverla."
+    },
+    {
+      "id": "risk-reward",
+      "body": "Dejar al jefe para interceptar conserva el daño, pero cuesta posición, tiempo y atención."
+    },
+    {
+      "id": "rule-exception",
+      "body": "Fuentes destruidas, llegadas simultáneas, fases, exceso, callbacks duplicados y rollback necesitan resultados explícitos."
+    },
+    {
+      "id": "telegraphing",
+      "body": "Silueta, enlace y paquete móvil deben revelar intención de curar y plazo antes de la entrega."
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "3D",
+      "game": "Genshin Impact",
+      "boss": "Electro Hypostasis",
+      "screenshot": "https://i.ytimg.com/vi/Q1A3BLMg5F4/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=Q1A3BLMg5F4&t=2s",
+      "video": "https://www.youtube.com/watch?v=Q1A3BLMg5F4&t=2s",
+      "videoDurationSeconds": 43,
+      "body": "A los 0:02 aparecen tres Revival Prisms alrededor del núcleo expuesto. El jugador los destruye con reacciones elementales; cada prisma superviviente restaura vida y persiste hasta el próximo intento, convirtiendo daño en prioridad persistente."
+    },
+    {
+      "dimension": "2D",
+      "game": "Terraria",
+      "boss": "Moon Lord",
+      "screenshot": "https://i.ytimg.com/vi/hfXG8H14GNA/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=hfXG8H14GNA&t=31s",
+      "video": "https://www.youtube.com/watch?v=hfXG8H14GNA&t=31s",
+      "videoDurationSeconds": 56,
+      "body": "A los 0:31 la lengua de Moon Lord conecta con el jugador y crea Moon Leech Clots que viajan a su boca. Pueden destruirse en tránsito; cada superviviente cura al jefe, de modo que la ruta legible sostiene la intercepción."
+    },
+    {
+      "dimension": "2D",
+      "game": "The Binding of Isaac: Afterbirth",
+      "boss": "Ultra Greed",
+      "screenshot": "https://i.ytimg.com/vi/h804IUhQunI/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=h804IUhQunI&t=30s",
+      "video": "https://www.youtube.com/watch?v=h804IUhQunI&t=30s",
+      "videoDurationSeconds": 49,
+      "body": "A los 0:30 Ultra Greed libera una ola de Heart Coins. Cada moneda es un objetivo destructible que lo cura si sobrevive, obligando a retargetear sin perder de vista al jefe ni al resto de la ola."
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

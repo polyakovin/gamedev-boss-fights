@@ -1,0 +1,134 @@
+{
+  "title": "रोके जा सकने वाले बाहरी उपचार स्रोत",
+  "subtitle": "बॉस की रिकवरी को बाहरी लक्ष्य-प्राथमिकता की समस्या बनाएँ",
+  "variant": "उत्पत्ति · मार्ग · रोकना · एक डिलीवरी",
+  "summary": "अलग इकाई या संसाधन बॉस की ओर उपचार भेजता है; स्रोत या उसके पैकेट को नष्ट करना उस सीमित डिलीवरी को रोकता है।",
+  "overview": "बाहरी उपचार स्रोत रिकवरी को बॉस से हटाकर arena में रखता है। खिलाड़ी को जानना है कि उपचार किस वस्तु का है, उसका मार्ग और समय-सीमा पढ़नी है, और तय करना है कि प्रगति बचाने के लिए बॉस से हटना उचित है या नहीं। हर स्रोत की आयु, रोकने का नियम, डिलीवरी घटना, मात्रा और रीसेट नीति स्पष्ट हों।",
+  "learning": "स्रोत पहचान, spawn और संकेत समय, स्रोत स्वास्थ्य, पैकेट स्वामित्व, मार्ग, interception predicate, डिलीवरी फ्रेम, माँगा और लगा उपचार, overheal, duplicate-event सुरक्षा, cleanup, phase transition, rollback और एक source id को एक परिणाम से जोड़ती telemetry परिभाषित करें।",
+  "category": "स्थितियाँ, संसाधन और स्केलिंग",
+  "readTime": "9 मिनट",
+  "demo": {
+    "title": "एक उपचार रून का पैकेट कर्न तक पहुँचने से पहले तोड़ें, फिर दूसरे को पहुँचने दें",
+    "timeline": "बाहरी उपचार डिलीवरी समयरेखा",
+    "step": "संकेत, रोकना, स्थानांतरण और रिकवरी अवस्थाएँ",
+    "phaseNames": ["उपचार स्रोत पहचानें", "एक स्थानांतरण रोकें", "एक बची डिलीवरी लागू करें"],
+    "phaseDescriptions": [
+      "0.28 सेकंड पर दो हीरे जैसे रून जलते और कर्न से जुड़ते हैं, जबकि बॉस स्वास्थ्य 42 रहता है। अलग शरीर और टूटी रेखाएँ दिखाती हैं कि pending recovery arena objects की है।",
+      "टावी बाएँ रून तक पहुँचकर 1.42 सेकंड पर उसे नष्ट करता है। उसका पैकेट मिटता है, स्रोत दो से एक होते हैं और कर्न 42 स्वास्थ्य पर रहता है।",
+      "दायाँ रून 2.46 सेकंड पर फिर संकेत देता और 2.90 से 4.08 तक पैकेट भेजता है। स्रोत बचने के कारण एक 18-बिंदु उपचार लगता है और कर्न 42 से 60 होता है।"
+    ],
+    "boss": "बॉस",
+    "player": "खिलाड़ी",
+    "danger": "केवल सक्रिय स्रोत जिसका पैकेट बॉस तक पहुँचे उपचार करे; नष्ट स्रोत, रद्द पैकेट और दोहराए callback शून्य लगाएँ",
+    "locked": "Source id, स्वास्थ्य, मार्ग, समय-सीमा, मान्य रोक, उपचार मात्रा, cap, cleanup, phase carryover, rollback और persistence encounter logic में रहें",
+    "safe": "हर स्रोत का अलग शरीर, जोड़, यात्रा संकेत, नष्ट होने की प्रतिक्रिया, डिलीवरी pulse और बॉस-स्वास्थ्य परिणाम दिखाएँ",
+    "reducedMotion": "कम गति में ऑटोप्ले बंद है। दोनों परिणाम और रीसेट देखने के लिए 0.28, 0.72, 1.20, 1.42, 1.78, 2.46, 2.90, 4.08, 4.50, 5.08 और 5.36 सेकंड देखें।",
+    "diagramDescription": "दो हीरे जैसे उपचार रून कर्न से जुड़े हैं। टावी बायाँ रून काटकर उसका पैकेट रद्द करता है; दायाँ दृश्य पैकेट भेजता है और बॉस स्वास्थ्य एक बार 42 से 60 होता है।"
+  },
+  "steps": [
+    {
+      "title": "रिकवरी का स्वामी कौन है?",
+      "body": "Healer, pickup, projectile या objective को स्थिर id वाली अलग encounter entity बनाएँ। उपचार से पहले बॉस से उसका संबंध दिखाएँ ताकि लक्ष्य की प्राथमिकता पढ़ी जा सके।"
+    },
+    {
+      "title": "खिलाड़ी डिलीवरी कहाँ रोक सकता है?",
+      "body": "तय करें कि स्रोत का शरीर, चलता पैकेट या दोनों attack हो सकते हैं। यात्रा समय, durability, दूरी और साथ की threats को खिलाड़ी के असली response verbs के अनुसार tune करें।"
+    },
+    {
+      "title": "अंतिम बिंदु पर क्या लागू होता है?",
+      "body": "पहुँचने पर जाँचें कि स्रोत सक्रिय है, एक clamped heal लगाएँ, source और result ids लिखें, फिर स्रोत consume या reset करें। अस्वीकृत और duplicate डिलीवरी स्वास्थ्य न बदलें।"
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "प्रभाव बॉस से आता लगता है",
+      "body": "पठनीय शरीर या मार्ग न हो तो स्वास्थ्य वृद्धि अस्पष्ट self-heal लगती है। दृश्य connection रखें और स्रोत नष्ट होने पर transfer cancel होना साफ दिखाएँ।"
+    },
+    {
+      "title": "हर स्रोत पूरा damage window मिटाता है",
+      "body": "अधिक durability, frequency या healing लक्ष्य-चयन को अनिवार्य सफाई बनाती है। रिकवरी सीमित करें और intercept समय की तुलना अपेक्षित damage, movement cost और exposure से करें।"
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "डिलीवरी को स्वामित्व वाला transaction मानें",
+      "body": "sourceId, packetId, spawnedAt, interceptedAt, arrivedAt, healRequested, healApplied और result रखें। इससे नष्ट स्रोत stale callback से पूरा नहीं होता और rollback deterministic रहता है।"
+    },
+    {
+      "title": "लक्ष्य-प्राथमिकता पठनीय रखें",
+      "body": "स्रोतों को अलग रखें, एक साथ दृश्य शोर सीमित करें और active स्रोत दिखाएँ। कई स्रोत उपचार करें तो क्रम, shared deadlines और partial interception का मूल्य बताएँ।"
+    },
+    {
+      "title": "ध्यान हटाने की कीमत मापें",
+      "body": "Source spawns, पहली प्रतिक्रिया, नष्ट स्रोत, intercepted packets, पूरी deliveries, लौटाया स्वास्थ्य, छोड़ा damage, दूरी, resource खर्च और delivery के बाद deaths मापें।"
+    }
+  ],
+  "story": {
+    "title": "टावी कर्न की उधार ली हुई एक जीवन-रेखा काटता है",
+    "body": "दो खड़े पत्थर जागते और कर्न की छाती की दरारों तक फीके धागे खींचते हैं। टावी पास का रून प्रकाश निकलने से पहले तोड़ता है; दूर का पत्थर बचकर अंतिम pulse से elemental का भाग भर देता है।"
+  },
+  "adaptation": {
+    "title": "स्रोत, मार्ग और समय-सीमा कई माध्यमों से दिखाएँ",
+    "body": "Silhouette, tether, packet motion, cadence, source count और health-bar feedback मिलाएँ। नियम बदले बिना कमजोर स्रोत, धीमे packets, कम targets, aim assist या अलग intercept prompt दें।"
+  },
+  "distinction": {
+    "title": "अलग healer, बॉस का अपना cast नहीं",
+    "body": "बाहरी entity डिलीवरी की स्वामी है और अलग attack हो सकती है। Interruptible self-heal बॉस की क्रिया है, जबकि on-hit healing को लक्ष्य से मान्य contact चाहिए।"
+  },
+  "lensNotes": [
+    {
+      "id": "progress-clarity",
+      "body": "स्रोत संख्या, चलता पैकेट, स्वास्थ्य बदलाव और स्थिर result id बताते हैं कि कितनी प्रगति बची या लौटी।"
+    },
+    {
+      "id": "counterplay",
+      "body": "स्रोत या पैकेट नष्ट करके खिलाड़ी recovery लागू होने से पहले सीधे रोक सकता है।"
+    },
+    {
+      "id": "risk-reward",
+      "body": "Intercept के लिए बॉस छोड़ना damage progress बचाता है, पर position, समय और ध्यान खर्च करता है।"
+    },
+    {
+      "id": "rule-exception",
+      "body": "नष्ट स्रोत, एक साथ arrivals, phase changes, overheal, duplicate callbacks और rollback के स्पष्ट परिणाम चाहिए।"
+    },
+    {
+      "id": "telegraphing",
+      "body": "अलग silhouette, tether और चलता packet delivery से पहले उपचार इरादा और deadline दिखाएँ।"
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "3D",
+      "game": "Genshin Impact",
+      "boss": "Electro Hypostasis",
+      "screenshot": "https://i.ytimg.com/vi/Q1A3BLMg5F4/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=Q1A3BLMg5F4&t=2s",
+      "video": "https://www.youtube.com/watch?v=Q1A3BLMg5F4&t=2s",
+      "videoDurationSeconds": 43,
+      "body": "0:02 पर खुले core के आसपास तीन Revival Prisms आते हैं। खिलाड़ी elemental reactions से उन्हें नष्ट करता है; हर बचा prism स्वास्थ्य लौटाकर अगली कोशिश तक रहता है, damage check को लगातार target priority बनाता है।"
+    },
+    {
+      "dimension": "2D",
+      "game": "Terraria",
+      "boss": "Moon Lord",
+      "screenshot": "https://i.ytimg.com/vi/hfXG8H14GNA/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=hfXG8H14GNA&t=31s",
+      "video": "https://www.youtube.com/watch?v=hfXG8H14GNA&t=31s",
+      "videoDurationSeconds": 56,
+      "body": "0:31 पर Moon Lord की जीभ खिलाड़ी से जुड़कर उसके मुँह की ओर Moon Leech Clots भेजती है। Clots रास्ते में नष्ट हो सकते हैं; हर पहुँचने वाला बॉस को heal करता है, इसलिए साफ route interception को सहारा देता है।"
+    },
+    {
+      "dimension": "2D",
+      "game": "The Binding of Isaac: Afterbirth",
+      "boss": "Ultra Greed",
+      "screenshot": "https://i.ytimg.com/vi/h804IUhQunI/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=h804IUhQunI&t=30s",
+      "video": "https://www.youtube.com/watch?v=h804IUhQunI&t=30s",
+      "videoDurationSeconds": 49,
+      "body": "0:30 पर Ultra Greed Heart Coins की wave छोड़ता है। हर coin अलग destructible target है जो बचने पर उसे heal करता है, इसलिए खिलाड़ी बॉस और बाकी wave देखते हुए जल्दी target बदलता है।"
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

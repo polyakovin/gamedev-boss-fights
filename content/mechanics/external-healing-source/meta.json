@@ -1,0 +1,28 @@
+{
+  "id": "external-healing-source",
+  "number": 98,
+  "published": true,
+  "sourceLocale": "en",
+  "contentVersion": 1,
+  "animation": "external-healing-source",
+  "lenses": ["progress-clarity", "counterplay", "risk-reward", "rule-exception", "telegraphing"],
+  "related": ["summon", "self-heal-cast", "ability-lock", "objective-linked-invulnerability"],
+  "sources": [
+    {
+      "title": "Boss Up: Boss Battle Design",
+      "url": "https://media.gdcvault.com/gdc2018/presentations/Keren_Itay_BossUp.pdf"
+    },
+    {
+      "title": "Electro Hypostasis — Genshin Impact Wiki",
+      "url": "https://genshin-impact.fandom.com/wiki/Electro_Hypostasis"
+    },
+    {
+      "title": "Moon Lord — Official Terraria Wiki",
+      "url": "https://terraria.wiki.gg/wiki/Moon_Lord"
+    },
+    {
+      "title": "Ultra Greed Coin — The Binding of Isaac Wiki",
+      "url": "https://bindingofisaacrebirth.wiki.gg/wiki/Ultra_Greed_Coin"
+    }
+  ]
+}

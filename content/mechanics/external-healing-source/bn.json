@@ -1,0 +1,138 @@
+{
+  "title": "বাধা দেওয়া যায় এমন বাহ্যিক চিকিৎসার উৎস",
+  "subtitle": "বসের পুনরুদ্ধারকে বাইরের লক্ষ্য-অগ্রাধিকারের সমস্যা করুন",
+  "variant": "আবির্ভাব · পথ · বাধা · একবার পৌঁছানো",
+  "summary": "আলাদা সত্তা বা সম্পদ বসের দিকে চিকিৎসা পাঠায়; উৎস বা তার প্যাকেট ধ্বংস করলে সীমিত চিকিৎসাটি পৌঁছায় না।",
+  "overview": "বাহ্যিক চিকিৎসার উৎস পুনরুদ্ধারকে বসের শরীর থেকে arena-তে নিয়ে আসে। খেলোয়াড়কে বুঝতে হয় কোন বস্তু চিকিৎসার মালিক, তার পথ ও সময়সীমা কী, এবং অগ্রগতি বাঁচাতে বস থেকে সরে যাওয়া সার্থক কি না। প্রতিটি উৎসের আয়ু, বাধার নিয়ম, পৌঁছানোর ঘটনা, পরিমাণ ও reset policy স্পষ্ট করুন।",
+  "learning": "উৎসের পরিচয়, spawn ও সংকেত, উৎসের স্বাস্থ্য, packet ownership, পথ, interception predicate, delivery frame, চাওয়া ও প্রয়োগ চিকিৎসা, overheal, duplicate-event রোধ, cleanup, phase transition, rollback এবং একটি source id-কে একটি ফলের সঙ্গে যুক্ত telemetry নির্ধারণ করুন।",
+  "category": "অবস্থা, সম্পদ ও স্কেলিং",
+  "readTime": "৯ মিনিট",
+  "demo": {
+    "title": "একটি চিকিৎসার রুনের প্যাকেট কার্নে পৌঁছানোর আগে ভাঙুন, দ্বিতীয়টিকে পৌঁছাতে দিন",
+    "timeline": "বাহ্যিক চিকিৎসা পৌঁছানোর সময়রেখা",
+    "step": "সংকেত, বাধা, স্থানান্তর ও পুনরুদ্ধার অবস্থা",
+    "phaseNames": [
+      "চিকিৎসার উৎস শনাক্ত করুন",
+      "একটি স্থানান্তর থামান",
+      "একটি টিকে থাকা ডেলিভারি মেটান"
+    ],
+    "phaseDescriptions": [
+      "০.২৮ সেকেন্ডে দুটি হীরকাকার রুন জ্বলে কার্নের সঙ্গে যুক্ত হয়, কিন্তু বসের স্বাস্থ্য ৪২ থাকে। আলাদা দেহ ও ছেঁড়া পথ দেখায় যে pending recovery arena object-এর।",
+      "টাভি বাঁ দিকের রুনে পৌঁছে ১.৪২ সেকেন্ডে তা ধ্বংস করে। প্যাকেটটি মিলিয়ে যায়, উৎস দুই থেকে এক হয় এবং কার্নের স্বাস্থ্য ৪২ থাকে।",
+      "ডান রুন ২.৪৬ সেকেন্ডে আবার সংকেত দেয় এবং ২.৯০ থেকে ৪.০৮ পর্যন্ত প্যাকেট পাঠায়। উৎসটি টিকে থাকায় একবার ১৮ চিকিৎসা লাগে এবং কার্ন ৪২ থেকে ৬০ হয়।"
+    ],
+    "boss": "বস",
+    "player": "খেলোয়াড়",
+    "danger": "শুধু সক্রিয় উৎসের প্যাকেট বসে পৌঁছালে চিকিৎসা হবে; ধ্বংস উৎস, বাতিল প্যাকেট ও পুনরাবৃত্ত callback শূন্য প্রয়োগ করবে",
+    "locked": "Source id, স্বাস্থ্য, পথ, সময়সীমা, বৈধ বাধা, চিকিৎসার পরিমাণ ও সীমা, cleanup, phase carryover, rollback ও persistence encounter logic-এর অংশ",
+    "safe": "প্রতিটি উৎসের আলাদা দেহ, সংযোগ, চলার সংকেত, ধ্বংসের প্রতিক্রিয়া, পৌঁছানোর pulse এবং বসের স্বাস্থ্য ফল দেখান",
+    "reducedMotion": "কম গতিতে অটোপ্লে বন্ধ। দুই ফল ও reset দেখতে ০.২৮, ০.৭২, ১.২০, ১.৪২, ১.৭৮, ২.৪৬, ২.৯০, ৪.০৮, ৪.৫০, ৫.০৮ ও ৫.৩৬ সেকেন্ড দেখুন।",
+    "diagramDescription": "দুটি হীরকাকার চিকিৎসার রুন কার্নের সঙ্গে যুক্ত। টাভি বাঁ রুন কেটে তার প্যাকেট বাতিল করে; ডান রুন দৃশ্যমান প্যাকেট পাঠায় এবং বসের স্বাস্থ্য একবার ৪২ থেকে ৬০ হয়।"
+  },
+  "steps": [
+    {
+      "title": "পুনরুদ্ধারের মালিক কে?",
+      "body": "Healer, pickup, projectile বা objective-কে স্থির id-সহ আলাদা encounter entity করুন। চিকিৎসার আগে বসের সঙ্গে সম্পর্ক দেখান, যাতে লক্ষ্য-অগ্রাধিকার পড়া যায়।"
+    },
+    {
+      "title": "খেলোয়াড় কোথায় ডেলিভারি থামাবে?",
+      "body": "উৎসের দেহ, চলমান প্যাকেট বা উভয়কেই আক্রমণ করা যাবে কি না ঠিক করুন। ভ্রমণ সময়, durability, দূরত্ব ও পাশাপাশি threat-কে খেলোয়াড়ের সত্যিকারের response verb অনুযায়ী সাজান।"
+    },
+    {
+      "title": "শেষ বিন্দুতে কী মেটানো হবে?",
+      "body": "পৌঁছালে উৎস সক্রিয় কি না যাচাই করুন, একবার সীমাবদ্ধ চিকিৎসা দিন, source ও result id লিখুন, তারপর উৎস consume বা reset করুন। প্রত্যাখ্যাত বা duplicate ডেলিভারি স্বাস্থ্য বদলাবে না।"
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "প্রভাবটি বস থেকেই এসেছে মনে হয়",
+      "body": "পাঠযোগ্য দেহ বা পথ না থাকলে স্বাস্থ্য বৃদ্ধি অজানা self-heal মনে হয়। দৃশ্যমান সংযোগ রাখুন এবং উৎস ধ্বংস হলে transfer বাতিল হওয়া দেখান।"
+    },
+    {
+      "title": "প্রতিটি উৎস পুরো damage window মুছে দেয়",
+      "body": "অতিরিক্ত durability, frequency বা healing লক্ষ্য বাছাইকে বাধ্যতামূলক পরিষ্কার করে। পুনরুদ্ধার সীমিত করুন এবং interception time-কে expected damage, movement cost ও exposure-এর সঙ্গে তুলনা করুন।"
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "ডেলিভারিকে মালিকানাযুক্ত transaction ভাবুন",
+      "body": "sourceId, packetId, spawnedAt, interceptedAt, arrivedAt, healRequested, healApplied ও result রাখুন। এতে ধ্বংস উৎস stale callback দিয়ে শেষ হয় না এবং rollback deterministic থাকে।"
+    },
+    {
+      "title": "লক্ষ্য-অগ্রাধিকার পাঠযোগ্য রাখুন",
+      "body": "উৎসগুলো দূরে রাখুন, একসঙ্গে দৃশ্যমান ভিড় কমান এবং সক্রিয়টি দেখান। একাধিক উৎস চিকিৎসা করলে ক্রম, shared deadline ও partial interception-এর মূল্য জানান।"
+    },
+    {
+      "title": "মনোযোগ সরানোর মূল্য মাপুন",
+      "body": "Source spawn, প্রথম response time, ধ্বংস উৎস, intercepted packet, সম্পূর্ণ delivery, ফেরত স্বাস্থ্য, হারানো damage, পথ, resource spend ও delivery-পরবর্তী মৃত্যু মাপুন।"
+    }
+  ],
+  "story": {
+    "title": "টাভি কার্নের ধার করা একটি জীবনরেখা কেটে দেয়",
+    "body": "দুটি দাঁড়ানো পাথর জেগে কার্নের বুকের ফাটলের দিকে ফ্যাকাশে সুতো টানে। আলো বেরোনোর আগে টাভি কাছের রুন ভাঙে; দূরের পাথর টিকে থেকে শেষ pulse-এ elemental-এর অংশ জোড়ে।"
+  },
+  "adaptation": {
+    "title": "উৎস, পথ ও সময়সীমা একাধিক মাধ্যমে দেখান",
+    "body": "Silhouette, tether, packet motion, cadence, source count ও health-bar feedback একত্র করুন। নিয়ম না বদলে দুর্বল উৎস, ধীর packet, কম target, aim assist বা আলাদা intercept prompt দিন।"
+  },
+  "distinction": {
+    "title": "আলাদা healer, বসের নিজস্ব cast নয়",
+    "body": "বাহ্যিক entity ডেলিভারির মালিক এবং আলাদাভাবে আক্রমণযোগ্য। Interruptible self-heal বসের ক্রিয়ার অংশ; on-hit healing-এর জন্য লক্ষ্যকে বৈধভাবে ছোঁয়া লাগে।"
+  },
+  "lensNotes": [
+    {
+      "id": "progress-clarity",
+      "body": "উৎসের সংখ্যা, চলমান প্যাকেট, স্বাস্থ্য পরিবর্তন ও স্থির result id ঠিক কত অগ্রগতি বাঁচল বা ফিরল তা দেখায়।"
+    },
+    {
+      "id": "counterplay",
+      "body": "উৎস বা প্যাকেট ধ্বংস করে খেলোয়াড় চিকিৎসা মেটার আগেই সরাসরি ঠেকাতে পারে।"
+    },
+    {
+      "id": "risk-reward",
+      "body": "Intercept করতে বস ছাড়া damage progress বাঁচায়, কিন্তু অবস্থান, সময় ও মনোযোগ খরচ করে।"
+    },
+    {
+      "id": "rule-exception",
+      "body": "ধ্বংস উৎস, একই সময়ে পৌঁছানো, phase change, overheal, duplicate callback ও rollback-এর স্পষ্ট ফল চাই।"
+    },
+    {
+      "id": "telegraphing",
+      "body": "আলাদা silhouette, tether ও চলমান packet পৌঁছানোর আগে চিকিৎসার ইচ্ছা ও deadline দেখাবে।"
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "3D",
+      "game": "Genshin Impact",
+      "boss": "Electro Hypostasis",
+      "screenshot": "https://i.ytimg.com/vi/Q1A3BLMg5F4/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=Q1A3BLMg5F4&t=2s",
+      "video": "https://www.youtube.com/watch?v=Q1A3BLMg5F4&t=2s",
+      "videoDurationSeconds": 43,
+      "body": "০:০২-এ খোলা core-এর চারপাশে তিনটি Revival Prisms আসে। খেলোয়াড় elemental reaction দিয়ে ভাঙে; প্রতিটি টিকে থাকা prism স্বাস্থ্য ফিরিয়ে পরের চেষ্টায় থাকে, damage check-কে স্থায়ী target priority করে।"
+    },
+    {
+      "dimension": "2D",
+      "game": "Terraria",
+      "boss": "Moon Lord",
+      "screenshot": "https://i.ytimg.com/vi/hfXG8H14GNA/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=hfXG8H14GNA&t=31s",
+      "video": "https://www.youtube.com/watch?v=hfXG8H14GNA&t=31s",
+      "videoDurationSeconds": 56,
+      "body": "০:৩১-এ Moon Lord-এর জিহ্বা খেলোয়াড়ের সঙ্গে যুক্ত হয়ে মুখের দিকে Moon Leech Clots পাঠায়। পথে ধ্বংস করা যায়; প্রতিটি পৌঁছানো clot বসকে heal করে, তাই পরিষ্কার পথ interception-কে সাহায্য করে।"
+    },
+    {
+      "dimension": "2D",
+      "game": "The Binding of Isaac: Afterbirth",
+      "boss": "Ultra Greed",
+      "screenshot": "https://i.ytimg.com/vi/h804IUhQunI/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=h804IUhQunI&t=30s",
+      "video": "https://www.youtube.com/watch?v=h804IUhQunI&t=30s",
+      "videoDurationSeconds": 49,
+      "body": "০:৩০-এ Ultra Greed Heart Coins-এর wave ছাড়ে। প্রতিটি coin আলাদা destructible target, যা বাঁচলে তাকে heal করে; খেলোয়াড় বস ও বাকি wave দেখে দ্রুত লক্ষ্য বদলায়।"
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

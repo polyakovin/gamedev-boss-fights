@@ -556,6 +556,44 @@ export function initializeBlueprint(widget) {
       widget.dataset.blueprintSelfHealCastInterruptCount = String(frame.selfHealCastInterruptCount);
       widget.dataset.blueprintSelfHealCastResultId = frame.selfHealCastResultId;
     }
+    if (mechanicId === 'external-healing-source') {
+      widget.dataset.blueprintExternalHealingSource = frame.externalHealingSourceState;
+      widget.dataset.blueprintExternalHealingSourceFirstDestroyed = String(
+        frame.externalHealingSourceFirstDestroyed,
+      );
+      widget.dataset.blueprintExternalHealingSourceFirstPacketCancelled = String(
+        frame.externalHealingSourceFirstPacketCancelled,
+      );
+      widget.dataset.blueprintExternalHealingSourceSecondSignaled = String(
+        frame.externalHealingSourceSecondSignaled,
+      );
+      widget.dataset.blueprintExternalHealingSourceSecondPacketActive = String(
+        frame.externalHealingSourceSecondPacketActive,
+      );
+      widget.dataset.blueprintExternalHealingSourceDelivered = String(
+        frame.externalHealingSourceDelivered,
+      );
+      widget.dataset.blueprintExternalHealingSourceHealing = String(
+        frame.externalHealingSourceHealing,
+      );
+      widget.dataset.blueprintExternalHealingSourceActiveCount = String(
+        frame.externalHealingSourceActiveCount,
+      );
+      widget.dataset.blueprintExternalHealingSourceBossHealth = String(
+        Math.round(frame.externalHealingSourceBossHealth),
+      );
+      widget.dataset.blueprintExternalHealingSourceRequested = String(
+        frame.externalHealingSourceRequested,
+      );
+      widget.dataset.blueprintExternalHealingSourceApplied = String(
+        frame.externalHealingSourceApplied,
+      );
+      widget.dataset.blueprintExternalHealingSourceEventCount = String(
+        frame.externalHealingSourceEventCount,
+      );
+      widget.dataset.blueprintExternalHealingSourceSourceId = frame.externalHealingSourceSourceId;
+      widget.dataset.blueprintExternalHealingSourceResultId = frame.externalHealingSourceResultId;
+    }
     boss.setAttribute(
       'transform',
       `translate(${frame.boss.x} ${frame.boss.y}) scale(${frame.bossScale})`,

@@ -1,0 +1,128 @@
+{
+  "title": "可拦截的外部治疗源",
+  "subtitle": "把首领恢复变成外部目标优先级问题",
+  "variant": "生成 · 路线 · 拦截 · 一次送达",
+  "summary": "独立实体或资源向首领输送治疗；摧毁治疗源或输送物即可阻止这次有上限的恢复。",
+  "overview": "外部治疗源把恢复行为从首领身上移到场地中。玩家要识别哪个对象拥有治疗，读懂路线与截止点，并判断为了保住进度是否值得离开首领。每个治疗源都需要明确的生命周期、拦截规则、送达事件、数值与重置策略。",
+  "learning": "定义治疗源身份、生成与信号时间、耐久、输送物归属、路线、拦截条件、送达帧、请求与实际治疗、溢出、重复事件保护、清理、阶段转换、回滚，以及把一个 source id 连接到一个结果的遥测。",
+  "category": "状态、资源与缩放",
+  "readTime": "9 分钟",
+  "demo": {
+    "title": "在治疗包抵达凯恩前摧毁一道符文，再让第二道成功送达",
+    "timeline": "外部治疗送达时间轴",
+    "step": "信号、拦截、传输与恢复状态",
+    "phaseNames": ["识别治疗源", "拦截一次传输", "结算一次幸存的送达"],
+    "phaseDescriptions": [
+      "0.28 秒时，两枚菱形符文亮起并连接凯恩，首领生命仍为 42。独立实体与虚线路线说明待处理恢复属于场地对象。",
+      "塔维抵达左侧符文并在 1.42 秒摧毁它。其输送物消失，治疗源从两个减为一个，凯恩仍为 42 点生命。",
+      "右侧符文在 2.46 秒再次发出信号，并于 2.90 至 4.08 秒输送治疗包。它成功存活，因此结算一次 18 点治疗，凯恩从 42 升至 60。"
+    ],
+    "boss": "首领",
+    "player": "玩家",
+    "danger": "只有仍然活跃且输送物抵达首领的治疗源可以治疗；被摧毁的源、取消的输送物与重复回调均为零",
+    "locked": "治疗源编号、耐久、路线、截止点、有效拦截、治疗量、上限、清理、阶段继承、回滚与持久化属于遭遇逻辑",
+    "safe": "为每个治疗源展示独特实体、连接、输送运动、摧毁反馈、送达脉冲与首领生命结果",
+    "reducedMotion": "减少动态效果时自动播放关闭。拖到 0.28、0.72、1.20、1.42、1.78、2.46、2.90、4.08、4.50、5.08 和 5.36 秒检查两种结果与重置。",
+    "diagramDescription": "两枚菱形治疗符文连接凯恩。塔维斩碎左侧并取消其输送物；右侧发送可见治疗包，首领生命只从 42 升到 60 一次。"
+  },
+  "steps": [
+    {
+      "title": "谁拥有这次恢复？",
+      "body": "把治疗者、拾取物、投射物或目标表示为带稳定编号的独立遭遇实体。在治疗开始前展示其与首领的关系，让目标优先级可读。"
+    },
+    {
+      "title": "玩家能在哪里阻止送达？",
+      "body": "选择治疗源本体、移动中的输送物，或二者是否可被攻击。依据玩家实际拥有的应对动作调整飞行时间、耐久、距离与并发威胁。"
+    },
+    {
+      "title": "终点要结算什么？",
+      "body": "到达时确认治疗源仍有效，只应用一次受上限约束的治疗，记录治疗源与结果编号，然后消耗或重置它。被拒绝和重复的送达不能改变生命。"
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "效果看起来来自首领",
+      "body": "治疗源若没有可读实体或路线，玩家会把生命增长理解为无缘由的自疗。保持可见连接，并明确表现摧毁治疗源会取消传输。"
+    },
+    {
+      "title": "每个治疗源都抹掉整个输出窗口",
+      "body": "过高的耐久、频率或治疗量会把优先级选择变成强制清场。限制恢复量，并把拦截时间与预期伤害、移动成本和风险比较。"
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "把送达建模为有归属的事务",
+      "body": "保存 sourceId、packetId、spawnedAt、interceptedAt、arrivedAt、healRequested、healApplied 与 result，防止已毁来源通过过期回调完成，也让回滚保持确定。"
+    },
+    {
+      "title": "让目标优先级清晰",
+      "body": "在空间上分开治疗源，限制同时噪声并标出活跃者。若多个源可治疗，要说明顺序、共享截止点与部分拦截是否仍有价值。"
+    },
+    {
+      "title": "测量转移注意力的成本",
+      "body": "记录生成、首次响应时间、摧毁数量、拦截输送物、成功送达、恢复生命、放弃伤害、移动距离、资源消耗与送达后的死亡。"
+    }
+  ],
+  "story": {
+    "title": "塔维斩断凯恩借来的一条生命线",
+    "body": "两块立石苏醒，把苍白细线引向凯恩胸口的裂缝。塔维在光芒离开前打碎近处符文；远处石头幸存，并以最后一次脉冲修补元素体的一部分。"
+  },
+  "adaptation": {
+    "title": "用多种通道展示来源、路线与截止点",
+    "body": "结合轮廓、连接线、输送物运动、节奏、来源数量和生命条反馈。可提供更弱的来源、更慢的输送物、更少目标、瞄准辅助或专用拦截提示，而不改变规则。"
+  },
+  "distinction": {
+    "title": "独立治疗者，而非首领自己的施法",
+    "body": "外部实体拥有送达行为，并可被独立攻击。可打断自疗属于首领动作；命中治疗则要求与目标发生合格接触。"
+  },
+  "lensNotes": [
+    {
+      "id": "progress-clarity",
+      "body": "来源数量、移动输送物、生命变化和稳定结果编号准确说明哪些进度被保住或恢复。"
+    },
+    { "id": "counterplay", "body": "摧毁治疗源或输送物，让玩家能在恢复结算前直接阻止它。" },
+    { "id": "risk-reward", "body": "离开首领去拦截能保住伤害进度，但会消耗位置、时间与注意力。" },
+    {
+      "id": "rule-exception",
+      "body": "已毁来源、同时抵达、阶段变化、溢出治疗、重复回调与回滚都需要明确结果。"
+    },
+    {
+      "id": "telegraphing",
+      "body": "独特轮廓、连接线和移动输送物必须在送达前揭示治疗意图与截止点。"
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "3D",
+      "game": "Genshin Impact",
+      "boss": "Electro Hypostasis",
+      "screenshot": "https://i.ytimg.com/vi/Q1A3BLMg5F4/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=Q1A3BLMg5F4&t=2s",
+      "video": "https://www.youtube.com/watch?v=Q1A3BLMg5F4&t=2s",
+      "videoDurationSeconds": 43,
+      "body": "0:02 时，裸露核心周围出现三枚 Revival Prisms。玩家要用元素反应摧毁它们；每枚幸存棱晶都会恢复生命并留到下次尝试，把输出检查变成持续目标优先级。"
+    },
+    {
+      "dimension": "2D",
+      "game": "Terraria",
+      "boss": "Moon Lord",
+      "screenshot": "https://i.ytimg.com/vi/hfXG8H14GNA/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=hfXG8H14GNA&t=31s",
+      "video": "https://www.youtube.com/watch?v=hfXG8H14GNA&t=31s",
+      "videoDurationSeconds": 56,
+      "body": "0:31 时，Moon Lord 的舌头连接玩家并生成飞向其嘴部的 Moon Leech Clots。血块能在途中被摧毁；每个抵达者都会治疗首领，因此路线可读性直接支持拦截。"
+    },
+    {
+      "dimension": "2D",
+      "game": "The Binding of Isaac: Afterbirth",
+      "boss": "Ultra Greed",
+      "screenshot": "https://i.ytimg.com/vi/h804IUhQunI/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=h804IUhQunI&t=30s",
+      "video": "https://www.youtube.com/watch?v=h804IUhQunI&t=30s",
+      "videoDurationSeconds": 49,
+      "body": "0:30 时，Ultra Greed 释放一波 Heart Coins。每枚硬币都是可摧毁目标，幸存就会治疗它，迫使玩家快速换目标，同时继续关注首领和整波硬币。"
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}
