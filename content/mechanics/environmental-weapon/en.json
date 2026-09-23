@@ -17,7 +17,7 @@
       "Credit device damage, expose the result, and reset"
     ],
     "phaseDescriptions": [
-      "The fixed ballista, its power node, cable, two pieces of cover, and complete route are visible before commitment. Tavi reaches the node from 0.55 to 1.30 s, powers it at 1.55 s, then follows the lit cable around the cover to the device by 2.45 s.",
+      "The fixed ballista, crystal switch, solid cable, and two stone covers are visible from the start. Tavi reaches the switch from 0.55 to 1.30 s, powers it at 1.55 s, then walks around the covers to the ballista by 2.45 s.",
       "The ballista becomes ready at 2.55 s. Its preview line firms into a locked line at 2.85 s, and the device fires at 3.12 s while Tavi's sword remains inactive. The harpoon follows one visible path from the muzzle to Kern rather than appearing as an unexplained damage event.",
       "The harpoon resolves at 3.50 s and removes a large authored health segment; attribution belongs to the device. The ballista becomes visibly spent at 3.68 s, Tavi can leave the station, the result holds until 4.72 s, and the complete setup resets after 5.15 s."
     ],
@@ -27,7 +27,7 @@
     "locked": "Device identity, power dependency, route, interaction point, aim preview, aim lock, fire event, projectile path, damage attribution, spent state, reward, and reset are authored",
     "safe": "Keep the node and device reachable with ordinary movement, preserve full-body clearance around cover, allow the operation to be abandoned, and show the same state through shape, motion, and text",
     "reducedMotion": "Autoplay is disabled by reduced motion. Scrub across 0.55, 1.30, 1.55, 1.65, 2.45, 2.55, 2.85, 3.12, 3.50, 3.68, 4.72, and 5.15 seconds to inspect access, preparation, aim, fire, impact, spent, reward, and reset states.",
-    "diagramDescription": "Kern stands at the top of a compact arena. Tavi moves from the lower edge to a power node, follows a lit cable around two rectangular covers to a stationary ballista, locks a dashed sight line, and fires one bright harpoon. The boss health bar drops only on impact, and a cross marks the spent device before reset."
+    "diagramDescription": "Kern stands high in a stone arena. Tavi activates a crystal power switch, then walks around two stone covers to a wheeled ballista connected by a solid cable. The bow holds a visible harpoon; its sight line settles on Kern before firing. The harpoon travels from the muzzle, Kern loses health on impact, and cracked bow limbs show that the device is spent."
   },
   "steps": [
     {

@@ -17,7 +17,7 @@
       "Atribuye el daño al dispositivo, muestra el resultado y reinicia"
     ],
     "phaseDescriptions": [
-      "La ballesta fija, su nodo de energía, el cable, dos coberturas y la ruta completa aparecen antes del compromiso. Tavi llega al nodo entre 0,55 y 1,30 s, lo enciende a 1,55 s y sigue el cable iluminado alrededor de la cobertura hasta el dispositivo a 2,45 s.",
+      "La ballesta fija, el interruptor de cristal, el cable continuo y dos coberturas de piedra se ven desde el inicio. Tavi llega al interruptor entre 0,55 y 1,30 s, lo enciende a 1,55 s y rodea las coberturas hasta la ballesta a 2,45 s.",
       "La ballesta queda lista a 2,55 s. La línea preliminar se fija a 2,85 s y el dispositivo dispara a 3,12 s mientras la espada de Tavi permanece inactiva. El arpón recorre una trayectoria visible desde la boca hasta Kern en vez de producir daño sin explicación.",
       "El arpón impacta a 3,50 s y elimina un segmento grande de salud atribuido al dispositivo. La ballesta queda visiblemente gastada a 3,68 s, Tavi puede abandonar el puesto, el resultado permanece hasta 4,72 s y toda la preparación se reinicia después de 5,15 s."
     ],
@@ -27,7 +27,7 @@
     "locked": "Se diseñan la identidad, energía, ruta, punto de interacción, preapuntado, bloqueo, disparo, trayectoria, atribución del daño, estado gastado, recompensa y reinicio",
     "safe": "Mantén nodo y dispositivo alcanzables con movimiento normal, deja espacio para todo el cuerpo alrededor de la cobertura, permite cancelar la operación y comunica el estado con forma, movimiento y texto",
     "reducedMotion": "Con movimiento reducido se desactiva la reproducción automática. Recorre 0,55, 1,30, 1,55, 1,65, 2,45, 2,55, 2,85, 3,12, 3,50, 3,68, 4,72 y 5,15 segundos para revisar acceso, preparación, puntería, disparo, impacto, gasto, recompensa y reinicio.",
-    "diagramDescription": "Kern está arriba en una arena compacta. Tavi va desde el borde inferior hasta un nodo, sigue un cable iluminado alrededor de dos coberturas rectangulares, llega a una ballesta fija, bloquea una mira discontinua y dispara un arpón brillante. La salud del jefe baja solo al impacto y una cruz marca el dispositivo gastado."
+    "diagramDescription": "Kern está en la parte alta de una arena de piedra. Tavi activa un interruptor de cristal y rodea dos coberturas de piedra hasta una ballesta con ruedas, unida por un cable continuo. Un arpón visible reposa en el arco; la mira se fija en Kern antes del disparo. El arpón sale de la boca, la vida de Kern baja al impacto y las ramas agrietadas muestran que el dispositivo está gastado."
   },
   "steps": [
     {

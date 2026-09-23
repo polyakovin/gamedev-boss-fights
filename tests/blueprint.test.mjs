@@ -2521,7 +2521,7 @@ test('environmental weapon attributes boss progress to a prepared fixed device',
 
   const powered = blueprintFrame(id, 1.6);
   assert.equal(powered.environmentalDevicePowered, true);
-  assert.ok(powered.primitives[6].opacity > 0.8, 'the powered cable is readable');
+  assert.ok(powered.primitives[8].opacity > 0.8, 'the powered cable is readable');
 
   const reached = blueprintFrame(id, 2.5);
   assert.equal(reached.environmentalDeviceReached, true);
@@ -2529,27 +2529,27 @@ test('environmental weapon attributes boss progress to a prepared fixed device',
 
   const preview = blueprintFrame(id, 2.7);
   assert.equal(preview.environmentalAimLocked, false);
-  assert.ok(preview.primitives[10].opacity > 0.4, 'the device previews its line of fire');
+  assert.ok(preview.primitives[17].opacity > 0.3, 'the device previews its line of fire');
 
   const locked = blueprintFrame(id, 2.95);
   assert.equal(locked.environmentalAimLocked, true);
-  assert.ok(locked.primitives[17].opacity > 0.8, 'the boss receives a distinct lock marker');
+  assert.ok(locked.primitives[20].opacity > 0.8, 'the boss receives a distinct lock marker');
 
   const fired = blueprintFrame(id, 3.25);
   assert.equal(fired.environmentalDeviceFired, true);
   assert.equal(fired.environmentalBossDamaged, false);
   assert.equal(fired.playerMotion.attack, 0, 'the sword never owns the device shot');
-  assert.ok(fired.primitives[12].opacity > 0.9, 'the harpoon travels from the device');
+  assert.ok(fired.primitives[19].opacity > 0.9, 'the harpoon travels from the device');
 
   const hit = blueprintFrame(id, 3.55);
   assert.equal(hit.environmentalBossDamaged, true);
   assert.equal(hit.environmentalDamageSource, 'device');
-  assert.equal(hit.primitives[15].rectWidth, 64);
-  assert.ok(hit.primitives[13].opacity > 0.8, 'impact and health loss resolve together');
+  assert.equal(hit.primitives[1].rectWidth, 100);
+  assert.ok(hit.primitives[21].opacity > 0.8, 'impact and health loss resolve together');
 
   const spent = blueprintFrame(id, 3.8);
   assert.equal(spent.environmentalDeviceSpent, true);
-  assert.ok(spent.primitives[18].opacity > 0.7, 'the used device becomes visibly spent');
+  assert.ok(spent.primitives[22].opacity > 0.7, 'the used device becomes visibly spent');
 
   assert.equal(blueprintPointSafe(id, 3.25, fired.player), true);
   assert.deepEqual(blueprintFrame(id, 0).player, blueprintFrame(id, 6).player);

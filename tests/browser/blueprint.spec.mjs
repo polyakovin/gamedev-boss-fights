@@ -2931,10 +2931,12 @@ test('environmental weapon powers, aims, fires, and attributes damage to the fix
   await expect(page.locator('.lesson-title-line h1')).toHaveText('Environmental weapon');
   await expect(page.locator('.wip-badge, .draft-profile')).toHaveCount(0);
   await expect(page.locator('.game-example')).toHaveCount(3);
+  await expect(widget).toHaveAttribute('data-blueprint-full-height', 'true');
+  expect((await widget.boundingBox()).height).toBeGreaterThan(800);
 
   await seek(1600);
   await expect(widget).toHaveAttribute('data-blueprint-environmental-powered', 'true');
-  await expect(widget.locator('[data-blueprint-primitive="6"] path')).not.toHaveAttribute(
+  await expect(widget.locator('[data-blueprint-primitive="8"] path')).not.toHaveAttribute(
     'opacity',
     '0',
   );
@@ -2945,7 +2947,7 @@ test('environmental weapon powers, aims, fires, and attributes damage to the fix
 
   await seek(2700);
   await expect(widget).toHaveAttribute('data-blueprint-environmental-aim-locked', 'false');
-  await expect(widget.locator('[data-blueprint-primitive="10"] line')).not.toHaveAttribute(
+  await expect(widget.locator('[data-blueprint-primitive="17"] line')).not.toHaveAttribute(
     'opacity',
     '0',
   );
@@ -2958,7 +2960,7 @@ test('environmental weapon powers, aims, fires, and attributes damage to the fix
   await expect(widget).toHaveAttribute('data-blueprint-environmental-fired', 'true');
   await expect(widget).toHaveAttribute('data-blueprint-environmental-boss-damaged', 'false');
   await expect(widget).toHaveAttribute('data-blueprint-environmental-damage-source', 'none');
-  await expect(widget.locator('[data-blueprint-primitive="12"] circle')).not.toHaveAttribute(
+  await expect(widget.locator('[data-blueprint-primitive="19"] path')).not.toHaveAttribute(
     'opacity',
     '0',
   );
@@ -2966,14 +2968,14 @@ test('environmental weapon powers, aims, fires, and attributes damage to the fix
   await seek(3550);
   await expect(widget).toHaveAttribute('data-blueprint-environmental-boss-damaged', 'true');
   await expect(widget).toHaveAttribute('data-blueprint-environmental-damage-source', 'device');
-  await expect(widget.locator('[data-blueprint-primitive="15"] rect')).toHaveAttribute(
+  await expect(widget.locator('[data-blueprint-primitive="1"] rect')).toHaveAttribute(
     'width',
-    '64',
+    '100',
   );
 
   await seek(3800);
   await expect(widget).toHaveAttribute('data-blueprint-environmental-spent', 'true');
-  await expect(widget.locator('[data-blueprint-primitive="18"] path')).not.toHaveAttribute(
+  await expect(widget.locator('[data-blueprint-primitive="22"] path')).not.toHaveAttribute(
     'opacity',
     '0',
   );
