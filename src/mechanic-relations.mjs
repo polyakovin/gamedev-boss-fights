@@ -213,7 +213,12 @@ const PROFILE_OVERRIDES = {
     signal: ['trajectory', 'environment', 'state'],
     response: ['reposition', 'manage'],
   },
-  'wraparound-projectile': { geometry: ['line', 'arena'], dimensions: ['2d'] },
+  'wraparound-projectile': {
+    geometry: ['line', 'arena'],
+    dimensions: ['2d', '3d'],
+    signal: ['trajectory', 'environment', 'state'],
+    response: ['reposition', 'dodge', 'attack'],
+  },
   'beat-synced-attack': { geometry: ['arena'], signal: ['rhythm'], response: ['dodge', 'manage'] },
   'secondary-cues-invisibility': {
     geometry: ['target'],
@@ -293,6 +298,8 @@ const COMPATIBLE_PAIRS = new Set(
     ['relocated-arena', 'cover-line-of-sight'],
     ['forced-inertia', 'telegraph'],
     ['forced-inertia', 'hazard-trail'],
+    ['wraparound-projectile', 'projectile-fan'],
+    ['wraparound-projectile', 'limited-spread'],
     ['debuff-handoff', 'ordered-targets'],
   ].map(([left, right]) => pairKey(left, right)),
 );
@@ -308,6 +315,7 @@ const CONFLICT_PAIRS = new Set(
     ['escape-phase', 'forced-scrolling'],
     ['relocated-arena', 'forced-scrolling'],
     ['forced-inertia', 'marked-area-strike'],
+    ['wraparound-projectile', 'shrinking-safe-area'],
     ['shrinking-safe-area', 'platform-destruction'],
     ['gaze-check', 'secondary-cues-invisibility'],
     ['damage-rate-cap', 'enrage'],

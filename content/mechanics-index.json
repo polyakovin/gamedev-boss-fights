@@ -1225,7 +1225,7 @@
         "en": {
           "title": "Wraparound projectile",
           "category": "Space, movement, and perception",
-          "summary": "Draft outline for the wraparound projectile mechanic. Rules, tuning guidance, and examples are still in progress."
+          "summary": "A projectile that exits one linked arena boundary and re-enters from another while preserving its route."
         },
         "ru": {
           "title": "Зацикленная траектория",

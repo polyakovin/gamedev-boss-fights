@@ -1,0 +1,28 @@
+{
+  "id": "wraparound-projectile",
+  "number": 77,
+  "published": true,
+  "sourceLocale": "en",
+  "contentVersion": 1,
+  "animation": "wraparound-projectile",
+  "lenses": ["threat-geometry", "telegraphing", "counterplay", "commitment"],
+  "related": ["returning-projectile", "ricochet-projectile", "limited-spread"],
+  "sources": [
+    {
+      "title": "GDC · Itay Keren — Boss Battle Design Fundamentals and Retrospective",
+      "url": "https://www.gdcvault.com/play/1024921/Boss-Up-Boss-Battle-Design"
+    },
+    {
+      "title": "The Binding of Isaac: Rebirth Wiki — Hush",
+      "url": "https://bindingofisaacrebirth.wiki.gg/wiki/Hush"
+    },
+    {
+      "title": "Orbital Bullet guide — The Gunner",
+      "url": "https://lalalalulun.com/game-review/orbital-bullet/"
+    },
+    {
+      "title": "GameFAQs — Super Mario Galaxy Boss Guide",
+      "url": "https://gamefaqs.gamespot.com/wii/915692-super-mario-galaxy/faqs/51303"
+    }
+  ]
+}

@@ -19,6 +19,7 @@ import {
   forcedScrollingOffset,
   forcedScrollingState,
   forcedInertiaState,
+  wraparoundProjectileState,
   counterStanceOutcome,
   counterStanceState,
   blueprintFrame,
@@ -46,8 +47,8 @@ import {
   renderBlueprintThumbnail,
 } from '../lib/blueprint-view.mjs';
 
-test('all 70 promoted lesson animations have distinct rule modes and complete moving frames', () => {
-  assert.equal(BLUEPRINT_MECHANIC_IDS.length, 70);
+test('all 71 promoted lesson animations have distinct rule modes and complete moving frames', () => {
+  assert.equal(BLUEPRINT_MECHANIC_IDS.length, 71);
   const modes = new Set();
   for (const id of BLUEPRINT_MECHANIC_IDS) {
     for (let time = 0; time <= BLUEPRINT_DURATION; time += 0.1) {
@@ -68,7 +69,7 @@ test('all 70 promoted lesson animations have distinct rule modes and complete mo
           assert.ok(Number.isFinite(value), `${id} has an invalid ${primitive.type}`);
     }
   }
-  assert.equal(modes.size, 70);
+  assert.equal(modes.size, 71);
 });
 
 test('every blueprint exposes signal, committed action, and recovery without player teleports', () => {
@@ -96,7 +97,8 @@ test('every blueprint exposes signal, committed action, and recovery without pla
       id !== 'escape-phase' &&
       id !== 'relocated-arena' &&
       id !== 'boss-as-terrain' &&
-      id !== 'forced-inertia'
+      id !== 'forced-inertia' &&
+      id !== 'wraparound-projectile'
     )
       assert.equal(blueprintFrame(id, 3).dangerActive, true, id);
     assert.equal(blueprintFrame(id, 3).playerSafe, true, id);
@@ -184,7 +186,8 @@ test('every damaging promoted animation derives safety from its own active geome
       id !== 'escape-phase' &&
       id !== 'relocated-arena' &&
       id !== 'boss-as-terrain' &&
-      id !== 'forced-inertia',
+      id !== 'forced-inertia' &&
+      id !== 'wraparound-projectile',
   )) {
     const frame = blueprintFrame(id, 3);
     let point = unsafePoints[id];
@@ -2061,5 +2064,63 @@ test('forced inertia preserves one committed vector until the authored braking p
   assert.match(
     renderBlueprintThumbnail(id, 'test-forced-inertia'),
     /data-blueprint-preview="forced-inertia"/,
+  );
+});
+
+test('wraparound projectile preserves one shot across linked boundaries before clearing the lane', () => {
+  const id = 'wraparound-projectile';
+  assert.deepEqual([0, 0.6, 1, 1.6, 2.3, 2.8, 3.8, 4.3, 5.4].map(wraparoundProjectileState), [
+    'unlinked-boundaries',
+    'boundary-link-signal',
+    'route-preview',
+    'first-pass',
+    'boundary-crossing',
+    'repeat-pass',
+    'corridor-clear',
+    'counter-window',
+    'reset',
+  ]);
+
+  const preview = blueprintFrame(id, 1);
+  assert.equal(preview.wraparoundBoundaryLinked, true);
+  assert.equal(preview.wraparoundRouteVisible, true);
+  assert.equal(preview.dangerActive, false);
+  assert.ok(preview.primitives[4].opacity > 0.8, 'the first route segment is previewed');
+
+  const first = blueprintFrame(id, 1.7);
+  assert.equal(first.wraparoundFirstPass, true);
+  assert.equal(first.wraparoundLap, 1);
+  assert.equal(first.dangerActive, true);
+  assert.equal(first.playerSafe, true);
+  assert.equal(blueprintPointSafe(id, 1.7, first.wraparoundProjectilePoint), false);
+  assert.ok(first.primitives[7].opacity > 0.9, 'the original projectile is visible');
+
+  const crossing = blueprintFrame(id, 2.3);
+  assert.equal(crossing.wraparoundCrossing, true);
+  assert.equal(crossing.wraparoundLap, 1);
+  assert.equal(crossing.wraparoundProjectilePoints.length, 2);
+  assert.ok(crossing.primitives[8].opacity > 0.7, 'the exit seam holds the same shot');
+  assert.ok(crossing.primitives[9].opacity > 0.7, 'the linked entry announces re-entry');
+
+  const second = blueprintFrame(id, 2.8);
+  assert.equal(second.wraparoundSecondPass, true);
+  assert.equal(second.wraparoundLap, 2);
+  assert.equal(second.dangerActive, true);
+  assert.equal(blueprintPointSafe(id, 2.8, second.wraparoundProjectilePoint), false);
+
+  const clear = blueprintFrame(id, 3.8);
+  assert.equal(clear.wraparoundProjectileState, 'corridor-clear');
+  assert.equal(clear.dangerActive, false);
+  assert.equal(clear.wraparoundProjectilePoints.length, 0);
+
+  const punish = blueprintFrame(id, 4.22);
+  assert.equal(punish.punishStrike, true);
+  assert.ok(punish.primitives[12].opacity > 0.9, 'the sword response follows the clear beat');
+
+  assert.deepEqual(blueprintFrame(id, 0).player, blueprintFrame(id, 6).player);
+  assert.deepEqual(blueprintFrame(id, 0).boss, blueprintFrame(id, 6).boss);
+  assert.match(
+    renderBlueprintThumbnail(id, 'test-wraparound-projectile'),
+    /data-blueprint-preview="wraparound-projectile"/,
   );
 });

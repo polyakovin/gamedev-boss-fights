@@ -1,0 +1,138 @@
+{
+  "title": "Wraparound projectile",
+  "subtitle": "Connect two arena boundaries so a shot that leaves through one returns through the other with an unchanged, learnable trajectory.",
+  "variant": "Kern links the quarry's left and right rune seams, previews one horizontal lane, fires through the right seam, and makes the same bolt re-enter from the left before Tavi closes for a sword strike",
+  "summary": "A projectile exits one linked boundary and re-enters from another while preserving its direction, speed, and remaining lifetime.",
+  "overview": "A wraparound projectile makes the arena continuous: leaving the visible play space does not end the threat. Its return is fair when linked boundaries, preserved trajectory, lap limit, and despawn are legible before crossing. It turns a straight shot into a repeated lane problem without homing, bouncing, or reversing.",
+  "learning": "Implement paired boundaries, exit and entry transforms, velocity preservation, body-radius-safe crossings, a deterministic lap or lifetime limit, seam telegraphs, off-screen continuity cues, collision order, despawn rules, and a useful response window as one projectile contract.",
+  "category": "Space, movement, and perception",
+  "readTime": "8 min",
+  "demo": {
+    "title": "Show the second arrival before the first shot leaves",
+    "timeline": "Wraparound timeline",
+    "step": "Wraparound-projectile states",
+    "phaseNames": [
+      "Link the boundaries and preview the lane",
+      "Cross once and preserve the shot",
+      "Clear the corridor and counter"
+    ],
+    "phaseDescriptions": [
+      "At 0.48 s the left and right rune seams light as a pair. At 0.82 s a dashed line crosses both seams, and Tavi moves fully below the marked corridor before Kern releases at 1.36 s.",
+      "The bolt reaches the right seam at 2.22 s and reappears at the left by 2.50 s without changing speed or heading. Its second pass follows the same corridor until the authored lap ends at 3.58 s.",
+      "Both seams and the lane visibly discharge when the projectile expires. Tavi enters only after that state change, strikes at 4.22 s, and the encounter resets after 5.02 s."
+    ],
+    "boss": "Boss",
+    "player": "Player",
+    "danger": "Crossing a boundary does not consume the projectile; the same body threatens the complete marked corridor again from the linked side",
+    "locked": "Boundary pair, exit-to-entry transform, velocity, projectile radius, collision order, lap count, lifetime, corridor, safe margin, clear beat, and reset are authored",
+    "safe": "Read both linked seams, leave the full corridor before release, track the re-entry rather than the disappearing edge, and approach only after the lap indicator clears",
+    "reducedMotion": "Autoplay is disabled by reduced motion. Scrub across 0.48, 0.82, 1.36, 2.22, 2.50, 3.58, 4.22, and 5.02 seconds to inspect the boundary link, first pass, crossing, repeat pass, clear state, counter, and reset.",
+    "diagramDescription": "Kern stands above a horizontal projectile corridor between two glowing rune seams. Tavi moves to a marked safe point below it. Kern's bolt travels to the right boundary, appears at the left boundary with the same heading, crosses the lane a second time, expires, and leaves a sword opening."
+  },
+  "steps": [
+    {
+      "title": "What exactly survives the boundary crossing?",
+      "body": "Define the exit boundary, paired entry boundary, position transform, velocity transform, rotation, owner, damage, pierce count, age, and remaining laps. A simple horizontal wrap preserves velocity and maps the overshoot distance from the right edge onto the left edge. Apply the same mapping in simulation, prediction, replay, networking, hit tests, and visual effects so the projectile never appears to turn, accelerate, or gain a duplicate life at the seam."
+    },
+    {
+      "title": "Can the player predict the re-entry point?",
+      "body": "Signal the linked boundaries as one system before firing. Match their color, rune motion, sound, and direction markers; extend the trajectory preview through the exit and entry; and keep the camera from hiding either seam. Include projectile radius and player radius in the corridor, because a centerline that mathematically misses can still clip a full character silhouette during re-entry."
+    },
+    {
+      "title": "When does the repeated threat actually end?",
+      "body": "Choose a fixed lap count, fixed lifetime, collision budget, or explicit absorber and expose that choice. Despawn only after collision for the final simulated segment, then give the seams and lane a readable clear state. The player needs a reliable moment to cross the former corridor or punish the boss; otherwise the mechanic becomes permanent arena denial rather than a timed spatial test."
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "The projectile vanishes and ambushes from off-screen",
+      "body": "A normal edge visually means that a threat is gone. If the paired entry is not established before release, re-entry reads as a new untelegraphed shot. Use persistent linked seams, an across-boundary route preview, a brief exit-to-entry pulse, and continuous audio panning so disappearance communicates transfer rather than safety."
+    },
+    {
+      "title": "The seam creates duplicates or skipped collisions",
+      "body": "Spawning a replacement before retiring the original can damage twice, while teleporting before resolving the overshoot can tunnel through a target at either edge. Advance to the boundary, resolve that segment, carry the exact remainder through the transform, and test the entry segment once. Cap crossings per simulation step so high speed cannot loop forever."
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "Treat wraparound as topology, not a visual trick",
+      "body": "Store boundary links as data with explicit transforms. Horizontal screen wrap is one case; paired portals, cylindrical arenas, and spherical surfaces use the same contract. Author navigation, projectile prediction, VFX, camera framing, AI queries, and debug drawing against that shared mapping instead of maintaining separate approximate versions."
+    },
+    {
+      "title": "Preserve enough continuity to support learning",
+      "body": "Keeping speed, direction, spacing, color, and rhythm unchanged lets the player infer the second pass from the first. If a crossing rotates or scales velocity, show that transform in the portal frame and preview. Avoid randomizing the entry point after the shot leaves; uncertainty should be telegraphed before commitment, not introduced while the projectile is invisible."
+    },
+    {
+      "title": "Budget repeated occupancy, not only projectile count",
+      "body": "One wrapping shot can occupy the same lane several times and overlap later boss actions. Tune lap count, interval, width, speed, and concurrent attacks from the total time each route denies space. Test slow effects and frame-rate variation because either can change when repeated passes overlap even if the initial volley looks readable."
+    },
+    {
+      "title": "Keep a body-sized answer on every pass",
+      "body": "Measure the safe route with the full player body, input latency, camera uncertainty, and accessibility assists. If later phases add fans or several linked pairs, preserve one stable corridor or a clearly timed crossing window. Do not combine wraparound with a shrinking arena until the remaining safe region can hold the player through every scheduled re-entry."
+    }
+  ],
+  "story": {
+    "title": "Kern joins two broken quarry gates",
+    "body": "Twin boundary stones carry halves of the same rune. When Kern powers them, dust and light flow out of one seam and into the other, making it clear that the quarry wall has folded into one continuous passage rather than creating a second projectile."
+  },
+  "adaptation": {
+    "title": "Let Tavi solve the lane with ordinary movement",
+    "body": "Tavi needs no portal skill or projectile cancel. The safe marker accepts the complete body below the corridor, the linked seams remain visible from that position, and the final discharge gives enough time to run back and use the sword before Kern begins another cycle."
+  },
+  "distinction": {
+    "title": "Boundary transfer, not a bounce or a return",
+    "body": "A ricochet reflects velocity at a surface, and a returning projectile reverses or curves back toward its source. A wraparound projectile preserves its forward route while the arena maps one boundary to another. The threat continues from a linked entry point; it does not rebound and it does not retrace the outgoing path."
+  },
+  "lensNotes": [
+    {
+      "id": "threat-geometry",
+      "body": "A boundary pair and its transform extend one projectile corridor across apparently separate edges of the visible arena."
+    },
+    {
+      "id": "telegraphing",
+      "body": "Matched seams, direction marks, route preview, transfer pulse, and clear state must all describe the same exit-to-entry mapping."
+    },
+    {
+      "id": "counterplay",
+      "body": "The player leaves the complete repeated corridor, tracks the re-entry, and crosses only after the authored lap or lifetime ends."
+    },
+    {
+      "id": "commitment",
+      "body": "Once fired, the shot keeps its mapped trajectory and lap budget; the player can plan against a stable future route."
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "The Binding of Isaac: Repentance",
+      "boss": "Hush",
+      "screenshot": "https://i.ytimg.com/vi/o-emlDM8Gp0/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=o-emlDM8Gp0&t=1s",
+      "body": "Hush fires wavy Continuum rows in a cardinal direction. The tears warp from the edge they leave to the opposite side and accelerate as they continue, so the first gaps teach safe positions for repeated passes while later overlapping attacks test whether that stable route remains readable.",
+      "video": "https://www.youtube.com/watch?v=o-emlDM8Gp0&t=1s",
+      "videoDurationSeconds": 126
+    },
+    {
+      "dimension": "2D",
+      "game": "Orbital Bullet",
+      "boss": "The Gunner",
+      "screenshot": "https://i.ytimg.com/vi/czXPRDs1ylg/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=czXPRDs1ylg&t=1s",
+      "body": "The Gunner can fire two long-range shots in opposite directions around the game's cylindrical stage. Each shot completes a full lap, so the arena itself makes departure and arrival continuous and asks the player to read threats approaching from both directions along one circular lane.",
+      "video": "https://www.youtube.com/watch?v=czXPRDs1ylg&t=1s",
+      "videoDurationSeconds": 48
+    },
+    {
+      "dimension": "3D",
+      "game": "Super Mario Galaxy",
+      "boss": "Bowser",
+      "screenshot": "https://i.ytimg.com/vi/XftwD1aqZw4/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=XftwD1aqZw4&t=2075s",
+      "body": "Bowser's fireballs travel around the small spherical battle planet instead of disappearing at a flat arena edge. The surface makes the wrap physically continuous: shots can approach again from beyond the camera horizon, so spacing and camera-readable gaps matter across the whole globe.",
+      "video": "https://www.youtube.com/watch?v=XftwD1aqZw4&t=2075s",
+      "videoDurationSeconds": 2901
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

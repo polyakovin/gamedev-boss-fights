@@ -1,0 +1,138 @@
+{
+  "title": "Proyectil envolvente",
+  "subtitle": "Conecta dos límites de la arena para que un disparo que sale por uno reaparezca por el otro con una trayectoria coherente y aprendible.",
+  "variant": "Kern enlaza las costuras rúnicas izquierda y derecha de la cantera, anticipa un carril horizontal, dispara por la derecha y hace que el mismo proyectil regrese por la izquierda antes de que Tavi se acerque con la espada",
+  "summary": "Un proyectil sale por un límite enlazado y entra por otro conservando dirección, velocidad y vida restante.",
+  "overview": "El proyectil envolvente vuelve continua la arena: salir de la zona visible no termina la amenaza. El regreso es justo si los límites vinculados, la trayectoria, las vueltas y la desaparición se entienden antes del cruce. Así, un disparo recto se convierte en un carril repetido sin perseguir, rebotar ni invertir su marcha.",
+  "learning": "Implementa como un solo contrato los límites emparejados, la transformación de salida a entrada, la conservación de velocidad, cruces seguros para el radio del cuerpo, un límite determinista de vueltas o tiempo, señales en las costuras, continuidad fuera de pantalla, orden de colisiones, desaparición y ventana de respuesta.",
+  "category": "Espacio, movimiento y percepción",
+  "readTime": "8 min",
+  "demo": {
+    "title": "Muestra la segunda llegada antes de la primera salida",
+    "timeline": "Cronología envolvente",
+    "step": "Estados del proyectil envolvente",
+    "phaseNames": [
+      "Enlaza los límites y anticipa el carril",
+      "Cruza una vez y conserva el disparo",
+      "Despeja el carril y contraataca"
+    ],
+    "phaseDescriptions": [
+      "A los 0,48 s, las costuras izquierda y derecha se iluminan como pareja. A los 0,82 s, una línea discontinua cruza ambas, y Tavi sale por completo del carril antes del disparo de Kern a los 1,36 s.",
+      "El proyectil alcanza la costura derecha a los 2,22 s y reaparece a la izquierda a los 2,50 s sin cambiar velocidad ni rumbo. La segunda pasada repite el carril hasta terminar la vuelta prevista a los 3,58 s.",
+      "Al expirar el proyectil, ambas costuras y el carril se apagan de forma visible. Tavi entra después de esa señal, golpea a los 4,22 s y el ciclo se reinicia tras los 5,02 s."
+    ],
+    "boss": "Jefe",
+    "player": "Jugador",
+    "danger": "Cruzar un límite no consume el proyectil; el mismo cuerpo vuelve a amenazar todo el carril desde el lado enlazado",
+    "locked": "Se fijan la pareja de límites, transformación, velocidad, radio, orden de colisiones, vueltas, vida, carril, margen seguro, pulso de despeje y reinicio",
+    "safe": "Lee ambas costuras, abandona todo el carril antes del disparo, sigue la entrada y no solo la salida, y acércate únicamente cuando se apague el indicador de vuelta",
+    "reducedMotion": "Con movimiento reducido se desactiva la reproducción automática. Recorre 0,48, 0,82, 1,36, 2,22, 2,50, 3,58, 4,22 y 5,02 segundos para revisar enlace, primera pasada, cruce, repetición, despeje, respuesta y reinicio.",
+    "diagramDescription": "Kern está sobre un carril horizontal entre dos costuras rúnicas brillantes. Tavi baja a un punto seguro. El proyectil sale por la derecha, aparece por la izquierda con el mismo rumbo, cruza otra vez, expira y deja una apertura para la espada."
+  },
+  "steps": [
+    {
+      "title": "¿Qué sobrevive exactamente al cruce?",
+      "body": "Define el límite de salida, la entrada asociada, las transformaciones de posición y velocidad, rotación, propietario, daño, perforaciones, edad y vueltas restantes. Un envolvimiento horizontal simple conserva la velocidad y traslada a la izquierda el exceso recorrido más allá de la derecha. Usa el mismo mapeo en simulación, predicción, repetición, red, impactos y efectos para no girar, acelerar ni duplicar el proyectil."
+    },
+    {
+      "title": "¿Puede el jugador predecir el punto de reentrada?",
+      "body": "Presenta los dos límites como un sistema antes de disparar. Iguala color, movimiento rúnico, sonido y flechas; prolonga la previsualización por salida y entrada; y evita que la cámara oculte una costura. Incluye los radios del proyectil y del jugador en el carril, porque una línea central segura aún puede rozar la silueta completa al reaparecer."
+    },
+    {
+      "title": "¿Cuándo termina realmente la amenaza repetida?",
+      "body": "Elige vueltas fijas, vida fija, presupuesto de colisiones o un absorbente explícito y comunícalo. Destruye el proyectil después de resolver el último tramo simulado y muestra un estado despejado en costuras y carril. Debe existir un momento fiable para cruzar o castigar al jefe; de lo contrario, la prueba temporal se vuelve una prohibición permanente del espacio."
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "El proyectil desaparece y embosca desde fuera de pantalla",
+      "body": "Un borde normal suele significar que la amenaza terminó. Sin una entrada emparejada antes del disparo, la reaparición parece un ataque nuevo sin aviso. Mantén visibles las costuras vinculadas, la ruta transversal, un pulso de transferencia y audio continuo para que desaparecer signifique trasladarse, no estar a salvo."
+    },
+    {
+      "title": "La costura duplica impactos o se salta colisiones",
+      "body": "Crear un reemplazo antes de retirar el original puede dañar dos veces; teletransportarlo sin resolver el exceso del paso puede atravesar un objetivo en el borde. Avanza hasta el límite, resuelve ese segmento, transforma el resto exacto y comprueba una sola vez el tramo de entrada. Limita los cruces por paso para evitar bucles infinitos a gran velocidad."
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "Trata el envolvimiento como topología, no como truco visual",
+      "body": "Guarda los vínculos de límites como datos con transformaciones explícitas. El envolvimiento horizontal, los portales emparejados, cilindros y esferas comparten el contrato. Navegación, predicción, VFX, cámara, consultas de IA y dibujo de depuración deben usar ese mismo mapeo en vez de aproximaciones separadas."
+    },
+    {
+      "title": "Conserva continuidad suficiente para aprender",
+      "body": "Velocidad, rumbo, separación, color y ritmo constantes permiten deducir la segunda pasada de la primera. Si el cruce rota o escala la velocidad, muéstralo en el marco de entrada y en la previsión. No aleatorices la entrada después de disparar: la incertidumbre debe anunciarse antes del compromiso."
+    },
+    {
+      "title": "Presupuesta la ocupación repetida, no solo la cantidad",
+      "body": "Un proyectil puede ocupar el mismo carril varias veces y solaparse con acciones posteriores. Ajusta vueltas, intervalo, anchura, velocidad y ataques simultáneos según el tiempo total que la ruta queda negada. Prueba ralentizaciones y variación de fotogramas, pues cambian los solapes aunque la primera descarga sea clara."
+    },
+    {
+      "title": "Mantén una respuesta del tamaño del cuerpo en cada vuelta",
+      "body": "Mide la ruta segura con todo el cuerpo, latencia de entrada, incertidumbre de cámara y ayudas de accesibilidad. Si añades abanicos o varias parejas, conserva un corredor estable o una ventana de cruce claramente temporizada. No lo combines con una arena menguante si la zona restante no contiene al jugador en cada reentrada."
+    }
+  ],
+  "story": {
+    "title": "Kern une dos portales rotos de la cantera",
+    "body": "Dos piedras fronterizas contienen mitades de la misma runa. Cuando Kern las activa, polvo y luz salen por una costura y entran por la otra, explicando que el muro se ha plegado en un paso continuo y que no ha nacido un segundo proyectil."
+  },
+  "adaptation": {
+    "title": "Deja que Tavi resuelva el carril con movimiento normal",
+    "body": "Tavi no necesita portales ni cancelar proyectiles. El punto seguro admite todo el cuerpo bajo el carril, ambas costuras siguen visibles y la descarga final deja tiempo para volver a Kern y usar la espada antes del siguiente ciclo."
+  },
+  "distinction": {
+    "title": "Transferencia entre límites, no rebote ni retorno",
+    "body": "Un rebote refleja la velocidad en una superficie; un proyectil de retorno invierte o curva su camino hacia el origen. El envolvente conserva el avance mientras la arena mapea un límite al otro. La amenaza continúa desde la entrada enlazada, sin rebotar ni recorrer al revés el trayecto de ida."
+  },
+  "lensNotes": [
+    {
+      "id": "threat-geometry",
+      "body": "Una pareja de límites y su transformación prolongan un solo carril a través de bordes visualmente separados."
+    },
+    {
+      "id": "telegraphing",
+      "body": "Costuras iguales, flechas, previsión, pulso de transferencia y estado despejado deben describir el mismo mapeo."
+    },
+    {
+      "id": "counterplay",
+      "body": "El jugador abandona todo el carril repetido, sigue la reentrada y cruza solo al terminar las vueltas o la vida fijadas."
+    },
+    {
+      "id": "commitment",
+      "body": "Tras el disparo, el proyectil mantiene ruta y presupuesto de vueltas, por lo que su futuro se puede planificar."
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "The Binding of Isaac: Repentance",
+      "boss": "Hush",
+      "screenshot": "https://i.ytimg.com/vi/o-emlDM8Gp0/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=o-emlDM8Gp0&t=1s",
+      "body": "Hush dispara filas ondulantes de Continuum en una dirección cardinal. Las lágrimas pasan al borde opuesto y aceleran, de modo que los primeros huecos enseñan posiciones seguras para las repeticiones y los ataques superpuestos prueban si la ruta estable sigue siendo legible.",
+      "video": "https://www.youtube.com/watch?v=o-emlDM8Gp0&t=1s",
+      "videoDurationSeconds": 126
+    },
+    {
+      "dimension": "2D",
+      "game": "Orbital Bullet",
+      "boss": "The Gunner",
+      "screenshot": "https://i.ytimg.com/vi/czXPRDs1ylg/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=czXPRDs1ylg&t=1s",
+      "body": "The Gunner lanza dos disparos de largo alcance en sentidos opuestos por el escenario cilíndrico. Cada uno completa una vuelta, así que la propia arena une salida y llegada y obliga a leer dos aproximaciones sobre un mismo carril circular.",
+      "video": "https://www.youtube.com/watch?v=czXPRDs1ylg&t=1s",
+      "videoDurationSeconds": 48
+    },
+    {
+      "dimension": "3D",
+      "game": "Super Mario Galaxy",
+      "boss": "Bowser",
+      "screenshot": "https://i.ytimg.com/vi/XftwD1aqZw4/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=XftwD1aqZw4&t=2075s",
+      "body": "Las bolas de fuego de Bowser rodean el pequeño planeta esférico en vez de desaparecer en un borde plano. La superficie hace continua la ruta: pueden volver desde detrás del horizonte de cámara, por lo que importan el espaciado y los huecos visibles en todo el globo.",
+      "video": "https://www.youtube.com/watch?v=XftwD1aqZw4&t=2075s",
+      "videoDurationSeconds": 2901
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

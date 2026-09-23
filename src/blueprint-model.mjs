@@ -739,6 +739,34 @@ const SPECS = {
       [118, 790],
     ],
   },
+  'wraparound-projectile': {
+    mode: 'wraparound-projectile',
+    boss: [150, 430],
+    player: [410, 690],
+    target: [250, 455],
+    arena: [56, 350, 448, 540],
+    laneY: 590,
+    leftBoundary: 56,
+    rightBoundary: 504,
+    signalAt: 0.48,
+    previewAt: 0.82,
+    releaseAt: 1.36,
+    firstPass: [1.36, 2.22],
+    crossing: [2.22, 2.5],
+    secondPass: [2.5, 3.58],
+    punishAt: 4.22,
+    resetAt: 5.02,
+    projectileRadius: 22,
+    safePoint: [410, 790],
+    strikePoint: [250, 455],
+    resetRoute: [
+      [250, 455],
+      [300, 520],
+      [350, 600],
+      [390, 680],
+      [410, 690],
+    ],
+  },
   'wide-swing': { mode: 'arc', boss: [280, 310], player: [410, 470], target: [470, 650] },
   lunge: { mode: 'lunge', boss: [170, 290], player: [390, 590], target: [470, 660] },
   grab: { mode: 'grab', boss: [280, 300], player: [390, 485], target: [470, 610] },
@@ -1327,6 +1355,20 @@ export function forcedInertiaState(time) {
   if (t < spec.slide[1]) return 'unsteerable-slide';
   if (t < spec.brake[1]) return 'braking-zone';
   if (t < spec.punishAt) return 'control-restored';
+  if (t < spec.resetAt) return 'counter-window';
+  return 'reset';
+}
+
+export function wraparoundProjectileState(time) {
+  const spec = SPECS['wraparound-projectile'];
+  const t = localTime(time);
+  if (t < spec.signalAt) return 'unlinked-boundaries';
+  if (t < spec.previewAt) return 'boundary-link-signal';
+  if (t < spec.releaseAt) return 'route-preview';
+  if (t < spec.firstPass[1]) return 'first-pass';
+  if (t < spec.crossing[1]) return 'boundary-crossing';
+  if (t < spec.secondPass[1]) return 'repeat-pass';
+  if (t < spec.punishAt) return 'corridor-clear';
   if (t < spec.resetAt) return 'counter-window';
   return 'reset';
 }
@@ -3082,6 +3124,102 @@ function primitivesFor(spec, frame) {
       ),
     ];
   }
+  if (mode === 'wraparound-projectile') {
+    const linked = frame.wraparoundBoundaryLinked;
+    const routeVisible = frame.wraparoundRouteVisible;
+    const crossing = frame.wraparoundCrossing;
+    const projectile = frame.wraparoundProjectilePoint;
+    const projectileVisible = frame.wraparoundFirstPass || crossing || frame.wraparoundSecondPass;
+    const strike = strikePulse(frame.time, spec.punishAt, 0.38);
+    const safe = point(spec.safePoint);
+    return [
+      rect(...spec.arena, 0.52, 'muted', 0.025),
+      rect(spec.leftBoundary - 8, 390, 16, 400, linked ? 0.9 : 0.24, 'accent', linked ? 0.2 : 0.04),
+      rect(
+        spec.rightBoundary - 8,
+        390,
+        16,
+        400,
+        linked ? 0.9 : 0.24,
+        'accent',
+        linked ? 0.2 : 0.04,
+      ),
+      rect(56, spec.laneY - 38, 448, 76, routeVisible ? 0.38 : 0.08, 'signal', 0.06),
+      line(
+        spec.boss[0] + 44,
+        spec.laneY,
+        spec.rightBoundary,
+        spec.laneY,
+        routeVisible ? 0.82 : 0,
+        'accent',
+        6,
+        '12 10',
+      ),
+      line(
+        spec.leftBoundary,
+        spec.laneY,
+        spec.rightBoundary,
+        spec.laneY,
+        routeVisible ? 0.58 : 0,
+        'accent',
+        5,
+        '10 12',
+      ),
+      path(
+        `M ${spec.rightBoundary - 20} ${spec.laneY - 18} L ${spec.rightBoundary} ${spec.laneY} L ${spec.rightBoundary - 20} ${spec.laneY + 18} M ${spec.leftBoundary + 20} ${spec.laneY - 18} L ${spec.leftBoundary} ${spec.laneY} L ${spec.leftBoundary + 20} ${spec.laneY + 18}`,
+        linked ? 0.92 : 0,
+        'accent',
+        7,
+      ),
+      circle(
+        projectile.x,
+        projectile.y,
+        spec.projectileRadius,
+        projectileVisible ? 0.96 : 0,
+        'signal',
+        7,
+        0.28,
+      ),
+      circle(
+        spec.rightBoundary + 10,
+        spec.laneY,
+        spec.projectileRadius,
+        crossing ? 0.78 : 0,
+        'signal',
+        6,
+        0.2,
+      ),
+      circle(
+        spec.leftBoundary - 10,
+        spec.laneY,
+        spec.projectileRadius,
+        crossing ? 0.78 : 0,
+        'signal',
+        6,
+        0.2,
+      ),
+      circle(safe.x, safe.y, 42, linked ? 0.72 : 0.16, 'safe', 6, 0.08, '8 7'),
+      path(
+        `M ${spec.leftBoundary - 24} ${spec.laneY - 52} Q ${spec.leftBoundary} ${spec.laneY - 76} ${spec.leftBoundary + 24} ${spec.laneY - 52} M ${spec.rightBoundary - 24} ${spec.laneY + 52} Q ${spec.rightBoundary} ${spec.laneY + 76} ${spec.rightBoundary + 24} ${spec.laneY + 52}`,
+        crossing ? 0.88 : linked ? 0.26 : 0,
+        'accent',
+        6,
+        0,
+        '8 7',
+      ),
+      line(frame.player.x, frame.player.y, frame.boss.x, frame.boss.y, strike, 'safe', 10),
+      circle(frame.boss.x + 24, frame.boss.y - 18, 12 + strike * 24, strike, 'safe', 7, 0.14),
+      circle(
+        frame.boss.x,
+        frame.boss.y,
+        48 + 22 * pulse(frame.wraparoundSignalProgress),
+        linked ? 0.46 : 0,
+        'accent',
+        6,
+        0.05,
+      ),
+    ];
+  }
   if (mode === 'landing') {
     const landing = point(spec.landing);
     const contact = phase === 1 ? clamp(1 - Math.abs(action - 0.52) / 0.2) : 0;
@@ -4387,6 +4525,11 @@ function pointClearsThreat(spec, frame, value, radius = BLUEPRINT_PLAYER_RADIUS)
   if (mode === 'cover-line-of-sight')
     return !frame.dangerActive || coverLineOfSightBlocked(frame.time, value, radius);
   if (mode === 'forced-inertia') return !frame.dangerActive || value.x + radius < spec.dangerX;
+  if (mode === 'wraparound-projectile')
+    return frame.wraparoundProjectilePoints.every(
+      (projectile) =>
+        Math.hypot(value.x - projectile.x, value.y - projectile.y) > spec.projectileRadius + radius,
+    );
   if (mode === 'spiral')
     return (
       distanceFromBoss > 52 + radius &&
@@ -4695,6 +4838,7 @@ export function blueprintFrame(id, time) {
   else if (spec.mode === 'boss-as-terrain') responseProgress = 0;
   else if (spec.mode === 'cover-line-of-sight') responseProgress = 0;
   else if (spec.mode === 'forced-inertia') responseProgress = 0;
+  else if (spec.mode === 'wraparound-projectile') responseProgress = 0;
   else if (spec.mode === 'knockback')
     responseProgress = phase === 0 ? 0 : phase === 1 ? smooth(action) : 1;
   else if (spec.mode === 'target-lock')
@@ -5139,6 +5283,29 @@ export function blueprintFrame(id, time) {
       player = pointAlongPolyline(spec.resetRoute.map(point), reset);
     }
   }
+  if (spec.mode === 'wraparound-projectile') {
+    const safe = point(spec.safePoint);
+    const strike = point(spec.strikePoint);
+    if (t < spec.signalAt) player = startPlayer;
+    else if (t < spec.releaseAt) {
+      const leaveLane = smooth((t - spec.signalAt) / (spec.releaseAt - spec.signalAt));
+      player = {
+        x: mix(startPlayer.x, safe.x, leaveLane),
+        y: mix(startPlayer.y, safe.y, leaveLane),
+      };
+    } else if (t < spec.secondPass[1]) player = safe;
+    else if (t < spec.punishAt) {
+      const approach = smooth((t - spec.secondPass[1]) / (spec.punishAt - spec.secondPass[1]));
+      player = {
+        x: mix(safe.x, strike.x, approach),
+        y: mix(safe.y, strike.y, approach),
+      };
+    } else if (t < spec.resetAt) player = strike;
+    else {
+      const reset = clamp((t - spec.resetAt) / (BLUEPRINT_DURATION - spec.resetAt));
+      player = pointAlongPolyline(spec.resetRoute.map(point), reset);
+    }
+  }
   if (spec.mode === 'rotating' && phase === 0) {
     const initialPosition = polar(boss, 255, Math.PI / 3);
     player = {
@@ -5303,7 +5470,24 @@ export function blueprintFrame(id, time) {
                                   smooth((t - spec.resetAt) / (BLUEPRINT_DURATION - spec.resetAt)),
                                 ) * 0.8,
                               )
-                            : pulse(responseProgress) + pulse(returnProgress) * 0.8;
+                            : spec.mode === 'wraparound-projectile'
+                              ? Math.max(
+                                  pulse(
+                                    smooth((t - spec.signalAt) / (spec.releaseAt - spec.signalAt)),
+                                  ),
+                                  pulse(
+                                    smooth(
+                                      (t - spec.secondPass[1]) /
+                                        (spec.punishAt - spec.secondPass[1]),
+                                    ),
+                                  ),
+                                  pulse(
+                                    smooth(
+                                      (t - spec.resetAt) / (BLUEPRINT_DURATION - spec.resetAt),
+                                    ),
+                                  ) * 0.8,
+                                )
+                              : pulse(responseProgress) + pulse(returnProgress) * 0.8;
   const bossVisible =
     spec.mode === 'burrow' && phase === 1 && action < 0.68
       ? 0
@@ -5455,7 +5639,11 @@ export function blueprintFrame(id, time) {
                                                                             'forced-inertia'
                                                                           ? t >= spec.slide[0] &&
                                                                             t < spec.slide[1]
-                                                                          : phase === 1;
+                                                                          : spec.mode ===
+                                                                              'wraparound-projectile'
+                                                                            ? t >= spec.releaseAt &&
+                                                                              t < spec.secondPass[1]
+                                                                            : phase === 1;
   const frame = {
     id,
     mode: spec.mode,
@@ -5539,22 +5727,25 @@ export function blueprintFrame(id, time) {
                             ? (Math.atan2(boss.y - player.y, boss.x - player.x) * 180) / Math.PI
                             : spec.mode === 'forced-inertia'
                               ? (Math.atan2(boss.y - player.y, boss.x - player.x) * 180) / Math.PI
-                              : spec.mode === 'boss-as-terrain'
+                              : spec.mode === 'wraparound-projectile'
                                 ? (Math.atan2(boss.y - player.y, boss.x - player.x) * 180) / Math.PI
-                                : spec.mode === 'control-mode-shift'
+                                : spec.mode === 'boss-as-terrain'
                                   ? (Math.atan2(boss.y - player.y, boss.x - player.x) * 180) /
                                     Math.PI
-                                  : spec.mode === 'damage-type-resistance' ||
-                                      spec.mode === 'situational-immunity' ||
-                                      spec.mode === 'part-break' ||
-                                      spec.mode === 'attack-reflection' ||
-                                      spec.mode === 'counter-stance' ||
-                                      spec.mode === 'absorption-power-up' ||
-                                      spec.mode === 'interruptible-wind-up' ||
-                                      spec.mode === 'loadout-adaptation' ||
-                                      spec.mode === 'wind-up'
-                                    ? -180
-                                    : -90,
+                                  : spec.mode === 'control-mode-shift'
+                                    ? (Math.atan2(boss.y - player.y, boss.x - player.x) * 180) /
+                                      Math.PI
+                                    : spec.mode === 'damage-type-resistance' ||
+                                        spec.mode === 'situational-immunity' ||
+                                        spec.mode === 'part-break' ||
+                                        spec.mode === 'attack-reflection' ||
+                                        spec.mode === 'counter-stance' ||
+                                        spec.mode === 'absorption-power-up' ||
+                                        spec.mode === 'interruptible-wind-up' ||
+                                        spec.mode === 'loadout-adaptation' ||
+                                        spec.mode === 'wind-up'
+                                      ? -180
+                                      : -90,
     bossMotion: motion({
       gait:
         spec.mode === 'chase-herding' ||
@@ -5882,7 +6073,9 @@ export function blueprintFrame(id, time) {
                                 ? t * 7 * stride
                                 : spec.mode === 'forced-inertia'
                                   ? t * 7 * stride
-                                  : (route * responseProgress + route * returnProgress) / 20,
+                                  : spec.mode === 'wraparound-projectile'
+                                    ? t * 7 * stride
+                                    : (route * responseProgress + route * returnProgress) / 20,
       stride,
       lean: stride * 0.45,
       crouch:
@@ -5973,11 +6166,13 @@ export function blueprintFrame(id, time) {
                                                   ? strikePulse(t, spec.punishAt, 0.38)
                                                   : spec.mode === 'forced-inertia'
                                                     ? strikePulse(t, spec.punishAt, 0.38)
-                                                    : spec.mode === 'decoy' && phase === 1
-                                                      ? pulse(clamp((action - 0.52) / 0.3))
-                                                      : spec.mode === 'weak-point' && phase === 1
-                                                        ? pulse(action * 1.5)
-                                                        : 0,
+                                                    : spec.mode === 'wraparound-projectile'
+                                                      ? strikePulse(t, spec.punishAt, 0.38)
+                                                      : spec.mode === 'decoy' && phase === 1
+                                                        ? pulse(clamp((action - 0.52) / 0.3))
+                                                        : spec.mode === 'weak-point' && phase === 1
+                                                          ? pulse(action * 1.5)
+                                                          : 0,
     }),
   };
   if (spec.mode === 'directional-shield') {
@@ -6088,6 +6283,47 @@ export function blueprintFrame(id, time) {
       : frame.forcedInertiaBraking
         ? 1 - smooth((t - spec.brake[0]) / (spec.brake[1] - spec.brake[0]))
         : 0;
+    frame.punishStrike = strikePulse(t, spec.punishAt, 0.38) > 0.5;
+  }
+  if (spec.mode === 'wraparound-projectile') {
+    frame.wraparoundProjectileState = wraparoundProjectileState(t);
+    frame.wraparoundBoundaryLinked = t >= spec.signalAt && t < spec.resetAt;
+    frame.wraparoundRouteVisible = t >= spec.previewAt && t < spec.resetAt;
+    frame.wraparoundFirstPass = t >= spec.firstPass[0] && t < spec.firstPass[1];
+    frame.wraparoundCrossing = t >= spec.crossing[0] && t < spec.crossing[1];
+    frame.wraparoundSecondPass = t >= spec.secondPass[0] && t < spec.secondPass[1];
+    frame.wraparoundLap = frame.wraparoundSecondPass
+      ? 2
+      : frame.wraparoundFirstPass || frame.wraparoundCrossing
+        ? 1
+        : 0;
+    frame.wraparoundSignalProgress = smooth((t - spec.signalAt) / (spec.previewAt - spec.signalAt));
+    const firstProgress = clamp((t - spec.firstPass[0]) / (spec.firstPass[1] - spec.firstPass[0]));
+    const crossingProgress = clamp((t - spec.crossing[0]) / (spec.crossing[1] - spec.crossing[0]));
+    const secondProgress = clamp(
+      (t - spec.secondPass[0]) / (spec.secondPass[1] - spec.secondPass[0]),
+    );
+    frame.wraparoundProjectilePoint = frame.wraparoundFirstPass
+      ? { x: mix(spec.boss[0] + 48, spec.rightBoundary + 18, firstProgress), y: spec.laneY }
+      : frame.wraparoundCrossing
+        ? {
+            x: crossingProgress < 0.5 ? spec.rightBoundary + 18 : spec.leftBoundary - 18,
+            y: spec.laneY,
+          }
+        : frame.wraparoundSecondPass
+          ? {
+              x: mix(spec.leftBoundary - 18, spec.rightBoundary + 18, secondProgress),
+              y: spec.laneY,
+            }
+          : { x: spec.boss[0] + 48, y: spec.laneY };
+    frame.wraparoundProjectilePoints = frame.wraparoundCrossing
+      ? [
+          { x: spec.rightBoundary + 10, y: spec.laneY },
+          { x: spec.leftBoundary - 10, y: spec.laneY },
+        ]
+      : dangerActive
+        ? [frame.wraparoundProjectilePoint]
+        : [];
     frame.punishStrike = strikePulse(t, spec.punishAt, 0.38) > 0.5;
   }
   if (spec.mode === 'control-mode-shift') {
@@ -6228,7 +6464,8 @@ export function blueprintFrame(id, time) {
       spec.mode === 'escape-phase' ||
       spec.mode === 'boss-as-terrain' ||
       spec.mode === 'cover-line-of-sight' ||
-      spec.mode === 'forced-inertia'
+      spec.mode === 'forced-inertia' ||
+      spec.mode === 'wraparound-projectile'
         ? 92
         : -62),
   };

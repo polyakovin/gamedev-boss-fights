@@ -250,6 +250,16 @@ export function initializeBlueprint(widget) {
       widget.dataset.blueprintInertiaSpeed = frame.forcedInertiaSpeed.toFixed(3);
       widget.dataset.blueprintPunishStrike = String(frame.punishStrike);
     }
+    if (mechanicId === 'wraparound-projectile') {
+      widget.dataset.blueprintWraparoundProjectile = frame.wraparoundProjectileState;
+      widget.dataset.blueprintWrapBoundary = String(frame.wraparoundBoundaryLinked);
+      widget.dataset.blueprintWrapRoute = String(frame.wraparoundRouteVisible);
+      widget.dataset.blueprintWrapFirstPass = String(frame.wraparoundFirstPass);
+      widget.dataset.blueprintWrapCrossing = String(frame.wraparoundCrossing);
+      widget.dataset.blueprintWrapSecondPass = String(frame.wraparoundSecondPass);
+      widget.dataset.blueprintWrapLap = String(frame.wraparoundLap);
+      widget.dataset.blueprintPunishStrike = String(frame.punishStrike);
+    }
     boss.setAttribute(
       'transform',
       `translate(${frame.boss.x} ${frame.boss.y}) scale(${frame.bossScale})`,
