@@ -1190,28 +1190,28 @@ const SPECS = {
   },
   'persistent-progress': {
     mode: 'persistent-progress',
-    boss: [300, 375],
-    player: [300, 760],
-    target: [300, 760],
-    arena: [55, 310, 450, 570],
+    boss: [280, 245],
+    player: [280, 710],
+    target: [280, 710],
+    arena: [40, 145, 480, 715],
     anchors: [
-      [180, 505],
-      [420, 505],
+      [145, 440],
+      [415, 440],
     ],
     strikePoints: [
-      [180, 585],
-      [420, 585],
+      [145, 540],
+      [415, 540],
     ],
-    corePoint: [300, 555],
+    corePoint: [280, 425],
     approachStarts: [0.32, 1.77, 3.29],
     strikes: [0.78, 2.28, 3.92],
     commits: [0.98, 2.5, 4.18],
     hazards: [
-      { telegraph: [1.02, 1.14], active: [1.14, 1.4], laneY: 585 },
-      { telegraph: [2.54, 2.66], active: [2.66, 2.92], laneY: 585 },
+      { telegraph: [1.02, 1.14], active: [1.14, 1.4], laneY: 540 },
+      { telegraph: [2.54, 2.66], active: [2.66, 2.92], laneY: 540 },
     ],
-    laneStart: [80, 585],
-    laneEnd: [520, 585],
+    laneStart: [80, 540],
+    laneEnd: [520, 540],
     laneHalfWidth: 34,
     restores: [
       [1.4, 1.77],
@@ -5586,120 +5586,129 @@ function primitivesFor(spec, frame) {
     ];
   }
   if (mode === 'persistent-progress') {
-    const checkpointPulse = Math.max(
-      ...spec.commits.map((commit) => strikePulse(frame.time, commit, 0.42)),
-    );
-    const strike = Math.max(...spec.strikes.map((time) => strikePulse(frame.time, time, 0.34)));
     const activeHazard = spec.hazards[frame.persistentProgressHazardIndex];
     const laneY = activeHazard?.laneY ?? spec.laneStart[1];
     const restorePulse = frame.persistentProgressRestoring
       ? 0.72 + pulse(frame.time * 3) * 0.22
       : 0;
-    const anchorPrimitives = spec.anchors.flatMap(([x, y], index) => {
-      const complete = index < frame.persistentProgressCompletedObjectives;
+    const anchors = spec.anchors.flatMap(([x, y], index) => {
+      const broken = frame.time >= spec.strikes[index] && frame.time < spec.resetAt;
+      const active = !broken;
       return [
         path(
-          `M ${x} ${y - 34} L ${x + 28} ${y} L ${x} ${y + 34} L ${x - 28} ${y} Z`,
-          complete ? 0.35 : 0.94,
-          complete ? 'muted' : 'accent',
-          7,
-          complete ? 0.02 : 0.14,
+          `M ${x - 37} ${y + 30} L ${x + 37} ${y + 30} L ${x + 45} ${y + 47} H ${x - 45} Z`,
+          0.88,
+          'muted',
+          0,
+          0.82,
         ),
-        line(x - 19, y - 20, x + 19, y + 20, complete ? 0.96 : 0, 'signal', 7),
-        line(x + 19, y - 20, x - 19, y + 20, complete ? 0.96 : 0, 'signal', 7),
-        line(
-          x,
-          y - 34,
-          frame.boss.x,
-          frame.boss.y + 44,
-          complete ? 0.12 : 0.62,
-          complete ? 'muted' : 'accent',
-          5,
-          '8 7',
+        path(
+          `M ${x - 25} ${y + 28} L ${x - 24} ${y - 15} L ${x} ${y - 51} L ${x + 24} ${y - 15} L ${x + 25} ${y + 28} Z`,
+          active ? 0.96 : 0,
+          'accent',
+          0,
+          0.88,
+        ),
+        path(
+          `M ${x} ${y - 35} L ${x - 8} ${y - 6} L ${x} ${y + 7} L ${x + 8} ${y - 6} Z`,
+          active ? 0.98 : 0,
+          'muted',
+          0,
+          0.8,
+        ),
+        path(
+          `M ${x - 31} ${y + 21} L ${x - 7} ${y + 6} L ${x + 1} ${y + 30} Z`,
+          broken ? 0.94 : 0,
+          'muted',
+          0,
+          0.88,
+        ),
+        path(
+          `M ${x + 7} ${y + 13} L ${x + 28} ${y + 23} L ${x + 10} ${y + 33} Z`,
+          broken ? 0.94 : 0,
+          'accent',
+          0,
+          0.78,
+        ),
+        path(
+          `M ${x - 8} ${y - 26} L ${x + 8} ${y - 17} L ${x + 1} ${y + 2} Z`,
+          broken ? 0.82 : 0,
+          'accent',
+          0,
+          0.76,
+        ),
+        path(
+          `M ${frame.boss.x + (index === 0 ? -26 : 26)} ${frame.boss.y + 27} L ${x - 6} ${y - 26} L ${x + 6} ${y - 20} L ${frame.boss.x + (index === 0 ? -17 : 17)} ${frame.boss.y + 30} Z`,
+          active ? 0.46 : 0,
+          'muted',
+          0,
+          0.72,
         ),
       ];
     });
     return [
-      rect(...spec.arena, frame.persistentProgressResolved ? 0.3 : 0.52, 'muted', 0.025),
-      rect(200, 318, 200, 12, 0.52, 'muted', 0.025),
-      rect(
-        200,
-        318,
-        200 * (frame.persistentProgressBossHealth / 100),
-        12,
-        0.92,
+      path('M 120 75 H 440 V 95 H 120 Z', 0.66, 'muted', 0, 0.62),
+      path(
+        `M 120 75 H ${120 + (320 * frame.persistentProgressBossHealth) / 100} V 95 H 120 Z`,
+        0.94,
         frame.persistentProgressResolved ? 'safe' : 'signal',
-        0.16,
+        0,
+        0.86,
       ),
       ...Array.from({ length: 3 }, (_, index) => {
-        const x = 238 + index * 62;
+        const x = 90;
+        const y = 190 + index * 60;
         const complete = index < frame.persistentProgressCompletedObjectives;
-        return path(
-          `M ${x} 358 L ${x + 15} 373 L ${x} 388 L ${x - 15} 373 Z`,
-          complete ? 0.98 : 0.3,
-          complete ? 'safe' : 'muted',
-          5,
-          complete ? 0.18 : 0.02,
-        );
-      }),
-      circle(300, 373, 30 + checkpointPulse * 34, checkpointPulse, 'safe', 6, 0.04),
-      ...anchorPrimitives,
-      circle(
-        frame.boss.x,
-        frame.boss.y + 24,
-        35 + pulse(frame.time * 2) * 4,
-        frame.persistentProgressCoreOpen ? 0.94 : 0.16,
+        return [
+          path(
+            `M ${x - 23} ${y - 20} L ${x + 23} ${y - 20} L ${x + 26} ${y + 8} L ${x} ${y + 20} L ${x - 26} ${y + 8} Z`,
+            0.94,
+            complete ? 'safe' : 'muted',
+            0,
+            complete ? 0.88 : 0.72,
+          ),
+          path(
+            `M ${x - 7} ${y - 9} L ${x} ${y + 5} L ${x + 7} ${y - 9}`,
+            complete ? 0.96 : 0.28,
+            complete ? 'muted' : 'accent',
+            3,
+          ),
+        ];
+      }).flat(),
+      ...anchors,
+      path(
+        `M ${frame.boss.x - 16} ${frame.boss.y + 7} L ${frame.boss.x} ${frame.boss.y - 2} L ${frame.boss.x + 16} ${frame.boss.y + 7} L ${frame.boss.x + 12} ${frame.boss.y + 26} L ${frame.boss.x} ${frame.boss.y + 34} L ${frame.boss.x - 12} ${frame.boss.y + 26} Z`,
+        frame.persistentProgressCoreOpen ? 0.98 : 0.22,
         frame.persistentProgressResolved ? 'safe' : 'accent',
-        7,
-        frame.persistentProgressCoreOpen ? 0.15 : 0.02,
+        0,
+        0.94,
       ),
       path(
-        `M ${frame.boss.x - 18} ${frame.boss.y + 24} L ${frame.boss.x} ${frame.boss.y + 6} L ${frame.boss.x + 18} ${frame.boss.y + 24} L ${frame.boss.x} ${frame.boss.y + 42} Z`,
-        frame.persistentProgressCoreOpen ? 0.98 : 0.2,
-        frame.persistentProgressResolved ? 'safe' : 'signal',
-        6,
-        frame.persistentProgressCoreOpen ? 0.18 : 0.02,
-      ),
-      line(
-        spec.laneStart[0],
-        laneY,
-        spec.laneEnd[0],
-        laneY,
-        frame.persistentProgressHazardActive ? 0.94 : 0,
+        `M ${spec.laneStart[0]} ${laneY - spec.laneHalfWidth} H ${spec.laneEnd[0]} V ${laneY + spec.laneHalfWidth} H ${spec.laneStart[0]} Z`,
+        frame.persistentProgressHazardActive
+          ? 0.86
+          : frame.persistentProgressHazardTelegraph
+            ? 0.38
+            : 0,
         'signal',
-        spec.laneHalfWidth * 2,
+        0,
+        frame.persistentProgressHazardActive ? 0.72 : 0.36,
       ),
-      line(
-        spec.laneStart[0],
-        laneY,
-        spec.laneEnd[0],
-        laneY,
-        frame.persistentProgressHazardTelegraph ? 0.76 : 0,
-        'accent',
-        7,
-        '12 10',
-      ),
-      circle(
-        spec.player[0],
-        spec.player[1],
-        30 + restorePulse * 28,
+      path(
+        `M ${spec.player[0] - 26} ${spec.player[1] + 20} L ${spec.player[0] + 26} ${spec.player[1] + 20} L ${spec.player[0] + 36} ${spec.player[1] + 31} H ${spec.player[0] - 36} Z`,
         restorePulse,
         'safe',
-        6,
-        0.04,
-        '8 7',
+        0,
+        0.46,
       ),
+      circle(440, 255, 18, frame.persistentProgressResolved ? 0.98 : 0, 'accent', 0, 0.9),
+      circle(440, 255, 8, frame.persistentProgressResolved ? 0.98 : 0, 'muted', 0, 0.9),
       path(
-        `M ${frame.player.x} ${frame.player.y - 38} Q ${frame.player.x} ${frame.player.y - 105} ${frame.boss.x} ${frame.boss.y + 42}`,
-        strike,
-        frame.persistentProgressResolved ? 'safe' : 'accent',
-        9,
-      ),
-      path(
-        'M 438 398 L 474 434 L 438 470 M 474 434 L 407 434',
-        frame.persistentProgressResolved ? 0.92 : 0.16,
-        'safe',
-        8,
+        'M 434 268 H 446 V 290 H 465 V 301 H 453 V 312 H 434 Z',
+        frame.persistentProgressResolved ? 0.98 : 0,
+        'accent',
+        0,
+        0.9,
       ),
     ];
   }
@@ -11342,7 +11351,8 @@ export function blueprintFrame(id, time) {
       spec.mode === 'ability-lock' ||
       spec.mode === 'maximum-health-reduction' ||
       spec.mode === 'instant-kill' ||
-      spec.mode === 'status-buildup'
+      spec.mode === 'status-buildup' ||
+      spec.mode === 'persistent-progress'
         ? 55
         : spec.mode === 'directional-shield' ||
             spec.mode === 'damage-type-resistance' ||

@@ -2992,6 +2992,11 @@ test('persistent progress restores committed objectives while transient combat r
   assert.equal(firstDefeat.dangerActive, true);
   assert.equal(firstDefeat.persistentProgressPlayerAlive, false);
   assert.equal(firstDefeat.playerSafe, false, 'the demonstration intentionally proves a retry');
+  const hazard = firstDefeat.primitives.find(
+    (primitive) => primitive.type === 'path' && primitive.data === 'M 80 506 H 520 V 574 H 80 Z',
+  );
+  assert.ok(hazard, 'the filled hazard matches the collision lane');
+  assert.equal(hazard.width, 0);
   assert.equal(blueprintPointSafe(id, 1.2, { x: 300, y: 760 }), true);
 
   const secondAttempt = blueprintFrame(id, 1.9);

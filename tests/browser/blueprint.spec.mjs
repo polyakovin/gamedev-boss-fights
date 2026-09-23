@@ -3339,6 +3339,8 @@ test('persistent progress restores two committed anchors before one final result
     }, milliseconds);
 
   await expect(page.locator('.lesson-title-line h1')).toHaveText('Persistent encounter progress');
+  await expect(widget).toHaveAttribute('data-blueprint-full-height', 'true');
+  expect((await widget.boundingBox()).height).toBeGreaterThan(800);
   await expect(page.locator('.wip-badge, .draft-profile')).toHaveCount(0);
   await expect(page.locator('.game-example')).toHaveCount(3);
 

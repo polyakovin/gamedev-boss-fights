@@ -27,7 +27,7 @@
     "locked": "Objective ids, commit revisions, retry count, reset package, restored phase, result id, reward claim, persistence version, and migration are encounter-owned",
     "safe": "Show committed objectives as broken arena objects and filled ledger marks; pair every save with a distinct pulse, label, sound, caption, and matching restored geometry",
     "reducedMotion": "Autoplay is disabled by reduced motion. Scrub across 0.78, 0.98, 1.24, 1.58, 2.28, 2.50, 2.76, 3.10, 3.92, 4.18, and 5.45 seconds to inspect both commits, failures, restores, the core result, and reset.",
-    "diagramDescription": "Kern stands behind two rune anchors while Tavi approaches with a sword. A three-slot ledger records the left anchor, then the right anchor, across two visible defeat-and-respawn transitions. Broken anchors remain dark and crossed out after each retry while transient boss health refills. On the third attempt the core opens, Tavi strikes it, and exactly one final mark and reward appear."
+    "diagramDescription": "Kern stands behind two tall crystal pylons connected to the boss. Tavi breaks the left pylon, then the right across two defeats and respawns; their stone rubble stays in place while boss health refills. Three carved wall tablets gain permanent marks one by one. On the third attempt Kern’s chest core opens, Tavi strikes it, and a single key appears as the reward."
   },
   "steps": [
     {
