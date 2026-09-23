@@ -1305,12 +1305,12 @@
         "en": {
           "title": "Wave-clear objective",
           "category": "Encounter goals and vulnerability",
-          "summary": "Draft outline for the wave-clear objective mechanic. Rules, tuning guidance, and examples are still in progress."
+          "summary": "The encounter advances when the player clears a fixed sequence of finite enemy waves rather than depleting conventional boss health."
         },
         "ru": {
           "title": "Победа через волны",
           "category": "Цель боя и открытие уязвимости",
-          "summary": "У босса нет обычного здоровья; прогресс даёт уничтожение заданного числа волн."
+          "summary": "Встреча продвигается, когда игрок очищает заданную последовательность конечных волн врагов, а не уменьшает обычное здоровье босса."
         }
       }
     },

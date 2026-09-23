@@ -1,0 +1,25 @@
+{
+  "id": "wave-clear-objective",
+  "number": 82,
+  "published": true,
+  "sourceLocale": "en",
+  "contentVersion": 1,
+  "animation": "wave-clear-objective",
+  "lenses": ["progress-clarity", "difficulty-rhythm", "counterplay", "encounter-purpose"],
+  "related": ["survival-phase", "summon", "objective-linked-invulnerability"],
+  "sources": [
+    {
+      "title": "Boss Up: Boss Battle Design",
+      "url": "https://media.gdcvault.com/gdc2018/presentations/Keren_Itay_BossUp.pdf"
+    },
+    {
+      "title": "Great Gideon — The Binding of Isaac: Rebirth Wiki",
+      "url": "https://bindingofisaacrebirth.wiki.gg/wiki/Great_Gideon"
+    },
+    { "title": "Mithrix — Risk of Rain 2 Wiki", "url": "https://riskofrain2.wiki.gg/wiki/Mithrix" },
+    {
+      "title": "Royal Rat Vanguard — Dark Souls II Wiki",
+      "url": "https://darksouls2.wikidot.com/bosses%3Aroyal-rat-vanguard"
+    }
+  ]
+}

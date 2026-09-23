@@ -405,9 +405,9 @@ test('volley releases three parallel bolts on one beat and clears its outside ro
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
 });
 
-test('catalog and builder reuse the 75 promoted rule-specific previews', async ({ page }) => {
+test('catalog and builder reuse the 76 promoted rule-specific previews', async ({ page }) => {
   await page.goto('en/');
-  await expect(page.locator('[data-blueprint-preview]')).toHaveCount(75);
+  await expect(page.locator('[data-blueprint-preview]')).toHaveCount(76);
   const catalogLayouts = await page.locator('[data-blueprint-preview]').evaluateAll((previews) =>
     previews.map((preview) => {
       const boss = preview.querySelector('[data-character-art-preview="kern"]');
@@ -431,7 +431,7 @@ test('catalog and builder reuse the 75 promoted rule-specific previews', async (
   expect(new Set(catalogLayouts.map(({ layout }) => layout)).size).toBeGreaterThanOrEqual(18);
 
   await page.goto('en/builder/');
-  await expect(page.locator('[data-blueprint-preview]')).toHaveCount(75);
+  await expect(page.locator('[data-blueprint-preview]')).toHaveCount(76);
   const builderLayouts = await page.locator('[data-blueprint-preview]').evaluateAll((previews) =>
     previews.map((preview) => {
       const boss = preview.querySelector('[data-character-art-preview="kern"]');
@@ -2836,6 +2836,79 @@ test('objective-linked invulnerability requires the complete ledger before damag
   await expect(widget).toHaveAttribute(
     'data-blueprint-objective-linked-invulnerability',
     'protection-restored',
+  );
+
+  await page.setViewportSize({ width: 375, height: 812 });
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+});
+
+test('wave-clear objective seals and empties each finite roster before advancing', async ({
+  page,
+}) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.goto('en/mechanics/wave-clear-objective/');
+  const widget = page.locator('[data-blueprint-demo]');
+  const timeline = widget.locator('[data-blueprint-timeline]');
+  const seek = (milliseconds) =>
+    timeline.evaluate((element, value) => {
+      element.value = String(value);
+      element.dispatchEvent(new Event('input', { bubbles: true }));
+    }, milliseconds);
+
+  await expect(page.locator('.lesson-title-line h1')).toHaveText('Wave-clear objective');
+  await expect(page.locator('.wip-badge, .draft-profile')).toHaveCount(0);
+  await expect(page.locator('.game-example')).toHaveCount(3);
+
+  await seek(600);
+  await expect(widget).toHaveAttribute('data-blueprint-wave-clear', 'wave-1-preview');
+  await expect(widget).toHaveAttribute('data-blueprint-wave-queue-sealed', 'false');
+
+  await seek(900);
+  await expect(widget).toHaveAttribute('data-blueprint-wave-clear', 'wave-1-active');
+  await expect(widget).toHaveAttribute('data-blueprint-wave', '1');
+  await expect(widget).toHaveAttribute('data-blueprint-wave-remaining', '2');
+  await expect(widget).toHaveAttribute('data-blueprint-wave-queue-sealed', 'true');
+  await expect(widget.locator('[data-blueprint-primitive="7"] circle')).not.toHaveAttribute(
+    'opacity',
+    '0',
+  );
+
+  await seek(1450);
+  await expect(widget).toHaveAttribute('data-blueprint-wave-remaining', '0');
+  await expect(widget).toHaveAttribute('data-blueprint-wave-roster-empty', 'true');
+  await expect(widget).toHaveAttribute('data-blueprint-waves-complete', '0');
+
+  await seek(1650);
+  await expect(widget).toHaveAttribute('data-blueprint-wave-clear', 'wave-1-cleared');
+  await expect(widget).toHaveAttribute('data-blueprint-wave', '2');
+  await expect(widget).toHaveAttribute('data-blueprint-waves-complete', '1');
+
+  await seek(2400);
+  await expect(widget).toHaveAttribute('data-blueprint-wave-clear', 'wave-2-active');
+  await expect(widget).toHaveAttribute('data-blueprint-wave-remaining', '2');
+
+  await seek(3800);
+  await expect(widget).toHaveAttribute('data-blueprint-wave-clear', 'wave-3-active');
+  await expect(widget).toHaveAttribute('data-blueprint-waves-complete', '2');
+  const firstEnemyRadius = Number(
+    await widget.locator('[data-blueprint-primitive="7"] circle').getAttribute('r'),
+  );
+  const eliteRadius = Number(
+    await widget.locator('[data-blueprint-primitive="8"] circle').getAttribute('r'),
+  );
+  expect(eliteRadius).toBeGreaterThan(firstEnemyRadius);
+
+  await seek(4600);
+  await expect(widget).toHaveAttribute('data-blueprint-wave-clear', 'all-waves-cleared');
+  await expect(widget).toHaveAttribute('data-blueprint-waves-complete', '3');
+  await expect(widget).toHaveAttribute('data-blueprint-wave-all-complete', 'true');
+
+  await seek(5100);
+  await expect(widget).toHaveAttribute('data-blueprint-wave-clear', 'reward-open');
+  await expect(widget).toHaveAttribute('data-blueprint-wave-reward-open', 'true');
+  await expect(widget.locator('[data-blueprint-primitive="22"] circle')).not.toHaveAttribute(
+    'opacity',
+    '0',
   );
 
   await page.setViewportSize({ width: 375, height: 812 });

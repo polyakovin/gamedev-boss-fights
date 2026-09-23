@@ -1,0 +1,138 @@
+{
+  "title": "Objetivo de limpiar oleadas",
+  "subtitle": "Haz avanzar el encuentro resolviendo una secuencia finita de grupos enemigos; la siguiente oleada solo empieza cuando la cola de aparición está cerrada y no queda ningún objetivo obligatorio.",
+  "variant": "Kern abre tres portales rúnicos en secuencia mientras Tavi recorre la cantera para eliminar dos esbirros, luego tres y por último un grupo de élite; cada lista vacía llena una marca, las tres terminan el encuentro sin una barra de vida convencional y el registro se reinicia de forma visible",
+  "summary": "El encuentro avanza al limpiar una secuencia fija de oleadas finitas en vez de agotar la vida convencional del jefe.",
+  "overview": "Este objetivo sustituye el daño directo al jefe por una lista finita. Cada oleada necesita reglas de pertenencia, una cola de aparición cerrada, un recuento autoritativo de vivos, un evento de limpieza y una resolución final, para que el progreso no dependa de enemigos ocultos, tiempo transcurrido o efectos visuales tardíos.",
+  "learning": "Diseña manifiestos finitos, propiedad de aparición, registro de objetivos, condiciones de cola cerrada y lista vacía, señales de limpieza y transición, ritmo, composición por roles, rutas de remate accesibles, crédito multijugador, reglas de fallo y control, equivalentes accesibles, reinicios deterministas y pruebas que impidan avanzar con un objetivo pendiente.",
+  "category": "Objetivos del encuentro y vulnerabilidad",
+  "readTime": "8 min",
+  "demo": {
+    "title": "Convierte cada oleada en un registro finito e inspeccionable",
+    "timeline": "Cronología del objetivo de oleadas",
+    "step": "Estados del objetivo de oleadas",
+    "phaseNames": [
+      "Anunciar la secuencia y cerrar la primera cola",
+      "Limpiar listas crecientes con relevos explícitos",
+      "Resolver solo tras la última lista vacía"
+    ],
+    "phaseDescriptions": [
+      "Kern levanta tres marcas y anticipa dos portales. La primera cola se cierra a 0,75 s con dos esbirros registrados; Tavi los golpea a 1,08 y 1,38 s, y la primera marca se llena a 1,58 s solo cuando el recuento vivo llega a cero.",
+      "La segunda oleada se sella a 1,90 s con tres objetivos y termina a 2,98 s tras golpes a 2,20, 2,48 y 2,76 s. La tercera empieza a 3,28 s con un objetivo central mayor; Tavi resuelve los tres a 3,62, 3,94 y 4,28 s mientras la barra cuenta enemigos reales, no tiempo.",
+      "La última lista vacía completa 3/3 a 4,50 s. El campo de Kern cae a 4,72 s, la recompensa abre a 4,95 s y la secuencia se reinicia tras 5,28 s. Ningún golpe oculto ni temporizador sustituye el evento de limpieza."
+    ],
+    "boss": "Jefe",
+    "player": "Jugador",
+    "danger": "La lista de la oleada, no el cuerpo de Kern, controla el progreso; un objetivo sigue siendo obligatorio hasta que su derrota autoritativa lo elimina de la lista sellada",
+    "locked": "Se definen manifiestos, portales, cierre de cola, ID registrados, recuento vivo, evento de limpieza, pausa, resolución final, recompensa, fallo y reinicio",
+    "safe": "Muestra el número total de oleadas, conserva cada objetivo localizable y accesible, ofrece una ruta de remate legible y espera a confirmar todas las derrotas obligatorias",
+    "reducedMotion": "Con movimiento reducido se detiene la reproducción automática. Recorre 0,75; 1,08; 1,38; 1,58; 1,90; 2,20; 2,48; 2,76; 2,98; 3,28; 3,62; 3,94; 4,28; 4,50; 4,72; 4,95 y 5,28 s para revisar listas, derrotas, limpiezas, relevos, recompensa y reinicio.",
+    "diagramDescription": "Kern está dentro de un campo rúnico sobre tres marcas. Dos portales laterales emiten fichas simples de esbirros cruzadas. Tavi sigue una ruta continua: los destellos de espada quitan fichas, la barra de vivos baja, cada marca se llena solo con la lista vacía y un pulso final abre la recompensa tras 3/3."
+  },
+  "steps": [
+    {
+      "title": "¿Qué pertenece exactamente a cada oleada?",
+      "body": "Define cada oleada como un manifiesto de ID estables, incluidos enemigos tardíos, divididos, transformados y opcionales. Registra los objetivos obligatorios antes de que actúen, sella la cola cuando no pueda entrar ninguno más y limpia solo con la lista sellada vacía. No deduzcas el final de una animación, una consulta general de la sala o un temporizador; registra cada alta y baja."
+    },
+    {
+      "title": "¿Cómo crea la composición un ritmo legible?",
+      "body": "Da un propósito a cada oleada: presentar un rol, combinar roles conocidos y probar prioridad o espacio. Presupuesta aviso, aproximación, tiempo de derrota, recorrido de remate y descanso. Mantén visible y alcanzable al último enemigo, limita la presión simultánea y define si las oleadas se solapan. La dificultad puede cambiar cantidades o roles, pero el manifiesto mostrado debe coincidir."
+    },
+    {
+      "title": "¿Cómo se resuelve con fiabilidad la limpieza final?",
+      "body": "Emite un único evento autoritativo después de la última baja y separa caída del campo, recompensa, salida, control y reinicio en transiciones con nombre. Define muerte, autodestrucción, desaparición, caída fuera del mapa, conversión, propiedad de invocaciones y unión tardía. Replica la lista sin permitir que dos clientes avancen dos veces."
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "Un enemigo oculto o inaccesible bloquea el encuentro",
+      "body": "Un objetivo fuera de la arena, bajo la navegación, invulnerable sin marca o sin señal convierte el final en buscar un fallo. Sigue ID obligatorios, muestra recuento y dirección, recupera posiciones inválidas y separa invocaciones opcionales de la lista."
+    },
+    {
+      "title": "La siguiente oleada avanza por tiempo y no por prueba",
+      "body": "Un retraso fijo puede iniciar otro grupo mientras una aparición tardía o una muerte aún posee jugabilidad. El tiempo puede dar forma a la pausa posterior, pero avanzar exige una cola cerrada y una lista autoritativa vacía."
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "Separa fin de aparición y fin de oleada",
+      "body": "La cola está cerrada cuando no añadirá objetivos obligatorios; la oleada está limpia cuando todos los registrados se resuelven. Ambos hechos evitan el avance temprano durante un instante vacío entre apariciones y aclaran la depuración."
+    },
+    {
+      "title": "Combina roles, no solo cantidades",
+      "body": "La escalada es más clara cuando cambia una decisión: presión móvil y controlador, primera línea protegida y apoyo expuesto, o enjambre débil alrededor de un ancla resistente. Aumentar solo el número alarga el remate sin crear necesariamente un problema nuevo."
+    },
+    {
+      "title": "Diseña la experiencia del último objetivo",
+      "body": "Mide la peor ruta, visibilidad de cámara, acceso vertical, límites y recuperación de navegación. Marca más al último enemigo e impide que huya indefinidamente. A menudo ese objetivo define el ritmo percibido de toda la oleada."
+    },
+    {
+      "title": "Expón un registro por varios canales",
+      "body": "Número, recuento vivo, estado de portales, marcas, pulso de limpieza, música, subtítulos y vibración deben describir la misma lista. No dependas solo del color. La ayuda puede señalar dirección, ampliar descansos o reducir roles simultáneos sin romper la prueba finita."
+    }
+  ],
+  "story": {
+    "title": "Kern prueba la cantera con tres portales",
+    "body": "Kern golpea el suelo y abre viejas grietas una por una. Pequeños esbirros de piedra salen con marcas de lista y el portal final ata un núcleo pesado entre ellos. Tavi cierra cada grieta al limpiar su manifiesto; al llenar la tercera marca, el elemental baja los brazos y libera el camino."
+  },
+  "adaptation": {
+    "title": "Deja que Tavi limpie la lista con movimiento y su espada",
+    "body": "Cada esbirro acepta la misma interacción de espada y la ruta usa movimiento normal. El siguiente portal espera la limpieza confirmada, las pausas permiten recolocarse y el objetivo resistente final queda en el centro para que el final sea deliberado y no una búsqueda fuera de pantalla."
+  },
+  "distinction": {
+    "title": "Progreso por derrotas, no por supervivencia o una invocación",
+    "body": "Una fase de supervivencia avanza al vencer el tiempo requerido; matar amenazas quizá solo reduzca presión. Limpiar oleadas avanza cuando una lista finita declarada queda vacía, sea rápido o lento. Invocar describe crear otro actor; solo se convierte en este objetivo cuando su derrota registrada controla el progreso."
+  },
+  "lensNotes": [
+    {
+      "id": "progress-clarity",
+      "body": "Número de oleada, portales sellados, marcas, recuento vivo, pips de limpieza y resolución muestran qué queda y qué evento avanza."
+    },
+    {
+      "id": "difficulty-rhythm",
+      "body": "Aviso, presión, remate, relevo y descanso forman una cadencia ajustable; la composición escala sin solo alargar el tiempo."
+    },
+    {
+      "id": "counterplay",
+      "body": "El jugador prioriza roles, recorre portales, controla presión simultánea, conserva recursos y prepara la posición del siguiente relevo."
+    },
+    {
+      "id": "encounter-purpose",
+      "body": "Las listas finitas en lugar de daño directo pueden probar control de masas, amplitud de configuración, recorrido o resistencia con un final medible."
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "The Binding of Isaac: Repentance",
+      "boss": "Great Gideon",
+      "screenshot": "https://i.ytimg.com/vi/Gq-7D79ULRI/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=Gq-7D79ULRI&t=8s",
+      "body": "Great Gideon no tiene vida tradicional. Seis oleadas finitas aparecen en una sala alta y la siguiente solo empieza al derrotar a la anterior mientras Gideon sigue atacando la arena. El contador explícito separa el progreso de la lista de la aparente resistencia del jefe.",
+      "video": "https://www.youtube.com/watch?v=Gq-7D79ULRI&t=8s",
+      "videoDurationSeconds": 135
+    },
+    {
+      "dimension": "3D",
+      "game": "Risk of Rain 2",
+      "boss": "Mithrix",
+      "screenshot": "https://i.ytimg.com/vi/5eKczbUwT7A/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=5eKczbUwT7A&t=412s",
+      "body": "Tras la primera fase de vida, Mithrix abandona la arena y la segunda fase es una limpieza finita de Lunar Chimera. Derrotar al grupo, no esperar ni dañar al jefe ausente, trae a Mithrix de vuelta. Los pilares, roles distintos y la arena vacía hacen legible el relevo.",
+      "video": "https://www.youtube.com/watch?v=5eKczbUwT7A&t=412s",
+      "videoDurationSeconds": 2033
+    },
+    {
+      "dimension": "3D",
+      "game": "Dark Souls II",
+      "boss": "Royal Rat Vanguard",
+      "screenshot": "https://i.ytimg.com/vi/fGwL3d-Qem8/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=fGwL3d-Qem8&t=14s",
+      "body": "El encuentro empieza sin el jefe nombrado. Matar diez ratas completa una lista inicial e introduce al Vanguard y su vida, cambiando de limpiar la multitud a identificar un objetivo marcado entre apariciones continuas. El ejemplo exige separar el final de oleada de enemigos posteriores o infinitos.",
+      "video": "https://www.youtube.com/watch?v=fGwL3d-Qem8&t=14s",
+      "videoDurationSeconds": 108
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

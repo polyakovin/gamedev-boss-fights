@@ -911,6 +911,69 @@ const SPECS = {
       [420, 500],
     ],
   },
+  'wave-clear-objective': {
+    mode: 'wave-clear-objective',
+    boss: [280, 370],
+    player: [280, 780],
+    target: [340, 520],
+    arena: [56, 330, 448, 560],
+    waveSpawns: [0.75, 1.9, 3.28],
+    waveKills: [
+      [1.08, 1.38],
+      [2.2, 2.48, 2.76],
+      [3.62, 3.94, 4.28],
+    ],
+    waveClears: [1.58, 2.98, 4.5],
+    resolveAt: 4.72,
+    rewardAt: 4.95,
+    resetAt: 5.28,
+    gates: [
+      [88, 610],
+      [472, 610],
+    ],
+    waveEnemies: [
+      [
+        [140, 620],
+        [420, 620],
+      ],
+      [
+        [420, 570],
+        [280, 700],
+        [140, 570],
+      ],
+      [
+        [145, 650],
+        [280, 600],
+        [415, 650],
+      ],
+    ],
+    playerRoutes: [
+      [
+        [280, 780],
+        [180, 690],
+        [380, 690],
+      ],
+      [
+        [380, 690],
+        [385, 610],
+        [320, 735],
+        [175, 610],
+      ],
+      [
+        [175, 610],
+        [185, 700],
+        [320, 650],
+        [375, 700],
+      ],
+    ],
+    rewardPoint: [340, 520],
+    resetRoute: [
+      [340, 520],
+      [340, 620],
+      [310, 700],
+      [280, 780],
+    ],
+  },
   'wide-swing': { mode: 'arc', boss: [280, 310], player: [410, 470], target: [470, 650] },
   lunge: { mode: 'lunge', boss: [170, 290], player: [390, 590], target: [470, 660] },
   grab: { mode: 'grab', boss: [280, 300], player: [390, 485], target: [470, 610] },
@@ -1587,6 +1650,56 @@ export function objectiveLinkedInvulnerabilityOutcome(time, target = 'boss') {
   if (index < 0 || index >= spec.objectiveHits.length)
     throw new Error(`Unknown objective target: ${target}`);
   return t >= spec.objectiveHits[index] && t < spec.resetAt ? 'complete' : 'active';
+}
+
+export function waveClearObjectiveState(time) {
+  const spec = SPECS['wave-clear-objective'];
+  const t = localTime(time);
+  if (t < 0.42) return 'briefing';
+  if (t < spec.waveSpawns[0]) return 'wave-1-preview';
+  if (t < spec.waveClears[0]) return 'wave-1-active';
+  if (t < spec.waveSpawns[1]) return 'wave-1-cleared';
+  if (t < spec.waveClears[1]) return 'wave-2-active';
+  if (t < spec.waveSpawns[2]) return 'wave-2-cleared';
+  if (t < spec.waveClears[2]) return 'wave-3-active';
+  if (t < spec.resolveAt) return 'all-waves-cleared';
+  if (t < spec.rewardAt) return 'encounter-resolving';
+  if (t < spec.resetAt) return 'reward-open';
+  return 'reset';
+}
+
+export function waveClearObjectiveProgress(time) {
+  const spec = SPECS['wave-clear-objective'];
+  const t = localTime(time);
+  if (t >= spec.resetAt)
+    return Object.freeze({
+      wave: 0,
+      completedWaves: 0,
+      remainingEnemies: 0,
+      spawnQueueSealed: false,
+      rosterEmpty: true,
+      allComplete: false,
+    });
+  let wave = spec.waveSpawns.findIndex((spawn, index) => t >= spawn && t < spec.waveClears[index]);
+  if (wave < 0) {
+    const next = spec.waveSpawns.findIndex((spawn) => t < spawn);
+    wave = next < 0 ? spec.waveSpawns.length : next;
+  }
+  const completedWaves = spec.waveClears.filter((clear) => t >= clear).length;
+  const activeWave = Math.min(wave, spec.waveKills.length - 1);
+  const spawnQueueSealed =
+    wave < spec.waveSpawns.length && t >= spec.waveSpawns[wave] && t < spec.waveClears[wave];
+  const remainingEnemies = spawnQueueSealed
+    ? spec.waveKills[wave].filter((kill) => t < kill).length
+    : 0;
+  return Object.freeze({
+    wave: completedWaves === spec.waveClears.length ? spec.waveClears.length : activeWave + 1,
+    completedWaves,
+    remainingEnemies,
+    spawnQueueSealed,
+    rosterEmpty: remainingEnemies === 0,
+    allComplete: completedWaves === spec.waveClears.length,
+  });
 }
 
 const segmentIntersectsRect = (start, end, bounds) => {
@@ -3800,6 +3913,104 @@ function primitivesFor(spec, frame) {
       ),
     ];
   }
+  if (mode === 'wave-clear-objective') {
+    const waveIndex = Math.max(0, Math.min(spec.waveEnemies.length - 1, frame.waveClearWave - 1));
+    const enemies = spec.waveEnemies[waveIndex].map(point);
+    const kills = spec.waveKills[waveIndex];
+    const activeEnemy =
+      frame.waveClearHitIndex >= 0 ? enemies[frame.waveClearHitIndex] : enemies[0];
+    const hitPulse = Math.max(...kills.map((kill) => strikePulse(frame.time, kill, 0.28)));
+    const spawnPulse = strikePulse(frame.time, spec.waveSpawns[waveIndex], 0.42);
+    const clearPulse = Math.max(
+      ...spec.waveClears.map((clear) => strikePulse(frame.time, clear, 0.42)),
+    );
+    const active = frame.waveClearSpawnQueueSealed;
+    const resolved = frame.waveClearAllComplete;
+    return [
+      rect(...spec.arena, 0.52, 'muted', 0.025),
+      ...spec.gates.map(([x, y]) =>
+        circle(x, y, 40 + spawnPulse * 18, active ? 0.78 : 0.24, 'accent', 7, 0.08, '8 8'),
+      ),
+      circle(
+        frame.boss.x,
+        frame.boss.y,
+        88 + clearPulse * 24,
+        resolved ? 0.16 : 0.72,
+        resolved ? 'safe' : 'accent',
+        resolved ? 5 : 9,
+        resolved ? 0.02 : 0.12,
+        '10 8',
+      ),
+      ...[0, 1, 2].map((index) =>
+        circle(
+          248 + index * 32,
+          500,
+          10,
+          0.92,
+          index < frame.waveClearCompletedWaves ? 'safe' : 'accent',
+          4,
+          index < frame.waveClearCompletedWaves ? 0.24 : 0.04,
+        ),
+      ),
+      ...[0, 1, 2].map((index) => {
+        const enemy = enemies[index] ?? point(spec.gates[index % spec.gates.length]);
+        const exists = index < kills.length;
+        const alive = exists && active && frame.time < kills[index];
+        const killed =
+          exists && frame.time >= kills[index] && frame.time < spec.waveClears[waveIndex];
+        return circle(
+          enemy.x,
+          enemy.y,
+          index === 1 && waveIndex === 2 ? 34 : 26,
+          alive ? 0.92 : killed ? 0.16 : 0,
+          alive ? 'signal' : 'muted',
+          alive ? 8 : 4,
+          alive ? 0.16 : 0.02,
+        );
+      }),
+      ...[0, 1, 2].map((index) => {
+        const enemy = enemies[index] ?? point(spec.gates[index % spec.gates.length]);
+        const exists = index < kills.length;
+        const alive = exists && active && frame.time < kills[index];
+        return path(
+          `M ${enemy.x - 13} ${enemy.y - 13} L ${enemy.x + 13} ${enemy.y + 13} M ${enemy.x + 13} ${enemy.y - 13} L ${enemy.x - 13} ${enemy.y + 13}`,
+          alive ? 0.86 : 0,
+          'signal',
+          5,
+        );
+      }),
+      ...[0, 1, 2].map((index) => {
+        const enemy = enemies[index] ?? activeEnemy;
+        const pulseAtTarget = index === frame.waveClearHitIndex ? hitPulse : 0;
+        return line(frame.player.x, frame.player.y, enemy.x, enemy.y, pulseAtTarget, 'safe', 9);
+      }),
+      ...[0, 1, 2].map((index) => {
+        const enemy = enemies[index] ?? activeEnemy;
+        const pulseAtTarget = index === frame.waveClearHitIndex ? hitPulse : 0;
+        return circle(enemy.x, enemy.y, 14 + pulseAtTarget * 24, pulseAtTarget, 'safe', 7, 0.12);
+      }),
+      rect(196, 530, 168, 14, 0.42, 'muted', 0.025),
+      rect(
+        196,
+        530,
+        168 * (frame.waveClearRemainingEnemies / Math.max(1, kills.length)),
+        14,
+        active ? 0.9 : 0,
+        'signal',
+        0.12,
+      ),
+      circle(frame.boss.x, frame.boss.y, 70 + clearPulse * 85, clearPulse, 'safe', 8, 0.04),
+      circle(
+        spec.rewardPoint[0],
+        spec.rewardPoint[1],
+        28 + frame.waveClearResolution * 18,
+        frame.waveClearRewardOpen ? 0.92 : 0,
+        'safe',
+        7,
+        0.16,
+      ),
+    ];
+  }
   if (mode === 'landing') {
     const landing = point(spec.landing);
     const contact = phase === 1 ? clamp(1 - Math.abs(action - 0.52) / 0.2) : 0;
@@ -5132,6 +5343,7 @@ function pointClearsThreat(spec, frame, value, radius = BLUEPRINT_PLAYER_RADIUS)
         spec.dangerRadius + radius
     );
   if (mode === 'objective-linked-invulnerability') return true;
+  if (mode === 'wave-clear-objective') return true;
   if (mode === 'spiral')
     return (
       distanceFromBoss > 52 + radius &&
@@ -5478,6 +5690,7 @@ export function blueprintFrame(id, time) {
   else if (spec.mode === 'secondary-cues-invisibility') responseProgress = 0;
   else if (spec.mode === 'sound-detection') responseProgress = 0;
   else if (spec.mode === 'objective-linked-invulnerability') responseProgress = 0;
+  else if (spec.mode === 'wave-clear-objective') responseProgress = 0;
   else if (spec.mode === 'knockback')
     responseProgress = phase === 0 ? 0 : phase === 1 ? smooth(action) : 1;
   else if (spec.mode === 'target-lock')
@@ -6047,6 +6260,37 @@ export function blueprintFrame(id, time) {
       player = pointAlongPolyline(spec.resetRoute.map(point), reset);
     }
   }
+  if (spec.mode === 'wave-clear-objective') {
+    const progress = waveClearObjectiveProgress(t);
+    const waveIndex = Math.max(0, Math.min(spec.waveKills.length - 1, progress.wave - 1));
+    if (t < 0.55) player = startPlayer;
+    else if (t < spec.waveClears[0]) {
+      const routeProgress = smooth((t - 0.55) / (spec.waveKills[0].at(-1) - 0.55));
+      player = pointAlongPolyline(spec.playerRoutes[0].map(point), routeProgress);
+    } else if (t < spec.waveClears[1]) {
+      const routeProgress = smooth(
+        (t - spec.waveClears[0]) / (spec.waveKills[1].at(-1) - spec.waveClears[0]),
+      );
+      player = pointAlongPolyline(spec.playerRoutes[1].map(point), routeProgress);
+    } else if (t < spec.waveClears[2]) {
+      const routeProgress = smooth(
+        (t - spec.waveClears[1]) / (spec.waveKills[2].at(-1) - spec.waveClears[1]),
+      );
+      player = pointAlongPolyline(spec.playerRoutes[2].map(point), routeProgress);
+    } else if (t < spec.rewardAt) {
+      const routeProgress = smooth((t - spec.waveClears[2]) / (spec.rewardAt - spec.waveClears[2]));
+      const start = point(spec.playerRoutes[waveIndex].at(-1));
+      const reward = point(spec.rewardPoint);
+      player = {
+        x: mix(start.x, reward.x, routeProgress),
+        y: mix(start.y, reward.y, routeProgress),
+      };
+    } else if (t < spec.resetAt) player = point(spec.rewardPoint);
+    else {
+      const reset = smooth((t - spec.resetAt) / (BLUEPRINT_DURATION - spec.resetAt));
+      player = pointAlongPolyline(spec.resetRoute.map(point), reset);
+    }
+  }
   if (spec.mode === 'rotating' && phase === 0) {
     const initialPosition = polar(boss, 255, Math.PI / 3);
     player = {
@@ -6312,7 +6556,36 @@ export function blueprintFrame(id, time) {
                                             ),
                                           ) * 0.8,
                                         )
-                                      : pulse(responseProgress) + pulse(returnProgress) * 0.8;
+                                      : spec.mode === 'wave-clear-objective'
+                                        ? Math.max(
+                                            ...spec.waveSpawns.map((spawn, index) =>
+                                              pulse(
+                                                smooth(
+                                                  (t -
+                                                    (index === 0
+                                                      ? 0.55
+                                                      : spec.waveClears[index - 1])) /
+                                                    (spec.waveKills[index].at(-1) -
+                                                      (index === 0
+                                                        ? 0.55
+                                                        : spec.waveClears[index - 1])),
+                                                ),
+                                              ),
+                                            ),
+                                            pulse(
+                                              smooth(
+                                                (t - spec.waveClears.at(-1)) /
+                                                  (spec.rewardAt - spec.waveClears.at(-1)),
+                                              ),
+                                            ),
+                                            pulse(
+                                              smooth(
+                                                (t - spec.resetAt) /
+                                                  (BLUEPRINT_DURATION - spec.resetAt),
+                                              ),
+                                            ) * 0.8,
+                                          )
+                                        : pulse(responseProgress) + pulse(returnProgress) * 0.8;
   const bossVisible =
     spec.mode === 'secondary-cues-invisibility'
       ? t < spec.vanishAt
@@ -6599,25 +6872,29 @@ export function blueprintFrame(id, time) {
                                       : spec.mode === 'objective-linked-invulnerability'
                                         ? (Math.atan2(boss.y - player.y, boss.x - player.x) * 180) /
                                           Math.PI
-                                        : spec.mode === 'boss-as-terrain'
+                                        : spec.mode === 'wave-clear-objective'
                                           ? (Math.atan2(boss.y - player.y, boss.x - player.x) *
                                               180) /
                                             Math.PI
-                                          : spec.mode === 'control-mode-shift'
+                                          : spec.mode === 'boss-as-terrain'
                                             ? (Math.atan2(boss.y - player.y, boss.x - player.x) *
                                                 180) /
                                               Math.PI
-                                            : spec.mode === 'damage-type-resistance' ||
-                                                spec.mode === 'situational-immunity' ||
-                                                spec.mode === 'part-break' ||
-                                                spec.mode === 'attack-reflection' ||
-                                                spec.mode === 'counter-stance' ||
-                                                spec.mode === 'absorption-power-up' ||
-                                                spec.mode === 'interruptible-wind-up' ||
-                                                spec.mode === 'loadout-adaptation' ||
-                                                spec.mode === 'wind-up'
-                                              ? -180
-                                              : -90,
+                                            : spec.mode === 'control-mode-shift'
+                                              ? (Math.atan2(boss.y - player.y, boss.x - player.x) *
+                                                  180) /
+                                                Math.PI
+                                              : spec.mode === 'damage-type-resistance' ||
+                                                  spec.mode === 'situational-immunity' ||
+                                                  spec.mode === 'part-break' ||
+                                                  spec.mode === 'attack-reflection' ||
+                                                  spec.mode === 'counter-stance' ||
+                                                  spec.mode === 'absorption-power-up' ||
+                                                  spec.mode === 'interruptible-wind-up' ||
+                                                  spec.mode === 'loadout-adaptation' ||
+                                                  spec.mode === 'wind-up'
+                                                ? -180
+                                                : -90,
     bossMotion: motion({
       gait:
         spec.mode === 'chase-herding' ||
@@ -6843,84 +7120,90 @@ export function blueprintFrame(id, time) {
                 : spec.mode === 'objective-linked-invulnerability'
                   ? 0.12 * strikePulse(t, spec.blockedStrike, 0.25) +
                     0.9 * strikePulse(t, spec.bossStrike, 0.3)
-                  : spec.mode === 'part-break'
-                    ? 0.75 * strikePulse(t, spec.breakAt, 0.26)
-                    : spec.mode === 'attack-reflection'
-                      ? 0.85 * strikePulse(t, spec.meleeStrike, 0.27)
-                      : spec.mode === 'counter-stance'
-                        ? 0.85 * strikePulse(t, spec.openStrike, 0.27)
-                        : spec.mode === 'absorption-power-up'
+                  : spec.mode === 'wave-clear-objective'
+                    ? Math.max(...spec.waveKills.flat().map((kill) => strikePulse(t, kill, 0.26)))
+                    : spec.mode === 'part-break'
+                      ? 0.75 * strikePulse(t, spec.breakAt, 0.26)
+                      : spec.mode === 'attack-reflection'
+                        ? 0.85 * strikePulse(t, spec.meleeStrike, 0.27)
+                        : spec.mode === 'counter-stance'
                           ? 0.85 * strikePulse(t, spec.openStrike, 0.27)
-                          : spec.mode === 'interruptible-wind-up'
-                            ? 0.9 * strikePulse(t, spec.interruptAt, 0.3)
-                            : spec.mode === 'wind-up'
-                              ? 0.65 *
-                                Math.max(
-                                  strikePulse(t, spec.firstRelease[0], 0.28),
-                                  strikePulse(t, spec.secondRelease[0], 0.28),
-                                )
-                              : spec.mode === 'attack-lock'
-                                ? 0.55 *
+                          : spec.mode === 'absorption-power-up'
+                            ? 0.85 * strikePulse(t, spec.openStrike, 0.27)
+                            : spec.mode === 'interruptible-wind-up'
+                              ? 0.9 * strikePulse(t, spec.interruptAt, 0.3)
+                              : spec.mode === 'wind-up'
+                                ? 0.65 *
                                   Math.max(
                                     strikePulse(t, spec.firstRelease[0], 0.28),
                                     strikePulse(t, spec.secondRelease[0], 0.28),
                                   )
-                                : spec.mode === 'active-phase'
-                                  ? strikePulse(t, spec.active[0], 0.3)
-                                  : spec.mode === 'recovery'
-                                    ? Math.max(
-                                        0.55 * strikePulse(t, spec.active[0], 0.3),
-                                        0.85 * strikePulse(t, spec.punishAt, 0.3),
-                                      )
-                                    : spec.mode === 'survival-phase'
+                                : spec.mode === 'attack-lock'
+                                  ? 0.55 *
+                                    Math.max(
+                                      strikePulse(t, spec.firstRelease[0], 0.28),
+                                      strikePulse(t, spec.secondRelease[0], 0.28),
+                                    )
+                                  : spec.mode === 'active-phase'
+                                    ? strikePulse(t, spec.active[0], 0.3)
+                                    : spec.mode === 'recovery'
                                       ? Math.max(
-                                          ...spec.hazards.map(
-                                            ({ active }) => 0.45 * strikePulse(t, active[0], 0.28),
-                                          ),
+                                          0.55 * strikePulse(t, spec.active[0], 0.3),
                                           0.85 * strikePulse(t, spec.punishAt, 0.3),
                                         )
-                                      : spec.mode === 'teleport'
+                                      : spec.mode === 'survival-phase'
                                         ? Math.max(
-                                            0.6 * strikePulse(t, spec.active[0], 0.3),
+                                            ...spec.hazards.map(
+                                              ({ active }) =>
+                                                0.45 * strikePulse(t, active[0], 0.28),
+                                            ),
                                             0.85 * strikePulse(t, spec.punishAt, 0.3),
                                           )
-                                        : spec.mode === 'boundary-attack'
+                                        : spec.mode === 'teleport'
                                           ? Math.max(
-                                              0.7 * strikePulse(t, spec.impactAt, 0.3),
+                                              0.6 * strikePulse(t, spec.active[0], 0.3),
                                               0.85 * strikePulse(t, spec.punishAt, 0.3),
                                             )
-                                          : spec.mode === 'forced-scrolling'
+                                          : spec.mode === 'boundary-attack'
                                             ? Math.max(
-                                                0.55 * strikePulse(t, spec.active[1], 0.32),
+                                                0.7 * strikePulse(t, spec.impactAt, 0.3),
                                                 0.85 * strikePulse(t, spec.punishAt, 0.3),
                                               )
-                                            : spec.mode === 'chase-herding'
+                                            : spec.mode === 'forced-scrolling'
                                               ? Math.max(
                                                   0.55 * strikePulse(t, spec.active[1], 0.32),
                                                   0.85 * strikePulse(t, spec.punishAt, 0.3),
                                                 )
-                                              : spec.mode === 'escape-phase'
+                                              : spec.mode === 'chase-herding'
                                                 ? Math.max(
-                                                    0.72 * strikePulse(t, spec.escape[1], 0.32),
+                                                    0.55 * strikePulse(t, spec.active[1], 0.32),
                                                     0.85 * strikePulse(t, spec.punishAt, 0.3),
                                                   )
-                                                : spec.mode === 'relocated-arena'
-                                                  ? 0.72 * strikePulse(t, spec.transfer[1], 0.32)
-                                                  : spec.mode === 'control-mode-shift'
-                                                    ? 0.85 * strikePulse(t, spec.punishAt, 0.3)
-                                                    : spec.mode === 'forced-inertia'
-                                                      ? Math.max(
-                                                          0.55 * strikePulse(t, spec.frostAt, 0.36),
-                                                          0.85 * strikePulse(t, spec.punishAt, 0.3),
-                                                        )
-                                                      : spec.mode === 'cover-line-of-sight'
-                                                        ? 0.85 * strikePulse(t, spec.punishAt, 0.3)
-                                                        : spec.mode === 'shockwave' ||
-                                                            spec.mode === 'knockback'
-                                                          ? pulse(action * 3)
-                                                          : spec.mode === 'chain-explosions'
-                                                            ? pulse((action * 5) % 1)
-                                                            : 0,
+                                                : spec.mode === 'escape-phase'
+                                                  ? Math.max(
+                                                      0.72 * strikePulse(t, spec.escape[1], 0.32),
+                                                      0.85 * strikePulse(t, spec.punishAt, 0.3),
+                                                    )
+                                                  : spec.mode === 'relocated-arena'
+                                                    ? 0.72 * strikePulse(t, spec.transfer[1], 0.32)
+                                                    : spec.mode === 'control-mode-shift'
+                                                      ? 0.85 * strikePulse(t, spec.punishAt, 0.3)
+                                                      : spec.mode === 'forced-inertia'
+                                                        ? Math.max(
+                                                            0.55 *
+                                                              strikePulse(t, spec.frostAt, 0.36),
+                                                            0.85 *
+                                                              strikePulse(t, spec.punishAt, 0.3),
+                                                          )
+                                                        : spec.mode === 'cover-line-of-sight'
+                                                          ? 0.85 *
+                                                            strikePulse(t, spec.punishAt, 0.3)
+                                                          : spec.mode === 'shockwave' ||
+                                                              spec.mode === 'knockback'
+                                                            ? pulse(action * 3)
+                                                            : spec.mode === 'chain-explosions'
+                                                              ? pulse((action * 5) % 1)
+                                                              : 0,
     }),
     playerMotion: motion({
       gait:
@@ -6960,8 +7243,11 @@ export function blueprintFrame(id, time) {
                                           ? t * 7 * stride
                                           : spec.mode === 'objective-linked-invulnerability'
                                             ? t * 7 * stride
-                                            : (route * responseProgress + route * returnProgress) /
-                                              20,
+                                            : spec.mode === 'wave-clear-objective'
+                                              ? t * 7 * stride
+                                              : (route * responseProgress +
+                                                  route * returnProgress) /
+                                                20,
       stride,
       lean: stride * 0.45,
       crouch:
@@ -7078,14 +7364,23 @@ export function blueprintFrame(id, time) {
                                                                     0.36,
                                                                   ),
                                                                 )
-                                                              : spec.mode === 'decoy' && phase === 1
-                                                                ? pulse(
-                                                                    clamp((action - 0.52) / 0.3),
+                                                              : spec.mode === 'wave-clear-objective'
+                                                                ? Math.max(
+                                                                    ...spec.waveKills
+                                                                      .flat()
+                                                                      .map((kill) =>
+                                                                        strikePulse(t, kill, 0.32),
+                                                                      ),
                                                                   )
-                                                                : spec.mode === 'weak-point' &&
+                                                                : spec.mode === 'decoy' &&
                                                                     phase === 1
-                                                                  ? pulse(action * 1.5)
-                                                                  : 0,
+                                                                  ? pulse(
+                                                                      clamp((action - 0.52) / 0.3),
+                                                                    )
+                                                                  : spec.mode === 'weak-point' &&
+                                                                      phase === 1
+                                                                    ? pulse(action * 1.5)
+                                                                    : 0,
     }),
   };
   if (spec.mode === 'directional-shield') {
@@ -7205,6 +7500,24 @@ export function blueprintFrame(id, time) {
         : t >= spec.vulnerable[1] && t < spec.shieldReturns
           ? smooth((t - spec.vulnerable[1]) / (spec.shieldReturns - spec.vulnerable[1]))
           : 0.92;
+  }
+  if (spec.mode === 'wave-clear-objective') {
+    const progress = waveClearObjectiveProgress(t);
+    const waveIndex = Math.max(0, Math.min(spec.waveKills.length - 1, progress.wave - 1));
+    frame.waveClearState = waveClearObjectiveState(t);
+    frame.waveClearWave = progress.wave;
+    frame.waveClearCompletedWaves = progress.completedWaves;
+    frame.waveClearRemainingEnemies = progress.remainingEnemies;
+    frame.waveClearSpawnQueueSealed = progress.spawnQueueSealed;
+    frame.waveClearRosterEmpty = progress.rosterEmpty;
+    frame.waveClearAllComplete = progress.allComplete;
+    frame.waveClearHitIndex = spec.waveKills[waveIndex].findIndex(
+      (kill) => Math.abs(t - kill) <= 0.14,
+    );
+    frame.waveClearResolution = clamp(
+      (t - spec.waveClears.at(-1)) / (spec.rewardAt - spec.waveClears.at(-1)),
+    );
+    frame.waveClearRewardOpen = t >= spec.rewardAt && t < spec.resetAt;
   }
   if (spec.mode === 'sound-detection') {
     frame.soundDetectionState = soundDetectionState(t);
@@ -7479,7 +7792,8 @@ export function blueprintFrame(id, time) {
       spec.mode === 'beat-synced-attack' ||
       spec.mode === 'secondary-cues-invisibility' ||
       spec.mode === 'sound-detection' ||
-      spec.mode === 'objective-linked-invulnerability'
+      spec.mode === 'objective-linked-invulnerability' ||
+      spec.mode === 'wave-clear-objective'
         ? 92
         : -62),
   };

@@ -25,6 +25,8 @@ import {
   soundDetectionState,
   objectiveLinkedInvulnerabilityOutcome,
   objectiveLinkedInvulnerabilityState,
+  waveClearObjectiveProgress,
+  waveClearObjectiveState,
   counterStanceOutcome,
   counterStanceState,
   blueprintFrame,
@@ -52,8 +54,8 @@ import {
   renderBlueprintThumbnail,
 } from '../lib/blueprint-view.mjs';
 
-test('all 75 promoted lesson animations have distinct rule modes and complete moving frames', () => {
-  assert.equal(BLUEPRINT_MECHANIC_IDS.length, 75);
+test('all 76 promoted lesson animations have distinct rule modes and complete moving frames', () => {
+  assert.equal(BLUEPRINT_MECHANIC_IDS.length, 76);
   const modes = new Set();
   for (const id of BLUEPRINT_MECHANIC_IDS) {
     for (let time = 0; time <= BLUEPRINT_DURATION; time += 0.1) {
@@ -74,7 +76,7 @@ test('all 75 promoted lesson animations have distinct rule modes and complete mo
           assert.ok(Number.isFinite(value), `${id} has an invalid ${primitive.type}`);
     }
   }
-  assert.equal(modes.size, 75);
+  assert.equal(modes.size, 76);
 });
 
 test('every blueprint exposes signal, committed action, and recovery without player teleports', () => {
@@ -179,6 +181,7 @@ test('every damaging promoted animation derives safety from its own active geome
       id !== 'damage-type-resistance' &&
       id !== 'situational-immunity' &&
       id !== 'objective-linked-invulnerability' &&
+      id !== 'wave-clear-objective' &&
       id !== 'part-break' &&
       id !== 'counter-stance' &&
       id !== 'absorption-power-up' &&
@@ -2368,5 +2371,84 @@ test('objective-linked invulnerability opens only after every protection objecti
   assert.match(
     renderBlueprintThumbnail(id, 'test-objective-linked-invulnerability'),
     /data-blueprint-preview="objective-linked-invulnerability"/,
+  );
+});
+
+test('wave-clear objective advances only from sealed and empty enemy rosters', () => {
+  const id = 'wave-clear-objective';
+  assert.deepEqual(
+    [0, 0.6, 1, 1.7, 2.4, 3.1, 3.8, 4.6, 4.8, 5.1, 5.4].map(waveClearObjectiveState),
+    [
+      'briefing',
+      'wave-1-preview',
+      'wave-1-active',
+      'wave-1-cleared',
+      'wave-2-active',
+      'wave-2-cleared',
+      'wave-3-active',
+      'all-waves-cleared',
+      'encounter-resolving',
+      'reward-open',
+      'reset',
+    ],
+  );
+
+  const preview = waveClearObjectiveProgress(0.6);
+  assert.equal(preview.wave, 1);
+  assert.equal(preview.spawnQueueSealed, false);
+  assert.equal(preview.rosterEmpty, true);
+
+  const firstActive = blueprintFrame(id, 0.9);
+  assert.equal(firstActive.waveClearWave, 1);
+  assert.equal(firstActive.waveClearSpawnQueueSealed, true);
+  assert.equal(firstActive.waveClearRemainingEnemies, 2);
+  assert.equal(firstActive.waveClearRosterEmpty, false);
+  assert.ok(firstActive.primitives[7].opacity > 0.8, 'the first roster is visible');
+
+  const firstDefeat = blueprintFrame(id, 1.08);
+  assert.equal(firstDefeat.waveClearHitIndex, 0);
+  assert.ok(firstDefeat.primitives[13].opacity > 0.8, 'the sword connects to a roster target');
+
+  const firstEmpty = waveClearObjectiveProgress(1.45);
+  assert.equal(firstEmpty.spawnQueueSealed, true);
+  assert.equal(firstEmpty.remainingEnemies, 0);
+  assert.equal(firstEmpty.rosterEmpty, true);
+  assert.equal(firstEmpty.completedWaves, 0, 'the clear event follows the empty roster');
+
+  const firstCleared = blueprintFrame(id, 1.65);
+  assert.equal(firstCleared.waveClearCompletedWaves, 1);
+  assert.equal(firstCleared.waveClearWave, 2);
+  assert.ok(firstCleared.primitives[4].fill > 0.2, 'the first wave pip stays complete');
+
+  const second = waveClearObjectiveProgress(2.4);
+  assert.equal(second.wave, 2);
+  assert.equal(second.completedWaves, 1);
+  assert.equal(second.remainingEnemies, 2);
+
+  const finalActive = blueprintFrame(id, 3.8);
+  assert.equal(finalActive.waveClearWave, 3);
+  assert.equal(finalActive.waveClearCompletedWaves, 2);
+  assert.equal(finalActive.waveClearAllComplete, false);
+  assert.ok(finalActive.primitives[8].radius > finalActive.primitives[7].radius);
+
+  const resolved = blueprintFrame(id, 4.6);
+  assert.equal(resolved.waveClearCompletedWaves, 3);
+  assert.equal(resolved.waveClearAllComplete, true);
+  assert.equal(resolved.waveClearRewardOpen, false);
+
+  const reward = blueprintFrame(id, 5.1);
+  assert.equal(reward.waveClearRewardOpen, true);
+  assert.ok(reward.primitives[22].opacity > 0.8, 'the reward opens after final resolution');
+
+  const reset = blueprintFrame(id, 5.4);
+  assert.equal(reset.waveClearWave, 0);
+  assert.equal(reset.waveClearCompletedWaves, 0);
+  assert.equal(reset.waveClearAllComplete, false);
+
+  assert.deepEqual(blueprintFrame(id, 0).player, blueprintFrame(id, 6).player);
+  assert.deepEqual(blueprintFrame(id, 0).boss, blueprintFrame(id, 6).boss);
+  assert.match(
+    renderBlueprintThumbnail(id, 'test-wave-clear-objective'),
+    /data-blueprint-preview="wave-clear-objective"/,
   );
 });

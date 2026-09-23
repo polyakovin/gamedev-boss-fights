@@ -1,0 +1,138 @@
+{
+  "title": "Wave-clear objective",
+  "subtitle": "Advance the encounter by resolving a finite sequence of enemy rosters, with each next wave gated by authoritative proof that the current spawn queue is sealed and every required target is gone.",
+  "variant": "Kern opens three rune gates in sequence while Tavi crosses the quarry to clear two runelings, then three, then a final elite group; each emptied roster fills one wave mark, all three end the encounter without a conventional boss health objective, and the complete ledger resets visibly",
+  "summary": "The encounter advances when the player clears a fixed sequence of finite enemy waves rather than depleting conventional boss health.",
+  "overview": "A wave-clear objective replaces or interrupts direct boss damage with a finite roster problem. Each wave needs an authored membership rule, a sealed spawn queue, an authoritative living count, an explicit clear event, and a final resolution so progress cannot depend on hidden enemies, elapsed time, or visual effects finishing late.",
+  "learning": "Design finite wave manifests, spawn ownership, roster registration, sealed-queue and empty-roster conditions, clear and inter-wave signals, pacing budgets, enemy-role compositions, reachable cleanup routes, multiplayer credit, failure and checkpoint policy, accessibility equivalents, deterministic resets, and assertions that no wave advances while a required target remains.",
+  "category": "Encounter goals and vulnerability",
+  "readTime": "8 min",
+  "demo": {
+    "title": "Make every wave a finite, inspectable ledger",
+    "timeline": "Wave-clear objective timeline",
+    "step": "Wave-clear objective states",
+    "phaseNames": [
+      "Announce the complete sequence and seal wave one",
+      "Clear escalating finite rosters with explicit handoffs",
+      "Resolve the encounter only after the final empty roster"
+    ],
+    "phaseDescriptions": [
+      "Kern raises three wave marks and previews both spawn gates. Wave one seals at 0.75 s with two registered runelings; Tavi cuts them at 1.08 and 1.38 s, and the first mark fills at 1.58 s only after the living roster reaches zero.",
+      "Wave two seals at 1.90 s with three targets and clears at 2.98 s after hits at 2.20, 2.48, and 2.76 s. Wave three seals at 3.28 s with a visibly larger center target; Tavi resolves all three at 3.62, 3.94, and 4.28 s while each roster bar counts actual required enemies rather than time.",
+      "The final empty roster fills 3/3 at 4.50 s. Kern's wave field collapses at 4.72 s, the reward state opens at 4.95 s, and the whole sequence resets after 5.28 s. No hidden health hit or survival timer substitutes for the clear event."
+    ],
+    "boss": "Boss",
+    "player": "Player",
+    "danger": "The wave roster, not Kern's body, owns encounter progress; targets remain required until their authoritative defeat events remove them from the sealed roster",
+    "locked": "Wave manifests, spawn gates, queue seal, registered target IDs, living count, clear event, inter-wave delay, final resolution, reward, failure policy, and reset are authored",
+    "safe": "Show the complete wave count, keep every remaining target locatable and reachable, provide a readable cleanup route, and hold the handoff until all required defeats are confirmed",
+    "reducedMotion": "Autoplay is disabled by reduced motion. Scrub across 0.75, 1.08, 1.38, 1.58, 1.90, 2.20, 2.48, 2.76, 2.98, 3.28, 3.62, 3.94, 4.28, 4.50, 4.72, 4.95, and 5.28 seconds to inspect each sealed roster, defeat, clear, handoff, resolution, reward, and reset.",
+    "diagramDescription": "Kern stands inside a rune field above three wave marks. Two side gates emit simple crossed runeling tokens. Tavi follows one continuous route through each finite group; sword flashes remove tokens, the living-roster bar shrinks, each wave mark fills only when its group is empty, and a final pulse opens the reward state after 3/3."
+  },
+  "steps": [
+    {
+      "title": "What exactly belongs to each wave?",
+      "body": "Author each wave as a manifest of stable spawn and target IDs, including delayed, split, transformed, and optional units. Register required targets before they can act, seal the queue when no more required spawns can enter, and clear only when that sealed roster is empty. Do not derive completion from an animation, a room query that includes unrelated enemies, or a timer. Log every registration and removal so missing or duplicated events are diagnosable."
+    },
+    {
+      "title": "How does composition create a readable rhythm?",
+      "body": "Give every wave a purpose: introduce one role, combine known roles, then test prioritization or space. Budget spawn warning, approach, time-to-defeat, cleanup travel, and inter-wave recovery together. Keep the last survivor visible and reachable, cap simultaneous pressure, and decide whether the next wave overlaps, waits, or enters from named gates. Difficulty may scale counts or roles, but the displayed manifest must match the actual requirement."
+    },
+    {
+      "title": "How does the final clear resolve reliably?",
+      "body": "Emit one authoritative clear event after the final required removal, then separate field collapse, reward, exit, checkpoint, and reset into named transitions. Define what happens on player death, enemy self-destruction, despawn, fall out of bounds, conversion, summon ownership, late network join, and host migration. In multiplayer, replicate roster changes and credit without letting two clients advance the wave twice."
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "One hidden or unreachable enemy stalls the encounter",
+      "body": "A target outside the arena, below navigation, in an unmarked invulnerable state, or omitted from feedback turns the final seconds into a search for a bug. Track required IDs, expose the remaining count and direction, add recovery for invalid positions, and distinguish optional summons from roster members."
+    },
+    {
+      "title": "The next wave advances on a timer instead of proof",
+      "body": "A fixed delay can start the next group while a late spawn or death animation still owns gameplay, causing overlap, soft locks, or inconsistent checkpoints. Timers may shape presentation after the clear event, but progression must require both a sealed queue and an empty authoritative roster."
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "Separate spawn completion from wave completion",
+      "body": "A queue is sealed when it cannot add more required targets; a wave is clear when every registered required target has resolved. Keeping both facts prevents an empty moment between delayed spawns from advancing early and lets tools explain whether designers are waiting on spawning or cleanup."
+    },
+    {
+      "title": "Compose roles, not only larger counts",
+      "body": "Escalation is clearer when waves change a decision: mobile pressure plus a stationary controller, shielded front line plus exposed support, or weak swarms around one durable anchor. Pure count growth can lengthen cleanup without creating a new problem and makes difficulty scaling expensive."
+    },
+    {
+      "title": "Design the last-target experience",
+      "body": "Measure the worst cleanup route, camera visibility, vertical access, leash, and navigation recovery. Mark the final target more strongly, prevent it from fleeing indefinitely, and consider resolving harmless stragglers automatically only through an explicit documented rule. The last enemy often dominates the perceived pace of the whole wave."
+    },
+    {
+      "title": "Expose one ledger through several channels",
+      "body": "Wave number, living count, gate state, target marks, clear pulse, music layer, captions, and haptics should describe the same roster. Do not use color alone. Assistance can add directional markers, extend recovery, or reduce simultaneous roles while preserving the finite sequence and proof of completion."
+    }
+  ],
+  "story": {
+    "title": "Kern tests the quarry through three rune gates",
+    "body": "Kern strikes the floor and opens old quarry seams one at a time. Small stone runelings climb out with matching roster marks, then the final gate binds a heavier core among them. Tavi closes each seam by clearing its complete manifest; when the third mark fills, the elemental lowers its arms and releases the path onward."
+  },
+  "adaptation": {
+    "title": "Let Tavi clear the roster with movement and the existing sword",
+    "body": "Every runeling uses a simple readable sword interaction and the route remains traversable with ordinary movement. The next gate waits for confirmed cleanup, short inter-wave pauses let Tavi reposition, and the final group places its durable target centrally so the last clear is a deliberate finish rather than a hunt off-screen."
+  },
+  "distinction": {
+    "title": "Defeat progress, not elapsed survival or one boss summon",
+    "body": "A survival phase advances because the required duration expires while the player remains valid; killing threats may only reduce pressure. A wave-clear objective advances because a declared finite roster is empty, however quickly or slowly that happens. Summon describes how a boss creates another actor; summoned actors become this objective only when their registered defeat is the progression condition."
+  },
+  "lensNotes": [
+    {
+      "id": "progress-clarity",
+      "body": "Wave number, sealed gates, target marks, living count, clear pips, and final resolution show exactly what remains and what event advances the encounter."
+    },
+    {
+      "id": "difficulty-rhythm",
+      "body": "Spawn warning, active pressure, cleanup, handoff, and recovery form a tunable cadence; role composition can escalate without merely extending time-to-clear."
+    },
+    {
+      "id": "counterplay",
+      "body": "Players prioritize roles, route between gates, control simultaneous pressure, preserve resources, and choose a final position for the next handoff."
+    },
+    {
+      "id": "encounter-purpose",
+      "body": "Replacing direct boss damage with finite rosters can test crowd control, build breadth, arena traversal, or endurance while still promising a measurable endpoint."
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "The Binding of Isaac: Repentance",
+      "boss": "Great Gideon",
+      "screenshot": "https://i.ytimg.com/vi/Gq-7D79ULRI/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=Gq-7D79ULRI&t=8s",
+      "body": "Great Gideon has no traditional health objective. Six finite monster waves appear in a tall room, and each next wave begins only when the previous enemies are defeated while Gideon continues applying arena attacks. The explicit wave counter makes the endpoint visible and separates roster progress from the boss prop's apparent durability.",
+      "video": "https://www.youtube.com/watch?v=Gq-7D79ULRI&t=8s",
+      "videoDurationSeconds": 135
+    },
+    {
+      "dimension": "3D",
+      "game": "Risk of Rain 2",
+      "boss": "Mithrix",
+      "screenshot": "https://i.ytimg.com/vi/5eKczbUwT7A/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=5eKczbUwT7A&t=412s",
+      "body": "After Mithrix's first health phase, he leaves the arena and phase two becomes a finite Lunar Chimera clear. Defeating the summoned group, not waiting out a duration or damaging the absent boss, brings Mithrix back for phase three. Pillars, distinct enemy roles, and the empty arena make the handoff from boss duel to roster objective legible.",
+      "video": "https://www.youtube.com/watch?v=5eKczbUwT7A&t=412s",
+      "videoDurationSeconds": 2033
+    },
+    {
+      "dimension": "3D",
+      "game": "Dark Souls II",
+      "boss": "Royal Rat Vanguard",
+      "screenshot": "https://i.ytimg.com/vi/fGwL3d-Qem8/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=fGwL3d-Qem8&t=14s",
+      "body": "The encounter begins without the named boss present. Killing ten ordinary rats completes an opening roster objective and causes the Vanguard and its health gauge to enter, shifting the goal from crowd clearing to identifying one marked target among continuing spawns. The example shows why wave completion and later optional or endless enemies need separate ownership.",
+      "video": "https://www.youtube.com/watch?v=fGwL3d-Qem8&t=14s",
+      "videoDurationSeconds": 108
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

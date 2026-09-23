@@ -303,6 +303,16 @@ export function initializeBlueprint(widget) {
       widget.dataset.blueprintObjectiveAllComplete = String(frame.objectiveAllComplete);
       widget.dataset.blueprintObjectiveWindow = frame.objectiveWindowRemaining.toFixed(3);
     }
+    if (mechanicId === 'wave-clear-objective') {
+      widget.dataset.blueprintWaveClear = frame.waveClearState;
+      widget.dataset.blueprintWave = String(frame.waveClearWave);
+      widget.dataset.blueprintWavesComplete = String(frame.waveClearCompletedWaves);
+      widget.dataset.blueprintWaveRemaining = String(frame.waveClearRemainingEnemies);
+      widget.dataset.blueprintWaveQueueSealed = String(frame.waveClearSpawnQueueSealed);
+      widget.dataset.blueprintWaveRosterEmpty = String(frame.waveClearRosterEmpty);
+      widget.dataset.blueprintWaveAllComplete = String(frame.waveClearAllComplete);
+      widget.dataset.blueprintWaveRewardOpen = String(frame.waveClearRewardOpen);
+    }
     boss.setAttribute(
       'transform',
       `translate(${frame.boss.x} ${frame.boss.y}) scale(${frame.bossScale})`,
