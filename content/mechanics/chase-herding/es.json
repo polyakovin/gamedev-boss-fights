@@ -1,0 +1,138 @@
+{
+  "title": "Persecución y arreo",
+  "subtitle": "Convierte la distancia y el ángulo de aproximación en la regla que conduce al jefe hacia un destino.",
+  "variant": "Tavi mantiene una franja legible, recorta la ruta de Kern y guía al elemental hasta una runa de captura",
+  "summary": "La persecución y el arreo convierten al jefe móvil en un objetivo espacial: el jugador reduce la distancia, mantiene presión y se acerca desde ángulos útiles hasta alcanzar un destino diseñado.",
+  "overview": "Esta mecánica transforma la persecución en una regla espacial controlable, no en una carrera detrás de un blanco invulnerable. A los 0,5 s Kern revela ruta, franja de distancia y runa. Entre 1,15 y 3,75 s Tavi mantiene presión y toma una línea interior que desplaza a Kern hacia la runa. El jefe solo queda expuesto al llegar.",
+  "learning": "Implementa ruta, franja de distancia relativa, respuesta de dirección, protección limitada para recuperar terreno, prueba de destino y vulnerabilidad posterior como un único sistema determinista.",
+  "category": "Espacio, movimiento y percepción",
+  "readTime": "7 min",
+  "demo": {
+    "title": "Muestra el destino antes de pedir la persecución",
+    "timeline": "Línea temporal de persecución y arreo",
+    "step": "Estados de persecución y arreo",
+    "phaseNames": [
+      "Revelar ruta y distancia",
+      "Mantener presión e interceptar",
+      "Capturar y castigar"
+    ],
+    "phaseDescriptions": [
+      "A los 0,5 s aparecen la runa, tres controles y dos anillos de distancia. Antes de moverse, el jugador conoce el final y la cercanía necesaria.",
+      "De 1,15 a 3,75 s Kern sigue una ruta autorada mientras Tavi permanece dentro del anillo exterior y luego corta por el punto interior. La intercepción cambia el siguiente rumbo sin reescribir la velocidad a cada entrada.",
+      "Entrar en la runa a los 3,75 s detiene la persecución. Kern queda plantado y Tavi recibe una ventana de espada a los 4,72 s antes del retorno continuo."
+    ],
+    "boss": "Jefe",
+    "player": "Jugador",
+    "danger": "La persecución no causa daño por contacto; se falla al perder la distancia o el destino",
+    "locked": "Controles, franja, influencia direccional, zona y vulnerabilidad están fijados",
+    "safe": "Mantén la franja de presión, usa la intercepción corta y no atravieses el cuerpo",
+    "reducedMotion": "Con movimiento reducido se pausa la reproducción. Revisa 0,5, 1,15, 2,55, 3,75, 4,45, 4,72 y 5,15 s.",
+    "diagramDescription": "Una arena fija muestra a Kern por una ruta discontinua hacia una runa en U, a Tavi por un atajo, dos anillos de distancia, tres controles y una ventana de espada tras la captura."
+  },
+  "steps": [
+    {
+      "title": "¿Qué relación hace avanzar la persecución?",
+      "body": "Define la distancia o posición relativa que cuenta como presión. Usa una franja, no un único umbral, y decide si salir pausa, activa ayuda limitada, vuelve a un control o reinicia; comunica siempre la consecuencia."
+    },
+    {
+      "title": "¿Cómo dirige el jugador en vez de limitarse a seguir?",
+      "body": "Asocia el ángulo de llegada a una respuesta limitada: carril opuesto, curva interior, lado marcado o siguiente rama. Limita el giro y evalúa la influencia en puntos claros para que el atajo nazca de leer el espacio."
+    },
+    {
+      "title": "¿Qué demuestra que terminó la persecución?",
+      "body": "Usa un destino visible: puente, corral, trampa, borde, aterrizaje o runa. Comprueba el cuerpo completo, detén la locomoción antes del daño y conserva el marcador en cambios de cámara y controles."
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "El jefe refleja cada corrección",
+      "body": "La dirección reactiva continua crea órbitas infinitas. Muestra la influencia en puertas autoradas, limita la respuesta y conserva una línea interior que produzca progreso."
+    },
+    {
+      "title": "Quedarse atrás produce viaje vacío irrecuperable",
+      "body": "Si el jefe sale de cámara o supera la velocidad máxima, ya no se prueba la ruta. Añade recuperación limitada, carriles amplios, esperas en controles o un reinicio claro."
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "Separa velocidad y autoridad de giro",
+      "body": "Ajusta velocidad base, aceleración, giro e influencia por separado. El jefe puede ser más rápido en recta y alcanzable por líneas cortas; el giro cambia la topología, no el presupuesto oculto."
+    },
+    {
+      "title": "Muestra progreso a varias escalas",
+      "body": "Destino para el total, controles para el tramo y franja para el instante. Si una señal sale de cámara, otra debe indicar ganancia, pérdida o dirección correcta."
+    },
+    {
+      "title": "Protege el contrato de cámara y colisión",
+      "body": "Mantén visibles a ambos actores, el siguiente giro útil y el destino. Define indicadores externos, colisión corporal, ancho de monturas, pendientes y adelantamientos."
+    },
+    {
+      "title": "Prueba movilidad alternativa y recuperación",
+      "body": "Mide configuraciones lentas, asistencias, separación multijugador, giros fallados, retroceso y una parada intencional. Valida la última distancia recuperable y la duración del reinicio."
+    }
+  ],
+  "story": {
+    "title": "Kern lleva un núcleo rúnico inestable hacia el sello",
+    "body": "Kern se retira por las ruinas y el núcleo repele a Tavi de cerca. El único sello estable está al final, así que Tavi mantiene presión y entra por dentro para forzar el paso marcado."
+  },
+  "adaptation": {
+    "title": "Haz que Tavi gane primero con la ruta y después con la espada",
+    "body": "Tavi conserva movimiento y espada. La persecución premia leer el radio y recortar; la espada importa cuando la runa convierte control espacial en una ventana limitada."
+  },
+  "distinction": {
+    "title": "Una relación móvil, no un plazo independiente de cámara",
+    "body": "El desplazamiento forzado avanza aunque el jugador se detenga. La persecución avanza al mantener relación con el jefe e influir su ruta. En una fase de escape, sobrevivir y llegar a salvo importa más que crear vulnerabilidad."
+  },
+  "lensNotes": [
+    {
+      "id": "encounter-purpose",
+      "body": "El destino cambia el verbo de dañar a controlar dónde podrá dañarse al jefe."
+    },
+    {
+      "id": "progress-clarity",
+      "body": "Anillos, controles y runa persistente muestran control local y progreso total."
+    },
+    {
+      "id": "player-expression",
+      "body": "Se puede cambiar seguimiento seguro por una intercepción más ajustada en la misma ruta."
+    },
+    {
+      "id": "counterplay",
+      "body": "La respuesta es limitada y la ruta alcanzable; posicionarse bien produce una ventana fiable."
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "Sonic Advance 2",
+      "boss": "Egg Hammer Tank II",
+      "screenshot": "https://i.ytimg.com/vi/1Qrti6Rrscc/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=1Qrti6Rrscc&t=1s",
+      "body": "El jefe avanza por un recorrido con desplazamiento. Sonic cierra la brecha y mantiene distancia de ataque mientras el martillo ocupa carriles; el retroceso gasta la distancia ganada antes del siguiente golpe.",
+      "video": "https://www.youtube.com/watch?v=1Qrti6Rrscc&t=1s",
+      "videoDurationSeconds": 1311
+    },
+    {
+      "dimension": "3D",
+      "game": "The Legend of Zelda: Twilight Princess HD",
+      "boss": "King Bulblin",
+      "screenshot": "https://i.ytimg.com/vi/pXzc1Ho_N24/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=pXzc1Ho_N24&t=134s",
+      "body": "Link gasta impulsos limitados de Epona, recorta giros y cabalga al lado de King Bulblin para quitar armadura. Suficientes aproximaciones envían el objetivo al Puente de Eldin y producen el siguiente estado de arena.",
+      "video": "https://www.youtube.com/watch?v=pXzc1Ho_N24&t=134s",
+      "videoDurationSeconds": 364
+    },
+    {
+      "dimension": "3D",
+      "game": "Shadow of the Colossus",
+      "boss": "Phalanx",
+      "screenshot": "https://i.ytimg.com/vi/Rq1FY9_UdAU/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=Rq1FY9_UdAU&t=258s",
+      "body": "Desinflar los sacos baja las aletas de Phalanx, pero solo crea acceso móvil. Wander cabalga, recorta giros y se alinea con una aleta escalable para convertir la captura en abordaje.",
+      "video": "https://www.youtube.com/watch?v=Rq1FY9_UdAU&t=258s",
+      "videoDurationSeconds": 678
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

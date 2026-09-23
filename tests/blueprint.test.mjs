@@ -9,6 +9,7 @@ import {
   attackLockState,
   attackReflectionState,
   boundaryAttackState,
+  chaseHerdingState,
   forcedScrollingOffset,
   forcedScrollingState,
   counterStanceOutcome,
@@ -38,8 +39,8 @@ import {
   renderBlueprintThumbnail,
 } from '../lib/blueprint-view.mjs';
 
-test('all 63 promoted lesson animations have distinct rule modes and complete moving frames', () => {
-  assert.equal(BLUEPRINT_MECHANIC_IDS.length, 63);
+test('all 64 promoted lesson animations have distinct rule modes and complete moving frames', () => {
+  assert.equal(BLUEPRINT_MECHANIC_IDS.length, 64);
   const modes = new Set();
   for (const id of BLUEPRINT_MECHANIC_IDS) {
     for (let time = 0; time <= BLUEPRINT_DURATION; time += 0.1) {
@@ -60,7 +61,7 @@ test('all 63 promoted lesson animations have distinct rule modes and complete mo
           assert.ok(Number.isFinite(value), `${id} has an invalid ${primitive.type}`);
     }
   }
-  assert.equal(modes.size, 63);
+  assert.equal(modes.size, 64);
 });
 
 test('every blueprint exposes signal, committed action, and recovery without player teleports', () => {
@@ -83,7 +84,8 @@ test('every blueprint exposes signal, committed action, and recovery without pla
       id !== 'recovery' &&
       id !== 'survival-phase' &&
       id !== 'teleport' &&
-      id !== 'boundary-attack'
+      id !== 'boundary-attack' &&
+      id !== 'chase-herding'
     )
       assert.equal(blueprintFrame(id, 3).dangerActive, true, id);
     assert.equal(blueprintFrame(id, 3).playerSafe, true, id);
@@ -164,7 +166,8 @@ test('every damaging promoted animation derives safety from its own active geome
       id !== 'recovery' &&
       id !== 'survival-phase' &&
       id !== 'teleport' &&
-      id !== 'boundary-attack',
+      id !== 'boundary-attack' &&
+      id !== 'chase-herding',
   )) {
     const frame = blueprintFrame(id, 3);
     let point = unsafePoints[id];
@@ -1708,5 +1711,50 @@ test('forced scrolling keeps one authored pace, a fixed failure edge, and a visi
   assert.match(
     renderBlueprintThumbnail(id, 'test-forced-scrolling'),
     /data-blueprint-preview="forced-scrolling"/,
+  );
+});
+
+test('chase herding keeps a readable distance band, a bounded intercept, and a captured opening', () => {
+  const id = 'chase-herding';
+  assert.deepEqual([0, 0.8, 1.8, 3, 3.9, 4.8, 5.4].map(chaseHerdingState), [
+    'idle',
+    'route-signal',
+    'maintain-distance',
+    'intercept',
+    'captured',
+    'opening',
+    'reset',
+  ]);
+
+  const signal = blueprintFrame(id, 0.9);
+  assert.equal(signal.dangerActive, false);
+  assert.ok(signal.primitives[3].opacity > 0.7, 'the destination is visible before pursuit');
+  assert.ok(signal.primitives[5].opacity > 0, 'the inner distance ring is visible');
+  assert.ok(signal.primitives[6].opacity > 0, 'the outer distance ring is visible');
+
+  const pursuit = blueprintFrame(id, 2.1);
+  assert.equal(pursuit.chaseHerdingState, 'maintain-distance');
+  assert.equal(pursuit.chaseInBand, true);
+  assert.equal(pursuit.playerSafe, true);
+  assert.equal(pursuit.dangerActive, false);
+  assert.ok(pursuit.chaseDistance > 68 && pursuit.chaseDistance < 185);
+
+  const intercept = blueprintFrame(id, 3.1);
+  assert.equal(intercept.chaseIntercepted, true);
+  assert.ok(intercept.primitives[11].opacity > 0.6, 'the authored inside waypoint stays visible');
+
+  const captured = blueprintFrame(id, 3.9);
+  assert.equal(captured.chaseCaptured, true);
+  assert.equal(captured.dangerActive, false);
+  assert.ok(captured.primitives[4].opacity > 0.8, 'the capture rune changes state');
+
+  const punish = blueprintFrame(id, 4.72);
+  assert.equal(punish.punishStrike, true);
+  assert.ok(punish.primitives[12].opacity > 0, 'the sword opens only after capture');
+  assert.deepEqual(blueprintFrame(id, 0).player, blueprintFrame(id, 6).player);
+  assert.deepEqual(blueprintFrame(id, 0).boss, blueprintFrame(id, 6).boss);
+  assert.match(
+    renderBlueprintThumbnail(id, 'test-chase-herding'),
+    /data-blueprint-preview="chase-herding"/,
   );
 });

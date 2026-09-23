@@ -1,0 +1,128 @@
+{
+  "title": "追逐与驱赶",
+  "subtitle": "让距离与接近角度成为把Boss推向指定终点的规则。",
+  "variant": "塔维维持清晰的追逐距离，切入凯恩的路线，并把石元素引向封印符文",
+  "summary": "追逐与驱赶把移动中的Boss变成空间目标：玩家缩短距离、保持压力，并从有效角度接近，直到Boss进入设计好的终点。",
+  "overview": "追逐与驱赶把追击变成可控制的空间规则，而不是跟在无敌目标后面的长跑。0.5秒时，凯恩显示路线、双环距离带与封印符文。1.15至3.75秒，塔维先保持在外环内，再切入内侧短线，把凯恩导向符文。只有到达终点后，Boss才会进入可攻击状态。",
+  "learning": "把Boss路线、相对距离带、转向响应、有限追赶保护、终点检测与捕获后的易伤状态实现为同一套确定性系统。",
+  "category": "空间、移动与感知",
+  "readTime": "7分钟",
+  "demo": {
+    "title": "在要求追逐前先展示终点",
+    "timeline": "追逐与驱赶时间轴",
+    "step": "追逐与驱赶状态",
+    "phaseNames": ["展示路线与距离", "维持压力并截击", "捕获并反击"],
+    "phaseDescriptions": [
+      "0.5秒时显示封印符文、三个路线节点和内外距离环。玩家在双方移动前就能读懂终点与需要维持的压力距离。",
+      "1.15至3.75秒，凯恩沿固定路线移动；塔维先留在外环内，再经过内侧截击点。截击只改变下一段朝向，不会按每一帧输入重写Boss速度。",
+      "3.75秒进入符文后追逐停止。符文改变状态，凯恩定在原地，塔维在4.72秒获得一次明确的剑击窗口，随后双方连续复位。"
+    ],
+    "boss": "Boss",
+    "player": "玩家",
+    "danger": "追逐本身没有接触伤害；失败来自丢失距离契约或错过终点",
+    "locked": "路线节点、距离带、转向影响、捕获区和易伤时机都预先设定",
+    "safe": "留在可读的压力带内，使用更短的截击路线，并避免穿过Boss身体",
+    "reducedMotion": "减少动态时自动播放关闭。拖动到0.5、1.15、2.55、3.75、4.45、4.72和5.15秒检查规则。",
+    "diagramDescription": "固定场地中，凯恩沿虚线前往U形封印，塔维走更短的截击路线；Boss周围有两圈距离带、三个节点，以及捕获后的剑击窗口。"
+  },
+  "steps": [
+    {
+      "title": "什么相对关系会推进追逐？",
+      "body": "明确把哪段距离或相对位置视为压力。使用一个带宽而非单一阈值，避免细小波动反复启停Boss。规定越出外环后是暂停、启用有限追赶、退回节点还是结束尝试，并把结果清楚显示出来。"
+    },
+    {
+      "title": "玩家如何引导，而不是只会跟随？",
+      "body": "把接近角度映射到有限且可预测的响应：Boss可以选择另一条道、暴露内弯、避开标记侧或进入下一分支。限制转向速度，只在清晰决策点读取影响，让捷径来自空间理解。"
+    },
+    {
+      "title": "什么证明追逐已经完成？",
+      "body": "使用可观察的终点，例如桥、围栏、陷阱、边缘、落地状态或封印符文。用Boss完整碰撞体检测目标区域，并在启用伤害前停止移动；镜头切换与检查点也要保留终点标记。"
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "Boss完美镜像每次修正",
+      "body": "持续反应式转向会形成无尽绕圈，正确站位立刻被抵消。只在预设节点读取玩家影响，限制响应，并保留能产生进度的内侧路线。"
+    },
+    {
+      "title": "落后变成无法挽回的空跑",
+      "body": "若Boss能离开镜头或超过玩家最高速度，系统就不再检验路线选择。使用有限追赶、恢复道、节点等待或明确重置。"
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "分离目标速度与转向权",
+      "body": "分别调整基础速度、加速度、转向率与玩家影响。Boss在直线上可以更快，但能被短线追上；转向改变路线结构，不应暗中改写距离预算。"
+    },
+    {
+      "title": "在多个尺度展示进度",
+      "body": "终点标记说明总体进度，路线节点说明中程进度，距离带说明即时控制。某个提示离开画面时，另一个仍应说明玩家在接近、落后还是成功驱赶。"
+    },
+    {
+      "title": "保护镜头与碰撞契约",
+      "body": "速度变化时保持双方、下一个有效转弯和终点提示可读。明确屏外指示、身体碰撞、坐骑宽度、坡面和超越Boss后的行为。"
+    },
+    {
+      "title": "测试不同机动性与失败恢复",
+      "body": "用低速配置、辅助选项、多人间距、错过转弯、击退和一次故意停步测试。记录最后可恢复距离与最长可接受重置。"
+    }
+  ],
+  "story": {
+    "title": "凯恩把不稳定的符文核心带向封印",
+    "body": "凯恩穿过遗迹撤退，觉醒的核心会在近距离排斥塔维。唯一稳定封印位于路线末端，因此塔维持续施压并从内侧接近，迫使元素进入标记通道。"
+  },
+  "adaptation": {
+    "title": "先让塔维用路线取胜，再使用剑",
+    "body": "塔维保留普通移动和熟悉的剑。追逐奖励对转弯半径和短线的理解；封印把空间控制转化为有限伤害窗口后，剑才发挥作用。"
+  },
+  "distinction": {
+    "title": "移动的相对关系，而非独立镜头倒计时",
+    "body": "强制滚屏即使玩家停止也按固定时间推进画面。追逐与驱赶只有在玩家维持与移动Boss的关系并影响其路线时才推进。逃生阶段则把生存与抵达安全处放在转化Boss易伤之前。"
+  },
+  "lensNotes": [
+    { "id": "encounter-purpose", "body": "终点把即时目标从输出伤害改为控制Boss可受伤的位置。" },
+    {
+      "id": "progress-clarity",
+      "body": "距离环、路线节点和持续可见的封印同时展示局部控制与总进度。"
+    },
+    {
+      "id": "player-expression",
+      "body": "玩家可在安全跟随与更紧的截击之间取舍，同时解决同一条路线。"
+    },
+    { "id": "counterplay", "body": "Boss响应受限且路线可追上，成功站位会可靠地产生剑击窗口。" }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "Sonic Advance 2",
+      "boss": "Egg Hammer Tank II",
+      "screenshot": "https://i.ytimg.com/vi/1Qrti6Rrscc/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=1Qrti6Rrscc&t=1s",
+      "body": "Boss持续在滚动路线前方行驶。索尼克需要缩短差距并维持攻击距离，而锤子占据近、中或远道；击退会消耗下一次攻击前已经获得的追逐距离。",
+      "video": "https://www.youtube.com/watch?v=1Qrti6Rrscc&t=1s",
+      "videoDurationSeconds": 1311
+    },
+    {
+      "dimension": "3D",
+      "game": "The Legend of Zelda: Twilight Princess HD",
+      "boss": "King Bulblin",
+      "screenshot": "https://i.ytimg.com/vi/pXzc1Ho_N24/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=pXzc1Ho_N24&t=134s",
+      "body": "林克消耗艾波娜有限的冲刺追上King Bulblin，切过转弯并骑到侧面，用剑逐片打掉护甲。足够多次成功接近会让目标驶向埃尔丁桥，追逐因此生成下一场地状态。",
+      "video": "https://www.youtube.com/watch?v=pXzc1Ho_N24&t=134s",
+      "videoDurationSeconds": 364
+    },
+    {
+      "dimension": "3D",
+      "game": "Shadow of the Colossus",
+      "boss": "Phalanx",
+      "screenshot": "https://i.ytimg.com/vi/Rq1FY9_UdAU/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=Rq1FY9_UdAU&t=258s",
+      "body": "射瘪Phalanx的气囊会让鳍降低，但只会产生移动的进入窗口。旺达骑马穿过沙地，切过巨像的大弯，在可攀爬的鳍旁对齐，把成功追上转化为登乘阶段。",
+      "video": "https://www.youtube.com/watch?v=Rq1FY9_UdAU&t=258s",
+      "videoDurationSeconds": 678
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

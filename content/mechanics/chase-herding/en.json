@@ -1,0 +1,138 @@
+{
+  "title": "Chase herding",
+  "subtitle": "Make distance and approach angle the rule that moves a boss toward a chosen endpoint.",
+  "variant": "Tavi holds a readable chase band, cuts across Kern's route, and guides the elemental into a capture rune",
+  "summary": "Chase herding makes the moving boss a spatial objective: the player closes distance, preserves contact, and approaches from useful angles until the boss reaches a designed destination.",
+  "overview": "Chase herding turns pursuit into a controllable rule instead of a long run behind an untouchable target. At 0.5 seconds Kern reveals a route, distance band, and capture rune. From 1.15–3.75 seconds Tavi stays close, then takes an inside line that steers Kern into the rune. Vulnerability begins only after capture.",
+  "learning": "Implement the boss route, player-relative distance band, steering response, catch-up protection, endpoint test, and post-capture vulnerability as one deterministic system.",
+  "category": "Space, movement, and perception",
+  "readTime": "7 min",
+  "demo": {
+    "title": "Show the destination before asking for pursuit",
+    "timeline": "Chase herding timeline",
+    "step": "Chase herding states",
+    "phaseNames": [
+      "Reveal route and distance",
+      "Maintain pressure and intercept",
+      "Capture and punish"
+    ],
+    "phaseDescriptions": [
+      "At 0.5 s the capture rune, three route checkpoints, and inner and outer distance rings appear. The player can read where the chase ends and how close pressure must remain before either actor moves.",
+      "From 1.15–3.75 s Kern follows the authored route while Tavi first remains inside the outer ring, then cuts across the inside waypoint. Kern's response is fixed and bounded: the intercept changes the next heading, not the boss's speed after every input sample.",
+      "Entering the capture rune at 3.75 s stops the chase. The rune changes state, Kern remains planted, and Tavi receives one measured sword opening at 4.72 s before both actors return continuously."
+    ],
+    "boss": "Boss",
+    "player": "Player",
+    "danger": "The chase itself is not contact damage; failure comes from losing the distance contract or missing the endpoint",
+    "locked": "Route checkpoints, accepted distance band, steering influence, capture zone, and vulnerability timing are authored",
+    "safe": "Stay within the readable pressure band, use the shorter intercept route, and avoid crossing through the boss body",
+    "reducedMotion": "Autoplay is disabled by reduced motion. Scrub across 0.5, 1.15, 2.55, 3.75, 4.45, 4.72, and 5.15 seconds to inspect the chase contract.",
+    "diagramDescription": "A fixed arena shows Kern moving along a dashed route toward a U-shaped capture rune, Tavi taking a shorter intercept path, two distance rings centered on the boss, three checkpoints, and a sword opening after capture."
+  },
+  "steps": [
+    {
+      "title": "What relationship advances the chase?",
+      "body": "Define the exact distance or relative position that counts as pressure. Use a band rather than one threshold so small oscillations do not repeatedly start and stop the boss. Decide whether dropping outside pauses progress, starts catch-up assistance, resets a checkpoint, or ends the attempt; never hide that consequence in camera behavior."
+    },
+    {
+      "title": "How can the player steer instead of merely follow?",
+      "body": "Map approach angle to a limited, predictable response: the boss may choose the opposite lane, expose an inner turn, avoid a marked side, or enter the next route branch. Clamp turn rate and evaluate steering at readable decision points. A faster route should come from spatial understanding, not from noisy frame-by-frame pursuit AI."
+    },
+    {
+      "title": "What proves the chase is complete?",
+      "body": "Use an observable endpoint such as a bridge, pen, trap, ledge, grounded state, or capture rune. Test the boss body against the full destination volume, then stop locomotion before enabling damage. Preserve the endpoint across camera cuts and checkpoints so players can connect their positioning to the resulting opening."
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "The boss perfectly mirrors every correction",
+      "body": "Continuous reactive steering can produce an endless orbit in which good positioning is cancelled instantly. Sample player influence at authored gates, cap the response, and leave an inside route that creates measurable progress."
+    },
+    {
+      "title": "Falling behind turns into unrecoverable empty travel",
+      "body": "If the boss can leave the camera or exceed the player's maximum speed, the mechanic stops testing route choice. Add bounded catch-up behavior, wider recovery lanes, checkpoint holds, or a clear reset instead of asking the player to run through dead space."
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "Separate target speed from steering authority",
+      "body": "Tune base speed, acceleration, turn rate, and player influence independently. The boss can remain faster on a straight while still being catchable through shorter lines; steering should change route topology without secretly rewriting the distance budget."
+    },
+    {
+      "title": "Make progress visible at more than one scale",
+      "body": "Use a destination marker for global progress, route gates for medium progress, and a distance band for immediate control. If one cue leaves the camera, another must still explain whether the player is gaining, losing, or steering successfully."
+    },
+    {
+      "title": "Protect the camera and collision contract",
+      "body": "Keep both actors, the next useful turn, and the endpoint cue readable while speed changes. Specify off-screen indicators, body collision, mount or vehicle width, slope handling, and what happens when the player overtakes the boss."
+    },
+    {
+      "title": "Test alternate mobility and failure recovery",
+      "body": "Measure the chase with slower builds, accessibility assists, multiplayer spacing, missed turns, knockback, and one intentional stop. Validate the last recoverable distance and the longest acceptable reset, not only a perfect expert line."
+    }
+  ],
+  "story": {
+    "title": "Kern carries an unstable rune core toward the seal",
+    "body": "Kern retreats through the ruin while the awakened core repels Tavi at close range. The only stable seal lies at the route's end, so Tavi keeps pressure and approaches from the inside to make the elemental choose the marked passage."
+  },
+  "adaptation": {
+    "title": "Let Tavi win with route choice before using the sword",
+    "body": "Tavi keeps ordinary movement and the familiar sword. The chase rewards reading turn radius and cutting a shorter line; the sword becomes relevant only after the capture rune converts spatial control into a bounded damage window."
+  },
+  "distinction": {
+    "title": "A moving relationship, not an independent camera deadline",
+    "body": "Forced scrolling advances the frame on an authored schedule even if the player stops. Chase herding advances because the player maintains a relationship to a moving boss and influences its route. Escape phase reverses the immediate goal: survival and reaching safety matter more than converting pursuit into boss vulnerability."
+  },
+  "lensNotes": [
+    {
+      "id": "encounter-purpose",
+      "body": "The endpoint changes the immediate verb from dealing damage to controlling where the boss can be damaged."
+    },
+    {
+      "id": "progress-clarity",
+      "body": "Distance rings, route checkpoints, and the persistent capture rune expose local control and total chase progress."
+    },
+    {
+      "id": "player-expression",
+      "body": "Players can trade a safer follow line for a tighter intercept while still solving the same authored route."
+    },
+    {
+      "id": "counterplay",
+      "body": "The boss has a bounded steering response and catchable route, while successful positioning creates a reliable sword opening."
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "Sonic Advance 2",
+      "boss": "Egg Hammer Tank II",
+      "screenshot": "https://i.ytimg.com/vi/1Qrti6Rrscc/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=1Qrti6Rrscc&t=1s",
+      "body": "The boss continually drives ahead on a scrolling course. Sonic must close the gap and hold a useful attack distance while the hammer claims near, middle, or far lanes; knockback is meaningful because it spends chase distance before the next cockpit hit.",
+      "video": "https://www.youtube.com/watch?v=1Qrti6Rrscc&t=1s",
+      "videoDurationSeconds": 1311
+    },
+    {
+      "dimension": "3D",
+      "game": "The Legend of Zelda: Twilight Princess HD",
+      "boss": "King Bulblin",
+      "screenshot": "https://i.ytimg.com/vi/pXzc1Ho_N24/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=pXzc1Ho_N24&t=134s",
+      "body": "Link spends Epona's limited bursts to catch King Bulblin, cuts across his turns, and rides alongside long enough to strip armor with the sword. Sufficient successful approaches send the target toward the Bridge of Eldin, making the chase produce the next arena state.",
+      "video": "https://www.youtube.com/watch?v=pXzc1Ho_N24&t=134s",
+      "videoDurationSeconds": 364
+    },
+    {
+      "dimension": "3D",
+      "game": "Shadow of the Colossus",
+      "boss": "Phalanx",
+      "screenshot": "https://i.ytimg.com/vi/Rq1FY9_UdAU/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=Rq1FY9_UdAU&t=258s",
+      "body": "Deflating Phalanx's air sacs lowers its fins, but that only creates a moving access window. Wander then rides across the sand, cuts the creature's broad turns, aligns beside a climbable fin, and converts a successful catch into the boarding phase.",
+      "video": "https://www.youtube.com/watch?v=Rq1FY9_UdAU&t=258s",
+      "videoDurationSeconds": 678
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

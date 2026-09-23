@@ -184,6 +184,14 @@ export function initializeBlueprint(widget) {
       widget.dataset.blueprintForcedScrollingCleared = String(frame.forcedScrollingRouteCleared);
       widget.dataset.blueprintPunishStrike = String(frame.punishStrike);
     }
+    if (mechanicId === 'chase-herding') {
+      widget.dataset.blueprintChaseHerding = frame.chaseHerdingState;
+      widget.dataset.blueprintChaseDistance = frame.chaseDistance.toFixed(1);
+      widget.dataset.blueprintChaseInBand = String(frame.chaseInBand);
+      widget.dataset.blueprintChaseIntercepted = String(frame.chaseIntercepted);
+      widget.dataset.blueprintChaseCaptured = String(frame.chaseCaptured);
+      widget.dataset.blueprintPunishStrike = String(frame.punishStrike);
+    }
     boss.setAttribute(
       'transform',
       `translate(${frame.boss.x} ${frame.boss.y}) scale(${frame.bossScale})`,

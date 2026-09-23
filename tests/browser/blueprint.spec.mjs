@@ -405,9 +405,9 @@ test('volley releases three parallel bolts on one beat and clears its outside ro
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
 });
 
-test('catalog and builder reuse the 63 promoted rule-specific previews', async ({ page }) => {
+test('catalog and builder reuse the 64 promoted rule-specific previews', async ({ page }) => {
   await page.goto('en/');
-  await expect(page.locator('[data-blueprint-preview]')).toHaveCount(63);
+  await expect(page.locator('[data-blueprint-preview]')).toHaveCount(64);
   const catalogLayouts = await page.locator('[data-blueprint-preview]').evaluateAll((previews) =>
     previews.map((preview) => {
       const boss = preview.querySelector('[data-character-art-preview="kern"]');
@@ -431,7 +431,7 @@ test('catalog and builder reuse the 63 promoted rule-specific previews', async (
   expect(new Set(catalogLayouts.map(({ layout }) => layout)).size).toBeGreaterThanOrEqual(18);
 
   await page.goto('en/builder/');
-  await expect(page.locator('[data-blueprint-preview]')).toHaveCount(63);
+  await expect(page.locator('[data-blueprint-preview]')).toHaveCount(64);
   const builderLayouts = await page.locator('[data-blueprint-preview]').evaluateAll((previews) =>
     previews.map((preview) => {
       const boss = preview.querySelector('[data-character-art-preview="kern"]');
@@ -2019,6 +2019,73 @@ test('forced scrolling exposes its fixed pace, lower failure edge, and route-com
   await expect(widget).toHaveAttribute('data-blueprint-forced-scrolling', 'opening');
   await expect(widget).toHaveAttribute('data-blueprint-punish-strike', 'true');
   await expect(widget.locator('[data-blueprint-primitive="11"] line')).not.toHaveAttribute(
+    'opacity',
+    '0',
+  );
+
+  await page.setViewportSize({ width: 375, height: 812 });
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+});
+
+test('chase herding exposes the pressure band, authored intercept, capture, and delayed opening', async ({
+  page,
+}) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.goto('en/mechanics/chase-herding/');
+  const widget = page.locator('[data-blueprint-demo]');
+  const timeline = widget.locator('[data-blueprint-timeline]');
+  const seek = (milliseconds) =>
+    timeline.evaluate((element, value) => {
+      element.value = String(value);
+      element.dispatchEvent(new Event('input', { bubbles: true }));
+    }, milliseconds);
+
+  await expect(page.locator('.lesson-title-line h1')).toHaveText('Chase herding');
+  await expect(page.locator('.wip-badge, .draft-profile')).toHaveCount(0);
+  await expect(page.locator('.game-example')).toHaveCount(3);
+  await expect(widget).toHaveAttribute('data-blueprint-playing', 'false');
+
+  await seek(900);
+  await expect(widget).toHaveAttribute('data-blueprint-chase-herding', 'route-signal');
+  await expect(widget).toHaveAttribute('data-blueprint-chase-captured', 'false');
+  await expect(widget.locator('[data-blueprint-primitive="1"] path')).not.toHaveAttribute(
+    'opacity',
+    '0',
+  );
+  await expect(widget.locator('[data-blueprint-primitive="4"] circle')).not.toHaveAttribute(
+    'opacity',
+    '0',
+  );
+
+  await seek(2100);
+  await expect(widget).toHaveAttribute('data-blueprint-chase-herding', 'maintain-distance');
+  await expect(widget).toHaveAttribute('data-blueprint-chase-in-band', 'true');
+  await expect(widget).toHaveAttribute('data-blueprint-outcome', 'safe');
+  await expect(widget.locator('[data-blueprint-primitive="5"] circle')).not.toHaveAttribute(
+    'opacity',
+    '0',
+  );
+  await expect(widget.locator('[data-blueprint-primitive="6"] circle')).not.toHaveAttribute(
+    'opacity',
+    '0',
+  );
+
+  await seek(3100);
+  await expect(widget).toHaveAttribute('data-blueprint-chase-herding', 'intercept');
+  await expect(widget).toHaveAttribute('data-blueprint-chase-intercepted', 'true');
+  await expect(widget.locator('[data-blueprint-primitive="11"] circle')).not.toHaveAttribute(
+    'opacity',
+    '0',
+  );
+
+  await seek(3900);
+  await expect(widget).toHaveAttribute('data-blueprint-chase-herding', 'captured');
+  await expect(widget).toHaveAttribute('data-blueprint-chase-captured', 'true');
+
+  await seek(4720);
+  await expect(widget).toHaveAttribute('data-blueprint-chase-herding', 'opening');
+  await expect(widget).toHaveAttribute('data-blueprint-punish-strike', 'true');
+  await expect(widget.locator('[data-blueprint-primitive="12"] line')).not.toHaveAttribute(
     'opacity',
     '0',
   );

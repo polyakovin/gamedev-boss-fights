@@ -171,6 +171,12 @@ const PROFILE_OVERRIDES = {
     signal: ['environment', 'rhythm'],
     response: ['reposition', 'manage'],
   },
+  'chase-herding': {
+    geometry: ['entity', 'arena'],
+    dimensions: ['2d', '3d'],
+    signal: ['marker', 'trajectory'],
+    response: ['reposition', 'attack'],
+  },
   'relocated-arena': { geometry: ['arena'], signal: ['environment', 'state'] },
   'boss-as-terrain': { geometry: ['entity', 'arena'], dimensions: ['2d', '3d'] },
   'cover-line-of-sight': {
@@ -251,6 +257,8 @@ const COMPATIBLE_PAIRS = new Set(
     ['shared-group-health', 'coordinated-duo-attack'],
     ['target-lock', 'personal-spread'],
     ['beat-synced-attack', 'attack-combination'],
+    ['chase-herding', 'target-lock'],
+    ['chase-herding', 'baited-self-hit'],
     ['debuff-handoff', 'ordered-targets'],
   ].map(([left, right]) => pairKey(left, right)),
 );
@@ -262,6 +270,7 @@ const CONFLICT_PAIRS = new Set(
     ['tower-soak', 'personal-spread'],
     ['tower-soak', 'party-split'],
     ['forced-scrolling', 'cover-line-of-sight'],
+    ['chase-herding', 'forced-scrolling'],
     ['forced-inertia', 'marked-area-strike'],
     ['shrinking-safe-area', 'platform-destruction'],
     ['gaze-check', 'secondary-cues-invisibility'],

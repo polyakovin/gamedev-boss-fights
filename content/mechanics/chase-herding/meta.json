@@ -1,0 +1,32 @@
+{
+  "id": "chase-herding",
+  "number": 70,
+  "published": true,
+  "sourceLocale": "en",
+  "contentVersion": 1,
+  "animation": "chase-herding",
+  "lenses": ["encounter-purpose", "progress-clarity", "player-expression", "counterplay"],
+  "related": ["forced-scrolling", "boundary-attack", "target-lock"],
+  "sources": [
+    {
+      "title": "GDC · Itay Keren — Boss Battle Design Fundamentals and Retrospective",
+      "url": "https://www.gdcvault.com/play/1024921/Boss-Up-Boss-Battle-Design"
+    },
+    {
+      "title": "Sonic Wiki Zone — EggHammerTankII",
+      "url": "https://sonic.fandom.com/wiki/EggHammerTankII"
+    },
+    {
+      "title": "Nintendo · Iwata Asks — The Legend of Zelda: Twilight Princess",
+      "url": "https://iwataasks.nintendo.com/interviews/wii/twilight_princess/0/1/"
+    },
+    {
+      "title": "Zelda Dungeon — Twilight Princess: Death Mountain",
+      "url": "https://www.zeldadungeon.net/twilight-princess-walkthrough/death-mountain/"
+    },
+    {
+      "title": "StrategyWiki — Shadow of the Colossus: Phalanx",
+      "url": "https://strategywiki.org/wiki/Shadow_of_the_Colossus/Phalanx_-_Colossus_13"
+    }
+  ]
+}
