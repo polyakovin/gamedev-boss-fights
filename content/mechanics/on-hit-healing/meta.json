@@ -1,0 +1,37 @@
+{
+  "id": "on-hit-healing",
+  "number": 96,
+  "published": true,
+  "sourceLocale": "en",
+  "contentVersion": 1,
+  "animation": "on-hit-healing",
+  "lenses": ["progress-clarity", "counterplay", "risk-reward", "rule-exception", "telegraphing"],
+  "related": [
+    "ability-lock",
+    "maximum-health-reduction",
+    "posture-stagger-gauge",
+    "attack-combination"
+  ],
+  "sources": [
+    {
+      "title": "Boss Up: Boss Battle Design",
+      "url": "https://media.gdcvault.com/gdc2018/presentations/Keren_Itay_BossUp.pdf"
+    },
+    {
+      "title": "Elden Ring update makes Malenia less impossible",
+      "url": "https://www.gamespot.com/articles/elden-ring-update-makes-malenia-less-impossible/1100-6502853/"
+    },
+    {
+      "title": "Anub'arak Strategy Guide — Trial of the Crusader",
+      "url": "https://www.wowhead.com/wotlk/guide/raids/trial-of-the-crusader/anubarak-strategy"
+    },
+    {
+      "title": "Giga Drain — Bulbapedia",
+      "url": "https://bulbapedia.bulbagarden.net/wiki/Giga_Drain_(move)"
+    },
+    {
+      "title": "Pokémon FireRed and LeafGreen Gym Leaders",
+      "url": "https://www.serebii.net/fireredleafgreen/gyms.shtml"
+    }
+  ]
+}

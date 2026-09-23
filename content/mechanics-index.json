@@ -1527,14 +1527,14 @@
       "number": 96,
       "translations": {
         "en": {
-          "title": "On-hit healing",
+          "title": "On-hit healing or lifesteal",
           "category": "States, resources, and scaling",
-          "summary": "Draft outline for the on-hit healing mechanic. Rules, tuning guidance, and examples are still in progress."
+          "summary": "A qualified contact restores bounded boss health, including explicitly eligible blocked hits that deal zero damage."
         },
         "ru": {
-          "title": "Лечение от попаданий",
+          "title": "Лечение при попадании или вампиризм",
           "category": "Состояния, ресурсы и масштабирование",
-          "summary": "Успешный контакт восстанавливает здоровье босса, включая оговорённые блокированные попадания."
+          "summary": "Подтверждённый контакт ограниченно лечит босса, включая явно допустимые блокированные удары с нулевым уроном."
         }
       }
     },

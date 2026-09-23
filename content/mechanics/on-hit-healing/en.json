@@ -1,0 +1,138 @@
+{
+  "title": "On-hit healing or lifesteal",
+  "subtitle": "Let qualified contact undo progress without hiding the rule",
+  "variant": "Miss · blocked contact · heal · clean evade",
+  "summary": "A qualified boss contact restores a bounded amount of health, even when the hit deals no damage if the encounter declares blocking eligible.",
+  "overview": "On-hit healing turns contact into boss recovery. The contract is the qualifying predicate: a clean miss does nothing, a blocked strike may count at zero damage, and one contact creates one heal event. The boss health change needs a visible source, a cap, and enough recovery time for the player to answer.",
+  "learning": "Define qualifying contact, block and parry treatment, damage dependence, requested and applied healing, overheal, per-target and per-swing de-duplication, multi-hit cadence, summons, immunity, phase transitions, rollback, and telemetry that connects each heal to one contact id.",
+  "category": "States, resources, and scaling",
+  "readTime": "9 min",
+  "demo": {
+    "title": "Dodge Kern's first strike, block the second for zero damage while Kern heals, then evade the third",
+    "timeline": "Contact-to-heal timeline",
+    "step": "Miss, blocked contact, and healing states",
+    "phaseNames": [
+      "Prove that a miss cannot heal",
+      "Separate qualified contact from damage",
+      "Preserve a useful response after recovery"
+    ],
+    "phaseDescriptions": [
+      "Kern fixes a 96-unit strike zone at 0.30 s. Tavi clears the whole circle before 0.98 s, so the contact predicate is false and Kern remains at 48 health.",
+      "The second strike connects with Tavi’s guard at 2.64 s. Damage applied is zero, but blocked contact is eligible; one event restores 16 health and raises Kern from 48 to 64.",
+      "A third strike resolves at 4.04 s after Tavi leaves the zone. No second heal is created, and the clear recovery gives Tavi time to return with a sword counter."
+    ],
+    "boss": "Boss",
+    "player": "Player",
+    "danger": "Only an authoritative qualifying contact may heal; a miss never heals, and one swing-target pair resolves once even if collision callbacks repeat",
+    "locked": "Contact predicate, block and parry policy, damage result, requested and applied healing, cap, event id, multi-hit cadence, summon ownership, rollback, and persistence belong to encounter logic",
+    "safe": "Show the contact, route a visible transfer toward the boss, move the boss health bar once, and keep zero player damage readable when a block still qualifies",
+    "reducedMotion": "Autoplay is disabled by reduced motion. Scrub across 0.30, 0.86, 0.98, 1.82, 2.64, 2.88, 3.34, 4.04, 4.68, and 5.34 seconds to inspect the miss, blocked contact, bounded heal, second miss, counter, and reset.",
+    "diagramDescription": "Kern projects a fixed circular strike around Tavi. The first and third circles miss. The middle strike meets a round guard, sends bright motes back to Kern, and fills a boss health segment from 48 to 64 while Tavi takes zero damage."
+  },
+  "steps": [
+    {
+      "title": "What exactly qualifies as a healing hit?",
+      "body": "Write one authoritative predicate for hurtbox contact, blocked contact, parry, armor, invulnerability, summons, projectiles, damage-over-time, and environmental proxies. Do not infer healing from animation overlap or from a damage number that may be zero."
+    },
+    {
+      "title": "How much health may one contact restore?",
+      "body": "Calculate requested healing separately from applied healing, clamp at maximum health, and decide whether the amount is fixed, proportional to damage, or scaled by phase. Give every swing-target pair a stable result id so duplicate callbacks cannot heal twice."
+    },
+    {
+      "title": "How does the player read and answer the recovery?",
+      "body": "Connect contact to the boss with shape, motion, sound, and a health-bar pulse. Keep dodge, parry, interruption, spacing, or healing reduction useful, and leave recovery long enough to punish a failed attempt."
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "Healing follows the visual swing instead of confirmed contact",
+      "body": "A boss that heals on a whiff teaches that spacing is irrelevant. Resolve the heal from the same authoritative contact record used by combat, and log the contact id, target, request, applied amount, and rejection reason."
+    },
+    {
+      "title": "Every multi-hit callback grants the full amount",
+      "body": "Rapid attacks, overlapping hurtboxes, summons, and rollback can multiply recovery into a runaway reset. Define per-swing or per-tick cadence, deduplicate target pairs, cap the gain, and test low frame rates and latency."
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "Separate contact, damage, and healing",
+      "body": "Store contactQualified, damageApplied, healRequested, healApplied, and resultId as different values. That makes blocked-but-healing attacks explicit and lets balance change without rewriting collision rules."
+    },
+    {
+      "title": "Budget how much progress can be undone",
+      "body": "Compare average player damage per opening with average boss recovery per successful contact. Bound the worst case across long combos and summons so one mistake increases pressure without erasing several clean cycles."
+    },
+    {
+      "title": "Instrument the feedback loop",
+      "body": "Track eligible contacts, misses, blocked contacts, damage-zero heals, requested and applied healing, overheal, duplicate suppression, heal per minute, deaths after boss recovery, and phase duration."
+    }
+  ],
+  "story": {
+    "title": "Kern pulls light through Tavi’s shield",
+    "body": "The blow leaves Tavi unharmed, but a thin stream of runic light runs from the guard into Kern’s cracked chest. The elemental closes one fracture, making the exceptional block rule visible before the next exchange."
+  },
+  "adaptation": {
+    "title": "Make the source, amount, and exception redundant",
+    "body": "Pair a tether, inward motes, a distinct heal sound, a boss-health flash, and text or icon feedback. Offer reduced healing, blocked-hit immunity, longer cooldowns, stronger healing reduction, or a mode where only damaging hits qualify, and state the chosen rule before combat."
+  },
+  "distinction": {
+    "title": "Contact-gated recovery, not scheduled self-healing",
+    "body": "On-hit healing requires an eligible boss contact with a target. Self-healing begins from a timer, phase, or boss action without that contact, while resource steal changes ownership of another value. Keep those event sources separate even when they share the same green effect."
+  },
+  "lensNotes": [
+    {
+      "id": "progress-clarity",
+      "body": "Every heal points to one contact id and one visible change on the boss health bar."
+    },
+    {
+      "id": "counterplay",
+      "body": "Avoidance, parry, interruption, spacing, or healing reduction can prevent or reduce the recovery."
+    },
+    {
+      "id": "risk-reward",
+      "body": "Blocking may prevent damage yet still trade boss recovery for safety, creating a legible tactical cost."
+    },
+    {
+      "id": "rule-exception",
+      "body": "Blocks, parries, invulnerability, summons, multi-hit attacks, overheal, and repeated callbacks need explicit outcomes."
+    },
+    {
+      "id": "telegraphing",
+      "body": "The attack signal should identify healing-enabled contact before the player chooses to dodge or guard."
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "Pokémon FireRed and LeafGreen",
+      "boss": "Gym Leader Erika",
+      "screenshot": "https://i.ytimg.com/vi/9ADcfkcxblM/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=9ADcfkcxblM&t=194s",
+      "video": "https://www.youtube.com/watch?v=9ADcfkcxblM&t=194s",
+      "videoDurationSeconds": 386,
+      "body": "At 3:14, Erika’s Tangela uses Giga Drain. Damage and recovery are one authored move result, so the interface must connect the struck target, the drained amount, and the user that receives the health instead of presenting an unexplained green number."
+    },
+    {
+      "dimension": "3D",
+      "game": "Elden Ring",
+      "boss": "Malenia, Blade of Miquella",
+      "screenshot": "https://i.ytimg.com/vi/Uaq4bKbaz08/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=Uaq4bKbaz08&t=4s",
+      "video": "https://www.youtube.com/watch?v=Uaq4bKbaz08&t=4s",
+      "videoDurationSeconds": 60,
+      "body": "Malenia restores health when her attacks make contact even through a shield that prevents damage. The exception is a strong reminder to model qualifying contact separately from damage applied and to signal that blocking changes the cost rather than cancelling the boss result."
+    },
+    {
+      "dimension": "3D",
+      "game": "World of Warcraft: Wrath of the Lich King",
+      "boss": "Anub'arak",
+      "screenshot": "https://i.ytimg.com/vi/xivwGN43ZpA/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=xivwGN43ZpA&t=30s",
+      "video": "https://www.youtube.com/watch?v=xivwGN43ZpA&t=30s",
+      "videoDurationSeconds": 268,
+      "body": "At 0:30, the guide isolates Anub'arak’s Leeching Swarm: periodic damage to the raid is converted into boss healing. Because the amount depends on current player health, the encounter turns party health management into a shared control over the boss’s recovery rate."
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

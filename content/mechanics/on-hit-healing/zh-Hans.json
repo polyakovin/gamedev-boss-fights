@@ -1,0 +1,134 @@
+{
+  "title": "命中治疗或生命汲取",
+  "subtitle": "让有效接触撤销进度，但不要隐藏规则",
+  "variant": "落空 · 格挡接触 · 治疗 · 完整闪避",
+  "summary": "有效的首领接触会恢复有上限的生命；若规则允许，即使格挡令伤害为零也会触发。",
+  "overview": "命中治疗把接触转化为首领恢复。核心不是绿色数字，而是触发条件：落空不产生治疗，格挡接触可在零伤害时生效，一次接触只创建一次事件。来源、上限和反击窗口都必须清楚。",
+  "learning": "定义有效接触、格挡和招架、伤害依赖、请求与实际治疗、过量治疗、多段去重、召唤物、无敌、阶段切换、回滚，以及把每次治疗连到 contact id 的遥测。",
+  "category": "状态、资源与缩放",
+  "readTime": "9 分钟",
+  "demo": {
+    "title": "躲开克恩第一击，格挡第二击而不受伤但让克恩治疗，再闪开第三击",
+    "timeline": "接触到治疗时间线",
+    "step": "落空、格挡接触与治疗状态",
+    "phaseNames": ["证明落空不会治疗", "把有效接触与伤害分开", "恢复后仍保留可用反制"],
+    "phaseDescriptions": [
+      "克恩在 0.30 秒锁定 96 单位攻击圈。塔维在 0.98 秒前完全离开，因此条件为假，克恩保持 48 生命。",
+      "第二击在 2.64 秒撞上塔维的防御。实际伤害为零，但格挡接触有效；一个事件恢复 16 点，使克恩从 48 到 64。",
+      "第三击在 4.04 秒结算时塔维已离圈，不会新增治疗；明确的恢复给塔维时间返回并用剑反击。"
+    ],
+    "boss": "首领",
+    "player": "玩家",
+    "danger": "只有权威确认的有效接触才能治疗；落空不治疗，同一挥击与目标即使收到重复碰撞回调也只结算一次",
+    "locked": "接触条件、格挡与招架、伤害结果、请求与实际治疗、上限、事件 id、多段频率、召唤物归属、回滚和持久化属于战斗逻辑",
+    "safe": "显示接触、朝首领移动的可见传输和一次生命条变化；格挡仍触发时要清楚显示玩家受到零伤害",
+    "reducedMotion": "减少动态效果时自动播放关闭。拖动到 0.30、0.86、0.98、1.82、2.64、2.88、3.34、4.04、4.68 和 5.34 秒检查落空、格挡、治疗、再次落空、反击与重置。",
+    "diagramDescription": "克恩在塔维周围投射固定圆形攻击。第一和第三次落空；中间一击撞上圆形防御，光点流回克恩，使首领生命从 48 增至 64，而塔维伤害为零。"
+  },
+  "steps": [
+    {
+      "title": "什么才算治疗命中？",
+      "body": "为受击框接触、格挡、招架、护甲、无敌、召唤物、投射物、持续伤害与环境代理写出一个权威条件。不要从动画重叠或可能为零的伤害数字推断治疗。"
+    },
+    {
+      "title": "一次接触能恢复多少？",
+      "body": "分开计算请求与实际治疗，按最大生命截断，并选择固定值、伤害比例或阶段缩放。为每个挥击与目标对提供稳定结果 id，防止重复回调二次治疗。"
+    },
+    {
+      "title": "玩家如何读懂并回应？",
+      "body": "用形状、运动、声音和生命条脉冲把接触连到首领。让闪避、招架、打断、距离或减疗仍然有用，并留下足够反击硬直。"
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "治疗跟随挥击动画而非接触",
+      "body": "首领若在落空时治疗，距离控制就失去意义。只从权威接触记录结算，并记录 id、目标、请求、实际数值和拒绝原因。"
+    },
+    {
+      "title": "多段回调每次都给完整治疗",
+      "body": "高速攻击、重叠受击框、召唤物和回滚会放大恢复。规定每挥击或每跳频率，去重目标对，限制收益并测试低帧率与延迟。"
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "分离接触、伤害与治疗",
+      "body": "分别保存 contactQualified、damageApplied、healRequested、healApplied 和 resultId，使格挡零伤害但治疗成为明确规则。"
+    },
+    {
+      "title": "预算可撤销的进度",
+      "body": "比较玩家每个输出窗口的平均伤害与首领每次接触的恢复，限制连段与召唤物的最坏情况。"
+    },
+    {
+      "title": "记录反馈循环",
+      "body": "追踪有效接触、落空、格挡、零伤害治疗、请求与实际治疗、过量治疗、去重、每分钟恢复、恢复后的死亡和阶段时长。"
+    }
+  ],
+  "story": {
+    "title": "克恩从塔维的盾中抽取光",
+    "body": "攻击没有伤到塔维，但符文光流入克恩破裂的胸口并合上一条裂缝，在下一轮前显示这条例外。"
+  },
+  "adaptation": {
+    "title": "用多种方式表达来源、数值与例外",
+    "body": "组合连线、内流粒子、独特音效、首领生命闪光与文字或图标。提供降低治疗、格挡免疫、加长冷却、强化减疗或仅伤害命中生效的选项。"
+  },
+  "distinction": {
+    "title": "由接触触发，而非定时自疗",
+    "body": "命中治疗需要首领与目标发生有效接触；自疗由计时器、阶段或无接触动作触发，资源偷取则改变其他数值的归属。"
+  },
+  "lensNotes": [
+    {
+      "id": "progress-clarity",
+      "body": "每次治疗指向一个接触 id 和一次可见生命变化。"
+    },
+    {
+      "id": "counterplay",
+      "body": "闪避、招架、打断、距离或减疗可以阻止或降低恢复。"
+    },
+    {
+      "id": "risk-reward",
+      "body": "格挡可免伤，却以首领恢复换取安全，形成清楚代价。"
+    },
+    {
+      "id": "rule-exception",
+      "body": "格挡、招架、无敌、召唤物、多段、过量治疗与重复回调都需明确结果。"
+    },
+    {
+      "id": "telegraphing",
+      "body": "攻击信号应在玩家选择闪避或防御前标明治疗接触。"
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "Pokémon FireRed and LeafGreen",
+      "boss": "Gym Leader Erika",
+      "screenshot": "https://i.ytimg.com/vi/9ADcfkcxblM/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=9ADcfkcxblM&t=194s",
+      "video": "https://www.youtube.com/watch?v=9ADcfkcxblM&t=194s",
+      "videoDurationSeconds": 386,
+      "body": "3:14 时，艾莉佳的蔓藤怪使用终极吸取。伤害与恢复属于同一招式结果，界面应连接目标、汲取量与生命接收者。"
+    },
+    {
+      "dimension": "3D",
+      "game": "Elden Ring",
+      "boss": "Malenia, Blade of Miquella",
+      "screenshot": "https://i.ytimg.com/vi/Uaq4bKbaz08/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=Uaq4bKbaz08&t=4s",
+      "video": "https://www.youtube.com/watch?v=Uaq4bKbaz08&t=4s",
+      "videoDurationSeconds": 60,
+      "body": "玛莲妮亚的攻击即使被盾牌格挡为零伤害，只要接触仍会恢复。它说明有效接触必须与实际伤害分开。"
+    },
+    {
+      "dimension": "3D",
+      "game": "World of Warcraft: Wrath of the Lich King",
+      "boss": "Anub'arak",
+      "screenshot": "https://i.ytimg.com/vi/xivwGN43ZpA/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=xivwGN43ZpA&t=30s",
+      "video": "https://www.youtube.com/watch?v=xivwGN43ZpA&t=30s",
+      "videoDurationSeconds": 268,
+      "body": "0:30 起视频解释阿努巴拉克的吸血虫群：对团队的周期伤害转化为首领治疗，玩家当前生命因此决定恢复速度。"
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

@@ -405,9 +405,9 @@ test('volley releases three parallel bolts on one beat and clears its outside ro
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
 });
 
-test('catalog and builder reuse the 89 promoted rule-specific previews', async ({ page }) => {
+test('catalog and builder reuse the 90 promoted rule-specific previews', async ({ page }) => {
   await page.goto('en/');
-  await expect(page.locator('[data-blueprint-preview]')).toHaveCount(89);
+  await expect(page.locator('[data-blueprint-preview]')).toHaveCount(90);
   const catalogLayouts = await page.locator('[data-blueprint-preview]').evaluateAll((previews) =>
     previews.map((preview) => {
       const boss = preview.querySelector('[data-character-art-preview="kern"]');
@@ -431,7 +431,7 @@ test('catalog and builder reuse the 89 promoted rule-specific previews', async (
   expect(new Set(catalogLayouts.map(({ layout }) => layout)).size).toBeGreaterThanOrEqual(18);
 
   await page.goto('en/builder/');
-  await expect(page.locator('[data-blueprint-preview]')).toHaveCount(89);
+  await expect(page.locator('[data-blueprint-preview]')).toHaveCount(90);
   const builderLayouts = await page.locator('[data-blueprint-preview]').evaluateAll((previews) =>
     previews.map((preview) => {
       const boss = preview.querySelector('[data-character-art-preview="kern"]');
@@ -3576,4 +3576,44 @@ test('resource steal preserves the ledger through drop, reclaim, and boss captur
   const playerLabel = await widget.locator('[data-blueprint-player-label]').boundingBox();
   const phaseLabel = await widget.locator('[data-blueprint-current-phase]').boundingBox();
   expect(playerLabel.y + playerLabel.height).toBeLessThan(phaseLabel.y - 12);
+});
+
+test('on-hit healing separates a blocked contact from applied damage and ignores misses', async ({
+  page,
+}) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.goto('en/mechanics/on-hit-healing/');
+  const widget = page.locator('[data-blueprint-demo]');
+  const timeline = widget.locator('[data-blueprint-timeline]');
+  const seek = (milliseconds) =>
+    timeline.evaluate((element, value) => {
+      element.value = String(value);
+      element.dispatchEvent(new Event('input', { bubbles: true }));
+    }, milliseconds);
+
+  await expect(page.locator('.lesson-title-line h1')).toHaveText('On-hit healing or lifesteal');
+  await expect(page.locator('.wip-badge, .draft-profile')).toHaveCount(0);
+  await expect(page.locator('.game-example')).toHaveCount(3);
+  await seek(1100);
+  await expect(widget).toHaveAttribute('data-blueprint-on-hit-healing-first-missed', 'true');
+  await expect(widget).toHaveAttribute('data-blueprint-on-hit-healing-boss-health', '48');
+  await expect(widget).toHaveAttribute('data-blueprint-on-hit-healing-event-count', '0');
+  await seek(2700);
+  await expect(widget).toHaveAttribute('data-blueprint-on-hit-healing-blocked-contact', 'true');
+  await expect(widget).toHaveAttribute('data-blueprint-on-hit-healing-contact-qualified', 'true');
+  await expect(widget).toHaveAttribute('data-blueprint-on-hit-healing-damage', '0');
+  await expect(widget).toHaveAttribute('data-blueprint-on-hit-healing-event-count', '1');
+  await expect(widget).toHaveAttribute('data-blueprint-on-hit-healing-blocked-counts', 'true');
+  await seek(3100);
+  await expect(widget).toHaveAttribute('data-blueprint-on-hit-healing-boss-health', '64');
+  await expect(widget).toHaveAttribute('data-blueprint-on-hit-healing-requested', '16');
+  await expect(widget).toHaveAttribute('data-blueprint-on-hit-healing-applied', '16');
+  await expect(widget).toHaveAttribute('data-blueprint-on-hit-healing-result-id', 'on-hit-heal-1');
+  await seek(4100);
+  await expect(widget).toHaveAttribute('data-blueprint-on-hit-healing-third-missed', 'true');
+  await expect(widget).toHaveAttribute('data-blueprint-on-hit-healing-miss-counts', 'false');
+  await expect(widget).toHaveAttribute('data-blueprint-on-hit-healing-event-count', '1');
+  await expect(widget).toHaveAttribute('data-blueprint-on-hit-healing-boss-health', '64');
+  await page.setViewportSize({ width: 375, height: 812 });
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
 });

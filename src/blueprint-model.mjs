@@ -1298,12 +1298,12 @@ const SPECS = {
   },
   'ability-lock': {
     mode: 'ability-lock',
-    boss: [300, 375],
-    player: [300, 635],
-    target: [455, 720],
-    arena: [55, 310, 450, 570],
-    sealCenter: [300, 635],
-    safePoint: [455, 720],
+    boss: [280, 245],
+    player: [280, 660],
+    target: [450, 750],
+    arena: [40, 145, 480, 715],
+    sealCenter: [280, 660],
+    safePoint: [450, 750],
     sealRadius: 96,
     firstTelegraph: [0.3, 0.94],
     firstEscape: [0.48, 0.86],
@@ -1353,6 +1353,33 @@ const SPECS = {
       [280, 790],
       [425, 770],
     ],
+  },
+  'on-hit-healing': {
+    mode: 'on-hit-healing',
+    boss: [300, 375],
+    player: [300, 635],
+    target: [455, 720],
+    arena: [55, 310, 450, 570],
+    strikeCenter: [300, 635],
+    safePoint: [455, 720],
+    strikeRadius: 96,
+    firstTelegraph: [0.3, 0.94],
+    firstEscape: [0.48, 0.86],
+    firstResolveAt: 0.98,
+    return: [1.18, 1.58],
+    secondTelegraph: [1.82, 2.52],
+    blockedHitAt: 2.64,
+    blockedHitWindow: [2.54, 2.78],
+    healing: [2.64, 3.06],
+    thirdTelegraph: [3.34, 4],
+    thirdEscape: [3.52, 3.86],
+    thirdResolveAt: 4.04,
+    thirdHitWindow: [3.94, 4.16],
+    counterReturn: [4.18, 4.5],
+    counterAt: 4.68,
+    resetAt: 5.34,
+    bossHealthBefore: 48,
+    healAmount: 16,
   },
   'wide-swing': { mode: 'arc', boss: [280, 310], player: [410, 470], target: [470, 650] },
   lunge: { mode: 'lunge', boss: [170, 290], player: [390, 590], target: [470, 660] },
@@ -2512,6 +2539,48 @@ export function resourceStealResolve({ current = 6, drop = 3, reclaim = 1, bossC
     conserved: player + captured + world === currentBefore,
     dropEventCount: dropped > 0 ? 1 : 0,
     benefitEventCount: captured > 0 ? 1 : 0,
+  });
+}
+
+export function onHitHealingState(time) {
+  const spec = SPECS['on-hit-healing'];
+  const t = localTime(time);
+  if (t < spec.firstTelegraph[0]) return 'ready';
+  if (t < spec.firstResolveAt) return 'first-telegraph';
+  if (t < spec.return[0]) return 'first-missed';
+  if (t < spec.secondTelegraph[0]) return 'repositioning';
+  if (t < spec.blockedHitAt) return 'second-telegraph';
+  if (t < spec.healing[1]) return 'blocked-contact-healing';
+  if (t < spec.thirdTelegraph[0]) return 'healed';
+  if (t < spec.thirdResolveAt) return 'third-telegraph';
+  if (t < spec.counterReturn[0]) return 'third-missed';
+  if (t < spec.counterAt) return 'counter-approach';
+  if (t < spec.resetAt) return 'recovery';
+  return 'reset';
+}
+
+export function onHitHealingResolve({
+  currentHealth = 48,
+  maximumHealth = 100,
+  qualifyingContact = false,
+  damageApplied = 0,
+  healAmount = 16,
+  alreadyResolved = false,
+} = {}) {
+  const maximum = Math.max(1, Number(maximumHealth) || 100);
+  const before = Math.min(maximum, Math.max(0, Number(currentHealth) || 0));
+  const requested =
+    qualifyingContact && !alreadyResolved ? Math.max(0, Number(healAmount) || 0) : 0;
+  const applied = Math.min(maximum - before, requested);
+  return Object.freeze({
+    healthBefore: before,
+    healthAfter: before + applied,
+    requested,
+    applied,
+    damageApplied: Math.max(0, Number(damageApplied) || 0),
+    contactQualified: Boolean(qualifyingContact),
+    eventCount: applied > 0 ? 1 : 0,
+    resultId: applied > 0 ? 'on-hit-heal-1' : 'none',
   });
 }
 
@@ -6157,6 +6226,101 @@ function primitivesFor(spec, frame) {
       ...runeStone(shieldX + 13, shieldY - 3, shieldVisible, 'signal', 0.58),
     ];
   }
+  if (mode === 'on-hit-healing') {
+    const center = point(spec.strikeCenter);
+    const first = frame.time >= spec.firstTelegraph[0] && frame.time < spec.firstResolveAt;
+    const second = frame.time >= spec.secondTelegraph[0] && frame.time < spec.blockedHitAt;
+    const third = frame.time >= spec.thirdTelegraph[0] && frame.time < spec.thirdResolveAt;
+    const telegraph = first || second || third;
+    const start = first
+      ? spec.firstTelegraph[0]
+      : second
+        ? spec.secondTelegraph[0]
+        : spec.thirdTelegraph[0];
+    const end = first ? spec.firstResolveAt : second ? spec.blockedHitAt : spec.thirdResolveAt;
+    const telegraphProgress = telegraph ? clamp((frame.time - start) / (end - start)) : 0;
+    const contactPulse = strikePulse(frame.time, spec.blockedHitAt, 0.48);
+    const healPulse = pulse(
+      smooth((frame.time - spec.healing[0]) / (spec.healing[1] - spec.healing[0])),
+    );
+    const width = 236 * (frame.onHitHealingBossHealth / 100);
+    const beamOpacity =
+      frame.time >= spec.healing[0] && frame.time < spec.healing[1] ? Math.max(0.34, healPulse) : 0;
+    return [
+      rect(...spec.arena, 0.52, 'muted', 0.025),
+      rect(178, 318, 244, 24, 0.74, 'muted', 0.035),
+      rect(182, 322, width, 16, 0.96, 'signal', 0.18),
+      line(182 + width, 314, 182 + width, 346, 0.8, 'signal', 4),
+      circle(
+        center.x,
+        center.y,
+        spec.strikeRadius,
+        telegraph ? 0.84 : contactPulse * 0.94,
+        'signal',
+        telegraph ? 7 : 11,
+        telegraph ? 0.05 : 0.1,
+        telegraph ? '12 9' : '',
+      ),
+      circle(
+        center.x,
+        center.y,
+        spec.strikeRadius * (1 - 0.46 * telegraphProgress),
+        telegraph ? 0.72 : 0,
+        'accent',
+        5,
+        0.02,
+      ),
+      circle(
+        spec.safePoint[0],
+        spec.safePoint[1] - 34,
+        34,
+        frame.onHitHealingFirstMissed || frame.onHitHealingThirdMissed ? 0.86 : 0,
+        'safe',
+        6,
+        0.04,
+        '8 7',
+      ),
+      path(
+        `M ${spec.safePoint[0] - 14} ${spec.safePoint[1] - 35} L ${spec.safePoint[0] - 3} ${spec.safePoint[1] - 24} L ${spec.safePoint[0] + 18} ${spec.safePoint[1] - 49}`,
+        frame.onHitHealingFirstMissed || frame.onHitHealingThirdMissed ? 0.98 : 0,
+        'safe',
+        6,
+      ),
+      circle(
+        frame.player.x,
+        frame.player.y - 34,
+        48,
+        frame.onHitHealingBlockedContact ? 0.96 : 0,
+        'safe',
+        7,
+        0.04,
+        '8 6',
+      ),
+      line(
+        frame.player.x,
+        frame.player.y - 34,
+        frame.boss.x,
+        frame.boss.y - 24,
+        beamOpacity,
+        'signal',
+        9,
+        '10 7',
+      ),
+      ...Array.from({ length: 3 }, (_, index) => {
+        const progress = (index + 1) / 4;
+        const x = mix(frame.player.x, frame.boss.x, progress);
+        const y = mix(frame.player.y - 34, frame.boss.y - 24, progress);
+        return circle(x, y, 8 + healPulse * 5, beamOpacity, 'signal', 4, 0.2);
+      }),
+      circle(frame.boss.x, frame.boss.y - 26, 58 + healPulse * 54, healPulse, 'safe', 9, 0.05),
+      path(
+        `M ${frame.player.x + 38} ${frame.player.y - 82} L ${frame.player.x + 92} ${frame.player.y - 136}`,
+        strikePulse(frame.time, spec.counterAt, 0.4),
+        'accent',
+        9,
+      ),
+    ];
+  }
   if (mode === 'encounter-specific-tool') {
     const pedestal = point(spec.pedestal);
     const spearBase = { x: frame.player.x - 8, y: frame.player.y - 22 };
@@ -7670,6 +7834,12 @@ function pointClearsThreat(spec, frame, value, radius = BLUEPRINT_PLAYER_RADIUS)
       Math.hypot(value.x - spec.stealCenter[0], value.y - spec.stealCenter[1]) >
         spec.stealRadius + radius
     );
+  if (mode === 'on-hit-healing')
+    return (
+      !frame.dangerActive ||
+      Math.hypot(value.x - spec.strikeCenter[0], value.y - spec.strikeCenter[1]) >
+        spec.strikeRadius + radius
+    );
   if (mode === 'projectile-rally')
     return (
       !frame.dangerActive ||
@@ -8056,6 +8226,7 @@ export function blueprintFrame(id, time) {
   else if (spec.mode === 'maximum-health-reduction') responseProgress = 0;
   else if (spec.mode === 'ability-lock') responseProgress = 0;
   else if (spec.mode === 'resource-steal') responseProgress = 0;
+  else if (spec.mode === 'on-hit-healing') responseProgress = 0;
   else if (spec.mode === 'knockback')
     responseProgress = phase === 0 ? 0 : phase === 1 ? smooth(action) : 1;
   else if (spec.mode === 'target-lock')
@@ -8992,6 +9163,28 @@ export function blueprintFrame(id, time) {
       };
     } else player = startPlayer;
   }
+  if (spec.mode === 'on-hit-healing') {
+    const safe = point(spec.safePoint);
+    if (t < spec.firstEscape[0]) player = startPlayer;
+    else if (t < spec.firstEscape[1]) {
+      const move = smooth((t - spec.firstEscape[0]) / (spec.firstEscape[1] - spec.firstEscape[0]));
+      player = { x: mix(startPlayer.x, safe.x, move), y: mix(startPlayer.y, safe.y, move) };
+    } else if (t < spec.return[0]) player = safe;
+    else if (t < spec.return[1]) {
+      const move = smooth((t - spec.return[0]) / (spec.return[1] - spec.return[0]));
+      player = { x: mix(safe.x, startPlayer.x, move), y: mix(safe.y, startPlayer.y, move) };
+    } else if (t < spec.thirdEscape[0]) player = startPlayer;
+    else if (t < spec.thirdEscape[1]) {
+      const move = smooth((t - spec.thirdEscape[0]) / (spec.thirdEscape[1] - spec.thirdEscape[0]));
+      player = { x: mix(startPlayer.x, safe.x, move), y: mix(startPlayer.y, safe.y, move) };
+    } else if (t < spec.counterReturn[0]) player = safe;
+    else if (t < spec.counterReturn[1]) {
+      const move = smooth(
+        (t - spec.counterReturn[0]) / (spec.counterReturn[1] - spec.counterReturn[0]),
+      );
+      player = { x: mix(safe.x, startPlayer.x, move), y: mix(safe.y, startPlayer.y, move) };
+    } else player = startPlayer;
+  }
   if (spec.mode === 'rotating' && phase === 0) {
     const initialPosition = polar(boss, 255, Math.PI / 3);
     player = {
@@ -9427,6 +9620,13 @@ export function blueprintFrame(id, time) {
       pulse(smooth((t - spec.reclaim[0]) / (spec.reclaim[1] - spec.reclaim[0]))),
       pulse(smooth((t - spec.retreat[0]) / (spec.retreat[1] - spec.retreat[0]))),
     );
+  if (spec.mode === 'on-hit-healing')
+    stride = Math.max(
+      pulse(smooth((t - spec.firstEscape[0]) / (spec.firstEscape[1] - spec.firstEscape[0]))),
+      pulse(smooth((t - spec.return[0]) / (spec.return[1] - spec.return[0]))),
+      pulse(smooth((t - spec.thirdEscape[0]) / (spec.thirdEscape[1] - spec.thirdEscape[0]))),
+      pulse(smooth((t - spec.counterReturn[0]) / (spec.counterReturn[1] - spec.counterReturn[0]))),
+    );
   const bossVisible =
     spec.mode === 'secondary-cues-invisibility'
       ? t < spec.vanishAt
@@ -9695,7 +9895,8 @@ export function blueprintFrame(id, time) {
             spec.mode === 'instant-kill' ||
             spec.mode === 'maximum-health-reduction' ||
             spec.mode === 'ability-lock' ||
-            spec.mode === 'resource-steal'
+            spec.mode === 'resource-steal' ||
+            spec.mode === 'on-hit-healing'
           ? (Math.atan2(boss.y - player.y, boss.x - player.x) * 180) / Math.PI
           : spec.mode === 'active-phase'
             ? (Math.atan2(boss.y - player.y, boss.x - player.x) * 180) / Math.PI
@@ -10782,6 +10983,48 @@ export function blueprintFrame(id, time) {
       strikePulse(t, spec.capture[1], 0.42),
     );
   }
+  if (spec.mode === 'on-hit-healing') {
+    const healed = t >= spec.blockedHitAt && t < spec.resetAt;
+    const healingProgress = smooth((t - spec.healing[0]) / (spec.healing[1] - spec.healing[0]));
+    frame.onHitHealingState = onHitHealingState(t);
+    frame.onHitHealingFirstMissed = t >= spec.firstResolveAt && t < spec.secondTelegraph[0];
+    frame.onHitHealingBlockedContact = t >= spec.blockedHitAt && t < spec.thirdTelegraph[0];
+    frame.onHitHealingContactQualified = healed;
+    frame.onHitHealingThirdMissed = t >= spec.thirdResolveAt && t < spec.resetAt;
+    frame.onHitHealingBossHealth =
+      t < spec.blockedHitAt
+        ? spec.bossHealthBefore
+        : t < spec.healing[1]
+          ? mix(spec.bossHealthBefore, spec.bossHealthBefore + spec.healAmount, healingProgress)
+          : t < spec.resetAt
+            ? spec.bossHealthBefore + spec.healAmount
+            : mix(
+                spec.bossHealthBefore + spec.healAmount,
+                spec.bossHealthBefore,
+                smooth((t - spec.resetAt) / (BLUEPRINT_DURATION - spec.resetAt)),
+              );
+    frame.onHitHealingRequested = healed ? spec.healAmount : 0;
+    frame.onHitHealingApplied = healed ? spec.healAmount : 0;
+    frame.onHitHealingDamageApplied = 0;
+    frame.onHitHealingEventCount = healed ? 1 : 0;
+    frame.onHitHealingResultId = healed ? 'on-hit-heal-1' : 'none';
+    frame.onHitHealingBlockedCounts = true;
+    frame.onHitHealingMissCounts = false;
+    frame.dangerActive =
+      (t >= spec.blockedHitWindow[0] && t < spec.blockedHitWindow[1]) ||
+      (t >= spec.thirdHitWindow[0] && t < spec.thirdHitWindow[1]);
+    frame.playerMotion.attack = strikePulse(t, spec.counterAt, 0.42);
+    frame.playerMotion.dodge = Math.max(
+      strikePulse(t, spec.firstResolveAt, 0.42),
+      strikePulse(t, spec.thirdResolveAt, 0.42),
+    );
+    frame.playerMotion.impact = strikePulse(t, spec.blockedHitAt, 0.44);
+    frame.bossMotion.attack = Math.max(
+      strikePulse(t, spec.firstResolveAt, 0.36),
+      strikePulse(t, spec.blockedHitAt, 0.42),
+      strikePulse(t, spec.thirdResolveAt, 0.4),
+    );
+  }
   if (spec.mode === 'ability-lock') {
     frame.abilityLockState = abilityLockState(t);
     frame.abilityLockFirstAvoided = t >= spec.firstResolveAt && t < spec.secondTelegraph[0];
@@ -11105,7 +11348,8 @@ export function blueprintFrame(id, time) {
             spec.mode === 'status-buildup' ||
             spec.mode === 'instant-kill' ||
             spec.mode === 'maximum-health-reduction' ||
-            spec.mode === 'ability-lock'
+            spec.mode === 'ability-lock' ||
+            spec.mode === 'on-hit-healing'
           ? 92
           : -62),
   };

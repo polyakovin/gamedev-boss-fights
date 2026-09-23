@@ -517,6 +517,25 @@ export function initializeBlueprint(widget) {
       widget.dataset.blueprintResourceStealTokenIds = frame.resourceStealTokenIds.join(',');
       widget.dataset.blueprintResourceStealTokenOwners = frame.resourceStealTokenOwners.join(',');
     }
+    if (mechanicId === 'on-hit-healing') {
+      widget.dataset.blueprintOnHitHealing = frame.onHitHealingState;
+      widget.dataset.blueprintOnHitHealingFirstMissed = String(frame.onHitHealingFirstMissed);
+      widget.dataset.blueprintOnHitHealingBlockedContact = String(frame.onHitHealingBlockedContact);
+      widget.dataset.blueprintOnHitHealingContactQualified = String(
+        frame.onHitHealingContactQualified,
+      );
+      widget.dataset.blueprintOnHitHealingThirdMissed = String(frame.onHitHealingThirdMissed);
+      widget.dataset.blueprintOnHitHealingBossHealth = String(
+        Math.round(frame.onHitHealingBossHealth),
+      );
+      widget.dataset.blueprintOnHitHealingRequested = String(frame.onHitHealingRequested);
+      widget.dataset.blueprintOnHitHealingApplied = String(frame.onHitHealingApplied);
+      widget.dataset.blueprintOnHitHealingDamage = String(frame.onHitHealingDamageApplied);
+      widget.dataset.blueprintOnHitHealingEventCount = String(frame.onHitHealingEventCount);
+      widget.dataset.blueprintOnHitHealingResultId = frame.onHitHealingResultId;
+      widget.dataset.blueprintOnHitHealingBlockedCounts = String(frame.onHitHealingBlockedCounts);
+      widget.dataset.blueprintOnHitHealingMissCounts = String(frame.onHitHealingMissCounts);
+    }
     boss.setAttribute(
       'transform',
       `translate(${frame.boss.x} ${frame.boss.y}) scale(${frame.bossScale})`,

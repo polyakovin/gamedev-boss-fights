@@ -47,6 +47,8 @@ import {
   abilityLockResolve,
   resourceStealState,
   resourceStealResolve,
+  onHitHealingState,
+  onHitHealingResolve,
   counterStanceOutcome,
   counterStanceState,
   blueprintFrame,
@@ -74,8 +76,8 @@ import {
   renderBlueprintThumbnail,
 } from '../lib/blueprint-view.mjs';
 
-test('all 89 promoted lesson animations have distinct rule modes and complete moving frames', () => {
-  assert.equal(BLUEPRINT_MECHANIC_IDS.length, 89);
+test('all 90 promoted lesson animations have distinct rule modes and complete moving frames', () => {
+  assert.equal(BLUEPRINT_MECHANIC_IDS.length, 90);
   const modes = new Set();
   for (const id of BLUEPRINT_MECHANIC_IDS) {
     for (let time = 0; time <= BLUEPRINT_DURATION; time += 0.1) {
@@ -96,7 +98,7 @@ test('all 89 promoted lesson animations have distinct rule modes and complete mo
           assert.ok(Number.isFinite(value), `${id} has an invalid ${primitive.type}`);
     }
   }
-  assert.equal(modes.size, 89);
+  assert.equal(modes.size, 90);
 });
 
 test('every blueprint exposes signal, committed action, and recovery without player teleports', () => {
@@ -135,7 +137,8 @@ test('every blueprint exposes signal, committed action, and recovery without pla
       id !== 'instant-kill' &&
       id !== 'maximum-health-reduction' &&
       id !== 'ability-lock' &&
-      id !== 'resource-steal'
+      id !== 'resource-steal' &&
+      id !== 'on-hit-healing'
     )
       assert.equal(blueprintFrame(id, 3).dangerActive, true, id);
     assert.equal(blueprintFrame(id, 3).playerSafe, true, id);
@@ -224,6 +227,7 @@ test('every damaging promoted animation derives safety from its own active geome
       id !== 'maximum-health-reduction' &&
       id !== 'ability-lock' &&
       id !== 'resource-steal' &&
+      id !== 'on-hit-healing' &&
       id !== 'part-break' &&
       id !== 'counter-stance' &&
       id !== 'absorption-power-up' &&
@@ -3314,5 +3318,66 @@ test('resource steal conserves ownership through drop, reclaim, and boss capture
   assert.match(
     renderBlueprintThumbnail(id, 'test-resource-steal'),
     /data-blueprint-preview="resource-steal"/,
+  );
+});
+
+test('on-hit healing resolves from qualified contact even when damage is blocked', () => {
+  const id = 'on-hit-healing';
+  assert.deepEqual(
+    [0, 0.5, 1, 1.4, 2.1, 2.7, 3.2, 3.6, 4.08, 4.4, 4.8, 5.5].map(onHitHealingState),
+    [
+      'ready',
+      'first-telegraph',
+      'first-missed',
+      'repositioning',
+      'second-telegraph',
+      'blocked-contact-healing',
+      'healed',
+      'third-telegraph',
+      'third-missed',
+      'counter-approach',
+      'recovery',
+      'reset',
+    ],
+  );
+  assert.deepEqual(onHitHealingResolve({ qualifyingContact: true, damageApplied: 0 }), {
+    healthBefore: 48,
+    healthAfter: 64,
+    requested: 16,
+    applied: 16,
+    damageApplied: 0,
+    contactQualified: true,
+    eventCount: 1,
+    resultId: 'on-hit-heal-1',
+  });
+  assert.equal(onHitHealingResolve({ qualifyingContact: false }).eventCount, 0);
+  assert.equal(
+    onHitHealingResolve({ currentHealth: 95, qualifyingContact: true, healAmount: 16 }).applied,
+    5,
+  );
+  assert.equal(
+    onHitHealingResolve({ qualifyingContact: true, alreadyResolved: true }).eventCount,
+    0,
+  );
+
+  const missed = blueprintFrame(id, 1.1);
+  assert.equal(missed.onHitHealingFirstMissed, true);
+  assert.equal(missed.onHitHealingBossHealth, 48);
+  const blocked = blueprintFrame(id, 2.8);
+  assert.equal(blocked.onHitHealingBlockedContact, true);
+  assert.equal(blocked.onHitHealingDamageApplied, 0);
+  assert.equal(blocked.onHitHealingEventCount, 1);
+  assert.ok(blocked.onHitHealingBossHealth > 48);
+  const healed = blueprintFrame(id, 3.1);
+  assert.equal(healed.onHitHealingBossHealth, 64);
+  assert.equal(healed.onHitHealingResultId, 'on-hit-heal-1');
+  const thirdMiss = blueprintFrame(id, 4.08);
+  assert.equal(thirdMiss.onHitHealingThirdMissed, true);
+  assert.equal(thirdMiss.onHitHealingEventCount, 1);
+  assert.equal(blueprintPointSafe(id, 4.04, { x: 455, y: 720 }), true);
+  assert.deepEqual(blueprintFrame(id, 0).player, blueprintFrame(id, 6).player);
+  assert.match(
+    renderBlueprintThumbnail(id, 'test-on-hit-healing'),
+    /data-blueprint-preview="on-hit-healing"/,
   );
 });

@@ -1,0 +1,138 @@
+{
+  "title": "Curación al impactar o robo de vida",
+  "subtitle": "Haz que el contacto válido deshaga progreso sin ocultar la regla",
+  "variant": "Fallo · contacto bloqueado · curación · evasión limpia",
+  "summary": "Un contacto válido del jefe restaura una cantidad limitada de salud, incluso con daño cero si el bloqueo cuenta.",
+  "overview": "La curación al impactar convierte el contacto en recuperación del jefe. El contrato importante es el criterio: un fallo limpio no hace nada, un golpe bloqueado puede contar con daño cero y un contacto genera un solo evento. La fuente, el límite y el tiempo de respuesta deben ser visibles.",
+  "learning": "Define contacto válido, bloqueo y parada, dependencia del daño, curación solicitada y aplicada, sobrecuración, deduplicación multigolpe, invocaciones, invulnerabilidad, fases, rollback y telemetría vinculada a un contact id.",
+  "category": "Estados, recursos y escalado",
+  "readTime": "9 min",
+  "demo": {
+    "title": "Esquiva el primer golpe de Kern, bloquea el segundo sin daño mientras Kern se cura y evita el tercero",
+    "timeline": "Cronología de contacto y curación",
+    "step": "Fallo, contacto bloqueado y estados de curación",
+    "phaseNames": [
+      "Demuestra que fallar no cura",
+      "Separa contacto válido de daño",
+      "Conserva una respuesta útil tras la recuperación"
+    ],
+    "phaseDescriptions": [
+      "Kern fija un área de 96 unidades a los 0,30 s. Tavi sale por completo antes de 0,98 s, así que Kern permanece con 48 de salud.",
+      "El segundo golpe toca la guardia de Tavi a los 2,64 s. El daño es cero, pero el contacto bloqueado vale: un evento cura 16 y lleva a Kern de 48 a 64.",
+      "El tercer golpe se resuelve a los 4,04 s con Tavi fuera. No crea otra curación y la recuperación deja tiempo para volver con un contraataque de espada."
+    ],
+    "boss": "Jefe",
+    "player": "Jugador",
+    "danger": "Solo un contacto válido y autoritativo puede curar; un fallo nunca cura y cada pareja ataque-objetivo se resuelve una vez aunque se repitan callbacks",
+    "locked": "Criterio de contacto, bloqueo y parada, daño, curación solicitada y aplicada, límite, id, cadencia, invocaciones, rollback y persistencia pertenecen a la lógica del encuentro",
+    "safe": "Muestra el contacto, una transferencia visible hacia el jefe y un único cambio de salud; si el bloqueo cuenta, mantén legible el daño cero al jugador",
+    "reducedMotion": "Con movimiento reducido, la reproducción automática se desactiva. Recorre 0,30, 0,86, 0,98, 1,82, 2,64, 2,88, 3,34, 4,04, 4,68 y 5,34 s para ver fallo, bloqueo, curación, segundo fallo, contraataque y reinicio.",
+    "diagramDescription": "Kern proyecta un círculo fijo alrededor de Tavi. El primero y tercero fallan; el del medio toca la guardia, envía luz a Kern y sube su salud de 48 a 64 mientras Tavi recibe cero daño."
+  },
+  "steps": [
+    {
+      "title": "¿Qué cuenta como impacto curativo?",
+      "body": "Escribe un criterio autoritativo para contacto, bloqueo, parada, armadura, invulnerabilidad, invocaciones, proyectiles, daño periódico y sustitutos ambientales. No deduzcas la curación de una superposición visual ni de un daño que puede ser cero."
+    },
+    {
+      "title": "¿Cuánta salud restaura un contacto?",
+      "body": "Separa curación solicitada y aplicada, limita por la salud máxima y elige cantidad fija, proporcional al daño o escalada por fase. Da un result id estable a cada pareja ataque-objetivo."
+    },
+    {
+      "title": "¿Cómo la lee y responde el jugador?",
+      "body": "Conecta el contacto con el jefe mediante forma, movimiento, sonido y pulso de salud. Mantén útiles la esquiva, parada, interrupción, distancia o reducción de curación y deja recuperación castigable."
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "La curación sigue la animación y no el contacto",
+      "body": "Curarse al fallar hace irrelevante el espacio. Resuelve desde el registro autoritativo y anota id, objetivo, solicitud, cantidad aplicada y motivo de rechazo."
+    },
+    {
+      "title": "Cada callback multigolpe concede todo",
+      "body": "Ataques rápidos, hitboxes solapadas, invocaciones y rollback pueden multiplicar la recuperación. Define cadencia, deduplica parejas, limita la ganancia y prueba FPS bajo y latencia."
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "Separa contacto, daño y curación",
+      "body": "Guarda contactQualified, damageApplied, healRequested, healApplied y resultId por separado para expresar el bloqueo que cura sin causar daño."
+    },
+    {
+      "title": "Presupuesta el progreso deshecho",
+      "body": "Compara daño medio por apertura con curación por contacto y limita el peor caso en combos e invocaciones."
+    },
+    {
+      "title": "Instrumenta el bucle",
+      "body": "Mide contactos válidos, fallos, bloqueos, curas con daño cero, solicitud, aplicación, sobrecuración, duplicados, curación por minuto, muertes posteriores y duración de fase."
+    }
+  ],
+  "story": {
+    "title": "Kern extrae luz a través del escudo de Tavi",
+    "body": "El golpe no hiere a Tavi, pero una corriente rúnica viaja hacia el pecho agrietado de Kern y cierra una fisura."
+  },
+  "adaptation": {
+    "title": "Redunda fuente, cantidad y excepción",
+    "body": "Combina vínculo, partículas entrantes, sonido propio, destello de salud y texto o icono. Ofrece menos curación, inmunidad al bloquear, más enfriamiento, reducción fuerte o un modo donde solo cuenten golpes con daño."
+  },
+  "distinction": {
+    "title": "Recuperación por contacto, no autocuración programada",
+    "body": "La curación al impactar exige contacto válido con un objetivo. La autocuración nace de un temporizador, fase o acción sin contacto; el robo de recursos cambia la propiedad de otro valor."
+  },
+  "lensNotes": [
+    {
+      "id": "progress-clarity",
+      "body": "Cada curación apunta a un contact id y a un cambio visible de salud."
+    },
+    {
+      "id": "counterplay",
+      "body": "Esquiva, parada, interrupción, distancia o reducción pueden evitar o limitar la recuperación."
+    },
+    {
+      "id": "risk-reward",
+      "body": "Bloquear puede evitar daño a cambio de curar al jefe: un coste táctico legible."
+    },
+    {
+      "id": "rule-exception",
+      "body": "Bloqueos, paradas, invulnerabilidad, invocaciones, multigolpes, sobrecuración y callbacks repetidos necesitan resultados explícitos."
+    },
+    {
+      "id": "telegraphing",
+      "body": "La señal debe identificar el contacto curativo antes de elegir esquiva o guardia."
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "Pokémon FireRed and LeafGreen",
+      "boss": "Gym Leader Erika",
+      "screenshot": "https://i.ytimg.com/vi/9ADcfkcxblM/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=9ADcfkcxblM&t=194s",
+      "video": "https://www.youtube.com/watch?v=9ADcfkcxblM&t=194s",
+      "videoDurationSeconds": 386,
+      "body": "En 3:14, el Tangela de Erika usa Giga Drain. La interfaz debe conectar objetivo, cantidad drenada y receptor de salud."
+    },
+    {
+      "dimension": "3D",
+      "game": "Elden Ring",
+      "boss": "Malenia, Blade of Miquella",
+      "screenshot": "https://i.ytimg.com/vi/Uaq4bKbaz08/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=Uaq4bKbaz08&t=4s",
+      "video": "https://www.youtube.com/watch?v=Uaq4bKbaz08&t=4s",
+      "videoDurationSeconds": 60,
+      "body": "Malenia recupera salud al contactar incluso contra un escudo que deja el daño en cero; el contacto válido debe modelarse aparte del daño aplicado."
+    },
+    {
+      "dimension": "3D",
+      "game": "World of Warcraft: Wrath of the Lich King",
+      "boss": "Anub'arak",
+      "screenshot": "https://i.ytimg.com/vi/xivwGN43ZpA/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=xivwGN43ZpA&t=30s",
+      "video": "https://www.youtube.com/watch?v=xivwGN43ZpA&t=30s",
+      "videoDurationSeconds": 268,
+      "body": "Desde 0:30, la guía aísla Leeching Swarm de Anub’arak: el daño periódico a la banda se convierte en curación y la salud actual del grupo controla su ritmo."
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}
