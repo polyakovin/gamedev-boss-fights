@@ -1912,7 +1912,7 @@ test('relocated arena previews a destination, hands off retained state, and resu
     preview.primitives[2].opacity > 0.2,
     'the lower chamber appears before control is lost',
   );
-  assert.ok(preview.primitives[5].opacity > 0.4, 'the upper floor visibly cracks');
+  assert.ok(preview.primitives[6].opacity > 0.4, 'the upper stone floor visibly cracks');
 
   const transfer = blueprintFrame(id, 1.7);
   assert.equal(transfer.relocatedArenaState, 'transfer');
@@ -1931,11 +1931,11 @@ test('relocated arena previews a destination, hands off retained state, and resu
 
   const punish = blueprintFrame(id, 3.85);
   assert.equal(punish.punishStrike, true);
-  assert.ok(punish.primitives[15].opacity > 0, 'the sword opening resumes in the lower room');
+  assert.ok(punish.primitives[16].opacity > 0, 'the sword opening resumes in the lower room');
 
   const lift = blueprintFrame(id, 5.25);
   assert.equal(lift.relocatedArenaState, 'return-lift');
-  assert.ok(lift.primitives[13].opacity > 0.8, 'the return lift is visible');
+  assert.ok(lift.primitives[15].opacity > 0.8, 'the stone return lift is visible');
   assert.deepEqual(blueprintFrame(id, 0).player, blueprintFrame(id, 6).player);
   assert.deepEqual(blueprintFrame(id, 0).boss, blueprintFrame(id, 6).boss);
   assert.match(

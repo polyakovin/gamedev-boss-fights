@@ -4115,84 +4115,110 @@ function primitivesFor(spec, frame) {
     const transferProgress = smooth(
       (frame.time - spec.transfer[0]) / (spec.transfer[1] - spec.transfer[0]),
     );
-    const returnProgress = smooth(
-      (frame.time - spec.resetAt) / (BLUEPRINT_DURATION - spec.resetAt),
-    );
     const lowerOpacity = lowerActive ? 0.88 : previewed ? 0.2 + previewProgress * 0.48 : 0.08;
     const upperOpacity = lowerActive && !returning ? 0.22 : 0.7;
     const strike = strikePulse(frame.time, spec.punishAt, 0.38);
     const landingPulse = strikePulse(frame.time, spec.transfer[1], 0.45);
-    const meterX = 318;
-    const meterWidth = 148;
+    const floorOpen = transferring || lowerActive || returning;
+    const liftY = Math.min(795, Math.max(frame.boss.y, frame.player.y) + 34);
     return [
-      rect(58, 386, 444, 202, upperOpacity, 'muted', 0.03),
-      line(58, 585, 502, 585, upperOpacity, 'accent', 7),
-      rect(98, 626, 364, 220, lowerOpacity, 'muted', lowerActive ? 0.08 : 0.02),
-      line(98, 626, 98, 846, lowerOpacity, lowerActive ? 'signal' : 'accent', 8),
-      line(462, 626, 462, 846, lowerOpacity, lowerActive ? 'signal' : 'accent', 8),
+      path('M 40 94 L 520 94 L 520 879 L 40 879 Z', 0.38, 'muted', 0, 0.5),
       path(
-        'M 122 585 L 166 568 L 205 585 L 246 562 L 284 585 L 326 566 L 374 585 L 426 564 L 474 585',
-        previewed ? 0.45 + previewProgress * 0.42 : 0.14,
-        transferring ? 'signal' : 'accent',
-        transferring ? 10 : 6,
-      ),
-      path(
-        `M ${spec.bossTransfer.map(([x, y]) => `${x} ${y}`).join(' L ')}`,
-        previewed && !lowerActive ? 0.58 : transferring ? 0.78 : 0.16,
+        'M 65 132 L 495 132 L 487 548 L 73 548 Z M 96 156 L 184 156 L 179 388 L 103 388 Z M 376 156 L 464 156 L 457 388 L 381 388 Z',
+        upperOpacity * 0.5,
         'accent',
-        5,
         0,
-        '10 9',
-      ),
-      path(
-        `M ${spec.playerTransfer.map(([x, y]) => `${x} ${y}`).join(' L ')}`,
-        previewed && !lowerActive ? 0.48 : transferring ? 0.72 : 0.16,
-        'safe',
-        5,
-        0,
-        '9 9',
-      ),
-      circle(250, 720, 26 + landingPulse * 17, lowerOpacity, 'accent', 6, 0.08, '8 7'),
-      circle(390, 755, 22 + landingPulse * 14, lowerOpacity, 'safe', 5, 0.06, '8 7'),
-      circle(
-        280,
-        786,
-        42 + Math.sin(frame.time * 2.4) ** 2 * 8,
-        lowerOpacity,
-        lowerActive ? 'signal' : 'accent',
-        6,
-        lowerActive ? 0.13 : 0.03,
-        '9 8',
-      ),
-      rect(meterX, 654, meterWidth, 15, previewed ? 0.72 : 0.25, 'muted', 0.08),
-      rect(
-        meterX,
-        654,
-        meterWidth * 0.62,
-        15,
-        previewed ? 0.9 : 0.35,
-        lowerActive ? 'safe' : 'accent',
         0.46,
       ),
+      path('M 96 620 L 464 620 L 456 861 L 104 861 Z', lowerOpacity, 'muted', 0, 0.5),
       path(
-        'M 82 810 L 82 470 L 248 470 L 248 810',
-        returning ? 0.82 : lowerActive ? 0.26 : 0.12,
-        returning ? 'safe' : 'accent',
-        returning ? 8 : 4,
+        'M 62 132 L 105 132 L 110 568 L 60 586 Z M 455 132 L 498 132 L 500 586 L 450 568 Z M 84 610 L 108 610 L 109 869 L 85 869 Z',
+        0.42,
+        'accent',
         0,
-        '12 9',
+        0.58,
       ),
-      rect(84, mix(790, 490, returnProgress), 162, 18, returning ? 0.92 : 0.18, 'safe', 0.32),
-      line(frame.player.x, frame.player.y, frame.boss.x, frame.boss.y, strike, 'safe', 10),
-      circle(frame.boss.x + 30, frame.boss.y - 8, 12 + strike * 24, strike, 'safe', 7, 0.12),
-      circle(
-        280,
-        720,
-        34 + transferProgress * 18,
-        transferring ? 0.28 + transferProgress * 0.35 : landingPulse * 0.62,
+      path(
+        'M 452 610 L 476 610 L 475 869 L 451 869 Z M 66 100 L 494 100 L 472 131 L 88 131 Z M 91 863 L 469 863 L 480 880 L 80 880 Z',
+        0.48,
+        'accent',
+        0,
+        0.62,
+      ),
+      path(
+        floorOpen
+          ? 'M 52 562 L 162 562 L 171 602 L 52 614 Z M 438 562 L 508 562 L 508 614 L 431 602 Z'
+          : 'M 52 562 L 508 562 L 508 612 L 52 612 Z',
+        upperOpacity,
+        'accent',
+        0,
+        0.82,
+      ),
+      path(
+        'M 155 562 L 194 552 L 225 568 L 255 552 L 285 568 L 317 549 L 352 566 L 395 555 L 437 565',
+        previewed && !floorOpen ? 0.88 : 0,
         'signal',
         5,
-        0.05,
+      ),
+      path(
+        'M 140 620 L 169 629 L 154 647 Z M 354 632 L 380 619 L 377 645 Z M 203 608 L 219 627 L 196 628 Z',
+        transferring || lowerActive ? 0.68 : 0,
+        'accent',
+        0,
+        0.64,
+      ),
+      path('M 208 726 L 248 709 L 289 726 L 282 740 L 216 740 Z', lowerOpacity, 'accent', 0, 0.7),
+      path('M 354 764 L 391 748 L 430 764 L 423 777 L 359 777 Z', lowerOpacity, 'safe', 0, 0.68),
+      path(
+        'M 260 781 L 280 756 L 300 781 L 293 827 L 267 827 Z',
+        lowerOpacity * 0.9,
+        'accent',
+        0,
+        0.76,
+      ),
+      path(
+        'M 280 772 L 291 788 L 280 808 L 269 788 Z',
+        lowerOpacity,
+        lowerActive ? 'signal' : 'accent',
+        0,
+        0.82,
+      ),
+      path(
+        'M 332 650 L 350 637 L 368 650 L 350 665 Z M 378 650 L 396 637 L 414 650 L 396 665 Z',
+        lowerOpacity,
+        'safe',
+        0,
+        0.75,
+      ),
+      path('M 424 650 L 442 637 L 460 650 L 442 665 Z', lowerOpacity * 0.34, 'accent', 0, 0.6),
+      path(
+        'M 82 485 L 99 485 L 99 821 L 82 821 Z M 438 485 L 455 485 L 455 821 L 438 821 Z',
+        returning ? 0.78 : 0.26,
+        'muted',
+        0,
+        0.62,
+      ),
+      path(
+        `M 76 ${liftY} L 462 ${liftY} L 450 ${liftY + 24} L 88 ${liftY + 24} Z`,
+        returning ? 0.94 : lowerActive ? 0.2 : 0,
+        'safe',
+        0,
+        0.72,
+      ),
+      line(frame.player.x, frame.player.y, frame.boss.x, frame.boss.y, strike, 'safe', 10),
+      path(
+        `M ${frame.boss.x + 28} ${frame.boss.y - 27} L ${frame.boss.x + 51} ${frame.boss.y - 40} L ${frame.boss.x + 39} ${frame.boss.y - 11} Z`,
+        strike,
+        'safe',
+        0,
+        0.84,
+      ),
+      path(
+        'M 212 736 L 196 747 L 210 747 Z M 278 736 L 294 747 L 280 747 Z M 367 772 L 352 782 L 368 782 Z',
+        transferring ? transferProgress * 0.5 : landingPulse * 0.62,
+        'signal',
+        0,
+        0.72,
       ),
     ];
   }

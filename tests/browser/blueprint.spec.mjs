@@ -2168,11 +2168,18 @@ test('relocated arena previews its destination and preserves encounter state acr
   await expect(page.locator('.wip-badge, .draft-profile')).toHaveCount(0);
   await expect(page.locator('.game-example')).toHaveCount(3);
   await expect(widget).toHaveAttribute('data-blueprint-playing', 'false');
+  await expect(widget).toHaveAttribute('data-blueprint-full-height', 'true');
+  expect(
+    await widget
+      .locator('[data-blueprint-primitives]')
+      .evaluate((element) => element.getBBox().height),
+  ).toBeGreaterThan(760);
+  await expect(widget.locator('[data-blueprint-primitives] [stroke-dasharray]')).toHaveCount(0);
 
   await seek(800);
   await expect(widget).toHaveAttribute('data-blueprint-relocated-arena', 'destination-preview');
   await expect(widget).toHaveAttribute('data-blueprint-relocation-destination', 'true');
-  await expect(widget.locator('[data-blueprint-primitive="2"] rect')).not.toHaveAttribute(
+  await expect(widget.locator('[data-blueprint-primitive="2"] path')).not.toHaveAttribute(
     'opacity',
     '0',
   );
@@ -2190,14 +2197,14 @@ test('relocated arena previews its destination and preserves encounter state acr
   await seek(3850);
   await expect(widget).toHaveAttribute('data-blueprint-relocated-arena', 'lower-combat');
   await expect(widget).toHaveAttribute('data-blueprint-punish-strike', 'true');
-  await expect(widget.locator('[data-blueprint-primitive="15"] line')).not.toHaveAttribute(
+  await expect(widget.locator('[data-blueprint-primitive="16"] line')).not.toHaveAttribute(
     'opacity',
     '0',
   );
 
   await seek(5250);
   await expect(widget).toHaveAttribute('data-blueprint-relocated-arena', 'return-lift');
-  await expect(widget.locator('[data-blueprint-primitive="13"] path')).not.toHaveAttribute(
+  await expect(widget.locator('[data-blueprint-primitive="15"] path')).not.toHaveAttribute(
     'opacity',
     '0',
   );
