@@ -1,0 +1,28 @@
+{
+  "id": "beat-synced-attack",
+  "number": 78,
+  "published": true,
+  "sourceLocale": "en",
+  "contentVersion": 1,
+  "animation": "beat-synced-attack",
+  "lenses": ["difficulty-rhythm", "telegraphing", "access-paths", "counterplay"],
+  "related": ["telegraph", "attack-combination", "delayed-activation"],
+  "sources": [
+    {
+      "title": "GDC · Itay Keren — Boss Battle Design Fundamentals and Retrospective",
+      "url": "https://www.gdcvault.com/play/1024921/Boss-Up-Boss-Battle-Design"
+    },
+    {
+      "title": "Xbox Wire — Hi-Fi Rush: From a Little Idea to a Very Big Surprise",
+      "url": "https://news.xbox.com/en-us/2023/10/04/hi-fi-rush-exclusive-oral-history/"
+    },
+    {
+      "title": "Crypt of the NecroDancer Wiki — Deep Blues",
+      "url": "https://crypt-of-the-necrodancer.fandom.com/wiki/Deep_Blues"
+    },
+    {
+      "title": "Everhood Wiki — Battles",
+      "url": "https://everhood.fandom.com/wiki/Battles"
+    }
+  ]
+}

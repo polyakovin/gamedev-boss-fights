@@ -767,6 +767,39 @@ const SPECS = {
       [410, 690],
     ],
   },
+  'beat-synced-attack': {
+    mode: 'beat-synced-attack',
+    boss: [280, 305],
+    player: [420, 700],
+    target: [280, 440],
+    arena: [70, 440, 420, 380],
+    lanes: [140, 280, 420],
+    laneHalfWidth: 52,
+    laneTop: 520,
+    laneBottom: 820,
+    beatOrigin: 0.48,
+    beatInterval: 0.6,
+    hits: [1.68, 2.28, 2.88],
+    pattern: [2, 1, 0],
+    attackDuration: 0.24,
+    telegraphLead: 0.42,
+    phraseClearsAt: 3.12,
+    punishAt: 4.18,
+    resetAt: 5.06,
+    strikePoint: [280, 440],
+    safePositions: [
+      [280, 700],
+      [140, 700],
+      [280, 700],
+    ],
+    resetRoute: [
+      [280, 440],
+      [310, 500],
+      [350, 570],
+      [390, 640],
+      [420, 700],
+    ],
+  },
   'wide-swing': { mode: 'arc', boss: [280, 310], player: [410, 470], target: [470, 650] },
   lunge: { mode: 'lunge', boss: [170, 290], player: [390, 590], target: [470, 660] },
   grab: { mode: 'grab', boss: [280, 300], player: [390, 485], target: [470, 610] },
@@ -1369,6 +1402,18 @@ export function wraparoundProjectileState(time) {
   if (t < spec.crossing[1]) return 'boundary-crossing';
   if (t < spec.secondPass[1]) return 'repeat-pass';
   if (t < spec.punishAt) return 'corridor-clear';
+  if (t < spec.resetAt) return 'counter-window';
+  return 'reset';
+}
+
+export function beatSyncedAttackState(time) {
+  const spec = SPECS['beat-synced-attack'];
+  const t = localTime(time);
+  if (t < spec.beatOrigin) return 'silent-count';
+  if (t < spec.beatOrigin + spec.beatInterval) return 'tempo-count-in';
+  if (t < spec.hits[0]) return 'pattern-cued';
+  if (t < spec.phraseClearsAt) return 'beat-strikes';
+  if (t < spec.punishAt) return 'phrase-clear';
   if (t < spec.resetAt) return 'counter-window';
   return 'reset';
 }
@@ -3220,6 +3265,84 @@ function primitivesFor(spec, frame) {
       ),
     ];
   }
+  if (mode === 'beat-synced-attack') {
+    const strike = strikePulse(frame.time, spec.punishAt, 0.38);
+    const activeLane = frame.beatSyncedAttackLane;
+    const previewLane = frame.beatSyncedTelegraphLane;
+    const phraseVisible = frame.time >= spec.beatOrigin && frame.time < spec.resetAt;
+    const beatXs = [160, 240, 320, 400];
+    const nextSafe =
+      frame.beatSyncedTelegraphIndex >= 0
+        ? point(spec.safePositions[frame.beatSyncedTelegraphIndex])
+        : frame.time < spec.phraseClearsAt
+          ? point(spec.safePositions[Math.min(2, Math.max(0, frame.beatSyncedCompletedHits))])
+          : point(spec.strikePoint);
+    return [
+      rect(...spec.arena, 0.52, 'muted', 0.025),
+      ...spec.lanes.map((center, index) => {
+        const active = index === activeLane;
+        const preview = index === previewLane;
+        return rect(
+          center - spec.laneHalfWidth,
+          spec.laneTop,
+          spec.laneHalfWidth * 2,
+          spec.laneBottom - spec.laneTop,
+          active ? 0.94 : preview ? 0.58 : phraseVisible ? 0.16 : 0.08,
+          active ? 'signal' : preview ? 'accent' : 'muted',
+          active ? 0.36 : preview ? 0.08 : 0.02,
+        );
+      }),
+      line(126, 405, 434, 405, phraseVisible ? 0.7 : 0.2, 'muted', 5),
+      ...beatXs.map((x, index) =>
+        circle(
+          x,
+          405,
+          index === frame.beatSyncedBeatSlot ? 15 + frame.beatSyncedBeatPulse * 7 : 12,
+          phraseVisible ? (index === frame.beatSyncedBeatSlot ? 0.92 : 0.34) : 0.16,
+          index === frame.beatSyncedBeatSlot ? 'accent' : 'muted',
+          index === frame.beatSyncedBeatSlot ? 6 : 4,
+          index === frame.beatSyncedBeatSlot ? 0.16 + frame.beatSyncedBeatPulse * 0.12 : 0.02,
+        ),
+      ),
+      circle(
+        280,
+        468,
+        22 + frame.beatSyncedBeatPulse * 20,
+        phraseVisible ? 0.42 + frame.beatSyncedBeatPulse * 0.48 : 0.12,
+        'accent',
+        6,
+        0.06,
+      ),
+      path(
+        previewLane >= 0
+          ? `M 280 470 L ${spec.lanes[previewLane]} ${spec.laneTop - 14} M ${spec.lanes[previewLane] - 18} ${spec.laneTop - 30} L ${spec.lanes[previewLane]} ${spec.laneTop - 14} L ${spec.lanes[previewLane] + 18} ${spec.laneTop - 30}`
+          : 'M 280 470 L 280 470',
+        previewLane >= 0 ? 0.86 : 0,
+        'accent',
+        6,
+        0,
+        '10 8',
+      ),
+      circle(
+        nextSafe.x,
+        nextSafe.y,
+        38,
+        frame.time < spec.phraseClearsAt ? 0.72 : 0.18,
+        'safe',
+        6,
+        0.08,
+        '8 7',
+      ),
+      line(frame.player.x, frame.player.y, frame.boss.x, frame.boss.y, strike, 'safe', 10),
+      circle(frame.boss.x + 26, frame.boss.y - 16, 12 + strike * 24, strike, 'safe', 7, 0.14),
+      path(
+        'M 112 490 L 112 470 L 126 470 M 434 490 L 434 470 L 420 470',
+        phraseVisible ? 0.62 : 0.14,
+        'accent',
+        5,
+      ),
+    ];
+  }
   if (mode === 'landing') {
     const landing = point(spec.landing);
     const contact = phase === 1 ? clamp(1 - Math.abs(action - 0.52) / 0.2) : 0;
@@ -4530,6 +4653,15 @@ function pointClearsThreat(spec, frame, value, radius = BLUEPRINT_PLAYER_RADIUS)
       (projectile) =>
         Math.hypot(value.x - projectile.x, value.y - projectile.y) > spec.projectileRadius + radius,
     );
+  if (mode === 'beat-synced-attack') {
+    if (!frame.dangerActive || frame.beatSyncedAttackLane < 0) return true;
+    const laneCenter = spec.lanes[frame.beatSyncedAttackLane];
+    return (
+      value.y + radius < spec.laneTop ||
+      value.y - radius > spec.laneBottom ||
+      Math.abs(value.x - laneCenter) > spec.laneHalfWidth + radius
+    );
+  }
   if (mode === 'spiral')
     return (
       distanceFromBoss > 52 + radius &&
@@ -4839,6 +4971,7 @@ export function blueprintFrame(id, time) {
   else if (spec.mode === 'cover-line-of-sight') responseProgress = 0;
   else if (spec.mode === 'forced-inertia') responseProgress = 0;
   else if (spec.mode === 'wraparound-projectile') responseProgress = 0;
+  else if (spec.mode === 'beat-synced-attack') responseProgress = 0;
   else if (spec.mode === 'knockback')
     responseProgress = phase === 0 ? 0 : phase === 1 ? smooth(action) : 1;
   else if (spec.mode === 'target-lock')
@@ -5306,6 +5439,36 @@ export function blueprintFrame(id, time) {
       player = pointAlongPolyline(spec.resetRoute.map(point), reset);
     }
   }
+  if (spec.mode === 'beat-synced-attack') {
+    const firstSafe = point(spec.safePositions[0]);
+    const secondSafe = point(spec.safePositions[1]);
+    const thirdSafe = point(spec.safePositions[2]);
+    const strike = point(spec.strikePoint);
+    if (t < 1.08) player = startPlayer;
+    else if (t < 1.52) {
+      const move = smooth((t - 1.08) / (1.52 - 1.08));
+      player = {
+        x: mix(startPlayer.x, firstSafe.x, move),
+        y: mix(startPlayer.y, firstSafe.y, move),
+      };
+    } else if (t < 1.78) player = firstSafe;
+    else if (t < 2.12) {
+      const move = smooth((t - 1.78) / (2.12 - 1.78));
+      player = { x: mix(firstSafe.x, secondSafe.x, move), y: mix(firstSafe.y, secondSafe.y, move) };
+    } else if (t < 2.38) player = secondSafe;
+    else if (t < 2.72) {
+      const move = smooth((t - 2.38) / (2.72 - 2.38));
+      player = { x: mix(secondSafe.x, thirdSafe.x, move), y: mix(secondSafe.y, thirdSafe.y, move) };
+    } else if (t < spec.phraseClearsAt) player = thirdSafe;
+    else if (t < spec.punishAt) {
+      const approach = smooth((t - spec.phraseClearsAt) / (spec.punishAt - spec.phraseClearsAt));
+      player = { x: mix(thirdSafe.x, strike.x, approach), y: mix(thirdSafe.y, strike.y, approach) };
+    } else if (t < spec.resetAt) player = strike;
+    else {
+      const reset = clamp((t - spec.resetAt) / (BLUEPRINT_DURATION - spec.resetAt));
+      player = pointAlongPolyline(spec.resetRoute.map(point), reset);
+    }
+  }
   if (spec.mode === 'rotating' && phase === 0) {
     const initialPosition = polar(boss, 255, Math.PI / 3);
     player = {
@@ -5487,7 +5650,23 @@ export function blueprintFrame(id, time) {
                                     ),
                                   ) * 0.8,
                                 )
-                              : pulse(responseProgress) + pulse(returnProgress) * 0.8;
+                              : spec.mode === 'beat-synced-attack'
+                                ? Math.max(
+                                    ...Array.from({ length: 9 }, (_, index) =>
+                                      pulse(
+                                        smooth(
+                                          (t - (spec.beatOrigin + index * spec.beatInterval)) /
+                                            0.22,
+                                        ),
+                                      ),
+                                    ),
+                                    pulse(
+                                      smooth(
+                                        (t - spec.resetAt) / (BLUEPRINT_DURATION - spec.resetAt),
+                                      ),
+                                    ) * 0.8,
+                                  )
+                                : pulse(responseProgress) + pulse(returnProgress) * 0.8;
   const bossVisible =
     spec.mode === 'burrow' && phase === 1 && action < 0.68
       ? 0
@@ -5643,7 +5822,17 @@ export function blueprintFrame(id, time) {
                                                                               'wraparound-projectile'
                                                                             ? t >= spec.releaseAt &&
                                                                               t < spec.secondPass[1]
-                                                                            : phase === 1;
+                                                                            : spec.mode ===
+                                                                                'beat-synced-attack'
+                                                                              ? spec.hits.some(
+                                                                                  (hit) =>
+                                                                                    Math.abs(
+                                                                                      t - hit,
+                                                                                    ) <=
+                                                                                    spec.attackDuration /
+                                                                                      2,
+                                                                                )
+                                                                              : phase === 1;
   const frame = {
     id,
     mode: spec.mode,
@@ -5729,23 +5918,26 @@ export function blueprintFrame(id, time) {
                               ? (Math.atan2(boss.y - player.y, boss.x - player.x) * 180) / Math.PI
                               : spec.mode === 'wraparound-projectile'
                                 ? (Math.atan2(boss.y - player.y, boss.x - player.x) * 180) / Math.PI
-                                : spec.mode === 'boss-as-terrain'
+                                : spec.mode === 'beat-synced-attack'
                                   ? (Math.atan2(boss.y - player.y, boss.x - player.x) * 180) /
                                     Math.PI
-                                  : spec.mode === 'control-mode-shift'
+                                  : spec.mode === 'boss-as-terrain'
                                     ? (Math.atan2(boss.y - player.y, boss.x - player.x) * 180) /
                                       Math.PI
-                                    : spec.mode === 'damage-type-resistance' ||
-                                        spec.mode === 'situational-immunity' ||
-                                        spec.mode === 'part-break' ||
-                                        spec.mode === 'attack-reflection' ||
-                                        spec.mode === 'counter-stance' ||
-                                        spec.mode === 'absorption-power-up' ||
-                                        spec.mode === 'interruptible-wind-up' ||
-                                        spec.mode === 'loadout-adaptation' ||
-                                        spec.mode === 'wind-up'
-                                      ? -180
-                                      : -90,
+                                    : spec.mode === 'control-mode-shift'
+                                      ? (Math.atan2(boss.y - player.y, boss.x - player.x) * 180) /
+                                        Math.PI
+                                      : spec.mode === 'damage-type-resistance' ||
+                                          spec.mode === 'situational-immunity' ||
+                                          spec.mode === 'part-break' ||
+                                          spec.mode === 'attack-reflection' ||
+                                          spec.mode === 'counter-stance' ||
+                                          spec.mode === 'absorption-power-up' ||
+                                          spec.mode === 'interruptible-wind-up' ||
+                                          spec.mode === 'loadout-adaptation' ||
+                                          spec.mode === 'wind-up'
+                                        ? -180
+                                        : -90,
     bossMotion: motion({
       gait:
         spec.mode === 'chase-herding' ||
@@ -6075,7 +6267,9 @@ export function blueprintFrame(id, time) {
                                   ? t * 7 * stride
                                   : spec.mode === 'wraparound-projectile'
                                     ? t * 7 * stride
-                                    : (route * responseProgress + route * returnProgress) / 20,
+                                    : spec.mode === 'beat-synced-attack'
+                                      ? t * 7 * stride
+                                      : (route * responseProgress + route * returnProgress) / 20,
       stride,
       lean: stride * 0.45,
       crouch:
@@ -6168,11 +6362,14 @@ export function blueprintFrame(id, time) {
                                                     ? strikePulse(t, spec.punishAt, 0.38)
                                                     : spec.mode === 'wraparound-projectile'
                                                       ? strikePulse(t, spec.punishAt, 0.38)
-                                                      : spec.mode === 'decoy' && phase === 1
-                                                        ? pulse(clamp((action - 0.52) / 0.3))
-                                                        : spec.mode === 'weak-point' && phase === 1
-                                                          ? pulse(action * 1.5)
-                                                          : 0,
+                                                      : spec.mode === 'beat-synced-attack'
+                                                        ? strikePulse(t, spec.punishAt, 0.38)
+                                                        : spec.mode === 'decoy' && phase === 1
+                                                          ? pulse(clamp((action - 0.52) / 0.3))
+                                                          : spec.mode === 'weak-point' &&
+                                                              phase === 1
+                                                            ? pulse(action * 1.5)
+                                                            : 0,
     }),
   };
   if (spec.mode === 'directional-shield') {
@@ -6326,6 +6523,29 @@ export function blueprintFrame(id, time) {
         : [];
     frame.punishStrike = strikePulse(t, spec.punishAt, 0.38) > 0.5;
   }
+  if (spec.mode === 'beat-synced-attack') {
+    frame.beatSyncedAttackState = beatSyncedAttackState(t);
+    const beatPosition = (t - spec.beatOrigin) / spec.beatInterval;
+    const beatNumber = Math.max(0, Math.floor(beatPosition + 0.001));
+    frame.beatSyncedBeatSlot = ((beatNumber % 4) + 4) % 4;
+    frame.beatSyncedBeatPulse =
+      t < spec.beatOrigin ? 0 : clamp(1 - Math.abs(beatPosition - Math.round(beatPosition)) / 0.24);
+    frame.beatSyncedAttackIndex = spec.hits.findIndex(
+      (hit) => Math.abs(t - hit) <= spec.attackDuration / 2,
+    );
+    frame.beatSyncedTelegraphIndex = spec.hits.findIndex(
+      (hit) => t >= hit - spec.telegraphLead && t < hit - spec.attackDuration / 2,
+    );
+    frame.beatSyncedAttackLane =
+      frame.beatSyncedAttackIndex >= 0 ? spec.pattern[frame.beatSyncedAttackIndex] : -1;
+    frame.beatSyncedTelegraphLane =
+      frame.beatSyncedTelegraphIndex >= 0 ? spec.pattern[frame.beatSyncedTelegraphIndex] : -1;
+    frame.beatSyncedCompletedHits = spec.hits.filter(
+      (hit) => t > hit + spec.attackDuration / 2,
+    ).length;
+    frame.beatSyncedPhraseComplete = t >= spec.phraseClearsAt;
+    frame.punishStrike = strikePulse(t, spec.punishAt, 0.38) > 0.5;
+  }
   if (spec.mode === 'control-mode-shift') {
     frame.controlModeShiftState = controlModeShiftState(t);
     frame.controlModePreviewed = t >= spec.previewAt;
@@ -6465,7 +6685,8 @@ export function blueprintFrame(id, time) {
       spec.mode === 'boss-as-terrain' ||
       spec.mode === 'cover-line-of-sight' ||
       spec.mode === 'forced-inertia' ||
-      spec.mode === 'wraparound-projectile'
+      spec.mode === 'wraparound-projectile' ||
+      spec.mode === 'beat-synced-attack'
         ? 92
         : -62),
   };

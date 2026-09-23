@@ -20,6 +20,7 @@ import {
   forcedScrollingState,
   forcedInertiaState,
   wraparoundProjectileState,
+  beatSyncedAttackState,
   counterStanceOutcome,
   counterStanceState,
   blueprintFrame,
@@ -47,8 +48,8 @@ import {
   renderBlueprintThumbnail,
 } from '../lib/blueprint-view.mjs';
 
-test('all 71 promoted lesson animations have distinct rule modes and complete moving frames', () => {
-  assert.equal(BLUEPRINT_MECHANIC_IDS.length, 71);
+test('all 72 promoted lesson animations have distinct rule modes and complete moving frames', () => {
+  assert.equal(BLUEPRINT_MECHANIC_IDS.length, 72);
   const modes = new Set();
   for (const id of BLUEPRINT_MECHANIC_IDS) {
     for (let time = 0; time <= BLUEPRINT_DURATION; time += 0.1) {
@@ -69,7 +70,7 @@ test('all 71 promoted lesson animations have distinct rule modes and complete mo
           assert.ok(Number.isFinite(value), `${id} has an invalid ${primitive.type}`);
     }
   }
-  assert.equal(modes.size, 71);
+  assert.equal(modes.size, 72);
 });
 
 test('every blueprint exposes signal, committed action, and recovery without player teleports', () => {
@@ -98,7 +99,8 @@ test('every blueprint exposes signal, committed action, and recovery without pla
       id !== 'relocated-arena' &&
       id !== 'boss-as-terrain' &&
       id !== 'forced-inertia' &&
-      id !== 'wraparound-projectile'
+      id !== 'wraparound-projectile' &&
+      id !== 'beat-synced-attack'
     )
       assert.equal(blueprintFrame(id, 3).dangerActive, true, id);
     assert.equal(blueprintFrame(id, 3).playerSafe, true, id);
@@ -187,7 +189,8 @@ test('every damaging promoted animation derives safety from its own active geome
       id !== 'relocated-arena' &&
       id !== 'boss-as-terrain' &&
       id !== 'forced-inertia' &&
-      id !== 'wraparound-projectile',
+      id !== 'wraparound-projectile' &&
+      id !== 'beat-synced-attack',
   )) {
     const frame = blueprintFrame(id, 3);
     let point = unsafePoints[id];
@@ -2122,5 +2125,61 @@ test('wraparound projectile preserves one shot across linked boundaries before c
   assert.match(
     renderBlueprintThumbnail(id, 'test-wraparound-projectile'),
     /data-blueprint-preview="wraparound-projectile"/,
+  );
+});
+
+test('beat-synced attack shares one clock across previews, lane hits, and the authored rest', () => {
+  const id = 'beat-synced-attack';
+  assert.deepEqual([0, 0.6, 1.3, 1.68, 2.3, 3.3, 4.2, 5.4].map(beatSyncedAttackState), [
+    'silent-count',
+    'tempo-count-in',
+    'pattern-cued',
+    'beat-strikes',
+    'beat-strikes',
+    'phrase-clear',
+    'counter-window',
+    'reset',
+  ]);
+
+  const preview = blueprintFrame(id, 1.3);
+  assert.equal(preview.beatSyncedTelegraphIndex, 0);
+  assert.equal(preview.beatSyncedTelegraphLane, 2);
+  assert.equal(preview.dangerActive, false);
+  assert.ok(preview.primitives[3].opacity > 0.5, 'the right lane is shown before its beat');
+
+  const right = blueprintFrame(id, 1.68);
+  assert.equal(right.beatSyncedAttackIndex, 0);
+  assert.equal(right.beatSyncedAttackLane, 2);
+  assert.equal(right.dangerActive, true);
+  assert.equal(right.playerSafe, true);
+  assert.equal(blueprintPointSafe(id, 1.68, { x: 420, y: 700 }), false);
+  assert.ok(right.primitives[3].opacity > 0.9, 'the first lane activates on the beat');
+
+  const center = blueprintFrame(id, 2.28);
+  assert.equal(center.beatSyncedAttackIndex, 1);
+  assert.equal(center.beatSyncedAttackLane, 1);
+  assert.equal(center.playerSafe, true);
+  assert.equal(blueprintPointSafe(id, 2.28, { x: 280, y: 700 }), false);
+
+  const left = blueprintFrame(id, 2.88);
+  assert.equal(left.beatSyncedAttackIndex, 2);
+  assert.equal(left.beatSyncedAttackLane, 0);
+  assert.equal(left.playerSafe, true);
+  assert.equal(blueprintPointSafe(id, 2.88, { x: 140, y: 700 }), false);
+
+  const rest = blueprintFrame(id, 3.3);
+  assert.equal(rest.beatSyncedPhraseComplete, true);
+  assert.equal(rest.dangerActive, false);
+  assert.equal(rest.beatSyncedAttackLane, -1);
+
+  const punish = blueprintFrame(id, 4.18);
+  assert.equal(punish.punishStrike, true);
+  assert.ok(punish.primitives[12].opacity > 0.9, 'the sword response lands during the rest');
+
+  assert.deepEqual(blueprintFrame(id, 0).player, blueprintFrame(id, 6).player);
+  assert.deepEqual(blueprintFrame(id, 0).boss, blueprintFrame(id, 6).boss);
+  assert.match(
+    renderBlueprintThumbnail(id, 'test-beat-synced-attack'),
+    /data-blueprint-preview="beat-synced-attack"/,
   );
 });

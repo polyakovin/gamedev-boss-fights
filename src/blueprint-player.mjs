@@ -260,6 +260,17 @@ export function initializeBlueprint(widget) {
       widget.dataset.blueprintWrapLap = String(frame.wraparoundLap);
       widget.dataset.blueprintPunishStrike = String(frame.punishStrike);
     }
+    if (mechanicId === 'beat-synced-attack') {
+      widget.dataset.blueprintBeatSyncedAttack = frame.beatSyncedAttackState;
+      widget.dataset.blueprintBeatSlot = String(frame.beatSyncedBeatSlot + 1);
+      widget.dataset.blueprintBeatPulse = frame.beatSyncedBeatPulse.toFixed(3);
+      widget.dataset.blueprintBeatAttack = String(frame.beatSyncedAttackIndex + 1);
+      widget.dataset.blueprintBeatAttackLane = String(frame.beatSyncedAttackLane);
+      widget.dataset.blueprintBeatTelegraph = String(frame.beatSyncedTelegraphIndex + 1);
+      widget.dataset.blueprintBeatTelegraphLane = String(frame.beatSyncedTelegraphLane);
+      widget.dataset.blueprintBeatPhraseComplete = String(frame.beatSyncedPhraseComplete);
+      widget.dataset.blueprintPunishStrike = String(frame.punishStrike);
+    }
     boss.setAttribute(
       'transform',
       `translate(${frame.boss.x} ${frame.boss.y}) scale(${frame.bossScale})`,

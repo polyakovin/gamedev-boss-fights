@@ -219,7 +219,12 @@ const PROFILE_OVERRIDES = {
     signal: ['trajectory', 'environment', 'state'],
     response: ['reposition', 'dodge', 'attack'],
   },
-  'beat-synced-attack': { geometry: ['arena'], signal: ['rhythm'], response: ['dodge', 'manage'] },
+  'beat-synced-attack': {
+    geometry: ['arena', 'zone'],
+    dimensions: ['2d', '3d'],
+    signal: ['rhythm', 'state'],
+    response: ['reposition', 'dodge', 'manage'],
+  },
   'secondary-cues-invisibility': {
     geometry: ['target'],
     signal: ['environment'],

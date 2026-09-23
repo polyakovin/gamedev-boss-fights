@@ -1241,7 +1241,7 @@
         "en": {
           "title": "Beat-synced attack",
           "category": "Space, movement, and perception",
-          "summary": "Draft outline for the beat-synced attack mechanic. Rules, tuning guidance, and examples are still in progress."
+          "summary": "An attack whose active moment is locked to a shared audible and visible beat clock."
         },
         "ru": {
           "title": "Ритмическая синхронизация",

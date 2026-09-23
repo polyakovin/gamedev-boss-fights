@@ -1,0 +1,138 @@
+{
+  "title": "Beat-synced attack",
+  "subtitle": "Anchor attack releases to a shared beat clock so players can predict timing from a repeating audiovisual phrase instead of reading each cooldown in isolation.",
+  "variant": "Kern strikes three quarry lanes on consecutive beats of one rune phrase while Tavi moves between neighboring safe lanes, waits for the phrase to resolve, and then closes with the sword",
+  "summary": "An attack lands on a known position in an audible, visible rhythm whose clock persists across the boss's actions.",
+  "overview": "A beat-synced attack commits its active moment to a shared musical clock. Count-in, visual pulse, animation, sound, and collision agree about when danger arrives. Repeated phrases make later attacks predictable, while authored rests create movement and counter windows.",
+  "learning": "Implement an authoritative beat clock, tempo map, bar and subdivision indices, look-ahead scheduling, animation and collision alignment, pause and resume behavior, latency calibration, visual and haptic equivalents, authored rests, tempo-change announcements, safe movement budgets, and a useful post-phrase response window as one timing contract.",
+  "category": "Space, movement, and perception",
+  "readTime": "8 min",
+  "demo": {
+    "title": "Teach the clock before the first damaging beat",
+    "timeline": "Beat-synced timeline",
+    "step": "Beat-synced attack states",
+    "phaseNames": [
+      "Count in and reveal the phrase",
+      "Strike three lanes on the beat",
+      "End the phrase and open the counter"
+    ],
+    "phaseDescriptions": [
+      "At 0.48 s and 1.08 s Kern's rune and the four-beat rail pulse without dealing damage. The right lane is then marked one beat ahead, and Tavi moves fully into the neighboring center lane before the first strike.",
+      "At 1.68, 2.28, and 2.88 seconds the right, center, and left lanes activate on consecutive 100 BPM beats. Every lane is shown before its beat, each active window lasts 0.24 s, and Tavi crosses only one neighboring lane between strikes.",
+      "The rhythm rail and lane runes discharge at 3.12 s, making the rest visible. Tavi approaches only during that authored rest, strikes at 4.18 s, and both actors return after 5.06 s without shifting the next downbeat."
+    ],
+    "boss": "Boss",
+    "player": "Player",
+    "danger": "A marked lane becomes damaging only on its assigned beat; the persistent clock makes the next active instant predictable before collision begins",
+    "locked": "Tempo, beat origin, subdivision, phrase order, telegraph lead, lane geometry, collision duration, rest, punish beat, pause behavior, and reset are authored",
+    "safe": "Read the count-in and lane preview through sound or equivalent pulses, move one lane before its beat, and approach only after the phrase-clear signal",
+    "reducedMotion": "Autoplay is disabled by reduced motion. Scrub across 0.48, 1.08, 1.32, 1.68, 2.28, 2.88, 3.12, 4.18, and 5.06 seconds to inspect the count-in, previews, three beat-locked strikes, phrase clear, counter, and reset.",
+    "diagramDescription": "Kern stands above three quarry lanes and a four-beat rune rail. Two harmless pulses establish the tempo. The right, center, and left lanes then flash and become dangerous on consecutive beats while Tavi moves between adjacent safe lanes, waits for the rail to clear, and approaches for a sword strike."
+  },
+  "steps": [
+    {
+      "title": "Which clock owns the damaging instant?",
+      "body": "Keep one authoritative transport that converts beat positions into simulation time. Store attacks as bar, beat, and subdivision plus a collision duration; do not trigger damage from an animation event, audio callback, or frame counter that can drift independently. Schedule audio and visuals with look-ahead, but evaluate collision from the same transport on the simulation tick. Define how pause, slowdown, dropped frames, replay, networking, and a resumed song preserve or deliberately rebase phase."
+    },
+    {
+      "title": "Can the phrase predict more than one attack?",
+      "body": "Establish the tempo with harmless count-in beats, then reveal lane order, accents, or rests early enough to form a phrase. Reuse the same visual and sonic accent at every damaging subdivision. A readable pattern lets one cue teach several future instants, but the spatial answer still needs full-body clearance and enough travel time between beats. If the phrase changes, announce the variation before the first changed strike rather than surprising the player mid-bar."
+    },
+    {
+      "title": "Does the rule survive latency and limited audio access?",
+      "body": "Offer a calibration offset and test speakers, headphones, wireless audio, low frame rates, and variable refresh. Mirror the beat with high-contrast pulses, lane motion, controller vibration, and an optional persistent metronome; never make pitch recognition the only way to identify danger. Keep collision windows slightly wider than a single rendered frame and let assists widen response windows or lower tempo without changing phrase order."
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "The animation looks musical but collision drifts",
+      "body": "Independent timers eventually disagree after a hitch, pause, phase transition, or tempo change. The sound may accent one beat while damage begins a frame or an entire subdivision later. Drive animation pose, effect accent, sound request, and hitbox state from the same beat position, log their offsets, and resynchronize only at declared musical boundaries so a correction never moves an attack after commitment."
+    },
+    {
+      "title": "The rhythm becomes an audio-only reaction test",
+      "body": "A loud metronome does not help players who cannot hear it, and a flashing marker at impact is not a telegraph. Show tempo continuously, preview the spatial target before its beat, preserve contrast during effects, and expose rests as clearly as hits. The useful skill is predicting a learned phrase, not compensating for device latency or guessing which sound controls collision."
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "Author in beat space and resolve in simulation time",
+      "body": "Store the score as musical positions so a tempo map can convert the whole phrase consistently. At runtime, resolve upcoming beats into precise timestamps within a look-ahead horizon. This keeps editor data legible to designers while the simulation still receives deterministic active intervals, rollback keys, and debug traces in seconds."
+    },
+    {
+      "title": "Use phrases, accents, and rests instead of constant pulses",
+      "body": "Uniform attacks on every beat become noise and leave no decision space. Group attacks into recognizable motifs, emphasize a downbeat, vary spatial targets while preserving timing grammar, and reserve rests for repositioning or damage. Later phases can add subdivisions or syncopation, but retain an audible and visible reference pulse so the new rhythm is a transformation of a known rule."
+    },
+    {
+      "title": "Budget the entire latency chain",
+      "body": "Perceived alignment includes audio output, display latency, input sampling, animation interpolation, and the collision tick. Measure the complete chain on target hardware and provide user calibration where needed. Apply offsets consistently to presentation and judgment; moving only the music or only the hitbox can improve one setup while making the rule dishonest on another."
+    },
+    {
+      "title": "Protect counterplay when the tempo changes",
+      "body": "Faster tempo shortens both reaction time and travel distance. Before increasing BPM or adding subdivisions, verify that the full player body can reach every authored answer with ordinary movement and that a missed beat does not cascade into unavoidable hits. Signal tempo changes for at least one phrase, reset ambiguous queued attacks, and preserve a readable rest afterward."
+    }
+  ],
+  "story": {
+    "title": "Kern conducts the quarry's buried pulse",
+    "body": "Four stones above the arena light like a measure, and each floor lane carries one matching rune. Kern raises a hand on the count-in; the stones answer in sequence, making the quarry feel like an old mechanism following a score rather than a set of unrelated traps."
+  },
+  "adaptation": {
+    "title": "Let Tavi move on the phrase and strike in the rest",
+    "body": "Tavi uses ordinary movement and the existing sword. Each preview leaves one neighboring lane reachable before the next beat, and the final rune discharge clearly separates the safe approach from the attack phrase. Timing assists may widen the active margin or slow the transport while keeping the same lane order."
+  },
+  "distinction": {
+    "title": "A shared rhythm, not a fixed cooldown",
+    "body": "A cooldown schedules the next action relative to the previous action or state change. A beat-synced attack commits to positions on a persistent clock shared by music, cues, and other systems; a delayed start can skip to a later beat without shifting the score. Repetition alone is not enough—the player must be able to observe and predict that shared phase."
+  },
+  "lensNotes": [
+    {
+      "id": "difficulty-rhythm",
+      "body": "Tempo, subdivision density, phrase length, spatial travel, and rest duration combine into one difficulty curve rather than independent speed sliders."
+    },
+    {
+      "id": "telegraphing",
+      "body": "Count-in pulses, lane previews, impact accents, and phrase-clear signals must point to the same beat positions and active geometry."
+    },
+    {
+      "id": "access-paths",
+      "body": "Sound, high-contrast visual pulses, haptics, calibration, and timing assists provide parallel ways to perceive the same clock without changing the rule."
+    },
+    {
+      "id": "counterplay",
+      "body": "The player predicts the next beat, reaches a body-sized safe lane before it, and uses a deliberately authored rest instead of reacting after collision starts."
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "Crypt of the NecroDancer",
+      "boss": "Deep Blues",
+      "screenshot": "https://i.ytimg.com/vi/dkHkWD2VSMM/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=dkHkWD2VSMM&t=159s",
+      "body": "Deep Blues turns a chess army into a beat-governed boss. Pieces retain distinct movement rules, but their advances are quantized to the soundtrack's turn clock, so tempo and subdivision communicate when the board can change. The encounter shows how a shared pulse can coordinate many threats while spatial rules remain individually readable.",
+      "video": "https://www.youtube.com/watch?v=dkHkWD2VSMM&t=159s",
+      "videoDurationSeconds": 1874
+    },
+    {
+      "dimension": "2D",
+      "game": "Everhood",
+      "boss": "Frog",
+      "screenshot": "https://i.ytimg.com/vi/3rl5Pyf7J4M/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=3rl5Pyf7J4M&t=14s",
+      "body": "Frog sends colored walls down a five-lane field in time with the battle song. The attack chart turns musical phrases into explicit spatial sequences: low notes can be jumped, tall notes require a lane change, and rests preserve anticipation between clusters. The score therefore authors both the impact timing and the changing geometry.",
+      "video": "https://www.youtube.com/watch?v=3rl5Pyf7J4M&t=14s",
+      "videoDurationSeconds": 3393
+    },
+    {
+      "dimension": "3D",
+      "game": "Hi-Fi Rush",
+      "boss": "Rekka",
+      "screenshot": "https://i.ytimg.com/vi/1urR6Mplu-k/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=1urR6Mplu-k&t=60s",
+      "body": "Rekka's charges, slams, animation accents, and surrounding machinery share the music's beat even though Chai can move freely between inputs. The persistent environmental pulse keeps the clock visible while large poses announce which future beat will carry contact, demonstrating beat synchronization without turning navigation into a strict note lane.",
+      "video": "https://www.youtube.com/watch?v=1urR6Mplu-k&t=60s",
+      "videoDurationSeconds": 501
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

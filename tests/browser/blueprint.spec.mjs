@@ -405,9 +405,9 @@ test('volley releases three parallel bolts on one beat and clears its outside ro
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
 });
 
-test('catalog and builder reuse the 71 promoted rule-specific previews', async ({ page }) => {
+test('catalog and builder reuse the 72 promoted rule-specific previews', async ({ page }) => {
   await page.goto('en/');
-  await expect(page.locator('[data-blueprint-preview]')).toHaveCount(71);
+  await expect(page.locator('[data-blueprint-preview]')).toHaveCount(72);
   const catalogLayouts = await page.locator('[data-blueprint-preview]').evaluateAll((previews) =>
     previews.map((preview) => {
       const boss = preview.querySelector('[data-character-art-preview="kern"]');
@@ -431,7 +431,7 @@ test('catalog and builder reuse the 71 promoted rule-specific previews', async (
   expect(new Set(catalogLayouts.map(({ layout }) => layout)).size).toBeGreaterThanOrEqual(18);
 
   await page.goto('en/builder/');
-  await expect(page.locator('[data-blueprint-preview]')).toHaveCount(71);
+  await expect(page.locator('[data-blueprint-preview]')).toHaveCount(72);
   const builderLayouts = await page.locator('[data-blueprint-preview]').evaluateAll((previews) =>
     previews.map((preview) => {
       const boss = preview.querySelector('[data-character-art-preview="kern"]');
@@ -2516,6 +2516,70 @@ test('wraparound projectile signals its linked seams, preserves one shot, and cl
 
   await seek(4220);
   await expect(widget).toHaveAttribute('data-blueprint-wraparound-projectile', 'counter-window');
+  await expect(widget).toHaveAttribute('data-blueprint-punish-strike', 'true');
+  await expect(widget.locator('[data-blueprint-primitive="12"] line')).not.toHaveAttribute(
+    'opacity',
+    '0',
+  );
+
+  await page.setViewportSize({ width: 375, height: 812 });
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+});
+
+test('beat-synced attack counts in, lands three lanes on the clock, and exposes the rest', async ({
+  page,
+}) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.goto('en/mechanics/beat-synced-attack/');
+  const widget = page.locator('[data-blueprint-demo]');
+  const timeline = widget.locator('[data-blueprint-timeline]');
+  const seek = (milliseconds) =>
+    timeline.evaluate((element, value) => {
+      element.value = String(value);
+      element.dispatchEvent(new Event('input', { bubbles: true }));
+    }, milliseconds);
+
+  await expect(page.locator('.lesson-title-line h1')).toHaveText('Beat-synced attack');
+  await expect(page.locator('.wip-badge, .draft-profile')).toHaveCount(0);
+  await expect(page.locator('.game-example')).toHaveCount(3);
+  await expect(widget).toHaveAttribute('data-blueprint-playing', 'false');
+
+  await seek(600);
+  await expect(widget).toHaveAttribute('data-blueprint-beat-synced-attack', 'tempo-count-in');
+  await expect(widget).toHaveAttribute('data-blueprint-beat-attack', '0');
+
+  await seek(1300);
+  await expect(widget).toHaveAttribute('data-blueprint-beat-synced-attack', 'pattern-cued');
+  await expect(widget).toHaveAttribute('data-blueprint-beat-telegraph', '1');
+  await expect(widget).toHaveAttribute('data-blueprint-beat-telegraph-lane', '2');
+  await expect(widget.locator('[data-blueprint-primitive="3"] rect')).not.toHaveAttribute(
+    'opacity',
+    '0',
+  );
+
+  await seek(1680);
+  await expect(widget).toHaveAttribute('data-blueprint-beat-synced-attack', 'beat-strikes');
+  await expect(widget).toHaveAttribute('data-blueprint-beat-attack', '1');
+  await expect(widget).toHaveAttribute('data-blueprint-beat-attack-lane', '2');
+  await expect(widget).toHaveAttribute('data-blueprint-outcome', 'safe');
+
+  await seek(2280);
+  await expect(widget).toHaveAttribute('data-blueprint-beat-attack', '2');
+  await expect(widget).toHaveAttribute('data-blueprint-beat-attack-lane', '1');
+  await expect(widget).toHaveAttribute('data-blueprint-outcome', 'safe');
+
+  await seek(2880);
+  await expect(widget).toHaveAttribute('data-blueprint-beat-attack', '3');
+  await expect(widget).toHaveAttribute('data-blueprint-beat-attack-lane', '0');
+  await expect(widget).toHaveAttribute('data-blueprint-outcome', 'safe');
+
+  await seek(3300);
+  await expect(widget).toHaveAttribute('data-blueprint-beat-synced-attack', 'phrase-clear');
+  await expect(widget).toHaveAttribute('data-blueprint-beat-phrase-complete', 'true');
+  await expect(widget).toHaveAttribute('data-blueprint-beat-attack', '0');
+
+  await seek(4180);
+  await expect(widget).toHaveAttribute('data-blueprint-beat-synced-attack', 'counter-window');
   await expect(widget).toHaveAttribute('data-blueprint-punish-strike', 'true');
   await expect(widget.locator('[data-blueprint-primitive="12"] line')).not.toHaveAttribute(
     'opacity',

@@ -1,0 +1,138 @@
+{
+  "title": "Ataque sincronizado con el pulso",
+  "subtitle": "Ancla los impactos a un reloj rítmico compartido para que el tiempo se pueda predecir mediante una frase audiovisual repetida y no leyendo cada recarga por separado.",
+  "variant": "Kern golpea tres carriles de la cantera en pulsos consecutivos de una frase rúnica mientras Tavi cambia entre carriles seguros adyacentes, espera a que termine la frase y se acerca con la espada",
+  "summary": "Un ataque impacta en una posición conocida de un ritmo audible y visible cuyo reloj persiste entre las acciones del jefe.",
+  "overview": "Un ataque sincronizado fija su momento activo a un reloj musical compartido. Cuenta previa, pulso visual, animación, sonido y colisión coinciden en cuándo llega el peligro. Las frases repetidas hacen predecibles los ataques posteriores y los silencios diseñados crean ventanas de movimiento y contraataque.",
+  "learning": "Implementa un reloj de pulso autoritativo, mapa de tempo, índices de compás y subdivisión, planificación anticipada, alineación de animación y colisión, comportamiento de pausa y reanudación, calibración de latencia, equivalentes visuales y hápticos, silencios diseñados, avisos de cambio de tempo, margen de movimiento seguro y una ventana útil tras la frase como un único contrato temporal.",
+  "category": "Espacio, movimiento y percepción",
+  "readTime": "8 min",
+  "demo": {
+    "title": "Enseña el reloj antes del primer pulso dañino",
+    "timeline": "Línea temporal sincronizada",
+    "step": "Estados del ataque sincronizado",
+    "phaseNames": [
+      "Contar y revelar la frase",
+      "Golpear tres carriles al pulso",
+      "Cerrar la frase y abrir el contraataque"
+    ],
+    "phaseDescriptions": [
+      "A los 0,48 y 1,08 s, la runa de Kern y el indicador de cuatro pulsos se iluminan sin causar daño. El carril derecho se marca con un pulso de antelación y Tavi entra por completo en el carril central antes del primer golpe.",
+      "A los 1,68, 2,28 y 2,88 s, los carriles derecho, central e izquierdo se activan en pulsos consecutivos a 100 BPM. Cada carril se muestra antes de su pulso, la ventana activa dura 0,24 s y Tavi cruza solo a un carril vecino entre golpes.",
+      "El indicador y las runas se apagan a los 3,12 s para hacer visible el silencio. Tavi se acerca solo durante ese descanso diseñado, golpea a los 4,18 s y ambos vuelven después de los 5,06 s sin desplazar el siguiente primer pulso."
+    ],
+    "boss": "Jefe",
+    "player": "Jugador",
+    "danger": "Un carril marcado solo causa daño en su pulso asignado; el reloj persistente permite predecir el instante activo antes de que comience la colisión",
+    "locked": "Se diseñan tempo, origen del pulso, subdivisión, orden de frase, antelación de señal, geometría de carril, duración de colisión, silencio, pulso de castigo, pausa y reinicio",
+    "safe": "Lee la cuenta previa por sonido o pulsos equivalentes, cambia de carril antes de su pulso y acércate solo tras la señal de fin de frase",
+    "reducedMotion": "Con movimiento reducido, la reproducción automática queda desactivada. Recorre 0,48, 1,08, 1,32, 1,68, 2,28, 2,88, 3,12, 4,18 y 5,06 segundos para inspeccionar la cuenta, anticipos, tres golpes fijados al pulso, cierre, contraataque y reinicio.",
+    "diagramDescription": "Kern está sobre tres carriles de cantera y un indicador rúnico de cuatro pulsos. Dos destellos seguros establecen el tempo. Después, los carriles derecho, central e izquierdo se iluminan y se vuelven peligrosos en pulsos consecutivos mientras Tavi cambia entre carriles seguros adyacentes, espera a que el indicador se apague y se acerca para atacar con la espada."
+  },
+  "steps": [
+    {
+      "title": "¿Qué reloj controla el instante dañino?",
+      "body": "Mantén un transporte autoritativo que convierta posiciones musicales en tiempo de simulación. Guarda los ataques como compás, pulso y subdivisión junto con la duración de colisión; no actives daño desde un evento de animación, callback de audio o contador de fotogramas que pueda desviarse. Programa audio y efectos con anticipación, pero evalúa la colisión desde el mismo transporte en el paso de simulación. Define cómo pausa, ralentización, fotogramas perdidos, repetición, red y reanudación conservan o recalculan deliberadamente la fase."
+    },
+    {
+      "title": "¿La frase permite predecir más de un ataque?",
+      "body": "Establece el tempo con pulsos inocuos y revela con tiempo el orden de carriles, acentos o silencios para formar una frase. Reutiliza el mismo acento visual y sonoro en cada subdivisión dañina. Un patrón legible enseña varios instantes futuros con una señal, pero la respuesta espacial todavía necesita holgura para todo el cuerpo y tiempo de recorrido entre pulsos. Si la frase cambia, anuncia la variación antes del primer golpe modificado."
+    },
+    {
+      "title": "¿La regla resiste la latencia y el acceso limitado al audio?",
+      "body": "Ofrece calibración y prueba altavoces, auriculares, audio inalámbrico, baja tasa de fotogramas y refresco variable. Refleja el pulso con destellos de alto contraste, movimiento de carril, vibración y un metrónomo persistente opcional; reconocer una altura sonora nunca debe ser la única forma de detectar peligro. Mantén la colisión algo más ancha que un fotograma y permite que las ayudas amplíen la respuesta o reduzcan el tempo sin cambiar el orden de la frase."
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "La animación parece musical, pero la colisión deriva",
+      "body": "Temporizadores independientes terminan por discrepar tras un tirón, pausa, cambio de fase o de tempo. El sonido puede acentuar un pulso y el daño empezar un fotograma o una subdivisión después. Deriva pose, efecto, solicitud de sonido y hitbox de la misma posición musical, registra sus offsets y resincroniza solo en límites declarados para no mover un ataque ya comprometido."
+    },
+    {
+      "title": "El ritmo se convierte en una prueba solo auditiva",
+      "body": "Un metrónomo fuerte no ayuda a quien no puede oírlo, y una marca que aparece al impactar no es un aviso. Muestra el tempo continuamente, anticipa el objetivo espacial, conserva el contraste entre efectos y representa los silencios tan claramente como los golpes. La habilidad útil es predecir una frase aprendida, no compensar la latencia del dispositivo ni adivinar qué sonido gobierna la colisión."
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "Diseña en pulsos y resuelve en tiempo de simulación",
+      "body": "Guarda la partitura como posiciones musicales para que el mapa de tempo convierta toda la frase de forma coherente. En ejecución, traduce los próximos pulsos a timestamps precisos dentro de un horizonte anticipado. Los datos siguen siendo legibles para diseño y la simulación recibe intervalos activos deterministas, claves de rollback y trazas en segundos."
+    },
+    {
+      "title": "Usa frases, acentos y silencios en vez de pulsos constantes",
+      "body": "Atacar igual en cada pulso se vuelve ruido y elimina decisiones. Agrupa ataques en motivos reconocibles, enfatiza el primer pulso, varía objetivos espaciales conservando la gramática temporal y reserva silencios para moverse o dañar. Las fases posteriores pueden añadir subdivisiones o síncopas, pero deben conservar una referencia audible y visible para que el nuevo ritmo transforme una regla conocida."
+    },
+    {
+      "title": "Presupuesta toda la cadena de latencia",
+      "body": "La alineación percibida incluye salida de audio, pantalla, muestreo de entrada, interpolación de animación y tick de colisión. Mide la cadena completa en el hardware objetivo y ofrece calibración cuando haga falta. Aplica offsets de forma coherente a presentación y evaluación; mover solo la música o solo el hitbox puede ayudar a una configuración y volver deshonesta otra."
+    },
+    {
+      "title": "Protege el contrajuego cuando cambia el tempo",
+      "body": "Un tempo más rápido reduce tanto reacción como distancia disponible. Antes de subir BPM o añadir subdivisiones, comprueba que el cuerpo completo alcanza cada respuesta con movimiento normal y que fallar un pulso no encadena impactos inevitables. Anuncia el cambio durante al menos una frase, limpia ataques ambiguos en cola y conserva un silencio legible después."
+    }
+  ],
+  "story": {
+    "title": "Kern dirige el pulso enterrado de la cantera",
+    "body": "Cuatro piedras sobre la arena se iluminan como un compás y cada carril del suelo contiene una runa correspondiente. Kern levanta una mano en la cuenta previa y las piedras responden en secuencia, haciendo que la cantera parezca un mecanismo antiguo que interpreta una partitura y no un conjunto de trampas inconexas."
+  },
+  "adaptation": {
+    "title": "Deja que Tavi se mueva en la frase y ataque en el silencio",
+    "body": "Tavi utiliza el movimiento normal y la espada existente. Cada anticipo deja un carril vecino alcanzable antes del siguiente pulso y la descarga final separa claramente el acercamiento seguro de la frase de ataque. Las ayudas pueden ampliar el margen o ralentizar el transporte sin alterar el orden de carriles."
+  },
+  "distinction": {
+    "title": "Un ritmo compartido, no una recarga fija",
+    "body": "Una recarga programa la siguiente acción respecto a la anterior o a un cambio de estado. Un ataque sincronizado se compromete con posiciones de un reloj persistente compartido por música, señales y otros sistemas; un inicio tardío puede saltar a un pulso posterior sin desplazar la partitura. La repetición no basta: esa fase compartida debe poder observarse y predecirse."
+  },
+  "lensNotes": [
+    {
+      "id": "difficulty-rhythm",
+      "body": "Tempo, densidad de subdivisiones, longitud de frase, recorrido espacial y duración del silencio forman una única curva de dificultad, no controles independientes."
+    },
+    {
+      "id": "telegraphing",
+      "body": "Cuenta previa, anticipos de carril, acentos de impacto y señal de cierre deben señalar las mismas posiciones musicales y la misma geometría activa."
+    },
+    {
+      "id": "access-paths",
+      "body": "Sonido, pulsos visuales contrastados, háptica, calibración y ayudas temporales ofrecen rutas paralelas para percibir el mismo reloj sin cambiar la regla."
+    },
+    {
+      "id": "counterplay",
+      "body": "El jugador predice el siguiente pulso, alcanza un carril seguro para todo el cuerpo antes de él y usa un silencio diseñado en vez de reaccionar cuando ya hay colisión."
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "Crypt of the NecroDancer",
+      "boss": "Deep Blues",
+      "screenshot": "https://i.ytimg.com/vi/dkHkWD2VSMM/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=dkHkWD2VSMM&t=159s",
+      "body": "Deep Blues convierte un ejército de ajedrez en un jefe gobernado por pulsos. Las piezas mantienen reglas de movimiento distintas, pero avanzan cuantizadas al reloj de la música, de modo que tempo y subdivisión comunican cuándo puede cambiar el tablero. El encuentro coordina muchas amenazas con un pulso común sin borrar sus reglas espaciales individuales.",
+      "video": "https://www.youtube.com/watch?v=dkHkWD2VSMM&t=159s",
+      "videoDurationSeconds": 1874
+    },
+    {
+      "dimension": "2D",
+      "game": "Everhood",
+      "boss": "Frog",
+      "screenshot": "https://i.ytimg.com/vi/3rl5Pyf7J4M/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=3rl5Pyf7J4M&t=14s",
+      "body": "Frog envía paredes de colores por cinco carriles al ritmo de la canción de combate. La carta convierte frases musicales en secuencias espaciales explícitas: las notas bajas se saltan, las altas exigen cambiar de carril y los silencios mantienen la anticipación entre grupos. La partitura diseña tanto el instante de impacto como la geometría cambiante.",
+      "video": "https://www.youtube.com/watch?v=3rl5Pyf7J4M&t=14s",
+      "videoDurationSeconds": 3393
+    },
+    {
+      "dimension": "3D",
+      "game": "Hi-Fi Rush",
+      "boss": "Rekka",
+      "screenshot": "https://i.ytimg.com/vi/1urR6Mplu-k/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=1urR6Mplu-k&t=60s",
+      "body": "Las cargas y golpes de Rekka, sus acentos de animación y la maquinaria del entorno comparten el pulso musical aunque Chai pueda moverse libremente. El pulso ambiental hace visible el reloj y las poses grandes anuncian qué futuro pulso tendrá contacto: sincronización rítmica sin convertir la navegación en una pista de notas estricta.",
+      "video": "https://www.youtube.com/watch?v=1urR6Mplu-k&t=60s",
+      "videoDurationSeconds": 501
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}
