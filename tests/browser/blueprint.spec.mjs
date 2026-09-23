@@ -405,9 +405,9 @@ test('volley releases three parallel bolts on one beat and clears its outside ro
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
 });
 
-test('catalog and builder reuse the 66 promoted rule-specific previews', async ({ page }) => {
+test('catalog and builder reuse the 67 promoted rule-specific previews', async ({ page }) => {
   await page.goto('en/');
-  await expect(page.locator('[data-blueprint-preview]')).toHaveCount(66);
+  await expect(page.locator('[data-blueprint-preview]')).toHaveCount(67);
   const catalogLayouts = await page.locator('[data-blueprint-preview]').evaluateAll((previews) =>
     previews.map((preview) => {
       const boss = preview.querySelector('[data-character-art-preview="kern"]');
@@ -431,7 +431,7 @@ test('catalog and builder reuse the 66 promoted rule-specific previews', async (
   expect(new Set(catalogLayouts.map(({ layout }) => layout)).size).toBeGreaterThanOrEqual(18);
 
   await page.goto('en/builder/');
-  await expect(page.locator('[data-blueprint-preview]')).toHaveCount(66);
+  await expect(page.locator('[data-blueprint-preview]')).toHaveCount(67);
   const builderLayouts = await page.locator('[data-blueprint-preview]').evaluateAll((previews) =>
     previews.map((preview) => {
       const boss = preview.querySelector('[data-character-art-preview="kern"]');
@@ -2201,6 +2201,58 @@ test('relocated arena previews its destination and preserves encounter state acr
     'opacity',
     '0',
   );
+
+  await page.setViewportSize({ width: 375, height: 812 });
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+});
+
+test('control mode shift visibly hands free movement to a taught jump contract', async ({
+  page,
+}) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.goto('en/mechanics/control-mode-shift/');
+  const widget = page.locator('[data-blueprint-demo]');
+  const timeline = widget.locator('[data-blueprint-timeline]');
+  const seek = (milliseconds) =>
+    timeline.evaluate((element, value) => {
+      element.value = String(value);
+      element.dispatchEvent(new Event('input', { bubbles: true }));
+    }, milliseconds);
+
+  await expect(page.locator('.lesson-title-line h1')).toHaveText('Control mode shift');
+  await expect(page.locator('.wip-badge, .draft-profile')).toHaveCount(0);
+  await expect(page.locator('.game-example')).toHaveCount(3);
+  await expect(widget).toHaveAttribute('data-blueprint-playing', 'false');
+
+  await seek(800);
+  await expect(widget).toHaveAttribute('data-blueprint-control-mode-shift', 'mode-preview');
+  await expect(widget).toHaveAttribute('data-blueprint-control-mode-previewed', 'true');
+  await expect(widget).toHaveAttribute('data-blueprint-control-mode-active', 'false');
+
+  await seek(1350);
+  await expect(widget).toHaveAttribute('data-blueprint-control-mode-shift', 'control-handoff');
+  await expect(widget).toHaveAttribute('data-blueprint-control-mode-mapping', 'free-movement');
+
+  await seek(2600);
+  await expect(widget).toHaveAttribute('data-blueprint-control-mode-shift', 'jump-mode');
+  await expect(widget).toHaveAttribute('data-blueprint-control-mode-active', 'true');
+  await expect(widget).toHaveAttribute(
+    'data-blueprint-control-mode-mapping',
+    'horizontal-and-jump',
+  );
+  await expect(widget).toHaveAttribute('data-blueprint-control-mode-wave', 'true');
+  await expect(widget.locator('[data-blueprint-primitive="13"] circle')).not.toHaveAttribute(
+    'opacity',
+    '0',
+  );
+
+  await seek(3850);
+  await expect(widget).toHaveAttribute('data-blueprint-control-mode-shift', 'opening');
+  await expect(widget).toHaveAttribute('data-blueprint-punish-strike', 'true');
+
+  await seek(5200);
+  await expect(widget).toHaveAttribute('data-blueprint-control-mode-shift', 'free-mode-return');
+  await expect(widget).toHaveAttribute('data-blueprint-control-mode-return', 'true');
 
   await page.setViewportSize({ width: 375, height: 812 });
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);

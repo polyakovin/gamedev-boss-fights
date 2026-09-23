@@ -10,6 +10,7 @@ import {
   attackReflectionState,
   boundaryAttackState,
   chaseHerdingState,
+  controlModeShiftState,
   escapePhaseState,
   relocatedArenaState,
   forcedScrollingOffset,
@@ -41,8 +42,8 @@ import {
   renderBlueprintThumbnail,
 } from '../lib/blueprint-view.mjs';
 
-test('all 66 promoted lesson animations have distinct rule modes and complete moving frames', () => {
-  assert.equal(BLUEPRINT_MECHANIC_IDS.length, 66);
+test('all 67 promoted lesson animations have distinct rule modes and complete moving frames', () => {
+  assert.equal(BLUEPRINT_MECHANIC_IDS.length, 67);
   const modes = new Set();
   for (const id of BLUEPRINT_MECHANIC_IDS) {
     for (let time = 0; time <= BLUEPRINT_DURATION; time += 0.1) {
@@ -63,7 +64,7 @@ test('all 66 promoted lesson animations have distinct rule modes and complete mo
           assert.ok(Number.isFinite(value), `${id} has an invalid ${primitive.type}`);
     }
   }
-  assert.equal(modes.size, 66);
+  assert.equal(modes.size, 67);
 });
 
 test('every blueprint exposes signal, committed action, and recovery without player teleports', () => {
@@ -128,6 +129,7 @@ test('every damaging promoted animation derives safety from its own active geome
     'limited-spread': null,
     'attack-reflection': null,
     'forced-scrolling': { x: 350, y: 750 },
+    'control-mode-shift': { x: 120, y: 724 },
     'wide-swing': { x: 280, y: 515 },
     lunge: { x: 300, y: 440 },
     grab: { x: 390, y: 485 },
@@ -1856,5 +1858,50 @@ test('relocated arena previews a destination, hands off retained state, and resu
   assert.match(
     renderBlueprintThumbnail(id, 'test-relocated-arena'),
     /data-blueprint-preview="relocated-arena"/,
+  );
+});
+
+test('control mode shift previews the remap, teaches its jump response, and restores free movement', () => {
+  const id = 'control-mode-shift';
+  assert.deepEqual([0, 0.8, 1.35, 2.6, 3.85, 5.2].map(controlModeShiftState), [
+    'free-movement',
+    'mode-preview',
+    'control-handoff',
+    'jump-mode',
+    'opening',
+    'free-mode-return',
+  ]);
+
+  const preview = blueprintFrame(id, 0.8);
+  assert.equal(preview.controlModePreviewed, true);
+  assert.equal(preview.controlModeActive, false);
+  assert.equal(preview.controlModeMapping, 'free-movement');
+  assert.ok(preview.primitives[6].opacity > 0.4, 'the handoff rune appears before remapping');
+
+  const handoff = blueprintFrame(id, 1.35);
+  assert.equal(handoff.controlModeShiftState, 'control-handoff');
+  assert.equal(handoff.dangerActive, false);
+  assert.ok(handoff.player.y > preview.player.y, 'the player settles before danger resumes');
+
+  const jump = blueprintFrame(id, 2.6);
+  assert.equal(jump.controlModeActive, true);
+  assert.equal(jump.controlModeMapping, 'horizontal-and-jump');
+  assert.equal(jump.controlModeWaveActive, true);
+  assert.equal(jump.playerSafe, true);
+  assert.ok(jump.player.y < 650, 'the remapped jump clears the grounded wave');
+  assert.ok(jump.primitives[13].opacity > 0.8, 'the active grounded wave remains visible');
+
+  const punish = blueprintFrame(id, 3.85);
+  assert.equal(punish.punishStrike, true);
+  assert.ok(punish.primitives[17].opacity > 0, 'the sword response lands after the mode lesson');
+
+  const returning = blueprintFrame(id, 5.2);
+  assert.equal(returning.controlModeReturnVisible, true);
+  assert.equal(returning.controlModeShiftState, 'free-mode-return');
+  assert.deepEqual(blueprintFrame(id, 0).player, blueprintFrame(id, 6).player);
+  assert.deepEqual(blueprintFrame(id, 0).boss, blueprintFrame(id, 6).boss);
+  assert.match(
+    renderBlueprintThumbnail(id, 'test-control-mode-shift'),
+    /data-blueprint-preview="control-mode-shift"/,
   );
 });

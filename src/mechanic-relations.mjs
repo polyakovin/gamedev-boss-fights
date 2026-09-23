@@ -189,6 +189,12 @@ const PROFILE_OVERRIDES = {
     signal: ['environment', 'state'],
     response: ['reposition', 'manage'],
   },
+  'control-mode-shift': {
+    geometry: ['arena'],
+    dimensions: ['2d', '3d'],
+    signal: ['environment', 'state'],
+    response: ['reposition', 'manage'],
+  },
   'boss-as-terrain': { geometry: ['entity', 'arena'], dimensions: ['2d', '3d'] },
   'cover-line-of-sight': {
     geometry: ['line', 'arena'],

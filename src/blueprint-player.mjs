@@ -210,6 +210,15 @@ export function initializeBlueprint(widget) {
       widget.dataset.blueprintRelocationProgress = frame.relocatedProgress.toFixed(2);
       widget.dataset.blueprintPunishStrike = String(frame.punishStrike);
     }
+    if (mechanicId === 'control-mode-shift') {
+      widget.dataset.blueprintControlModeShift = frame.controlModeShiftState;
+      widget.dataset.blueprintControlModePreviewed = String(frame.controlModePreviewed);
+      widget.dataset.blueprintControlModeActive = String(frame.controlModeActive);
+      widget.dataset.blueprintControlModeMapping = frame.controlModeMapping;
+      widget.dataset.blueprintControlModeWave = String(frame.controlModeWaveActive);
+      widget.dataset.blueprintControlModeReturn = String(frame.controlModeReturnVisible);
+      widget.dataset.blueprintPunishStrike = String(frame.punishStrike);
+    }
     boss.setAttribute(
       'transform',
       `translate(${frame.boss.x} ${frame.boss.y}) scale(${frame.bossScale})`,

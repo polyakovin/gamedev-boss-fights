@@ -1,0 +1,32 @@
+{
+  "id": "control-mode-shift",
+  "number": 73,
+  "published": true,
+  "sourceLocale": "en",
+  "contentVersion": 1,
+  "animation": "control-mode-shift",
+  "lenses": ["progress-clarity", "threat-geometry", "mastery-check", "dramatic-framing"],
+  "related": ["relocated-arena", "fight-phase", "attack-lock"],
+  "sources": [
+    {
+      "title": "GDC · Itay Keren — Boss Battle Design Fundamentals and Retrospective",
+      "url": "https://www.gdcvault.com/play/1024921/Boss-Up-Boss-Battle-Design"
+    },
+    {
+      "title": "The Undertale Wiki — Papyrus in battle",
+      "url": "https://undertale.wiki/w/Papyrus/In_Battle"
+    },
+    {
+      "title": "The Undertale Wiki — SOUL mode",
+      "url": "https://undertale.wiki/w/Soul_mode"
+    },
+    {
+      "title": "Xbox Wire · Emeric Thoa — Furi Available Now on Xbox One",
+      "url": "https://news.xbox.com/en-us/2016/12/02/furi-available-now-xbox-one/"
+    },
+    {
+      "title": "WiKirby — Void Termina boss battle",
+      "url": "https://wikirby.com/wiki/Void_Termina"
+    }
+  ]
+}

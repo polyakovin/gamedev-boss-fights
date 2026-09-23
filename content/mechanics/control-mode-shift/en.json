@@ -1,0 +1,142 @@
+{
+  "title": "Control mode shift",
+  "subtitle": "Change how the player moves or reads space inside one continuous boss encounter.",
+  "variant": "Kern binds the quarry to a gravity rune, replacing Tavi's free movement with a horizontal run and jump before clearly restoring the original controls",
+  "summary": "A control mode shift replaces the player's current movement or response grammar with another one during the same encounter.",
+  "overview": "A control mode shift changes what an input means, which axes are available, or how the arena is read. Kern previews a gravity rune before free movement becomes a run and jump. Tavi gets safe practice, clears one grounded wave, takes a sword opening, and sees the original controls return.",
+  "learning": "Author the trigger, advance signal, input handoff, protected practice beat, camera and geometry support, attack package, accessibility policy, multiplayer ownership, and restoration as one explicit control contract.",
+  "category": "Space, movement, and perception",
+  "readTime": "8 min",
+  "demo": {
+    "title": "Teach the replacement verb before testing it",
+    "timeline": "Control mode shift timeline",
+    "step": "Control mode shift states",
+    "phaseNames": [
+      "Preview and hand off",
+      "Use the new movement rule",
+      "Restore the original contract"
+    ],
+    "phaseDescriptions": [
+      "Tavi first moves freely. At 0.55 s Kern exposes a gravity rune, the four-direction guide fades, and a floor plus jump arc previews the next control grammar. From 1.15–1.65 s both actors settle while danger remains disabled.",
+      "Horizontal movement and jump are now active. A grounded rune wave is previewed before travelling from 2.05–3.20 s; Tavi's authored jump clears it with full-body space, then the new mode produces a sword opening at 3.85 s.",
+      "The opening remains readable through the phase boundary. At 4.75 s the gravity rune releases, the free-movement guide returns, and both actors follow visible continuous paths to the exact loop start."
+    ],
+    "boss": "Boss",
+    "player": "Player",
+    "danger": "The grounded wave becomes active only after the new mapping, floor, and jump path have all been shown",
+    "locked": "Trigger, mapping table, camera framing, transition immunity, attack set, exit condition, and restoration point are authored together",
+    "safe": "Read the mode signal, test the replacement verb in protected space, then use that verb to clear the first real threat",
+    "reducedMotion": "Autoplay is disabled by reduced motion. Scrub across 0.55, 1.15, 1.65, 2.05, 2.62, 3.20, 3.85, and 4.75 seconds to inspect the complete control handoff.",
+    "diagramDescription": "One quarry arena changes from a free-movement grid into a side-on gravity lane. Kern's rune replaces a four-direction control diagram with a horizontal floor and jump arc; Tavi settles safely, jumps a grounded wave, attacks during the opening, and visibly returns to free movement."
+  },
+  "steps": [
+    {
+      "title": "What exactly changes under the player's hands?",
+      "body": "Write an input-to-action table for the state before, during, and after the shift. Mark removed axes, reassigned buttons, altered acceleration, gravity, targeting, camera-relative directions, and unavailable abilities. Preserve menu, pause, accessibility, and system controls. If the same input produces a surprising new action, communicate the replacement before accepting failure."
+    },
+    {
+      "title": "How does the player learn the new grammar safely?",
+      "body": "Signal the shift with at least two agreeing channels, settle the camera, then grant a protected beat that asks for the replacement verb without lethal timing. Use one low-complexity threat to confirm understanding before combining the mode with the boss's normal pressure. Measure from input restoration, not from the start of the transition cinematic."
+    },
+    {
+      "title": "How does the encounter enter, persist, and exit the mode?",
+      "body": "Choose an explicit trigger, minimum duration, interruption policy, checkpoint state, death behavior, and return cue. Decide whether projectiles, lock-on, summons, cooldowns, multiplayer partners, and buffered inputs persist or convert. Restore the original mapping only after the camera and geometry support it, and flush or translate held inputs so the exit cannot cause an accidental action."
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "The first prompt is already the exam",
+      "body": "A tooltip displayed while damage is active does not teach a new control contract. Separate handoff, safe rehearsal, and first scored threat; otherwise failures measure reading speed and prior genre knowledge instead of the intended boss decision."
+    },
+    {
+      "title": "The picture changes but the controls do not — or vice versa",
+      "body": "A camera cut that implies side-on movement while diagonal input still matters creates false geometry. A silent remap under an unchanged camera is equally opaque. Align framing, collision, input prompts, animation, and attack lanes so every channel describes the same rules."
+    },
+    {
+      "title": "The return carries stale input",
+      "body": "A held jump becoming an attack, or a stick direction being reinterpreted across the seam, can manufacture an unavoidable mistake. Define buffering and cancellation for every transition, show the restored mode, and delay renewed danger until the original controls are live."
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "Treat each mode as a complete input context",
+      "body": "Give the mode one owner and a declarative mapping that gameplay, prompts, tutorials, rebinding, input glyphs, AI tests, and telemetry all read. Avoid scattered conditionals that leave one ability or device on the old rules. Log entry, first valid new-mode input, damage before mastery, exit, and unexpected context conflicts."
+    },
+    {
+      "title": "Preserve invariants across devices and accessibility settings",
+      "body": "Test keyboard, digital pad, analog stick, touch, remapping, one-handed layouts, hold-versus-toggle options, motion reduction, camera inversion, and assist modes. Teach actions rather than physical button names. If an accessibility option changes timing or automation, keep the boss's readable signal and response window honest."
+    },
+    {
+      "title": "Budget camera and cognition as part of the transition",
+      "body": "Time the visual signal, camera move, character settle, prompt recognition, first exploratory input, and threat preview separately. A short animation can still impose a long cognitive switch cost. Repeated entries may accelerate spectacle, but never remove the rule cue or protected input confirmation."
+    },
+    {
+      "title": "Test every boundary and interruption",
+      "body": "Enter while airborne, attacking, stunned, aiming, holding a direction, using an item, or controlling a secondary entity. Exit under the same conditions. Exercise pause, device disconnect, rebinding, death, checkpoint reload, cutscene skip, co-op join, and latency so no participant is left in a different control context."
+    }
+  ],
+  "story": {
+    "title": "Kern makes the rune plane heavy",
+    "body": "The quarry does not move. Kern activates an embedded gravity rune that pulls both bodies toward one visible floor, collapses free traversal into a side-on lane, and gives the grounded wave a physical reason to demand a jump."
+  },
+  "adaptation": {
+    "title": "Keep Tavi's familiar sword while changing only movement",
+    "body": "Tavi retains the same attack and silhouette, so the lesson isolates one new verb: jump under gravity. The transition grants a protected landing, the first wave accepts an ordinary full-body jump, and the sword opening confirms that the temporary movement rule still feeds the encounter's familiar reward."
+  },
+  "distinction": {
+    "title": "A new input grammar, not merely a new camera or room",
+    "body": "Relocated arena moves the continuing fight into different geometry while ordinary controls may remain intact. Fight phase changes the boss package while player verbs may remain intact. Control mode shift specifically changes how the player moves, aims, blocks, or otherwise operates; a camera cut alone does not qualify unless it changes that playable contract."
+  },
+  "lensNotes": [
+    {
+      "id": "progress-clarity",
+      "body": "Mode entry, first valid input, mastery test, and restoration need distinct signals so failure can be attributed to a decision rather than an invisible state change."
+    },
+    {
+      "id": "threat-geometry",
+      "body": "The replacement verb must match the active lanes, clearances, gravity, camera, and collision extents used by the new attack package."
+    },
+    {
+      "id": "mastery-check",
+      "body": "Replacing learned controls creates a task-switch cost; protected rehearsal and a simple first test keep that cost legible instead of stacking it with pattern complexity."
+    },
+    {
+      "id": "dramatic-framing",
+      "body": "A perspective or presentation shift can sell the moment, but framing must first preserve orientation and reveal the new playable axes."
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "Undertale",
+      "boss": "Papyrus",
+      "screenshot": "https://i.ytimg.com/vi/cU9Nv5aM5aY/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=cU9Nv5aM5aY&t=145s",
+      "body": "Papyrus explicitly turns the freely moving red SOUL blue. Gravity now pins it to the bottom of the bullet box and the up input becomes a variable-height jump, after which horizontal bone patterns teach and test that platform-like movement grammar.",
+      "video": "https://www.youtube.com/watch?v=cU9Nv5aM5aY&t=145s",
+      "videoDurationSeconds": 582
+    },
+    {
+      "dimension": "3D",
+      "game": "Furi",
+      "boss": "The Chain",
+      "screenshot": "https://i.ytimg.com/vi/iDXvM8N4y-o/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=iDXvM8N4y-o&t=16s",
+      "body": "The Chain demonstrates Furi's repeated handoff between wide top-down bullet-hell movement with free shooting and a close circular duel where spacing, parry timing, and sword attacks dominate. The enclosing ring and camera move announce which response grammar now applies.",
+      "video": "https://www.youtube.com/watch?v=iDXvM8N4y-o&t=16s",
+      "videoDurationSeconds": 256
+    },
+    {
+      "dimension": "3D",
+      "game": "Kirby Star Allies",
+      "boss": "Void Termina",
+      "screenshot": "https://i.ytimg.com/vi/IUky0DvqdeM/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=IUky0DvqdeM&t=570s",
+      "body": "The outer phases use the Star Allies Sparkler in the series' first fully 3D boss spaces. Entering Void Termina's body returns Kirby and allies to on-foot side-view abilities against the core, making the transition itself a clear handoff between movement, targeting, and attack grammars.",
+      "video": "https://www.youtube.com/watch?v=IUky0DvqdeM&t=570s",
+      "videoDurationSeconds": 1672
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

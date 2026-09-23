@@ -1,0 +1,142 @@
+{
+  "title": "Cambio de modo de control",
+  "subtitle": "Cambia cómo se mueve el jugador o lee el espacio dentro de un mismo combate continuo.",
+  "variant": "Kern vincula la cantera a una runa de gravedad: el movimiento libre de Tavi se convierte en carrera horizontal y salto antes de restaurarse con claridad",
+  "summary": "Un cambio de modo de control sustituye la gramática actual de movimiento o respuesta durante el mismo encuentro.",
+  "overview": "Un cambio de control modifica el significado de una entrada, los ejes disponibles o la lectura de la arena. Kern anticipa una runa antes de convertir el movimiento libre en carrera y salto. Tavi practica a salvo, salta una onda, obtiene una apertura para la espada y ve volver los controles originales.",
+  "learning": "Diseña como un solo contrato explícito el disparador, la señal previa, el relevo de entradas, la práctica protegida, la cámara y geometría, el paquete de ataques, la accesibilidad, la autoridad multijugador y la restauración.",
+  "category": "Espacio, movimiento y percepción",
+  "readTime": "8 min",
+  "demo": {
+    "title": "Enseña el verbo sustituto antes de examinarlo",
+    "timeline": "Cronología del cambio de control",
+    "step": "Estados del cambio de control",
+    "phaseNames": [
+      "Anticipar y transferir",
+      "Usar la nueva regla de movimiento",
+      "Restaurar el contrato original"
+    ],
+    "phaseDescriptions": [
+      "Tavi se mueve libremente. A los 0,55 s Kern revela la runa; la guía de cuatro direcciones se desvanece y un suelo con arco de salto anuncia la nueva gramática. Entre 1,15 y 1,65 s ambos se asientan sin peligro activo.",
+      "Ahora rigen el movimiento horizontal y el salto. Una onda terrestre se anticipa y viaja de 2,05 a 3,20 s; el salto de Tavi la supera con todo el cuerpo y crea una apertura para la espada a los 3,85 s.",
+      "La apertura sigue legible tras el límite de fase. A los 4,75 s la runa se libera, vuelve la guía libre y ambos recorren rutas continuas hasta el inicio exacto del bucle."
+    ],
+    "boss": "Jefe",
+    "player": "Jugador",
+    "danger": "La onda solo se activa después de mostrar el nuevo mapeo, el suelo y la trayectoria de salto",
+    "locked": "Disparador, tabla de mapeo, cámara, inmunidad de transición, ataques, salida y restauración se definen juntos",
+    "safe": "Lee la señal, prueba el verbo sustituto en un espacio protegido y úsalo ante la primera amenaza real",
+    "reducedMotion": "El movimiento reducido desactiva la reproducción automática. Recorre 0,55, 1,15, 1,65, 2,05, 2,62, 3,20, 3,85 y 4,75 segundos para inspeccionar todo el relevo.",
+    "diagramDescription": "Una cantera pasa de una cuadrícula libre a un carril lateral con gravedad. La runa de Kern sustituye la guía de cuatro direcciones por un suelo y un arco; Tavi aterriza a salvo, salta la onda, ataca en la apertura y vuelve visiblemente al movimiento libre."
+  },
+  "steps": [
+    {
+      "title": "¿Qué cambia exactamente bajo las manos del jugador?",
+      "body": "Escribe una tabla de entrada y acción antes, durante y después del cambio. Marca ejes eliminados, botones reasignados, aceleración, gravedad, apuntado, direcciones relativas a cámara y habilidades bloqueadas. Conserva menú, pausa, accesibilidad y controles del sistema. Si la misma entrada produce algo inesperado, comunica el reemplazo antes de admitir un fallo."
+    },
+    {
+      "title": "¿Cómo aprende el jugador la nueva gramática sin riesgo?",
+      "body": "Señala el cambio con dos canales concordantes, estabiliza la cámara y ofrece un instante protegido que pida el nuevo verbo sin tiempo letal. Confirma la comprensión con una amenaza simple antes de mezclar el modo con la presión normal del jefe. Mide desde que vuelve la entrada, no desde el comienzo de la cinemática."
+    },
+    {
+      "title": "¿Cómo entra, persiste y sale el encuentro del modo?",
+      "body": "Define disparador, duración mínima, interrupciones, punto de control, muerte y señal de retorno. Decide si proyectiles, fijado, invocaciones, enfriamientos, aliados y entradas almacenadas persisten o se convierten. Restaura el mapa original solo cuando cámara y geometría lo admitan, y limpia o traduce entradas retenidas para evitar una acción accidental."
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "La primera instrucción ya es el examen",
+      "body": "Un mensaje durante daño activo no enseña un contrato nuevo. Separa relevo, ensayo seguro y primera amenaza evaluada; de lo contrario el fallo mide velocidad de lectura y experiencia previa, no la decisión del jefe."
+    },
+    {
+      "title": "Cambia la imagen pero no los controles, o al revés",
+      "body": "Una cámara lateral con movimiento diagonal crea geometría falsa; una reasignación silenciosa con la cámara intacta es igual de opaca. Alinea encuadre, colisión, avisos, animación y carriles de ataque para que todos describan la misma regla."
+    },
+    {
+      "title": "El regreso arrastra una entrada obsoleta",
+      "body": "Un salto retenido que se vuelve ataque o una dirección reinterpretada puede fabricar un error inevitable. Define búfer y cancelación en cada transición, muestra el modo restaurado y retrasa el peligro hasta que el control original esté activo."
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "Trata cada modo como un contexto de entrada completo",
+      "body": "Dale un propietario y un mapa declarativo compartido por juego, avisos, tutorial, reasignación, glifos, pruebas y telemetría. Evita condicionales dispersos que dejen una habilidad o dispositivo con reglas viejas. Registra entrada, primer uso válido, daño antes de dominarlo, salida y conflictos."
+    },
+    {
+      "title": "Conserva invariantes entre dispositivos y accesibilidad",
+      "body": "Prueba teclado, cruceta, stick, tacto, reasignación, esquemas a una mano, mantener frente a alternar, movimiento reducido, cámara invertida y ayudas. Enseña acciones, no botones físicos. Si una opción altera tiempos o automatización, conserva honestos la señal y el margen de respuesta."
+    },
+    {
+      "title": "Incluye cámara y cognición en el presupuesto",
+      "body": "Mide por separado señal, movimiento de cámara, asentamiento, reconocimiento, primera entrada exploratoria y aviso de amenaza. Una animación breve aún puede exigir un cambio mental largo. Las repeticiones pueden acelerar el espectáculo, pero no borrar la señal ni la confirmación segura."
+    },
+    {
+      "title": "Prueba cada límite e interrupción",
+      "body": "Entra y sal estando en el aire, atacando, aturdido, apuntando, manteniendo dirección, usando un objeto o controlando otra entidad. Prueba pausa, desconexión, reasignación, muerte, recarga, salto de cinemática, unión cooperativa y latencia para que nadie quede en otro contexto."
+    }
+  ],
+  "story": {
+    "title": "Kern vuelve pesada la superficie rúnica",
+    "body": "La cantera no se mueve. Kern activa una runa incrustada que atrae ambos cuerpos hacia un suelo visible, reduce el tránsito libre a un carril lateral y justifica que la onda terrestre exija un salto."
+  },
+  "adaptation": {
+    "title": "Mantén la espada familiar de Tavi y cambia solo el movimiento",
+    "body": "Tavi conserva ataque y silueta, por lo que la lección aísla un verbo nuevo: saltar bajo gravedad. La transición ofrece un aterrizaje protegido, la primera onda acepta un salto ordinario con margen corporal y la apertura confirma que el movimiento temporal conduce a una recompensa familiar."
+  },
+  "distinction": {
+    "title": "Una nueva gramática de entrada, no solo otra cámara o sala",
+    "body": "Una arena trasladada mueve el combate a otra geometría sin exigir otros controles. Una fase cambia el paquete del jefe sin cambiar los verbos. Aquí cambia cómo se mueve, apunta, bloquea u opera el jugador; un corte de cámara solo cuenta si altera ese contrato jugable."
+  },
+  "lensNotes": [
+    {
+      "id": "progress-clarity",
+      "body": "Entrada, primera acción válida, prueba de dominio y restauración necesitan señales distintas para atribuir el fallo a una decisión y no a un estado invisible."
+    },
+    {
+      "id": "threat-geometry",
+      "body": "El verbo sustituto debe coincidir con carriles, márgenes, gravedad, cámara y volúmenes de colisión del nuevo paquete."
+    },
+    {
+      "id": "mastery-check",
+      "body": "Sustituir controles aprendidos cuesta un cambio de tarea; ensayo protegido y primera prueba simple mantienen ese coste legible."
+    },
+    {
+      "id": "dramatic-framing",
+      "body": "La perspectiva puede realzar el momento, pero primero debe conservar la orientación y revelar los nuevos ejes jugables."
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "Undertale",
+      "boss": "Papyrus",
+      "screenshot": "https://i.ytimg.com/vi/cU9Nv5aM5aY/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=cU9Nv5aM5aY&t=145s",
+      "body": "Papyrus vuelve azul el ALMA roja que antes se movía libremente. La gravedad la fija abajo y arriba pasa a ser un salto de altura variable; los patrones horizontales de huesos enseñan y examinan esa gramática de plataformas.",
+      "video": "https://www.youtube.com/watch?v=cU9Nv5aM5aY&t=145s",
+      "videoDurationSeconds": 582
+    },
+    {
+      "dimension": "3D",
+      "game": "Furi",
+      "boss": "The Chain",
+      "screenshot": "https://i.ytimg.com/vi/iDXvM8N4y-o/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=iDXvM8N4y-o&t=16s",
+      "body": "The Chain alterna el movimiento amplio de bullet hell cenital con disparo libre y un duelo circular cercano dominado por distancia, parada y espada. El anillo y la cámara anuncian qué gramática responde ahora.",
+      "video": "https://www.youtube.com/watch?v=iDXvM8N4y-o&t=16s",
+      "videoDurationSeconds": 256
+    },
+    {
+      "dimension": "3D",
+      "game": "Kirby Star Allies",
+      "boss": "Void Termina",
+      "screenshot": "https://i.ytimg.com/vi/IUky0DvqdeM/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=IUky0DvqdeM&t=570s",
+      "body": "Las fases exteriores usan Star Allies Sparkler en los primeros jefes plenamente 3D de la serie. Dentro del cuerpo, Kirby vuelve a habilidades a pie y vista lateral contra el núcleo: la transición cambia movimiento, apuntado y ataque.",
+      "video": "https://www.youtube.com/watch?v=IUky0DvqdeM&t=570s",
+      "videoDurationSeconds": 1672
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}
