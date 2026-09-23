@@ -3227,6 +3227,8 @@ test('posture gauge visibly recovers, breaks, and advances only through one fini
     }, milliseconds);
 
   await expect(page.locator('.lesson-title-line h1')).toHaveText('Posture stagger gauge');
+  await expect(widget).toHaveAttribute('data-blueprint-full-height', 'true');
+  expect((await widget.boundingBox()).height).toBeGreaterThan(800);
   await expect(page.locator('.wip-badge, .draft-profile')).toHaveCount(0);
   await expect(page.locator('.game-example')).toHaveCount(3);
 

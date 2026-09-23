@@ -18,7 +18,7 @@
     ],
     "phaseDescriptions": [
       "Tavi's first sword contact adds 32 posture at 0.72 s. A deliberate pause after 1.02 s lets the gauge fall from 32 to 18, making recovery visible before two deflects and one strike rebuild pressure. Kern's health does not move during this setup.",
-      "The contact at 2.62 s reaches the 100-point threshold. Kern enters critical-ready, a diamond marker appears, posture recovery stops, and the opening lasts until 3.88 s. The filled gauge is evidence of a break, not phase progress by itself.",
+      "The contact at 2.62 s reaches the 100-point threshold. Kern enters critical-ready, the chest crystal opens, posture recovery stops, and the opening lasts until 3.88 s. The filled gauge is evidence of a break, not phase progress by itself.",
       "Tavi steps into finisher reach and commits at 3.46 s. The encounter consumes exactly one phase token, reduces boss health once, clears the marker, and holds Kern in recovery before posture and positions reset after 5.20 s. An unconsumed opening would simply close with no token awarded."
     ],
     "boss": "Boss",
@@ -27,7 +27,7 @@
     "locked": "Gauge owner, gain events, recovery delay and rate, break id, critical deadline, finisher eligibility, consumed phase token, health result, and reset are encounter-owned",
     "safe": "Pair gauge fill with segments, impact notches, a recovery arrow, break flash, shaped critical marker, timer ring, sound, captions, and controller feedback rather than color alone",
     "reducedMotion": "Autoplay is disabled by reduced motion. Scrub across 0.72, 1.02, 1.42, 1.72, 2.12, 2.62, 2.82, 3.46, 3.88, and 5.20 seconds to inspect gain, recovery, renewed pressure, break, eligibility, consumption, close, and reset.",
-    "diagramDescription": "Tavi faces Kern beneath a separate segmented posture gauge. Sword and deflect contacts add visible notches, one pause drains part of the gauge, and the final contact fills it. A diamond critical marker and shrinking timer ring appear over the staggered boss. Tavi closes the distance and performs one finisher; one phase token empties and boss health changes only at that resolution."
+    "diagramDescription": "Tavi approaches Kern beneath two separate solid gauges: orange posture rises with sword and deflect contacts, while green boss health stays full. A pause lets posture drain before later contacts fill it. When Kern staggers, the crystal in the boss’s chest opens and a short hourglass bar counts down the finisher window. Tavi strikes once; one of three stone phase tokens goes dark and health falls only after that hit."
   },
   "steps": [
     {

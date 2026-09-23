@@ -2845,6 +2845,14 @@ test('posture break recovers under lost pressure and advances only through one f
   assert.equal(broken.postureBreakId, 'posture-break-1');
   assert.equal(broken.postureRewardGrants, 0);
   assert.equal(broken.postureHealthChanged, false);
+  const postureBar = broken.primitives.find(
+    (primitive) =>
+      primitive.type === 'path' &&
+      primitive.data === 'M 120 71 H 440 V 91 H 120 Z' &&
+      primitive.tone === 'signal',
+  );
+  assert.ok(postureBar, 'the filled posture gauge reaches its threshold');
+  assert.equal(postureBar.width, 0);
 
   const ready = blueprintFrame(id, 2.9);
   assert.equal(ready.postureCriticalReady, true);

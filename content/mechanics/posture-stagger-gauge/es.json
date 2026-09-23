@@ -18,7 +18,7 @@
     ],
     "phaseDescriptions": [
       "El primer contacto de Tavi añade 32 puntos a los 0,72 s. Una pausa desde 1,02 s reduce el valor de 32 a 18 y hace visible la recuperación; dos desvíos y otro golpe reconstruyen la presión sin mover la salud de Kern.",
-      "El contacto de 2,62 s alcanza 100. Kern entra en estado crítico, aparece un rombo, se detiene la recuperación y la ventana dura hasta 3,88 s. El medidor lleno demuestra la ruptura, pero aún no concede progreso de fase.",
+      "El contacto de 2,62 s alcanza 100. Kern entra en estado crítico, se abre el cristal del pecho, se detiene la recuperación y la ventana dura hasta 3,88 s. El medidor lleno demuestra la ruptura, pero aún no concede progreso de fase.",
       "Tavi entra en alcance y se compromete a los 3,46 s. El encuentro consume exactamente un marcador de fase, reduce la salud una vez, retira la marca y mantiene la recuperación hasta el reinicio tras 5,20 s. Si expira, no hay recompensa."
     ],
     "boss": "Jefe",
@@ -27,7 +27,7 @@
     "locked": "Propietario del medidor, ganancias, recuperación, id de ruptura, límite crítico, elegibilidad del remate, marcador de fase, salud y reinicio pertenecen al encuentro",
     "safe": "Combina segmentos, muescas, flecha de recuperación, destello, marca con forma, temporizador, sonido, subtítulos y vibración; no dependas solo del color",
     "reducedMotion": "Con movimiento reducido no hay reproducción automática. Recorre 0,72, 1,02, 1,42, 1,72, 2,12, 2,62, 2,82, 3,46, 3,88 y 5,20 s para revisar ganancia, recuperación, presión, ruptura, consumo, cierre y reinicio.",
-    "diagramDescription": "Tavi enfrenta a Kern bajo un medidor segmentado. Golpes y desvíos añaden muescas, una pausa vacía parte del medidor y el último contacto lo llena. Un rombo y un temporizador aparecen sobre el jefe. Tavi se acerca y ejecuta un remate; un marcador de fase desaparece y la salud solo cambia al resolverlo."
+    "diagramDescription": "Tavi se acerca a Kern bajo dos barras sólidas separadas: la postura naranja sube con golpes y desvíos, mientras la salud verde del jefe sigue llena. Una pausa deja que la postura baje antes de que otros contactos la llenen. Al tambalearse Kern, se abre el cristal de su pecho y una barra con reloj de arena cuenta el tiempo para el remate. Tavi golpea una vez; se apaga una de tres fichas de piedra y la salud solo baja tras ese golpe."
   },
   "steps": [
     {

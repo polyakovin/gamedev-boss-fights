@@ -1144,12 +1144,12 @@ const SPECS = {
   },
   'posture-stagger-gauge': {
     mode: 'posture-stagger-gauge',
-    boss: [300, 390],
-    player: [300, 720],
-    target: [300, 720],
-    arena: [55, 310, 450, 570],
-    pressurePoint: [300, 570],
-    finisherPoint: [300, 555],
+    boss: [280, 310],
+    player: [280, 700],
+    target: [280, 700],
+    arena: [40, 145, 480, 715],
+    pressurePoint: [280, 455],
+    finisherPoint: [280, 430],
     contacts: [0.72, 1.72, 2.12, 2.62],
     postureAfterContact: [32, 48, 72, 100],
     recovery: [1.02, 1.42],
@@ -5388,101 +5388,90 @@ function primitivesFor(spec, frame) {
     ];
   }
   if (mode === 'posture-stagger-gauge') {
-    const postureWidth = 200 * (frame.postureValue / 100);
-    const finisherPulse = strikePulse(frame.time, spec.finisherAt, 0.44);
-    const breakPulse = strikePulse(frame.time, spec.breakAt, 0.5);
+    const postureEnd = 120 + (320 * frame.postureValue) / 100;
+    const healthEnd = 120 + (320 * (frame.postureFinisherConsumed ? 116 : 172)) / 172;
     const contactPulse = Math.max(
       ...spec.contacts.map((contact) => strikePulse(frame.time, contact, 0.28)),
     );
+    const finisherPulse = strikePulse(frame.time, spec.finisherAt, 0.44);
     const criticalRemaining = frame.postureCriticalReady
       ? clamp((spec.criticalEndsAt - frame.time) / (spec.criticalEndsAt - spec.criticalReadyAt))
       : 0;
-    const bossHealth = frame.postureFinisherConsumed ? 116 : 172;
     return [
-      rect(...spec.arena, 0.52, 'muted', 0.025),
-      rect(180, 318, 240, 22, 0.62, 'muted', 0.035),
-      rect(200, 322, postureWidth, 14, 0.96, frame.postureBroken ? 'signal' : 'accent', 0.2),
-      ...Array.from({ length: 4 }, (_, index) =>
-        line(250 + index * 50, 321, 250 + index * 50, 338, 0.82, 'muted', 3),
+      path('M 120 71 H 440 V 91 H 120 Z', 0.66, 'muted', 0, 0.64),
+      path(
+        `M 120 71 H ${postureEnd} V 91 H 120 Z`,
+        frame.postureValue > 0 ? 0.98 : 0,
+        frame.postureBroken ? 'signal' : 'accent',
+        0,
+        0.9,
+      ),
+      path('M 84 67 L 105 77 L 100 96 L 84 108 L 68 96 L 63 77 Z', 0.96, 'accent', 0, 0.85),
+      path('M 120 108 H 440 V 124 H 120 Z', 0.68, 'muted', 0, 0.62),
+      path(`M 120 108 H ${healthEnd} V 124 H 120 Z`, 0.98, 'safe', 0, 0.9),
+      path(
+        'M 86 111 C 75 99 59 110 64 125 L 86 145 L 108 125 C 113 110 97 99 86 111 Z',
+        0.96,
+        'safe',
+        0,
+        0.86,
+      ),
+      ...Array.from({ length: 3 }, (_, index) => {
+        const y = 230 + index * 57;
+        const remaining = index < frame.posturePhaseTokens;
+        return [
+          path(
+            `M 62 ${y - 19} L 92 ${y - 19} L 101 ${y + 9} L 77 ${y + 26} L 53 ${y + 9} Z`,
+            0.94,
+            remaining ? 'safe' : 'muted',
+            0,
+            remaining ? 0.84 : 0.6,
+          ),
+          path(`M 65 ${y + 3} L 77 ${y - 5} L 89 ${y + 3}`, remaining ? 0.88 : 0.2, 'muted', 3),
+        ];
+      }).flat(),
+      path(
+        `M ${frame.boss.x - 18} ${frame.boss.y + 3} L ${frame.boss.x} ${frame.boss.y - 5} L ${frame.boss.x + 18} ${frame.boss.y + 3} L ${frame.boss.x + 14} ${frame.boss.y + 27} L ${frame.boss.x} ${frame.boss.y + 35} L ${frame.boss.x - 14} ${frame.boss.y + 27} Z`,
+        frame.postureCriticalReady || frame.postureFinisherConsumed ? 0.98 : 0.2,
+        frame.postureFinisherConsumed ? 'safe' : 'signal',
+        0,
+        0.92,
       ),
       path(
-        'M 408 330 L 430 330 M 420 320 L 430 330 L 420 340',
-        frame.postureRecovering ? 0.92 : 0.18,
-        'safe',
-        5,
-      ),
-      rect(214, 352, 172, 12, 0.5, 'muted', 0.025),
-      rect(214, 352, bossHealth, 12, 0.9, frame.postureFinisherConsumed ? 'signal' : 'safe', 0.14),
-      circle(frame.boss.x, frame.boss.y, 84 + breakPulse * 34, breakPulse, 'signal', 9, 0.05),
-      circle(
-        frame.boss.x,
-        frame.boss.y,
-        76 + pulse(frame.time * 2) * 5,
-        frame.postureCriticalReady ? 0.9 : 0,
-        'safe',
-        7,
-        0.02,
-        '9 7',
+        `M ${frame.boss.x - 44} ${frame.boss.y + 27} L ${frame.boss.x - 20} ${frame.boss.y + 7} L ${frame.boss.x - 15} ${frame.boss.y + 25} Z`,
+        contactPulse * 0.92,
+        'accent',
+        0,
+        0.86,
       ),
       path(
-        `M ${frame.boss.x} ${frame.boss.y - 120} L ${frame.boss.x + 22} ${frame.boss.y - 96} L ${frame.boss.x} ${frame.boss.y - 72} L ${frame.boss.x - 22} ${frame.boss.y - 96} Z`,
+        `M ${frame.boss.x + 42} ${frame.boss.y + 20} L ${frame.boss.x + 23} ${frame.boss.y + 4} L ${frame.boss.x + 19} ${frame.boss.y + 30} Z`,
+        contactPulse * 0.92,
+        'accent',
+        0,
+        0.86,
+      ),
+      path('M 372 341 H 493 V 356 H 372 Z', frame.postureCriticalReady ? 0.74 : 0, 'muted', 0, 0.7),
+      path(
+        `M 372 341 H ${372 + 121 * criticalRemaining} V 356 H 372 Z`,
         frame.postureCriticalReady ? 0.98 : 0,
         'signal',
-        7,
-        0.2,
-      ),
-      rect(200, 374, 200, 8, frame.postureCriticalReady ? 0.44 : 0, 'muted', 0.02),
-      rect(
-        200,
-        374,
-        200 * criticalRemaining,
-        8,
-        frame.postureCriticalReady ? 0.92 : 0,
-        'signal',
-        0.18,
+        0,
+        0.9,
       ),
       path(
-        `M ${frame.player.x} ${frame.player.y - 44} Q ${frame.player.x} ${frame.player.y - 118} ${frame.boss.x} ${frame.boss.y + 40}`,
-        contactPulse,
-        frame.postureBroken ? 'signal' : 'accent',
-        9,
-      ),
-      circle(
-        frame.boss.x,
-        frame.boss.y + 48,
-        24 + contactPulse * 35,
-        contactPulse,
-        'accent',
-        7,
-        0.08,
-      ),
-      circle(
-        frame.boss.x,
-        frame.boss.y,
-        54 + finisherPulse * 46,
-        finisherPulse,
+        'M 497 333 H 517 L 507 348 L 517 363 H 497 L 507 348 Z',
+        frame.postureCriticalReady ? 0.96 : 0,
         'signal',
-        10,
-        0.08,
+        0,
+        0.85,
       ),
-      ...Array.from({ length: 3 }, (_, index) =>
-        path(
-          `M ${238 + index * 62} 410 L ${253 + index * 62} 425 L ${238 + index * 62} 440 L ${223 + index * 62} 425 Z`,
-          0.9,
-          index < frame.posturePhaseTokens ? 'safe' : 'muted',
-          5,
-          index < frame.posturePhaseTokens ? 0.16 : 0.02,
-        ),
-      ),
-      line(
-        frame.player.x,
-        frame.player.y - 36,
-        frame.boss.x,
-        frame.boss.y + 55,
-        frame.postureFinisherEligible && !frame.postureFinisherConsumed ? 0.58 : 0.08,
-        'safe',
-        5,
-        '8 7',
+      path(
+        `M ${frame.player.x - 18} ${frame.player.y - 58} L ${frame.boss.x - 8} ${frame.boss.y + 26} L ${frame.boss.x + 20} ${frame.boss.y + 16} L ${frame.player.x + 4} ${frame.player.y - 52} Z`,
+        finisherPulse * 0.82,
+        'signal',
+        0,
+        0.72,
       ),
     ];
   }
@@ -11322,7 +11311,8 @@ export function blueprintFrame(id, time) {
       spec.mode === 'instant-kill' ||
       spec.mode === 'status-buildup' ||
       spec.mode === 'persistent-progress' ||
-      spec.mode === 'pacifist-resolution'
+      spec.mode === 'pacifist-resolution' ||
+      spec.mode === 'posture-stagger-gauge'
         ? 55
         : spec.mode === 'directional-shield' ||
             spec.mode === 'damage-type-resistance' ||
