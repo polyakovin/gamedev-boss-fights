@@ -1,0 +1,142 @@
+{
+  "title": "Status buildup",
+  "subtitle": "Accumulate pressure first, apply the consequence only at the threshold",
+  "variant": "Expose · decay · stack · trigger",
+  "summary": "Boss attacks fill a separate status gauge; the actual effect begins only when accumulated exposure reaches its threshold.",
+  "overview": "Status buildup separates exposure from consequence. Each qualifying contact adds to a readable gauge, safe time may let that value decay, and the authored effect is applied exactly once when the threshold is crossed, creating a risk decision before ordinary damage, control loss, or defeat occurs.",
+  "learning": "Define which contacts add buildup, the per-source amount, threshold, decay delay and rate, effect payload and duration, cleansing rules, resistance scaling, reapplication immunity, stacking ownership, UI priority, and the tests that keep buildup, effect, and ordinary health damage from becoming one ambiguous system.",
+  "category": "States, resources, and scaling",
+  "readTime": "9 min",
+  "demo": {
+    "title": "Enter Kern's rune field, let one exposure decay, then cross the threshold",
+    "timeline": "Status buildup timeline",
+    "step": "Status buildup states",
+    "phaseNames": [
+      "Apply partial buildup, then show delayed decay",
+      "Stack contacts to the threshold and apply one effect",
+      "Clear the gauge, protect re-entry, and reset"
+    ],
+    "phaseDescriptions": [
+      "Tavi enters Kern's radial field and receives 38 buildup at 0.72 s. Leaving the field stops new exposure, but the gauge holds until its 1.08 s decay delay and then falls to 14 by 1.72 s, making the grace period and recovery rate separately visible.",
+      "Tavi re-enters before the remainder clears. Contacts at 2.14 s and 2.60 s raise the same gauge to 55 and then 100. The threshold crossing reserves one status effect; the rune lock begins at 2.72 s and lasts until 3.72 s while ordinary health remains a separate concern.",
+      "When the effect ends, buildup resets to zero and a short immunity ring lasts until 4.42 s. A contact during that ring is ignored rather than silently starting another effect. Tavi then leaves the field and the complete system returns to its clear state after 5.20 s."
+    ],
+    "boss": "Boss",
+    "player": "Player",
+    "danger": "The radial field adds buildup only during authored contact windows; partial exposure is not yet the status effect, and crossing the threshold may never create more than one effect event",
+    "locked": "Source id, buildup amount, threshold comparison, decay delay, decay rate, resistance modifier, effect id, duration, cleansing, immunity, and reapplication authority are encounter-owned",
+    "safe": "Show current buildup, threshold, decay direction, active effect, cleanse, and immunity as distinct shapes and states; never communicate all of them with one changing color",
+    "reducedMotion": "Autoplay is disabled by reduced motion. Scrub across 0.72, 1.08, 1.72, 2.14, 2.60, 2.72, 3.72, 4.42, and 5.20 seconds to inspect exposure, decay, threshold, effect, immunity, and reset.",
+    "diagramDescription": "Kern stands inside a dashed radial rune field while Tavi moves in and out. A segmented gauge above the arena rises after the first pulse, partially decays outside the field, then fills after two close pulses. At the threshold, rune shards orbit Tavi for one effect window. The gauge clears and a separate protective ring marks temporary immunity before the loop resets."
+  },
+  "steps": [
+    {
+      "title": "What accumulates, and what does not happen before the threshold?",
+      "body": "Give every source a stable status id and explicit buildup amount. Decide whether blocks, invulnerability, shields, weak hits, overlapping zones, or repeated ticks contribute. Keep partial buildup free of the final payload unless a separate escalating-warning rule is intentional; otherwise the gauge lies about when the consequence begins."
+    },
+    {
+      "title": "How can the player manage the gauge before it fills?",
+      "body": "Tune the delay before decay, decay per second, cleansing cost, resistance modifier, and safe-space availability together. Test one isolated contact, a planned combo, overlapping sources, and the slowest legal movement speed. The player needs enough signal to decide whether to leave, cleanse, guard, or accept the risk."
+    },
+    {
+      "title": "What exactly happens on crossing, clearing, and reapplication?",
+      "body": "Use one authoritative threshold comparison and reserve one effect id when it crosses. Specify whether excess buildup is discarded, carried, or converted; when the gauge clears; whether the effect can refresh; and how long immunity lasts. Test simultaneous final hits, cleanse-on-crossing, phase changes, death, rollback, and repeated network messages."
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "The gauge looks full before the effect is authoritative",
+      "body": "Rounding, delayed replication, or a decorative animation can show 100 while the server still considers the target below threshold. Derive fill, threshold flash, effect event, and accessibility announcement from the same resolved value and sequence number."
+    },
+    {
+      "title": "Decay and immunity are invisible exceptions",
+      "body": "If buildup pauses, falls, clears, or ignores a new hit without a distinct cue, the system appears inconsistent. Expose delay, direction, cleansing, resistance, and immunity separately, and log the reason every contribution was applied, reduced, or rejected."
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "Separate buildup from the applied effect",
+      "body": "Store current buildup, last exposure time, threshold, effect state, effect timer, and immunity timer as separate fields. The gauge may decay while no effect exists; the active effect may continue while buildup is already zero. This boundary prevents accidental refreshes and supports clear telemetry."
+    },
+    {
+      "title": "Balance frequency, amount, and recovery as one rhythm",
+      "body": "A small amount from a rapid source can be more demanding than one large, slow pulse because it repeatedly postpones decay. Measure time to threshold under intended and worst-case overlap, time needed to recover after one mistake, safe uptime lost, and how resistance changes those values."
+    },
+    {
+      "title": "Choose an effect proportional to avoidability",
+      "body": "A hard stun or instant defeat needs stronger advance information, more reliable counterplay, and safer overlap rules than a brief damage-over-time effect. Scale consequence with field coverage, source tracking, contact frequency, arena constraints, and the cost of cleansing rather than with theme alone."
+    },
+    {
+      "title": "Make ownership and stacking deterministic",
+      "body": "For multiple bosses, summons, hazards, or players, decide whether contributions share one gauge, create separate gauges, or select a dominant source. Resolve simultaneous threshold crossings once, preserve the credited source, and keep co-op UI and rollback from applying duplicate effects."
+    }
+  ],
+  "story": {
+    "title": "Runes stain the sword before they bind its bearer",
+    "body": "Kern's first pulse leaves a few glowing marks on Tavi's gauge, and retreat lets them fade. Returning too soon lets two later pulses complete the rune pattern. Only then do the shards close around Tavi, making accumulation, threshold, and consequence three readable story beats."
+  },
+  "adaptation": {
+    "title": "Offer redundant warning and adjustable recovery",
+    "body": "Pair the gauge with shape, icon, sound, caption, and controller feedback at important bands. Allow larger UI, reduced flashes, independent effect audio, and a clear numeric or segmented alternative. Difficulty options may increase decay, reduce buildup, lengthen immunity, or automate cleansing without hiding the underlying rule."
+  },
+  "distinction": {
+    "title": "A thresholded secondary state, not ordinary health or a posture break",
+    "body": "Health usually changes immediately when damage resolves. A posture gauge commonly rewards sustained player pressure by opening the boss to a finisher. Status buildup instead records exposure on a target and withholds its separate payload until a threshold is crossed; that payload may harm, constrain, transform, or defeat either side."
+  },
+  "lensNotes": [
+    {
+      "id": "progress-clarity",
+      "body": "The gauge must distinguish partial exposure, decay, threshold crossing, active effect, and immunity without implying that they are the same state."
+    },
+    {
+      "id": "risk-reward",
+      "body": "Remaining in range can preserve offensive uptime, but it also postpones decay and makes the next contact more likely to cross the threshold."
+    },
+    {
+      "id": "counterplay",
+      "body": "Leaving the source, guarding a tick, cleansing, or building resistance must change a measurable part of the accumulation rule."
+    },
+    {
+      "id": "difficulty-rhythm",
+      "body": "Contact spacing relative to the decay delay determines whether pressure feels like isolated warnings or a deliberate threshold combo."
+    },
+    {
+      "id": "rule-exception",
+      "body": "Cleansing, resistance, immunity, and sources that bypass decay are exceptions that need explicit ownership and visible feedback."
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "Salt and Sanctuary",
+      "boss": "That Stench Most Foul",
+      "screenshot": "https://i.ytimg.com/vi/i-VPBdz-UAw/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=i-VPBdz-UAw&t=6s",
+      "body": "The boss's poison breath and summoned Stenchpods turn one shared poison meter into an arena-pressure system. Exposure fills the gauge first; poisoning begins only after it fills, so retreat space and the time between contacts determine whether partial buildup becomes a lasting effect.",
+      "video": "https://www.youtube.com/watch?v=i-VPBdz-UAw&t=6s",
+      "videoDurationSeconds": 90
+    },
+    {
+      "dimension": "3D",
+      "game": "Sekiro: Shadows Die Twice",
+      "boss": "Guardian Ape",
+      "screenshot": "https://i.ytimg.com/vi/4JfjDp4blkU/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=4JfjDp4blkU&t=2s",
+      "body": "The headless phase's scream applies Terror over a broad radial area. The visible meter separates brief exposure from the lethal threshold, letting the sustained field, escape time, and any buildup reduction be tuned independently of the scream's ordinary damage.",
+      "video": "https://www.youtube.com/watch?v=4JfjDp4blkU&t=2s",
+      "videoDurationSeconds": 34
+    },
+    {
+      "dimension": "3D",
+      "game": "Elden Ring",
+      "boss": "Wormface",
+      "screenshot": "https://i.ytimg.com/vi/FqKZnoVL1Ys/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=FqKZnoVL1Ys&t=17s",
+      "body": "Wormface's breath and lingering cloud build Death Blight rather than immediately producing its terminal result. Moving sources and persistent space denial can therefore share one threshold while the full meter remains the single authoritative transition to the effect.",
+      "video": "https://www.youtube.com/watch?v=FqKZnoVL1Ys&t=17s",
+      "videoDurationSeconds": 95
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

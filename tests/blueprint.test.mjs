@@ -37,6 +37,8 @@ import {
   pacifistResolutionOutcome,
   persistentProgressState,
   persistentProgressRestore,
+  statusBuildupState,
+  statusBuildupApply,
   counterStanceOutcome,
   counterStanceState,
   blueprintFrame,
@@ -64,8 +66,8 @@ import {
   renderBlueprintThumbnail,
 } from '../lib/blueprint-view.mjs';
 
-test('all 84 promoted lesson animations have distinct rule modes and complete moving frames', () => {
-  assert.equal(BLUEPRINT_MECHANIC_IDS.length, 84);
+test('all 85 promoted lesson animations have distinct rule modes and complete moving frames', () => {
+  assert.equal(BLUEPRINT_MECHANIC_IDS.length, 85);
   const modes = new Set();
   for (const id of BLUEPRINT_MECHANIC_IDS) {
     for (let time = 0; time <= BLUEPRINT_DURATION; time += 0.1) {
@@ -86,7 +88,7 @@ test('all 84 promoted lesson animations have distinct rule modes and complete mo
           assert.ok(Number.isFinite(value), `${id} has an invalid ${primitive.type}`);
     }
   }
-  assert.equal(modes.size, 84);
+  assert.equal(modes.size, 85);
 });
 
 test('every blueprint exposes signal, committed action, and recovery without player teleports', () => {
@@ -120,7 +122,8 @@ test('every blueprint exposes signal, committed action, and recovery without pla
       id !== 'baited-self-hit' &&
       id !== 'posture-stagger-gauge' &&
       id !== 'pacifist-resolution' &&
-      id !== 'persistent-progress'
+      id !== 'persistent-progress' &&
+      id !== 'status-buildup'
     )
       assert.equal(blueprintFrame(id, 3).dangerActive, true, id);
     assert.equal(blueprintFrame(id, 3).playerSafe, true, id);
@@ -204,6 +207,7 @@ test('every damaging promoted animation derives safety from its own active geome
       id !== 'posture-stagger-gauge' &&
       id !== 'pacifist-resolution' &&
       id !== 'persistent-progress' &&
+      id !== 'status-buildup' &&
       id !== 'part-break' &&
       id !== 'counter-stance' &&
       id !== 'absorption-power-up' &&
@@ -2992,5 +2996,59 @@ test('persistent progress restores committed objectives while transient combat r
   assert.match(
     renderBlueprintThumbnail(id, 'test-persistent-progress'),
     /data-blueprint-preview="persistent-progress"/,
+  );
+});
+
+test('status buildup decays partial exposure and emits one effect at the threshold', () => {
+  const id = 'status-buildup';
+  assert.deepEqual([0, 0.8, 1.2, 1.8, 2.2, 2.62, 2.8, 3.8, 4.6, 5.3].map(statusBuildupState), [
+    'clear',
+    'partial-buildup',
+    'decaying',
+    'partially-cleared',
+    'chain-buildup',
+    'threshold-reached',
+    'status-active',
+    'temporary-immunity',
+    'clear',
+    'reset',
+  ]);
+  assert.deepEqual(statusBuildupApply({ current: 70, amount: 40 }), {
+    value: 100,
+    triggered: true,
+    effectCount: 1,
+    ignored: false,
+  });
+  assert.deepEqual(statusBuildupApply({ current: 30, amount: 80, immune: true }), {
+    value: 30,
+    triggered: false,
+    effectCount: 0,
+    ignored: true,
+  });
+
+  const firstContact = blueprintFrame(id, 0.72);
+  assert.equal(firstContact.statusBuildupValue, 38);
+  assert.equal(firstContact.dangerActive, true);
+  assert.equal(firstContact.playerSafe, false, 'the demonstration intentionally applies buildup');
+  assert.equal(blueprintPointSafe(id, 0.72, { x: 470, y: 780 }), true);
+  assert.equal(Math.round(blueprintFrame(id, 1.72).statusBuildupValue), 14);
+  assert.equal(Math.round(blueprintFrame(id, 2.2).statusBuildupValue), 55);
+
+  const triggered = blueprintFrame(id, 2.8);
+  assert.equal(triggered.statusBuildupValue, 100);
+  assert.equal(triggered.statusBuildupThresholdReached, true);
+  assert.equal(triggered.statusBuildupEffectActive, true);
+  assert.equal(triggered.statusBuildupEffectCount, 1);
+  assert.equal(triggered.statusBuildupEffectId, 'status-effect-1');
+
+  const immune = blueprintFrame(id, 4.05);
+  assert.equal(immune.statusBuildupValue, 0);
+  assert.equal(immune.statusBuildupImmune, true);
+  assert.equal(immune.statusBuildupIgnoredContacts, 1);
+  assert.equal(immune.statusBuildupEffectCount, 1);
+  assert.deepEqual(blueprintFrame(id, 0).player, blueprintFrame(id, 6).player);
+  assert.match(
+    renderBlueprintThumbnail(id, 'test-status-buildup'),
+    /data-blueprint-preview="status-buildup"/,
   );
 });

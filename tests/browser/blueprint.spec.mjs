@@ -405,9 +405,9 @@ test('volley releases three parallel bolts on one beat and clears its outside ro
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
 });
 
-test('catalog and builder reuse the 84 promoted rule-specific previews', async ({ page }) => {
+test('catalog and builder reuse the 85 promoted rule-specific previews', async ({ page }) => {
   await page.goto('en/');
-  await expect(page.locator('[data-blueprint-preview]')).toHaveCount(84);
+  await expect(page.locator('[data-blueprint-preview]')).toHaveCount(85);
   const catalogLayouts = await page.locator('[data-blueprint-preview]').evaluateAll((previews) =>
     previews.map((preview) => {
       const boss = preview.querySelector('[data-character-art-preview="kern"]');
@@ -431,7 +431,7 @@ test('catalog and builder reuse the 84 promoted rule-specific previews', async (
   expect(new Set(catalogLayouts.map(({ layout }) => layout)).size).toBeGreaterThanOrEqual(18);
 
   await page.goto('en/builder/');
-  await expect(page.locator('[data-blueprint-preview]')).toHaveCount(84);
+  await expect(page.locator('[data-blueprint-preview]')).toHaveCount(85);
   const builderLayouts = await page.locator('[data-blueprint-preview]').evaluateAll((previews) =>
     previews.map((preview) => {
       const boss = preview.querySelector('[data-character-art-preview="kern"]');
@@ -3372,6 +3372,45 @@ test('persistent progress restores two committed anchors before one final result
   );
   await expect(widget).toHaveAttribute('data-blueprint-persistent-reward-grants', '1');
   await expect(widget).toHaveAttribute('data-blueprint-persistent-boss-health', '0');
+  await page.setViewportSize({ width: 375, height: 812 });
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+});
+
+test('status buildup decays, crosses once, and ignores contact during immunity', async ({
+  page,
+}) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.goto('en/mechanics/status-buildup/');
+  const widget = page.locator('[data-blueprint-demo]');
+  const timeline = widget.locator('[data-blueprint-timeline]');
+  const seek = (milliseconds) =>
+    timeline.evaluate((element, value) => {
+      element.value = String(value);
+      element.dispatchEvent(new Event('input', { bubbles: true }));
+    }, milliseconds);
+
+  await expect(page.locator('.lesson-title-line h1')).toHaveText('Status buildup');
+  await expect(page.locator('.wip-badge, .draft-profile')).toHaveCount(0);
+  await expect(page.locator('.game-example')).toHaveCount(3);
+
+  await seek(720);
+  await expect(widget).toHaveAttribute('data-blueprint-status-value', '38');
+  await expect(widget).toHaveAttribute('data-blueprint-status-contact', 'true');
+  await seek(1720);
+  await expect(widget).toHaveAttribute('data-blueprint-status-value', '14');
+  await seek(2200);
+  await expect(widget).toHaveAttribute('data-blueprint-status-value', '55');
+  await seek(2800);
+  await expect(widget).toHaveAttribute('data-blueprint-status-value', '100');
+  await expect(widget).toHaveAttribute('data-blueprint-status-threshold', 'true');
+  await expect(widget).toHaveAttribute('data-blueprint-status-effect', 'true');
+  await expect(widget).toHaveAttribute('data-blueprint-status-effect-count', '1');
+  await expect(widget).toHaveAttribute('data-blueprint-status-effect-id', 'status-effect-1');
+  await seek(4050);
+  await expect(widget).toHaveAttribute('data-blueprint-status-value', '0');
+  await expect(widget).toHaveAttribute('data-blueprint-status-immune', 'true');
+  await expect(widget).toHaveAttribute('data-blueprint-status-ignored-contacts', '1');
+  await expect(widget).toHaveAttribute('data-blueprint-status-effect-count', '1');
   await page.setViewportSize({ width: 375, height: 812 });
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
 });

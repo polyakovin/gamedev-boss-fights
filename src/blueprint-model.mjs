@@ -1221,6 +1221,33 @@ const SPECS = {
     retreatAt: 4.48,
     resetAt: 5.45,
   },
+  'status-buildup': {
+    mode: 'status-buildup',
+    boss: [300, 375],
+    player: [470, 720],
+    target: [390, 555],
+    arena: [55, 310, 450, 570],
+    exposurePoint: [390, 555],
+    auraRadius: 235,
+    approach: [0.28, 0.62],
+    contacts: [0.72, 2.14, 2.6],
+    contactWindows: [
+      [0.64, 0.82],
+      [2.06, 2.24],
+      [2.52, 2.7],
+    ],
+    retreat: [0.88, 1.24],
+    reenter: [1.78, 2.12],
+    decay: [1.08, 1.72],
+    buildupAfterContact: [38, 55, 100],
+    decayFloor: 14,
+    thresholdAt: 2.6,
+    effectStartsAt: 2.72,
+    effectEndsAt: 3.72,
+    immuneProbeAt: 4.05,
+    immunityEndsAt: 4.42,
+    resetAt: 5.2,
+  },
   'wide-swing': { mode: 'arc', boss: [280, 310], player: [410, 470], target: [470, 650] },
   lunge: { mode: 'lunge', boss: [170, 290], player: [390, 590], target: [470, 660] },
   grab: { mode: 'grab', boss: [280, 300], player: [390, 485], target: [470, 610] },
@@ -2127,6 +2154,51 @@ export function persistentProgressRestore({ completedObjectives = 0, snapshotVer
     playerHealth: 100,
   });
 }
+
+export function statusBuildupState(time) {
+  const spec = SPECS['status-buildup'];
+  const t = localTime(time);
+  if (t < spec.contacts[0]) return 'clear';
+  if (t < spec.decay[0]) return 'partial-buildup';
+  if (t < spec.decay[1]) return 'decaying';
+  if (t < spec.contacts[1]) return 'partially-cleared';
+  if (t < spec.contacts[2]) return 'chain-buildup';
+  if (t < spec.effectStartsAt) return 'threshold-reached';
+  if (t < spec.effectEndsAt) return 'status-active';
+  if (t < spec.immunityEndsAt) return 'temporary-immunity';
+  if (t < spec.resetAt) return 'clear';
+  return 'reset';
+}
+
+export function statusBuildupApply({
+  current = 0,
+  amount = 0,
+  threshold = 100,
+  immune = false,
+} = {}) {
+  const safeThreshold = Math.max(1, Number(threshold) || 100);
+  const before = clamp((Number(current) || 0) / safeThreshold) * safeThreshold;
+  if (immune)
+    return Object.freeze({ value: before, triggered: false, effectCount: 0, ignored: true });
+  const value = Math.min(safeThreshold, Math.max(0, before + (Number(amount) || 0)));
+  const triggered = before < safeThreshold && value >= safeThreshold;
+  return Object.freeze({ value, triggered, effectCount: triggered ? 1 : 0, ignored: false });
+}
+
+const statusBuildupValueAt = (spec, time) => {
+  if (time < spec.contacts[0]) return 0;
+  if (time < spec.decay[0]) return spec.buildupAfterContact[0];
+  if (time < spec.decay[1])
+    return mix(
+      spec.buildupAfterContact[0],
+      spec.decayFloor,
+      smooth((time - spec.decay[0]) / (spec.decay[1] - spec.decay[0])),
+    );
+  if (time < spec.contacts[1]) return spec.decayFloor;
+  if (time < spec.contacts[2]) return spec.buildupAfterContact[1];
+  if (time < spec.effectEndsAt) return 100;
+  return 0;
+};
 
 const projectileRallyLegAt = (spec, time) => {
   const index = spec.legs.findIndex(({ start, end }) => time >= start && time < end);
@@ -5247,6 +5319,105 @@ function primitivesFor(spec, frame) {
       ),
     ];
   }
+  if (mode === 'status-buildup') {
+    const contactPulse = Math.max(
+      ...spec.contacts.map((contact) => strikePulse(frame.time, contact, 0.34)),
+    );
+    const thresholdPulse = strikePulse(frame.time, spec.thresholdAt, 0.52);
+    const ignoredPulse = strikePulse(frame.time, spec.immuneProbeAt, 0.36);
+    const auraOpacity = frame.statusBuildupContactActive ? 0.9 : 0.2;
+    const effectOpacity = frame.statusBuildupEffectActive ? 0.78 + pulse(frame.time * 3) * 0.18 : 0;
+    const immunityProgress = frame.statusBuildupImmune
+      ? clamp(
+          1 -
+            (frame.time - spec.effectEndsAt) /
+              Math.max(0.01, spec.immunityEndsAt - spec.effectEndsAt),
+        )
+      : 0;
+    return [
+      rect(...spec.arena, 0.52, 'muted', 0.025),
+      circle(
+        frame.boss.x,
+        frame.boss.y,
+        spec.auraRadius,
+        auraOpacity,
+        frame.statusBuildupContactActive ? 'signal' : 'accent',
+        frame.statusBuildupContactActive ? 14 : 5,
+        frame.statusBuildupContactActive ? 0.08 : 0.015,
+        frame.statusBuildupContactActive ? '' : '12 10',
+      ),
+      circle(
+        frame.boss.x,
+        frame.boss.y,
+        spec.auraRadius * (0.32 + 0.68 * contactPulse),
+        contactPulse,
+        'signal',
+        10,
+        0.03,
+      ),
+      rect(178, 318, 244, 24, 0.64, 'muted', 0.035),
+      rect(
+        182,
+        322,
+        236 * (frame.statusBuildupValue / 100),
+        16,
+        0.96,
+        frame.statusBuildupThresholdReached ? 'signal' : 'accent',
+        0.2,
+      ),
+      ...Array.from({ length: 4 }, (_, index) =>
+        line(241 + index * 59, 321, 241 + index * 59, 339, 0.82, 'muted', 3),
+      ),
+      line(418, 315, 418, 345, 0.96, 'signal', 5),
+      circle(418, 330, 20 + thresholdPulse * 30, thresholdPulse, 'signal', 7, 0.06),
+      circle(
+        frame.player.x,
+        frame.player.y - 34,
+        42 + pulse(frame.time * 2.4) * 7,
+        effectOpacity,
+        'signal',
+        8,
+        0.08,
+      ),
+      ...Array.from({ length: 5 }, (_, index) => {
+        const angle = (Math.PI * 2 * index) / 5 + frame.time;
+        const x = frame.player.x + Math.cos(angle) * 56;
+        const y = frame.player.y - 34 + Math.sin(angle) * 34;
+        return path(
+          `M ${x - 8} ${y} L ${x} ${y - 8} L ${x + 8} ${y} L ${x} ${y + 8} Z`,
+          effectOpacity,
+          'signal',
+          4,
+          0.14,
+        );
+      }),
+      circle(
+        frame.player.x,
+        frame.player.y - 34,
+        54,
+        frame.statusBuildupImmune ? 0.82 : 0,
+        'safe',
+        7,
+        0.03,
+        '9 7',
+      ),
+      circle(
+        frame.player.x,
+        frame.player.y - 34,
+        32 + ignoredPulse * 74,
+        ignoredPulse,
+        'safe',
+        9,
+        0.03,
+      ),
+      path(
+        `M ${frame.player.x - 34} ${frame.player.y - 112} L ${frame.player.x} ${frame.player.y - 132} L ${frame.player.x + 34} ${frame.player.y - 112}`,
+        immunityProgress,
+        'safe',
+        7,
+      ),
+    ];
+  }
   if (mode === 'encounter-specific-tool') {
     const pedestal = point(spec.pedestal);
     const spearBase = { x: frame.player.x - 8, y: frame.player.y - 22 };
@@ -6731,6 +6902,11 @@ function pointClearsThreat(spec, frame, value, radius = BLUEPRINT_PLAYER_RADIUS)
       distanceToSegment(value, point(spec.laneStart), point(spec.laneEnd)) >
         spec.laneHalfWidth + radius
     );
+  if (mode === 'status-buildup')
+    return (
+      !frame.dangerActive ||
+      Math.hypot(value.x - frame.boss.x, value.y - frame.boss.y) > spec.auraRadius + radius
+    );
   if (mode === 'projectile-rally')
     return (
       !frame.dangerActive ||
@@ -7112,6 +7288,7 @@ export function blueprintFrame(id, time) {
   else if (spec.mode === 'posture-stagger-gauge') responseProgress = 0;
   else if (spec.mode === 'pacifist-resolution') responseProgress = 0;
   else if (spec.mode === 'persistent-progress') responseProgress = 0;
+  else if (spec.mode === 'status-buildup') responseProgress = 0;
   else if (spec.mode === 'knockback')
     responseProgress = phase === 0 ? 0 : phase === 1 ? smooth(action) : 1;
   else if (spec.mode === 'target-lock')
@@ -7933,6 +8110,38 @@ export function blueprintFrame(id, time) {
       player = { x: mix(core.x, startPlayer.x, retreat), y: mix(core.y, startPlayer.y, retreat) };
     } else player = startPlayer;
   }
+  if (spec.mode === 'status-buildup') {
+    const exposure = point(spec.exposurePoint);
+    if (t < spec.approach[0]) player = startPlayer;
+    else if (t < spec.approach[1]) {
+      const approach = smooth((t - spec.approach[0]) / (spec.approach[1] - spec.approach[0]));
+      player = {
+        x: mix(startPlayer.x, exposure.x, approach),
+        y: mix(startPlayer.y, exposure.y, approach),
+      };
+    } else if (t < spec.retreat[0]) player = exposure;
+    else if (t < spec.retreat[1]) {
+      const retreat = smooth((t - spec.retreat[0]) / (spec.retreat[1] - spec.retreat[0]));
+      player = {
+        x: mix(exposure.x, startPlayer.x, retreat),
+        y: mix(exposure.y, startPlayer.y, retreat),
+      };
+    } else if (t < spec.reenter[0]) player = startPlayer;
+    else if (t < spec.reenter[1]) {
+      const reenter = smooth((t - spec.reenter[0]) / (spec.reenter[1] - spec.reenter[0]));
+      player = {
+        x: mix(startPlayer.x, exposure.x, reenter),
+        y: mix(startPlayer.y, exposure.y, reenter),
+      };
+    } else if (t < spec.immunityEndsAt) player = exposure;
+    else if (t < spec.resetAt) {
+      const reset = smooth((t - spec.immunityEndsAt) / (spec.resetAt - spec.immunityEndsAt));
+      player = {
+        x: mix(exposure.x, startPlayer.x, reset),
+        y: mix(exposure.y, startPlayer.y, reset),
+      };
+    } else player = startPlayer;
+  }
   if (spec.mode === 'rotating' && phase === 0) {
     const initialPosition = polar(boss, 255, Math.PI / 3);
     player = {
@@ -8339,6 +8548,13 @@ export function blueprintFrame(id, time) {
       ...spec.restores.map(([start, end]) => pulse(smooth((t - start) / (end - start)))),
       pulse(smooth((t - spec.retreatAt) / (spec.resetAt - spec.retreatAt))),
     );
+  if (spec.mode === 'status-buildup')
+    stride = Math.max(
+      pulse(smooth((t - spec.approach[0]) / (spec.approach[1] - spec.approach[0]))),
+      pulse(smooth((t - spec.retreat[0]) / (spec.retreat[1] - spec.retreat[0]))),
+      pulse(smooth((t - spec.reenter[0]) / (spec.reenter[1] - spec.reenter[0]))),
+      pulse(smooth((t - spec.immunityEndsAt) / (spec.resetAt - spec.immunityEndsAt))),
+    );
   const bossVisible =
     spec.mode === 'secondary-cues-invisibility'
       ? t < spec.vanishAt
@@ -8602,7 +8818,8 @@ export function blueprintFrame(id, time) {
             spec.mode === 'baited-self-hit' ||
             spec.mode === 'posture-stagger-gauge' ||
             spec.mode === 'pacifist-resolution' ||
-            spec.mode === 'persistent-progress'
+            spec.mode === 'persistent-progress' ||
+            spec.mode === 'status-buildup'
           ? (Math.atan2(boss.y - player.y, boss.x - player.x) * 180) / Math.PI
           : spec.mode === 'active-phase'
             ? (Math.atan2(boss.y - player.y, boss.x - player.x) * 180) / Math.PI
@@ -9567,6 +9784,34 @@ export function blueprintFrame(id, time) {
     frame.bossMotion.impact = strikePulse(t, spec.strikes[2], 0.42);
     frame.bossMotion.lean = frame.persistentProgressResolved ? -0.24 : 0;
   }
+  if (spec.mode === 'status-buildup') {
+    frame.statusBuildupState = statusBuildupState(t);
+    frame.statusBuildupValue = statusBuildupValueAt(spec, t);
+    frame.statusBuildupDecayDelayed = t >= spec.contacts[0] && t < spec.decay[0];
+    frame.statusBuildupDecaying = t >= spec.decay[0] && t < spec.decay[1];
+    frame.statusBuildupContactIndex = spec.contactWindows.findIndex(
+      ([start, end]) => t >= start && t < end,
+    );
+    frame.statusBuildupContactActive = frame.statusBuildupContactIndex >= 0;
+    frame.statusBuildupThresholdReached = t >= spec.thresholdAt && t < spec.effectEndsAt;
+    frame.statusBuildupEffectActive = t >= spec.effectStartsAt && t < spec.effectEndsAt;
+    frame.statusBuildupEffectCount = t >= spec.thresholdAt && t < spec.resetAt ? 1 : 0;
+    frame.statusBuildupImmune = t >= spec.effectEndsAt && t < spec.immunityEndsAt;
+    frame.statusBuildupIgnoredContacts =
+      frame.statusBuildupImmune && strikePulse(t, spec.immuneProbeAt, 0.36) > 0 ? 1 : 0;
+    frame.statusBuildupEffectId =
+      t >= spec.thresholdAt && t < spec.resetAt ? 'status-effect-1' : 'none';
+    frame.dangerActive = frame.statusBuildupContactActive;
+    frame.playerMotion.attack = 0;
+    frame.playerMotion.dodge = 0;
+    frame.playerMotion.impact = Math.max(
+      ...spec.contacts.map((contact) => strikePulse(t, contact, 0.3)),
+    );
+    frame.bossMotion.attack = Math.max(
+      ...spec.contacts.map((contact) => strikePulse(t, contact, 0.34)),
+      strikePulse(t, spec.immuneProbeAt, 0.36),
+    );
+  }
   if (spec.mode === 'sound-detection') {
     frame.soundDetectionState = soundDetectionState(t);
     frame.soundDetectionHeard = t >= spec.heardAt && t < spec.resetAt;
@@ -9849,7 +10094,8 @@ export function blueprintFrame(id, time) {
       spec.mode === 'baited-self-hit' ||
       spec.mode === 'posture-stagger-gauge' ||
       spec.mode === 'pacifist-resolution' ||
-      spec.mode === 'persistent-progress'
+      spec.mode === 'persistent-progress' ||
+      spec.mode === 'status-buildup'
         ? 92
         : -62),
   };

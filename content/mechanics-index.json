@@ -1449,7 +1449,7 @@
         "en": {
           "title": "Status buildup",
           "category": "States, resources, and scaling",
-          "summary": "Draft outline for the status buildup mechanic. Rules, tuning guidance, and examples are still in progress."
+          "summary": "Boss attacks fill a separate status gauge; the actual effect begins only when accumulated exposure reaches its threshold."
         },
         "ru": {
           "title": "Накопление состояния",

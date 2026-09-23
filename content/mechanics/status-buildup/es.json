@@ -1,0 +1,142 @@
+{
+  "title": "Acumulación de estado",
+  "subtitle": "Acumula presión primero y aplica la consecuencia solo en el umbral",
+  "variant": "Exponer · decaer · acumular · activar",
+  "summary": "Los ataques del jefe llenan una barra de estado separada; el efecto real empieza solo al alcanzar el umbral.",
+  "overview": "La acumulación de estado separa exposición y consecuencia. Cada contacto válido aumenta una barra legible, el tiempo seguro puede reducirla y el efecto se aplica una sola vez al cruzar el umbral, creando una decisión de riesgo antes del daño, la pérdida de control o la derrota.",
+  "learning": "Define las fuentes y cantidades, el umbral, el retraso y ritmo de decaimiento, el efecto y su duración, la limpieza, la resistencia, la inmunidad de reaplicación, la propiedad de las acumulaciones, la prioridad de interfaz y las pruebas que separan barra, efecto y salud.",
+  "category": "Estados, recursos y escalado",
+  "readTime": "9 min",
+  "demo": {
+    "title": "Entra en el campo rúnico de Kern, deja decaer una exposición y cruza el umbral",
+    "timeline": "Cronología de acumulación de estado",
+    "step": "Estados de acumulación",
+    "phaseNames": [
+      "Aplica acumulación parcial y muestra el decaimiento retrasado",
+      "Encadena contactos hasta el umbral y aplica un efecto",
+      "Vacía la barra, protege la reentrada y reinicia"
+    ],
+    "phaseDescriptions": [
+      "Tavi entra en el campo radial de Kern y recibe 38 puntos a los 0,72 s. Salir detiene la exposición, pero la barra espera hasta 1,08 s antes de bajar a 14 en 1,72 s, haciendo visibles por separado la gracia y la recuperación.",
+      "Tavi vuelve antes de que desaparezca el resto. Los contactos de 2,14 y 2,60 s llevan la misma barra a 55 y 100. El cruce reserva un solo efecto; el bloqueo rúnico dura de 2,72 a 3,72 s y la salud común sigue siendo otro sistema.",
+      "Al terminar el efecto, la barra vuelve a cero y un anillo de inmunidad dura hasta 4,42 s. Un contacto dentro de esa ventana se ignora. Tavi sale y todo vuelve al estado limpio después de 5,20 s."
+    ],
+    "boss": "Jefe",
+    "player": "Jugador",
+    "danger": "El campo radial añade acumulación solo en ventanas de contacto definidas; la exposición parcial aún no es el efecto y el cruce crea como máximo un evento",
+    "locked": "La fuente, cantidad, comparación del umbral, retraso y ritmo de decaimiento, resistencia, efecto, duración, limpieza, inmunidad y reaplicación pertenecen al encuentro",
+    "safe": "Muestra acumulación, umbral, dirección del decaimiento, efecto, limpieza e inmunidad con formas y estados distintos, no solo con color",
+    "reducedMotion": "Con movimiento reducido no hay reproducción automática. Recorre 0,72, 1,08, 1,72, 2,14, 2,60, 2,72, 3,72, 4,42 y 5,20 s para revisar exposición, decaimiento, umbral, efecto, inmunidad y reinicio.",
+    "diagramDescription": "Kern ocupa un campo rúnico radial discontinuo mientras Tavi entra y sale. Una barra segmentada sube, decae parcialmente y se llena con dos pulsos cercanos. En el umbral, fragmentos rúnicos rodean a Tavi; después la barra se vacía y un anillo separado marca la inmunidad temporal."
+  },
+  "steps": [
+    {
+      "title": "¿Qué se acumula y qué no ocurre antes del umbral?",
+      "body": "Asigna a cada fuente un identificador y una cantidad explícita. Decide si bloqueo, invulnerabilidad, escudos, golpes débiles, zonas superpuestas o pulsos repetidos contribuyen. La acumulación parcial no debe aplicar la consecuencia final salvo que exista una regla adicional deliberada."
+    },
+    {
+      "title": "¿Cómo puede el jugador gestionar la barra antes de llenarla?",
+      "body": "Ajusta juntos el retraso, la pérdida por segundo, el coste de limpieza, la resistencia y el espacio seguro. Prueba un contacto aislado, una combinación prevista, fuentes solapadas y la menor velocidad válida; la señal debe permitir salir, limpiar, defender o aceptar el riesgo."
+    },
+    {
+      "title": "¿Qué ocurre exactamente al cruzar, limpiar y reaplicar?",
+      "body": "Usa una sola comparación autoritativa y reserva un identificador de efecto al cruzar. Define qué pasa con el exceso, cuándo se vacía la barra, si el efecto se renueva y cuánto dura la inmunidad. Prueba impactos simultáneos, limpieza en el umbral, cambio de fase, muerte, reversión y mensajes repetidos."
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "La barra parece llena antes de que el efecto sea autoritativo",
+      "body": "El redondeo, la replicación tardía o una animación decorativa pueden mostrar 100 demasiado pronto. Deriva relleno, destello, evento y anuncio accesible del mismo valor resuelto y número de secuencia."
+    },
+    {
+      "title": "Decaimiento e inmunidad son excepciones invisibles",
+      "body": "Si la barra se detiene, baja, se limpia o ignora un golpe sin señal propia, la regla parece incoherente. Muestra retraso, dirección, limpieza, resistencia e inmunidad por separado y registra por qué se acepta, reduce o rechaza cada aporte."
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "Separa la acumulación del efecto aplicado",
+      "body": "Guarda por separado el valor actual, la última exposición, el umbral, el estado y temporizador del efecto y la inmunidad. La barra puede decaer sin efecto y el efecto puede continuar con la barra ya vacía."
+    },
+    {
+      "title": "Equilibra frecuencia, cantidad y recuperación como un ritmo",
+      "body": "Una fuente pequeña y rápida puede exigir más que un gran pulso porque retrasa el decaimiento. Mide el tiempo al umbral con solapes normales y extremos, la recuperación tras un error, el tiempo seguro perdido y la resistencia."
+    },
+    {
+      "title": "Haz proporcional el efecto a su evitabilidad",
+      "body": "Un aturdimiento duro o una derrota inmediata requiere mejor aviso, contrajuego fiable y reglas de solape más seguras que un daño breve. Considera cobertura, seguimiento, frecuencia, arena y coste de limpieza."
+    },
+    {
+      "title": "Haz deterministas la propiedad y la suma",
+      "body": "Con varios jefes, invocaciones, peligros o jugadores, decide si comparten barra, usan barras separadas o eligen una fuente dominante. Resuelve una vez los cruces simultáneos y evita duplicados durante una reversión de red."
+    }
+  ],
+  "story": {
+    "title": "Las runas manchan la espada antes de atar a quien la empuña",
+    "body": "El primer pulso de Kern deja unas marcas que se desvanecen al retirarse. Volver demasiado pronto permite que dos pulsos completen el patrón. Solo entonces los fragmentos se cierran sobre Tavi, separando acumulación, umbral y consecuencia."
+  },
+  "adaptation": {
+    "title": "Ofrece avisos redundantes y recuperación ajustable",
+    "body": "Combina barra, forma, icono, sonido, texto y vibración en bandas importantes. Permite ampliar la interfaz, reducir destellos y separar el audio. Las opciones pueden acelerar el decaimiento, reducir el aporte, alargar la inmunidad o automatizar la limpieza sin ocultar la regla."
+  },
+  "distinction": {
+    "title": "Un estado secundario con umbral, no salud ni ruptura de postura",
+    "body": "La salud suele cambiar al resolver daño. La postura suele premiar la presión del jugador con una apertura contra el jefe. Esta mecánica registra exposición sobre un objetivo y retiene una consecuencia distinta hasta el umbral; puede dañar, limitar, transformar o derrotar a cualquier lado."
+  },
+  "lensNotes": [
+    {
+      "id": "progress-clarity",
+      "body": "La barra debe diferenciar exposición parcial, decaimiento, cruce, efecto activo e inmunidad."
+    },
+    {
+      "id": "risk-reward",
+      "body": "Permanecer cerca conserva tiempo ofensivo, pero pospone el decaimiento y acerca el siguiente contacto al umbral."
+    },
+    {
+      "id": "counterplay",
+      "body": "Salir, bloquear un pulso, limpiar o ganar resistencia debe cambiar una parte medible de la regla."
+    },
+    {
+      "id": "difficulty-rhythm",
+      "body": "El espacio entre contactos respecto al retraso decide si son avisos aislados o una combinación de umbral."
+    },
+    {
+      "id": "rule-exception",
+      "body": "Limpieza, resistencia, inmunidad y fuentes sin decaimiento son excepciones que necesitan autoridad y respuesta visibles."
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "Salt and Sanctuary",
+      "boss": "That Stench Most Foul",
+      "screenshot": "https://i.ytimg.com/vi/i-VPBdz-UAw/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=i-VPBdz-UAw&t=6s",
+      "body": "El aliento venenoso y los Stenchpods invocados convierten una barra de veneno compartida en presión de arena. La exposición llena primero la barra y el veneno empieza al completarla, por lo que el espacio de retirada y el intervalo deciden si el valor parcial se convierte en efecto.",
+      "video": "https://www.youtube.com/watch?v=i-VPBdz-UAw&t=6s",
+      "videoDurationSeconds": 90
+    },
+    {
+      "dimension": "3D",
+      "game": "Sekiro: Shadows Die Twice",
+      "boss": "Guardian Ape",
+      "screenshot": "https://i.ytimg.com/vi/4JfjDp4blkU/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=4JfjDp4blkU&t=2s",
+      "body": "El grito de la fase decapitada acumula Terror en un área radial amplia. La barra separa una exposición breve del umbral letal y permite ajustar por separado el campo sostenido, el tiempo de salida y la reducción de acumulación.",
+      "video": "https://www.youtube.com/watch?v=4JfjDp4blkU&t=2s",
+      "videoDurationSeconds": 34
+    },
+    {
+      "dimension": "3D",
+      "game": "Elden Ring",
+      "boss": "Wormface",
+      "screenshot": "https://i.ytimg.com/vi/FqKZnoVL1Ys/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=FqKZnoVL1Ys&t=17s",
+      "body": "El aliento y la nube persistente de Wormface acumulan Death Blight en vez de producir de inmediato el resultado final. Fuentes móviles y negación persistente comparten un umbral y la barra llena sigue siendo la transición autoritativa.",
+      "video": "https://www.youtube.com/watch?v=FqKZnoVL1Ys&t=17s",
+      "videoDurationSeconds": 95
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

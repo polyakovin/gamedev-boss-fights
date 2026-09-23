@@ -427,6 +427,19 @@ export function initializeBlueprint(widget) {
         frame.persistentProgressSnapshotVersion,
       );
     }
+    if (mechanicId === 'status-buildup') {
+      widget.dataset.blueprintStatusBuildup = frame.statusBuildupState;
+      widget.dataset.blueprintStatusValue = String(Math.round(frame.statusBuildupValue));
+      widget.dataset.blueprintStatusDecayDelayed = String(frame.statusBuildupDecayDelayed);
+      widget.dataset.blueprintStatusDecaying = String(frame.statusBuildupDecaying);
+      widget.dataset.blueprintStatusContact = String(frame.statusBuildupContactActive);
+      widget.dataset.blueprintStatusThreshold = String(frame.statusBuildupThresholdReached);
+      widget.dataset.blueprintStatusEffect = String(frame.statusBuildupEffectActive);
+      widget.dataset.blueprintStatusEffectCount = String(frame.statusBuildupEffectCount);
+      widget.dataset.blueprintStatusImmune = String(frame.statusBuildupImmune);
+      widget.dataset.blueprintStatusIgnoredContacts = String(frame.statusBuildupIgnoredContacts);
+      widget.dataset.blueprintStatusEffectId = frame.statusBuildupEffectId;
+    }
     boss.setAttribute(
       'transform',
       `translate(${frame.boss.x} ${frame.boss.y}) scale(${frame.bossScale})`,

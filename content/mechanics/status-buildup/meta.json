@@ -1,0 +1,43 @@
+{
+  "id": "status-buildup",
+  "number": 91,
+  "published": true,
+  "sourceLocale": "en",
+  "contentVersion": 1,
+  "animation": "status-buildup",
+  "lenses": [
+    "progress-clarity",
+    "risk-reward",
+    "counterplay",
+    "difficulty-rhythm",
+    "rule-exception"
+  ],
+  "related": [
+    "lingering-hazard",
+    "damage-type-resistance",
+    "situational-immunity",
+    "posture-stagger-gauge"
+  ],
+  "sources": [
+    {
+      "title": "Boss Up: Boss Battle Design",
+      "url": "https://media.gdcvault.com/gdc2018/presentations/Keren_Itay_BossUp.pdf"
+    },
+    {
+      "title": "Guardian Ape Terror buildup — GameSpot",
+      "url": "https://www.gamespot.com/articles/sekiro-guide-for-guardian-ape-boss-beating-the-bru/1100-6465875/"
+    },
+    {
+      "title": "Wormface Death Blight buildup — Neoseeker",
+      "url": "https://www.neoseeker.com/elden-ring/Bosses/Wormface"
+    },
+    {
+      "title": "That Stench Most Foul poison meter — Neoseeker",
+      "url": "https://www.neoseeker.com/salt-and-sanctuary/walkthrough/Mire_of_Stench"
+    },
+    {
+      "title": "Salt and Sanctuary poison gauge behavior — GameFAQs",
+      "url": "https://gamefaqs.gamespot.com/boards/834700-salt-and-sanctuary/73672543"
+    }
+  ]
+}
