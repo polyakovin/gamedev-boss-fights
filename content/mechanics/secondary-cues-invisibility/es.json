@@ -1,0 +1,138 @@
+{
+  "title": "Invisibilidad",
+  "subtitle": "Oculta la señal corporal principal del jefe, pero conserva pistas secundarias suficientes de posición, dirección y tiempo para permitir una respuesta deliberada.",
+  "variant": "Kern se desvanece, pero deja huellas rúnicas, polvo y ondas en la piedra a lo largo de una ruta continua; Tavi sigue las pruebas hasta un lateral seguro, espera el golpe oculto y contraataca tras la aparición",
+  "summary": "El jefe oculta su cuerpo, mientras pistas ambientales, sonoras o de partículas mantienen legibles su posición y su intención de ataque.",
+  "overview": "La invisibilidad elimina la pista de posición más directa, no toda la información útil. Huellas, sonido, partículas, vegetación desplazada y previas de ataque forman un sensor imperfecto de un cuerpo oculto continuo. Su cadencia y error aún deben dejar tiempo y espacio para una respuesta completa.",
+  "learning": "Implementa un contrato explícito: una transformación y un volumen de colisión autoritativos, pistas limitadas, cadencia, duración y margen de error, una fuente de ataque fijada, colisión coherente, equivalentes multisensoriales, transiciones legibles y una ventana útil tras la revelación.",
+  "category": "Espacio, movimiento y percepción",
+  "readTime": "8 min",
+  "demo": {
+    "title": "Quita el cuerpo, conserva las pruebas",
+    "timeline": "Línea temporal de invisibilidad",
+    "step": "Estados de invisibilidad",
+    "phaseNames": [
+      "Ocultar el cuerpo e iniciar el rastro",
+      "Fijar la fuente oculta y resolver el golpe",
+      "Revelar al jefe y abrir el contraataque"
+    ],
+    "phaseDescriptions": [
+      "A los 0,62 s Kern empieza a desaparecer y queda oculto a los 0,88 s. Cinco huellas breves, nubes de polvo y ondas de piedra marcan una ruta continua hasta los 2,12 s; Tavi avanza hacia el lateral seguro sin recibir una silueta exacta.",
+      "A los 2,32 s la última pista fija la fuente. Una línea discontinua anticipa el corredor antes de que sea peligroso entre 2,72 y 3,16 s; el cuerpo completo de Tavi ya está fuera.",
+      "El golpe produce una señal de revelación y Kern vuelve a ser visible a los 3,38 s. Tavi se acerca después del peligro, golpea con la espada a los 4,18 s y ambos se reinician después de 5,05 s."
+    ],
+    "boss": "Jefe",
+    "player": "Jugador",
+    "danger": "El cuerpo oculto sigue siendo continuo y colisionable; solo la línea anticipada desde la última pista inflige daño durante el intervalo activo",
+    "locked": "Se definen transformación oculta, muestras, cadencia, duración, error, fijación de fuente, geometría, colisión, revelación, contraataque y reinicio",
+    "safe": "Sigue la pista más reciente, saca todo el cuerpo del corredor previsto y acércate solo cuando termine el golpe y aparezca el jefe",
+    "reducedMotion": "Con movimiento reducido no hay reproducción automática. Recorre 0,62; 0,88; 1,22; 1,82; 2,32; 2,72; 3,16; 3,38; 4,18 y 5,05 s para revisar desaparición, rastro, fijación, golpe, revelación, respuesta y reinicio.",
+    "diagramDescription": "Kern desaparece mientras huellas rúnicas y ondas de piedra marcan una ruta curva continua. La última pista fija un corredor diagonal. Tavi espera por completo a un lado, supera el golpe oculto y se acerca con la espada cuando Kern reaparece."
+  },
+  "steps": [
+    {
+      "title": "¿Qué estado sigue siendo autoritativo con el cuerpo oculto?",
+      "body": "Mantén una única transformación, orientación, velocidad y colisión reales durante toda la invisibilidad. La presentación puede ocultar el modelo, pero IA, ataques, física, red y efectos deben leer ese mismo estado. Decide si daño de contacto, fijación, sombra, barra de vida y ayuda de puntería continúan. Depura juntos el cuerpo verdadero y cada proxy para evitar posiciones contradictorias."
+    },
+    {
+      "title": "¿Con qué precisión predicen las pistas la siguiente fuente?",
+      "body": "Trata cada huella, sonido, polvo, estela o vegetación como una muestra con tiempo, retraso, duración, radio y error. La secuencia comunica dirección y velocidad plausible sin dibujar un contorno perfecto. Antes del ataque, fija la fuente o muestra una nueva previa con tiempo para retirar todo el cuerpo. Nunca teletransportes al jefe fuera de la historia sugerida por las pistas."
+    },
+    {
+      "title": "¿Todos pueden percibir entrada, seguimiento y salida?",
+      "body": "Combina el entorno con partículas contrastadas, sonido espacial o estéreo, vibración y un contorno accesible opcional. Señala por separado desaparición y regreso. Las ayudas pueden prolongar pistas, reducir error o añadir dirección sin cambiar la ruta ni la regla. Prueba pantallas pequeñas, audio mono, filtros de color y movimiento reducido."
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "Cambia la opacidad, pero no el contrato informativo",
+      "body": "La transparencia es cosmética si fijación, sombra, barra o apuntado siguen revelando el centro exacto. El extremo opuesto elimina toda pista y obliga a adivinar. Enumera cada canal de posición, decide cuáles quedan deliberadamente imprecisos y alinea su exactitud con la incertidumbre deseada."
+    },
+    {
+      "title": "El jefe oculto rompe la continuidad antes de atacar",
+      "body": "Si el rastro indica un lado y la colisión o el ataque empieza en otro, no se puede razonar desde las pruebas. Conserva movimiento continuo, limita velocidad y mide la distancia desde la última pista hasta la fuente fijada. Señala teletransporte o señuelo como reglas separadas."
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "Modela las pistas como un sensor imperfecto",
+      "body": "Expón muestras del estado oculto, no otro modelo exacto. Pueden retrasarse, desaparecer pronto, cuantizarse al terreno o desplazarse dentro de un radio. Guarda esos parámetros en datos para ajustar dificultad y verificar que la fuente siga dentro del margen inferido."
+    },
+    {
+      "title": "Haz que el material de la arena informe",
+      "body": "La nieve retiene huellas, el agua crea estelas, el polvo sube, la vegetación se dobla y las piedras reaccionan al peso. Así la invisibilidad pertenece al escenario. Conserva una señal abstracta equivalente donde el material no sea legible."
+    },
+    {
+      "title": "Ajusta juntos cadencia, duración y error",
+      "body": "Un jefe rápido necesita muestras más frecuentes o duraderas. Mayor error exige más reacción o una ruta segura más ancha. Mide el mayor vacío entre pistas, el error máximo de fuente y el movimiento disponible desde la fijación hasta el impacto."
+    },
+    {
+      "title": "Da significado mecánico a la revelación",
+      "body": "Un impacto claro, tropiezo o colapso material anuncia el retorno de la posición exacta. Si abre daño, su duración debe poder planearse y su cierre debe verse. Las fases posteriores pueden acortarla sin invalidar la gramática aprendida."
+    }
+  ],
+  "story": {
+    "title": "Kern oculta su núcleo, no su peso",
+    "body": "Kern apaga las runas que mantienen sus placas hasta desaparecer. La cantera aún responde a cada paso: saltan guijarros, el polvo rodea una pierna invisible y runas antiguas brillan bajo presión. El lugar se convierte en testigo del elemental."
+  },
+  "adaptation": {
+    "title": "Deja que Tavi infiera una ruta y gane el acercamiento",
+    "body": "Tavi usa movimiento normal y su espada. La cadencia deja un lateral seguro del tamaño del cuerpo, la fuente se fija antes del golpe y la aparición separa evasión y contraataque. Las ayudas pueden alargar el rastro o añadir dirección sin reemplazar la ruta."
+  },
+  "distinction": {
+    "title": "Estado oculto continuo, no teletransporte ni señuelo",
+    "body": "La invisibilidad reduce percepción mientras el mismo cuerpo continúa en espacio y colisión. El teletransporte cambia posición de forma discontinua y el señuelo cambia qué entidad es real. Pueden combinarse, pero cada transición necesita su propia señal."
+  },
+  "lensNotes": [
+    {
+      "id": "telegraphing",
+      "body": "Desvanecimiento, rastros temporales, previa de fuente fijada, impacto y revelación deben describir un cambio continuo y un intervalo activo."
+    },
+    {
+      "id": "access-paths",
+      "body": "Entorno, partículas, sonido, vibración y ayuda direccional opcional dan accesos paralelos a la misma evidencia limitada."
+    },
+    {
+      "id": "threat-geometry",
+      "body": "El margen de error de la última pista y el ancho completo del ataque deciden si existe una ruta segura para todo el cuerpo."
+    },
+    {
+      "id": "counterplay",
+      "body": "El jugador interpreta la secuencia, abandona el corredor antes de activarse y usa una ventana de revelación declarada."
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "Metroid Dread",
+      "boss": "Corpius",
+      "screenshot": "https://i.ytimg.com/vi/BIsn9Nm9zqo/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=BIsn9Nm9zqo&t=70s",
+      "body": "Corpius vuelve transparente casi todo el cuerpo, pero la punta luminosa de la cola y la distorsión de su silueta conservan estructura útil. La visibilidad selectiva muestra la parte vulnerable y el cruce de la sala sin restaurar un modelo opaco perfecto.",
+      "video": "https://www.youtube.com/watch?v=BIsn9Nm9zqo&t=70s",
+      "videoDurationSeconds": 247
+    },
+    {
+      "dimension": "3D",
+      "game": "Dark Souls Remastered",
+      "boss": "Crossbreed Priscilla",
+      "screenshot": "https://i.ytimg.com/vi/MnIbQC3lh2g/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=MnIbQC3lh2g&t=24s",
+      "body": "Priscilla desaparece en la arena nevada mientras las huellas revelan posición reciente y dirección. Cada muestra es incompleta, pero la secuencia limita dónde puede estar antes del siguiente ataque y convierte material y duración en parte de la regla.",
+      "video": "https://www.youtube.com/watch?v=MnIbQC3lh2g&t=24s",
+      "videoDurationSeconds": 107
+    },
+    {
+      "dimension": "3D",
+      "game": "Sekiro: Shadows Die Twice",
+      "boss": "Folding Screen Monkeys",
+      "screenshot": "https://i.ytimg.com/vi/YUTLWIhiMxc/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=YUTLWIhiMxc&t=1s",
+      "body": "El mono invisible se lee mediante huellas, sonido cercano, polvo y alteraciones de nieve o agua; la pantalla vacía establece su estado. Varios canales ambientales y auditivos permiten inferir sin reducir la búsqueda a choques a ciegas.",
+      "video": "https://www.youtube.com/watch?v=YUTLWIhiMxc&t=1s",
+      "videoDurationSeconds": 246
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

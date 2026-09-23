@@ -800,6 +800,51 @@ const SPECS = {
       [420, 700],
     ],
   },
+  'secondary-cues-invisibility': {
+    mode: 'secondary-cues-invisibility',
+    boss: [160, 400],
+    player: [330, 690],
+    target: [390, 540],
+    arena: [56, 350, 448, 540],
+    vanishAt: 0.62,
+    hiddenAt: 0.88,
+    lockAt: 2.32,
+    attack: [2.72, 3.16],
+    revealAt: 3.38,
+    punishAt: 4.18,
+    resetAt: 5.05,
+    cueLifetime: 0.9,
+    laneHalfWidth: 28,
+    laneEnd: [130, 820],
+    safePoint: [470, 710],
+    strikePoint: [390, 540],
+    hiddenRoute: [
+      [160, 400],
+      [210, 440],
+      [270, 465],
+      [330, 430],
+      [390, 520],
+    ],
+    clues: [
+      { point: [190, 425], at: 0.96 },
+      { point: [240, 455], at: 1.22 },
+      { point: [300, 448], at: 1.52 },
+      { point: [350, 470], at: 1.82 },
+      { point: [390, 520], at: 2.12 },
+    ],
+    playerRoute: [
+      [330, 690],
+      [370, 710],
+      [430, 730],
+      [470, 710],
+    ],
+    resetRoute: [
+      [390, 540],
+      [370, 580],
+      [350, 630],
+      [330, 690],
+    ],
+  },
   'wide-swing': { mode: 'arc', boss: [280, 310], player: [410, 470], target: [470, 650] },
   lunge: { mode: 'lunge', boss: [170, 290], player: [390, 590], target: [470, 660] },
   grab: { mode: 'grab', boss: [280, 300], player: [390, 485], target: [470, 610] },
@@ -1414,6 +1459,20 @@ export function beatSyncedAttackState(time) {
   if (t < spec.hits[0]) return 'pattern-cued';
   if (t < spec.phraseClearsAt) return 'beat-strikes';
   if (t < spec.punishAt) return 'phrase-clear';
+  if (t < spec.resetAt) return 'counter-window';
+  return 'reset';
+}
+
+export function secondaryCuesInvisibilityState(time) {
+  const spec = SPECS['secondary-cues-invisibility'];
+  const t = localTime(time);
+  if (t < spec.vanishAt) return 'visible-presence';
+  if (t < spec.hiddenAt) return 'fading-body';
+  if (t < spec.lockAt) return 'tracking-secondary-cues';
+  if (t < spec.attack[0]) return 'hidden-source-locked';
+  if (t < spec.attack[1]) return 'hidden-strike';
+  if (t < spec.revealAt) return 'reveal-signal';
+  if (t < spec.punishAt) return 'revealed-opening';
   if (t < spec.resetAt) return 'counter-window';
   return 'reset';
 }
@@ -3343,6 +3402,84 @@ function primitivesFor(spec, frame) {
       ),
     ];
   }
+  if (mode === 'secondary-cues-invisibility') {
+    const hidden = frame.invisibilityHidden;
+    const routeVisible = frame.time >= spec.vanishAt && frame.time < spec.revealAt;
+    const source = point(spec.hiddenRoute.at(-1));
+    const laneEnd = point(spec.laneEnd);
+    const safe = point(spec.safePoint);
+    const strike = strikePulse(frame.time, spec.punishAt, 0.38);
+    const cuePoint = frame.invisibilityCuePoint;
+    return [
+      rect(...spec.arena, 0.52, 'muted', 0.025),
+      path(
+        `M ${spec.hiddenRoute.map(([x, y]) => `${x} ${y}`).join(' L ')}`,
+        routeVisible ? 0.24 : 0,
+        'accent',
+        5,
+        0,
+        '9 11',
+      ),
+      ...spec.clues.map(({ point: [x, y] }, index) =>
+        path(
+          `M ${x - 13} ${y - 8} Q ${x - 3} ${y - 18} ${x + 7} ${y - 8} M ${x - 8} ${y + 12} Q ${x + 2} ${y + 2} ${x + 12} ${y + 12}`,
+          frame.invisibilityCueOpacities[index],
+          'accent',
+          6,
+        ),
+      ),
+      circle(
+        cuePoint.x,
+        cuePoint.y,
+        28 + 18 * pulse(frame.invisibilityCuePulse),
+        hidden ? 0.68 : 0,
+        'accent',
+        5,
+        0.04,
+        '8 9',
+      ),
+      circle(frame.boss.x, frame.boss.y, 46, hidden ? 0.22 : 0, 'muted', 4, 0.03, '6 12'),
+      line(
+        source.x,
+        source.y,
+        laneEnd.x,
+        laneEnd.y,
+        frame.invisibilitySourceLocked ? 0.72 : 0,
+        'accent',
+        6,
+        '11 9',
+      ),
+      line(
+        source.x,
+        source.y,
+        laneEnd.x,
+        laneEnd.y,
+        frame.invisibilityAttackActive ? 0.98 : 0,
+        'signal',
+        spec.laneHalfWidth * 2,
+      ),
+      circle(safe.x, safe.y, 40, routeVisible ? 0.7 : 0.14, 'safe', 6, 0.08, '8 7'),
+      circle(
+        source.x,
+        source.y,
+        48 + 30 * pulse(frame.invisibilityRevealProgress),
+        frame.invisibilityRevealVisible ? 0.86 : 0,
+        'safe',
+        7,
+        0.08,
+      ),
+      line(frame.player.x, frame.player.y, frame.boss.x, frame.boss.y, strike, 'safe', 10),
+      circle(frame.boss.x + 26, frame.boss.y - 16, 12 + strike * 24, strike, 'safe', 7, 0.14),
+      path(
+        'M 100 388 Q 132 370 164 388 M 420 390 Q 452 372 484 390 M 92 824 Q 124 806 156 824',
+        routeVisible ? 0.26 : 0.08,
+        'muted',
+        4,
+        0,
+        '8 12',
+      ),
+    ];
+  }
   if (mode === 'landing') {
     const landing = point(spec.landing);
     const contact = phase === 1 ? clamp(1 - Math.abs(action - 0.52) / 0.2) : 0;
@@ -4662,6 +4799,12 @@ function pointClearsThreat(spec, frame, value, radius = BLUEPRINT_PLAYER_RADIUS)
       Math.abs(value.x - laneCenter) > spec.laneHalfWidth + radius
     );
   }
+  if (mode === 'secondary-cues-invisibility')
+    return (
+      !frame.dangerActive ||
+      distanceToSegment(value, point(spec.hiddenRoute.at(-1)), point(spec.laneEnd)) >
+        spec.laneHalfWidth + radius
+    );
   if (mode === 'spiral')
     return (
       distanceFromBoss > 52 + radius &&
@@ -4908,6 +5051,20 @@ export function blueprintFrame(id, time) {
       x: mix(startBoss.x, spec.real[0], split),
       y: mix(startBoss.y, spec.real[1], split),
     };
+  } else if (spec.mode === 'secondary-cues-invisibility') {
+    const hiddenEnd = point(spec.hiddenRoute.at(-1));
+    if (t < spec.hiddenAt) boss = startBoss;
+    else if (t < spec.lockAt) {
+      const tracking = smooth((t - spec.hiddenAt) / (spec.lockAt - spec.hiddenAt));
+      boss = pointAlongPolyline(spec.hiddenRoute.map(point), tracking);
+    } else if (t < spec.resetAt) boss = hiddenEnd;
+    else {
+      const reset = smooth((t - spec.resetAt) / (BLUEPRINT_DURATION - spec.resetAt));
+      boss = {
+        x: mix(hiddenEnd.x, startBoss.x, reset),
+        y: mix(hiddenEnd.y, startBoss.y, reset),
+      };
+    }
   }
   let responseProgress = response;
   if (spec.mode === 'landing')
@@ -4972,6 +5129,7 @@ export function blueprintFrame(id, time) {
   else if (spec.mode === 'forced-inertia') responseProgress = 0;
   else if (spec.mode === 'wraparound-projectile') responseProgress = 0;
   else if (spec.mode === 'beat-synced-attack') responseProgress = 0;
+  else if (spec.mode === 'secondary-cues-invisibility') responseProgress = 0;
   else if (spec.mode === 'knockback')
     responseProgress = phase === 0 ? 0 : phase === 1 ? smooth(action) : 1;
   else if (spec.mode === 'target-lock')
@@ -5469,6 +5627,23 @@ export function blueprintFrame(id, time) {
       player = pointAlongPolyline(spec.resetRoute.map(point), reset);
     }
   }
+  if (spec.mode === 'secondary-cues-invisibility') {
+    const safe = point(spec.safePoint);
+    const strike = point(spec.strikePoint);
+    if (t < spec.hiddenAt) player = startPlayer;
+    else if (t < spec.lockAt) {
+      const track = smooth((t - spec.hiddenAt) / (spec.lockAt - spec.hiddenAt));
+      player = pointAlongPolyline(spec.playerRoute.map(point), track);
+    } else if (t < spec.attack[1]) player = safe;
+    else if (t < spec.punishAt) {
+      const approach = smooth((t - spec.attack[1]) / (spec.punishAt - spec.attack[1]));
+      player = { x: mix(safe.x, strike.x, approach), y: mix(safe.y, strike.y, approach) };
+    } else if (t < spec.resetAt) player = strike;
+    else {
+      const reset = clamp((t - spec.resetAt) / (BLUEPRINT_DURATION - spec.resetAt));
+      player = pointAlongPolyline(spec.resetRoute.map(point), reset);
+    }
+  }
   if (spec.mode === 'rotating' && phase === 0) {
     const initialPosition = polar(boss, 255, Math.PI / 3);
     player = {
@@ -5666,34 +5841,60 @@ export function blueprintFrame(id, time) {
                                       ),
                                     ) * 0.8,
                                   )
-                                : pulse(responseProgress) + pulse(returnProgress) * 0.8;
+                                : spec.mode === 'secondary-cues-invisibility'
+                                  ? Math.max(
+                                      pulse(
+                                        smooth((t - spec.hiddenAt) / (spec.lockAt - spec.hiddenAt)),
+                                      ),
+                                      pulse(
+                                        smooth(
+                                          (t - spec.attack[1]) / (spec.punishAt - spec.attack[1]),
+                                        ),
+                                      ),
+                                      pulse(
+                                        smooth(
+                                          (t - spec.resetAt) / (BLUEPRINT_DURATION - spec.resetAt),
+                                        ),
+                                      ) * 0.8,
+                                    )
+                                  : pulse(responseProgress) + pulse(returnProgress) * 0.8;
   const bossVisible =
-    spec.mode === 'burrow' && phase === 1 && action < 0.68
-      ? 0
-      : spec.mode === 'teleport'
-        ? t < spec.departure[0]
-          ? 1
-          : t < spec.absent[0]
-            ? 1 - smooth((t - spec.departure[0]) / (spec.absent[0] - spec.departure[0]))
-            : t < spec.arrival[0]
-              ? 0
-              : t < spec.arrival[1]
-                ? smooth((t - spec.arrival[0]) / (spec.arrival[1] - spec.arrival[0]))
-                : t < spec.resetDeparture[0]
-                  ? 1
-                  : t < spec.resetAbsent[0]
-                    ? 1 -
-                      smooth(
-                        (t - spec.resetDeparture[0]) /
-                          (spec.resetAbsent[0] - spec.resetDeparture[0]),
-                      )
-                    : t < spec.resetArrival[0]
-                      ? 0
-                      : smooth(
-                          (t - spec.resetArrival[0]) /
-                            (spec.resetArrival[1] - spec.resetArrival[0]),
+    spec.mode === 'secondary-cues-invisibility'
+      ? t < spec.vanishAt
+        ? 1
+        : t < spec.hiddenAt
+          ? 1 - smooth((t - spec.vanishAt) / (spec.hiddenAt - spec.vanishAt))
+          : t < spec.attack[1]
+            ? 0
+            : t < spec.revealAt
+              ? smooth((t - spec.attack[1]) / (spec.revealAt - spec.attack[1]))
+              : 1
+      : spec.mode === 'burrow' && phase === 1 && action < 0.68
+        ? 0
+        : spec.mode === 'teleport'
+          ? t < spec.departure[0]
+            ? 1
+            : t < spec.absent[0]
+              ? 1 - smooth((t - spec.departure[0]) / (spec.absent[0] - spec.departure[0]))
+              : t < spec.arrival[0]
+                ? 0
+                : t < spec.arrival[1]
+                  ? smooth((t - spec.arrival[0]) / (spec.arrival[1] - spec.arrival[0]))
+                  : t < spec.resetDeparture[0]
+                    ? 1
+                    : t < spec.resetAbsent[0]
+                      ? 1 -
+                        smooth(
+                          (t - spec.resetDeparture[0]) /
+                            (spec.resetAbsent[0] - spec.resetDeparture[0]),
                         )
-        : 1;
+                      : t < spec.resetArrival[0]
+                        ? 0
+                        : smooth(
+                            (t - spec.resetArrival[0]) /
+                              (spec.resetArrival[1] - spec.resetArrival[0]),
+                          )
+          : 1;
   const decoy =
     spec.mode === 'decoy'
       ? {
@@ -5832,7 +6033,13 @@ export function blueprintFrame(id, time) {
                                                                                     spec.attackDuration /
                                                                                       2,
                                                                                 )
-                                                                              : phase === 1;
+                                                                              : spec.mode ===
+                                                                                  'secondary-cues-invisibility'
+                                                                                ? t >=
+                                                                                    spec
+                                                                                      .attack[0] &&
+                                                                                  t < spec.attack[1]
+                                                                                : phase === 1;
   const frame = {
     id,
     mode: spec.mode,
@@ -5921,23 +6128,26 @@ export function blueprintFrame(id, time) {
                                 : spec.mode === 'beat-synced-attack'
                                   ? (Math.atan2(boss.y - player.y, boss.x - player.x) * 180) /
                                     Math.PI
-                                  : spec.mode === 'boss-as-terrain'
+                                  : spec.mode === 'secondary-cues-invisibility'
                                     ? (Math.atan2(boss.y - player.y, boss.x - player.x) * 180) /
                                       Math.PI
-                                    : spec.mode === 'control-mode-shift'
+                                    : spec.mode === 'boss-as-terrain'
                                       ? (Math.atan2(boss.y - player.y, boss.x - player.x) * 180) /
                                         Math.PI
-                                      : spec.mode === 'damage-type-resistance' ||
-                                          spec.mode === 'situational-immunity' ||
-                                          spec.mode === 'part-break' ||
-                                          spec.mode === 'attack-reflection' ||
-                                          spec.mode === 'counter-stance' ||
-                                          spec.mode === 'absorption-power-up' ||
-                                          spec.mode === 'interruptible-wind-up' ||
-                                          spec.mode === 'loadout-adaptation' ||
-                                          spec.mode === 'wind-up'
-                                        ? -180
-                                        : -90,
+                                      : spec.mode === 'control-mode-shift'
+                                        ? (Math.atan2(boss.y - player.y, boss.x - player.x) * 180) /
+                                          Math.PI
+                                        : spec.mode === 'damage-type-resistance' ||
+                                            spec.mode === 'situational-immunity' ||
+                                            spec.mode === 'part-break' ||
+                                            spec.mode === 'attack-reflection' ||
+                                            spec.mode === 'counter-stance' ||
+                                            spec.mode === 'absorption-power-up' ||
+                                            spec.mode === 'interruptible-wind-up' ||
+                                            spec.mode === 'loadout-adaptation' ||
+                                            spec.mode === 'wind-up'
+                                          ? -180
+                                          : -90,
     bossMotion: motion({
       gait:
         spec.mode === 'chase-herding' ||
@@ -6269,7 +6479,9 @@ export function blueprintFrame(id, time) {
                                     ? t * 7 * stride
                                     : spec.mode === 'beat-synced-attack'
                                       ? t * 7 * stride
-                                      : (route * responseProgress + route * returnProgress) / 20,
+                                      : spec.mode === 'secondary-cues-invisibility'
+                                        ? t * 7 * stride
+                                        : (route * responseProgress + route * returnProgress) / 20,
       stride,
       lean: stride * 0.45,
       crouch:
@@ -6364,12 +6576,15 @@ export function blueprintFrame(id, time) {
                                                       ? strikePulse(t, spec.punishAt, 0.38)
                                                       : spec.mode === 'beat-synced-attack'
                                                         ? strikePulse(t, spec.punishAt, 0.38)
-                                                        : spec.mode === 'decoy' && phase === 1
-                                                          ? pulse(clamp((action - 0.52) / 0.3))
-                                                          : spec.mode === 'weak-point' &&
-                                                              phase === 1
-                                                            ? pulse(action * 1.5)
-                                                            : 0,
+                                                        : spec.mode ===
+                                                            'secondary-cues-invisibility'
+                                                          ? strikePulse(t, spec.punishAt, 0.38)
+                                                          : spec.mode === 'decoy' && phase === 1
+                                                            ? pulse(clamp((action - 0.52) / 0.3))
+                                                            : spec.mode === 'weak-point' &&
+                                                                phase === 1
+                                                              ? pulse(action * 1.5)
+                                                              : 0,
     }),
   };
   if (spec.mode === 'directional-shield') {
@@ -6464,6 +6679,34 @@ export function blueprintFrame(id, time) {
     frame.activePhaseState = activePhaseState(t);
     frame.hitboxActive = dangerActive;
     frame.followThroughVisible = t >= spec.active[1] && t < spec.followThroughEnd;
+    frame.punishStrike = strikePulse(t, spec.punishAt, 0.38) > 0.5;
+  }
+  if (spec.mode === 'secondary-cues-invisibility') {
+    frame.secondaryCuesInvisibilityState = secondaryCuesInvisibilityState(t);
+    frame.invisibilityHidden = t >= spec.hiddenAt && t < spec.revealAt;
+    frame.invisibilitySourceLocked = t >= spec.lockAt && t < spec.attack[1];
+    frame.invisibilityAttackActive = dangerActive;
+    frame.invisibilityRevealVisible = t >= spec.attack[1] && t < spec.punishAt;
+    frame.invisibilityRevealProgress = smooth(
+      (t - spec.attack[1]) / (spec.revealAt - spec.attack[1]),
+    );
+    frame.invisibilityCueIndex = spec.clues.reduce(
+      (latest, clue, index) => (t >= clue.at ? index : latest),
+      -1,
+    );
+    frame.invisibilityCuePoint =
+      frame.invisibilityCueIndex >= 0
+        ? point(spec.clues[frame.invisibilityCueIndex].point)
+        : point(spec.boss);
+    frame.invisibilityCuePulse =
+      frame.invisibilityCueIndex >= 0
+        ? clamp((t - spec.clues[frame.invisibilityCueIndex].at) / Math.max(0.01, spec.cueLifetime))
+        : 0;
+    frame.invisibilityCueOpacities = spec.clues.map(({ at }) => {
+      const age = t - at;
+      return age < 0 || age > spec.cueLifetime ? 0 : mix(0.92, 0.16, age / spec.cueLifetime);
+    });
+    frame.invisibilityCueCount = spec.clues.filter(({ at }) => t >= at).length;
     frame.punishStrike = strikePulse(t, spec.punishAt, 0.38) > 0.5;
   }
   if (spec.mode === 'forced-inertia') {
@@ -6686,7 +6929,8 @@ export function blueprintFrame(id, time) {
       spec.mode === 'cover-line-of-sight' ||
       spec.mode === 'forced-inertia' ||
       spec.mode === 'wraparound-projectile' ||
-      spec.mode === 'beat-synced-attack'
+      spec.mode === 'beat-synced-attack' ||
+      spec.mode === 'secondary-cues-invisibility'
         ? 92
         : -62),
   };

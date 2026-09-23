@@ -1,0 +1,138 @@
+{
+  "title": "Invisibility",
+  "subtitle": "Hide the boss's primary body signal while continuous secondary cues preserve enough position, direction, and timing information for deliberate counterplay.",
+  "variant": "Kern fades from view but leaves rune-lit footprints, dust, and stone ripples along one continuous route; Tavi follows the evidence into a body-sized safe side, waits for the hidden strike, and counters after the reveal",
+  "summary": "The boss hides its primary body signal while bounded environmental, audio, or particle traces preserve position and attack intent.",
+  "overview": "Invisibility removes the easiest position cue, not all usable information. Footprints, sound, particles, displaced foliage, lock-on behavior, and attack previews become a lossy sensor for one continuous hidden body. Their cadence and error must still leave time and space for a full response.",
+  "learning": "Build invisibility as an explicit state contract: one authoritative hidden transform and hitbox, bounded secondary cues, cue cadence and lifetime, uncertainty limits, a committed attack source, consistent collision, multisensory equivalents, readable entry and exit transitions, and a useful post-reveal response window.",
+  "category": "Space, movement, and perception",
+  "readTime": "8 min",
+  "demo": {
+    "title": "Remove the body, preserve the evidence",
+    "timeline": "Invisibility timeline",
+    "step": "Invisibility states",
+    "phaseNames": [
+      "Fade the body and begin a trace",
+      "Lock the hidden source and resolve the strike",
+      "Reveal the boss and open the counter"
+    ],
+    "phaseDescriptions": [
+      "At 0.62 s Kern begins to fade and is fully hidden at 0.88 s. Five short-lived footprints, dust puffs, and stone ripples appear along one continuous route through 2.12 s, while Tavi moves toward the marked safe side without receiving an exact silhouette.",
+      "At 2.32 s the latest clue fixes the attack source. A dashed preview runs from that bounded location before the lane becomes dangerous from 2.72 to 3.16 s; Tavi's full body is already outside the active corridor.",
+      "The strike itself produces a reveal signal, Kern is fully visible by 3.38 s, and Tavi approaches only after danger ends. The sword lands at 4.18 s before both actors reset after 5.05 s."
+    ],
+    "boss": "Boss",
+    "player": "Player",
+    "danger": "The hidden body remains continuous and collidable; only the previewed line from the final trace becomes damaging during the authored active interval",
+    "locked": "Hidden transform, cue samples, cadence, lifetime, error envelope, attack-source lock, lane geometry, collision, reveal timing, punish window, and reset are authored",
+    "safe": "Track the newest secondary cue, move fully outside the previewed corridor, and approach only after the strike reveals the boss and the active interval ends",
+    "reducedMotion": "Autoplay is disabled by reduced motion. Scrub across 0.62, 0.88, 1.22, 1.82, 2.32, 2.72, 3.16, 3.38, 4.18, and 5.05 seconds to inspect the fade, trace cadence, source lock, strike, reveal, counter, and reset.",
+    "diagramDescription": "Kern fades while rune-lit footprints and expanding stone ripples mark a continuous curved route. The final clue locks a diagonal attack corridor. Tavi stands fully beside that corridor, waits through the hidden strike, then closes with the sword as Kern becomes visible."
+  },
+  "steps": [
+    {
+      "title": "Which state remains authoritative while the body is hidden?",
+      "body": "Keep one real transform, facing, velocity, and collision volume throughout invisibility. Presentation may suppress the model, but AI, attacks, physics, network replication, and secondary effects must read that same hidden state. Decide explicitly whether contact damage, lock-on, shadows, health bars, and aim assistance remain available. Debug the true body and every exposed proxy together so a cue never describes a different position from the collidable boss."
+    },
+    {
+      "title": "How accurately do clues predict the next source?",
+      "body": "Treat each footprint, sound, dust puff, water wake, or foliage reaction as a timestamped sample with known delay, lifetime, radius, and error. The sequence should communicate direction and plausible speed without revealing a perfect outline. Before an attack, lock the source or show a new preview long enough for the player to move a full body out of danger. Never let the hidden boss silently teleport beyond the history implied by those samples."
+    },
+    {
+      "title": "Can every player perceive entry, tracking, and exit?",
+      "body": "Pair environmental traces with high-contrast particles, spatial or stereo sound, controller vibration, and an optional accessibility outline. Give fade-in and fade-out their own state cues, and ensure busy effects cannot erase the evidence. Assists may increase cue lifetime, reduce positional error, or add a directional indicator without changing the hidden route or attack rule. Test on small displays, mono audio, color-vision filters, and reduced motion."
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "Opacity changes, but the information contract does not",
+      "body": "A transparent model is cosmetic when the lock-on reticle, shadow, health bar, or perfect homing aim still reveals the exact center. The opposite failure removes every signal and turns contact into guessing. Inventory every channel that exposes position, choose which ones remain intentionally lossy, and make their accuracy agree with the encounter's intended uncertainty."
+    },
+    {
+      "title": "The hidden boss breaks continuity before attacking",
+      "body": "If traces imply movement to one side but the hitbox or attack begins elsewhere, the player cannot reason from evidence. Keep motion continuous, cap hidden speed, and log the distance between the last cue and the committed source. If a teleport or decoy is part of the pattern, signal it as a separate rule rather than hiding the discontinuity inside invisibility."
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "Model secondary cues as a lossy sensor",
+      "body": "Expose samples of the hidden state instead of a second exact model. A cue can be delayed, short-lived, quantized to terrain cells, or offset within a bounded radius. Record those parameters in data so difficulty changes remain deliberate and automated tests can verify that the attack source stays inside the inferred envelope."
+    },
+    {
+      "title": "Let the arena material carry information",
+      "body": "Snow holds prints, shallow water forms wakes, dust rises from heavy steps, foliage bends, and loose stones react to weight. These effects make invisibility feel grounded in the setting while clarifying which surfaces support the mechanic. Preserve an equivalent abstract cue on surfaces that would otherwise become unreadable."
+    },
+    {
+      "title": "Tune cadence, lifetime, and error together",
+      "body": "Faster bosses need more frequent or longer-lived samples. A larger error radius needs either more reaction time or a wider safe route. Measure the worst gap between useful cues, the maximum inferred-source error, and the movement budget from source lock to impact; tuning only opacity or damage cannot repair a broken sensing loop."
+    },
+    {
+      "title": "Make reveal states mechanically meaningful",
+      "body": "Use a clear impact, stagger, material collapse, or exhausted shimmer to announce when exact position returns. If reveal creates a damage opportunity, keep its duration stable enough to plan around and show when it closes. Later phases may shorten the window or mix cue types, but should not retroactively invalidate the learned trace grammar."
+    }
+  ],
+  "story": {
+    "title": "Kern hides its core, not its weight",
+    "body": "Kern dims the runes holding its stone plates together until the body disappears. The quarry still answers each heavy step: pebbles jump, dust folds around an unseen leg, and old floor runes flare under pressure. The setting itself becomes the witness to the hidden elemental."
+  },
+  "adaptation": {
+    "title": "Let Tavi infer a route, then earn the approach",
+    "body": "Tavi uses ordinary movement and the existing sword. The clue cadence always leaves a neighboring body-sized safe side, the final source is fixed before the strike, and the visible return separates evasion from the counter. Accessibility settings can extend traces or add direction without replacing the authored route."
+  },
+  "distinction": {
+    "title": "Continuous hidden state, not teleportation or a decoy",
+    "body": "Invisibility suppresses direct perception while the same body continues through space and collision. Teleportation changes position discontinuously, and a decoy changes which perceived entity is real. Those mechanics can be combined, but each transition needs its own signal; otherwise players cannot know whether to integrate a trace, expect a jump, or test identities."
+  },
+  "lensNotes": [
+    {
+      "id": "telegraphing",
+      "body": "Fade cues, timestamped traces, a committed-source preview, impact, and reveal must describe one continuous state change and one active interval."
+    },
+    {
+      "id": "access-paths",
+      "body": "Environment motion, high-contrast particles, sound, haptics, and optional directional assistance provide parallel access to the same bounded position evidence."
+    },
+    {
+      "id": "threat-geometry",
+      "body": "The error envelope around the last clue and the full width of the coming attack determine whether a body-sized safe route actually exists."
+    },
+    {
+      "id": "counterplay",
+      "body": "The player interprets a clue sequence, leaves the committed corridor before activation, and uses a declared reveal window rather than striking an unknowable target."
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "Metroid Dread",
+      "boss": "Corpius",
+      "screenshot": "https://i.ytimg.com/vi/BIsn9Nm9zqo/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=BIsn9Nm9zqo&t=70s",
+      "body": "Corpius turns most of its body transparent, but its glowing tail weak point and the distortion of its long silhouette continue to expose actionable structure. The cue is not a perfect opaque model: it preserves where the vulnerable end is and how the body crosses the room, showing how selective visibility can remove one channel without erasing the encounter's spatial rule.",
+      "video": "https://www.youtube.com/watch?v=BIsn9Nm9zqo&t=70s",
+      "videoDurationSeconds": 247
+    },
+    {
+      "dimension": "3D",
+      "game": "Dark Souls Remastered",
+      "boss": "Crossbreed Priscilla",
+      "screenshot": "https://i.ytimg.com/vi/MnIbQC3lh2g/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=MnIbQC3lh2g&t=24s",
+      "body": "Crossbreed Priscilla disappears against a snow-covered arena while footprints reveal recent position and direction. The persistent surface turns locomotion into evidence: individual prints are incomplete samples, but their sequence bounds where the hidden body can plausibly be before the next attack. The example also shows why arena material and cue lifetime are part of the rule.",
+      "video": "https://www.youtube.com/watch?v=MnIbQC3lh2g&t=24s",
+      "videoDurationSeconds": 107
+    },
+    {
+      "dimension": "3D",
+      "game": "Sekiro: Shadows Die Twice",
+      "boss": "Folding Screen Monkeys",
+      "screenshot": "https://i.ytimg.com/vi/YUTLWIhiMxc/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=YUTLWIhiMxc&t=1s",
+      "body": "The invisible monkey is not read from a visible body. Footprints, nearby sound, dust, and disturbances in snow or water indicate where it moved, while the empty folding screen establishes that invisibility is its defining state. Multiple environmental and auditory channels make the search inferential without reducing it to a blind collision test.",
+      "video": "https://www.youtube.com/watch?v=YUTLWIhiMxc&t=1s",
+      "videoDurationSeconds": 246
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

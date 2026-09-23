@@ -21,6 +21,7 @@ import {
   forcedInertiaState,
   wraparoundProjectileState,
   beatSyncedAttackState,
+  secondaryCuesInvisibilityState,
   counterStanceOutcome,
   counterStanceState,
   blueprintFrame,
@@ -48,8 +49,8 @@ import {
   renderBlueprintThumbnail,
 } from '../lib/blueprint-view.mjs';
 
-test('all 72 promoted lesson animations have distinct rule modes and complete moving frames', () => {
-  assert.equal(BLUEPRINT_MECHANIC_IDS.length, 72);
+test('all 73 promoted lesson animations have distinct rule modes and complete moving frames', () => {
+  assert.equal(BLUEPRINT_MECHANIC_IDS.length, 73);
   const modes = new Set();
   for (const id of BLUEPRINT_MECHANIC_IDS) {
     for (let time = 0; time <= BLUEPRINT_DURATION; time += 0.1) {
@@ -70,7 +71,7 @@ test('all 72 promoted lesson animations have distinct rule modes and complete mo
           assert.ok(Number.isFinite(value), `${id} has an invalid ${primitive.type}`);
     }
   }
-  assert.equal(modes.size, 72);
+  assert.equal(modes.size, 73);
 });
 
 test('every blueprint exposes signal, committed action, and recovery without player teleports', () => {
@@ -138,6 +139,7 @@ test('every damaging promoted animation derives safety from its own active geome
     'speed-change': null,
     'limited-spread': null,
     'attack-reflection': null,
+    'secondary-cues-invisibility': { x: 300, y: 625 },
     'forced-scrolling': { x: 350, y: 750 },
     'control-mode-shift': { x: 120, y: 724 },
     'cover-line-of-sight': { x: 470, y: 850 },
@@ -2181,5 +2183,57 @@ test('beat-synced attack shares one clock across previews, lane hits, and the au
   assert.match(
     renderBlueprintThumbnail(id, 'test-beat-synced-attack'),
     /data-blueprint-preview="beat-synced-attack"/,
+  );
+});
+
+test('invisibility preserves a continuous hidden body through bounded secondary cues', () => {
+  const id = 'secondary-cues-invisibility';
+  assert.deepEqual(
+    [0, 0.7, 1.3, 2.4, 2.9, 3.2, 3.6, 4.2, 5.4].map(secondaryCuesInvisibilityState),
+    [
+      'visible-presence',
+      'fading-body',
+      'tracking-secondary-cues',
+      'hidden-source-locked',
+      'hidden-strike',
+      'reveal-signal',
+      'revealed-opening',
+      'counter-window',
+      'reset',
+    ],
+  );
+
+  const tracking = blueprintFrame(id, 1.52);
+  assert.equal(tracking.invisibilityHidden, true);
+  assert.equal(tracking.invisibilityCueCount, 3);
+  assert.equal(tracking.bossVisible, 0);
+  assert.ok(tracking.primitives[4].opacity > 0.8, 'the newest footprint is strongly visible');
+
+  const locked = blueprintFrame(id, 2.4);
+  assert.equal(locked.invisibilitySourceLocked, true);
+  assert.equal(locked.dangerActive, false);
+  assert.ok(locked.primitives[9].opacity > 0.7, 'the source previews its committed corridor');
+
+  const active = blueprintFrame(id, 2.9);
+  assert.equal(active.invisibilityAttackActive, true);
+  assert.equal(active.playerSafe, true);
+  assert.equal(blueprintPointSafe(id, 2.9, { x: 300, y: 625 }), false);
+  assert.equal(blueprintPointSafe(id, 2.9, { x: 470, y: 710 }), true);
+  assert.ok(active.primitives[10].opacity > 0.9, 'the hidden strike activates only its lane');
+
+  const reveal = blueprintFrame(id, 3.25);
+  assert.equal(reveal.invisibilityRevealVisible, true);
+  assert.ok(reveal.bossVisible > 0 && reveal.bossVisible < 1);
+  assert.ok(reveal.primitives[12].opacity > 0.8, 'the exact body returns with a reveal pulse');
+
+  const punish = blueprintFrame(id, 4.18);
+  assert.equal(punish.punishStrike, true);
+  assert.ok(punish.primitives[13].opacity > 0.9, 'the sword response follows the reveal');
+
+  assert.deepEqual(blueprintFrame(id, 0).player, blueprintFrame(id, 6).player);
+  assert.deepEqual(blueprintFrame(id, 0).boss, blueprintFrame(id, 6).boss);
+  assert.match(
+    renderBlueprintThumbnail(id, 'test-secondary-cues-invisibility'),
+    /data-blueprint-preview="secondary-cues-invisibility"/,
   );
 });

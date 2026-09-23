@@ -1,0 +1,28 @@
+{
+  "id": "secondary-cues-invisibility",
+  "number": 79,
+  "published": true,
+  "sourceLocale": "en",
+  "contentVersion": 1,
+  "animation": "secondary-cues-invisibility",
+  "lenses": ["telegraphing", "access-paths", "threat-geometry", "counterplay"],
+  "related": ["decoy", "teleport", "target-lock"],
+  "sources": [
+    {
+      "title": "GDC · Itay Keren — Boss Battle Design Fundamentals and Retrospective",
+      "url": "https://www.gdcvault.com/play/1024921/Boss-Up-Boss-Battle-Design"
+    },
+    {
+      "title": "Nintendo Life — Metroid Dread: Corpius Boss Battle",
+      "url": "https://www.nintendolife.com/guides/metroid-dread-corpius-boss-battle-how-to-beat-corpius"
+    },
+    {
+      "title": "Game Voyagers — Crossbreed Priscilla in Dark Souls Remastered",
+      "url": "https://gamevoyagers.com/how-to-beat-crossbreed-priscilla-in-dark-souls-remastered/"
+    },
+    {
+      "title": "GameWith — Folding Screen Monkeys Boss Fight",
+      "url": "https://gamewith.net/sekiro/article/show/8634"
+    }
+  ]
+}

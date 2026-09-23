@@ -271,6 +271,15 @@ export function initializeBlueprint(widget) {
       widget.dataset.blueprintBeatPhraseComplete = String(frame.beatSyncedPhraseComplete);
       widget.dataset.blueprintPunishStrike = String(frame.punishStrike);
     }
+    if (mechanicId === 'secondary-cues-invisibility') {
+      widget.dataset.blueprintSecondaryCuesInvisibility = frame.secondaryCuesInvisibilityState;
+      widget.dataset.blueprintInvisibilityHidden = String(frame.invisibilityHidden);
+      widget.dataset.blueprintInvisibilityCueCount = String(frame.invisibilityCueCount);
+      widget.dataset.blueprintInvisibilitySourceLocked = String(frame.invisibilitySourceLocked);
+      widget.dataset.blueprintInvisibilityAttack = String(frame.invisibilityAttackActive);
+      widget.dataset.blueprintInvisibilityReveal = String(frame.invisibilityRevealVisible);
+      widget.dataset.blueprintPunishStrike = String(frame.punishStrike);
+    }
     boss.setAttribute(
       'transform',
       `translate(${frame.boss.x} ${frame.boss.y}) scale(${frame.bossScale})`,

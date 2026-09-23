@@ -405,9 +405,9 @@ test('volley releases three parallel bolts on one beat and clears its outside ro
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
 });
 
-test('catalog and builder reuse the 72 promoted rule-specific previews', async ({ page }) => {
+test('catalog and builder reuse the 73 promoted rule-specific previews', async ({ page }) => {
   await page.goto('en/');
-  await expect(page.locator('[data-blueprint-preview]')).toHaveCount(72);
+  await expect(page.locator('[data-blueprint-preview]')).toHaveCount(73);
   const catalogLayouts = await page.locator('[data-blueprint-preview]').evaluateAll((previews) =>
     previews.map((preview) => {
       const boss = preview.querySelector('[data-character-art-preview="kern"]');
@@ -431,7 +431,7 @@ test('catalog and builder reuse the 72 promoted rule-specific previews', async (
   expect(new Set(catalogLayouts.map(({ layout }) => layout)).size).toBeGreaterThanOrEqual(18);
 
   await page.goto('en/builder/');
-  await expect(page.locator('[data-blueprint-preview]')).toHaveCount(72);
+  await expect(page.locator('[data-blueprint-preview]')).toHaveCount(73);
   const builderLayouts = await page.locator('[data-blueprint-preview]').evaluateAll((previews) =>
     previews.map((preview) => {
       const boss = preview.querySelector('[data-character-art-preview="kern"]');
@@ -2582,6 +2582,85 @@ test('beat-synced attack counts in, lands three lanes on the clock, and exposes 
   await expect(widget).toHaveAttribute('data-blueprint-beat-synced-attack', 'counter-window');
   await expect(widget).toHaveAttribute('data-blueprint-punish-strike', 'true');
   await expect(widget.locator('[data-blueprint-primitive="12"] line')).not.toHaveAttribute(
+    'opacity',
+    '0',
+  );
+
+  await page.setViewportSize({ width: 375, height: 812 });
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+});
+
+test('invisibility replaces the body with bounded traces before a fixed hidden strike', async ({
+  page,
+}) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.goto('en/mechanics/secondary-cues-invisibility/');
+  const widget = page.locator('[data-blueprint-demo]');
+  const timeline = widget.locator('[data-blueprint-timeline]');
+  const seek = (milliseconds) =>
+    timeline.evaluate((element, value) => {
+      element.value = String(value);
+      element.dispatchEvent(new Event('input', { bubbles: true }));
+    }, milliseconds);
+
+  await expect(page.locator('.lesson-title-line h1')).toHaveText('Invisibility');
+  await expect(page.locator('.wip-badge, .draft-profile')).toHaveCount(0);
+  await expect(page.locator('.game-example')).toHaveCount(3);
+  await expect(widget).toHaveAttribute('data-blueprint-playing', 'false');
+
+  await seek(700);
+  await expect(widget).toHaveAttribute('data-blueprint-secondary-cues-invisibility', 'fading-body');
+
+  await seek(1520);
+  await expect(widget).toHaveAttribute(
+    'data-blueprint-secondary-cues-invisibility',
+    'tracking-secondary-cues',
+  );
+  await expect(widget).toHaveAttribute('data-blueprint-invisibility-hidden', 'true');
+  await expect(widget).toHaveAttribute('data-blueprint-invisibility-cue-count', '3');
+  await expect(widget.locator('[data-blueprint-primitive="4"] path')).not.toHaveAttribute(
+    'opacity',
+    '0',
+  );
+
+  await seek(2400);
+  await expect(widget).toHaveAttribute(
+    'data-blueprint-secondary-cues-invisibility',
+    'hidden-source-locked',
+  );
+  await expect(widget).toHaveAttribute('data-blueprint-invisibility-source-locked', 'true');
+  await expect(widget).toHaveAttribute('data-blueprint-invisibility-attack', 'false');
+  await expect(widget.locator('[data-blueprint-primitive="9"] line')).not.toHaveAttribute(
+    'opacity',
+    '0',
+  );
+
+  await seek(2900);
+  await expect(widget).toHaveAttribute(
+    'data-blueprint-secondary-cues-invisibility',
+    'hidden-strike',
+  );
+  await expect(widget).toHaveAttribute('data-blueprint-invisibility-attack', 'true');
+  await expect(widget).toHaveAttribute('data-blueprint-outcome', 'safe');
+  await expect(widget.locator('[data-blueprint-primitive="10"] line')).not.toHaveAttribute(
+    'opacity',
+    '0',
+  );
+
+  await seek(3250);
+  await expect(widget).toHaveAttribute(
+    'data-blueprint-secondary-cues-invisibility',
+    'reveal-signal',
+  );
+  await expect(widget).toHaveAttribute('data-blueprint-invisibility-reveal', 'true');
+
+  await seek(4180);
+  await expect(widget).toHaveAttribute(
+    'data-blueprint-secondary-cues-invisibility',
+    'counter-window',
+  );
+  await expect(widget).toHaveAttribute('data-blueprint-punish-strike', 'true');
+  await expect(widget.locator('[data-blueprint-primitive="13"] line')).not.toHaveAttribute(
     'opacity',
     '0',
   );

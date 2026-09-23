@@ -226,9 +226,11 @@ const PROFILE_OVERRIDES = {
     response: ['reposition', 'dodge', 'manage'],
   },
   'secondary-cues-invisibility': {
-    geometry: ['target'],
-    signal: ['environment'],
-    response: ['reposition', 'manage'],
+    geometry: ['target', 'line'],
+    signal: ['environment', 'state', 'marker'],
+    response: ['reposition', 'dodge', 'attack', 'manage'],
+    dimensions: ['2d', '3d'],
+    lenses: ['telegraphing', 'access-paths', 'threat-geometry', 'counterplay'],
   },
   'sound-detection': {
     geometry: ['arena'],

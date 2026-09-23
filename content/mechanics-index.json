@@ -1257,7 +1257,7 @@
         "en": {
           "title": "Invisibility",
           "category": "Space, movement, and perception",
-          "summary": "Draft outline for the invisibility mechanic. Rules, tuning guidance, and examples are still in progress."
+          "summary": "The boss hides its primary body signal while bounded environmental, audio, or particle traces preserve position and attack intent."
         },
         "ru": {
           "title": "Скрытый босс и вторичные следы",
