@@ -1864,8 +1864,8 @@ test('escape phase signals a finite route, supports interruption, and resolves i
   const signal = blueprintFrame(id, 0.8);
   assert.equal(signal.escapeActive, false);
   assert.equal(signal.escapeInterrupted, false);
-  assert.ok(signal.primitives[1].opacity > 0.6, 'the exit route appears before the run');
-  assert.ok(signal.primitives[3].opacity > 0.7, 'the exit gate is explicit');
+  assert.ok(signal.primitives[8].opacity > 0.6, 'the gate rune lights before the run');
+  assert.ok(signal.primitives[4].opacity > 0.7, 'the stone exit arch is explicit');
 
   const escape = blueprintFrame(id, 2.1);
   assert.equal(escape.escapePhaseState, 'escape-run');
@@ -1880,12 +1880,12 @@ test('escape phase signals a finite route, supports interruption, and resolves i
   assert.equal(interrupted.escapeInterrupted, true);
   assert.equal(interrupted.escapeInterruptStrike, true);
   assert.equal(interrupted.escapeProgress, 0.72);
-  assert.ok(interrupted.primitives[9].opacity > 0.6, 'the interrupt ripple confirms success');
+  assert.ok(interrupted.primitives[13].opacity > 0.6, 'the impact burst confirms interruption');
 
   const punish = blueprintFrame(id, 3.72);
   assert.equal(punish.escapePhaseState, 'opening');
   assert.equal(punish.punishStrike, true);
-  assert.ok(punish.primitives[10].opacity > 0, 'the sword response lands during the opening');
+  assert.ok(punish.primitives[14].opacity > 0, 'the sword response lands during the opening');
   assert.deepEqual(blueprintFrame(id, 0).player, blueprintFrame(id, 6).player);
   assert.deepEqual(blueprintFrame(id, 0).boss, blueprintFrame(id, 6).boss);
   assert.match(

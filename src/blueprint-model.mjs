@@ -4019,87 +4019,107 @@ function primitivesFor(spec, frame) {
     const resolved = frame.time >= spec.escape[1] && frame.time < spec.resetAt;
     const signalVisible = frame.time >= spec.triggerAt && frame.time < spec.escape[0];
     const strike = strikePulse(frame.time, spec.punishAt, 0.38);
-    const gate = point(spec.exitGate);
-    const interrupt = point(spec.interruptPoint);
-    const meterX = 92;
-    const meterWidth = 360;
+    const gateOpacity = frame.escapeInterrupted ? 0.5 : signalVisible || escaping ? 0.96 : 0.58;
+    const gaugeWidth = 104 * frame.escapeProgress;
     return [
-      rect(58, 390, 444, 390, 0.45, 'muted', 0.02),
+      path('M 40 94 L 520 94 L 520 878 L 40 878 Z', 0.35, 'muted', 0, 0.46),
       path(
-        `M ${spec.bossRoute.map(([x, y]) => `${x} ${y}`).join(' L ')}`,
-        resolved ? 0.24 : signalVisible || escaping ? 0.72 : 0.18,
+        'M 60 128 L 392 128 L 386 451 L 58 469 Z M 64 145 L 145 145 L 145 368 L 61 383 Z M 170 143 L 320 143 L 315 376 L 166 382 Z',
+        0.28,
         'accent',
-        6,
         0,
-        '12 10',
+        0.46,
       ),
       path(
-        `M ${spec.playerRoute.map(([x, y]) => `${x} ${y}`).join(' L ')}`,
-        escaping ? 0.66 : signalVisible ? 0.38 : 0.16,
-        'safe',
-        5,
+        'M 58 746 L 186 594 L 256 550 L 330 588 L 386 527 L 454 507 L 486 566 L 392 606 L 342 662 L 258 626 L 207 669 L 142 800 Z',
+        0.58,
+        'muted',
         0,
-        '10 10',
+        0.63,
       ),
-      rect(
-        gate.x - 30,
-        gate.y - 94,
-        60,
-        188,
-        frame.escapeInterrupted ? 0.34 : frame.time >= spec.triggerAt ? 0.82 : 0.2,
+      path(
+        'M 76 773 L 178 711 L 272 638 L 376 549 L 403 574 L 292 676 L 192 751 L 108 809 Z',
+        signalVisible || escaping ? 0.37 : 0.2,
+        'safe',
+        0,
+        0.43,
+      ),
+      path(
+        'M 409 330 L 505 330 L 519 645 L 413 645 Z M 422 310 L 511 310 L 520 340 L 410 340 Z',
+        0.86,
+        'accent',
+        0,
+        0.74,
+      ),
+      path(
+        'M 438 370 L 492 370 L 494 622 L 439 622 Z',
+        gateOpacity,
         frame.escapeInterrupted ? 'safe' : 'signal',
-        frame.escapeInterrupted ? 0.04 : 0.12,
+        0,
+        0.42,
       ),
-      line(gate.x - 38, gate.y - 94, gate.x - 38, gate.y + 94, 0.8, 'accent', 7),
-      circle(
-        interrupt.x,
-        interrupt.y,
-        27,
-        signalVisible || escaping || resolved ? 0.78 : 0.18,
+      path(
+        'M 420 358 L 441 358 L 442 638 L 419 638 Z M 490 358 L 509 358 L 511 638 L 491 638 Z M 423 634 L 508 634 L 515 651 L 419 651 Z',
+        0.82,
+        'muted',
+        0,
+        0.68,
+      ),
+      path('M 455 205 L 480 205 L 497 252 L 469 299 L 440 252 Z', 0.78, 'accent', 0, 0.7),
+      path(
+        'M 465 218 L 476 249 L 465 282 L 454 250 Z M 459 249 L 471 246 L 466 261 Z',
+        frame.escapeInterrupted
+          ? 0.54
+          : signalVisible || escaping
+            ? 0.82 + signalProgress * 0.16
+            : 0.16,
+        frame.escapeInterrupted ? 'safe' : 'signal',
+        0,
+        0.82,
+      ),
+      path(
+        'M 358 553 L 389 533 L 420 552 L 393 576 Z',
+        signalVisible || escaping || resolved ? 0.84 : 0.35,
         frame.escapeInterrupted ? 'safe' : 'accent',
-        frame.escapeInterrupted ? 8 : 5,
-        frame.escapeInterrupted ? 0.18 : 0.04,
-        frame.escapeInterrupted ? '' : '8 8',
+        0,
+        0.72,
       ),
-      rect(meterX, 418, meterWidth, 18, frame.time >= spec.triggerAt ? 0.78 : 0.22, 'muted', 0.08),
-      rect(
-        meterX,
-        418,
-        meterWidth * frame.escapeProgress,
-        18,
-        frame.time >= spec.triggerAt ? 0.92 : 0,
+      path('M 402 343 L 506 343 L 506 355 L 402 355 Z', 0.82, 'muted', 0, 0.66),
+      path(
+        `M 402 343 L ${402 + gaugeWidth} 343 L ${402 + gaugeWidth} 355 L 402 355 Z`,
+        frame.time >= spec.triggerAt ? 0.94 : 0,
         frame.escapeInterrupted ? 'safe' : 'signal',
-        0.32,
+        0,
+        0.86,
       ),
-      line(
-        meterX + meterWidth * 0.72,
-        409,
-        meterX + meterWidth * 0.72,
-        445,
-        frame.time >= spec.triggerAt ? 0.86 : 0,
+      path(
+        'M 477 336 L 481 336 L 481 362 L 477 362 Z',
+        frame.time >= spec.triggerAt ? 0.83 : 0.28,
         'accent',
-        4,
-        '5 5',
+        0,
+        0.78,
       ),
-      circle(
-        frame.boss.x,
-        frame.boss.y,
-        44 + strikePulse(frame.time, spec.escape[1], 0.46) * 22,
-        frame.escapeInterrupted ? 0.7 : 0,
+      path(
+        `M ${frame.boss.x - 50} ${frame.boss.y - 4} L ${frame.boss.x - 20} ${frame.boss.y - 30} L ${frame.boss.x + 17} ${frame.boss.y - 10} L ${frame.boss.x + 42} ${frame.boss.y + 14} L ${frame.boss.x + 5} ${frame.boss.y + 24} Z`,
+        frame.escapeInterrupted ? 0.9 : 0,
         'safe',
-        7,
-        0.08,
+        0,
+        0.24,
       ),
       line(frame.player.x, frame.player.y, frame.boss.x, frame.boss.y, strike, 'safe', 10),
-      circle(frame.boss.x - 30, frame.boss.y - 8, 12 + strike * 24, strike, 'safe', 7, 0.12),
-      circle(
-        gate.x,
-        gate.y,
-        24 + signalProgress * 18,
-        signalVisible ? 0.4 + signalProgress * 0.4 : escaping ? 0.52 : 0.18,
+      path(
+        `M ${frame.boss.x - 38} ${frame.boss.y - 29} L ${frame.boss.x - 17} ${frame.boss.y - 42} L ${frame.boss.x - 22} ${frame.boss.y - 14} Z`,
+        strike,
+        'safe',
+        0,
+        0.84,
+      ),
+      path(
+        'M 447 383 L 484 383 L 488 400 L 444 400 Z',
+        signalVisible || escaping ? 0.34 + signalProgress * 0.24 : 0.08,
         'signal',
-        5,
-        0.08,
+        0,
+        0.7,
       ),
     ];
   }

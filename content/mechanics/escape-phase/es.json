@@ -23,7 +23,7 @@
     "locked": "Umbral, destino, ruta, tiempo, interrupción válida, coste del fallo y punto de control están definidos",
     "safe": "Lee la salida, toma el atajo y usa la interrupción indicada antes de que se complete el medidor",
     "reducedMotion": "Con movimiento reducido no hay reproducción automática. Recorre 0,55, 1,15, 2,2, 2,85, 3,35, 4,45 y 5,15 s.",
-    "diagramDescription": "Una arena fija muestra a Kern corriendo por una ruta discontinua hacia una puerta alta, un medidor que se llena, el atajo de Tavi y un golpe que detiene la huida."
+    "diagramDescription": "Un alto muro de cantera enmarca la calzada de piedra de Kern hacia el arco de salida. Un medidor rúnico integrado en el arco se llena mientras corre; Tavi toma un atajo hasta la losa de intercepción tallada y lo detiene con la espada antes de la puerta."
   },
   "steps": [
     {

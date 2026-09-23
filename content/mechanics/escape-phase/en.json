@@ -23,7 +23,7 @@
     "locked": "Trigger threshold, destination, route, travel time, interrupt eligibility, failure cost, and checkpoint behavior are authored",
     "safe": "Read the exit early, take the shorter intercept line, and spend the stated interrupt before the meter completes",
     "reducedMotion": "Autoplay is disabled by reduced motion. Scrub across 0.55, 1.15, 2.2, 2.85, 3.35, 4.45, and 5.15 seconds to inspect the escape contract.",
-    "diagramDescription": "A fixed arena shows Kern running along a dashed route toward a tall exit gate, an escape meter filling above the route, Tavi taking a shorter intercept line, and a sword interruption that stops the meter before the gate."
+    "diagramDescription": "A tall quarry wall frames Kern’s stone causeway to an exit arch. A rune gauge built into the arch fills as he runs; Tavi cuts across to the carved intercept plate and stops him with a sword strike before the gate."
   },
   "steps": [
     {
