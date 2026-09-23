@@ -1,0 +1,138 @@
+{
+  "title": "Autocuración interrumpible",
+  "subtitle": "Convierte la recuperación en una acción legible, limitada y realmente cancelable",
+  "variant": "Señal · interrupción · repetición · una cura",
+  "summary": "El jefe inicia una recuperación visible sin contacto con el jugador; una interrupción válida la cancela y un lanzamiento completo aplica una sola cura limitada.",
+  "overview": "La autocuración interrumpible pregunta si el jugador arriesgará posición o daño para conservar su progreso. La cura nace de una acción del jefe, muestra un plazo y se resuelve una sola vez al completarse. Señal, regla de interrupción, cantidad, enfriamiento y recuperación deben ser claros.",
+  "learning": "Define condición de inicio, duración, interrupción válida, superarmadura, fotograma de término, cura solicitada y aplicada, exceso, deduplicación, enfriamiento, fases, rollback y telemetría que une un cast id con un resultado.",
+  "category": "Estados, recursos y escalado",
+  "readTime": "9 min",
+  "demo": {
+    "title": "Interrumpe el primer canal de Kern con la espada de Tavi y deja terminar el segundo",
+    "timeline": "Cronología de recuperación interrumpible",
+    "step": "Señal, cancelación, repetición y estados de cura",
+    "phaseNames": [
+      "Lee el compromiso de curación",
+      "Interrumpe antes del plazo",
+      "Resuelve una recuperación limitada"
+    ],
+    "phaseDescriptions": [
+      "A los 0,30 s, Kern abre un anillo rúnico y compromete 0,68 s de canal. Las motas entrantes y la barra exponen el plazo antes de cambiar la vida.",
+      "Tavi alcanza a Kern y golpea a los 1,46 s. El anillo se rompe, se registra una interrupción y Kern permanece con 38 de vida.",
+      "Kern inicia otro canal a los 3,02 s. Sin golpe válido antes de 4,18 s, termina una vez y restaura 24: de 38 a 62."
+    ],
+    "boss": "Jefe",
+    "player": "Jugador",
+    "danger": "Solo un lanzamiento completo puede curar; uno interrumpido aplica cero y los callbacks repetidos del mismo cast id no crean curas extra",
+    "locked": "Inicio, plazo, etiquetas de interrupción, armadura, cura solicitada y aplicada, límite, enfriamiento, cast id, fase, rollback y persistencia pertenecen a la lógica del encuentro",
+    "safe": "Muestra pose distinta, movimiento hacia dentro, progreso, ruptura al interrumpir, cambio de vida del jefe y recuperación tras ambos resultados",
+    "reducedMotion": "Con movimiento reducido, la reproducción automática está desactivada. Revisa 0,30; 0,78; 1,28; 1,46; 2,54; 3,02; 4,18; 4,40; 4,62 y 5,36 s.",
+    "diagramDescription": "Kern canaliza dentro de runas concéntricas mientras las motas entran y la barra se llena. Tavi rompe el primer anillo; el segundo termina y la vida sube una vez de 38 a 62."
+  },
+  "steps": [
+    {
+      "title": "¿Qué inicia la cura y con qué frecuencia?",
+      "body": "Elige de forma explícita un umbral de vida, fase, temporizador o condición táctica. Limita con enfriamiento o cargas para evitar que el jefe recupere todo el progreso."
+    },
+    {
+      "title": "¿Qué cuenta como interrupción?",
+      "body": "Define umbral de daño, stagger, estado, herramienta, dirección y superarmadura. Resuelve desde el evento de combate autoritativo, cancela la cura pendiente y conserva un cast id estable."
+    },
+    {
+      "title": "¿Qué ocurre al completar o cancelar?",
+      "body": "Aplica la cura una vez en el fotograma de término, limita al máximo y entra en una recuperación clara. Un lanzamiento cancelado cura cero pero confirma el resultado."
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "La vida sube antes de terminar el canal",
+      "body": "Si la barra cambia durante la preparación, no se entiende si la interrupción funcionó. Separa cura pendiente y aplicada."
+    },
+    {
+      "title": "El jefe repite hasta borrar el progreso",
+      "body": "Un disparador sin límite convierte una decisión en repetición. Limita frecuencia y cantidad, y compara la cura con el daño esperado por ventana."
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "Modela el lanzamiento como transacción",
+      "body": "Guarda castId, startedAt, completesAt, interruptedAt, healRequested, healApplied y result para evitar términos duplicados."
+    },
+    {
+      "title": "Pon precio a la ruta de interrupción",
+      "body": "Mide tiempo de acercamiento, daño requerido, recursos y exposición a otros ataques."
+    },
+    {
+      "title": "Instrumenta ambos resultados",
+      "body": "Registra inicios, tasa y momento de interrupción, curas completas, exceso, cura por minuto, intervalo, daño intercambiado, muertes y duración de fase."
+    }
+  ],
+  "story": {
+    "title": "Tavi parte la runa que reúne Kern",
+    "body": "La luz avanza desde las piedras hasta las grietas del pecho de Kern. Tavi cruza el círculo y corta el glifo central; los fragmentos se apagan."
+  },
+  "adaptation": {
+    "title": "No comuniques el plazo solo con color",
+    "body": "Combina pose, cadencia sonora, partículas entrantes, barra y pulso final. Ofrece más tiempo, menor umbral, menos cura, menos usos o una indicación dedicada."
+  },
+  "distinction": {
+    "title": "Recuperación programada, no cura por contacto",
+    "body": "La autocuración nace de una decisión del jefe o condición del encuentro. La cura al golpear exige contacto; una fuente externa es otra entidad atacable."
+  },
+  "lensNotes": [
+    {
+      "id": "progress-clarity",
+      "body": "La barra, la vida y el result id muestran cuándo la recuperación pendiente se aplica."
+    },
+    {
+      "id": "counterplay",
+      "body": "Un plazo alcanzable y una regla explícita permiten impedir la cura."
+    },
+    {
+      "id": "risk-reward",
+      "body": "Interrumpir puede exigir abandonar seguridad o gastar recursos; aceptar la cura conserva posición."
+    },
+    {
+      "id": "rule-exception",
+      "body": "Superarmadura, inmunidad, cambios de fase, golpes duplicados, exceso y rollback necesitan resultados explícitos."
+    },
+    {
+      "id": "telegraphing",
+      "body": "La intención de curar debe distinguirse de un ataque antes de acercarse."
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "3D",
+      "game": "Bloodborne",
+      "boss": "Vicar Amelia",
+      "screenshot": "https://i.ytimg.com/vi/RQxOU8lqnBQ/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=RQxOU8lqnBQ&t=137s",
+      "video": "https://www.youtube.com/watch?v=RQxOU8lqnBQ&t=137s",
+      "videoDurationSeconds": 173,
+      "body": "A 2:17, Vicar Amelia retrocede y reza mientras el cazador elige Numbing Mist. La pose larga abre respuesta: el daño interrumpe y el objeto bloquea curas posteriores."
+    },
+    {
+      "dimension": "2D",
+      "game": "Dead Cells",
+      "boss": "The Collector",
+      "screenshot": "https://i.ytimg.com/vi/tyFky1GGlkY/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=tyFky1GGlkY&t=17s",
+      "video": "https://www.youtube.com/watch?v=tyFky1GGlkY&t=17s",
+      "videoDurationSeconds": 114,
+      "body": "A 0:17, el Collector bebe la Panacea tras un campo protector. Los primeros usos protegidos enseñan la regla; el último sin escudo convierte la misma acción en objetivo de interrupción."
+    },
+    {
+      "dimension": "2D",
+      "game": "Pokémon Red and Blue",
+      "boss": "Gym Leader Sabrina",
+      "screenshot": "https://i.ytimg.com/vi/6_NjyFECZBw/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=6_NjyFECZBw&t=113s",
+      "video": "https://www.youtube.com/watch?v=6_NjyFECZBw&t=113s",
+      "videoDurationSeconds": 298,
+      "body": "A 1:53, el Alakazam de Sabrina usa Recover por turnos. El texto y la barra de PS llevan toda la señal y el resultado; los límites evitan revertir progreso sin fin."
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

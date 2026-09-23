@@ -1,0 +1,138 @@
+{
+  "title": "Interceptable healing sources",
+  "subtitle": "Turn boss recovery into an external target-priority problem",
+  "variant": "Spawn · route · intercept · one delivery",
+  "summary": "A separate entity or resource sends healing toward the boss, and destroying the source or its packet prevents that bounded delivery.",
+  "overview": "An external healing source moves recovery out of the boss and into the arena. The player must identify which object owns the heal, understand its route and deadline, and decide whether leaving the boss is worth preserving progress. Each source needs an explicit lifetime, intercept rule, delivery event, amount, and reset policy.",
+  "learning": "Define source identity, spawn and signal timing, source health, packet ownership, travel route, interception predicate, delivery frame, requested and applied healing, overheal, duplicate-event protection, cleanup, phase transitions, rollback, and telemetry that joins one source id to one result.",
+  "category": "States, resources, and scaling",
+  "readTime": "9 min",
+  "demo": {
+    "title": "Destroy one healing rune before its packet reaches Kern, then let the second deliver",
+    "timeline": "External healing delivery timeline",
+    "step": "Signal, intercept, transfer, and recovery states",
+    "phaseNames": [
+      "Identify the healing sources",
+      "Intercept one transfer",
+      "Resolve one surviving delivery"
+    ],
+    "phaseDescriptions": [
+      "At 0.28 s, two diamond runes light up and connect to Kern while the boss health bar remains at 42. Their separate bodies and dashed routes show that the arena objects own the pending recovery.",
+      "Tavi reaches the left rune and destroys it at 1.42 s. Its packet disappears, the source count falls from two to one, and Kern remains at 42 health.",
+      "The right rune signals again at 2.46 s and sends a packet from 2.90 to 4.08 s. Because that source survives, one 18-point heal resolves and Kern rises from 42 to 60 before recovery."
+    ],
+    "boss": "Boss",
+    "player": "Player",
+    "danger": "Only an active source whose packet reaches the boss may heal; destroyed sources, cancelled packets, and repeated callbacks apply zero",
+    "locked": "Source id, health, route, delivery deadline, valid intercepts, heal amount, cap, cleanup, phase carryover, rollback, and persistence belong to encounter logic",
+    "safe": "Give every source a distinct body, connection, travel cue, destruction response, delivery pulse, and boss-health result",
+    "reducedMotion": "Autoplay is disabled by reduced motion. Scrub across 0.28, 0.72, 1.20, 1.42, 1.78, 2.46, 2.90, 4.08, 4.50, 5.08, and 5.36 seconds to inspect both outcomes and the reset.",
+    "diagramDescription": "Two diamond healing runes link to Kern. Tavi cuts the left rune and cancels its packet; the surviving right rune sends a visible packet into Kern and the boss health bar rises once from 42 to 60."
+  },
+  "steps": [
+    {
+      "title": "What owns the recovery?",
+      "body": "Represent the healer, pickup, projectile, or objective as a separate encounter entity with a stable id. Show its relationship to the boss before healing begins so the target-priority decision is readable."
+    },
+    {
+      "title": "Where can the player interrupt delivery?",
+      "body": "Choose whether the source body, the travelling packet, or both can be attacked. Tune travel time, source durability, distance, and concurrent threats around the response verbs the player actually has."
+    },
+    {
+      "title": "What resolves at the endpoint?",
+      "body": "On arrival, verify that the source is still active, apply one clamped heal, record the source and result ids, then consume or reset the source. Rejected and duplicated deliveries must change no health."
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "The effect appears to come from the boss",
+      "body": "If the source has no readable body or route, players interpret the health gain as an unexplained self-heal. Maintain a visible connection and make source destruction visibly cancel the transfer."
+    },
+    {
+      "title": "Every source erases an entire damage window",
+      "body": "Too much durability, frequency, or healing turns target priority into mandatory cleanup. Bound the restored amount and compare the time to intercept with expected damage, movement cost, and exposure."
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "Treat delivery as an owned transaction",
+      "body": "Store sourceId, packetId, spawnedAt, interceptedAt, arrivedAt, healRequested, healApplied, and result. This prevents a destroyed source from completing through a stale callback and makes rollback deterministic."
+    },
+    {
+      "title": "Keep target priority legible",
+      "body": "Separate sources spatially, limit simultaneous clutter, and show which one is active. If several sources can heal, communicate ordering, shared deadlines, and whether partial interception still matters."
+    },
+    {
+      "title": "Measure the diversion cost",
+      "body": "Track source spawns, time to first response, sources destroyed, packets intercepted, deliveries completed, health restored, damage forgone, travel distance, resource spend, and deaths after a delivery."
+    }
+  ],
+  "story": {
+    "title": "Tavi severs one of Kern’s borrowed lifelines",
+    "body": "Two standing stones wake and draw pale threads toward the cracks in Kern’s chest. Tavi breaks the nearer rune before its light can leave; the farther stone survives and seals part of the elemental with one final pulse."
+  },
+  "adaptation": {
+    "title": "Expose source, route, and deadline through multiple channels",
+    "body": "Combine silhouette, tether, packet motion, cadence, source count, and health-bar feedback. Offer weaker sources, slower packets, fewer simultaneous targets, aim assistance, or a dedicated intercept prompt without changing the rule."
+  },
+  "distinction": {
+    "title": "A separate healer, not a boss-owned cast",
+    "body": "The external entity owns the delivery and can be targeted independently. An interruptible self-heal belongs to the boss action itself, while on-hit healing requires qualifying contact with a target."
+  },
+  "lensNotes": [
+    {
+      "id": "progress-clarity",
+      "body": "The source count, travelling packet, boss-health change, and stable result id reveal exactly what progress was preserved or restored."
+    },
+    {
+      "id": "counterplay",
+      "body": "Destroying a source or packet gives the player a direct way to prevent recovery before it resolves."
+    },
+    {
+      "id": "risk-reward",
+      "body": "Leaving the boss to intercept a healer preserves damage progress but costs position, time, and attention."
+    },
+    {
+      "id": "rule-exception",
+      "body": "Destroyed sources, simultaneous arrivals, phase changes, overheal, duplicate callbacks, and rollback need explicit outcomes."
+    },
+    {
+      "id": "telegraphing",
+      "body": "A distinct source silhouette, tether, and moving packet must reveal the healing intent and its deadline before delivery."
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "3D",
+      "game": "Genshin Impact",
+      "boss": "Electro Hypostasis",
+      "screenshot": "https://i.ytimg.com/vi/Q1A3BLMg5F4/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=Q1A3BLMg5F4&t=2s",
+      "video": "https://www.youtube.com/watch?v=Q1A3BLMg5F4&t=2s",
+      "videoDurationSeconds": 43,
+      "body": "At 0:02, three Revival Prisms appear around the exposed core. The player must destroy them with elemental reactions; each surviving prism restores health and remains for the next recovery attempt, turning a damage check into persistent target priority."
+    },
+    {
+      "dimension": "2D",
+      "game": "Terraria",
+      "boss": "Moon Lord",
+      "screenshot": "https://i.ytimg.com/vi/hfXG8H14GNA/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=hfXG8H14GNA&t=31s",
+      "video": "https://www.youtube.com/watch?v=hfXG8H14GNA&t=31s",
+      "videoDurationSeconds": 56,
+      "body": "At 0:31, the Moon Lord’s tongue connects to the player and produces Moon Leech Clots that travel toward his mouth. The clots can be destroyed in transit; every survivor that arrives heals the boss, so route readability directly supports interception."
+    },
+    {
+      "dimension": "2D",
+      "game": "The Binding of Isaac: Afterbirth",
+      "boss": "Ultra Greed",
+      "screenshot": "https://i.ytimg.com/vi/h804IUhQunI/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=h804IUhQunI&t=30s",
+      "video": "https://www.youtube.com/watch?v=h804IUhQunI&t=30s",
+      "videoDurationSeconds": 49,
+      "body": "At 0:30, Ultra Greed releases a wave of Heart Coins. Each coin is a separate destructible target that heals him if it survives, forcing the player to retarget quickly without losing awareness of the boss and the rest of the coin wave."
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

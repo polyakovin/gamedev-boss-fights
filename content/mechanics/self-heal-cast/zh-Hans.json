@@ -1,0 +1,134 @@
+{
+  "title": "可打断的自我治疗",
+  "subtitle": "把恢复做成可读、有上限且真正能阻止的动作",
+  "variant": "信号 · 打断 · 再次施放 · 一次治疗",
+  "summary": "首领在没有接触玩家时开始可见的恢复动作；合格的打断会取消它，完整施放只结算一次受上限约束的治疗。",
+  "overview": "可打断自疗要求玩家判断，是否用位置或伤害换取已取得的进度。治疗由首领动作启动，公开截止时刻，并只在完成后结算一次。信号、打断规则、数值、冷却和收招窗口都必须清楚。",
+  "learning": "定义启动条件、引导时长、有效打断、霸体、完成帧、请求与实际治疗、溢出、去重、冷却、阶段继承、回滚，以及把一个施法编号连接到一个结果的遥测。",
+  "category": "状态、资源与缩放",
+  "readTime": "9 分钟",
+  "demo": {
+    "title": "用塔维的剑打断凯恩第一次引导，再让第二次完成",
+    "timeline": "可打断恢复时间轴",
+    "step": "信号、取消、重施与治疗状态",
+    "phaseNames": ["读懂治疗承诺", "在截止前打断", "结算一次有上限的恢复"],
+    "phaseDescriptions": [
+      "0.30 秒时，凯恩展开符文环并承诺 0.68 秒引导。向内的微粒与施法条在生命变化前暴露截止点。",
+      "塔维接近并在 1.46 秒挥剑。符文环破裂，第一次施法记录一次打断，凯恩仍为 38 点生命。",
+      "凯恩在 3.02 秒再次引导。4.18 秒前没有有效命中，施法只完成一次，恢复 24 点生命，从 38 升到 62。"
+    ],
+    "boss": "首领",
+    "player": "玩家",
+    "danger": "只有完成的施法能治疗；被打断的尝试为零，同一施法编号的重复回调不能额外治疗",
+    "locked": "启动条件、截止点、打断标签、霸体、请求与实际治疗、上限、冷却、施法编号、阶段变化、回滚和持久化属于遭遇逻辑",
+    "safe": "展示独特姿势、向内运动、施法进度、打断破碎、首领生命变化，以及两种结果后的收招窗口",
+    "reducedMotion": "减少动态效果时自动播放关闭。拖到 0.30、0.78、1.28、1.46、2.54、3.02、4.18、4.40、4.62 和 5.36 秒检查两次尝试与重置。",
+    "diagramDescription": "凯恩在同心符文中引导，微粒向内汇聚，施法条填充。塔维一剑打碎第一道环；第二次完成，首领生命只从 38 增至 62 一次。"
+  },
+  "steps": [
+    {
+      "title": "什么触发治疗，多久能用一次？",
+      "body": "明确选择生命阈值、阶段、计时器或战术条件。用冷却或次数限制动作，避免首领连续重施并抹掉全部进度。"
+    },
+    {
+      "title": "什么算有效打断？",
+      "body": "定义伤害阈值、失衡标签、状态、工具、命中方向与霸体。以权威战斗事件结算，取消待处理治疗，并保存稳定施法编号。"
+    },
+    {
+      "title": "完成或取消后发生什么？",
+      "body": "在完成帧只应用一次治疗，按最大生命截断，再进入清楚的收招。取消时治疗为零，但仍要提供明确确认与刻意调好的惩罚窗口。"
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "生命在引导明显结束前上升",
+      "body": "若引导中生命条已移动，玩家无法判断打断是否成功。分开待处理与已应用治疗，只用明确完成事件改动生命。"
+    },
+    {
+      "title": "首领反复施放直到进度归零",
+      "body": "无界触发会把决策变成重复。限制频率和数值，保留应对窗口，并把恢复量与玩家每个输出窗口的预期伤害比较。"
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "把施法建模为事务",
+      "body": "保存 castId、startedAt、completesAt、interruptedAt、healRequested、healApplied 和 result，避免重复完成，并让回滚确定。"
+    },
+    {
+      "title": "给打断路线定价",
+      "body": "测量接近时间、所需伤害、资源消耗与其他攻击风险，让玩家决定是否值得离开安全位置。"
+    },
+    {
+      "title": "记录两种结果",
+      "body": "统计启动、打断率与时机、完成治疗、溢出、每分钟恢复、重施间隔、交换伤害、完成后的死亡与阶段时长。"
+    }
+  ],
+  "story": {
+    "title": "塔维劈开凯恩聚拢的符文",
+    "body": "光从竞技场石块爬向凯恩胸口的裂缝。塔维穿过圆环斩开中央符号，碎片在封住元素体前熄灭。"
+  },
+  "adaptation": {
+    "title": "不要只用颜色表现截止点",
+    "body": "结合姿势、声音节奏、向内微粒、施法进度与完成脉冲。可加长窗口、降低阈值、减弱治疗、减少次数或提供专用反制提示。"
+  },
+  "distinction": {
+    "title": "计划中的恢复，不是接触触发治疗",
+    "body": "自疗来自首领决定或遭遇条件，并可有引导。命中治疗需要与目标接触；外部治疗源则属于可单独攻击的另一实体。"
+  },
+  "lensNotes": [
+    {
+      "id": "progress-clarity",
+      "body": "施法条、首领生命和结果编号明确显示待处理恢复何时变为实际恢复。"
+    },
+    {
+      "id": "counterplay",
+      "body": "可到达的截止点与明确条件让玩家能阻止治疗。"
+    },
+    {
+      "id": "risk-reward",
+      "body": "打断可能要离开安全区或花费伤害和资源；接受治疗则保住位置。"
+    },
+    {
+      "id": "rule-exception",
+      "body": "霸体、免疫、阶段切换、重复命中、溢出与回滚都要明确。"
+    },
+    {
+      "id": "telegraphing",
+      "body": "玩家决定接近前，治疗意图必须与攻击可区分。"
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "3D",
+      "game": "Bloodborne",
+      "boss": "Vicar Amelia",
+      "screenshot": "https://i.ytimg.com/vi/RQxOU8lqnBQ/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=RQxOU8lqnBQ&t=137s",
+      "video": "https://www.youtube.com/watch?v=RQxOU8lqnBQ&t=137s",
+      "videoDurationSeconds": 173,
+      "body": "2:17 时，维卡·阿梅利亚后撤祈祷，猎人选择麻痹雾。长姿势形成反应窗口：伤害可打断，道具会暂时阻止后续治疗。"
+    },
+    {
+      "dimension": "2D",
+      "game": "Dead Cells",
+      "boss": "The Collector",
+      "screenshot": "https://i.ytimg.com/vi/tyFky1GGlkY/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=tyFky1GGlkY&t=17s",
+      "video": "https://www.youtube.com/watch?v=tyFky1GGlkY&t=17s",
+      "videoDurationSeconds": 114,
+      "body": "0:17 时，收藏家在护盾内饮用万能药并恢复生命。早期受保护的饮用先教学，最终无盾饮用把同一动作变成打断目标。"
+    },
+    {
+      "dimension": "2D",
+      "game": "Pokémon Red and Blue",
+      "boss": "Gym Leader Sabrina",
+      "screenshot": "https://i.ytimg.com/vi/6_NjyFECZBw/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=6_NjyFECZBw&t=113s",
+      "video": "https://www.youtube.com/watch?v=6_NjyFECZBw&t=113s",
+      "videoDurationSeconds": 298,
+      "body": "1:53 时，娜姿的胡地在回合战中使用自我再生。没有空间引导，指令文字和 HP 条承担全部信号与结果；限制可避免无限撤销进度。"
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

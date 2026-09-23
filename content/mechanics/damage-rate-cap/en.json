@@ -1,0 +1,138 @@
+{
+  "title": "Adaptive damage-rate cap",
+  "subtitle": "Limit burst damage without turning the boss invulnerable",
+  "variant": "Measure · attenuate · decay · restore",
+  "summary": "Recent or estimated burst damage lowers the fraction of each new hit that reaches the boss, then the attenuation relaxes when the damage window clears.",
+  "overview": "A damage-rate cap protects encounter structure from extreme burst while ordinary attacks still move the health bar. It estimates pressure with a recent-damage window or weapon-DPS model, then reduces later damage above a threshold. Define the window, curve, floor, decay, exception order, and feedback so stronger builds still feel effective.",
+  "learning": "Define the measured damage sample, window duration, threshold, attenuation curve, minimum multiplier, per-hit and damage-type exceptions, first-hit behavior, decay, phase resets, multiplayer aggregation, health application order, stable hit ids, rollback, and telemetry for raw, applied, and prevented damage.",
+  "category": "States, resources, and scaling",
+  "readTime": "10 min",
+  "demo": {
+    "title": "Compare an isolated sword hit with a rapid burst, then wait for the cap to recover",
+    "timeline": "Adaptive damage-rate cap timeline",
+    "step": "Isolated hit, attenuated burst, decay, and restored hit",
+    "phaseNames": [
+      "Establish full damage",
+      "Fill the recent-damage window",
+      "Let attenuation decay"
+    ],
+    "phaseDescriptions": [
+      "Tavi lands an isolated 18-point sword hit at 0.92 s. With no recent damage in the window, all 18 points apply and Kern falls from 100 to 82 health.",
+      "A four-hit burst begins at 2.08 s. The same raw 18-point hit first applies 18, then only 9, 6, and 5 as the recent-damage meter fills; Kern reaches 44 instead of 10.",
+      "The meter drains from 3.48 to 4.48 s. A new 18-point hit at 4.94 s again applies the full 18, proving that the rule paces damage rather than creating invulnerability."
+    ],
+    "boss": "Boss",
+    "player": "Player",
+    "danger": "Every hit still resolves once; only its applied amount changes from the measured pressure, curve, and floor",
+    "locked": "Window membership, threshold, multiplier, exception order, phase reset, multiplayer ownership, rollback, and health mutation belong to encounter logic",
+    "safe": "Show raw versus applied damage, the recent-damage window, changing protection, and the exact boss-health result",
+    "reducedMotion": "Autoplay is disabled by reduced motion. Scrub across 0.34, 0.92, 1.72, 2.08, 2.43, 2.78, 3.13, 3.48, 4.48, 4.94, and 5.42 seconds to inspect the curve and reset.",
+    "diagramDescription": "Tavi strikes Kern once for full damage, then performs a rapid series whose equal raw hits shrink as a recent-damage meter fills. After the meter drains, one more equal hit deals full damage again."
+  },
+  "steps": [
+    {
+      "title": "What pressure does the rule measure?",
+      "body": "Choose a rolling sum, weighted history, weapon burst-DPS estimate, or another explicit sample. Record which hits enter it, when they expire, whether players share a window, and whether the current hit is evaluated before or after it is added."
+    },
+    {
+      "title": "How does pressure change a hit?",
+      "body": "Map measured pressure to a multiplier with a documented threshold, curve, and nonzero floor. Keep identical input deterministic, clamp the result once, and decide the order of critical hits, armor, vulnerabilities, shields, and attenuation."
+    },
+    {
+      "title": "How does the player read and test it?",
+      "body": "Make applied damage, health loss, and recovery from attenuation distinguishable. Test isolated hits, dense bursts, damage-over-time, multihit attacks, multiplayer focus fire, phase transitions, latency, duplicate events, and builds on both sides of the threshold."
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "More power produces the same result with no explanation",
+      "body": "If numbers, reactions, and health loss do not reveal attenuation, players read the system as a bug or dishonest scaling. Preserve meaningful gains below and above the threshold and expose the changed multiplier through feedback or encounter UI."
+    },
+    {
+      "title": "The cap becomes a hidden invulnerability phase",
+      "body": "A near-zero floor, long memory, or reset that never arrives can erase valid play. Give the window a bounded lifetime, maintain a useful minimum contribution, and audit interactions that continuously refresh pressure."
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "Keep the damage transaction ordered",
+      "body": "For each hit, store hitId, sourceId, rawDamage, recentSample, threshold, multiplier, appliedDamage, preventedDamage, healthBefore, healthAfter, and resolution time. Replayed hit ids must not apply twice."
+    },
+    {
+      "title": "Decide what skill the cap rewards",
+      "body": "A rolling window can reward cadence and intentional pauses; a weapon-DPS model can equalize loadouts but may feel detached from moment-to-moment play. Pick the model that protects the encounter without invalidating the combat verbs you want players to express."
+    },
+    {
+      "title": "Measure the compression, not only completion",
+      "body": "Track raw-to-applied ratio, time above threshold, damage prevented per source, kill time by build, phase skips, first-hit spikes, multiplayer concentration, floor uptime, and whether players recognize why their numbers changed."
+    }
+  ],
+  "story": {
+    "title": "Kern’s runes harden under a flurry",
+    "body": "One measured cut crosses the elemental’s shell cleanly. When Tavi crowds several blows together, the runes flare and spread the force across the stone; after a quiet beat their glow fades and the blade bites deeply again."
+  },
+  "adaptation": {
+    "title": "Expose pressure and recovery through more than numbers",
+    "body": "Combine health-bar motion, hit sound, impact weight, color, controller feedback, a protection aura, and an optional recent-damage meter. Offer a gentler curve, shorter window, higher floor, or explicit threshold indicator without changing which events qualify."
+  },
+  "distinction": {
+    "title": "Adaptive attenuation, not armor, a hit cap, or a health gate",
+    "body": "Armor reduces damage by a mostly stable rule, a per-hit cap clips one large hit, and a health gate stops progress at a fixed boundary. A damage-rate cap changes later hits according to recent or estimated pressure and relaxes when that pressure decays."
+  },
+  "lensNotes": [
+    {
+      "id": "progress-clarity",
+      "body": "Raw damage, applied damage, the recent-pressure meter, and health loss must explain why progress compresses during a burst and returns afterward."
+    },
+    {
+      "id": "risk-reward",
+      "body": "Continuing a burst maintains pressure and tempo but accepts lower efficiency; pausing restores efficiency at the cost of time and possibly position."
+    },
+    {
+      "id": "rule-exception",
+      "body": "First hits, criticals, damage-over-time, multihit attacks, phase resets, multiplayer focus fire, and duplicate callbacks need explicit ordering."
+    },
+    {
+      "id": "player-expression",
+      "body": "The curve decides whether burst builds, sustained damage, coordinated volleys, and deliberate cadence remain meaningfully distinct."
+    },
+    {
+      "id": "difficulty-rhythm",
+      "body": "Window length and decay create a combat rhythm of pressure and release that should align with openings instead of fighting them."
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "The Binding of Isaac: Repentance",
+      "boss": "Hush",
+      "screenshot": "https://i.ytimg.com/vi/SAy8fV6yGRA/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=SAy8fV6yGRA&t=120s",
+      "video": "https://www.youtube.com/watch?v=SAy8fV6yGRA&t=120s",
+      "videoDurationSeconds": 508,
+      "body": "From 2:00, Hush’s second form demonstrates a long encounter protected from extreme burst. Its documented Damage Scaling tracks unmodified damage over the previous four seconds and lowers the multiplier toward a floor, making window length and minimum contribution central tuning values."
+    },
+    {
+      "dimension": "3D",
+      "game": "Warframe",
+      "boss": "Archon Boreal",
+      "screenshot": "https://i.ytimg.com/vi/rtl0o3M0e-A/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=rtl0o3M0e-A&t=462s",
+      "video": "https://www.youtube.com/watch?v=rtl0o3M0e-A&t=462s",
+      "videoDurationSeconds": 842,
+      "body": "At 7:42, an extreme first-hit setup defeats Archon Boreal despite the encounter’s Damage Attenuation. The exception is useful design evidence: initialization and operation order matter as much as the curve, because a spike evaluated before enough pressure exists can bypass the intended pacing."
+    },
+    {
+      "dimension": "3D",
+      "game": "Warframe",
+      "boss": "The Fragmented One",
+      "screenshot": "https://i.ytimg.com/vi/s8ur1I8hi7I/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=s8ur1I8hi7I&t=660s",
+      "video": "https://www.youtube.com/watch?v=s8ur1I8hi7I&t=660s",
+      "videoDurationSeconds": 831,
+      "body": "The boss fight begins at 11:00. The Fragmented One is documented with Damage Attenuation and a maximum DPS amount; the sustained firefight shows why designers must validate the cap across continuous weapons, high fire rates, status effects, and a long health-bar read rather than only single attacks."
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

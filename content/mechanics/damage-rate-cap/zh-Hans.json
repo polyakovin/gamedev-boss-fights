@@ -1,0 +1,128 @@
+{
+  "title": "自适应伤害速率上限",
+  "subtitle": "限制爆发伤害，而不让首领进入无敌",
+  "variant": "测量 · 衰减 · 消退 · 恢复",
+  "summary": "近期或估算的爆发伤害会降低新命中实际作用于首领的比例；伤害窗口清空后，衰减随之解除。",
+  "overview": "伤害速率上限可以保护遭遇结构，避免极端爆发跳过内容，同时让普通攻击继续推动生命条。规则通常用滚动伤害窗口或武器DPS模型估算压力，并在超过阈值后降低后续伤害。必须明确窗口、曲线、下限、消退、例外顺序和可读反馈。",
+  "learning": "定义伤害样本、窗口时长、阈值、衰减曲线、最低倍率、命中与伤害类型例外、首击、消退、阶段重置、多人汇总、结算顺序、稳定hit id、rollback，以及raw/applied/prevented damage遥测。",
+  "category": "状态、资源与缩放",
+  "readTime": "10分钟",
+  "demo": {
+    "title": "比较一次独立剑击与快速连击，然后等待上限恢复",
+    "timeline": "自适应伤害速率上限时间线",
+    "step": "独立命中、衰减连击、消退与恢复命中",
+    "phaseNames": ["建立完整伤害基准", "填满近期伤害窗口", "让衰减消退"],
+    "phaseDescriptions": [
+      "塔维在0.92秒造成一次18点剑击。窗口内没有近期伤害，因此18点全部生效，凯恩从100降到82。",
+      "四连击在2.08秒开始。相同的18点原始伤害依次只应用18、9、6、5点；凯恩停在44，而不是10。",
+      "计量条在3.48至4.48秒清空。4.94秒的新18点命中再次全额生效，说明规则控制节奏而非制造无敌。"
+    ],
+    "boss": "首领",
+    "player": "玩家",
+    "danger": "每次命中仍只结算一次；只有实际数值会随压力、曲线和下限变化",
+    "locked": "窗口成员、阈值、倍率、例外顺序、阶段重置、多人归属、rollback与生命修改属于遭遇逻辑",
+    "safe": "展示原始与实际伤害、近期伤害窗口、变化的防护和准确生命结果",
+    "reducedMotion": "减少动态效果时自动播放关闭。检查0.34、0.92、1.72、2.08、2.43、2.78、3.13、3.48、4.48、4.94和5.42秒。",
+    "diagramDescription": "塔维先以完整伤害命中凯恩；随后相同的快速命中会随着计量条填满而减小。计量条清空后，下一击再次造成完整伤害。"
+  },
+  "steps": [
+    {
+      "title": "规则测量什么压力？",
+      "body": "选择滚动总和、加权历史、武器爆发DPS或其他明确样本。记录哪些命中进入、何时过期、玩家是否共享窗口，以及当前命中在加入前还是加入后计算。"
+    },
+    {
+      "title": "压力如何改变命中？",
+      "body": "用已记录的阈值、曲线和非零下限将压力映射为倍率。保持相同输入确定，并确定暴击、护甲、弱点、护盾和衰减的顺序。"
+    },
+    {
+      "title": "玩家如何读取与测试？",
+      "body": "区分实际伤害、生命变化和衰减恢复。测试独立命中、密集爆发、DoT、多段、多人集火、阶段切换、延迟、重复事件和阈值两侧的配置。"
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "更强配置毫无解释地得到相同结果",
+      "body": "若数字、反应和生命变化都不显示衰减，玩家会认为是故障。让阈值上下的强化仍有意义，并传达倍率变化。"
+    },
+    {
+      "title": "上限变成隐藏无敌",
+      "body": "接近零的下限、过长记忆或不断刷新的窗口会抹掉有效玩法。限制窗口寿命，并保留每次命中的有效贡献。"
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "保持伤害事务顺序",
+      "body": "为每次命中保存hitId、sourceId、rawDamage、recentSample、threshold、multiplier、appliedDamage、preventedDamage、healthBefore、healthAfter和时间；重复id不得再次生效。"
+    },
+    {
+      "title": "决定上限奖励什么技巧",
+      "body": "滚动窗口可奖励节奏与停顿；武器DPS模型可平衡配置但较脱离即时操作。保护结构时不要否定期望的战斗动词。"
+    },
+    {
+      "title": "测量压缩而不仅是胜负",
+      "body": "跟踪原始/实际比、超过阈值时间、阻止伤害、击杀时间、跳阶段、首击峰值、多人集中度与规则识别。"
+    }
+  ],
+  "story": {
+    "title": "凯恩的符文会在连击下硬化",
+    "body": "一次从容的斩击切入石壳。塔维快速连击时，符文亮起并分散力量；安静片刻后光芒消退，剑刃再次深入。"
+  },
+  "adaptation": {
+    "title": "用多种通道表现压力与恢复",
+    "body": "结合生命条、音效、冲击重量、颜色、震动、防护光环和可选计量条。可提供更柔和曲线、更短窗口、更高下限或明确阈值。"
+  },
+  "distinction": {
+    "title": "不是护甲、单击上限或生命门",
+    "body": "护甲按相对稳定规则减伤，单击上限裁掉一次大伤害，生命门在固定边界停止进度。本机制按近期或估算压力改变后续命中，并在压力消退后恢复。"
+  },
+  "lensNotes": [
+    {
+      "id": "progress-clarity",
+      "body": "原始伤害、实际伤害、压力条与生命变化应解释爆发期间的进度压缩及其恢复。"
+    },
+    { "id": "risk-reward", "body": "继续爆发维持节奏但效率降低；停顿以时间和位置为代价恢复效率。" },
+    {
+      "id": "rule-exception",
+      "body": "首击、暴击、DoT、多段、阶段重置、多人集火和重复回调需要明确顺序。"
+    },
+    {
+      "id": "player-expression",
+      "body": "曲线决定爆发、持续伤害、协同齐射与刻意节奏能否保持不同。"
+    },
+    { "id": "difficulty-rhythm", "body": "窗口和消退形成压力与释放节奏，应与首领破绽相配。" }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "The Binding of Isaac: Repentance",
+      "boss": "Hush",
+      "screenshot": "https://i.ytimg.com/vi/SAy8fV6yGRA/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=SAy8fV6yGRA&t=120s",
+      "video": "https://www.youtube.com/watch?v=SAy8fV6yGRA&t=120s",
+      "videoDurationSeconds": 508,
+      "body": "从2:00起，Hush第二形态展示了受极端爆发保护的长战斗。Damage Scaling记录过去四秒的未修改伤害，并把倍率压向下限。"
+    },
+    {
+      "dimension": "3D",
+      "game": "Warframe",
+      "boss": "Archon Boreal",
+      "screenshot": "https://i.ytimg.com/vi/rtl0o3M0e-A/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=rtl0o3M0e-A&t=462s",
+      "video": "https://www.youtube.com/watch?v=rtl0o3M0e-A&t=462s",
+      "videoDurationSeconds": 842,
+      "body": "7:42的极端首击配置绕过了Damage Attenuation并击败Boreal，说明初始化和运算顺序与曲线同样重要。"
+    },
+    {
+      "dimension": "3D",
+      "game": "Warframe",
+      "boss": "The Fragmented One",
+      "screenshot": "https://i.ytimg.com/vi/s8ur1I8hi7I/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=s8ur1I8hi7I&t=660s",
+      "video": "https://www.youtube.com/watch?v=s8ur1I8hi7I&t=660s",
+      "videoDurationSeconds": 831,
+      "body": "战斗从11:00开始。该首领有记录明确的Damage Attenuation和最大DPS，需要验证持续武器、射速、状态与长时间生命读取。"
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

@@ -1575,14 +1575,14 @@
       "number": 99,
       "translations": {
         "en": {
-          "title": "DPS scaling",
+          "title": "Adaptive damage-rate cap",
           "category": "States, resources, and scaling",
-          "summary": "Draft outline for the dps scaling mechanic. Rules, tuning guidance, and examples are still in progress."
+          "summary": "Recent or estimated burst damage lowers each new hit until the measured pressure decays."
         },
         "ru": {
-          "title": "Ограничение темпа урона",
+          "title": "Адаптивное ограничение темпа урона",
           "category": "Состояния, ресурсы и масштабирование",
-          "summary": "Эффективный входящий урон уменьшается в зависимости от недавнего DPS, чтобы всплеск силы не пропустил бой."
+          "summary": "Недавний или расчётный взрывной урон уменьшает следующие попадания, пока измеренное давление не спадёт."
         }
       }
     },

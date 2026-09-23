@@ -1,0 +1,134 @@
+{
+  "title": "बाधित की जा सकने वाली स्व-चिकित्सा",
+  "subtitle": "रिकवरी को स्पष्ट, सीमित और सचमुच रोकी जा सकने वाली क्रिया बनाएँ",
+  "variant": "संकेत · बाधा · पुनः कास्ट · एक उपचार",
+  "summary": "बॉस खिलाड़ी से संपर्क बिना दिखने वाली रिकवरी शुरू करता है; मान्य बाधा इसे रद्द करती है और पूरा कास्ट केवल एक सीमित उपचार लगाता है।",
+  "overview": "यह मैकेनिक पूछता है कि खिलाड़ी प्रगति बचाने के लिए स्थान या क्षति का जोखिम लेगा या नहीं। उपचार बॉस की क्रिया से शुरू होता है, समय-सीमा दिखाता है और पूरा होने पर एक बार लागू होता है। संकेत, बाधा नियम, मात्रा, कूलडाउन और रिकवरी स्पष्ट रहें।",
+  "learning": "आरंभ शर्त, चैनल अवधि, मान्य बाधा, सुपर-आर्मर, पूर्णता फ्रेम, माँगा और लगा उपचार, ओवरहील, डुप्लीकेट रोक, कूलडाउन, चरण परिवर्तन, रोलबैक और एक cast id का परिणाम तय करें।",
+  "category": "स्थितियाँ, संसाधन और स्केलिंग",
+  "readTime": "9 मिनट",
+  "demo": {
+    "title": "टावी की तलवार से कर्न का पहला चैनल रोकें, फिर दूसरा पूरा होने दें",
+    "timeline": "बाधित रिकवरी समयरेखा",
+    "step": "संकेत, रद्द, पुनः कास्ट और उपचार अवस्थाएँ",
+    "phaseNames": ["उपचार का इरादा पढ़ें", "समय-सीमा से पहले रोकें", "एक सीमित रिकवरी लागू करें"],
+    "phaseDescriptions": [
+      "0.30 सेकंड पर कर्न रून वृत्त खोलकर 0.68 सेकंड का चैनल शुरू करता है। भीतर जाती कणिकाएँ और भरता बार स्वास्थ्य बदलने से पहले सीमा दिखाते हैं।",
+      "टावी 1.46 सेकंड पर तलवार से वार करता है। वृत्त टूटता है, एक बाधा दर्ज होती है और कर्न का स्वास्थ्य 38 रहता है।",
+      "3.02 सेकंड पर दूसरा चैनल शुरू होता है। 4.18 से पहले मान्य वार न होने पर वह एक बार पूरा होकर 24 स्वास्थ्य देता है: 38 से 62।"
+    ],
+    "boss": "बॉस",
+    "player": "खिलाड़ी",
+    "danger": "केवल पूरा कास्ट उपचार करे; बाधित प्रयास शून्य दे और एक cast id के दोहराए callback अतिरिक्त उपचार न बनाएँ",
+    "locked": "आरंभ, समय-सीमा, बाधा टैग, कवच, माँगा और लगा उपचार, सीमा, कूलडाउन, cast id, चरण, रोलबैक और स्थायित्व encounter logic में रहें",
+    "safe": "अलग मुद्रा, भीतर गति, कास्ट प्रगति, टूटने का संकेत, बॉस स्वास्थ्य बदलाव और दोनों परिणामों के बाद रिकवरी दिखाएँ",
+    "reducedMotion": "कम गति में ऑटोप्ले बंद है। दोनों प्रयास और रीसेट देखने के लिए 0.30, 0.78, 1.28, 1.46, 2.54, 3.02, 4.18, 4.40, 4.62 और 5.36 सेकंड देखें।",
+    "diagramDescription": "कर्न संकेंद्रित रूनों में चैनल करता है, कण भीतर आते हैं और बार भरता है। टावी पहली रून तलवार से तोड़ता है; दूसरी पूरी होकर स्वास्थ्य एक बार 38 से 62 करती है।"
+  },
+  "steps": [
+    {
+      "title": "उपचार कब और कितनी बार शुरू होता है?",
+      "body": "स्वास्थ्य सीमा, चरण, टाइमर या रणनीतिक शर्त स्पष्ट चुनें। कूलडाउन या सीमित उपयोग रखें ताकि लगातार कास्ट पूरी प्रगति न मिटाए।"
+    },
+    {
+      "title": "मान्य बाधा क्या है?",
+      "body": "क्षति सीमा, stagger tag, status, tool, दिशा और super-armor तय करें। authoritative combat event पर परिणाम निकालें, pending heal रद्द करें और स्थिर cast id रखें।"
+    },
+    {
+      "title": "पूर्णता या रद्द होने पर क्या होता है?",
+      "body": "पूर्णता फ्रेम पर उपचार एक बार लगाएँ, अधिकतम स्वास्थ्य पर clamp करें और स्पष्ट रिकवरी दें। रद्द कास्ट शून्य उपचार दे लेकिन पुष्टि और punish window दिखाए।"
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "चैनल पूरा दिखने से पहले स्वास्थ्य बढ़ता है",
+      "body": "तैयारी के दौरान बार बढ़े तो खिलाड़ी बाधा नहीं पढ़ पाएगा। pending और applied heal अलग रखें और केवल completion event पर स्वास्थ्य बदलें।"
+    },
+    {
+      "title": "बॉस प्रगति मिटने तक फिर कास्ट करता है",
+      "body": "असीम trigger निर्णय को दोहराव बनाता है। आवृत्ति और मात्रा सीमित करें और recovery को player damage per opening से तुलना करें।"
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "कास्ट को transaction की तरह मॉडल करें",
+      "body": "castId, startedAt, completesAt, interruptedAt, healRequested, healApplied और result रखें ताकि duplicate completion न हो।"
+    },
+    {
+      "title": "बाधा मार्ग की कीमत तय करें",
+      "body": "पहुँच समय, जरूरी क्षति, खर्च और अन्य हमलों का जोखिम मापें; खिलाड़ी सुरक्षा छोड़ने का निर्णय ले।"
+    },
+    {
+      "title": "दोनों परिणाम मापें",
+      "body": "starts, interruption rate और timing, completed heals, overheal, heal per minute, recast interval, traded damage, मौतें और phase duration दर्ज करें।"
+    }
+  ],
+  "story": {
+    "title": "टावी कर्न की जुटती रून काटता है",
+    "body": "अखाड़े के पत्थरों से रोशनी कर्न की छाती की दरारों की ओर जाती है। टावी वृत्त पार कर केंद्रीय चिह्न काट देता है और टुकड़े बुझ जाते हैं।"
+  },
+  "adaptation": {
+    "title": "समय-सीमा केवल रंग से न दिखाएँ",
+    "body": "मुद्रा, ध्वनि लय, भीतर आते कण, कास्ट प्रगति और completion pulse जोड़ें। लंबी window, कम threshold, कम heal, कम casts या counter prompt दें।"
+  },
+  "distinction": {
+    "title": "निर्धारित रिकवरी, संपर्क से उपचार नहीं",
+    "body": "स्व-उपचार बॉस के निर्णय या encounter condition से शुरू होता है। on-hit healing को target contact चाहिए; external source दूसरी attackable entity है।"
+  },
+  "lensNotes": [
+    {
+      "id": "progress-clarity",
+      "body": "कास्ट बार, बॉस स्वास्थ्य और result id pending से applied recovery का क्षण दिखाते हैं।"
+    },
+    {
+      "id": "counterplay",
+      "body": "पहुँच योग्य deadline और स्पष्ट predicate उपचार रोकने देते हैं।"
+    },
+    {
+      "id": "risk-reward",
+      "body": "बाधा के लिए सुरक्षा या संसाधन छोड़ने पड़ सकते हैं; उपचार स्वीकारने से स्थिति बचती है।"
+    },
+    {
+      "id": "rule-exception",
+      "body": "super-armor, immunity, phase change, duplicate hits, overheal और rollback स्पष्ट हों।"
+    },
+    {
+      "id": "telegraphing",
+      "body": "पास जाने से पहले उपचार का संकेत हमले से अलग दिखे।"
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "3D",
+      "game": "Bloodborne",
+      "boss": "Vicar Amelia",
+      "screenshot": "https://i.ytimg.com/vi/RQxOU8lqnBQ/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=RQxOU8lqnBQ&t=137s",
+      "video": "https://www.youtube.com/watch?v=RQxOU8lqnBQ&t=137s",
+      "videoDurationSeconds": 173,
+      "body": "2:17 पर Vicar Amelia पीछे हटकर प्रार्थना करती है और शिकारी Numbing Mist चुनता है। लंबी मुद्रा उत्तर का समय देती है; क्षति रोक सकती है और वस्तु आगे की healing रोकती है।"
+    },
+    {
+      "dimension": "2D",
+      "game": "Dead Cells",
+      "boss": "The Collector",
+      "screenshot": "https://i.ytimg.com/vi/tyFky1GGlkY/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=tyFky1GGlkY&t=17s",
+      "video": "https://www.youtube.com/watch?v=tyFky1GGlkY&t=17s",
+      "videoDurationSeconds": 114,
+      "body": "0:17 पर Collector ढाल के भीतर Panacea पीकर स्वास्थ्य लौटाता है। सुरक्षित शुरुआती drinks नियम सिखाते हैं; अंतिम बिना ढाल वाला drink interrupt objective बनता है।"
+    },
+    {
+      "dimension": "2D",
+      "game": "Pokémon Red and Blue",
+      "boss": "Gym Leader Sabrina",
+      "screenshot": "https://i.ytimg.com/vi/6_NjyFECZBw/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=6_NjyFECZBw&t=113s",
+      "video": "https://www.youtube.com/watch?v=6_NjyFECZBw&t=113s",
+      "videoDurationSeconds": 298,
+      "body": "1:53 पर Sabrina का Alakazam turn-based battle में Recover चलाता है। command text और HP bar पूरा signal/result देते हैं; सीमा अनंत progress reversal रोकती है।"
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

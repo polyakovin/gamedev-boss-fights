@@ -1,0 +1,42 @@
+{
+  "id": "damage-rate-cap",
+  "number": 99,
+  "published": true,
+  "sourceLocale": "en",
+  "contentVersion": 1,
+  "animation": "damage-rate-cap",
+  "lenses": [
+    "progress-clarity",
+    "risk-reward",
+    "rule-exception",
+    "player-expression",
+    "difficulty-rhythm"
+  ],
+  "related": ["enrage", "fight-phase", "situational-immunity", "persistent-progress"],
+  "sources": [
+    {
+      "title": "Boss Up: Boss Battle Design",
+      "url": "https://media.gdcvault.com/gdc2018/presentations/Keren_Itay_BossUp.pdf"
+    },
+    {
+      "title": "Damage Scaling — The Binding of Isaac Wiki",
+      "url": "https://bindingofisaacrebirth.wiki.gg/wiki/Damage_Scaling"
+    },
+    {
+      "title": "Hush — The Binding of Isaac Wiki",
+      "url": "https://bindingofisaacrebirth.wiki.gg/wiki/Hush"
+    },
+    {
+      "title": "Devstream 173 — Warframe Wiki",
+      "url": "https://wiki.warframe.com/w/Devstream_173"
+    },
+    {
+      "title": "Damage Attenuation and Quality of Life Changes — Warframe Forums",
+      "url": "https://forums.warframe.com/topic/1469410-dev-workshop-damage-attenuation-and-quality-of-life-changes-devstream-189/"
+    },
+    {
+      "title": "The Fragmented One — Warframe Wiki",
+      "url": "https://warframe.fandom.com/wiki/The_Fragmented_One"
+    }
+  ]
+}

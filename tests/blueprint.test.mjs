@@ -49,6 +49,12 @@ import {
   resourceStealResolve,
   onHitHealingState,
   onHitHealingResolve,
+  selfHealCastState,
+  selfHealCastResolve,
+  externalHealingSourceState,
+  externalHealingSourceResolve,
+  damageRateCapState,
+  damageRateCapResolve,
   counterStanceOutcome,
   counterStanceState,
   blueprintFrame,
@@ -76,8 +82,8 @@ import {
   renderBlueprintThumbnail,
 } from '../lib/blueprint-view.mjs';
 
-test('all 90 promoted lesson animations have distinct rule modes and complete moving frames', () => {
-  assert.equal(BLUEPRINT_MECHANIC_IDS.length, 90);
+test('all 93 promoted lesson animations have distinct rule modes and complete moving frames', () => {
+  assert.equal(BLUEPRINT_MECHANIC_IDS.length, 93);
   const modes = new Set();
   for (const id of BLUEPRINT_MECHANIC_IDS) {
     for (let time = 0; time <= BLUEPRINT_DURATION; time += 0.1) {
@@ -98,7 +104,7 @@ test('all 90 promoted lesson animations have distinct rule modes and complete mo
           assert.ok(Number.isFinite(value), `${id} has an invalid ${primitive.type}`);
     }
   }
-  assert.equal(modes.size, 90);
+  assert.equal(modes.size, 93);
 });
 
 test('every blueprint exposes signal, committed action, and recovery without player teleports', () => {
@@ -138,7 +144,10 @@ test('every blueprint exposes signal, committed action, and recovery without pla
       id !== 'maximum-health-reduction' &&
       id !== 'ability-lock' &&
       id !== 'resource-steal' &&
-      id !== 'on-hit-healing'
+      id !== 'on-hit-healing' &&
+      id !== 'self-heal-cast' &&
+      id !== 'external-healing-source' &&
+      id !== 'damage-rate-cap'
     )
       assert.equal(blueprintFrame(id, 3).dangerActive, true, id);
     assert.equal(blueprintFrame(id, 3).playerSafe, true, id);
@@ -228,6 +237,9 @@ test('every damaging promoted animation derives safety from its own active geome
       id !== 'ability-lock' &&
       id !== 'resource-steal' &&
       id !== 'on-hit-healing' &&
+      id !== 'self-heal-cast' &&
+      id !== 'external-healing-source' &&
+      id !== 'damage-rate-cap' &&
       id !== 'part-break' &&
       id !== 'counter-stance' &&
       id !== 'absorption-power-up' &&
@@ -3510,5 +3522,199 @@ test('on-hit healing resolves from qualified contact even when damage is blocked
   assert.match(
     renderBlueprintThumbnail(id, 'test-on-hit-healing'),
     /data-blueprint-preview="on-hit-healing"/,
+  );
+});
+
+test('self-heal cast distinguishes an interruption from one completed heal', () => {
+  const id = 'self-heal-cast';
+  assert.deepEqual([0, 0.5, 0.9, 1.5, 2.1, 2.7, 3.4, 4.25, 4.8, 5.2, 5.5].map(selfHealCastState), [
+    'ready',
+    'first-telegraph',
+    'first-channel',
+    'interrupted',
+    'repositioning',
+    'second-telegraph',
+    'second-channel',
+    'healing',
+    'healed',
+    'recovery',
+    'reset',
+  ]);
+  assert.deepEqual(selfHealCastResolve({ castCompleted: true }), {
+    healthBefore: 38,
+    healthAfter: 62,
+    requested: 24,
+    applied: 24,
+    castCompleted: true,
+    interrupted: false,
+    eventCount: 1,
+    resultId: 'self-heal-cast-1',
+  });
+  assert.equal(selfHealCastResolve({ castCompleted: true, interrupted: true }).eventCount, 0);
+  assert.equal(selfHealCastResolve({ castCompleted: false }).applied, 0);
+  assert.equal(
+    selfHealCastResolve({ currentHealth: 94, castCompleted: true, healAmount: 24 }).applied,
+    6,
+  );
+  assert.equal(selfHealCastResolve({ castCompleted: true, alreadyResolved: true }).eventCount, 0);
+
+  const interrupted = blueprintFrame(id, 1.55);
+  assert.equal(interrupted.selfHealCastFirstInterrupted, true);
+  assert.equal(interrupted.selfHealCastBossHealth, 38);
+  assert.equal(interrupted.selfHealCastEventCount, 0);
+  assert.equal(interrupted.selfHealCastInterruptCount, 1);
+  const channeling = blueprintFrame(id, 3.5);
+  assert.equal(channeling.selfHealCastChannelActive, true);
+  assert.ok(channeling.selfHealCastChannelProgress > 0);
+  const healing = blueprintFrame(id, 4.35);
+  assert.equal(healing.selfHealCastCompleted, true);
+  assert.equal(healing.selfHealCastEventCount, 1);
+  assert.ok(healing.selfHealCastBossHealth > 38);
+  const healed = blueprintFrame(id, 4.7);
+  assert.equal(healed.selfHealCastBossHealth, 62);
+  assert.equal(healed.selfHealCastResultId, 'self-heal-cast-1');
+  assert.deepEqual(blueprintFrame(id, 0).player, blueprintFrame(id, 6).player);
+  assert.match(
+    renderBlueprintThumbnail(id, 'test-self-heal-cast'),
+    /data-blueprint-preview="self-heal-cast"/,
+  );
+});
+
+test('external healing sources separate interception from one delivered heal', () => {
+  const id = 'external-healing-source';
+  assert.deepEqual(
+    [0, 0.5, 0.9, 1.55, 2.1, 2.6, 3.5, 4.2, 4.7, 5.2, 5.5].map(externalHealingSourceState),
+    [
+      'ready',
+      'sources-signaled',
+      'first-packet-travelling',
+      'first-source-destroyed',
+      'repositioning',
+      'second-source-signaled',
+      'second-packet-travelling',
+      'packet-delivered',
+      'boss-healed',
+      'recovery',
+      'reset',
+    ],
+  );
+  assert.deepEqual(externalHealingSourceResolve({ sourceActive: true, packetArrived: true }), {
+    healthBefore: 42,
+    healthAfter: 60,
+    requested: 18,
+    applied: 18,
+    sourceActive: true,
+    packetArrived: true,
+    sourceId: 'healing-source-2',
+    eventCount: 1,
+    resultId: 'external-heal-healing-source-2',
+  });
+  assert.equal(
+    externalHealingSourceResolve({ sourceActive: false, packetArrived: true }).applied,
+    0,
+  );
+  assert.equal(
+    externalHealingSourceResolve({ sourceActive: true, packetArrived: false }).eventCount,
+    0,
+  );
+  assert.equal(
+    externalHealingSourceResolve({
+      currentHealth: 94,
+      healAmount: 18,
+      sourceActive: true,
+      packetArrived: true,
+    }).applied,
+    6,
+  );
+  assert.equal(
+    externalHealingSourceResolve({
+      sourceActive: true,
+      packetArrived: true,
+      alreadyResolved: true,
+    }).eventCount,
+    0,
+  );
+
+  const intercepted = blueprintFrame(id, 1.55);
+  assert.equal(intercepted.externalHealingSourceFirstDestroyed, true);
+  assert.equal(intercepted.externalHealingSourceFirstPacketCancelled, true);
+  assert.equal(intercepted.externalHealingSourceBossHealth, 42);
+  assert.equal(intercepted.externalHealingSourceEventCount, 0);
+  assert.equal(intercepted.externalHealingSourceActiveCount, 1);
+  const travelling = blueprintFrame(id, 3.5);
+  assert.equal(travelling.externalHealingSourceSecondPacketActive, true);
+  assert.equal(travelling.externalHealingSourceDelivered, false);
+  const healing = blueprintFrame(id, 4.25);
+  assert.equal(healing.externalHealingSourceDelivered, true);
+  assert.equal(healing.externalHealingSourceHealing, true);
+  assert.equal(healing.externalHealingSourceEventCount, 1);
+  assert.ok(healing.externalHealingSourceBossHealth > 42);
+  const healed = blueprintFrame(id, 4.7);
+  assert.equal(healed.externalHealingSourceBossHealth, 60);
+  assert.equal(healed.externalHealingSourceSourceId, 'healing-source-2');
+  assert.equal(healed.externalHealingSourceResultId, 'external-heal-healing-source-2');
+  assert.deepEqual(blueprintFrame(id, 0).player, blueprintFrame(id, 6).player);
+  assert.match(
+    renderBlueprintThumbnail(id, 'test-external-healing-source'),
+    /data-blueprint-preview="external-healing-source"/,
+  );
+});
+
+test('damage-rate cap attenuates a burst and restores full damage after decay', () => {
+  const id = 'damage-rate-cap';
+  assert.deepEqual([0, 0.5, 0.95, 1.75, 1.9, 2.2, 3.6, 4.6, 5, 5.38, 5.5].map(damageRateCapState), [
+    'ready',
+    'isolated-signal',
+    'isolated-hit',
+    'window-cleared',
+    'burst-signal',
+    'burst-attenuating',
+    'window-decaying',
+    'recovered-signal',
+    'recovered-hit',
+    'recovery',
+    'reset',
+  ]);
+  assert.deepEqual(damageRateCapResolve({ hitId: 'isolated-1' }), {
+    rawDamage: 18,
+    recentDamage: 0,
+    threshold: 18,
+    multiplier: 1,
+    appliedDamage: 18,
+    preventedDamage: 0,
+    eventCount: 1,
+    hitId: 'isolated-1',
+  });
+  assert.equal(damageRateCapResolve({ recentDamage: 18 }).appliedDamage, 9);
+  assert.equal(damageRateCapResolve({ recentDamage: 36 }).appliedDamage, 6);
+  assert.equal(damageRateCapResolve({ recentDamage: 54 }).appliedDamage, 5);
+  assert.equal(damageRateCapResolve({ recentDamage: 54 }).multiplier, 0.25);
+  assert.equal(damageRateCapResolve({ alreadyResolved: true }).eventCount, 0);
+
+  const isolated = blueprintFrame(id, 0.95);
+  assert.equal(isolated.damageRateCapHitCount, 1);
+  assert.equal(isolated.damageRateCapBossHealth, 82);
+  assert.equal(isolated.damageRateCapAppliedDamage, 18);
+  const burst = blueprintFrame(id, 3.2);
+  assert.equal(burst.damageRateCapBurstActive, true);
+  assert.equal(burst.damageRateCapHitCount, 5);
+  assert.equal(burst.damageRateCapBossHealth, 44);
+  assert.equal(burst.damageRateCapAppliedDamage, 5);
+  assert.equal(burst.damageRateCapPreventedDamage, 13);
+  assert.equal(burst.damageRateCapMultiplier, 0.25);
+  const recovered = blueprintFrame(id, 4.6);
+  assert.equal(recovered.damageRateCapWindowRecovered, true);
+  assert.equal(recovered.damageRateCapRecentDamage, 0);
+  assert.equal(recovered.damageRateCapMultiplier, 1);
+  const finalHit = blueprintFrame(id, 5);
+  assert.equal(finalHit.damageRateCapHitCount, 6);
+  assert.equal(finalHit.damageRateCapBossHealth, 26);
+  assert.equal(finalHit.damageRateCapAppliedDamage, 18);
+  assert.equal(finalHit.damageRateCapLastHitId, 'recovered-1');
+  assert.equal(blueprintPointSafe(id, 3.13, { x: 300, y: 660 }), true);
+  assert.deepEqual(blueprintFrame(id, 0).player, blueprintFrame(id, 6).player);
+  assert.match(
+    renderBlueprintThumbnail(id, 'test-damage-rate-cap'),
+    /data-blueprint-preview="damage-rate-cap"/,
   );
 });

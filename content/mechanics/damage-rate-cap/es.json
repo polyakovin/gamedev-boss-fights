@@ -1,0 +1,138 @@
+{
+  "title": "Límite adaptativo de ritmo de daño",
+  "subtitle": "Limita el daño explosivo sin volver invulnerable al jefe",
+  "variant": "Medir · atenuar · decaer · restaurar",
+  "summary": "El daño explosivo reciente o estimado reduce la parte de cada golpe nuevo que llega al jefe; la atenuación desaparece cuando se vacía la ventana.",
+  "overview": "Un límite de ritmo protege la estructura del encuentro contra ráfagas extremas mientras los ataques normales aún mueven la salud. Estima la presión con una ventana móvil o un modelo de DPS y reduce el daño posterior sobre un umbral. Define ventana, curva, mínimo, decaimiento, excepciones y respuesta legible.",
+  "learning": "Define muestra y duración, umbral, curva, multiplicador mínimo, excepciones, primer golpe, decaimiento, reinicios de fase, agregación multijugador, orden de aplicación, hit ids estables, rollback y telemetría de daño bruto, aplicado y evitado.",
+  "category": "Estados, recursos y escalado",
+  "readTime": "10 min",
+  "demo": {
+    "title": "Compara un tajo aislado con una ráfaga y espera a que el límite se recupere",
+    "timeline": "Cronología del límite adaptativo",
+    "step": "Golpe aislado, ráfaga atenuada, decaimiento y golpe restaurado",
+    "phaseNames": [
+      "Establece el daño completo",
+      "Llena la ventana reciente",
+      "Deja decaer la atenuación"
+    ],
+    "phaseDescriptions": [
+      "Tavi asesta un golpe aislado de 18 puntos a los 0,92 s. Sin daño reciente se aplican los 18 y Kern baja de 100 a 82.",
+      "Una ráfaga de cuatro golpes comienza a los 2,08 s. Los mismos 18 puntos brutos aplican 18, luego 9, 6 y 5; Kern queda en 44 en vez de 10.",
+      "El medidor se vacía entre 3,48 y 4,48 s. A los 4,94 s otro golpe de 18 vuelve a aplicar 18: la regla marca el ritmo, no crea invulnerabilidad."
+    ],
+    "boss": "Jefe",
+    "player": "Jugador",
+    "danger": "Cada golpe se resuelve una vez; solo cambia la cantidad aplicada según presión, curva y mínimo",
+    "locked": "Ventana, umbral, multiplicador, excepciones, reinicio, propiedad multijugador, rollback y salud pertenecen a la lógica del encuentro",
+    "safe": "Muestra daño bruto y aplicado, ventana reciente, protección cambiante y resultado exacto de salud",
+    "reducedMotion": "Con movimiento reducido no hay reproducción automática. Revisa 0,34; 0,92; 1,72; 2,08; 2,43; 2,78; 3,13; 3,48; 4,48; 4,94 y 5,42 s.",
+    "diagramDescription": "Tavi golpea una vez con daño completo; los golpes iguales de una ráfaga se reducen mientras se llena el medidor. Tras vaciarse, el siguiente vuelve a ser completo."
+  },
+  "steps": [
+    {
+      "title": "¿Qué presión mide la regla?",
+      "body": "Elige suma móvil, historial ponderado, DPS explosivo del arma u otra muestra explícita. Registra qué entra, cuándo caduca, si los jugadores comparten ventana y si el golpe actual se añade antes o después de evaluarse."
+    },
+    {
+      "title": "¿Cómo cambia la presión un golpe?",
+      "body": "Convierte la presión en multiplicador con umbral, curva y mínimo no nulo documentados. Conserva el determinismo y decide el orden de críticos, armadura, vulnerabilidades, escudos y atenuación."
+    },
+    {
+      "title": "¿Cómo se lee y se prueba?",
+      "body": "Distingue daño aplicado, pérdida de salud y recuperación. Prueba golpes aislados, ráfagas, DoT, multigolpe, fuego concentrado, fases, latencia, duplicados y configuraciones a ambos lados del umbral."
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "Más poder da el mismo resultado sin explicación",
+      "body": "Si números, reacción y salud no revelan la atenuación, parece un fallo. Mantén mejoras significativas y comunica el multiplicador."
+    },
+    {
+      "title": "El límite se vuelve invulnerabilidad oculta",
+      "body": "Un mínimo casi nulo, memoria larga o ventana siempre renovada borra el juego válido. Limita su vida y conserva una contribución útil."
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "Ordena la transacción de daño",
+      "body": "Guarda hitId, sourceId, rawDamage, recentSample, threshold, multiplier, appliedDamage, preventedDamage, healthBefore, healthAfter y tiempo. Un hit id repetido no se aplica dos veces."
+    },
+    {
+      "title": "Decide qué habilidad recompensa",
+      "body": "Una ventana móvil puede premiar cadencia y pausas; un modelo de DPS iguala equipamientos pero se siente menos inmediato. Protege el encuentro sin invalidar los verbos deseados."
+    },
+    {
+      "title": "Mide la compresión",
+      "body": "Registra relación bruto/aplicado, tiempo sobre umbral, daño evitado, tiempo de victoria, fases saltadas, picos iniciales, concentración multijugador y comprensión del jugador."
+    }
+  ],
+  "story": {
+    "title": "Las runas de Kern se endurecen bajo la ráfaga",
+    "body": "Un corte medido atraviesa la piedra. Cuando Tavi junta golpes, las runas reparten la fuerza; tras una pausa su brillo cae y la espada vuelve a morder."
+  },
+  "adaptation": {
+    "title": "Comunica presión y recuperación con varios canales",
+    "body": "Combina barra de salud, sonido, peso, color, vibración, aura y medidor opcional. Ofrece curva suave, ventana corta, mínimo alto o umbral visible sin cambiar la regla."
+  },
+  "distinction": {
+    "title": "Atenuación adaptativa, no armadura, límite por golpe ni puerta de salud",
+    "body": "La armadura reduce de forma estable, el límite por golpe recorta un impacto y una puerta de salud detiene en un punto. Aquí los golpes posteriores dependen de la presión reciente y se recuperan al decaer."
+  },
+  "lensNotes": [
+    {
+      "id": "progress-clarity",
+      "body": "Daño bruto, aplicado, medidor y salud explican la compresión de progreso y su recuperación."
+    },
+    {
+      "id": "risk-reward",
+      "body": "Seguir la ráfaga mantiene el ritmo con menos eficiencia; pausar la restaura a cambio de tiempo y posición."
+    },
+    {
+      "id": "rule-exception",
+      "body": "Primeros golpes, críticos, DoT, multigolpe, reinicios, fuego concentrado y duplicados requieren orden explícito."
+    },
+    {
+      "id": "player-expression",
+      "body": "La curva decide si ráfaga, daño sostenido, salvas coordinadas y cadencia siguen siendo estilos distintos."
+    },
+    {
+      "id": "difficulty-rhythm",
+      "body": "Ventana y decaimiento crean un ritmo de presión y descanso que debe coincidir con las aperturas."
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "The Binding of Isaac: Repentance",
+      "boss": "Hush",
+      "screenshot": "https://i.ytimg.com/vi/SAy8fV6yGRA/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=SAy8fV6yGRA&t=120s",
+      "video": "https://www.youtube.com/watch?v=SAy8fV6yGRA&t=120s",
+      "videoDurationSeconds": 508,
+      "body": "Desde 2:00, la segunda forma de Hush muestra un combate protegido de ráfagas extremas. Damage Scaling registra el daño sin modificar de los cuatro segundos anteriores y baja el multiplicador hasta un mínimo."
+    },
+    {
+      "dimension": "3D",
+      "game": "Warframe",
+      "boss": "Archon Boreal",
+      "screenshot": "https://i.ytimg.com/vi/rtl0o3M0e-A/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=rtl0o3M0e-A&t=462s",
+      "video": "https://www.youtube.com/watch?v=rtl0o3M0e-A&t=462s",
+      "videoDurationSeconds": 842,
+      "body": "A los 7:42 una preparación extrema del primer golpe vence a Boreal pese a Damage Attenuation. La inicialización y el orden importan tanto como la curva."
+    },
+    {
+      "dimension": "3D",
+      "game": "Warframe",
+      "boss": "The Fragmented One",
+      "screenshot": "https://i.ytimg.com/vi/s8ur1I8hi7I/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=s8ur1I8hi7I&t=660s",
+      "video": "https://www.youtube.com/watch?v=s8ur1I8hi7I&t=660s",
+      "videoDurationSeconds": 831,
+      "body": "El combate empieza en 11:00. Tiene Damage Attenuation y DPS máximo documentados; exige validar armas continuas, cadencia, estados y lectura prolongada de salud."
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}
