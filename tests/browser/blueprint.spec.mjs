@@ -405,9 +405,9 @@ test('volley releases three parallel bolts on one beat and clears its outside ro
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
 });
 
-test('catalog and builder reuse the 79 promoted rule-specific previews', async ({ page }) => {
+test('catalog and builder reuse the 80 promoted rule-specific previews', async ({ page }) => {
   await page.goto('en/');
-  await expect(page.locator('[data-blueprint-preview]')).toHaveCount(79);
+  await expect(page.locator('[data-blueprint-preview]')).toHaveCount(80);
   const catalogLayouts = await page.locator('[data-blueprint-preview]').evaluateAll((previews) =>
     previews.map((preview) => {
       const boss = preview.querySelector('[data-character-art-preview="kern"]');
@@ -431,7 +431,7 @@ test('catalog and builder reuse the 79 promoted rule-specific previews', async (
   expect(new Set(catalogLayouts.map(({ layout }) => layout)).size).toBeGreaterThanOrEqual(18);
 
   await page.goto('en/builder/');
-  await expect(page.locator('[data-blueprint-preview]')).toHaveCount(79);
+  await expect(page.locator('[data-blueprint-preview]')).toHaveCount(80);
   const builderLayouts = await page.locator('[data-blueprint-preview]').evaluateAll((previews) =>
     previews.map((preview) => {
       const boss = preview.querySelector('[data-character-art-preview="kern"]');
@@ -3095,6 +3095,65 @@ test('player-controlled boss hands a bounded action from a human controller to A
   await expect(widget).toHaveAttribute('data-blueprint-player-boss-controller', 'ai');
   await expect(widget).toHaveAttribute('data-blueprint-player-boss-reward-grants', '0');
 
+  await page.setViewportSize({ width: 375, height: 812 });
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+});
+
+test('projectile rally keeps one accelerating orb and opens only after the boss miss', async ({
+  page,
+}) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.goto('en/mechanics/projectile-rally/');
+  const widget = page.locator('[data-blueprint-demo]');
+  const timeline = widget.locator('[data-blueprint-timeline]');
+  const seek = (milliseconds) =>
+    timeline.evaluate((element, value) => {
+      element.value = String(value);
+      element.dispatchEvent(new Event('input', { bubbles: true }));
+    }, milliseconds);
+
+  await expect(page.locator('.lesson-title-line h1')).toHaveText('Projectile rally');
+  await expect(page.locator('.wip-badge, .draft-profile')).toHaveCount(0);
+  await expect(page.locator('.game-example')).toHaveCount(3);
+
+  await seek(900);
+  await expect(widget).toHaveAttribute('data-blueprint-projectile-rally', 'boss-serve');
+  await expect(widget).toHaveAttribute('data-blueprint-projectile-rally-id', 'rune-orb-1');
+  await expect(widget).toHaveAttribute('data-blueprint-projectile-rally-owner', 'boss');
+  await expect(widget).toHaveAttribute('data-blueprint-projectile-rally-speed', '1');
+
+  await seek(1600);
+  await expect(widget).toHaveAttribute('data-blueprint-projectile-rally-id', 'rune-orb-1');
+  await expect(widget).toHaveAttribute('data-blueprint-projectile-rally-owner', 'player');
+  await expect(widget).toHaveAttribute('data-blueprint-projectile-rally-exchanges', '1');
+
+  await seek(2200);
+  await expect(widget).toHaveAttribute('data-blueprint-projectile-rally-owner', 'boss');
+  await expect(widget).toHaveAttribute('data-blueprint-projectile-rally-speed', '2');
+
+  await seek(3200);
+  await expect(widget).toHaveAttribute('data-blueprint-projectile-rally-owner', 'player');
+  await expect(widget).toHaveAttribute('data-blueprint-projectile-rally-speed', '3');
+  await expect(widget).toHaveAttribute('data-blueprint-projectile-rally-exchanges', '5');
+
+  await seek(3600);
+  await expect(widget).toHaveAttribute('data-blueprint-projectile-rally', 'boss-miss');
+  await expect(widget).toHaveAttribute('data-blueprint-projectile-rally-miss', 'true');
+  await expect(widget).toHaveAttribute('data-blueprint-projectile-rally-vulnerable', 'true');
+  await expect(widget).toHaveAttribute(
+    'data-blueprint-projectile-rally-damage-source',
+    'rally-orb',
+  );
+
+  await seek(4000);
+  await expect(widget).toHaveAttribute('data-blueprint-projectile-rally-punished', 'true');
+  await expect(widget.locator('[data-blueprint-primitive="18"] circle')).not.toHaveAttribute(
+    'opacity',
+    '0',
+  );
+
+  await seek(4700);
+  await expect(widget).toHaveAttribute('data-blueprint-projectile-rally-vulnerable', 'false');
   await page.setViewportSize({ width: 375, height: 812 });
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
 });

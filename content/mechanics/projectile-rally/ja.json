@@ -1,0 +1,142 @@
+{
+  "title": "飛び道具ラリー",
+  "subtitle": "ひとつの敵弾を、読みやすく加速する応酬へ変える",
+  "variant": "サーブ · リターン · 加速 · ミス",
+  "summary": "ボスとプレイヤーが同じ飛び道具を返し合い、どちらかの明確なミスでラリーが決着する。",
+  "overview": "飛び道具ラリーでは、戦闘が所有するひとつの弾がボスとプレイヤーの間を往復する。有効なリターンごとに進行方向と所有者が変わり、次の移動時間を短くできる。明確なミス、時間切れ、無効な応答でラリーは終了し、ボスのミスは共有されたタイミング試験を攻撃機会へ変換するのが一般的だ。",
+  "learning": "サーブ、有効な response verb、接触点、入力受付、所有権移動、返球先、速度曲線、最大往復数、視聴覚の拍、ミス条件、プレイヤーダメージ、ボスのよろめき、攻撃機会、協力時の裁定、遅延許容、アクセシビリティ補助、リセット、そして表示位置・当たり判定・権限を同期させるテストを定義する。",
+  "category": "戦闘目標と弱点",
+  "readTime": "9分",
+  "demo": {
+    "title": "所有者とテンポが変わっても、ひとつのオーブを連続させる",
+    "timeline": "飛び道具ラリーのタイムライン",
+    "step": "飛び道具ラリーの状態",
+    "phaseNames": [
+      "サーブと有効な返球操作を予告する",
+      "同じオーブを3回の加速する応酬に通す",
+      "ボスのミスを時間制の攻撃機会として解決する"
+    ],
+    "phaseDescriptions": [
+      "カーンはルーンのオーブを溜め、レーンを固定して0.78秒に放つ。接触前にタヴィの剣を囲む response ring が現れ、返せるサーブを通常弾から区別する。",
+      "タヴィは1.48秒に同じオーブを返し、カーンは2.05秒に打ち返す。2.48秒と2.86秒でも両者が応答し、タヴィが3.15秒に最後の返球を行う。各移動で所有マークと次の拍が変わるが、オーブのテレポートや差し替えはない。",
+      "カーンは3.48秒にミスする。オーブが命中し、往復カウンターが閉じ、弱点リングは4.55秒まで残る。3.90秒のタヴィの追撃は反射弾ではなく攻撃機会に属し、契約全体は5.20秒にリセットされる。"
+    ],
+    "boss": "ボス",
+    "player": "プレイヤー",
+    "danger": "生きたオーブは定義された返球受付を逃した側へダメージを与える。後半ほど速いが、見える経路は変わらない",
+    "locked": "ひとつの projectile identity、現在の所有者、接触点、有効な応答、受付時間、速度曲線、往復上限、ミス結果、攻撃機会、ダメージ、リセットを戦闘側が所有する",
+    "safe": "次の接触、所有者、拍、失敗を形・動き・音・字幕・寛容な先行入力で示し、色だけに依存しない",
+    "reducedMotion": "動きを減らす設定では自動再生を止める。0.78、1.48、2.05、2.48、2.86、3.15、3.48、3.90、4.55、5.20秒へ移動し、サーブ、全所有権移動、加速、ミス、攻撃機会、追撃、終了、リセットを確認できる。",
+    "diagramDescription": "固定レーンの両端でタヴィとカーンが向き合う。ひとつのルーンオーブが接触リングを往復し、交換記録が1から5まで埋まる。同じオーブに所有マークが追従し、テンポの上昇とともに軌跡は短くなり、最後の返球がカーンに命中して時間制の弱点リングを開く。"
+  },
+  "steps": [
+    {
+      "title": "返球成功時に何を移動させるのか？",
+      "body": "飛び道具へ永続する戦闘 identity と server-authoritative な所有者を与える。接触イベントで response verb、入力時刻、距離、必要なら向き、そしてオーブが有効かを検証する。その後、見える接触点から速度を反転または再照準し、交換数と damage allegiance を一度だけ切り替える。弾を破棄し、別位置へ新しい弾を密かに生成してはいけない。"
+    },
+    {
+      "title": "当てずっぽうにせず、どう加速させるか？",
+      "body": "上限のない倍率ではなく、接触から接触までの拍を設計する。移動を段階的に短くしつつ、読みやすい発射、最低反応時間、安定したレーン、応答予告、固有の接触音を保つ。ボスが返球角度を変えるなら、速度で修正不能になる前に選択を示す。速度と往復数には上限を置く。"
+    },
+    {
+      "title": "応酬を何が終わらせ、結果を誰が所有するか？",
+      "body": "プレイヤーのミス、ボスのミス、時間切れ、明記した規則による中断のいずれかへ解決する。プレイヤーのミスは現在のオーブダメージを適用してラリーを終える。ボスのミスはオーブを消費し、よろめきを記録し、固定長の追撃時間を開き、回復まで次のサーブを防ぐ。協力時の claimant rules を定め、ダメージと報酬を冪等にする。"
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "応酬が無関係な弾の連鎖になっている",
+      "body": "命中ごとに新しいオーブを出すと、位置飛び、二重衝突、古い所有権、重複ダメージを隠し得る。ひとつの identity を保ち、同じ決定的な leg から表示位置、衝突、軌跡、所有者、交換数を導く。時間を戻しても各接触を正確に再現できるようにする。"
+    },
+    {
+      "title": "加速が熟達ではなく応答そのものを消す",
+      "body": "指数的な速度倍率は最後の拍を入力・表示・通信・アニメーション遅延より短くする。最低可読時間、少し早い入力のバッファ、リズム合図、速度と回数の上限を設ける。難度として意図的に受付を絞っても、偶発的な frame-rate contest にしない。"
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "ラリーを有限状態機械として扱う",
+      "body": "有用な状態は serve wind-up、outbound、player return window、inbound、boss return window、accelerated legs、player miss、boss miss、opening、reset。Projectile id、owner、leg index、出発・到着時刻、origin、destination、speed tier、accepted input、outcome を保存し、各接触は一つの遷移だけが所有する。"
+    },
+    {
+      "title": "照準課題とタイミング課題を分ける",
+      "body": "固定レーンはタイミング、方向を変える返球は照準、ボスが選ぶ角度は読みを問う。最大速度で三つを同時に課すと失敗理由が曖昧になる。まず一軸を教え、接触前に変更を示し、補助が受付時間、照準吸着、または両方へ作用するか決める。"
+    },
+    {
+      "title": "移動より接触を中心に音を組む",
+      "body": "成功した返球ごとに鋭い立ち上がり、上がる音程または短くなる間隔、振動、見える所有 glyph を与える。ミスには別の cadence、攻撃機会には持続する合図を残す。オーブが複雑なボスシルエットを横切っても応酬を追えるようにする。"
+    },
+    {
+      "title": "権限と協力時の裁定を試す",
+      "body": "Serve id、leg、予測・確定接触時刻、claimant、accepted input、前後の ownership、velocity、miss reason、boss stagger、punish damage、reset を記録する。同一フレームの二人の返球、受付端の遅延、一時停止、巻き戻し、低fps、弾の破壊、phase change、重複報酬を再現する。"
+    }
+  ],
+  "story": {
+    "title": "採石場は一太刀ごとに答える",
+    "body": "カーンはルーンを唸る石の火花へ圧縮する。タヴィは剣の腹で受けて返し、エレメンタルが答え、また刃が答える。音の間隔は次第に詰まり、最後の拍でカーンのひび割れた手が遅れ、火花が核へ食い込み、ルーンが短い攻撃機会を開く。"
+  },
+  "adaptation": {
+    "title": "運動・感覚・通信の差があってもテンポを読めるようにする",
+    "body": "受付時間プリセット、先行入力バッファ、任意の照準補助、強い接触音、振動、色に依存しない所有 glyph、サーブとミスの字幕、往復数を保つ上限制の低速モードを用意する。オンラインや協力では確定 claimant を表示し、成功した接触を見える剣からずらさず遅延を補償する。"
+  },
+  "distinction": {
+    "title": "単発反射や一般的なパリィではなく、継続する応酬",
+    "body": "Attack reflection は一発の敵弾を一度返して終わる場合がある。Projectile rally は明示的に次の応答を許す。同じ弾が複数 leg を生き、所有者が交互に変わり、テンポや角度が発展し、ミスが一連を解決する。Counter stance は移動物体や継続リズムなしに近接トリガーを罰せる。"
+  },
+  "lensNotes": [
+    {
+      "id": "telegraphing",
+      "body": "サーブ、有効なオーブ、次の接触、受付、所有者、速度段階、ミスは結果より先に異なる合図が必要だ。"
+    },
+    {
+      "id": "counterplay",
+      "body": "プレイヤーは弾を避けるだけでなく、各接触で既知の応答を実行し、防御を進行へ変換する。"
+    },
+    {
+      "id": "difficulty-rhythm",
+      "body": "成功するたび上限付きテンポ曲線で次の拍を短くし、反復を段階的な緊張へ変える。"
+    },
+    {
+      "id": "commitment",
+      "body": "leg が出た後は、所有者、目的地、到着拍、有効な応答を接触または中断まで固定する。"
+    },
+    {
+      "id": "progress-clarity",
+      "body": "見える交換記録と最後のミスが、中間の返球とボス攻撃機会という結果を区別する。"
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "The Legend of Zelda: Four Swords Adventures",
+      "boss": "Phantom Ganon",
+      "screenshot": "https://i.ytimg.com/vi/bSI_oswB1Kc/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=bSI_oswB1Kc&t=1s",
+      "body": "Hyrule Castle 戦で Phantom Ganon は、どちらかがミスするまで Links と色付き energy ball を打ち合う。色付き弾はラリー対象であり続け、別の blast は分裂し得る。反復が共有 cadence を作り、ボスのミスが剣攻撃用の明確な stun を生む。",
+      "video": "https://www.youtube.com/watch?v=bSI_oswB1Kc&t=1s",
+      "videoDurationSeconds": 1537
+    },
+    {
+      "dimension": "3D",
+      "game": "The Legend of Zelda: Ocarina of Time",
+      "boss": "Phantom Ganon",
+      "screenshot": "https://i.ytimg.com/vi/gaPNvBsT8nQ/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=gaPNvBsT8nQ&t=205s",
+      "body": "第2段階で Link は Phantom Ganon の電撃オーブを剣で返す。ボスも返し得るため高速の往復試験となり、Phantom Ganon がミスすると同じオーブが彼を倒し、タイミング成功を時間制の近接攻撃機会へ変える。",
+      "video": "https://www.youtube.com/watch?v=gaPNvBsT8nQ&t=205s",
+      "videoDurationSeconds": 278
+    },
+    {
+      "dimension": "3D",
+      "game": "The Legend of Zelda: The Wind Waker",
+      "boss": "Phantom Ganon",
+      "screenshot": "https://i.ytimg.com/vi/2F57Oo4N5EY/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=2F57Oo4N5EY&t=80s",
+      "body": "Forsaken Fortress で Phantom Ganon が光弾をサーブし、Link とボスが急速に加速する応酬を続ける。敗北した交換は Link にダメージを与え、最後の返球成功はボスを倒し、ラリーのタイミングループと追撃の剣攻撃を分離する。",
+      "video": "https://www.youtube.com/watch?v=2F57Oo4N5EY&t=80s",
+      "videoDurationSeconds": 143
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

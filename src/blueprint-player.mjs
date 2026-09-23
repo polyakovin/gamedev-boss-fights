@@ -350,6 +350,18 @@ export function initializeBlueprint(widget) {
       widget.dataset.blueprintPlayerBossHealthPreserved = String(frame.playerBossHealthPreserved);
       widget.dataset.blueprintPlayerBossRewardGrants = String(frame.playerBossRewardGrants);
     }
+    if (mechanicId === 'projectile-rally') {
+      widget.dataset.blueprintProjectileRally = frame.projectileRallyState;
+      widget.dataset.blueprintProjectileRallyId = frame.projectileRallyProjectileId;
+      widget.dataset.blueprintProjectileRallyLeg = String(frame.projectileRallyLeg);
+      widget.dataset.blueprintProjectileRallyOwner = frame.projectileRallyOwner;
+      widget.dataset.blueprintProjectileRallyExchanges = String(frame.projectileRallyExchangeCount);
+      widget.dataset.blueprintProjectileRallySpeed = String(frame.projectileRallySpeedTier);
+      widget.dataset.blueprintProjectileRallyMiss = String(frame.projectileRallyBossMiss);
+      widget.dataset.blueprintProjectileRallyVulnerable = String(frame.projectileRallyVulnerable);
+      widget.dataset.blueprintProjectileRallyPunished = String(frame.projectileRallyPunished);
+      widget.dataset.blueprintProjectileRallyDamageSource = frame.projectileRallyDamageSource;
+    }
     boss.setAttribute(
       'transform',
       `translate(${frame.boss.x} ${frame.boss.y}) scale(${frame.bossScale})`,

@@ -1,0 +1,142 @@
+{
+  "title": "प्रोजेक्टाइल रैली",
+  "subtitle": "एक ही शत्रुतापूर्ण गोले को स्पष्ट और तेज़ होती अदला-बदली में बदलें",
+  "variant": "सर्व · वापसी · गति-वृद्धि · चूक",
+  "summary": "बॉस और खिलाड़ी उसी प्रोजेक्टाइल को तब तक लौटाते हैं, जब तक किसी की स्पष्ट चूक रैली को समाप्त न कर दे।",
+  "overview": "प्रोजेक्टाइल रैली में मुठभेड़ के स्वामित्व वाला एक गोला बॉस और खिलाड़ी के बीच जाता है। हर मान्य वापसी उसकी दिशा पलटती है, नया स्वामी दर्ज करती है और अगली यात्रा को छोटा कर सकती है। स्पष्ट चूक, समय-सीमा या अमान्य प्रतिक्रिया पर रैली समाप्त होती है; बॉस की चूक आम तौर पर साझा टाइमिंग-परीक्षा को क्षति के अवसर में बदलती है।",
+  "learning": "सर्व, मान्य response verb, संपर्क-बिंदु, इनपुट विंडो, स्वामित्व-हस्तांतरण, वापसी का निशाना, गति-वक्र, अधिकतम अदला-बदल, दृश्य-श्रव्य बीट, चूक के नियम, खिलाड़ी की क्षति, बॉस का stagger, अवसर की अवधि, co-op arbitration, latency tolerance, accessibility सहायता, reset और वे परीक्षण तय करें जो दृश्य स्थिति, collision और authority को एक साथ रखें।",
+  "category": "मुठभेड़ के लक्ष्य और भेद्यता",
+  "readTime": "9 मिनट",
+  "demo": {
+    "title": "स्वामित्व और ताल बदलते हुए एक ही गोले को निरंतर रखें",
+    "timeline": "प्रोजेक्टाइल रैली की समयरेखा",
+    "step": "प्रोजेक्टाइल रैली की अवस्थाएँ",
+    "phaseNames": [
+      "सर्व और मान्य वापसी संकेतित करें",
+      "एक ही गोले को तीन तेज़ होती अदला-बदली से गुजारें",
+      "बॉस की चूक को सीमित अवसर में बदलें"
+    ],
+    "phaseDescriptions": [
+      "केर्न एक rune orb चार्ज करता है, उसकी lane स्थिर करता है और 0.78 सेकंड पर छोड़ता है। संपर्क से पहले टावी की तलवार के चारों ओर response ring दिखती है, इसलिए लौटाया जा सकने वाला सर्व साधारण प्रोजेक्टाइल से अलग दिखता है।",
+      "टावी 1.48 सेकंड पर उसी गोले को लौटाता है; केर्न 2.05 पर वापस भेजता है; टावी और केर्न 2.48 तथा 2.86 पर फिर उत्तर देते हैं; टावी 3.15 पर अंतिम वापसी करता है। हर हस्तांतरण ownership mark बदलता और अगली यात्रा-बीट घटाता है, पर गोला न teleport होता है, न बदला जाता है।",
+      "केर्न 3.48 सेकंड पर चूकता है। गोला टकराता है, exchange counter बंद होता है और vulnerability ring 4.55 तक रहती है। 3.90 पर टावी का वार अवसर का भाग है, reflected projectile का नहीं; पूरा contract 5.20 पर reset होता है।"
+    ],
+    "boss": "बॉस",
+    "player": "खिलाड़ी",
+    "danger": "जीवित गोला उस पक्ष को क्षति देता है जो अपनी लिखी हुई return window चूकता है; बाद की यात्राएँ तेज़ हैं पर वही दृश्य मार्ग रखती हैं",
+    "locked": "एक projectile identity, वर्तमान स्वामी, संपर्क-बिंदु, मान्य प्रतिक्रिया, timing windows, speed curve, exchange cap, miss outcome, opening, damage और reset मुठभेड़ के स्वामित्व में हैं",
+    "safe": "अगला संपर्क, स्वामी, बीट और असफलता shape, motion, sound, captions और उदार input buffering से दिखाएँ; केवल रंग पर निर्भर न रहें",
+    "reducedMotion": "Reduced motion में autoplay बंद है। सर्व, हर स्वामित्व-हस्तांतरण, तेजी, चूक, अवसर, वार, समापन और reset देखने के लिए 0.78, 1.48, 2.05, 2.48, 2.86, 3.15, 3.48, 3.90, 4.55 और 5.20 सेकंड पर scrub करें।",
+    "diagramDescription": "टावी और केर्न एक स्थिर lane के दोनों सिरों पर आमने-सामने हैं। एक rune orb उनके contact rings के बीच चलता है और exchange ledger एक से पाँच तक भरता है। खिलाड़ी और बॉस के ownership marks उसी गोले के साथ बदलते हैं, बढ़ती ताल में trail छोटा होता है, और अंतिम वापसी केर्न को लगकर सीमित vulnerability ring खोलती है।"
+  },
+  "steps": [
+    {
+      "title": "सफल वापसी पर वास्तव में क्या हस्तांतरित होता है?",
+      "body": "प्रोजेक्टाइल को स्थिर encounter identity और server-authoritative owner दें। संपर्क पर response verb, input time, दूरी, जरूरत हो तो facing, और eligibility जाँचें। फिर दृश्य संपर्क-बिंदु से velocity पलटें या retarget करें, counter केवल एक बढ़ाएँ और damage allegiance केवल एक बार बदलें। एक shot नष्ट करके दूसरी जगह नया shot चुपचाप न बनाएँ।"
+    },
+    {
+      "title": "रैली अंदाजा बने बिना तेज़ कैसे हो?",
+      "body": "अनियंत्रित multiplier के बजाय contact-to-contact beats लिखें। यात्रा को मापे हुए चरणों में छोटा करें, पर स्पष्ट launch, न्यूनतम reaction budget, स्थिर lane, response anticipation और अलग contact sound बचाएँ। यदि बॉस return angle बदल सकता है, तो तेज़ी से पहले उसका चुनाव दिखाएँ। गति और exchange count को cap करें।"
+    },
+    {
+      "title": "अदला-बदली कैसे समाप्त होती है और परिणाम किसका है?",
+      "body": "चार परिणामों में से एक resolve करें: खिलाड़ी की चूक, बॉस की चूक, timeout या दर्ज नियम से cancellation। खिलाड़ी की चूक पर वर्तमान orb damage लागू कर रैली समाप्त करें। बॉस की चूक orb को consume करती है, stagger दर्ज करती है, निश्चित punish window खोलती है और recovery तक नया serve रोकती है। Co-op claimant rules तय करें और damage तथा rewards को idempotent रखें।"
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "अदला-बदली असंबंधित प्रोजेक्टाइलों की श्रृंखला मात्र है",
+      "body": "हर hit पर नया orb बनाने से position jump, double collision, stale ownership या duplicate damage छिप सकते हैं। एक identity बनाए रखें और उसी deterministic leg से rendered position, collision, trail, owner और exchange count निकालें। पीछे seek करने पर हर contact ठीक उसी तरह दोहरना चाहिए।"
+    },
+    {
+      "title": "गति-वृद्धि कौशल जाँचने के बजाय प्रतिक्रिया ही मिटा देती है",
+      "body": "Exponential multiplier अंतिम beat को input, display, network या animation latency से छोटा कर देता है। न्यूनतम readable interval रखें, थोड़े early input buffer करें, rhythm cue दिखाएँ और speed तथा exchanges cap करें। कठिनाई जान-बूझकर window घटा सकती है, लेकिन उसे आकस्मिक frame-rate contest न बनने दें।"
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "रैली को finite state machine बनाएँ",
+      "body": "उपयोगी अवस्थाएँ हैं serve wind-up, outbound, player return window, inbound, boss return window, accelerated legs, player miss, boss miss, opening और reset। Projectile id, owner, leg index, departure time, arrival time, origin, destination, speed tier, accepted input और outcome रखें। हर contact का स्वामी केवल एक transition हो।"
+    },
+    {
+      "title": "निशाना और टाइमिंग की चुनौती अलग रखें",
+      "body": "स्थिर lane टाइमिंग पूछती है; redirected return निशाना; boss-selected angle पढ़ना। तीनों को अधिकतम गति पर जोड़ने से असफलता अस्पष्ट होती है। पहले एक axis सिखाएँ, contact से पहले बदलाव संकेतित करें और तय करें कि assists timing बढ़ाती हैं, aim magnetism देती हैं या दोनों।"
+    },
+    {
+      "title": "ध्वनि को यात्रा नहीं, संपर्क के आसपास रचें",
+      "body": "हर मान्य return को crisp transient, बढ़ती pitch या छोटा interval, controller pulse और visible ownership glyph दें। Miss के लिए अलग cadence और opening के लिए sustained cue बचाएँ। व्यस्त boss silhouette पर भी खिलाड़ी exchange का अनुसरण कर सके।"
+    },
+    {
+      "title": "Authority और co-op arbitration की जाँच करें",
+      "body": "Serve id, leg, predicted और authoritative contact time, claimant, accepted input, ownership before/after, velocity, miss reason, boss stagger, punish damage और reset log करें। एक frame में दो खिलाड़ियों की return, window edge latency, pause, rollback, low frame rate, projectile destruction, phase change और repeated reward messages simulate करें।"
+    }
+  ],
+  "story": {
+    "title": "खदान हर वार का उत्तर देती है",
+    "body": "केर्न एक rune को गूँजती पत्थर-चिंगारी में दबाता है। टावी उसे तलवार की चौड़ी सतह पर पकड़कर लौटाता है; elemental उत्तर देता है, फिर तलवार—हर स्वर अगले के और पास। अंतिम beat पर केर्न का टूटा हाथ देर से बंद होता है, चिंगारी core में धँसती है और runes थोड़ी देर के लिए खुल जाते हैं।"
+  },
+  "adaptation": {
+    "title": "Motor, sensory और network भिन्नता में ताल स्पष्ट रखें",
+    "body": "Timing-window presets, early input buffering, वैकल्पिक aim assist, मजबूत contact audio, controller vibration, non-color ownership glyphs, serve और miss captions तथा capped slow-tempo mode दें जो exchange count बचाए। Online या co-op में authoritative claimant दिखाएँ और latency compensate करें, पर accepted contact को दृश्य blade से दूर न खिसकाएँ।"
+  },
+  "distinction": {
+    "title": "लगातार अदला-बदली, एक reflection या साधारण parry नहीं",
+    "body": "Attack reflection एक hostile shot को एक return में बदल सकती है और वहीं समाप्त हो सकती है। Projectile rally स्पष्ट रूप से अगला उत्तर सम्भव बनाती है: ownership बदलता है, वही projectile कई legs में रहता है, tempo या angle विकसित होता है और miss sequence समाप्त करता है। Counter stance बिना travelling object या जारी rhythm के melee trigger punish कर सकती है।"
+  },
+  "lensNotes": [
+    {
+      "id": "telegraphing",
+      "body": "Serve, eligible orb, अगला contact, response window, owner, speed tier और miss के परिणाम से पहले अलग संकेत चाहिए।"
+    },
+    {
+      "id": "counterplay",
+      "body": "खिलाड़ी projectile से केवल बचने के बजाय हर contact पर ज्ञात response करके defense को progress में बदलता है।"
+    },
+    {
+      "id": "difficulty-rhythm",
+      "body": "हर मान्य return capped tempo curve में अगली beat घटाता है और repetition को मापी हुई escalation बनाता है।"
+    },
+    {
+      "id": "commitment",
+      "body": "एक leg निकलने के बाद owner, destination, arrival beat और valid response contact या cancellation तक स्थिर रहते हैं।"
+    },
+    {
+      "id": "progress-clarity",
+      "body": "Visible exchange ledger और अंतिम miss मध्यवर्ती returns को boss-opening result से अलग करते हैं।"
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "The Legend of Zelda: Four Swords Adventures",
+      "boss": "Phantom Ganon",
+      "screenshot": "https://i.ytimg.com/vi/bSI_oswB1Kc/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=bSI_oswB1Kc&t=1s",
+      "body": "Hyrule Castle की लड़ाई में Phantom Ganon Links के साथ रंगीन energy ball तब तक बदलता है, जब तक कोई चूक न जाए। रंगीन shot रैली का eligible object रहता है जबकि अन्य blasts टूट सकते हैं; returns साझा cadence बनाते हैं और boss miss स्पष्ट sword-damage stun देता है।",
+      "video": "https://www.youtube.com/watch?v=bSI_oswB1Kc&t=1s",
+      "videoDurationSeconds": 1537
+    },
+    {
+      "dimension": "3D",
+      "game": "The Legend of Zelda: Ocarina of Time",
+      "boss": "Phantom Ganon",
+      "screenshot": "https://i.ytimg.com/vi/gaPNvBsT8nQ/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=gaPNvBsT8nQ&t=205s",
+      "body": "दूसरे phase में Link तलवार से Phantom Ganon का electric orb लौटाता है। Boss फिर लौटा सकता है, जिससे तेज़ back-and-forth test बनता है; boss के चूकने पर वही orb उसे गिराता और timing success को सीमित melee opening में बदलता है।",
+      "video": "https://www.youtube.com/watch?v=gaPNvBsT8nQ&t=205s",
+      "videoDurationSeconds": 278
+    },
+    {
+      "dimension": "3D",
+      "game": "The Legend of Zelda: The Wind Waker",
+      "boss": "Phantom Ganon",
+      "screenshot": "https://i.ytimg.com/vi/2F57Oo4N5EY/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=2F57Oo4N5EY&t=80s",
+      "body": "Forsaken Fortress में Phantom Ganon light ball serve करता है जिसे Link और boss तेजी से बढ़ती रफ्तार में लौटाते हैं। हारी exchange Link को damage देती है; सफल अंतिम return Phantom Ganon को गिराती और rally timing loop को follow-up sword punish से अलग रखती है।",
+      "video": "https://www.youtube.com/watch?v=2F57Oo4N5EY&t=80s",
+      "videoDurationSeconds": 143
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

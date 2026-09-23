@@ -30,6 +30,7 @@ import {
   environmentalWeaponState,
   encounterSpecificToolState,
   playerControlledBossState,
+  projectileRallyState,
   counterStanceOutcome,
   counterStanceState,
   blueprintFrame,
@@ -57,8 +58,8 @@ import {
   renderBlueprintThumbnail,
 } from '../lib/blueprint-view.mjs';
 
-test('all 79 promoted lesson animations have distinct rule modes and complete moving frames', () => {
-  assert.equal(BLUEPRINT_MECHANIC_IDS.length, 79);
+test('all 80 promoted lesson animations have distinct rule modes and complete moving frames', () => {
+  assert.equal(BLUEPRINT_MECHANIC_IDS.length, 80);
   const modes = new Set();
   for (const id of BLUEPRINT_MECHANIC_IDS) {
     for (let time = 0; time <= BLUEPRINT_DURATION; time += 0.1) {
@@ -79,7 +80,7 @@ test('all 79 promoted lesson animations have distinct rule modes and complete mo
           assert.ok(Number.isFinite(value), `${id} has an invalid ${primitive.type}`);
     }
   }
-  assert.equal(modes.size, 79);
+  assert.equal(modes.size, 80);
 });
 
 test('every blueprint exposes signal, committed action, and recovery without player teleports', () => {
@@ -188,6 +189,7 @@ test('every damaging promoted animation derives safety from its own active geome
       id !== 'environmental-weapon' &&
       id !== 'encounter-specific-tool' &&
       id !== 'player-controlled-boss' &&
+      id !== 'projectile-rally' &&
       id !== 'part-break' &&
       id !== 'counter-stance' &&
       id !== 'absorption-power-up' &&
@@ -2639,5 +2641,75 @@ test('player-controlled boss preserves authored attacks through human and AI own
   assert.match(
     renderBlueprintThumbnail(id, 'test-player-controlled-boss'),
     /data-blueprint-preview="player-controlled-boss"/,
+  );
+});
+
+test('projectile rally preserves one orb through accelerating ownership transfers', () => {
+  const id = 'projectile-rally';
+  assert.deepEqual(
+    [0, 0.6, 0.9, 1.6, 2.2, 2.6, 3, 3.3, 3.6, 4.1, 4.7, 5.3].map(projectileRallyState),
+    [
+      'briefing',
+      'serve-wind-up',
+      'boss-serve',
+      'player-return-1',
+      'boss-return-1',
+      'player-return-2',
+      'boss-return-2',
+      'player-return-3',
+      'boss-miss',
+      'punished-opening',
+      'recovery',
+      'reset',
+    ],
+  );
+
+  const serve = blueprintFrame(id, 0.9);
+  const firstReturn = blueprintFrame(id, 1.6);
+  const secondServe = blueprintFrame(id, 2.2);
+  const finalReturn = blueprintFrame(id, 3.2);
+  assert.equal(serve.projectileRallyProjectileId, 'rune-orb-1');
+  assert.equal(firstReturn.projectileRallyProjectileId, serve.projectileRallyProjectileId);
+  assert.equal(secondServe.projectileRallyProjectileId, serve.projectileRallyProjectileId);
+  assert.equal(finalReturn.projectileRallyProjectileId, serve.projectileRallyProjectileId);
+  assert.deepEqual(
+    [
+      serve.projectileRallyOwner,
+      firstReturn.projectileRallyOwner,
+      secondServe.projectileRallyOwner,
+    ],
+    ['boss', 'player', 'boss'],
+  );
+  assert.deepEqual(
+    [
+      serve.projectileRallySpeedTier,
+      secondServe.projectileRallySpeedTier,
+      finalReturn.projectileRallySpeedTier,
+    ],
+    [1, 2, 3],
+  );
+  assert.equal(finalReturn.projectileRallyExchangeCount, 5);
+  assert.equal(blueprintPointSafe(id, 0.9, serve.projectileRallyOrb), false);
+  assert.equal(serve.playerSafe, true);
+
+  const miss = blueprintFrame(id, 3.6);
+  assert.equal(miss.projectileRallyBossMiss, true);
+  assert.equal(miss.projectileRallyVulnerable, true);
+  assert.equal(miss.projectileRallyDamageSource, 'rally-orb');
+  assert.ok(miss.primitives[17].opacity > 0.2, 'the boss miss has a visible impact');
+
+  const punish = blueprintFrame(id, 4);
+  assert.equal(punish.projectileRallyPunished, true);
+  assert.equal(punish.projectileRallyVulnerable, true);
+  assert.ok(punish.playerMotion.attack > 0.5, 'Tavi owns a separate sword punish');
+  assert.ok(punish.primitives[18].opacity > 0.8, 'the opening remains visibly bounded');
+
+  const closed = blueprintFrame(id, 4.7);
+  assert.equal(closed.projectileRallyVulnerable, false);
+  assert.deepEqual(blueprintFrame(id, 0).player, blueprintFrame(id, 6).player);
+  assert.deepEqual(blueprintFrame(id, 0).boss, blueprintFrame(id, 6).boss);
+  assert.match(
+    renderBlueprintThumbnail(id, 'test-projectile-rally'),
+    /data-blueprint-preview="projectile-rally"/,
   );
 });

@@ -1,0 +1,142 @@
+{
+  "title": "Projectile rally",
+  "subtitle": "Turn one hostile shot into a readable, accelerating exchange",
+  "variant": "Serve · return · accelerate · miss",
+  "summary": "Boss and player repeatedly return the same projectile until a missed response resolves the rally.",
+  "overview": "A projectile rally transfers one encounter-owned shot between boss and player. Each valid return reverses its direction, records the new owner, and may shorten the next travel beat. The exchange ends on a clear miss, timeout, or invalid response; the boss's miss usually converts the shared timing test into a damage opening.",
+  "learning": "Define the serve, eligible response verb, contact point, input window, ownership transfer, return aim, speed curve, maximum exchanges, audiovisual beat, miss rules, player damage, boss stagger, opening duration, co-op arbitration, latency tolerance, accessibility assists, reset, and tests that keep visible position, collision, and authority synchronized.",
+  "category": "Encounter goals and vulnerability",
+  "readTime": "9 min",
+  "demo": {
+    "title": "Keep one orb continuous while its ownership and tempo change",
+    "timeline": "Projectile rally timeline",
+    "step": "Projectile rally states",
+    "phaseNames": [
+      "Announce the serve and the valid return verb",
+      "Transfer one orb through three accelerating exchanges",
+      "Resolve the boss miss into a bounded opening"
+    ],
+    "phaseDescriptions": [
+      "Kern charges one rune orb, fixes its lane, and releases it at 0.78 s. A response ring appears around Tavi's sword before contact, distinguishing a returnable serve from ordinary projectiles.",
+      "Tavi returns the same orb at 1.48 s; Kern sends it back at 2.05 s; Tavi and Kern answer again at 2.48 and 2.86 s; Tavi makes the final return at 3.15 s. Every transfer changes the ownership mark and shortens the next travel beat without teleporting or spawning a replacement orb.",
+      "Kern misses at 3.48 s. The orb connects, the exchange counter closes, and a vulnerability ring remains until 4.55 s. Tavi's punish at 3.90 s belongs to the opening rather than to the reflected projectile, and the complete contract resets after 5.20 s."
+    ],
+    "boss": "Boss",
+    "player": "Player",
+    "danger": "The live orb damages the side that misses its authored return window; later legs arrive faster but keep the same visible path",
+    "locked": "One projectile identity, current owner, contact points, valid response, timing windows, speed curve, exchange cap, miss outcome, opening, damage, and reset are encounter-owned",
+    "safe": "Show the next contact, owner, beat, and failure state with shape, motion, sound, captions, and forgiving input buffering rather than color alone",
+    "reducedMotion": "Autoplay is disabled by reduced motion. Scrub across 0.78, 1.48, 2.05, 2.48, 2.86, 3.15, 3.48, 3.90, 4.55, and 5.20 seconds to inspect serve, every ownership transfer, acceleration, miss, opening, punish, close, and reset.",
+    "diagramDescription": "Tavi and Kern face each other across a fixed lane. One rune orb travels between their contact rings while an exchange ledger fills from one to five. Alternating player and boss ownership marks follow that same orb, its trail becomes shorter as the tempo rises, and the final return strikes Kern to reveal a timed vulnerability ring."
+  },
+  "steps": [
+    {
+      "title": "What exactly transfers at a successful return?",
+      "body": "Give the projectile a stable encounter identity and server-authoritative owner. At the contact event, validate the response verb, input time, distance, facing if relevant, and whether the orb is still eligible. Then reverse or retarget its velocity from the visible contact point, increment the exchange counter once, and switch damage allegiance once. Do not destroy one shot and silently spawn another at a different position."
+    },
+    {
+      "title": "How does the rally accelerate without becoming a guess?",
+      "body": "Author contact-to-contact beats rather than applying an uncapped multiplier. Shorten travel in measured steps, but preserve a readable launch, minimum reaction budget, stable lane, response anticipation, and distinct contact sound. If the boss can vary return angle, reveal that choice before speed makes correction impossible. Cap exchange count or speed so success remains reproducible."
+    },
+    {
+      "title": "What ends the exchange and who owns the result?",
+      "body": "Resolve one of four outcomes: player miss, boss miss, timeout, or cancellation by a documented rule. A player miss applies the orb's current damage and ends the rally. A boss miss consumes the orb, records boss stagger, opens a fixed punish window, and prevents another serve until recovery. Define co-op claimant rules and make all damage and rewards idempotent."
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "The exchange is only a chain of unrelated projectiles",
+      "body": "Respawning a new orb at every hit can hide position jumps, double collisions, stale ownership, or duplicate damage. Preserve one identity and derive its rendered position, collision, trail, owner, and exchange count from the same deterministic leg. Tests should seek backward and reproduce every contact exactly."
+    },
+    {
+      "title": "Acceleration removes the response rather than testing mastery",
+      "body": "An exponential speed multiplier quickly reduces the last beat below input, display, network, or animation latency. Set a minimum readable interval, buffer slightly early inputs, expose a rhythm cue, and cap both speed and exchanges. Difficulty can tighten the window deliberately, but it should never be an accidental frame-rate contest."
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "Model the rally as a finite state machine",
+      "body": "Useful states are serve wind-up, outbound, player return window, inbound, boss return window, accelerated legs, player miss, boss miss, opening, and reset. Store projectile id, owner, leg index, departure time, arrival time, origin, destination, speed tier, accepted input, and outcome. One transition must own each contact."
+    },
+    {
+      "title": "Separate aim challenge from timing challenge",
+      "body": "A fixed lane asks for timing; a redirected return asks for aim; a boss-selected angle asks for reading. Combining all three at maximum speed obscures the failure. Teach one axis first, signal changes before contact, and decide whether assist settings widen timing, add aim magnetism, or both."
+    },
+    {
+      "title": "Compose sound around contact, not just travel",
+      "body": "Give each accepted return a crisp transient, rising pitch or shorter interval, controller pulse, and visible ownership glyph. Reserve a distinct cadence for a miss and a sustained cue for the opening. The player should be able to follow the exchange when the orb crosses a visually busy boss silhouette."
+    },
+    {
+      "title": "Test authority and co-op arbitration",
+      "body": "Log serve id, leg, predicted and authoritative contact time, claimant, accepted input, ownership before and after, velocity, miss reason, boss stagger, punish damage, and reset. Simulate two players returning on the same frame, latency at the window edges, pause, rollback, low frame rate, projectile destruction, boss phase change, and repeated reward messages."
+    }
+  ],
+  "story": {
+    "title": "The quarry answers every stroke",
+    "body": "Kern compresses a rune into a humming stone spark. Tavi catches it on the sword's flat and sends it back; the elemental answers, then the blade answers again, each note closer to the next. On the final beat Kern's cracked hand closes too late, the spark drives into the core, and its runes separate into a brief opening."
+  },
+  "adaptation": {
+    "title": "Make tempo readable across motor, sensory, and network variance",
+    "body": "Offer timing-window presets, early input buffering, optional aim assist, strong contact audio, controller vibration, non-color ownership glyphs, captions for serve and miss, and a capped slow-tempo mode that preserves exchange count. In online or co-op play, display the authoritative claimant and compensate latency without moving an accepted contact away from the visible blade."
+  },
+  "distinction": {
+    "title": "A sustained exchange, not a single reflection or generic parry",
+    "body": "Attack reflection changes one hostile shot into one return and may end immediately. A projectile rally explicitly supports another answer: ownership alternates, the same projectile persists across multiple legs, tempo or angle evolves, and a miss resolves the sequence. A counter stance can punish a melee trigger without any travelling object or continuing rhythm."
+  },
+  "lensNotes": [
+    {
+      "id": "telegraphing",
+      "body": "The serve, eligible orb, next contact, response window, owner, speed tier, and miss need distinct signals before their consequences."
+    },
+    {
+      "id": "counterplay",
+      "body": "The player converts defense into progress by executing a known response at each contact rather than merely avoiding the projectile."
+    },
+    {
+      "id": "difficulty-rhythm",
+      "body": "Each accepted return shortens the next beat within a capped tempo curve, turning repetition into measured escalation."
+    },
+    {
+      "id": "commitment",
+      "body": "Once a leg departs, owner, destination, arrival beat, and valid response remain fixed until contact or cancellation."
+    },
+    {
+      "id": "progress-clarity",
+      "body": "A visible exchange ledger and final miss distinguish intermediate returns from the boss-opening result."
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "The Legend of Zelda: Four Swords Adventures",
+      "boss": "Phantom Ganon",
+      "screenshot": "https://i.ytimg.com/vi/bSI_oswB1Kc/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=bSI_oswB1Kc&t=1s",
+      "body": "Phantom Ganon opens the Hyrule Castle fight by trading a colored energy ball with the Links until one side misses. The colored shot remains the eligible rally object while other blasts can break apart; repeated returns build a shared cadence and the boss's miss produces a clear stun for sword damage.",
+      "video": "https://www.youtube.com/watch?v=bSI_oswB1Kc&t=1s",
+      "videoDurationSeconds": 1537
+    },
+    {
+      "dimension": "3D",
+      "game": "The Legend of Zelda: Ocarina of Time",
+      "boss": "Phantom Ganon",
+      "screenshot": "https://i.ytimg.com/vi/gaPNvBsT8nQ/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=gaPNvBsT8nQ&t=205s",
+      "body": "In the second phase, Link returns Phantom Ganon's electric orb with a sword swing. The boss may return it again, producing a faster back-and-forth test; when Phantom Ganon finally misses, the same orb knocks him down and converts timing success into a bounded melee opening.",
+      "video": "https://www.youtube.com/watch?v=gaPNvBsT8nQ&t=205s",
+      "videoDurationSeconds": 278
+    },
+    {
+      "dimension": "3D",
+      "game": "The Legend of Zelda: The Wind Waker",
+      "boss": "Phantom Ganon",
+      "screenshot": "https://i.ytimg.com/vi/2F57Oo4N5EY/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=2F57Oo4N5EY&t=80s",
+      "body": "At the Forsaken Fortress, Phantom Ganon serves a light ball that Link and the boss strike back and forth as it rapidly accelerates. A lost exchange damages Link; a successful final return drops Phantom Ganon, cleanly separating the rally's timing loop from the follow-up sword punish.",
+      "video": "https://www.youtube.com/watch?v=2F57Oo4N5EY&t=80s",
+      "videoDurationSeconds": 143
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

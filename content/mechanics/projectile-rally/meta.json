@@ -1,0 +1,32 @@
+{
+  "id": "projectile-rally",
+  "number": 86,
+  "published": true,
+  "sourceLocale": "en",
+  "contentVersion": 1,
+  "animation": "projectile-rally",
+  "lenses": ["telegraphing", "counterplay", "difficulty-rhythm", "commitment", "progress-clarity"],
+  "related": ["attack-reflection", "counter-stance", "speed-change", "beat-synced-attack"],
+  "sources": [
+    {
+      "title": "Boss Up: Boss Battle Design",
+      "url": "https://media.gdcvault.com/gdc2018/presentations/Keren_Itay_BossUp.pdf"
+    },
+    {
+      "title": "Dead Man's Volley — Zelda Dungeon Wiki",
+      "url": "https://www.zeldadungeon.net/wiki/Dead_Man%27s_Volley"
+    },
+    {
+      "title": "Phantom Ganon — Zelda Dungeon Wiki",
+      "url": "https://zeldadungeon.net/wiki/Phantom_Ganon"
+    },
+    {
+      "title": "Phantom Ganon (Ocarina of Time) — Zelda Dungeon Wiki",
+      "url": "https://www.zeldadungeon.net/wiki/Phantom_Ganon_%28Ocarina_of_Time%29"
+    },
+    {
+      "title": "Phantom Ganon (The Wind Waker) — Zelda Dungeon Wiki",
+      "url": "https://zeldadungeon.net/wiki/Phantom_Ganon_%28The_Wind_Waker%29"
+    }
+  ]
+}

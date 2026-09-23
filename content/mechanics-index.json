@@ -1369,7 +1369,7 @@
         "en": {
           "title": "Projectile rally",
           "category": "Encounter goals and vulnerability",
-          "summary": "Draft outline for the projectile rally mechanic. Rules, tuning guidance, and examples are still in progress."
+          "summary": "Boss and player repeatedly return the same projectile until a missed response resolves the rally."
         },
         "ru": {
           "title": "Ответный залп",

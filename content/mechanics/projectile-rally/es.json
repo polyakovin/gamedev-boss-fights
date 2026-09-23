@@ -1,0 +1,142 @@
+{
+  "title": "Intercambio de proyectil",
+  "subtitle": "Convierte un disparo hostil en un intercambio legible y acelerado",
+  "variant": "Servir · devolver · acelerar · fallar",
+  "summary": "Jefe y jugador devuelven el mismo proyectil hasta que una respuesta fallida resuelve el intercambio.",
+  "overview": "El intercambio transfiere un único disparo bajo autoridad del encuentro entre jefe y jugador. Cada devolución válida invierte la dirección, registra un nuevo dueño y puede acortar el siguiente compás. Un fallo, tiempo agotado o respuesta inválida termina la secuencia; el fallo del jefe suele abrir una ventana de daño.",
+  "learning": "Define servicio, verbo de respuesta, contacto, ventana de entrada, transferencia, puntería, curva de velocidad, máximo de golpes, ritmo audiovisual, fallos, daño, aturdimiento, ventana, arbitraje cooperativo, latencia, accesibilidad, reinicio y pruebas que sincronicen posición, colisión y autoridad.",
+  "category": "Objetivos del encuentro y vulnerabilidad",
+  "readTime": "9 min",
+  "demo": {
+    "title": "Conservar un orbe mientras cambian dueño y tempo",
+    "timeline": "Línea temporal del intercambio",
+    "step": "Estados del intercambio",
+    "phaseNames": [
+      "Anunciar el servicio y la respuesta válida",
+      "Transferir un orbe en tres intercambios acelerados",
+      "Convertir el fallo del jefe en una ventana limitada"
+    ],
+    "phaseDescriptions": [
+      "Kern carga un orbe rúnico, fija su carril y lo lanza a 0,78 s. Un anillo alrededor de la espada de Tavi distingue el servicio retornable de un proyectil común.",
+      "Tavi devuelve el mismo orbe a 1,48 s; Kern a 2,05; ambos responden a 2,48 y 2,86; Tavi hace la última devolución a 3,15. Cada contacto cambia el dueño y acorta el compás sin teletransportar ni crear otro orbe.",
+      "Kern falla a 3,48 s. El orbe impacta, el contador se cierra y el anillo vulnerable dura hasta 4,55. El golpe de Tavi a 3,90 pertenece a la apertura, no al proyectil, y el contrato reinicia después de 5,20."
+    ],
+    "boss": "Jefe",
+    "player": "Jugador",
+    "danger": "El orbe daña al lado que pierde su ventana; los tramos finales llegan más rápido pero conservan el mismo carril visible",
+    "locked": "Identidad, dueño, contactos, respuesta, ventanas, velocidad, límite, resultado del fallo, apertura, daño y reinicio pertenecen al encuentro",
+    "safe": "Muestra contacto, dueño, pulso y fallo con forma, movimiento, sonido, subtítulos y búfer, no solo color",
+    "reducedMotion": "Con movimiento reducido no hay autoplay. Recorre 0,78, 1,48, 2,05, 2,48, 2,86, 3,15, 3,48, 3,90, 4,55 y 5,20 s para revisar servicio, transferencias, aceleración, fallo, apertura, golpe, cierre y reinicio.",
+    "diagramDescription": "Tavi y Kern ocupan los extremos de un carril fijo. Un solo orbe viaja entre anillos de contacto y un registro crece de uno a cinco. Los símbolos de dueño siguen el mismo orbe, su estela se acorta con el tempo y la devolución final golpea a Kern para mostrar una vulnerabilidad limitada."
+  },
+  "steps": [
+    {
+      "title": "¿Qué se transfiere en una devolución correcta?",
+      "body": "Da al proyectil identidad estable y dueño autoritativo. En el contacto valida verbo, tiempo, distancia, orientación si procede y elegibilidad. Invierte o redirige desde el punto visible, aumenta una vez el contador y cambia una vez la afiliación del daño. No sustituyas el disparo por otro en una posición distinta."
+    },
+    {
+      "title": "¿Cómo acelerar sin convertirlo en adivinanza?",
+      "body": "Diseña compases entre contactos, no un multiplicador ilimitado. Acorta en pasos manteniendo lanzamiento, reacción mínima, carril, anticipación y sonido. Si cambia el ángulo, anúncialo antes de que la velocidad impida corregir. Limita velocidad e intercambios."
+    },
+    {
+      "title": "¿Qué termina la secuencia y quién posee el resultado?",
+      "body": "Resuelve fallo del jugador, fallo del jefe, timeout o cancelación documentada. El fallo del jugador aplica el daño actual y termina. El del jefe consume el orbe, aturde y abre una ventana fija sin nuevo servicio hasta recuperarse. Define reclamación cooperativa y resultados idempotentes."
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "La secuencia son proyectiles independientes",
+      "body": "Recrear el orbe oculta saltos, colisiones dobles, dueño obsoleto y daño duplicado. Conserva una identidad y deriva posición, colisión, estela, dueño y contador de una sola etapa determinista. La búsqueda hacia atrás debe reproducir cada contacto."
+    },
+    {
+      "title": "La aceleración elimina la respuesta",
+      "body": "Un multiplicador exponencial reduce el último compás por debajo de la latencia de entrada, pantalla, red o animación. Define intervalo mínimo, búfer temprano, señal rítmica y topes. La dificultad puede estrechar a propósito, no por accidente de FPS."
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "Modela una máquina de estados finita",
+      "body": "Usa preparación, salida, ventana del jugador, regreso, ventana del jefe, tramos rápidos, ambos fallos, apertura y reinicio. Guarda id, dueño, tramo, salida, llegada, origen, destino, velocidad, entrada e resultado. Un solo cambio posee cada contacto."
+    },
+    {
+      "title": "Separa puntería y tiempo",
+      "body": "Un carril fijo prueba tiempo; redirigir prueba puntería; un ángulo elegido por el jefe prueba lectura. Mezclarlos al máximo oculta la causa. Enseña un eje, anuncia cambios y decide si la asistencia amplía ventana, magnetiza puntería o ambos."
+    },
+    {
+      "title": "Compón el sonido alrededor del contacto",
+      "body": "Cada devolución necesita un transitorio, tono ascendente o intervalo menor, pulso y glifo de dueño. Reserva otra cadencia para el fallo y un sonido sostenido para la apertura. El ritmo debe sobrevivir a una silueta visualmente ocupada."
+    },
+    {
+      "title": "Prueba autoridad y arbitraje cooperativo",
+      "body": "Registra id, tramo, contacto previsto y real, reclamante, entrada, dueño antes y después, velocidad, fallo, aturdimiento, daño y reinicio. Simula dos respuestas simultáneas, latencia extrema, pausa, rollback, FPS bajo, destrucción, cambio de fase y premio repetido."
+    }
+  ],
+  "story": {
+    "title": "La cantera responde a cada golpe",
+    "body": "Kern comprime una runa en una chispa de piedra. Tavi la recibe con la hoja y la devuelve; el elemental responde, luego la espada otra vez, con cada nota más cerca. En el pulso final la mano agrietada llega tarde, la chispa entra al núcleo y las runas se separan durante una breve apertura."
+  },
+  "adaptation": {
+    "title": "Haz legible el tempo ante variación motora, sensorial y de red",
+    "body": "Ofrece ventanas configurables, búfer temprano, ayuda de puntería, sonido fuerte, vibración, glifos no cromáticos, subtítulos y modo lento con el mismo conteo. En red muestra quién ganó la reclamación y compensa latencia sin separar el contacto de la hoja visible."
+  },
+  "distinction": {
+    "title": "Intercambio sostenido, no reflexión única ni parada genérica",
+    "body": "La reflexión convierte un tiro hostil en una sola devolución y puede acabar. Aquí existe otra respuesta: alterna el dueño, persiste el mismo proyectil, evoluciona tempo o ángulo y un fallo resuelve. Una postura de contra puede castigar cuerpo a cuerpo sin objeto ni ritmo continuo."
+  },
+  "lensNotes": [
+    {
+      "id": "telegraphing",
+      "body": "Servicio, orbe válido, contacto, ventana, dueño, velocidad y fallo necesitan señales distintas antes del resultado."
+    },
+    {
+      "id": "counterplay",
+      "body": "La defensa se convierte en progreso al ejecutar una respuesta conocida en cada contacto."
+    },
+    {
+      "id": "difficulty-rhythm",
+      "body": "Cada devolución acorta el siguiente pulso dentro de una curva limitada."
+    },
+    {
+      "id": "commitment",
+      "body": "Al salir un tramo, dueño, destino, llegada y respuesta quedan fijos hasta contacto o cancelación."
+    },
+    {
+      "id": "progress-clarity",
+      "body": "El registro y el fallo final separan devoluciones intermedias de la apertura del jefe."
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "The Legend of Zelda: Four Swords Adventures",
+      "boss": "Phantom Ganon",
+      "screenshot": "https://i.ytimg.com/vi/bSI_oswB1Kc/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=bSI_oswB1Kc&t=1s",
+      "body": "Phantom Ganon intercambia una esfera coloreada con los Links hasta que alguien falla. Es el objeto válido mientras otros disparos se rompen; el ritmo compartido termina en aturdimiento para daño de espada.",
+      "video": "https://www.youtube.com/watch?v=bSI_oswB1Kc&t=1s",
+      "videoDurationSeconds": 1537
+    },
+    {
+      "dimension": "3D",
+      "game": "The Legend of Zelda: Ocarina of Time",
+      "boss": "Phantom Ganon",
+      "screenshot": "https://i.ytimg.com/vi/gaPNvBsT8nQ/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=gaPNvBsT8nQ&t=205s",
+      "body": "Link devuelve el orbe eléctrico y el jefe puede responder de nuevo. El intercambio acelera; el fallo del jefe deja que el mismo orbe lo derribe y abre daño cuerpo a cuerpo.",
+      "video": "https://www.youtube.com/watch?v=gaPNvBsT8nQ&t=205s",
+      "videoDurationSeconds": 278
+    },
+    {
+      "dimension": "3D",
+      "game": "The Legend of Zelda: The Wind Waker",
+      "boss": "Phantom Ganon",
+      "screenshot": "https://i.ytimg.com/vi/2F57Oo4N5EY/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=2F57Oo4N5EY&t=80s",
+      "body": "En Forsaken Fortress, Link y Phantom Ganon devuelven una esfera que acelera con rapidez. Perder hiere a Link; ganar derriba al jefe y separa la prueba de tiempo del castigo con espada.",
+      "video": "https://www.youtube.com/watch?v=2F57Oo4N5EY&t=80s",
+      "videoDurationSeconds": 143
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

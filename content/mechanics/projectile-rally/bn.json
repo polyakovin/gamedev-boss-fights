@@ -1,0 +1,142 @@
+{
+  "title": "প্রজেক্টাইল র‍্যালি",
+  "subtitle": "একটি শত্রুভাবাপন্ন গোলাকে স্পষ্ট ও ক্রমশ দ্রুত বিনিময়ে পরিণত করুন",
+  "variant": "সার্ভ · রিটার্ন · গতি বৃদ্ধি · মিস",
+  "summary": "বস ও খেলোয়াড় একই প্রজেক্টাইল বারবার ফেরায়, যতক্ষণ না কারও স্পষ্ট মিস র‍্যালি শেষ করে।",
+  "overview": "প্রজেক্টাইল র‍্যালিতে encounter-owned একটি গোলা বস ও খেলোয়াড়ের মধ্যে হাতবদল হয়। প্রতিটি বৈধ রিটার্ন দিক উল্টায়, নতুন মালিক নথিভুক্ত করে এবং পরের যাত্রার beat ছোট করতে পারে। স্পষ্ট মিস, timeout বা অবৈধ response-এ র‍্যালি শেষ হয়; বসের মিস সাধারণত timing পরীক্ষাকে damage opening-এ বদলে দেয়।",
+  "learning": "Serve, যোগ্য response verb, contact point, input window, ownership transfer, return aim, speed curve, সর্বোচ্চ exchange, audiovisual beat, miss rules, player damage, boss stagger, opening duration, co-op arbitration, latency tolerance, accessibility assists, reset এবং দৃশ্যমান অবস্থান, collision ও authority একই রাখার test নির্ধারণ করুন।",
+  "category": "Encounter goals and vulnerability",
+  "readTime": "৯ মিনিট",
+  "demo": {
+    "title": "মালিকানা ও tempo বদলালেও একটি গোলাই অক্ষত রাখুন",
+    "timeline": "প্রজেক্টাইল র‍্যালির টাইমলাইন",
+    "step": "প্রজেক্টাইল র‍্যালির অবস্থা",
+    "phaseNames": [
+      "সার্ভ ও বৈধ রিটার্নের verb জানান",
+      "এক গোলা দিয়ে তিনটি দ্রুততর exchange চালান",
+      "বসের মিসকে সীমিত opening-এ মেটান"
+    ],
+    "phaseDescriptions": [
+      "কার্ন একটি rune orb charge করে, lane স্থির করে এবং ০.৭৮ সেকেন্ডে ছাড়ে। Contact-এর আগে টাভির তরবারির চারপাশে response ring দেখা যায়, তাই ফেরানো যায় এমন serve সাধারণ projectile থেকে আলাদা।",
+      "টাভি ১.৪৮ সেকেন্ডে একই গোলা ফেরায়; কার্ন ২.০৫-এ পাঠায়; টাভি ও কার্ন ২.৪৮ ও ২.৮৬-এ আবার উত্তর দেয়; টাভি ৩.১৫-এ শেষ return করে। প্রতিটি transfer ownership mark বদলায় ও পরের beat ছোট করে, কিন্তু গোলা teleport বা replace হয় না।",
+      "কার্ন ৩.৪৮ সেকেন্ডে মিস করে। গোলা আঘাত করে, exchange counter বন্ধ হয় এবং vulnerability ring ৪.৫৫ পর্যন্ত থাকে। ৩.৯০-এ টাভির punish opening-এর অংশ, reflected projectile-এর নয়; পুরো contract ৫.২০-এ reset হয়।"
+    ],
+    "boss": "বস",
+    "player": "খেলোয়াড়",
+    "danger": "Live orb যে পক্ষ তার authored return window মিস করে তাকে damage দেয়; পরের legs দ্রুত এলেও একই দৃশ্যমান পথ রাখে",
+    "locked": "এক projectile identity, বর্তমান owner, contact points, valid response, timing windows, speed curve, exchange cap, miss outcome, opening, damage ও reset encounter-owned",
+    "safe": "পরের contact, owner, beat ও failure shape, motion, sound, captions এবং forgiving input buffering দিয়ে দেখান; শুধু রঙের উপর নির্ভর করবেন না",
+    "reducedMotion": "Reduced motion-এ autoplay বন্ধ। Serve, ownership transfer, acceleration, miss, opening, punish, close ও reset দেখতে ০.৭৮, ১.৪৮, ২.০৫, ২.৪৮, ২.৮৬, ৩.১৫, ৩.৪৮, ৩.৯০, ৪.৫৫ এবং ৫.২০ সেকেন্ডে scrub করুন।",
+    "diagramDescription": "টাভি ও কার্ন একটি স্থির lane-এর দুই প্রান্তে মুখোমুখি। একটি rune orb তাদের contact ring-এর মধ্যে চলে এবং exchange ledger এক থেকে পাঁচ পূর্ণ হয়। Player ও boss ownership mark একই গোলার সঙ্গে পাল্টায়, tempo বাড়লে trail ছোট হয় এবং শেষ return কার্নকে আঘাত করে timed vulnerability ring প্রকাশ করে।"
+  },
+  "steps": [
+    {
+      "title": "সফল রিটার্নে আসলে কী স্থানান্তরিত হয়?",
+      "body": "Projectile-কে স্থায়ী encounter identity ও server-authoritative owner দিন। Contact event-এ response verb, input time, দূরত্ব, দরকারে facing এবং eligibility যাচাই করুন। তারপর দৃশ্যমান contact point থেকে velocity reverse বা retarget করুন, exchange counter একবার বাড়ান এবং damage allegiance একবার বদলান। এক shot ধ্বংস করে অন্য অবস্থানে নতুন shot গোপনে বানাবেন না।"
+    },
+    {
+      "title": "র‍্যালি অনুমানের খেলায় না গিয়ে কীভাবে দ্রুত হবে?",
+      "body": "Uncapped multiplier-এর বদলে contact-to-contact beat author করুন। মাপা ধাপে travel কমান, কিন্তু readable launch, minimum reaction budget, stable lane, response anticipation ও আলাদা contact sound রাখুন। Boss return angle বদলালে speed অসম্ভব করার আগেই choice দেখান। Speed ও exchange count cap করুন।"
+    },
+    {
+      "title": "Exchange কীভাবে শেষ হয় এবং ফল কার?",
+      "body": "চার ফলের একটিতে resolve করুন: player miss, boss miss, timeout বা documented cancellation। Player miss বর্তমান orb damage দিয়ে rally শেষ করে। Boss miss orb consume করে, stagger record করে, fixed punish window খোলে এবং recovery পর্যন্ত নতুন serve আটকায়। Co-op claimant rules লিখুন এবং damage ও reward idempotent রাখুন।"
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "Exchange শুধু অসংলগ্ন projectile-এর শৃঙ্খল",
+      "body": "প্রতিটি hit-এ নতুন orb spawn করলে position jump, double collision, stale ownership বা duplicate damage ঢাকা পড়ে। একটি identity রাখুন এবং একই deterministic leg থেকে rendered position, collision, trail, owner ও exchange count বের করুন। Backward seek-এ প্রতিটি contact ঠিকমতো পুনরাবৃত্ত হতে হবে।"
+    },
+    {
+      "title": "Acceleration দক্ষতা যাচাই না করে response মুছে দেয়",
+      "body": "Exponential speed multiplier শেষ beat-কে input, display, network বা animation latency-এর চেয়েও ছোট করে। Minimum readable interval, সামান্য early input buffer, rhythm cue এবং speed ও exchange cap রাখুন। Difficulty ইচ্ছাকৃতভাবে window আঁটতে পারে, দুর্ঘটনাবশত frame-rate contest নয়।"
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "র‍্যালিকে finite state machine হিসেবে গড়ুন",
+      "body": "প্রয়োজনীয় state: serve wind-up, outbound, player return window, inbound, boss return window, accelerated legs, player miss, boss miss, opening ও reset। Projectile id, owner, leg index, departure/arrival time, origin, destination, speed tier, accepted input ও outcome রাখুন। প্রতিটি contact-এর দায় একটি transition-এর।"
+    },
+    {
+      "title": "Aim challenge ও timing challenge আলাদা রাখুন",
+      "body": "Fixed lane timing চায়; redirected return aim; boss-selected angle reading। সর্বোচ্চ speed-এ তিনটি মেশালে failure অস্পষ্ট হয়। আগে একটি axis শেখান, contact-এর আগে পরিবর্তন signal করুন এবং assist timing বাড়াবে, aim magnetism দেবে, নাকি দুটোই তা ঠিক করুন।"
+    },
+    {
+      "title": "শব্দ travel নয়, contact ঘিরে compose করুন",
+      "body": "প্রতি accepted return-এ crisp transient, rising pitch বা ছোট interval, controller pulse ও visible ownership glyph দিন। Miss-এর জন্য আলাদা cadence এবং opening-এর জন্য sustained cue রাখুন। ব্যস্ত boss silhouette পার হলেও player যেন exchange অনুসরণ করতে পারে।"
+    },
+    {
+      "title": "Authority ও co-op arbitration পরীক্ষা করুন",
+      "body": "Serve id, leg, predicted/authoritative contact time, claimant, accepted input, ownership before/after, velocity, miss reason, boss stagger, punish damage ও reset log করুন। একই frame-এ দুই player return, window-edge latency, pause, rollback, low frame rate, projectile destruction, phase change ও repeated reward message simulate করুন।"
+    }
+  ],
+  "story": {
+    "title": "খনি প্রতিটি আঘাতের উত্তর দেয়",
+    "body": "কার্ন একটি rune-কে গুনগুনে পাথুরে স্ফুলিঙ্গে চাপে। টাভি তরবারির সমতলে ধরে ফেরায়; elemental উত্তর দেয়, তারপর blade আবার—প্রতিটি সুর পরেরটির আরও কাছে। শেষ beat-এ কার্নের ফাটা হাত দেরিতে বন্ধ হয়, স্ফুলিঙ্গ core-এ ঢোকে এবং rune অল্প সময়ের জন্য আলাদা হয়ে যায়।"
+  },
+  "adaptation": {
+    "title": "Motor, sensory ও network পার্থক্যেও tempo পাঠযোগ্য রাখুন",
+    "body": "Timing-window preset, early input buffering, optional aim assist, জোরালো contact audio, controller vibration, non-color ownership glyph, serve/miss caption এবং capped slow-tempo mode দিন যা exchange count রাখে। Online বা co-op-এ authoritative claimant দেখান এবং latency compensate করুন, কিন্তু accepted contact দৃশ্যমান blade থেকে সরাবেন না।"
+  },
+  "distinction": {
+    "title": "একটি চলমান exchange, single reflection বা generic parry নয়",
+    "body": "Attack reflection একটি hostile shot-কে এক return-এ বদলিয়ে সেখানেই শেষ হতে পারে। Projectile rally আরেকটি উত্তর স্পষ্টভাবে সমর্থন করে: ownership পাল্টায়, একই projectile বহু leg থাকে, tempo বা angle বদলায় এবং miss sequence resolve করে। Counter stance traveling object বা চলমান rhythm ছাড়াই melee trigger punish করতে পারে।"
+  },
+  "lensNotes": [
+    {
+      "id": "telegraphing",
+      "body": "Serve, eligible orb, পরের contact, response window, owner, speed tier ও miss-এর আলাদা সংকেত ফলের আগেই চাই।"
+    },
+    {
+      "id": "counterplay",
+      "body": "Player শুধু projectile এড়ায় না; প্রতি contact-এ জানা response করে defense-কে progress-এ বদলায়।"
+    },
+    {
+      "id": "difficulty-rhythm",
+      "body": "প্রতি accepted return capped tempo curve-এ পরের beat ছোট করে, repetition-কে মাপা escalation বানায়।"
+    },
+    {
+      "id": "commitment",
+      "body": "একটি leg ছাড়ার পর owner, destination, arrival beat ও valid response contact বা cancellation পর্যন্ত স্থির।"
+    },
+    {
+      "id": "progress-clarity",
+      "body": "Visible exchange ledger ও final miss মধ্যবর্তী return থেকে boss-opening result আলাদা করে।"
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "The Legend of Zelda: Four Swords Adventures",
+      "boss": "Phantom Ganon",
+      "screenshot": "https://i.ytimg.com/vi/bSI_oswB1Kc/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=bSI_oswB1Kc&t=1s",
+      "body": "Hyrule Castle-এর লড়াইয়ে Phantom Ganon Links-এর সঙ্গে colored energy ball চালাচালি করে যতক্ষণ এক পক্ষ মিস না করে। Colored shot rally object থাকে, অন্য blast ভাঙতে পারে; repeated return shared cadence বানায় এবং boss miss sword damage-এর স্পষ্ট stun দেয়।",
+      "video": "https://www.youtube.com/watch?v=bSI_oswB1Kc&t=1s",
+      "videoDurationSeconds": 1537
+    },
+    {
+      "dimension": "3D",
+      "game": "The Legend of Zelda: Ocarina of Time",
+      "boss": "Phantom Ganon",
+      "screenshot": "https://i.ytimg.com/vi/gaPNvBsT8nQ/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=gaPNvBsT8nQ&t=205s",
+      "body": "দ্বিতীয় phase-এ Link তরবারি দিয়ে Phantom Ganon-এর electric orb ফেরায়। Boss আবার ফেরাতে পারে, ফলে দ্রুত back-and-forth test হয়; Phantom Ganon মিস করলে একই orb তাকে ফেলে দেয় এবং timing success সীমিত melee opening-এ যায়।",
+      "video": "https://www.youtube.com/watch?v=gaPNvBsT8nQ&t=205s",
+      "videoDurationSeconds": 278
+    },
+    {
+      "dimension": "3D",
+      "game": "The Legend of Zelda: The Wind Waker",
+      "boss": "Phantom Ganon",
+      "screenshot": "https://i.ytimg.com/vi/2F57Oo4N5EY/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=2F57Oo4N5EY&t=80s",
+      "body": "Forsaken Fortress-এ Phantom Ganon একটি light ball serve করে, যা Link ও boss ক্রমশ দ্রুত ফেরায়। হারা exchange Link-কে damage করে; সফল final return Phantom Ganon-কে ফেলে এবং rally timing loop-কে follow-up sword punish থেকে আলাদা রাখে।",
+      "video": "https://www.youtube.com/watch?v=2F57Oo4N5EY&t=80s",
+      "videoDurationSeconds": 143
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

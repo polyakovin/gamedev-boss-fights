@@ -287,9 +287,11 @@ const PROFILE_OVERRIDES = {
     ],
   },
   'projectile-rally': {
-    geometry: ['line'],
-    signal: ['trajectory', 'rhythm'],
-    response: ['counter'],
+    geometry: ['line', 'target'],
+    signal: ['trajectory', 'rhythm', 'state'],
+    response: ['counter', 'attack'],
+    dimensions: ['2d', '3d'],
+    lenses: ['telegraphing', 'counterplay', 'difficulty-rhythm', 'commitment', 'progress-clarity'],
   },
   'baited-self-hit': { geometry: ['line', 'zone'], response: ['reposition', 'counter'] },
   'posture-stagger-gauge': {
