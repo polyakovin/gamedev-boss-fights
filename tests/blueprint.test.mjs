@@ -1992,7 +1992,7 @@ test('boss as terrain exposes a stable route, holds through motion, and validate
   const preview = blueprintFrame(id, 0.8);
   assert.equal(preview.bossAsTerrainRouteRevealed, true);
   assert.equal(preview.bossAsTerrainMounted, false);
-  assert.ok(preview.primitives[1].opacity > 0.5, 'the connected climb appears before mounting');
+  assert.ok(preview.primitives[3].opacity > 0.5, 'the first stone hold appears before mounting');
 
   const climbing = blueprintFrame(id, 1.5);
   assert.equal(climbing.bossAsTerrainMounted, true);
@@ -2004,17 +2004,17 @@ test('boss as terrain exposes a stable route, holds through motion, and validate
   assert.equal(holding.dangerActive, true);
   assert.equal(holding.playerSafe, true);
   assert.ok(holding.bossAsTerrainGrip < 0.9 && holding.bossAsTerrainGrip > 0.58);
-  assert.ok(holding.primitives[7].opacity > 0.8, 'shake arcs remain visible while holding');
+  assert.ok(holding.primitives[8].opacity > 0.8, 'stone chips announce the shake while holding');
 
   const opening = blueprintFrame(id, 3.72);
   assert.equal(opening.bossAsTerrainWeakPointOpen, true);
   assert.equal(opening.punishStrike, true);
-  assert.ok(opening.primitives[12].opacity > 0.9, 'the sword reaches the opened weak point');
+  assert.ok(opening.primitives[11].opacity > 0.9, 'the sword reaches the opened weak point');
 
   const drop = blueprintFrame(id, 4.6);
   assert.equal(drop.bossAsTerrainSafeDrop, true);
-  assert.ok(drop.primitives[10].opacity > 0.8, 'the dismount route is visible');
-  assert.ok(drop.primitives[11].opacity > 0.8, 'the validated landing point is visible');
+  assert.ok(drop.primitives[9].opacity > 0.8, 'falling stone chips mark the dismount route');
+  assert.ok(drop.primitives[10].opacity > 0.8, 'the stone landing ledge is visible');
 
   assert.deepEqual(blueprintFrame(id, 0).player, blueprintFrame(id, 6).player);
   assert.deepEqual(blueprintFrame(id, 0).boss, blueprintFrame(id, 6).boss);

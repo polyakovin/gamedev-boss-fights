@@ -19,7 +19,7 @@
     "phaseDescriptions": [
       "At 0.45 s connected holds appear from Kern's lowered arm to the head rune. Tavi receives a stable approach and mounts at 1.08 s before the body motion becomes relevant.",
       "Tavi climbs to the shoulder, explicitly holds through the 2.02–2.68 s shake, then continues to the weak point. The rune opens at 3.18 s and the sword strike lands at 3.72 s without detaching the player unexpectedly.",
-      "At 4.18 s a separate drop path and landing ring appear. Tavi reaches the validated landing point by 5.05 s, then both actors visibly settle into the exact starting state for the continuous loop."
+      "At 4.18 s a separate drop path and stone landing ledge appear. Tavi reaches the validated landing point by 5.05 s, then both actors visibly settle into the exact starting state for the continuous loop."
     ],
     "boss": "Boss",
     "player": "Player",
@@ -27,7 +27,7 @@
     "locked": "Mount timing, climb graph, attachment state, inherited motion, shake, weak point, safe drop, camera bounds, and reset are authored",
     "safe": "Read the connected holds, mount during the stable window, hold through the announced shake, strike the opened rune, and leave by the marked drop",
     "reducedMotion": "Autoplay is disabled by reduced motion. Scrub across 0.45, 1.08, 2.02, 2.68, 3.18, 3.72, 4.18, and 5.05 seconds to inspect the full route.",
-    "diagramDescription": "Kern fills the center of the arena as a moving climbable structure. A connected route runs from a lowered arm through shoulder holds to a head rune; Tavi mounts, holds during a shake, strikes the rune, and follows a separate marked path to a safe landing ring."
+    "diagramDescription": "Kern fills the center of the arena as a moving climbable structure. A connected route runs from a lowered arm through shoulder holds to a head rune; Tavi mounts, holds during a shake, strikes the rune, and follows a separate marked path to a safe stone landing ledge."
   },
   "steps": [
     {

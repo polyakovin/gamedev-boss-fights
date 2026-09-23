@@ -4081,83 +4081,61 @@ function primitivesFor(spec, frame) {
     ];
   }
   if (mode === 'boss-as-terrain') {
-    const state = frame.bossAsTerrainState;
     const routeVisible = frame.bossAsTerrainRouteRevealed;
     const mounted = frame.bossAsTerrainMounted;
     const holding = frame.bossAsTerrainHolding;
     const weakPointOpen = frame.bossAsTerrainWeakPointOpen;
     const safeDrop = frame.bossAsTerrainSafeDrop;
     const revealProgress = smooth((frame.time - spec.revealAt) / (spec.mountAt - spec.revealAt));
-    const shakePulse = holding ? 0.55 + Math.sin(frame.time * 22) ** 2 * 0.35 : 0;
     const strike = strikePulse(frame.time, spec.punishAt, 0.38);
-    const gripWidth = 128;
-    const routeOpacity = routeVisible ? 0.34 + revealProgress * 0.42 : 0.12;
+    const routeOpacity = routeVisible ? 0.56 + revealProgress * 0.3 : 0.2;
     return [
-      rect(58, 382, 444, 430, 0.55, 'muted', 0.025),
+      path('M 42 94 L 518 94 L 520 881 L 40 881 Z', 0.38, 'muted', 0, 0.28),
       path(
-        `M ${spec.climbRoute.map(([x, y]) => `${x} ${y}`).join(' L ')}`,
-        routeOpacity,
-        holding ? 'signal' : 'safe',
-        holding ? 8 : 6,
+        'M 43 112 L 252 102 L 254 335 L 43 353 Z M 266 103 L 517 113 L 518 349 L 265 335 Z',
+        0.26,
+        'muted',
         0,
-        holding ? '5 7' : '11 9',
+        0.44,
       ),
-      circle(386, 704, 20, routeVisible ? 0.72 : 0.15, 'safe', 5, 0.08, '7 6'),
-      circle(366, 652, 18, routeVisible ? 0.66 : 0.12, 'safe', 5, 0.07, '7 6'),
-      circle(
-        354,
-        604,
-        22 + shakePulse * 8,
-        mounted ? 0.8 : 0.18,
+      path('M 60 773 L 233 750 L 360 764 L 502 748 L 515 871 L 46 877 Z', 0.42, 'muted', 0, 0.54),
+      path('M 352 688 L 407 682 L 402 709 L 361 713 Z', routeOpacity, 'safe', 0, 0.72),
+      path('M 339 636 L 385 629 L 382 655 L 345 658 Z', routeOpacity, 'safe', 0, 0.72),
+      path(
+        'M 327 581 L 375 577 L 366 607 L 332 609 Z',
+        mounted ? 0.96 : routeOpacity,
         holding ? 'signal' : 'safe',
-        6,
-        0.1,
+        0,
+        0.78,
       ),
-      circle(334, 558, 17, routeVisible ? 0.62 : 0.1, 'safe', 5, 0.06, '7 6'),
-      circle(
-        spec.weakPoint[0],
-        spec.weakPoint[1],
-        25 + (weakPointOpen ? Math.sin(frame.time * 4) ** 2 * 8 : 0),
-        weakPointOpen ? 0.94 : routeVisible ? 0.34 : 0.12,
+      path('M 308 538 L 353 532 L 349 562 L 315 562 Z', routeOpacity, 'safe', 0, 0.76),
+      path(
+        'M 302 489 L 323 513 L 302 538 L 281 513 Z M 302 499 L 313 513 L 302 528 L 291 513 Z',
+        weakPointOpen ? 0.98 : routeVisible ? 0.44 : 0.16,
         weakPointOpen ? 'signal' : 'accent',
-        weakPointOpen ? 9 : 5,
-        weakPointOpen ? 0.2 : 0.04,
+        0,
+        weakPointOpen ? 0.86 : 0.48,
       ),
       path(
-        'M 238 568 Q 206 602 238 636 M 224 554 Q 174 602 224 650',
-        holding ? 0.84 : 0,
+        'M 196 572 L 212 553 L 219 578 Z M 224 628 L 241 614 L 244 638 Z M 242 554 L 254 538 L 261 559 Z',
+        holding ? 0.94 : 0,
         'signal',
-        7,
         0,
-        '9 8',
-      ),
-      rect(78, 414, gripWidth, 18, mounted ? 0.82 : 0.28, 'muted', 0.08),
-      rect(
-        78,
-        414,
-        gripWidth * frame.bossAsTerrainGrip,
-        18,
-        mounted ? 0.94 : 0.2,
-        holding ? 'signal' : 'safe',
-        0.36,
+        0.82,
       ),
       path(
-        `M ${spec.dropRoute.map(([x, y]) => `${x} ${y}`).join(' L ')}`,
-        safeDrop ? 0.82 : weakPointOpen ? 0.28 : 0.1,
+        'M 333 580 L 346 592 L 335 606 Z M 369 622 L 383 637 L 367 652 Z M 400 686 L 414 704 L 398 716 Z',
+        safeDrop ? 0.86 : 0,
         'accent',
-        safeDrop ? 7 : 4,
         0,
-        '10 9',
+        0.76,
       ),
-      circle(
-        spec.landingPoint[0],
-        spec.landingPoint[1],
-        safeDrop ? 32 : 22,
-        safeDrop ? 0.86 : 0.2,
+      path(
+        'M 390 763 L 440 744 L 490 763 L 474 790 L 405 790 Z',
+        safeDrop ? 0.9 : 0.42,
         'safe',
-        6,
-        0.08,
-        '8 7',
+        0,
+        0.76,
       ),
       line(
         frame.player.x,
@@ -4168,9 +4146,13 @@ function primitivesFor(spec, frame) {
         'safe',
         10,
       ),
-      circle(spec.weakPoint[0], spec.weakPoint[1], 12 + strike * 24, strike, 'safe', 7, 0.14),
-      circle(frame.player.x, frame.player.y, 30, holding ? 0.34 : 0, 'signal', 5, 0.08),
-      line(266, 484, 338, 484, state === 'weak-point-opening' ? 0.72 : 0.16, 'accent', 5, '7 7'),
+      path(
+        'M 275 494 L 291 485 L 295 503 Z M 315 490 L 330 499 L 309 507 Z',
+        strike,
+        'safe',
+        0,
+        0.86,
+      ),
     ];
   }
   if (mode === 'cover-line-of-sight') {
@@ -9554,7 +9536,7 @@ export function blueprintFrame(id, time) {
     bossVisible,
     bossScale:
       spec.mode === 'boss-as-terrain'
-        ? 1.28
+        ? 2.4
         : spec.mode === 'phase'
           ? 1 + action * 0.12
           : spec.mode === 'enrage'

@@ -2275,12 +2275,14 @@ test('boss as terrain keeps the climb, hold, weak point, and dismount explicit',
   await expect(page.locator('.wip-badge, .draft-profile')).toHaveCount(0);
   await expect(page.locator('.game-example')).toHaveCount(3);
   await expect(widget).toHaveAttribute('data-blueprint-playing', 'false');
+  await expect(widget).toHaveAttribute('data-blueprint-full-height', 'true');
+  expect((await widget.boundingBox()).height).toBeGreaterThan(800);
 
   await seek(800);
   await expect(widget).toHaveAttribute('data-blueprint-boss-as-terrain', 'route-revealed');
   await expect(widget).toHaveAttribute('data-blueprint-terrain-route', 'true');
   await expect(widget).toHaveAttribute('data-blueprint-terrain-mounted', 'false');
-  await expect(widget.locator('[data-blueprint-primitive="1"] path')).not.toHaveAttribute(
+  await expect(widget.locator('[data-blueprint-primitive="3"] path')).not.toHaveAttribute(
     'opacity',
     '0',
   );
@@ -2294,7 +2296,7 @@ test('boss as terrain keeps the climb, hold, weak point, and dismount explicit',
   await expect(widget).toHaveAttribute('data-blueprint-terrain-holding', 'true');
   await expect(widget).toHaveAttribute('data-blueprint-outcome', 'safe');
   expect(Number(await widget.getAttribute('data-blueprint-terrain-grip'))).toBeLessThan(0.9);
-  await expect(widget.locator('[data-blueprint-primitive="7"] path')).not.toHaveAttribute(
+  await expect(widget.locator('[data-blueprint-primitive="8"] path')).not.toHaveAttribute(
     'opacity',
     '0',
   );
@@ -2303,7 +2305,7 @@ test('boss as terrain keeps the climb, hold, weak point, and dismount explicit',
   await expect(widget).toHaveAttribute('data-blueprint-boss-as-terrain', 'weak-point-opening');
   await expect(widget).toHaveAttribute('data-blueprint-terrain-weak-point', 'true');
   await expect(widget).toHaveAttribute('data-blueprint-punish-strike', 'true');
-  await expect(widget.locator('[data-blueprint-primitive="12"] line')).not.toHaveAttribute(
+  await expect(widget.locator('[data-blueprint-primitive="11"] line')).not.toHaveAttribute(
     'opacity',
     '0',
   );
@@ -2311,11 +2313,11 @@ test('boss as terrain keeps the climb, hold, weak point, and dismount explicit',
   await seek(4600);
   await expect(widget).toHaveAttribute('data-blueprint-boss-as-terrain', 'safe-drop');
   await expect(widget).toHaveAttribute('data-blueprint-terrain-safe-drop', 'true');
-  await expect(widget.locator('[data-blueprint-primitive="10"] path')).not.toHaveAttribute(
+  await expect(widget.locator('[data-blueprint-primitive="9"] path')).not.toHaveAttribute(
     'opacity',
     '0',
   );
-  await expect(widget.locator('[data-blueprint-primitive="11"] circle')).not.toHaveAttribute(
+  await expect(widget.locator('[data-blueprint-primitive="10"] path')).not.toHaveAttribute(
     'opacity',
     '0',
   );
