@@ -1,0 +1,142 @@
+{
+  "title": "Resolución pacifista",
+  "subtitle": "Termina el encuentro demostrando contención sin vaciar la salud",
+  "variant": "Abstenerse · resistir · habilitar · perdonar",
+  "summary": "Una condición no violenta visible habilita una acción separada de perdón y termina el encuentro sin vaciar la salud del jefe.",
+  "overview": "La resolución pacifista ofrece un final diseñado que no exige vaciar la salud del jefe. La contención, supervivencia, diálogo u otra condición sin ataque habilita una acción de perdón claramente señalada; solo elegirla resuelve el combate, por lo que esperar, causar daño no letal y terminar siguen siendo estados distintos.",
+  "learning": "Define condición, acciones válidas y prohibidas, progreso, efecto del daño, ataques durante la contención, señal de elegibilidad, plazo, interacción, acuerdo cooperativo, recompensa, resultado narrativo, persistencia, reintento, accesibilidad y telemetría que impida resolver derrota y perdón a la vez.",
+  "category": "Objetivos del encuentro y vulnerabilidad",
+  "readTime": "10 min",
+  "demo": {
+    "title": "Conserva la salud de Kern, supera tres carriles y elige perdonar",
+    "timeline": "Cronología de resolución pacifista",
+    "step": "Estados de resolución pacifista",
+    "phaseNames": [
+      "Evita atacar mientras el jefe aún amenaza",
+      "Muestra la condición completa como elección separada",
+      "Confirma el perdón sin registrar derrota"
+    ],
+    "phaseDescriptions": [
+      "Tavi envaina a los 0,42 s y el reloj empieza a 0,55 s. Kern lanza tres carriles a 0,96, 1,72 y 2,25 s; Tavi sale de cada uno con movimiento normal. No hay eventos ofensivos, la salud sigue llena y el requisito termina a 2,60 s.",
+      "A 2,60 s la condición queda completa y aparece una hoja. Es elegibilidad, no éxito automático: derrota sigue falsa, la salud está llena y la elección vence a 3,88 s.",
+      "Tavi se acerca y confirma perdón a 3,46 s. Un id cierra el combate, detiene ataques, registra perdonado en vez de derrotado y abre la salida. Kern acepta antes del reinicio a 5,20 s; atacar o expirar seguiría una rama de fallo."
+    ],
+    "boss": "Jefe",
+    "player": "Jugador",
+    "danger": "El jefe sigue siendo peligroso durante el progreso y un evento ofensivo o la expiración puede reiniciar o cerrar la ruta",
+    "locked": "Condición, tiempo, eventos inválidos, salud, elegibilidad, plazo, id, estado perdonado, recompensa, salida, persistencia y reinicio pertenecen al encuentro",
+    "safe": "Usa reloj segmentado, arma tachada, geometría de carriles, muesca completa, marca con forma, etiqueta, sonido, subtítulos y resultado distinto de derrota",
+    "reducedMotion": "Con movimiento reducido no hay reproducción automática. Recorre 0,42, 0,55, 0,96, 1,22, 1,72, 1,98, 2,25, 2,60, 2,82, 3,46, 3,88 y 5,20 s.",
+    "diagramDescription": "Tavi enfrenta a Kern con una espada tachada y un reloj segmentado. Tres carriles verticales aparecen mientras Tavi sale por completo. La salud queda llena. Al completar el reloj aparece una hoja y una ruta segura. La interacción abre la salida y el registro marca perdonado, no derrotado."
+  },
+  "steps": [
+    {
+      "title": "¿Qué conducta demuestra que la ruta no violenta es intencional?",
+      "body": "Elige una condición observable: no atacar, dialogar, proteger, devolver un arma, reducir hostilidad o rechazar un remate. Enumera eventos válidos e inválidos. Muestra de inmediato un reinicio accidental y comunica un cierre permanente antes de invertir más tiempo."
+    },
+    {
+      "title": "¿Cómo sigue siendo un encuentro mientras el jugador se contiene?",
+      "body": "Mantén peligro legible, movimiento, presión de recursos o decisiones. Da respuestas defensivas alcanzables que no cuenten en secreto como ataques. Ajusta duración al patrón y clasifica paradas, invocaciones, compañeros, peligros y daño reflejado."
+    },
+    {
+      "title": "¿Qué evento posee la resolución no violenta?",
+      "body": "La elegibilidad abre una acción separada, no termina en silencio. Al confirmar reserva un id, detén ataques, resuelve proyectiles, registra perdón, asigna recompensas y banderas, y abre la salida. Rechaza daño letal simultáneo y reclamos repetidos."
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "Hay que esperar, pero progreso y reinicio son invisibles",
+      "body": "La contención invisible convierte el descubrimiento en adivinanza. Muestra inicio, mantenimiento, avance y causa del reinicio. Una señal diegética aún necesita equivalente accesible."
+    },
+    {
+      "title": "Perdón y derrota resuelven en el mismo cuadro",
+      "body": "Si el daño vacía salud junto al perdón, recompensas y persistencia divergen. Reserva un resultado, cancela callbacks incompatibles y prueba todos los órdenes junto al plazo y umbral letal."
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "Separa elegibilidad y resolución",
+      "body": "Modela no disponible, seguimiento, reinicio, condición completa, elección, compromiso, resolución, perdonado, fallo y reinicio. Guarda versión, inicio, progreso, descalificador, actor, plazo, reclamante, id, salud, resultado, recompensas y persistencia."
+    },
+    {
+      "title": "Conserva un conjunto defensivo completo",
+      "body": "Audita esquivas, bloqueos, paradas, habilidades, compañeros, auras, espinas y autoataques. No invalidez la ruta con una mejora inevitable: clasifícala neutral, reemplázala o advierte antes."
+    },
+    {
+      "title": "Haz materialmente distinto el resultado",
+      "body": "El perdón puede cambiar diálogo, recompensas, relaciones o final sin declarar superioridad universal. Explica la consecuencia local y conserva una elección informada; evita penalizaciones permanentes ocultas."
+    },
+    {
+      "title": "Prueba autoridad, interrupción y persistencia",
+      "body": "Simula daño letal junto al perdón, proyectiles tardíos, daño periódico, jugadores en desacuerdo, interrupción, desconexión, rollback, reintento, carga y entrada repetida. Solo sobreviven un resultado y un registro."
+    }
+  ],
+  "story": {
+    "title": "La cantera oye volver la espada a su vaina",
+    "body": "Tavi baja la hoja mientras las runas de Kern aún cortan el suelo. Cruza cada carril sin responder y la inscripción cambia de desafío a pregunta. Al callar la última marca, Tavi toca la runa abierta, no el núcleo. Kern se aparta y deja intacto el paso."
+  },
+  "adaptation": {
+    "title": "Permite la contención sin quitar defensas",
+    "body": "Ofrece duración ajustable, plazo amplio, búfer, marca persistente, sonido fuerte de reinicio, subtítulos de estados y forma no basada solo en color. Clasifica daño pasivo y compañeros; en cooperativo muestra quién confirma y cómo se resuelve el desacuerdo."
+  },
+  "distinction": {
+    "title": "Resultado terminal alternativo, no invulnerabilidad ni tregua",
+    "body": "La invulnerabilidad ligada a objetivos vuelve al daño normal; supervivencia puede abrir otra ventana; tambaleo o rendición pueden ser temporales. La resolución pacifista confirma un resultado terminal sin llevar la salud a cero."
+  },
+  "lensNotes": [
+    {
+      "id": "encounter-purpose",
+      "body": "El final alternativo pregunta si el encuentro prueba dominio, contención, comunicación, protección u otro valor."
+    },
+    {
+      "id": "player-expression",
+      "body": "Elegir perdonar expresa intención en vez de recibir el final automáticamente."
+    },
+    {
+      "id": "progress-clarity",
+      "body": "Progreso, elegibilidad, salud y resultado separados evitan confundir espera con victoria."
+    },
+    {
+      "id": "risk-reward",
+      "body": "Renunciar a atacar prolonga la exposición a cambio de otro resultado."
+    },
+    {
+      "id": "rule-exception",
+      "body": "Documenta qué sistemas ofensivos se ignoran, reinician la ruta o siguen siendo defensa válida."
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "The Binding of Isaac: Repentance",
+      "boss": "Baby Plum",
+      "screenshot": "https://i.ytimg.com/vi/O9LOcrmuM54/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=O9LOcrmuM54&t=29s",
+      "body": "Baby Plum se marcha tras treinta segundos sin recibir daño; el daño reinicia el temporizador. Sigue activa, saluda y sale, y el encuentro otorga Plum Flute sin vaciar salud.",
+      "video": "https://www.youtube.com/watch?v=O9LOcrmuM54&t=29s",
+      "videoDurationSeconds": 61
+    },
+    {
+      "dimension": "2D",
+      "game": "Undertale",
+      "boss": "Toriel",
+      "screenshot": "https://i.ytimg.com/vi/DmC-pihm8YE/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=DmC-pihm8YE&t=150s",
+      "body": "Toriel pide seleccionar Spare repetidamente mientras se sobreviven turnos. Ataques y diálogo cambian antes de que la acción final termine el combate, separando intención y resultado.",
+      "video": "https://www.youtube.com/watch?v=DmC-pihm8YE&t=150s",
+      "videoDurationSeconds": 189
+    },
+    {
+      "dimension": "3D",
+      "game": "Sifu",
+      "boss": "Fajar — The Botanist",
+      "screenshot": "https://i.ytimg.com/vi/9QP_MUOgeKY/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=9QP_MUOgeKY&t=157s",
+      "body": "En la ruta desbloqueada, Fajar exige rechazar un takedown, dejar recuperar Structure y romperla otra vez sin vaciar salud. El prompt spare reemplaza el final letal.",
+      "video": "https://www.youtube.com/watch?v=9QP_MUOgeKY&t=157s",
+      "videoDurationSeconds": 194
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

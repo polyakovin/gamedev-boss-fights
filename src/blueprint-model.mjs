@@ -1163,6 +1163,31 @@ const SPECS = {
     recoveryEndsAt: 4.72,
     resetAt: 5.2,
   },
+  'pacifist-resolution': {
+    mode: 'pacifist-resolution',
+    boss: [300, 375],
+    player: [300, 720],
+    target: [300, 720],
+    arena: [55, 310, 450, 570],
+    attacks: [
+      { telegraph: [0.72, 0.96], active: [0.96, 1.22], laneX: 300 },
+      { telegraph: [1.45, 1.72], active: [1.72, 1.98], laneX: 390 },
+      { telegraph: [2.05, 2.25], active: [2.25, 2.5], laneX: 210 },
+    ],
+    laneTop: 435,
+    laneBottom: 820,
+    laneHalfWidth: 38,
+    sheathAt: 0.42,
+    restraintStartsAt: 0.55,
+    conditionMetAt: 2.6,
+    choiceOfferedAt: 2.78,
+    spareApproachAt: 2.9,
+    sparePoint: [300, 555],
+    spareAt: 3.46,
+    choiceEndsAt: 3.88,
+    resolvedAt: 4.05,
+    resetAt: 5.2,
+  },
   'wide-swing': { mode: 'arc', boss: [280, 310], player: [410, 470], target: [470, 650] },
   lunge: { mode: 'lunge', boss: [170, 290], player: [390, 590], target: [470, 660] },
   grab: { mode: 'grab', boss: [280, 300], player: [390, 485], target: [470, 610] },
@@ -2006,6 +2031,29 @@ const postureValueAt = (spec, time) => {
   if (time < spec.resetAt) return 0;
   return 0;
 };
+
+export function pacifistResolutionState(time) {
+  const spec = SPECS['pacifist-resolution'];
+  const t = localTime(time);
+  if (t < spec.sheathAt) return 'combat-ready';
+  if (t < spec.restraintStartsAt) return 'weapon-sheathed';
+  const attackIndex = spec.attacks.findIndex(({ active }) => t >= active[0] && t < active[1]);
+  if (attackIndex >= 0) return `restraint-threat-${attackIndex + 1}`;
+  if (t < spec.conditionMetAt) return 'restraint-tracking';
+  if (t < spec.choiceOfferedAt) return 'condition-complete';
+  if (t < spec.spareAt) return 'choice-offered';
+  if (t < spec.resolvedAt) return 'spare-committed';
+  if (t < spec.resetAt) return 'spared';
+  return 'reset';
+}
+
+export function pacifistResolutionOutcome({ conditionComplete, action, resultReserved = false }) {
+  if (resultReserved) return 'locked';
+  if (!conditionComplete) return action === 'attack' ? 'condition-reset' : 'ineligible';
+  if (action === 'spare') return 'spared';
+  if (action === 'attack') return 'route-closed';
+  return 'choice-open';
+}
 
 const projectileRallyLegAt = (spec, time) => {
   const index = spec.legs.findIndex(({ start, end }) => time >= start && time < end);
@@ -4909,6 +4957,105 @@ function primitivesFor(spec, frame) {
       ),
     ];
   }
+  if (mode === 'pacifist-resolution') {
+    const liveAttack = spec.attacks[frame.pacifistAttackIndex];
+    const restraintWidth = 200 * frame.pacifistRestraintProgress;
+    const sparePulse = strikePulse(frame.time, spec.spareAt, 0.5);
+    const laneOpacity = frame.pacifistAttackActive ? 0.92 : 0;
+    const laneX = liveAttack?.laneX ?? 300;
+    const choiceOpacity = frame.pacifistChoiceOffered ? 0.96 : 0;
+    return [
+      rect(...spec.arena, frame.pacifistResolved ? 0.28 : 0.52, 'muted', 0.025),
+      rect(180, 318, 240, 22, 0.62, 'muted', 0.035),
+      rect(
+        200,
+        322,
+        restraintWidth,
+        14,
+        0.96,
+        frame.pacifistConditionComplete ? 'safe' : 'accent',
+        0.18,
+      ),
+      ...Array.from({ length: 4 }, (_, index) =>
+        line(250 + index * 50, 321, 250 + index * 50, 338, 0.8, 'muted', 3),
+      ),
+      rect(214, 352, 172, 12, 0.5, 'muted', 0.025),
+      rect(214, 352, 172, 12, 0.92, 'safe', 0.15),
+      line(112, 388, 148, 432, frame.pacifistTracking ? 0.9 : 0.32, 'accent', 8),
+      line(148, 388, 112, 432, frame.pacifistTracking ? 0.9 : 0.32, 'accent', 8),
+      path(
+        'M 115 420 Q 130 392 145 420 M 130 392 L 130 370',
+        frame.pacifistTracking ? 0.88 : 0.3,
+        'muted',
+        6,
+      ),
+      line(
+        laneX,
+        spec.laneTop,
+        laneX,
+        spec.laneBottom,
+        laneOpacity,
+        'signal',
+        spec.laneHalfWidth * 2,
+      ),
+      line(
+        laneX,
+        spec.laneTop,
+        laneX,
+        spec.laneBottom,
+        frame.pacifistAttackTelegraph ? 0.72 : 0,
+        'accent',
+        7,
+        '12 10',
+      ),
+      ...spec.attacks.map((attack, index) =>
+        path(
+          `M ${attack.laneX - 24} 455 L ${attack.laneX} 431 L ${attack.laneX + 24} 455`,
+          index === frame.pacifistAttackIndex ? 0.98 : 0.18,
+          index === frame.pacifistAttackIndex ? 'signal' : 'muted',
+          6,
+        ),
+      ),
+      path(
+        `M ${frame.boss.x} ${frame.boss.y - 116} C ${frame.boss.x - 34} ${frame.boss.y - 146}, ${frame.boss.x - 52} ${frame.boss.y - 108}, ${frame.boss.x} ${frame.boss.y - 72} C ${frame.boss.x + 52} ${frame.boss.y - 108}, ${frame.boss.x + 34} ${frame.boss.y - 146}, ${frame.boss.x} ${frame.boss.y - 116} Z`,
+        choiceOpacity,
+        'safe',
+        7,
+        0.18,
+      ),
+      circle(
+        frame.boss.x,
+        frame.boss.y,
+        78 + pulse(frame.time * 2) * 5,
+        frame.pacifistChoiceOffered ? 0.76 : 0,
+        'safe',
+        7,
+        0.02,
+        '9 7',
+      ),
+      line(
+        frame.player.x,
+        frame.player.y - 36,
+        frame.boss.x,
+        frame.boss.y + 48,
+        frame.pacifistChoiceOffered ? 0.58 : 0.08,
+        'safe',
+        5,
+        '8 7',
+      ),
+      circle(frame.boss.x, frame.boss.y, 58 + sparePulse * 48, sparePulse, 'safe', 10, 0.08),
+      path(
+        'M 438 394 L 474 430 L 438 466 M 474 430 L 407 430',
+        frame.pacifistResolved ? 0.92 : 0.18,
+        'safe',
+        8,
+      ),
+      circle(418, 515, 14, frame.pacifistResolved ? 0.96 : 0.24, 'safe', 5, 0.2),
+      path('M 411 515 L 417 521 L 428 507', frame.pacifistResolved ? 0.98 : 0.2, 'safe', 5),
+      circle(418, 558, 14, 0.28, 'muted', 5, 0.02),
+      path('M 410 550 L 426 566 M 426 550 L 410 566', 0.34, 'muted', 5),
+    ];
+  }
   if (mode === 'encounter-specific-tool') {
     const pedestal = point(spec.pedestal);
     const spearBase = { x: frame.player.x - 8, y: frame.player.y - 22 };
@@ -6379,6 +6526,14 @@ function pointClearsThreat(spec, frame, value, radius = BLUEPRINT_PLAYER_RADIUS)
       distanceToSegment(value, point(spec.boss), point(spec.laneEnd)) > spec.laneHalfWidth + radius
     );
   if (mode === 'posture-stagger-gauge') return true;
+  if (mode === 'pacifist-resolution')
+    return (
+      !frame.dangerActive ||
+      value.y + radius < spec.laneTop ||
+      value.y - radius > spec.laneBottom ||
+      Math.abs(value.x - spec.attacks[frame.pacifistAttackIndex].laneX) >
+        spec.laneHalfWidth + radius
+    );
   if (mode === 'projectile-rally')
     return (
       !frame.dangerActive ||
@@ -6683,6 +6838,7 @@ export function blueprintFrame(id, time) {
     } else boss = startBoss;
   }
   if (spec.mode === 'posture-stagger-gauge') boss = startBoss;
+  if (spec.mode === 'pacifist-resolution') boss = startBoss;
   let responseProgress = response;
   if (spec.mode === 'landing')
     responseProgress = phase === 0 ? 0 : phase === 1 ? smooth(action / 0.4) : 1;
@@ -6756,6 +6912,7 @@ export function blueprintFrame(id, time) {
   else if (spec.mode === 'projectile-rally') responseProgress = 0;
   else if (spec.mode === 'baited-self-hit') responseProgress = 0;
   else if (spec.mode === 'posture-stagger-gauge') responseProgress = 0;
+  else if (spec.mode === 'pacifist-resolution') responseProgress = 0;
   else if (spec.mode === 'knockback')
     responseProgress = phase === 0 ? 0 : phase === 1 ? smooth(action) : 1;
   else if (spec.mode === 'target-lock')
@@ -7492,6 +7649,44 @@ export function blueprintFrame(id, time) {
       };
     } else player = startPlayer;
   }
+  if (spec.mode === 'pacifist-resolution') {
+    const firstSafe = { x: 180, y: startPlayer.y };
+    const secondSafe = { x: 300, y: startPlayer.y };
+    const thirdSafe = { x: 420, y: startPlayer.y };
+    const sparePoint = point(spec.sparePoint);
+    if (t < spec.attacks[0].telegraph[0]) player = startPlayer;
+    else if (t < spec.attacks[0].active[0]) {
+      const move = smooth(
+        (t - spec.attacks[0].telegraph[0]) /
+          (spec.attacks[0].active[0] - spec.attacks[0].telegraph[0]),
+      );
+      player = { x: mix(startPlayer.x, firstSafe.x, move), y: startPlayer.y };
+    } else if (t < spec.attacks[0].active[1]) player = firstSafe;
+    else if (t < 1.6) {
+      const move = smooth((t - spec.attacks[0].active[1]) / (1.6 - spec.attacks[0].active[1]));
+      player = { x: mix(firstSafe.x, secondSafe.x, move), y: startPlayer.y };
+    } else if (t < spec.attacks[1].active[1]) player = secondSafe;
+    else if (t < spec.attacks[2].active[0]) {
+      const move = smooth(
+        (t - spec.attacks[1].active[1]) / (spec.attacks[2].active[0] - spec.attacks[1].active[1]),
+      );
+      player = { x: mix(secondSafe.x, thirdSafe.x, move), y: startPlayer.y };
+    } else if (t < spec.spareApproachAt) player = thirdSafe;
+    else if (t < spec.spareAt) {
+      const approach = smooth((t - spec.spareApproachAt) / (spec.spareAt - spec.spareApproachAt));
+      player = {
+        x: mix(thirdSafe.x, sparePoint.x, approach),
+        y: mix(thirdSafe.y, sparePoint.y, approach),
+      };
+    } else if (t < spec.choiceEndsAt) player = sparePoint;
+    else if (t < spec.resetAt) {
+      const reset = smooth((t - spec.choiceEndsAt) / (spec.resetAt - spec.choiceEndsAt));
+      player = {
+        x: mix(sparePoint.x, startPlayer.x, reset),
+        y: mix(sparePoint.y, startPlayer.y, reset),
+      };
+    } else player = startPlayer;
+  }
   if (spec.mode === 'rotating' && phase === 0) {
     const initialPosition = polar(boss, 255, Math.PI / 3);
     player = {
@@ -7873,6 +8068,23 @@ export function blueprintFrame(id, time) {
       pulse(smooth((t - spec.finisherApproachAt) / (spec.finisherAt - spec.finisherApproachAt))),
       pulse(smooth((t - spec.criticalEndsAt) / (spec.resetAt - spec.criticalEndsAt))),
     );
+  if (spec.mode === 'pacifist-resolution')
+    stride = Math.max(
+      pulse(
+        smooth(
+          (t - spec.attacks[0].telegraph[0]) /
+            (spec.attacks[0].active[0] - spec.attacks[0].telegraph[0]),
+        ),
+      ),
+      pulse(smooth((t - spec.attacks[0].active[1]) / (1.6 - spec.attacks[0].active[1]))),
+      pulse(
+        smooth(
+          (t - spec.attacks[1].active[1]) / (spec.attacks[2].active[0] - spec.attacks[1].active[1]),
+        ),
+      ),
+      pulse(smooth((t - spec.spareApproachAt) / (spec.spareAt - spec.spareApproachAt))),
+      pulse(smooth((t - spec.choiceEndsAt) / (spec.resetAt - spec.choiceEndsAt))),
+    );
   const bossVisible =
     spec.mode === 'secondary-cues-invisibility'
       ? t < spec.vanishAt
@@ -8134,7 +8346,8 @@ export function blueprintFrame(id, time) {
         : spec.mode === 'player-controlled-boss' ||
             spec.mode === 'projectile-rally' ||
             spec.mode === 'baited-self-hit' ||
-            spec.mode === 'posture-stagger-gauge'
+            spec.mode === 'posture-stagger-gauge' ||
+            spec.mode === 'pacifist-resolution'
           ? (Math.atan2(boss.y - player.y, boss.x - player.x) * 180) / Math.PI
           : spec.mode === 'active-phase'
             ? (Math.atan2(boss.y - player.y, boss.x - player.x) * 180) / Math.PI
@@ -9009,6 +9222,47 @@ export function blueprintFrame(id, time) {
     );
     frame.bossMotion.lean = frame.postureCriticalReady ? 0.38 : 0;
   }
+  if (spec.mode === 'pacifist-resolution') {
+    frame.pacifistResolutionState = pacifistResolutionState(t);
+    frame.pacifistTracking = t >= spec.restraintStartsAt && t < spec.spareAt;
+    frame.pacifistRestraintProgress =
+      t < spec.restraintStartsAt
+        ? 0
+        : t < spec.conditionMetAt
+          ? clamp((t - spec.restraintStartsAt) / (spec.conditionMetAt - spec.restraintStartsAt))
+          : t < spec.resetAt
+            ? 1
+            : 0;
+    frame.pacifistConditionComplete = t >= spec.conditionMetAt && t < spec.resetAt;
+    frame.pacifistChoiceOffered = t >= spec.choiceOfferedAt && t < spec.spareAt;
+    frame.pacifistChoiceDeadline = spec.choiceEndsAt;
+    frame.pacifistAttackIndex = spec.attacks.findIndex(
+      ({ telegraph, active }) => t >= telegraph[0] && t < active[1],
+    );
+    frame.pacifistAttackTelegraph = spec.attacks.some(
+      ({ telegraph }) => t >= telegraph[0] && t < telegraph[1],
+    );
+    frame.pacifistAttackActive = spec.attacks.some(({ active }) => t >= active[0] && t < active[1]);
+    frame.pacifistOffensiveEvents = 0;
+    frame.pacifistBossHealth = 100;
+    frame.pacifistSpareCommitted = t >= spec.spareAt && t < spec.resetAt;
+    frame.pacifistResolutionId = frame.pacifistSpareCommitted ? 'pacifist-resolution-1' : 'none';
+    frame.pacifistResolved = t >= spec.resolvedAt && t < spec.resetAt;
+    frame.pacifistSpared = frame.pacifistResolved;
+    frame.pacifistDefeated = false;
+    frame.pacifistRewardGrants = frame.pacifistResolved ? 1 : 0;
+    frame.dangerActive = frame.pacifistAttackActive;
+    frame.playerMotion.attack = 0;
+    frame.playerMotion.dodge = Math.max(
+      strikePulse(t, spec.attacks[0].active[0], 0.42),
+      strikePulse(t, spec.attacks[1].active[0], 0.42),
+      strikePulse(t, spec.attacks[2].active[0], 0.42),
+    );
+    frame.bossMotion.attack = Math.max(
+      ...spec.attacks.map(({ active }) => strikePulse(t, active[0], 0.36)),
+    );
+    frame.bossMotion.lean = frame.pacifistResolved ? -0.18 : 0;
+  }
   if (spec.mode === 'sound-detection') {
     frame.soundDetectionState = soundDetectionState(t);
     frame.soundDetectionHeard = t >= spec.heardAt && t < spec.resetAt;
@@ -9289,7 +9543,8 @@ export function blueprintFrame(id, time) {
       spec.mode === 'player-controlled-boss' ||
       spec.mode === 'projectile-rally' ||
       spec.mode === 'baited-self-hit' ||
-      spec.mode === 'posture-stagger-gauge'
+      spec.mode === 'posture-stagger-gauge' ||
+      spec.mode === 'pacifist-resolution'
         ? 92
         : -62),
   };

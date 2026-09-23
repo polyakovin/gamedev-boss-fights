@@ -392,6 +392,22 @@ export function initializeBlueprint(widget) {
       widget.dataset.blueprintPostureRewardGrants = String(frame.postureRewardGrants);
       widget.dataset.blueprintPostureHealthChanged = String(frame.postureHealthChanged);
     }
+    if (mechanicId === 'pacifist-resolution') {
+      widget.dataset.blueprintPacifistResolution = frame.pacifistResolutionState;
+      widget.dataset.blueprintPacifistProgress = String(
+        Math.round(frame.pacifistRestraintProgress * 100),
+      );
+      widget.dataset.blueprintPacifistConditionComplete = String(frame.pacifistConditionComplete);
+      widget.dataset.blueprintPacifistChoiceOffered = String(frame.pacifistChoiceOffered);
+      widget.dataset.blueprintPacifistAttack = String(frame.pacifistAttackActive);
+      widget.dataset.blueprintPacifistOffensiveEvents = String(frame.pacifistOffensiveEvents);
+      widget.dataset.blueprintPacifistBossHealth = String(frame.pacifistBossHealth);
+      widget.dataset.blueprintPacifistSpareCommitted = String(frame.pacifistSpareCommitted);
+      widget.dataset.blueprintPacifistResolutionId = frame.pacifistResolutionId;
+      widget.dataset.blueprintPacifistSpared = String(frame.pacifistSpared);
+      widget.dataset.blueprintPacifistDefeated = String(frame.pacifistDefeated);
+      widget.dataset.blueprintPacifistRewardGrants = String(frame.pacifistRewardGrants);
+    }
     boss.setAttribute(
       'transform',
       `translate(${frame.boss.x} ${frame.boss.y}) scale(${frame.bossScale})`,

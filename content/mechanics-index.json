@@ -1415,14 +1415,14 @@
       "number": 89,
       "translations": {
         "en": {
-          "title": "Spare",
+          "title": "Pacifist resolution",
           "category": "Encounter goals and vulnerability",
-          "summary": "Draft outline for the spare mechanic. Rules, tuning guidance, and examples are still in progress."
+          "summary": "A visible nonviolent condition makes a separate spare action eligible, ending the encounter without emptying boss health."
         },
         "ru": {
           "title": "Ненасильственное завершение",
           "category": "Цель боя и открытие уязвимости",
-          "summary": "Бой можно закончить без обнуления здоровья босса, выполнив условие отказа от атаки или взаимодействия."
+          "summary": "Видимое ненасильственное условие открывает отдельное действие «пощадить», завершая бой без обнуления здоровья босса."
         }
       }
     },

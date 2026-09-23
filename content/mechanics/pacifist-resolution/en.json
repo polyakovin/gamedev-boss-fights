@@ -1,0 +1,142 @@
+{
+  "title": "Pacifist resolution",
+  "subtitle": "End the encounter by proving restraint instead of emptying health",
+  "variant": "Withhold · endure · qualify · spare",
+  "summary": "The encounter can end without emptying boss health when the player satisfies a visible nonviolent condition and commits to a separate spare action.",
+  "overview": "Pacifist resolution ends an encounter without emptying boss health. Restraint, survival, dialogue, or another non-attack condition makes a clearly signaled spare action eligible; choosing it resolves combat through its own authority, so merely waiting, dealing nonlethal damage, and actually ending the fight remain distinct states.",
+  "learning": "Define the nonviolent condition, qualifying and disqualifying actions, timer or state progress, whether damage resets or permanently closes the route, boss attacks during restraint, eligibility signal, choice deadline, spare interaction, multiplayer agreement, reward and narrative outcome, persistence, retry rules, accessibility cues, and telemetry that prevents both defeat and spare from resolving the same encounter.",
+  "category": "Encounter goals and vulnerability",
+  "readTime": "10 min",
+  "demo": {
+    "title": "Keep Kern's health intact, survive three rune lanes, then choose to spare",
+    "timeline": "Pacifist resolution timeline",
+    "step": "Pacifist resolution states",
+    "phaseNames": [
+      "Withhold attacks while the boss still creates danger",
+      "Expose the completed condition as a separate choice",
+      "Commit the spare result without awarding a defeat"
+    ],
+    "phaseDescriptions": [
+      "Tavi sheathes the sword at 0.42 s and the restraint clock starts at 0.55 s. Kern sends three fixed rune lanes at 0.96, 1.72, and 2.25 s; Tavi clears each with ordinary movement. No offensive event is recorded, Kern remains at full health, and the clock reaches its 2.05-second requirement at 2.60 s.",
+      "At 2.60 s the encounter marks the nonviolent condition complete and reveals a leaf-shaped spare prompt. This is eligibility, not automatic success: boss defeat remains false, the health bar stays full, and the prompt has a documented deadline at 3.88 s.",
+      "Tavi approaches and commits the spare interaction at 3.46 s. One encounter resolution id closes combat, suppresses further attacks, records spared rather than defeated, and opens the exit. Kern acknowledges the choice before both actors reset after 5.20 s; an attack or expired prompt would have followed a documented failure branch."
+    ],
+    "boss": "Boss",
+    "player": "Player",
+    "danger": "The boss remains dangerous while restraint progress builds, and an offensive event or expired choice can reset or close the nonviolent route according to the encounter rules",
+    "locked": "Condition owner, qualifying time, disqualifying events, boss health, eligibility, choice deadline, resolution id, spared flag, reward, exit, persistence, and reset are encounter-owned",
+    "safe": "Show restraint with a segmented clock, crossed weapon symbol, attack-lane geometry, completion notch, shaped spare marker, explicit choice label, sound, captions, and a distinct non-defeat result",
+    "reducedMotion": "Autoplay is disabled by reduced motion. Scrub across 0.42, 0.55, 0.96, 1.22, 1.72, 1.98, 2.25, 2.60, 2.82, 3.46, 3.88, and 5.20 seconds to inspect sheathing, restraint, each lane, qualification, choice, spare, close, and reset.",
+    "diagramDescription": "Tavi faces Kern with a crossed sword icon and a segmented restraint clock above the arena. Three different vertical rune lanes appear in sequence while Tavi moves fully outside each one. The boss health bar remains full. When the clock completes, a leaf-shaped spare marker appears and a safe path leads to Kern. Tavi uses the interaction, the combat frame opens into an exit, and the outcome ledger marks spared while defeated remains empty."
+  },
+  "steps": [
+    {
+      "title": "What behavior proves that the nonviolent route is intentional?",
+      "body": "Choose an observable condition: refrain from attacks for a duration, select a sequence of dialogue actions, protect another actor, return a weapon, lower hostility, or reject a finisher. List every qualifying and disqualifying event. If an accidental damage tick resets progress, show that immediately; if prior violence permanently closes the route, communicate the lock before the player invests more time."
+    },
+    {
+      "title": "How does the boss remain an encounter while the player shows restraint?",
+      "body": "Keep readable danger, movement, resource pressure, or interaction decisions active during the condition. The player needs reachable defensive responses that do not secretly count as attacks. Tune duration against the boss pattern so waiting is a designed challenge, not an idle pause, and decide whether defensive counters, summons, companions, hazards, and reflected damage preserve eligibility."
+    },
+    {
+      "title": "Which event owns the nonviolent resolution?",
+      "body": "Eligibility should expose a separate action, not silently end the fight. On commit, reserve one resolution id, stop new attacks, settle projectiles, record spared rather than defeated, select the correct rewards and narrative flags, and open the exit. Reject simultaneous lethal damage, repeated inputs, and competing players after the result is reserved."
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "The player must wait, but the game shows no progress or reset",
+      "body": "Invisible restraint turns discovery into guessing. Show when the condition begins, what maintains it, how far it has advanced, and which event broke it. A diegetic behavior can carry the same information as a meter, but the state still needs an accessible equivalent."
+    },
+    {
+      "title": "Spare and defeat can resolve on the same frame",
+      "body": "If a damage callback empties health while the spare input also succeeds, rewards, cinematics, and persistence can diverge. Reserve one encounter result before presentation, cancel incompatible callbacks, and test every ordering around the eligibility deadline and lethal threshold."
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "Model eligibility and resolution separately",
+      "body": "Useful states are unavailable, tracking, reset, condition-complete, choice-offered, choice-committed, resolving, spared, failed, and encounter-reset. Store condition version, qualifying start, progress, disqualifier, eligible actor, deadline, claimant, resolution id, health snapshot, result type, rewards, and persistence write."
+    },
+    {
+      "title": "Preserve a complete defensive verb set",
+      "body": "Audit dodges, blocks, parries, movement skills, companions, damage auras, thorns, and automatic attacks. A route based on restraint should not be invalidated by an upgrade the player cannot disable. Either classify unavoidable effects as neutral, provide a temporary replacement, or explain the restriction before entry."
+    },
+    {
+      "title": "Make the alternate result materially distinct",
+      "body": "A spare route can change dialogue, rewards, later encounters, relationships, or ending state, but it should not falsely claim moral superiority as a universal rule. Explain the local consequence and preserve the player's informed choice. If rewards differ, reveal enough structure to avoid a hidden permanent penalty."
+    },
+    {
+      "title": "Test authority, interruption, and persistence",
+      "body": "Simulate lethal damage and spare in the same frame, delayed projectiles, damage-over-time, two players choosing different results, boss interruption, disconnect, rollback, retry after failure, checkpoint reload, and repeated interaction. Exactly one terminal result and one persistence record may survive."
+    }
+  ],
+  "story": {
+    "title": "The quarry hears a sword return to its sheath",
+    "body": "Tavi lowers the blade while Kern's warning runes still cut the floor. Each lane is crossed without an answering strike, and the elemental's inscription slowly changes from challenge to question. When the final mark quiets, Tavi touches the open rune instead of the core. Kern steps aside, leaving the passage intact."
+  },
+  "adaptation": {
+    "title": "Make restraint possible without removing defensive options",
+    "body": "Offer adjustable condition duration, generous choice time, input buffering, a persistent eligibility marker, strong reset audio, captions for tracking, broken, eligible, and spared states, and a non-color progress shape. Classify passive damage and companion actions explicitly; in co-op, show whose action can commit the shared result and how disagreement is resolved."
+  },
+  "distinction": {
+    "title": "A terminal alternate outcome, not invulnerability or temporary de-escalation",
+    "body": "Objective-linked invulnerability eventually restores ordinary damage. A survival phase ends after elapsed time but may still lead to a normal attack window. A stagger or surrender prompt can be temporary without ending the encounter. Pacifist resolution instead commits a terminal spared outcome without requiring boss health to reach zero."
+  },
+  "lensNotes": [
+    {
+      "id": "encounter-purpose",
+      "body": "The alternate completion asks whether the encounter tests domination, restraint, communication, protection, or another authored value."
+    },
+    {
+      "id": "player-expression",
+      "body": "A separate spare choice lets the player express intent rather than receiving a nonviolent ending automatically."
+    },
+    {
+      "id": "progress-clarity",
+      "body": "Condition progress, eligibility, boss health, and terminal result stay separate so waiting cannot be mistaken for victory."
+    },
+    {
+      "id": "risk-reward",
+      "body": "Withholding offense prolongs exposure to boss danger in exchange for a different encounter result and consequence."
+    },
+    {
+      "id": "rule-exception",
+      "body": "The lesson must document which normally offensive systems are ignored, reset the route, or remain valid defensive tools."
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "The Binding of Isaac: Repentance",
+      "boss": "Baby Plum",
+      "screenshot": "https://i.ytimg.com/vi/O9LOcrmuM54/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=O9LOcrmuM54&t=29s",
+      "body": "Baby Plum leaves after taking no damage for thirty seconds; damage resets rather than permanently removes that timer. The boss remains active during restraint, then visibly waves and exits, and the encounter awards Plum Flute instead of resolving through an empty health bar.",
+      "video": "https://www.youtube.com/watch?v=O9LOcrmuM54&t=29s",
+      "videoDurationSeconds": 61
+    },
+    {
+      "dimension": "2D",
+      "game": "Undertale",
+      "boss": "Toriel",
+      "screenshot": "https://i.ytimg.com/vi/DmC-pihm8YE/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=DmC-pihm8YE&t=150s",
+      "body": "Toriel's encounter asks the player to keep selecting Spare while surviving turns rather than finding a conventional damaging finish. Her attack behavior and dialogue change across the sequence before the final mercy action ends the battle, so repeated intent and terminal resolution remain separate.",
+      "video": "https://www.youtube.com/watch?v=DmC-pihm8YE&t=150s",
+      "videoDurationSeconds": 189
+    },
+    {
+      "dimension": "3D",
+      "game": "Sifu",
+      "boss": "Fajar — The Botanist",
+      "screenshot": "https://i.ytimg.com/vi/9QP_MUOgeKY/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=9QP_MUOgeKY&t=157s",
+      "body": "On the unlocked spare route, Fajar's second phase requires the player to reject an available takedown, let Structure recover, and break it again without emptying health. A separate spare prompt then replaces the habitual lethal resolution, turning demonstrated mastery and restraint into the terminal result.",
+      "video": "https://www.youtube.com/watch?v=9QP_MUOgeKY&t=157s",
+      "videoDurationSeconds": 194
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

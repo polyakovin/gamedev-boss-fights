@@ -33,6 +33,8 @@ import {
   projectileRallyState,
   baitedSelfHitState,
   postureStaggerGaugeState,
+  pacifistResolutionState,
+  pacifistResolutionOutcome,
   counterStanceOutcome,
   counterStanceState,
   blueprintFrame,
@@ -60,8 +62,8 @@ import {
   renderBlueprintThumbnail,
 } from '../lib/blueprint-view.mjs';
 
-test('all 82 promoted lesson animations have distinct rule modes and complete moving frames', () => {
-  assert.equal(BLUEPRINT_MECHANIC_IDS.length, 82);
+test('all 83 promoted lesson animations have distinct rule modes and complete moving frames', () => {
+  assert.equal(BLUEPRINT_MECHANIC_IDS.length, 83);
   const modes = new Set();
   for (const id of BLUEPRINT_MECHANIC_IDS) {
     for (let time = 0; time <= BLUEPRINT_DURATION; time += 0.1) {
@@ -82,7 +84,7 @@ test('all 82 promoted lesson animations have distinct rule modes and complete mo
           assert.ok(Number.isFinite(value), `${id} has an invalid ${primitive.type}`);
     }
   }
-  assert.equal(modes.size, 82);
+  assert.equal(modes.size, 83);
 });
 
 test('every blueprint exposes signal, committed action, and recovery without player teleports', () => {
@@ -114,7 +116,8 @@ test('every blueprint exposes signal, committed action, and recovery without pla
       id !== 'wraparound-projectile' &&
       id !== 'beat-synced-attack' &&
       id !== 'baited-self-hit' &&
-      id !== 'posture-stagger-gauge'
+      id !== 'posture-stagger-gauge' &&
+      id !== 'pacifist-resolution'
     )
       assert.equal(blueprintFrame(id, 3).dangerActive, true, id);
     assert.equal(blueprintFrame(id, 3).playerSafe, true, id);
@@ -196,6 +199,7 @@ test('every damaging promoted animation derives safety from its own active geome
       id !== 'projectile-rally' &&
       id !== 'baited-self-hit' &&
       id !== 'posture-stagger-gauge' &&
+      id !== 'pacifist-resolution' &&
       id !== 'part-break' &&
       id !== 'counter-stance' &&
       id !== 'absorption-power-up' &&
@@ -2834,5 +2838,75 @@ test('posture break recovers under lost pressure and advances only through one f
   assert.match(
     renderBlueprintThumbnail(id, 'test-posture-stagger-gauge'),
     /data-blueprint-preview="posture-stagger-gauge"/,
+  );
+});
+
+test('pacifist resolution keeps health intact and reserves one spared result', () => {
+  const id = 'pacifist-resolution';
+  assert.deepEqual(
+    [0, 0.5, 0.8, 1, 1.5, 1.8, 2.3, 2.7, 2.9, 3.5, 4.2, 5.3].map(pacifistResolutionState),
+    [
+      'combat-ready',
+      'weapon-sheathed',
+      'restraint-tracking',
+      'restraint-threat-1',
+      'restraint-tracking',
+      'restraint-threat-2',
+      'restraint-threat-3',
+      'condition-complete',
+      'choice-offered',
+      'spare-committed',
+      'spared',
+      'reset',
+    ],
+  );
+  assert.equal(
+    pacifistResolutionOutcome({ conditionComplete: false, action: 'spare' }),
+    'ineligible',
+  );
+  assert.equal(
+    pacifistResolutionOutcome({ conditionComplete: false, action: 'attack' }),
+    'condition-reset',
+  );
+  assert.equal(
+    pacifistResolutionOutcome({ conditionComplete: true, action: 'attack' }),
+    'route-closed',
+  );
+  assert.equal(pacifistResolutionOutcome({ conditionComplete: true, action: 'spare' }), 'spared');
+
+  for (const [time, unsafe, safe] of [
+    [1, { x: 300, y: 720 }, { x: 180, y: 720 }],
+    [1.8, { x: 390, y: 720 }, { x: 300, y: 720 }],
+    [2.3, { x: 210, y: 720 }, { x: 420, y: 720 }],
+  ]) {
+    const frame = blueprintFrame(id, time);
+    assert.equal(frame.dangerActive, true);
+    assert.equal(blueprintPointSafe(id, time, unsafe), false);
+    assert.equal(blueprintPointSafe(id, time, safe), true);
+    assert.equal(frame.playerSafe, true);
+    assert.equal(frame.pacifistBossHealth, 100);
+    assert.equal(frame.pacifistOffensiveEvents, 0);
+  }
+
+  const eligible = blueprintFrame(id, 2.9);
+  assert.equal(eligible.pacifistConditionComplete, true);
+  assert.equal(eligible.pacifistChoiceOffered, true);
+  assert.equal(eligible.pacifistSpared, false);
+  assert.equal(eligible.pacifistDefeated, false);
+
+  const committed = blueprintFrame(id, 3.5);
+  assert.equal(committed.pacifistSpareCommitted, true);
+  assert.equal(committed.pacifistResolutionId, 'pacifist-resolution-1');
+  assert.equal(committed.pacifistRewardGrants, 0);
+
+  const resolved = blueprintFrame(id, 4.2);
+  assert.equal(resolved.pacifistSpared, true);
+  assert.equal(resolved.pacifistDefeated, false);
+  assert.equal(resolved.pacifistBossHealth, 100);
+  assert.equal(resolved.pacifistRewardGrants, 1);
+  assert.deepEqual(blueprintFrame(id, 0).player, blueprintFrame(id, 6).player);
+  assert.match(
+    renderBlueprintThumbnail(id, 'test-pacifist-resolution'),
+    /data-blueprint-preview="pacifist-resolution"/,
   );
 });

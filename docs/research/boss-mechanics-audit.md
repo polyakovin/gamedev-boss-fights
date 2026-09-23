@@ -61,7 +61,7 @@ This is the baseline against which the reviewed encounters were compared.
 | **Projectile rally / dead man's volley** | One encounter-owned projectile alternates between boss and player until a missed response resolves the accelerating exchange.                          | Zelda's [Dead Man's Volley](https://www.zeldadungeon.net/wiki/Dead_Man%27s_Volley) repeatedly transfers the same attack and exposes the boss when it misses. This is narrower than a one-step reflection.      |
 | **Baited collision / self-hit**          | A prepared object or position becomes boss damage only when a committed boss action completes the qualifying contact.                                  | [Chub](https://bindingofisaacrebirth.wiki.gg/wiki/Chub) eats bombs placed in its charge path; [Scaldera](https://www.zeldadungeon.net/skyward-sword-walkthrough/earth-temple/) swallows a bomb while inhaling. |
 | **Posture stagger gauge**                | Authored attacks and counters pressure a separate gauge; a break opens a bounded critical state that an explicit finisher or critical action consumes. | Sekiro centers fights on posture and Deathblow; Sifu's official combat overview separates Structure break from the takedown that consumes it.                                                                  |
-| **Spare / pacifist resolution**          | The encounter can end without emptying boss health by satisfying a non-attack or interaction condition.                                                | [Baby Plum](https://bindingofisaacrebirth.wiki.gg/wiki/Baby_Plum) leaves and drops a different reward after taking no damage for 30 seconds.                                                                   |
+| **Pacifist resolution**                  | A visible nonviolent condition makes a separate spare action eligible, ending the encounter without emptying boss health.                              | [Baby Plum](https://bindingofisaacrebirth.wiki.gg/wiki/Baby_Plum) leaves and drops a different reward after taking no damage for 30 seconds.                                                                   |
 | **Persistent encounter progress**        | Completed parts of the fight remain complete after the player's death.                                                                                 | Destroyed [Bed of Chaos](https://darksouls.fandom.com/wiki/Bed_of_Chaos?page=2) roots remain destroyed on the next attempt.                                                                                    |
 
 ### States, resources, and scaling
@@ -136,7 +136,7 @@ These topics add the most to the five current lessons:
 7. **Projectile rally** — turns a defensive action into a method for exposing boss vulnerability.
 8. **Partner revival** — creates a clear health-management objective across several opponents.
 9. **Perspective / control-mode shift** — strongly differentiates phases but requires teaching the controls again without losing readability.
-10. **Spare / pacifist resolution** — shows how a boss's character and story can be expressed through the victory condition.
+10. **Pacifist resolution** — shows how a boss's character and story can be expressed through the victory condition.
 
 ## Primary catalogs and references
 

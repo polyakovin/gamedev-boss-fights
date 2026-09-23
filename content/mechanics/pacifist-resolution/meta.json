@@ -1,0 +1,43 @@
+{
+  "id": "pacifist-resolution",
+  "number": 89,
+  "published": true,
+  "sourceLocale": "en",
+  "contentVersion": 1,
+  "animation": "pacifist-resolution",
+  "lenses": [
+    "encounter-purpose",
+    "player-expression",
+    "progress-clarity",
+    "risk-reward",
+    "rule-exception"
+  ],
+  "related": [
+    "survival-phase",
+    "objective-linked-invulnerability",
+    "posture-stagger-gauge",
+    "escape-phase"
+  ],
+  "sources": [
+    {
+      "title": "Boss Up: Boss Battle Design",
+      "url": "https://media.gdcvault.com/gdc2018/presentations/Keren_Itay_BossUp.pdf"
+    },
+    {
+      "title": "Baby Plum non-damage escape rule — The Binding of Isaac: Rebirth Wiki",
+      "url": "https://bindingofisaacrebirth.wiki.gg/wiki/Baby_Plum"
+    },
+    {
+      "title": "Toriel in battle — Undertale Wiki",
+      "url": "https://undertale.wiki/w/Toriel/In_Battle"
+    },
+    {
+      "title": "How Sifu's Kung Fu combat works — PlayStation Blog",
+      "url": "https://blog.playstation.com/2021/11/18/how-sifus-kung-fu-combat-works/"
+    },
+    {
+      "title": "How to spare bosses in Sifu — GamesRadar+",
+      "url": "https://www.gamesradar.com/how-to-spare-bosses-in-sifu/"
+    }
+  ]
+}
