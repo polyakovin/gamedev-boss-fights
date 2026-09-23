@@ -631,6 +631,37 @@ const SPECS = {
     waveStart: [340, 724],
     waveEnd: [82, 724],
   },
+  'boss-as-terrain': {
+    mode: 'boss-as-terrain',
+    boss: [280, 640],
+    player: [448, 770],
+    target: [302, 514],
+    revealAt: 0.45,
+    mountAt: 1.08,
+    shake: [2.02, 2.68],
+    weakPointOpensAt: 3.18,
+    punishAt: 3.72,
+    drop: [4.18, 5.05],
+    resetAt: 5.05,
+    weakPoint: [302, 514],
+    mountPoint: [386, 704],
+    holdPoint: [354, 604],
+    landingPoint: [438, 770],
+    climbRoute: [
+      [448, 770],
+      [386, 704],
+      [366, 652],
+      [354, 604],
+      [334, 558],
+      [302, 514],
+    ],
+    dropRoute: [
+      [302, 514],
+      [350, 565],
+      [396, 642],
+      [438, 770],
+    ],
+  },
   'wide-swing': { mode: 'arc', boss: [280, 310], player: [410, 470], target: [470, 650] },
   lunge: { mode: 'lunge', boss: [170, 290], player: [390, 590], target: [470, 660] },
   grab: { mode: 'grab', boss: [280, 300], player: [390, 485], target: [470, 610] },
@@ -1182,6 +1213,18 @@ export function controlModeShiftState(time) {
   if (t < 3.45) return 'jump-mode';
   if (t < spec.resetAt) return 'opening';
   return 'free-mode-return';
+}
+
+export function bossAsTerrainState(time) {
+  const spec = SPECS['boss-as-terrain'];
+  const t = localTime(time);
+  if (t < spec.revealAt) return 'grounded';
+  if (t < spec.mountAt) return 'route-revealed';
+  if (t < spec.shake[0]) return 'climbing';
+  if (t < spec.shake[1]) return 'hold-through-shake';
+  if (t < spec.drop[0]) return 'weak-point-opening';
+  if (t < spec.resetAt) return 'safe-drop';
+  return 'reset';
 }
 
 const pointInPolygon = (value, points) => {
@@ -2628,6 +2671,99 @@ function primitivesFor(spec, frame) {
       circle(frame.boss.x - 32, frame.boss.y - 8, 12 + strike * 24, strike, 'safe', 7, 0.12),
     ];
   }
+  if (mode === 'boss-as-terrain') {
+    const state = frame.bossAsTerrainState;
+    const routeVisible = frame.bossAsTerrainRouteRevealed;
+    const mounted = frame.bossAsTerrainMounted;
+    const holding = frame.bossAsTerrainHolding;
+    const weakPointOpen = frame.bossAsTerrainWeakPointOpen;
+    const safeDrop = frame.bossAsTerrainSafeDrop;
+    const revealProgress = smooth((frame.time - spec.revealAt) / (spec.mountAt - spec.revealAt));
+    const shakePulse = holding ? 0.55 + Math.sin(frame.time * 22) ** 2 * 0.35 : 0;
+    const strike = strikePulse(frame.time, spec.punishAt, 0.38);
+    const gripWidth = 128;
+    const routeOpacity = routeVisible ? 0.34 + revealProgress * 0.42 : 0.12;
+    return [
+      rect(58, 382, 444, 430, 0.55, 'muted', 0.025),
+      path(
+        `M ${spec.climbRoute.map(([x, y]) => `${x} ${y}`).join(' L ')}`,
+        routeOpacity,
+        holding ? 'signal' : 'safe',
+        holding ? 8 : 6,
+        0,
+        holding ? '5 7' : '11 9',
+      ),
+      circle(386, 704, 20, routeVisible ? 0.72 : 0.15, 'safe', 5, 0.08, '7 6'),
+      circle(366, 652, 18, routeVisible ? 0.66 : 0.12, 'safe', 5, 0.07, '7 6'),
+      circle(
+        354,
+        604,
+        22 + shakePulse * 8,
+        mounted ? 0.8 : 0.18,
+        holding ? 'signal' : 'safe',
+        6,
+        0.1,
+      ),
+      circle(334, 558, 17, routeVisible ? 0.62 : 0.1, 'safe', 5, 0.06, '7 6'),
+      circle(
+        spec.weakPoint[0],
+        spec.weakPoint[1],
+        25 + (weakPointOpen ? Math.sin(frame.time * 4) ** 2 * 8 : 0),
+        weakPointOpen ? 0.94 : routeVisible ? 0.34 : 0.12,
+        weakPointOpen ? 'signal' : 'accent',
+        weakPointOpen ? 9 : 5,
+        weakPointOpen ? 0.2 : 0.04,
+      ),
+      path(
+        'M 238 568 Q 206 602 238 636 M 224 554 Q 174 602 224 650',
+        holding ? 0.84 : 0,
+        'signal',
+        7,
+        0,
+        '9 8',
+      ),
+      rect(78, 414, gripWidth, 18, mounted ? 0.82 : 0.28, 'muted', 0.08),
+      rect(
+        78,
+        414,
+        gripWidth * frame.bossAsTerrainGrip,
+        18,
+        mounted ? 0.94 : 0.2,
+        holding ? 'signal' : 'safe',
+        0.36,
+      ),
+      path(
+        `M ${spec.dropRoute.map(([x, y]) => `${x} ${y}`).join(' L ')}`,
+        safeDrop ? 0.82 : weakPointOpen ? 0.28 : 0.1,
+        'accent',
+        safeDrop ? 7 : 4,
+        0,
+        '10 9',
+      ),
+      circle(
+        spec.landingPoint[0],
+        spec.landingPoint[1],
+        safeDrop ? 32 : 22,
+        safeDrop ? 0.86 : 0.2,
+        'safe',
+        6,
+        0.08,
+        '8 7',
+      ),
+      line(
+        frame.player.x,
+        frame.player.y,
+        spec.weakPoint[0],
+        spec.weakPoint[1],
+        strike,
+        'safe',
+        10,
+      ),
+      circle(spec.weakPoint[0], spec.weakPoint[1], 12 + strike * 24, strike, 'safe', 7, 0.14),
+      circle(frame.player.x, frame.player.y, 30, holding ? 0.34 : 0, 'signal', 5, 0.08),
+      line(266, 484, 338, 484, state === 'weak-point-opening' ? 0.72 : 0.16, 'accent', 5, '7 7'),
+    ];
+  }
   if (mode === 'landing') {
     const landing = point(spec.landing);
     const contact = phase === 1 ? clamp(1 - Math.abs(action - 0.52) / 0.2) : 0;
@@ -3929,6 +4065,7 @@ function pointClearsThreat(spec, frame, value, radius = BLUEPRINT_PLAYER_RADIUS)
   if (mode === 'relocated-arena') return true;
   if (mode === 'control-mode-shift')
     return !frame.dangerActive || value.y + radius < spec.waveStart[1] - 18;
+  if (mode === 'boss-as-terrain') return !frame.dangerActive || frame.bossAsTerrainHolding;
   if (mode === 'spiral')
     return (
       distanceFromBoss > 52 + radius &&
@@ -4234,6 +4371,7 @@ export function blueprintFrame(id, time) {
   else if (spec.mode === 'escape-phase') responseProgress = 0;
   else if (spec.mode === 'relocated-arena') responseProgress = 0;
   else if (spec.mode === 'control-mode-shift') responseProgress = 0;
+  else if (spec.mode === 'boss-as-terrain') responseProgress = 0;
   else if (spec.mode === 'knockback')
     responseProgress = phase === 0 ? 0 : phase === 1 ? smooth(action) : 1;
   else if (spec.mode === 'target-lock')
@@ -4602,6 +4740,37 @@ export function blueprintFrame(id, time) {
       );
     }
   }
+  if (spec.mode === 'boss-as-terrain') {
+    const mount = point(spec.mountPoint);
+    const hold = point(spec.holdPoint);
+    const weakPoint = point(spec.weakPoint);
+    const landing = point(spec.landingPoint);
+    if (t < spec.revealAt) player = startPlayer;
+    else if (t < spec.mountAt) {
+      const approach = smooth((t - spec.revealAt) / (spec.mountAt - spec.revealAt));
+      player = {
+        x: mix(startPlayer.x, mount.x, approach),
+        y: mix(startPlayer.y, mount.y, approach),
+      };
+    } else if (t < spec.shake[0]) {
+      const climb = smooth((t - spec.mountAt) / (spec.shake[0] - spec.mountAt));
+      player = pointAlongPolyline(spec.climbRoute.slice(1, 4).map(point), climb);
+    } else if (t < spec.shake[1]) player = hold;
+    else if (t < spec.weakPointOpensAt) {
+      const climb = smooth((t - spec.shake[1]) / (spec.weakPointOpensAt - spec.shake[1]));
+      player = pointAlongPolyline(spec.climbRoute.slice(3).map(point), climb);
+    } else if (t < spec.drop[0]) player = weakPoint;
+    else if (t < spec.drop[1]) {
+      const drop = smooth((t - spec.drop[0]) / (spec.drop[1] - spec.drop[0]));
+      player = pointAlongPolyline(spec.dropRoute.map(point), drop);
+    } else {
+      const reset = smooth((t - spec.resetAt) / (BLUEPRINT_DURATION - spec.resetAt));
+      player = {
+        x: mix(landing.x, startPlayer.x, reset),
+        y: mix(landing.y, startPlayer.y, reset),
+      };
+    }
+  }
   if (spec.mode === 'rotating' && phase === 0) {
     const initialPosition = polar(boss, 255, Math.PI / 3);
     player = {
@@ -4737,7 +4906,21 @@ export function blueprintFrame(id, time) {
                               smooth((t - spec.resetAt) / (BLUEPRINT_DURATION - spec.resetAt)),
                             ) * 0.8,
                           )
-                        : pulse(responseProgress) + pulse(returnProgress) * 0.8;
+                        : spec.mode === 'boss-as-terrain'
+                          ? Math.max(
+                              pulse(smooth((t - spec.revealAt) / (spec.mountAt - spec.revealAt))),
+                              pulse(smooth((t - spec.mountAt) / (spec.shake[0] - spec.mountAt))),
+                              pulse(
+                                smooth(
+                                  (t - spec.shake[1]) / (spec.weakPointOpensAt - spec.shake[1]),
+                                ),
+                              ),
+                              pulse(smooth((t - spec.drop[0]) / (spec.drop[1] - spec.drop[0]))),
+                              pulse(
+                                smooth((t - spec.resetAt) / (BLUEPRINT_DURATION - spec.resetAt)),
+                              ) * 0.8,
+                            )
+                          : pulse(responseProgress) + pulse(returnProgress) * 0.8;
   const bossVisible =
     spec.mode === 'burrow' && phase === 1 && action < 0.68
       ? 0
@@ -4877,7 +5060,11 @@ export function blueprintFrame(id, time) {
                                                                       'control-mode-shift'
                                                                     ? t >= spec.wave[0] &&
                                                                       t < spec.wave[1]
-                                                                    : phase === 1;
+                                                                    : spec.mode ===
+                                                                        'boss-as-terrain'
+                                                                      ? t >= spec.shake[0] &&
+                                                                        t < spec.shake[1]
+                                                                      : phase === 1;
   const frame = {
     id,
     mode: spec.mode,
@@ -4896,13 +5083,15 @@ export function blueprintFrame(id, time) {
     sourceAngle,
     bossVisible,
     bossScale:
-      spec.mode === 'phase'
-        ? 1 + action * 0.12
-        : spec.mode === 'enrage'
-          ? phase === 0
-            ? 1 + prepare * 0.1
-            : 1.1
-          : 1,
+      spec.mode === 'boss-as-terrain'
+        ? 1.28
+        : spec.mode === 'phase'
+          ? 1 + action * 0.12
+          : spec.mode === 'enrage'
+            ? phase === 0
+              ? 1 + prepare * 0.1
+              : 1.1
+            : 1,
     bossFacing:
       spec.mode === 'landing'
         ? (Math.atan2(spec.landing[1] - spec.boss[1], spec.landing[0] - spec.boss[0]) * 180) /
@@ -4921,17 +5110,19 @@ export function blueprintFrame(id, time) {
               ? 90
               : spec.mode === 'escape-phase'
                 ? 90
-                : spec.mode === 'control-mode-shift'
-                  ? t < spec.handoff[0]
-                    ? 90
-                    : t < spec.resetAt
-                      ? 180
-                      : mix(
-                          180,
-                          90,
-                          smooth((t - spec.resetAt) / (BLUEPRINT_DURATION - spec.resetAt)),
-                        )
-                  : 90,
+                : spec.mode === 'boss-as-terrain'
+                  ? 180
+                  : spec.mode === 'control-mode-shift'
+                    ? t < spec.handoff[0]
+                      ? 90
+                      : t < spec.resetAt
+                        ? 180
+                        : mix(
+                            180,
+                            90,
+                            smooth((t - spec.resetAt) / (BLUEPRINT_DURATION - spec.resetAt)),
+                          )
+                    : 90,
     playerFacing:
       spec.mode === 'directional-shield'
         ? mix(-90, -180, smooth((t - 2.7) / 0.68)) * (1 - returnProgress) - 90 * returnProgress
@@ -4953,19 +5144,21 @@ export function blueprintFrame(id, time) {
                         ? (Math.atan2(boss.y - player.y, boss.x - player.x) * 180) / Math.PI
                         : spec.mode === 'relocated-arena'
                           ? (Math.atan2(boss.y - player.y, boss.x - player.x) * 180) / Math.PI
-                          : spec.mode === 'control-mode-shift'
+                          : spec.mode === 'boss-as-terrain'
                             ? (Math.atan2(boss.y - player.y, boss.x - player.x) * 180) / Math.PI
-                            : spec.mode === 'damage-type-resistance' ||
-                                spec.mode === 'situational-immunity' ||
-                                spec.mode === 'part-break' ||
-                                spec.mode === 'attack-reflection' ||
-                                spec.mode === 'counter-stance' ||
-                                spec.mode === 'absorption-power-up' ||
-                                spec.mode === 'interruptible-wind-up' ||
-                                spec.mode === 'loadout-adaptation' ||
-                                spec.mode === 'wind-up'
-                              ? -180
-                              : -90,
+                            : spec.mode === 'control-mode-shift'
+                              ? (Math.atan2(boss.y - player.y, boss.x - player.x) * 180) / Math.PI
+                              : spec.mode === 'damage-type-resistance' ||
+                                  spec.mode === 'situational-immunity' ||
+                                  spec.mode === 'part-break' ||
+                                  spec.mode === 'attack-reflection' ||
+                                  spec.mode === 'counter-stance' ||
+                                  spec.mode === 'absorption-power-up' ||
+                                  spec.mode === 'interruptible-wind-up' ||
+                                  spec.mode === 'loadout-adaptation' ||
+                                  spec.mode === 'wind-up'
+                                ? -180
+                                : -90,
     bossMotion: motion({
       gait:
         spec.mode === 'chase-herding' ||
@@ -5267,14 +5460,20 @@ export function blueprintFrame(id, time) {
                           ? t * 7 * stride
                           : spec.mode === 'control-mode-shift'
                             ? t * 7 * stride
-                            : (route * responseProgress + route * returnProgress) / 20,
+                            : spec.mode === 'boss-as-terrain'
+                              ? t * 7 * stride
+                              : (route * responseProgress + route * returnProgress) / 20,
       stride,
       lean: stride * 0.45,
       crouch:
         spec.mode === 'control-mode-shift'
           ? 0.34 *
             Math.max(strikePulse(t, spec.handoff[1], 0.36), strikePulse(t, spec.wave[1], 0.34))
-          : stride * 0.16,
+          : spec.mode === 'boss-as-terrain'
+            ? t >= spec.shake[0] && t < spec.shake[1]
+              ? 0.28
+              : 0.08 * stride
+            : stride * 0.16,
       lift:
         spec.mode === 'control-mode-shift' && t >= spec.handoff[1] && t < spec.wave[1]
           ? Math.sin(clamp((t - spec.handoff[1]) / (spec.wave[1] - spec.handoff[1])) * Math.PI)
@@ -5340,11 +5539,13 @@ export function blueprintFrame(id, time) {
                                             ? strikePulse(t, spec.punishAt, 0.38)
                                             : spec.mode === 'control-mode-shift'
                                               ? strikePulse(t, spec.punishAt, 0.38)
-                                              : spec.mode === 'decoy' && phase === 1
-                                                ? pulse(clamp((action - 0.52) / 0.3))
-                                                : spec.mode === 'weak-point' && phase === 1
-                                                  ? pulse(action * 1.5)
-                                                  : 0,
+                                              : spec.mode === 'boss-as-terrain'
+                                                ? strikePulse(t, spec.punishAt, 0.38)
+                                                : spec.mode === 'decoy' && phase === 1
+                                                  ? pulse(clamp((action - 0.52) / 0.3))
+                                                  : spec.mode === 'weak-point' && phase === 1
+                                                    ? pulse(action * 1.5)
+                                                    : 0,
     }),
   };
   if (spec.mode === 'directional-shield') {
@@ -5450,6 +5651,20 @@ export function blueprintFrame(id, time) {
     frame.controlModeReturnVisible = t >= spec.resetAt;
     frame.punishStrike = strikePulse(t, spec.punishAt, 0.38) > 0.5;
   }
+  if (spec.mode === 'boss-as-terrain') {
+    frame.bossAsTerrainState = bossAsTerrainState(t);
+    frame.bossAsTerrainRouteRevealed = t >= spec.revealAt && t < spec.resetAt;
+    frame.bossAsTerrainMounted = t >= spec.mountAt && t < spec.drop[1];
+    frame.bossAsTerrainHolding = t >= spec.shake[0] && t < spec.shake[1];
+    frame.bossAsTerrainGrip = frame.bossAsTerrainHolding
+      ? mix(0.9, 0.58, (t - spec.shake[0]) / (spec.shake[1] - spec.shake[0]))
+      : frame.bossAsTerrainMounted
+        ? 0.9
+        : 1;
+    frame.bossAsTerrainWeakPointOpen = t >= spec.weakPointOpensAt && t < spec.drop[0];
+    frame.bossAsTerrainSafeDrop = t >= spec.drop[0] && t < spec.resetAt;
+    frame.punishStrike = strikePulse(t, spec.punishAt, 0.38) > 0.5;
+  }
   if (spec.mode === 'relocated-arena') {
     frame.relocatedArenaState = relocatedArenaState(t);
     frame.relocatedDestinationRevealed = t >= spec.previewAt;
@@ -5552,7 +5767,8 @@ export function blueprintFrame(id, time) {
       spec.mode === 'boundary-attack' ||
       spec.mode === 'forced-scrolling' ||
       spec.mode === 'chase-herding' ||
-      spec.mode === 'escape-phase'
+      spec.mode === 'escape-phase' ||
+      spec.mode === 'boss-as-terrain'
         ? 92
         : -62),
   };

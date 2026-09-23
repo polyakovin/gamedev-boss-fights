@@ -1,0 +1,138 @@
+{
+  "title": "Jefe como terreno",
+  "subtitle": "Convierte el cuerpo del jefe en una ruta móvil donde los agarres, peligros y puntos débiles controlan el acceso.",
+  "variant": "Tavi monta el brazo bajado de Kern, mantiene un agarre marcado durante una sacudida, llega a la runa de la cabeza y sigue una caída segura visible",
+  "summary": "El jugador recorre el cuerpo del jefe y el acceso al punto de daño depende de una ruta legible y reglas de agarre fiables.",
+  "overview": "Jefe como terreno convierte el cuerpo en espacio jugable: el jugador lo monta, sigue agarres definidos, soporta su movimiento, alcanza un objetivo y sale con seguridad. Funciona cuando entrada, ruta, sujeción, peligros, objetivo y salida se leen juntos; el espectáculo no sustituye una colisión y una cámara fiables.",
+  "learning": "Implementa la ventana de montaje, el grafo de superficies transitables, las reglas de agarre, la herencia de movimiento, la sacudida, el acceso al punto débil, la cámara, la recuperación de caídas y el reinicio como un único contrato de nivel móvil.",
+  "category": "Espacio, movimiento y percepción",
+  "readTime": "8 min",
+  "demo": {
+    "title": "Muestra una ruta completa sobre el cuerpo móvil",
+    "timeline": "Cronología de jefe como terreno",
+    "step": "Estados de jefe como terreno",
+    "phaseNames": [
+      "Revelar y montar la ruta",
+      "Agarrarse, subir y golpear",
+      "Bajar con seguridad y reiniciar"
+    ],
+    "phaseDescriptions": [
+      "A los 0,45 s aparecen agarres conectados desde el brazo bajado de Kern hasta la runa de la cabeza. Tavi recibe una aproximación estable y monta a los 1,08 s, antes de que el movimiento del cuerpo sea relevante.",
+      "Tavi sube al hombro, mantiene explícitamente el agarre durante la sacudida de 2,02–2,68 s y continúa hacia el punto débil. La runa se abre a los 3,18 s y la espada impacta a los 3,72 s sin desprendimientos inesperados.",
+      "A los 4,18 s aparecen una ruta de descenso separada y un anillo de aterrizaje. Tavi llega al punto validado a los 5,05 s y ambos actores vuelven visiblemente al estado inicial exacto del bucle."
+    ],
+    "boss": "Jefe",
+    "player": "Jugador",
+    "danger": "La sacudida comprueba la sujeción mientras el agarre marcado está activo; quien no se sujete es desplazado por una regla explícita y nunca atraviesa el cuerpo en silencio",
+    "locked": "El montaje, el grafo de subida, la sujeción, el movimiento heredado, la sacudida, el punto débil, la bajada, la cámara y el reinicio están definidos",
+    "safe": "Leer los agarres conectados, montar durante la ventana estable, sujetarse en la sacudida anunciada, golpear la runa abierta y salir por el descenso marcado",
+    "reducedMotion": "Con movimiento reducido se desactiva la reproducción automática. Recorre 0,45, 1,08, 2,02, 2,68, 3,18, 3,72, 4,18 y 5,05 s para inspeccionar toda la ruta.",
+    "diagramDescription": "Kern ocupa el centro como estructura móvil escalable. Una ruta conectada va del brazo bajado por los agarres del hombro a la runa de la cabeza; Tavi monta, se sujeta durante una sacudida, golpea la runa y sigue otra ruta hasta un aterrizaje seguro."
+  },
+  "steps": [
+    {
+      "title": "¿Qué superficies del cuerpo son geometría fiable?",
+      "body": "Define un grafo pequeño y deliberado de montajes, agarres, zonas caminables, enlaces y huecos prohibidos en vez de hacer escalable toda la malla animada. Cada nodo necesita un marco local estable, volumen libre, dirección de entrada y alternativa. Valídalo contra cada pose, daño, mezcla de animación y límite del nivel."
+    },
+    {
+      "title": "¿Cómo permanece sujeto el jugador cuando el jefe se mueve?",
+      "body": "Decide cuándo se hereda el movimiento, cuándo importan un botón o recurso de agarre, qué gestos amenazan la sujeción y cómo se anuncian. Resuelve animación, física, red y cámara en un orden único para evitar deslizamientos, vibración, atravesar el cuerpo o recibir daño antes de ver el estado de sujeción."
+    },
+    {
+      "title": "¿Cómo termina cada intento con seguridad?",
+      "body": "Da un objetivo legible y al menos una salida validada: caída controlada, orden de desmontar, saliente de recuperación o expulsión segura. Define saltos fallidos, agarre agotado, partes rotas, cambios de fase, muerte, separación multijugador y puntos de control. Fallar puede costar tiempo o vida, pero no encerrar al jugador dentro del jefe o fuera de cámara."
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "Confundir la malla animada con terreno fiable",
+      "body": "Los triángulos visibles, colisiones y huesos pueden divergir en poses rápidas. Si toda superficie visible acepta apoyo, pequeños cambios de animación crean deslizamientos, enganches o rechazos invisibles. Crea superficies explícitas, muestra cuándo son válidas y desprende solo mediante reglas nombradas."
+    },
+    {
+      "title": "La subida no tiene salida ni recuperación legibles",
+      "body": "Llegar al punto débil no basta si después se lanza al jugador a un peligro desconocido, se le atrapa con una fase o debe adivinar dónde caer. Anticipa el desmontaje antes de completar el objetivo y reserva un volumen de aterrizaje visible para todas las capacidades compatibles."
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "Construye con anclajes locales y prueba en espacio global",
+      "body": "Vincula nodos a huesos o piezas rígidas elegidas, pero comprueba continuamente distancia, pendiente, espacio libre y velocidad globales. Desactiva o desvía un enlace antes de que una pose lo vuelva imposible. Registra padre y desplazamiento local para que repetición, rollback y corrección de red interpreten igual la sujeción."
+    },
+    {
+      "title": "Separa la presión de agarre de la pérdida arbitraria de control",
+      "body": "Una sacudida necesita anticipación, respuesta de sujeción conocida y consecuencia recuperable. Si hay que mantener un botón, muestra el estado y presupuesto antes de la primera prueba. No apiles rotación de cámara, entrada invertida, resistencia, daño y tiempo estrecho sin una decisión distinta para cada capa."
+    },
+    {
+      "title": "Da a la cámara su propio plan de recorrido",
+      "body": "Pasa del encuadre de arena a una vista relativa al cuerpo sin perder el siguiente agarre, la silueta ni la gravedad. Limita extremidades que ocultan, recorte cercano y cambios bruscos de horizonte. En multijugador decide si separar, ampliar, unir cámaras o dar amenazas distintas a escaladores y jugadores en tierra."
+    },
+    {
+      "title": "Prueba cambios de topología, no solo la subida ideal",
+      "body": "Ensaya partes ausentes o rotas, movimiento enfurecido, carga de colisiones, pausa, guardado, baja tasa de cuadros, uniones tardías, retroceso y cambios de fase en cada nodo. Registra montajes, desprendimientos, muertes y abandonos para hallar agarres válidos pero ilegibles."
+    }
+  ],
+  "story": {
+    "title": "Las runas de Kern forman una antigua ruta de mantenimiento",
+    "body": "Los guardianes de la cantera subían antes por las placas del hombro y los conductos del núcleo. Cuando Kern se afirma, esas juntas se iluminan en orden y la ruta parece parte de la construcción de la criatura, no una interfaz superpuesta."
+  },
+  "adaptation": {
+    "title": "Usa el salto, agarre y espada normales de Tavi",
+    "body": "La ruta respeta su alcance actual y no exige un impulso aéreo inexistente. Una ventana generosa enseña la sujeción, una sacudida prueba el agarre, la runa queda al alcance de la espada y la bajada devuelve a Tavi al movimiento terrestre antes del siguiente ataque."
+  },
+  "distinction": {
+    "title": "Un nivel móvil, no solo un objetivo grande",
+    "body": "Un punto débil puede atacarse desde la arena y romper una parte cambia un componente. Jefe como terreno exige ocupar y recorrer el cuerpo; el problema esencial es mantener una ruta legible y válida sobre geometría animada."
+  },
+  "lensNotes": [
+    {
+      "id": "access-paths",
+      "body": "Montajes, agarres, puntos débiles y salidas forman un grafo cuya disponibilidad cambia con la pose del jefe."
+    },
+    {
+      "id": "threat-geometry",
+      "body": "El cuerpo es a la vez colisión móvil, superficie navegable, oclusor y fuente de desplazamiento."
+    },
+    {
+      "id": "risk-reward",
+      "body": "Seguir sujeto durante una sacudida anunciada cambia riesgo de caída por acceso a una ventana de daño valiosa."
+    },
+    {
+      "id": "dramatic-framing",
+      "body": "La escala se vuelve jugable cuando la cámara conserva dirección, agarre, punto débil y una salida creíble."
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "Sonic & Knuckles",
+      "boss": "Egg Golem",
+      "screenshot": "https://i.ytimg.com/vi/U7mop3FhwFk/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=U7mop3FhwFk&t=8s",
+      "body": "La mano del primer plano se extiende como plataforma temporal y crea una ruta corta por el cuerpo hasta la cabeza y el piloto expuesto. Como la mano se retrae, el acceso depende de pose y tiempo, no solo de la altura de salto.",
+      "video": "https://www.youtube.com/watch?v=U7mop3FhwFk&t=8s",
+      "videoDurationSeconds": 80
+    },
+    {
+      "dimension": "3D",
+      "game": "Shadow of the Colossus",
+      "boss": "Valus",
+      "screenshot": "https://i.ytimg.com/vi/c-fZr73km2U/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=c-fZr73km2U&t=18s",
+      "body": "La pierna, el pelo, los salientes, la espalda y la cabeza de Valus forman una ruta móvil continua. La capacidad de agarre y las sacudidas convierten la sujeción en un problema de recurso y tiempo, mientras zonas amplias permiten recuperarse antes del sigilo.",
+      "video": "https://www.youtube.com/watch?v=c-fZr73km2U&t=18s",
+      "videoDurationSeconds": 179
+    },
+    {
+      "dimension": "3D",
+      "game": "God of War III",
+      "boss": "Cronos",
+      "screenshot": "https://i.ytimg.com/vi/YnIZpT-FX-o/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=YnIZpT-FX-o&t=53s",
+      "body": "Cronos es oponente y nivel móvil: el encuentro conduce a Kratos por piel, heridas, dedos, ataduras y orientaciones cambiantes mientras los ataques rehacen el recorrido local. Muestra por qué cámara y sujeción deben diseñarse junto con la animación corporal.",
+      "video": "https://www.youtube.com/watch?v=YnIZpT-FX-o&t=53s",
+      "videoDurationSeconds": 700
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

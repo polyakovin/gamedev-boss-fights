@@ -1,0 +1,28 @@
+{
+  "id": "boss-as-terrain",
+  "number": 74,
+  "published": true,
+  "sourceLocale": "en",
+  "contentVersion": 1,
+  "animation": "boss-as-terrain",
+  "lenses": ["access-paths", "threat-geometry", "risk-reward", "dramatic-framing"],
+  "related": ["weak-point", "part-break", "platform-destruction"],
+  "sources": [
+    {
+      "title": "GDC · Itay Keren — Boss Battle Design Fundamentals and Retrospective",
+      "url": "https://www.gdcvault.com/play/1024921/Boss-Up-Boss-Battle-Design"
+    },
+    {
+      "title": "GDC — The Titans: Creating Living, Breathing Levels in God of War III",
+      "url": "https://www.gdcvault.com/play/1015524/The-Titans-Creating-Living-Breathing"
+    },
+    {
+      "title": "PlayStation Blog — Shadow of the Colossus in 3D: Eyes On, Hands On",
+      "url": "https://blog.playstation.com/?p=41623"
+    },
+    {
+      "title": "Zone: 0 — Sonic & Knuckles: Sandopolis Zone boss",
+      "url": "https://www.soniczone0.com/games/sonicandknuckles/sandopolis/"
+    }
+  ]
+}

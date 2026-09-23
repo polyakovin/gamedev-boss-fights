@@ -219,6 +219,16 @@ export function initializeBlueprint(widget) {
       widget.dataset.blueprintControlModeReturn = String(frame.controlModeReturnVisible);
       widget.dataset.blueprintPunishStrike = String(frame.punishStrike);
     }
+    if (mechanicId === 'boss-as-terrain') {
+      widget.dataset.blueprintBossAsTerrain = frame.bossAsTerrainState;
+      widget.dataset.blueprintTerrainRoute = String(frame.bossAsTerrainRouteRevealed);
+      widget.dataset.blueprintTerrainMounted = String(frame.bossAsTerrainMounted);
+      widget.dataset.blueprintTerrainHolding = String(frame.bossAsTerrainHolding);
+      widget.dataset.blueprintTerrainGrip = frame.bossAsTerrainGrip.toFixed(3);
+      widget.dataset.blueprintTerrainWeakPoint = String(frame.bossAsTerrainWeakPointOpen);
+      widget.dataset.blueprintTerrainSafeDrop = String(frame.bossAsTerrainSafeDrop);
+      widget.dataset.blueprintPunishStrike = String(frame.punishStrike);
+    }
     boss.setAttribute(
       'transform',
       `translate(${frame.boss.x} ${frame.boss.y}) scale(${frame.bossScale})`,

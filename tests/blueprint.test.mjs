@@ -9,6 +9,7 @@ import {
   attackLockState,
   attackReflectionState,
   boundaryAttackState,
+  bossAsTerrainState,
   chaseHerdingState,
   controlModeShiftState,
   escapePhaseState,
@@ -42,8 +43,8 @@ import {
   renderBlueprintThumbnail,
 } from '../lib/blueprint-view.mjs';
 
-test('all 67 promoted lesson animations have distinct rule modes and complete moving frames', () => {
-  assert.equal(BLUEPRINT_MECHANIC_IDS.length, 67);
+test('all 68 promoted lesson animations have distinct rule modes and complete moving frames', () => {
+  assert.equal(BLUEPRINT_MECHANIC_IDS.length, 68);
   const modes = new Set();
   for (const id of BLUEPRINT_MECHANIC_IDS) {
     for (let time = 0; time <= BLUEPRINT_DURATION; time += 0.1) {
@@ -64,7 +65,7 @@ test('all 67 promoted lesson animations have distinct rule modes and complete mo
           assert.ok(Number.isFinite(value), `${id} has an invalid ${primitive.type}`);
     }
   }
-  assert.equal(modes.size, 67);
+  assert.equal(modes.size, 68);
 });
 
 test('every blueprint exposes signal, committed action, and recovery without player teleports', () => {
@@ -90,7 +91,8 @@ test('every blueprint exposes signal, committed action, and recovery without pla
       id !== 'boundary-attack' &&
       id !== 'chase-herding' &&
       id !== 'escape-phase' &&
-      id !== 'relocated-arena'
+      id !== 'relocated-arena' &&
+      id !== 'boss-as-terrain'
     )
       assert.equal(blueprintFrame(id, 3).dangerActive, true, id);
     assert.equal(blueprintFrame(id, 3).playerSafe, true, id);
@@ -175,7 +177,8 @@ test('every damaging promoted animation derives safety from its own active geome
       id !== 'boundary-attack' &&
       id !== 'chase-herding' &&
       id !== 'escape-phase' &&
-      id !== 'relocated-arena',
+      id !== 'relocated-arena' &&
+      id !== 'boss-as-terrain',
   )) {
     const frame = blueprintFrame(id, 3);
     let point = unsafePoints[id];
@@ -1903,5 +1906,52 @@ test('control mode shift previews the remap, teaches its jump response, and rest
   assert.match(
     renderBlueprintThumbnail(id, 'test-control-mode-shift'),
     /data-blueprint-preview="control-mode-shift"/,
+  );
+});
+
+test('boss as terrain exposes a stable route, holds through motion, and validates the dismount', () => {
+  const id = 'boss-as-terrain';
+  assert.deepEqual([0, 0.8, 1.5, 2.3, 3.5, 4.6, 5.5].map(bossAsTerrainState), [
+    'grounded',
+    'route-revealed',
+    'climbing',
+    'hold-through-shake',
+    'weak-point-opening',
+    'safe-drop',
+    'reset',
+  ]);
+
+  const preview = blueprintFrame(id, 0.8);
+  assert.equal(preview.bossAsTerrainRouteRevealed, true);
+  assert.equal(preview.bossAsTerrainMounted, false);
+  assert.ok(preview.primitives[1].opacity > 0.5, 'the connected climb appears before mounting');
+
+  const climbing = blueprintFrame(id, 1.5);
+  assert.equal(climbing.bossAsTerrainMounted, true);
+  assert.ok(climbing.player.y < preview.player.y, 'the player advances up the authored body route');
+
+  const holding = blueprintFrame(id, 2.3);
+  assert.equal(holding.bossAsTerrainState, 'hold-through-shake');
+  assert.equal(holding.bossAsTerrainHolding, true);
+  assert.equal(holding.dangerActive, true);
+  assert.equal(holding.playerSafe, true);
+  assert.ok(holding.bossAsTerrainGrip < 0.9 && holding.bossAsTerrainGrip > 0.58);
+  assert.ok(holding.primitives[7].opacity > 0.8, 'shake arcs remain visible while holding');
+
+  const opening = blueprintFrame(id, 3.72);
+  assert.equal(opening.bossAsTerrainWeakPointOpen, true);
+  assert.equal(opening.punishStrike, true);
+  assert.ok(opening.primitives[12].opacity > 0.9, 'the sword reaches the opened weak point');
+
+  const drop = blueprintFrame(id, 4.6);
+  assert.equal(drop.bossAsTerrainSafeDrop, true);
+  assert.ok(drop.primitives[10].opacity > 0.8, 'the dismount route is visible');
+  assert.ok(drop.primitives[11].opacity > 0.8, 'the validated landing point is visible');
+
+  assert.deepEqual(blueprintFrame(id, 0).player, blueprintFrame(id, 6).player);
+  assert.deepEqual(blueprintFrame(id, 0).boss, blueprintFrame(id, 6).boss);
+  assert.match(
+    renderBlueprintThumbnail(id, 'test-boss-as-terrain'),
+    /data-blueprint-preview="boss-as-terrain"/,
   );
 });

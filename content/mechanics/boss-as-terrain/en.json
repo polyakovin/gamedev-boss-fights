@@ -1,0 +1,138 @@
+{
+  "title": "Boss as terrain",
+  "subtitle": "Turn the boss's body into a moving route whose holds, hazards, and weak points control access.",
+  "variant": "Tavi mounts Kern's lowered arm, holds a marked shoulder grip through one shake, reaches the exposed head rune, then follows a visible safe drop",
+  "summary": "The player traverses the boss's body, and access to the damage point depends on a readable route and reliable holding rules.",
+  "overview": "Boss as terrain makes the boss's body playable space: the player mounts it, follows authored holds, survives its motion, reaches a target, and leaves safely. It works when entry, route, attachment, hazards, objective, and exit remain readable together; spectacle cannot replace dependable collision and camera behavior.",
+  "learning": "Implement the mount window, traversable surface graph, grip rules, motion inheritance, shake timing, weak-point access, camera ownership, fall recovery, and reset as one moving-level contract.",
+  "category": "Space, movement, and perception",
+  "readTime": "8 min",
+  "demo": {
+    "title": "Expose a complete route across the moving body",
+    "timeline": "Boss-as-terrain timeline",
+    "step": "Boss-as-terrain states",
+    "phaseNames": [
+      "Reveal and mount the route",
+      "Hold, climb, and strike",
+      "Drop safely and reset"
+    ],
+    "phaseDescriptions": [
+      "At 0.45 s connected holds appear from Kern's lowered arm to the head rune. Tavi receives a stable approach and mounts at 1.08 s before the body motion becomes relevant.",
+      "Tavi climbs to the shoulder, explicitly holds through the 2.02–2.68 s shake, then continues to the weak point. The rune opens at 3.18 s and the sword strike lands at 3.72 s without detaching the player unexpectedly.",
+      "At 4.18 s a separate drop path and landing ring appear. Tavi reaches the validated landing point by 5.05 s, then both actors visibly settle into the exact starting state for the continuous loop."
+    ],
+    "boss": "Boss",
+    "player": "Player",
+    "danger": "The shake tests attachment while the marked hold is active; an unheld player would be displaced, never silently clipped through the body",
+    "locked": "Mount timing, climb graph, attachment state, inherited motion, shake, weak point, safe drop, camera bounds, and reset are authored",
+    "safe": "Read the connected holds, mount during the stable window, hold through the announced shake, strike the opened rune, and leave by the marked drop",
+    "reducedMotion": "Autoplay is disabled by reduced motion. Scrub across 0.45, 1.08, 2.02, 2.68, 3.18, 3.72, 4.18, and 5.05 seconds to inspect the full route.",
+    "diagramDescription": "Kern fills the center of the arena as a moving climbable structure. A connected route runs from a lowered arm through shoulder holds to a head rune; Tavi mounts, holds during a shake, strikes the rune, and follows a separate marked path to a safe landing ring."
+  },
+  "steps": [
+    {
+      "title": "Which body surfaces are reliable gameplay geometry?",
+      "body": "Define a small authored graph of mount points, holds, walkable patches, seams, and forbidden gaps instead of treating the whole animated mesh as climbable. Give each node a stable local frame, clearance volume, entry direction, and fallback. Validate the graph against every body pose, damage state, animation blend, and level boundary that can occur during the route."
+    },
+    {
+      "title": "How does the player stay attached while the boss moves?",
+      "body": "Choose when movement is inherited, when a hold button or stamina-like resource matters, which motions threaten attachment, and how that threat is signaled. Resolve animation, physics, networking, and camera transforms in one order so the player does not skate, jitter, tunnel through the body, or receive a hit before the attachment state is visible."
+    },
+    {
+      "title": "How does every attempt end safely?",
+      "body": "Provide a legible objective and at least one validated exit: a controlled drop, dismount prompt, recovery ledge, or safe knock-off. Define what happens on missed jumps, depleted grip, broken parts, phase changes, death, multiplayer separation, and checkpoints. Failure may cost time or health, but it should not strand the player inside the boss or outside the camera."
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "The animated mesh is mistaken for dependable terrain",
+      "body": "Rendering triangles, collision proxies, and bones can disagree during fast poses. If any visible patch is accepted as a foothold, small animation changes create sliding, snagging, or invisible rejection. Author and debug explicit traversal surfaces, show when they are valid, and detach only through named rules."
+    },
+    {
+      "title": "The climb has no readable exit or recovery",
+      "body": "Reaching the weak point is not enough if the player is then thrown into an unknown hazard, trapped by a phase transition, or forced to guess where falling is legal. Preview the dismount before the objective completes and reserve a camera-visible landing volume that works for every supported movement kit."
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "Build traversal on local anchors, test it in world space",
+      "body": "Attach route nodes to selected bones or rigid subparts, but continuously test their world-space separation, slope, clearance, and velocity. Disable or reroute a link before a pose makes it impossible. Record the active parent and local offset so replay, rollback, and multiplayer correction do not reinterpret the same attachment differently."
+    },
+    {
+      "title": "Separate grip pressure from arbitrary control loss",
+      "body": "A shake should have anticipation, a known attachment response, and a recoverable consequence. If holding is required, show the hold state and its budget before the first test. Avoid stacking camera rotation, reversed input, stamina drain, damage, and narrow timing unless each layer earns a distinct decision."
+    },
+    {
+      "title": "Give the camera its own traversal plan",
+      "body": "Blend from arena framing to a body-relative route view without losing the next hold, the boss silhouette, or the direction of gravity. Limit occluding limbs, near-plane clipping, and sudden horizon changes. In multiplayer, decide whether cameras split, widen, tether players, or keep climbers and ground players under separate threat packages."
+    },
+    {
+      "title": "Test topology changes, not only the ideal climb",
+      "body": "Exercise missing and broken parts, enraged motion, collision streaming, pause and resume, save loading, low frame rates, late joins, player knockback, and a phase change at every route node. Instrument mounts, forced detachments, deaths, and abandoned attempts to find holds that are technically valid but practically unreadable."
+    }
+  ],
+  "story": {
+    "title": "Kern's runes form an ancient maintenance path",
+    "body": "The elemental's shoulder plates and core channels were once climbed by quarry keepers. When Kern braces, those same seams light in sequence, making the traversal route feel like part of the creature's construction rather than an interface painted over it."
+  },
+  "adaptation": {
+    "title": "Use Tavi's ordinary jump, hold, and sword",
+    "body": "The route fits Tavi's existing reach and never assumes an unowned air dash. A generous mount window teaches attachment, the single shake tests holding, the rune sits within normal sword range, and the marked drop returns Tavi to ordinary ground movement before the next attack."
+  },
+  "distinction": {
+    "title": "A moving level, not merely a large target",
+    "body": "A weak point can be attacked from ordinary arena space, and a part break changes a boss component. Boss as terrain specifically asks the player to occupy and traverse the boss's body; its essential implementation problem is maintaining a readable, valid route across animated geometry."
+  },
+  "lensNotes": [
+    {
+      "id": "access-paths",
+      "body": "Mount points, holds, weak points, and exits form a route graph whose availability changes with the boss pose."
+    },
+    {
+      "id": "threat-geometry",
+      "body": "The body is simultaneously moving collision, navigable surface, occluder, and source of displacement."
+    },
+    {
+      "id": "risk-reward",
+      "body": "Remaining attached through a signaled shake trades fall risk for access to a valuable damage window."
+    },
+    {
+      "id": "dramatic-framing",
+      "body": "Scale becomes playable when the camera preserves route direction, grip state, the weak point, and a credible exit."
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "Sonic & Knuckles",
+      "boss": "Egg Golem",
+      "screenshot": "https://i.ytimg.com/vi/U7mop3FhwFk/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=U7mop3FhwFk&t=8s",
+      "body": "The foreground hand extends into a temporary platform, creating a short route over the boss's own body to its head and exposed pilot. Because the hand retracts, access is defined by pose and timing rather than by the player's ordinary jump height alone.",
+      "video": "https://www.youtube.com/watch?v=U7mop3FhwFk&t=8s",
+      "videoDurationSeconds": 80
+    },
+    {
+      "dimension": "3D",
+      "game": "Shadow of the Colossus",
+      "boss": "Valus",
+      "screenshot": "https://i.ytimg.com/vi/c-fZr73km2U/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=c-fZr73km2U&t=18s",
+      "body": "Valus's leg, fur, ledges, back, and head form a continuous moving route. Grip capacity and the colossus's attempts to shake the player turn attachment into a resource-and-timing problem, while broader body patches provide deliberate places to recover before the head sigil.",
+      "video": "https://www.youtube.com/watch?v=c-fZr73km2U&t=18s",
+      "videoDurationSeconds": 179
+    },
+    {
+      "dimension": "3D",
+      "game": "God of War III",
+      "boss": "Cronos",
+      "screenshot": "https://i.ytimg.com/vi/YnIZpT-FX-o/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=YnIZpT-FX-o&t=53s",
+      "body": "Cronos is both opponent and moving level: the encounter routes Kratos across skin, wounds, fingers, restraints, and changing orientations while attacks reshape the local traversal problem. The sequence demonstrates why camera handoffs and attachment rules must be designed with the body animation, not added afterward.",
+      "video": "https://www.youtube.com/watch?v=YnIZpT-FX-o&t=53s",
+      "videoDurationSeconds": 700
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}
