@@ -772,11 +772,11 @@ const SPECS = {
     boss: [280, 305],
     player: [420, 700],
     target: [280, 440],
-    arena: [70, 440, 420, 380],
+    arena: [54, 96, 452, 782],
     lanes: [140, 280, 420],
     laneHalfWidth: 52,
-    laneTop: 520,
-    laneBottom: 820,
+    laneTop: 430,
+    laneBottom: 870,
     beatOrigin: 0.48,
     beatInterval: 0.6,
     hits: [1.68, 2.28, 2.88],
@@ -4439,78 +4439,64 @@ function primitivesFor(spec, frame) {
     const strike = strikePulse(frame.time, spec.punishAt, 0.38);
     const activeLane = frame.beatSyncedAttackLane;
     const previewLane = frame.beatSyncedTelegraphLane;
-    const phraseVisible = frame.time >= spec.beatOrigin && frame.time < spec.resetAt;
-    const beatXs = [160, 240, 320, 400];
-    const nextSafe =
-      frame.beatSyncedTelegraphIndex >= 0
-        ? point(spec.safePositions[frame.beatSyncedTelegraphIndex])
-        : frame.time < spec.phraseClearsAt
-          ? point(spec.safePositions[Math.min(2, Math.max(0, frame.beatSyncedCompletedHits))])
-          : point(spec.strikePoint);
+    const phraseVisible = frame.time >= spec.beatOrigin && frame.time < spec.phraseClearsAt;
+    const beatXs = [148, 236, 324, 412];
+    const laneShape = (center) =>
+      `M ${center - spec.laneHalfWidth} ${spec.laneTop} L ${center + spec.laneHalfWidth} ${spec.laneTop} L ${center + spec.laneHalfWidth} ${spec.laneBottom} L ${center - spec.laneHalfWidth} ${spec.laneBottom} Z`;
     return [
-      rect(...spec.arena, 0.52, 'muted', 0.025),
-      ...spec.lanes.map((center, index) => {
-        const active = index === activeLane;
-        const preview = index === previewLane;
-        return rect(
-          center - spec.laneHalfWidth,
-          spec.laneTop,
-          spec.laneHalfWidth * 2,
-          spec.laneBottom - spec.laneTop,
-          active ? 0.94 : preview ? 0.58 : phraseVisible ? 0.16 : 0.08,
-          active ? 'signal' : preview ? 'accent' : 'muted',
-          active ? 0.36 : preview ? 0.08 : 0.02,
-        );
-      }),
-      line(126, 405, 434, 405, phraseVisible ? 0.7 : 0.2, 'muted', 5),
-      ...beatXs.map((x, index) =>
-        circle(
-          x,
-          405,
-          index === frame.beatSyncedBeatSlot ? 15 + frame.beatSyncedBeatPulse * 7 : 12,
-          phraseVisible ? (index === frame.beatSyncedBeatSlot ? 0.92 : 0.34) : 0.16,
-          index === frame.beatSyncedBeatSlot ? 'accent' : 'muted',
-          index === frame.beatSyncedBeatSlot ? 6 : 4,
-          index === frame.beatSyncedBeatSlot ? 0.16 + frame.beatSyncedBeatPulse * 0.12 : 0.02,
+      path('M 54 95 L 506 95 L 517 886 L 43 886 Z', 0.52, 'muted', 0, 0.34),
+      path('M 82 105 L 479 105 L 492 195 L 68 195 Z', 0.78, 'muted', 0, 0.74),
+      path('M 100 132 L 460 132 L 468 177 L 92 177 Z', 0.42, 'accent', 0, 0.26),
+      ...spec.lanes.map((center) => path(laneShape(center), 0.62, 'muted', 0, 0.68)),
+      path('M 182 382 L 280 370 L 378 382 L 352 412 H 208 Z', 0.58, 'muted', 0, 0.82),
+      ...spec.lanes.map((center) =>
+        path(
+          `M ${center - spec.laneHalfWidth} 546 H ${center + spec.laneHalfWidth} M ${center - spec.laneHalfWidth} 656 H ${center + spec.laneHalfWidth} M ${center - spec.laneHalfWidth} 766 H ${center + spec.laneHalfWidth}`,
+          0.55,
+          'muted',
+          6,
         ),
       ),
-      circle(
-        280,
-        468,
-        22 + frame.beatSyncedBeatPulse * 20,
-        phraseVisible ? 0.42 + frame.beatSyncedBeatPulse * 0.48 : 0.12,
-        'accent',
-        6,
-        0.06,
+      ...beatXs.map((x, index) =>
+        path(
+          `M ${x} 138 L ${x + 13} 155 L ${x} 172 L ${x - 13} 155 Z M ${x - 3} 145 L ${x + 4} 155 L ${x - 3} 165 Z`,
+          phraseVisible
+            ? index === frame.beatSyncedBeatSlot
+              ? 0.66 + frame.beatSyncedBeatPulse * 0.32
+              : 0.26
+            : 0.12,
+          index === frame.beatSyncedBeatSlot ? 'accent' : 'muted',
+          0,
+          0.88,
+        ),
+      ),
+      ...spec.lanes.map((center, index) =>
+        path(
+          `M ${center} 455 L ${center + 20} 481 L ${center} 507 L ${center - 20} 481 Z M ${center} 465 V 497 M ${center - 12} 481 H ${center + 12}`,
+          index === activeLane ? 0.98 : index === previewLane ? 0.82 : phraseVisible ? 0.34 : 0.18,
+          index === activeLane ? 'signal' : 'accent',
+          0,
+          index === activeLane ? 0.82 : 0.44,
+        ),
       ),
       path(
-        previewLane >= 0
-          ? `M 280 470 L ${spec.lanes[previewLane]} ${spec.laneTop - 14} M ${spec.lanes[previewLane] - 18} ${spec.laneTop - 30} L ${spec.lanes[previewLane]} ${spec.laneTop - 14} L ${spec.lanes[previewLane] + 18} ${spec.laneTop - 30}`
-          : 'M 280 470 L 280 470',
-        previewLane >= 0 ? 0.86 : 0,
+        'M 280 272 L 294 295 L 280 317 L 266 295 Z',
+        phraseVisible ? 0.42 + frame.beatSyncedBeatPulse * 0.48 : 0.16,
         'accent',
-        6,
         0,
-        '10 8',
+        0.84,
       ),
-      circle(
-        nextSafe.x,
-        nextSafe.y,
-        38,
-        frame.time < spec.phraseClearsAt ? 0.72 : 0.18,
-        'safe',
-        6,
-        0.08,
-        '8 7',
+      ...spec.lanes.map((center, index) =>
+        path(
+          laneShape(center),
+          index === activeLane ? 0.92 : index === previewLane ? 0.56 : 0,
+          index === activeLane ? 'signal' : 'accent',
+          0,
+          index === activeLane ? 0.62 : 0.3,
+        ),
       ),
       line(frame.player.x, frame.player.y, frame.boss.x, frame.boss.y, strike, 'safe', 10),
       circle(frame.boss.x + 26, frame.boss.y - 16, 12 + strike * 24, strike, 'safe', 7, 0.14),
-      path(
-        'M 112 490 L 112 470 L 126 470 M 434 490 L 434 470 L 420 470',
-        phraseVisible ? 0.62 : 0.14,
-        'accent',
-        5,
-      ),
     ];
   }
   if (mode === 'secondary-cues-invisibility') {

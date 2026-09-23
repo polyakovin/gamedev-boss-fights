@@ -2201,7 +2201,7 @@ test('beat-synced attack shares one clock across previews, lane hits, and the au
   assert.equal(preview.beatSyncedTelegraphIndex, 0);
   assert.equal(preview.beatSyncedTelegraphLane, 2);
   assert.equal(preview.dangerActive, false);
-  assert.ok(preview.primitives[3].opacity > 0.5, 'the right lane is shown before its beat');
+  assert.ok(preview.primitives[20].opacity > 0.5, 'the right lane is shown before its beat');
 
   const right = blueprintFrame(id, 1.68);
   assert.equal(right.beatSyncedAttackIndex, 0);
@@ -2209,7 +2209,7 @@ test('beat-synced attack shares one clock across previews, lane hits, and the au
   assert.equal(right.dangerActive, true);
   assert.equal(right.playerSafe, true);
   assert.equal(blueprintPointSafe(id, 1.68, { x: 420, y: 700 }), false);
-  assert.ok(right.primitives[3].opacity > 0.9, 'the first lane activates on the beat');
+  assert.ok(right.primitives[20].opacity > 0.9, 'the first lane activates on the beat');
 
   const center = blueprintFrame(id, 2.28);
   assert.equal(center.beatSyncedAttackIndex, 1);
@@ -2230,7 +2230,7 @@ test('beat-synced attack shares one clock across previews, lane hits, and the au
 
   const punish = blueprintFrame(id, 4.18);
   assert.equal(punish.punishStrike, true);
-  assert.ok(punish.primitives[12].opacity > 0.9, 'the sword response lands during the rest');
+  assert.ok(punish.primitives[21].opacity > 0.9, 'the sword response lands during the rest');
 
   assert.deepEqual(blueprintFrame(id, 0).player, blueprintFrame(id, 6).player);
   assert.deepEqual(blueprintFrame(id, 0).boss, blueprintFrame(id, 6).boss);

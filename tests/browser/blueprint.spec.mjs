@@ -2543,6 +2543,8 @@ test('beat-synced attack counts in, lands three lanes on the clock, and exposes 
   await expect(page.locator('.wip-badge, .draft-profile')).toHaveCount(0);
   await expect(page.locator('.game-example')).toHaveCount(3);
   await expect(widget).toHaveAttribute('data-blueprint-playing', 'false');
+  await expect(widget).toHaveAttribute('data-blueprint-full-height', 'true');
+  expect((await widget.boundingBox()).height).toBeGreaterThan(800);
 
   await seek(600);
   await expect(widget).toHaveAttribute('data-blueprint-beat-synced-attack', 'tempo-count-in');
@@ -2552,7 +2554,7 @@ test('beat-synced attack counts in, lands three lanes on the clock, and exposes 
   await expect(widget).toHaveAttribute('data-blueprint-beat-synced-attack', 'pattern-cued');
   await expect(widget).toHaveAttribute('data-blueprint-beat-telegraph', '1');
   await expect(widget).toHaveAttribute('data-blueprint-beat-telegraph-lane', '2');
-  await expect(widget.locator('[data-blueprint-primitive="3"] rect')).not.toHaveAttribute(
+  await expect(widget.locator('[data-blueprint-primitive="20"] path')).not.toHaveAttribute(
     'opacity',
     '0',
   );
@@ -2581,7 +2583,7 @@ test('beat-synced attack counts in, lands three lanes on the clock, and exposes 
   await seek(4180);
   await expect(widget).toHaveAttribute('data-blueprint-beat-synced-attack', 'counter-window');
   await expect(widget).toHaveAttribute('data-blueprint-punish-strike', 'true');
-  await expect(widget.locator('[data-blueprint-primitive="12"] line')).not.toHaveAttribute(
+  await expect(widget.locator('[data-blueprint-primitive="21"] line')).not.toHaveAttribute(
     'opacity',
     '0',
   );
