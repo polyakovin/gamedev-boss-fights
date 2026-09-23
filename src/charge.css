@@ -211,6 +211,66 @@
 .charge-demo__game-bar [data-charge-game-controls] {
   color: var(--muted);
 }
+.charge-demo__touch-copy,
+.charge-demo [data-charge-touch-toggle],
+.charge-demo__touch-attack {
+  display: none;
+}
+.charge-demo__joystick {
+  position: absolute;
+  z-index: 3;
+  width: 144px;
+  height: 144px;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+.charge-demo__joystick[hidden] {
+  display: none;
+}
+.charge-demo__joystick-track {
+  position: absolute;
+  inset: 0;
+  border: 2px solid var(--accent);
+  border-radius: 50%;
+  background: var(--paper);
+  opacity: 0.65;
+}
+.charge-demo__joystick-handle {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 52px;
+  height: 52px;
+  border: 2px solid var(--ink);
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 2px 12px var(--shadow);
+  transform: translate(
+    calc(-50% + var(--charge-stick-x, 0px)),
+    calc(-50% + var(--charge-stick-y, 0px))
+  );
+}
+.charge-demo__touch-attack {
+  position: absolute;
+  z-index: 4;
+  inset: auto 0.9rem 1rem auto;
+  align-items: center;
+  justify-content: center;
+  width: 84px;
+  height: 84px;
+  padding: 0.25rem;
+  border: 2px solid var(--ink);
+  border-radius: 50%;
+  background: var(--accent);
+  color: var(--paper);
+  box-shadow: 0 4px 16px var(--shadow);
+  font: inherit;
+  font-size: 0.78rem;
+  font-weight: 700;
+  line-height: 1.1;
+  text-align: center;
+  touch-action: none;
+}
 .charge-demo__game-score {
   display: flex;
   gap: 0.9rem;
@@ -222,7 +282,7 @@
 }
 .charge-demo__game-bar button {
   padding: 0.3rem 0.7rem;
-  color: var(--paper);
+  color: var(--ink);
   background: var(--accent-soft);
   border: 1px solid var(--accent);
   border-radius: 5px;
@@ -230,6 +290,7 @@
   font: inherit;
 }
 .charge-demo:focus-visible,
+.charge-demo__touch-attack:focus-visible,
 .charge-demo__game-bar button:focus-visible {
   outline: 3px solid var(--accent);
   outline-offset: 2px;
@@ -247,6 +308,23 @@
 .charge-demo__game-score[hidden],
 .charge-demo__game-bar button[hidden] {
   display: none;
+}
+@media (pointer: coarse) {
+  .charge-demo__keyboard-copy {
+    display: none;
+  }
+  .charge-demo__touch-copy {
+    display: inline;
+  }
+  .charge-demo [data-charge-touch-toggle] {
+    display: inline-flex;
+  }
+  .charge-demo[data-charge-mode='game'] .charge-demo__canvas {
+    touch-action: none;
+  }
+  .charge-demo[data-charge-mode='game'] .charge-demo__touch-attack {
+    display: flex;
+  }
 }
 @media (max-width: 650px) {
   .charge-demo {

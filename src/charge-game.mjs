@@ -45,6 +45,7 @@ export function createChargeGame() {
     hitThisRound: false,
     struckThisRound: false,
     moving: false,
+    movementIntensity: 0,
     gait: 0,
     facing: -90,
     attackFlash: 0,
@@ -74,8 +75,8 @@ export function chargeGameFrame(game) {
     playerFacing: game.facing,
     playerMotion: {
       gait: game.gait,
-      stride: game.moving ? 0.75 : 0,
-      lean: game.moving ? 0.16 : 0,
+      stride: game.movementIntensity * 0.75,
+      lean: game.movementIntensity * 0.16,
       attack: game.attackFlash > 0 ? 1 : 0,
       impact: game.hitFlash > 0 ? 0.7 : 0,
     },
@@ -91,16 +92,23 @@ export function advanceChargeGame(game, input, elapsed) {
     const dt = Math.min(remaining, 1 / 120);
     remaining -= dt;
     const previous = chargeGameFrame(game);
-    const dx = Number(Boolean(input.right)) - Number(Boolean(input.left));
-    const dy = Number(Boolean(input.down)) - Number(Boolean(input.up));
+    const dx = Number.isFinite(input.moveX)
+      ? clamp(input.moveX, -1, 1)
+      : Number(Boolean(input.right)) - Number(Boolean(input.left));
+    const dy = Number.isFinite(input.moveY)
+      ? clamp(input.moveY, -1, 1)
+      : Number(Boolean(input.down)) - Number(Boolean(input.up));
     const length = Math.hypot(dx, dy);
-    game.moving = length > 0;
-    if (length) {
+    const intensity = Math.min(length, 1);
+    const scale = length > 1 ? 1 / length : 1;
+    game.movementIntensity = intensity;
+    game.moving = intensity > 0;
+    if (game.moving) {
       game.player = {
-        x: clamp(game.player.x + (dx / length) * PLAYER_SPEED * dt, 120, 440),
-        y: clamp(game.player.y + (dy / length) * PLAYER_SPEED * dt, 305, 655),
+        x: clamp(game.player.x + dx * scale * PLAYER_SPEED * dt, 120, 440),
+        y: clamp(game.player.y + dy * scale * PLAYER_SPEED * dt, 305, 655),
       };
-      game.gait += (PLAYER_SPEED * dt) / 20;
+      game.gait += (PLAYER_SPEED * intensity * dt) / 20;
       game.facing = (Math.atan2(dy, dx) * 180) / Math.PI;
     }
     const oldTime = game.time;

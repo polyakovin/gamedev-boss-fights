@@ -1,5 +1,6 @@
 import { chargeFrame, DURATION } from './charge-model.mjs';
 import { advanceChargeGame, chargeGameFrame, createChargeGame } from './charge-game.mjs';
+import { moveFloatingJoystick } from './charge-joystick.mjs';
 import { createCharacterAnimator } from './character-motion.mjs';
 import { createEncounterEffects } from './encounter-effects.mjs';
 
@@ -23,6 +24,7 @@ export function initializeCharge(widget) {
   const text = JSON.parse(configElement.textContent);
   const find = (selector) => widget.querySelector(selector);
   const timeline = find('[data-charge-timeline]');
+  const canvas = find('.charge-demo__canvas');
   const currentPhase = find('[data-charge-current-phase]');
   const phaseName = find('[data-charge-phase-name]');
   const phaseTooltip = find('[data-charge-phase-tooltip]');
@@ -46,8 +48,12 @@ export function initializeCharge(widget) {
   const message = find('[data-charge-game-message]');
   const score = find('[data-charge-game-score]');
   const restart = find('[data-charge-restart]');
+  const touchToggle = find('[data-charge-touch-toggle]');
+  const touchAttack = find('[data-charge-touch-attack]');
+  const joystick = find('[data-charge-joystick]');
   const motionNote = find('[data-charge-motion-note]');
   const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+  const coarsePointer = window.matchMedia('(pointer: coarse)');
   const number = new Intl.NumberFormat(document.documentElement.lang || undefined, {
     minimumFractionDigits: 1,
     maximumFractionDigits: 1,
@@ -62,7 +68,59 @@ export function initializeCharge(widget) {
   let scrubbing = false;
   let phaseHovered = false;
   let attackQueued = false;
+  let lastTouchAttackAt = -Infinity;
+  let touchPointerId = null;
+  let stick = null;
   const pressed = new Set();
+
+  function clearTouch() {
+    const pointerId = touchPointerId;
+    touchPointerId = null;
+    stick = null;
+    joystick.hidden = true;
+    if (pointerId !== null && canvas.hasPointerCapture(pointerId))
+      canvas.releasePointerCapture(pointerId);
+  }
+
+  function renderJoystick() {
+    joystick.hidden = false;
+    joystick.style.left = `${stick.center.x}px`;
+    joystick.style.top = `${stick.center.y}px`;
+    joystick.style.setProperty('--charge-stick-x', `${stick.offset.x}px`);
+    joystick.style.setProperty('--charge-stick-y', `${stick.offset.y}px`);
+  }
+
+  function onTouchStart(event) {
+    if (
+      mode !== 'game' ||
+      (event.pointerType !== 'touch' && event.pointerType !== 'pen') ||
+      touchPointerId !== null ||
+      event.target.closest('[data-charge-touch-attack]')
+    )
+      return;
+    event.preventDefault();
+    const bounds = canvas.getBoundingClientRect();
+    const center = { x: event.clientX - bounds.left, y: event.clientY - bounds.top };
+    stick = moveFloatingJoystick(center, center);
+    touchPointerId = event.pointerId;
+    canvas.setPointerCapture(touchPointerId);
+    renderJoystick();
+  }
+
+  function onTouchMove(event) {
+    if (event.pointerId !== touchPointerId) return;
+    event.preventDefault();
+    const bounds = canvas.getBoundingClientRect();
+    stick = moveFloatingJoystick(stick.center, {
+      x: event.clientX - bounds.left,
+      y: event.clientY - bounds.top,
+    });
+    renderJoystick();
+  }
+
+  function onTouchEnd(event) {
+    if (event.pointerId === touchPointerId) clearTouch();
+  }
 
   function render() {
     const frame = mode === 'demo' ? chargeFrame(time) : chargeGameFrame(game);
@@ -151,9 +209,12 @@ export function initializeCharge(widget) {
     score.hidden = mode === 'demo';
     restart.hidden = mode === 'demo' || mode === 'game';
     motionNote.hidden = !reducedMotion.matches || mode !== 'demo';
+    touchToggle.textContent = mode === 'demo' ? text.gameTouchStart : text.gameTouchExit;
     message.textContent =
       mode === 'demo'
-        ? text.gamePrompt
+        ? coarsePointer.matches
+          ? text.gameTouchPrompt
+          : text.gamePrompt
         : mode === 'won'
           ? text.gameWon
           : mode === 'lost'
@@ -181,6 +242,8 @@ export function initializeCharge(widget) {
           right: pressed.has('ArrowRight') || pressed.has('KeyD'),
           up: pressed.has('ArrowUp') || pressed.has('KeyW'),
           down: pressed.has('ArrowDown') || pressed.has('KeyS'),
+          moveX: stick?.direction.x,
+          moveY: stick?.direction.y,
           attack: attackQueued,
         };
         const oldPlayerHealth = game.playerHealth;
@@ -193,6 +256,7 @@ export function initializeCharge(widget) {
           mode = game.result;
           status.textContent = mode === 'won' ? text.gameWon : text.gameLost;
           pressed.clear();
+          clearTouch();
         }
       }
     }
@@ -215,6 +279,7 @@ export function initializeCharge(widget) {
   }
 
   function startGame() {
+    clearTouch();
     game = createChargeGame();
     mode = 'game';
     attackQueued = false;
@@ -226,6 +291,7 @@ export function initializeCharge(widget) {
   }
 
   function leaveGame() {
+    clearTouch();
     mode = 'demo';
     game = undefined;
     pressed.clear();
@@ -295,15 +361,42 @@ export function initializeCharge(widget) {
     updatePlayback();
   });
   restart.addEventListener('click', startGame);
+  touchToggle.addEventListener('click', () => {
+    if (mode === 'demo') startGame();
+    else leaveGame();
+  });
+  touchAttack.addEventListener('pointerdown', (event) => {
+    if (mode !== 'game' || (event.pointerType !== 'touch' && event.pointerType !== 'pen')) return;
+    event.preventDefault();
+    lastTouchAttackAt = performance.now();
+    attackQueued = true;
+  });
+  touchAttack.addEventListener('click', (event) => {
+    if (mode !== 'game') return;
+    if (event.detail > 0 && performance.now() - lastTouchAttackAt < 500) return;
+    attackQueued = true;
+  });
+  canvas.addEventListener('pointerdown', onTouchStart);
+  canvas.addEventListener('pointermove', onTouchMove);
+  canvas.addEventListener('pointerup', onTouchEnd);
+  canvas.addEventListener('pointercancel', onTouchEnd);
+  canvas.addEventListener('lostpointercapture', onTouchEnd);
   document.addEventListener('keydown', onKeyDown);
   document.addEventListener('keyup', onKeyUp);
-  window.addEventListener('blur', () => pressed.clear());
+  window.addEventListener('blur', () => {
+    pressed.clear();
+    clearTouch();
+  });
   reducedMotion.addEventListener('change', () => {
     render();
     updatePlayback();
   });
+  coarsePointer.addEventListener('change', render);
   document.addEventListener('visibilitychange', () => {
-    if (document.hidden) pressed.clear();
+    if (document.hidden) {
+      pressed.clear();
+      clearTouch();
+    }
     updatePlayback();
   });
   widget.dataset.chargeReady = 'true';
