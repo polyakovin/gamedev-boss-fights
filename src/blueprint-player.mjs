@@ -594,6 +594,28 @@ export function initializeBlueprint(widget) {
       widget.dataset.blueprintExternalHealingSourceSourceId = frame.externalHealingSourceSourceId;
       widget.dataset.blueprintExternalHealingSourceResultId = frame.externalHealingSourceResultId;
     }
+    if (mechanicId === 'damage-rate-cap') {
+      widget.dataset.blueprintDamageRateCap = frame.damageRateCapState;
+      widget.dataset.blueprintDamageRateCapBurstActive = String(frame.damageRateCapBurstActive);
+      widget.dataset.blueprintDamageRateCapWindowRecovered = String(
+        frame.damageRateCapWindowRecovered,
+      );
+      widget.dataset.blueprintDamageRateCapHitCount = String(frame.damageRateCapHitCount);
+      widget.dataset.blueprintDamageRateCapRaw = String(frame.damageRateCapRawDamage);
+      widget.dataset.blueprintDamageRateCapApplied = String(frame.damageRateCapAppliedDamage);
+      widget.dataset.blueprintDamageRateCapPrevented = String(frame.damageRateCapPreventedDamage);
+      widget.dataset.blueprintDamageRateCapTotalApplied = String(frame.damageRateCapTotalApplied);
+      widget.dataset.blueprintDamageRateCapRecent = String(
+        Math.round(frame.damageRateCapRecentDamage),
+      );
+      widget.dataset.blueprintDamageRateCapThreshold = String(frame.damageRateCapThreshold);
+      widget.dataset.blueprintDamageRateCapMultiplier = frame.damageRateCapMultiplier.toFixed(3);
+      widget.dataset.blueprintDamageRateCapBossHealth = String(
+        Math.round(frame.damageRateCapBossHealth),
+      );
+      widget.dataset.blueprintDamageRateCapEventCount = String(frame.damageRateCapEventCount);
+      widget.dataset.blueprintDamageRateCapLastHitId = frame.damageRateCapLastHitId;
+    }
     boss.setAttribute(
       'transform',
       `translate(${frame.boss.x} ${frame.boss.y}) scale(${frame.bossScale})`,

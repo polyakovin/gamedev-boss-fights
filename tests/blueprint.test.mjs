@@ -53,6 +53,8 @@ import {
   selfHealCastResolve,
   externalHealingSourceState,
   externalHealingSourceResolve,
+  damageRateCapState,
+  damageRateCapResolve,
   counterStanceOutcome,
   counterStanceState,
   blueprintFrame,
@@ -80,8 +82,8 @@ import {
   renderBlueprintThumbnail,
 } from '../lib/blueprint-view.mjs';
 
-test('all 92 promoted lesson animations have distinct rule modes and complete moving frames', () => {
-  assert.equal(BLUEPRINT_MECHANIC_IDS.length, 92);
+test('all 93 promoted lesson animations have distinct rule modes and complete moving frames', () => {
+  assert.equal(BLUEPRINT_MECHANIC_IDS.length, 93);
   const modes = new Set();
   for (const id of BLUEPRINT_MECHANIC_IDS) {
     for (let time = 0; time <= BLUEPRINT_DURATION; time += 0.1) {
@@ -102,7 +104,7 @@ test('all 92 promoted lesson animations have distinct rule modes and complete mo
           assert.ok(Number.isFinite(value), `${id} has an invalid ${primitive.type}`);
     }
   }
-  assert.equal(modes.size, 92);
+  assert.equal(modes.size, 93);
 });
 
 test('every blueprint exposes signal, committed action, and recovery without player teleports', () => {
@@ -144,7 +146,8 @@ test('every blueprint exposes signal, committed action, and recovery without pla
       id !== 'resource-steal' &&
       id !== 'on-hit-healing' &&
       id !== 'self-heal-cast' &&
-      id !== 'external-healing-source'
+      id !== 'external-healing-source' &&
+      id !== 'damage-rate-cap'
     )
       assert.equal(blueprintFrame(id, 3).dangerActive, true, id);
     assert.equal(blueprintFrame(id, 3).playerSafe, true, id);
@@ -236,6 +239,7 @@ test('every damaging promoted animation derives safety from its own active geome
       id !== 'on-hit-healing' &&
       id !== 'self-heal-cast' &&
       id !== 'external-healing-source' &&
+      id !== 'damage-rate-cap' &&
       id !== 'part-break' &&
       id !== 'counter-stance' &&
       id !== 'absorption-power-up' &&
@@ -3522,5 +3526,64 @@ test('external healing sources separate interception from one delivered heal', (
   assert.match(
     renderBlueprintThumbnail(id, 'test-external-healing-source'),
     /data-blueprint-preview="external-healing-source"/,
+  );
+});
+
+test('damage-rate cap attenuates a burst and restores full damage after decay', () => {
+  const id = 'damage-rate-cap';
+  assert.deepEqual([0, 0.5, 0.95, 1.75, 1.9, 2.2, 3.6, 4.6, 5, 5.38, 5.5].map(damageRateCapState), [
+    'ready',
+    'isolated-signal',
+    'isolated-hit',
+    'window-cleared',
+    'burst-signal',
+    'burst-attenuating',
+    'window-decaying',
+    'recovered-signal',
+    'recovered-hit',
+    'recovery',
+    'reset',
+  ]);
+  assert.deepEqual(damageRateCapResolve({ hitId: 'isolated-1' }), {
+    rawDamage: 18,
+    recentDamage: 0,
+    threshold: 18,
+    multiplier: 1,
+    appliedDamage: 18,
+    preventedDamage: 0,
+    eventCount: 1,
+    hitId: 'isolated-1',
+  });
+  assert.equal(damageRateCapResolve({ recentDamage: 18 }).appliedDamage, 9);
+  assert.equal(damageRateCapResolve({ recentDamage: 36 }).appliedDamage, 6);
+  assert.equal(damageRateCapResolve({ recentDamage: 54 }).appliedDamage, 5);
+  assert.equal(damageRateCapResolve({ recentDamage: 54 }).multiplier, 0.25);
+  assert.equal(damageRateCapResolve({ alreadyResolved: true }).eventCount, 0);
+
+  const isolated = blueprintFrame(id, 0.95);
+  assert.equal(isolated.damageRateCapHitCount, 1);
+  assert.equal(isolated.damageRateCapBossHealth, 82);
+  assert.equal(isolated.damageRateCapAppliedDamage, 18);
+  const burst = blueprintFrame(id, 3.2);
+  assert.equal(burst.damageRateCapBurstActive, true);
+  assert.equal(burst.damageRateCapHitCount, 5);
+  assert.equal(burst.damageRateCapBossHealth, 44);
+  assert.equal(burst.damageRateCapAppliedDamage, 5);
+  assert.equal(burst.damageRateCapPreventedDamage, 13);
+  assert.equal(burst.damageRateCapMultiplier, 0.25);
+  const recovered = blueprintFrame(id, 4.6);
+  assert.equal(recovered.damageRateCapWindowRecovered, true);
+  assert.equal(recovered.damageRateCapRecentDamage, 0);
+  assert.equal(recovered.damageRateCapMultiplier, 1);
+  const finalHit = blueprintFrame(id, 5);
+  assert.equal(finalHit.damageRateCapHitCount, 6);
+  assert.equal(finalHit.damageRateCapBossHealth, 26);
+  assert.equal(finalHit.damageRateCapAppliedDamage, 18);
+  assert.equal(finalHit.damageRateCapLastHitId, 'recovered-1');
+  assert.equal(blueprintPointSafe(id, 3.13, { x: 300, y: 660 }), true);
+  assert.deepEqual(blueprintFrame(id, 0).player, blueprintFrame(id, 6).player);
+  assert.match(
+    renderBlueprintThumbnail(id, 'test-damage-rate-cap'),
+    /data-blueprint-preview="damage-rate-cap"/,
   );
 });

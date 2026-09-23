@@ -1426,6 +1426,28 @@ const SPECS = {
     healAmount: 18,
     sourceRadius: 38,
   },
+  'damage-rate-cap': {
+    mode: 'damage-rate-cap',
+    boss: [300, 375],
+    player: [300, 660],
+    target: [300, 660],
+    arena: [55, 310, 450, 590],
+    isolatedSignal: [0.34, 0.82],
+    isolatedHitAt: 0.92,
+    firstWindowClearsAt: 1.72,
+    burstSignal: [1.82, 2.02],
+    burstHits: [2.08, 2.43, 2.78, 3.13],
+    burstEndsAt: 3.48,
+    decay: [3.48, 4.48],
+    recoveredSignal: [4.48, 4.82],
+    recoveredHitAt: 4.94,
+    recoveryEndsAt: 5.34,
+    resetAt: 5.42,
+    bossHealthBefore: 100,
+    rawDamage: 18,
+    threshold: 18,
+    minimumMultiplier: 0.25,
+  },
   'wide-swing': { mode: 'arc', boss: [280, 310], player: [410, 470], target: [470, 650] },
   lunge: { mode: 'lunge', boss: [170, 290], player: [390, 590], target: [470, 660] },
   grab: { mode: 'grab', boss: [280, 300], player: [390, 485], target: [470, 610] },
@@ -2710,6 +2732,48 @@ export function externalHealingSourceResolve({
     sourceId: qualifies ? String(sourceId) : 'none',
     eventCount: applied > 0 ? 1 : 0,
     resultId: applied > 0 ? `external-heal-${String(sourceId)}` : 'none',
+  });
+}
+
+export function damageRateCapState(time) {
+  const spec = SPECS['damage-rate-cap'];
+  const t = localTime(time);
+  if (t < spec.isolatedSignal[0]) return 'ready';
+  if (t < spec.isolatedHitAt) return 'isolated-signal';
+  if (t < spec.firstWindowClearsAt) return 'isolated-hit';
+  if (t < spec.burstSignal[0]) return 'window-cleared';
+  if (t < spec.burstHits[0]) return 'burst-signal';
+  if (t < spec.burstEndsAt) return 'burst-attenuating';
+  if (t < spec.decay[1]) return 'window-decaying';
+  if (t < spec.recoveredHitAt) return 'recovered-signal';
+  if (t < spec.recoveryEndsAt) return 'recovered-hit';
+  if (t < spec.resetAt) return 'recovery';
+  return 'reset';
+}
+
+export function damageRateCapResolve({
+  rawDamage = 18,
+  recentDamage = 0,
+  threshold = 18,
+  minimumMultiplier = 0.25,
+  hitId = 'damage-rate-cap-hit-1',
+  alreadyResolved = false,
+} = {}) {
+  const raw = Math.max(0, Number(rawDamage) || 0);
+  const recent = Math.max(0, Number(recentDamage) || 0);
+  const limit = Math.max(1, Number(threshold) || 1);
+  const floor = clamp(Number(minimumMultiplier) || 0, 0, 1);
+  const multiplier = Math.max(floor, Math.min(1, limit / Math.max(limit, recent + raw)));
+  const applied = alreadyResolved ? 0 : Math.round(raw * multiplier);
+  return Object.freeze({
+    rawDamage: raw,
+    recentDamage: recent,
+    threshold: limit,
+    multiplier,
+    appliedDamage: applied,
+    preventedDamage: alreadyResolved ? 0 : raw - applied,
+    eventCount: alreadyResolved || raw <= 0 ? 0 : 1,
+    hitId: alreadyResolved || raw <= 0 ? 'none' : String(hitId),
   });
 }
 
@@ -6704,6 +6768,87 @@ function primitivesFor(spec, frame) {
       ),
     ];
   }
+  if (mode === 'damage-rate-cap') {
+    const hitTimes = [spec.isolatedHitAt, ...spec.burstHits, spec.recoveredHitAt];
+    const lastHitAt = hitTimes.reduce(
+      (latest, hitAt) => (frame.time >= hitAt ? hitAt : latest),
+      -1,
+    );
+    const impact = lastHitAt < 0 ? 0 : strikePulse(frame.time, lastHitAt, 0.34);
+    const healthWidth = 236 * (frame.damageRateCapBossHealth / 100);
+    const meterWidth = 196 * clamp(frame.damageRateCapRecentDamage / (spec.threshold * 4));
+    const appliedWidth = 96 * (frame.damageRateCapAppliedDamage / spec.rawDamage);
+    const attenuation = 1 - frame.damageRateCapMultiplier;
+    return [
+      rect(...spec.arena, 0.52, 'muted', 0.025),
+      rect(178, 318, 244, 24, 0.74, 'muted', 0.035),
+      rect(182, 322, healthWidth, 16, 0.96, 'signal', 0.18),
+      line(182 + healthWidth, 314, 182 + healthWidth, 346, 0.82, 'signal', 4),
+      rect(200, 472, 200, 18, 0.78, 'muted', 0.04),
+      rect(202, 474, meterWidth, 14, 0.96, attenuation > 0 ? 'signal' : 'safe', 0.2),
+      line(251, 466, 251, 496, 0.9, 'accent', 4),
+      ...Array.from({ length: 4 }, (_, index) =>
+        circle(
+          225 + index * 50,
+          530,
+          11,
+          frame.damageRateCapRecentDamage >= spec.threshold * (index + 1) ? 0.96 : 0.2,
+          frame.damageRateCapRecentDamage >= spec.threshold * (index + 1) ? 'signal' : 'muted',
+          4,
+          0.14,
+        ),
+      ),
+      circle(
+        frame.boss.x,
+        frame.boss.y - 24,
+        58 + attenuation * 38,
+        attenuation > 0 ? 0.34 + attenuation * 0.5 : 0.08,
+        'signal',
+        8,
+        0.025,
+        '11 8',
+      ),
+      circle(
+        frame.boss.x,
+        frame.boss.y - 24,
+        43 + attenuation * 22,
+        attenuation > 0 ? 0.2 + attenuation * 0.42 : 0,
+        'accent',
+        6,
+        0.02,
+      ),
+      path(
+        `M ${frame.player.x + 26} ${frame.player.y - 70} L ${frame.player.x + 92} ${frame.player.y - 136}`,
+        impact,
+        'accent',
+        11,
+      ),
+      line(
+        frame.boss.x - 70,
+        frame.boss.y - 96,
+        frame.boss.x + 62,
+        frame.boss.y + 36,
+        impact,
+        'safe',
+        7,
+      ),
+      circle(frame.boss.x, frame.boss.y - 24, 54 + impact * 54, impact, 'accent', 9, 0.03),
+      rect(80, 760, 100, 18, frame.damageRateCapHitCount > 0 ? 0.7 : 0, 'muted', 0.04),
+      rect(82, 762, 96, 14, frame.damageRateCapHitCount > 0 ? 0.72 : 0, 'accent', 0.16),
+      rect(80, 794, 100, 18, frame.damageRateCapHitCount > 0 ? 0.7 : 0, 'muted', 0.04),
+      rect(82, 796, appliedWidth, 14, frame.damageRateCapHitCount > 0 ? 0.96 : 0, 'safe', 0.22),
+      line(
+        82 + appliedWidth,
+        788,
+        178,
+        788,
+        frame.damageRateCapPreventedDamage > 0 ? 0.9 : 0,
+        'signal',
+        5,
+        '6 5',
+      ),
+    ];
+  }
   if (mode === 'encounter-specific-tool') {
     const pedestal = point(spec.pedestal);
     const spearBase = { x: frame.player.x - 8, y: frame.player.y - 22 };
@@ -8225,6 +8370,7 @@ function pointClearsThreat(spec, frame, value, radius = BLUEPRINT_PLAYER_RADIUS)
     );
   if (mode === 'self-heal-cast') return true;
   if (mode === 'external-healing-source') return true;
+  if (mode === 'damage-rate-cap') return true;
   if (mode === 'projectile-rally')
     return (
       !frame.dangerActive ||
@@ -8614,6 +8760,7 @@ export function blueprintFrame(id, time) {
   else if (spec.mode === 'on-hit-healing') responseProgress = 0;
   else if (spec.mode === 'self-heal-cast') responseProgress = 0;
   else if (spec.mode === 'external-healing-source') responseProgress = 0;
+  else if (spec.mode === 'damage-rate-cap') responseProgress = 0;
   else if (spec.mode === 'knockback')
     responseProgress = phase === 0 ? 0 : phase === 1 ? smooth(action) : 1;
   else if (spec.mode === 'target-lock')
@@ -10331,7 +10478,8 @@ export function blueprintFrame(id, time) {
             spec.mode === 'resource-steal' ||
             spec.mode === 'on-hit-healing' ||
             spec.mode === 'self-heal-cast' ||
-            spec.mode === 'external-healing-source'
+            spec.mode === 'external-healing-source' ||
+            spec.mode === 'damage-rate-cap'
           ? (Math.atan2(boss.y - player.y, boss.x - player.x) * 180) / Math.PI
           : spec.mode === 'active-phase'
             ? (Math.atan2(boss.y - player.y, boss.x - player.x) * 180) / Math.PI
@@ -11538,6 +11686,70 @@ export function blueprintFrame(id, time) {
     frame.playerMotion.impact = 0;
     frame.bossMotion.attack = frame.externalHealingSourceHealing ? pulse(healingProgress) * 0.4 : 0;
   }
+  if (spec.mode === 'damage-rate-cap') {
+    const hits = [
+      { at: spec.isolatedHitAt, recent: 0, id: 'isolated-1' },
+      { at: spec.burstHits[0], recent: 0, id: 'burst-1' },
+      { at: spec.burstHits[1], recent: 18, id: 'burst-2' },
+      { at: spec.burstHits[2], recent: 36, id: 'burst-3' },
+      { at: spec.burstHits[3], recent: 54, id: 'burst-4' },
+      { at: spec.recoveredHitAt, recent: 0, id: 'recovered-1' },
+    ];
+    const resolvedHits = hits
+      .filter(({ at }) => t >= at)
+      .map(({ recent, id }) =>
+        damageRateCapResolve({
+          rawDamage: spec.rawDamage,
+          recentDamage: recent,
+          threshold: spec.threshold,
+          minimumMultiplier: spec.minimumMultiplier,
+          hitId: id,
+        }),
+      );
+    const activeHits = t >= spec.resetAt ? [] : resolvedHits;
+    const latest = activeHits.at(-1);
+    const totalApplied = activeHits.reduce((sum, hit) => sum + hit.appliedDamage, 0);
+    let recentDamage = 0;
+    if (t >= spec.isolatedHitAt && t < spec.firstWindowClearsAt)
+      recentDamage = mix(spec.rawDamage, 0, smooth((t - (spec.firstWindowClearsAt - 0.42)) / 0.42));
+    if (t >= spec.burstHits[0] && t < spec.decay[0])
+      recentDamage = spec.rawDamage * spec.burstHits.filter((hitAt) => t >= hitAt).length;
+    if (t >= spec.decay[0] && t < spec.decay[1])
+      recentDamage = mix(
+        spec.rawDamage * spec.burstHits.length,
+        0,
+        smooth((t - spec.decay[0]) / (spec.decay[1] - spec.decay[0])),
+      );
+    if (t >= spec.recoveredHitAt && t < spec.resetAt) recentDamage = spec.rawDamage;
+    frame.damageRateCapState = damageRateCapState(t);
+    frame.damageRateCapHitCount = activeHits.length;
+    frame.damageRateCapRawDamage = latest?.rawDamage ?? 0;
+    frame.damageRateCapAppliedDamage = latest?.appliedDamage ?? 0;
+    frame.damageRateCapPreventedDamage =
+      t >= spec.decay[1] && t < spec.recoveredHitAt ? 0 : (latest?.preventedDamage ?? 0);
+    frame.damageRateCapTotalApplied = totalApplied;
+    frame.damageRateCapRecentDamage = recentDamage;
+    frame.damageRateCapThreshold = spec.threshold;
+    frame.damageRateCapMultiplier =
+      t >= spec.decay[1] && t < spec.recoveredHitAt ? 1 : (latest?.multiplier ?? 1);
+    frame.damageRateCapLastHitId = latest?.hitId ?? 'none';
+    frame.damageRateCapEventCount = activeHits.length;
+    frame.damageRateCapBurstActive = t >= spec.burstHits[0] && t < spec.burstEndsAt;
+    frame.damageRateCapWindowRecovered = t >= spec.decay[1] && t < spec.resetAt;
+    frame.damageRateCapBossHealth =
+      t < spec.resetAt
+        ? spec.bossHealthBefore - totalApplied
+        : mix(
+            spec.bossHealthBefore - resolvedHits.reduce((sum, hit) => sum + hit.appliedDamage, 0),
+            spec.bossHealthBefore,
+            smooth((t - spec.resetAt) / (BLUEPRINT_DURATION - spec.resetAt)),
+          );
+    frame.dangerActive = false;
+    frame.playerMotion.attack = Math.max(...hits.map(({ at }) => strikePulse(t, at, 0.36)));
+    frame.playerMotion.dodge = 0;
+    frame.playerMotion.impact = 0;
+    frame.bossMotion.attack = Math.max(...hits.map(({ at }) => strikePulse(t, at, 0.3)));
+  }
   if (spec.mode === 'ability-lock') {
     frame.abilityLockState = abilityLockState(t);
     frame.abilityLockFirstAvoided = t >= spec.firstResolveAt && t < spec.secondTelegraph[0];
@@ -11864,7 +12076,8 @@ export function blueprintFrame(id, time) {
             spec.mode === 'ability-lock' ||
             spec.mode === 'on-hit-healing' ||
             spec.mode === 'self-heal-cast' ||
-            spec.mode === 'external-healing-source'
+            spec.mode === 'external-healing-source' ||
+            spec.mode === 'damage-rate-cap'
           ? 92
           : -62),
   };

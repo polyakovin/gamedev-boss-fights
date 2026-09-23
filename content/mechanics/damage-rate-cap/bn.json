@@ -1,0 +1,138 @@
+{
+  "title": "অভিযোজিত ড্যামেজ-রেট সীমা",
+  "subtitle": "বসকে অজেয় না করেই বার্স্ট ড্যামেজ সীমিত করুন",
+  "variant": "মাপুন · কমান · ক্ষয় করুন · ফিরিয়ে আনুন",
+  "summary": "সাম্প্রতিক বা অনুমিত বার্স্ট ড্যামেজ নতুন আঘাতের বসে পৌঁছানো অংশ কমায়; ড্যামেজ উইন্ডো খালি হলে attenuation সরে যায়।",
+  "overview": "ড্যামেজ-রেট সীমা সাধারণ আঘাতে হেলথ কমতে দেয়, কিন্তু অতিরিক্ত বার্স্ট থেকে encounter-এর গঠন রক্ষা করে। Rolling window বা weapon-DPS model চাপ মাপে এবং threshold-এর ওপরে পরের আঘাত কমায়। স্পষ্ট window, curve, floor, decay, exception order ও feedback দরকার।",
+  "learning": "Damage sample, window duration, threshold, attenuation curve, minimum multiplier, hit ও damage-type exception, first hit, decay, phase reset, multiplayer aggregation, application order, স্থিতিশীল hit id, rollback এবং raw/applied/prevented telemetry নির্ধারণ করুন।",
+  "category": "অবস্থা, রিসোর্স ও স্কেলিং",
+  "readTime": "১০ মিনিট",
+  "demo": {
+    "title": "একটি আলাদা তলোয়ার আঘাতের সঙ্গে দ্রুত বার্স্ট তুলনা করে সীমা ফিরে আসা পর্যন্ত অপেক্ষা করুন",
+    "timeline": "অভিযোজিত ড্যামেজ-রেট সীমার টাইমলাইন",
+    "step": "আলাদা আঘাত, attenuated burst, decay ও restored hit",
+    "phaseNames": [
+      "পূর্ণ ড্যামেজ স্থাপন করুন",
+      "সাম্প্রতিক ড্যামেজ উইন্ডো পূরণ করুন",
+      "Attenuation ক্ষয় হতে দিন"
+    ],
+    "phaseDescriptions": [
+      "টাভি ০.৯২ সেকেন্ডে ১৮ পয়েন্টের আলাদা আঘাত করে। উইন্ডোতে সাম্প্রতিক ড্যামেজ নেই, তাই পুরো ১৮ প্রয়োগ হয় এবং কার্ন ১০০ থেকে ৮২-তে নামে।",
+      "২.০৮ সেকেন্ডে চার আঘাতের বার্স্ট শুরু হয়। একই raw ১৮ যথাক্রমে ১৮, ৯, ৬ ও ৫ প্রয়োগ করে; কার্ন ১০-এর বদলে ৪৪-এ থাকে।",
+      "৩.৪৮ থেকে ৪.৪৮ সেকেন্ডে মিটার খালি হয়। ৪.৯৪ সেকেন্ডে নতুন ১৮-পয়েন্ট আঘাত আবার পুরো ১৮ প্রয়োগ করে—এটি pacing, invulnerability নয়।"
+    ],
+    "boss": "বস",
+    "player": "খেলোয়াড়",
+    "danger": "প্রতিটি hit একবারই resolve হয়; শুধু measured pressure, curve ও floor অনুযায়ী applied amount বদলায়",
+    "locked": "Window membership, threshold, multiplier, exception order, phase reset, multiplayer ownership, rollback ও health mutation encounter logic-এ থাকে",
+    "safe": "Raw ও applied damage, recent window, বদলানো protection এবং সঠিক boss-health ফল দেখান",
+    "reducedMotion": "Reduced motion-এ autoplay বন্ধ। ০.৩৪, ০.৯২, ১.৭২, ২.০৮, ২.৪৩, ২.৭৮, ৩.১৩, ৩.৪৮, ৪.৪৮, ৪.৯৪ ও ৫.৪২ সেকেন্ড দেখুন।",
+    "diagramDescription": "টাভির প্রথম আঘাত পূর্ণ ড্যামেজ দেয়; দ্রুত সিরিজের সমান আঘাত মিটার পূর্ণ হলে ছোট হয়। মিটার খালি হলে পরেরটি আবার পূর্ণ হয়।"
+  },
+  "steps": [
+    {
+      "title": "নিয়ম কোন চাপ মাপে?",
+      "body": "Rolling sum, weighted history, weapon burst-DPS estimate বা স্পষ্ট sample বেছে নিন। কোন hits ঢোকে, কখন বের হয়, players window ভাগ করে কি না এবং current hit যোগের আগে না পরে evaluate হয় তা লিখুন।"
+    },
+    {
+      "title": "চাপ একটি hit কীভাবে বদলায়?",
+      "body": "লিখিত threshold, curve ও nonzero floor দিয়ে pressure-কে multiplier-এ নিন। Determinism রাখুন এবং critical, armor, vulnerability, shield ও attenuation-এর ক্রম ঠিক করুন।"
+    },
+    {
+      "title": "খেলোয়াড় কীভাবে পড়বে ও পরীক্ষা করবে?",
+      "body": "Applied damage, health loss ও recovery আলাদা করুন। Isolated hit, burst, DoT, multihit, focus fire, phase, latency, duplicate event এবং threshold-এর দুই পাশের build পরীক্ষা করুন।"
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "বেশি power ব্যাখ্যা ছাড়া একই ফল দেয়",
+      "body": "Numbers, reaction ও health loss attenuation না দেখালে সিস্টেম bug মনে হয়। Threshold-এর দুই পাশেই অর্থপূর্ণ gain রাখুন এবং multiplier বদল দেখান।"
+    },
+    {
+      "title": "সীমা লুকানো invulnerability হয়ে যায়",
+      "body": "প্রায় শূন্য floor, দীর্ঘ memory বা সর্বদা refresh হওয়া window বৈধ খেলা মুছে দেয়। Window life বেঁধে প্রতিটি hit-এর উপকারী অবদান রাখুন।"
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "Damage transaction-এর ক্রম রাখুন",
+      "body": "প্রতি hit-এ hitId, sourceId, rawDamage, recentSample, threshold, multiplier, appliedDamage, preventedDamage, healthBefore, healthAfter ও সময় রাখুন। একই id দ্বিতীয়বার প্রয়োগ হবে না।"
+    },
+    {
+      "title": "সীমা কোন skill পুরস্কৃত করবে ঠিক করুন",
+      "body": "Rolling window cadence ও pause পুরস্কৃত করতে পারে; weapon-DPS model loadout সমান করে কিন্তু কম তাৎক্ষণিক। Encounter রক্ষা করুন, কাঙ্ক্ষিত combat verb নয়।"
+    },
+    {
+      "title": "শুধু জয় নয়, compression মাপুন",
+      "body": "Raw/applied ratio, threshold-এর ওপরে সময়, prevented damage, kill time, phase skip, first-hit spike, multiplayer concentration ও rule recognition track করুন।"
+    }
+  ],
+  "story": {
+    "title": "দ্রুত আঘাতে কার্নের rune শক্ত হয়",
+    "body": "একটি মাপা কোপ পাথর কাটে। টাভি দ্রুত আঘাত করলে rune শক্তি ছড়ায়; এক মুহূর্ত নীরবতার পর আলো নিভে তলোয়ার আবার গভীরে যায়।"
+  },
+  "adaptation": {
+    "title": "সংখ্যার বাইরে pressure ও recovery দেখান",
+    "body": "Health bar, sound, impact weight, color, vibration, protection aura ও optional meter মিলিয়ে দিন। Softer curve, shorter window, higher floor বা visible threshold দিন।"
+  },
+  "distinction": {
+    "title": "Armor, per-hit cap বা health gate নয়",
+    "body": "Armor স্থিরভাবে কমায়, per-hit cap একটি বড় আঘাত কাটে, health gate নির্দিষ্ট সীমায় থামায়। এটি recent বা estimated pressure অনুযায়ী পরের hits বদলায় এবং decay-এর পর ফিরে আসে।"
+  },
+  "lensNotes": [
+    {
+      "id": "progress-clarity",
+      "body": "Raw, applied, pressure meter ও health loss burst-এর progress compression এবং recovery বোঝায়।"
+    },
+    {
+      "id": "risk-reward",
+      "body": "Burst চালালে tempo থাকে কিন্তু efficiency কমে; pause সময় ও position দিয়ে efficiency ফেরায়।"
+    },
+    {
+      "id": "rule-exception",
+      "body": "First hit, critical, DoT, multihit, phase reset, focus fire ও duplicate callback-এর স্পষ্ট order দরকার।"
+    },
+    {
+      "id": "player-expression",
+      "body": "Curve ঠিক করে burst, sustained damage, coordinated volley ও cadence আলাদা style থাকবে কি না।"
+    },
+    {
+      "id": "difficulty-rhythm",
+      "body": "Window ও decay-এর pressure-release rhythm boss opening-এর সঙ্গে মিলতে হবে।"
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "The Binding of Isaac: Repentance",
+      "boss": "Hush",
+      "screenshot": "https://i.ytimg.com/vi/SAy8fV6yGRA/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=SAy8fV6yGRA&t=120s",
+      "video": "https://www.youtube.com/watch?v=SAy8fV6yGRA&t=120s",
+      "videoDurationSeconds": 508,
+      "body": "২:০০ থেকে Hush-এর দ্বিতীয় রূপ extreme burst থেকে রক্ষিত দীর্ঘ encounter দেখায়। Damage Scaling আগের চার সেকেন্ডের unmodified damage track করে multiplier-কে floor-এর দিকে নামায়।"
+    },
+    {
+      "dimension": "3D",
+      "game": "Warframe",
+      "boss": "Archon Boreal",
+      "screenshot": "https://i.ytimg.com/vi/rtl0o3M0e-A/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=rtl0o3M0e-A&t=462s",
+      "video": "https://www.youtube.com/watch?v=rtl0o3M0e-A&t=462s",
+      "videoDurationSeconds": 842,
+      "body": "৭:৪২-এ extreme first-hit setup Damage Attenuation সত্ত্বেও Boreal-কে হারায়। Initialization ও operation order curve-এর মতোই গুরুত্বপূর্ণ।"
+    },
+    {
+      "dimension": "3D",
+      "game": "Warframe",
+      "boss": "The Fragmented One",
+      "screenshot": "https://i.ytimg.com/vi/s8ur1I8hi7I/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=s8ur1I8hi7I&t=660s",
+      "video": "https://www.youtube.com/watch?v=s8ur1I8hi7I&t=660s",
+      "videoDurationSeconds": 831,
+      "body": "Boss fight ১১:০০-এ শুরু। Documented Damage Attenuation ও maximum DPS-এর জন্য continuous weapon, fire rate, status ও দীর্ঘ health read যাচাই দরকার।"
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

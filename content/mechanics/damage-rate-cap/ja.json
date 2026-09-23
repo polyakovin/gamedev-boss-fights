@@ -1,0 +1,134 @@
+{
+  "title": "適応型ダメージレート上限",
+  "subtitle": "ボスを無敵にせず瞬間火力を抑える",
+  "variant": "計測 · 減衰 · 消失 · 回復",
+  "summary": "直近または推定された瞬間火力に応じて新しい攻撃の実ダメージを下げ、計測窓が空になると減衰を解除します。",
+  "overview": "ダメージレート上限は、通常攻撃で体力を減らせる状態を保ちながら、極端な瞬間火力によるフェーズ飛ばしを防ぎます。移動窓の合計や武器DPSモデルで圧力を推定し、しきい値を超えた後続ダメージを減らします。窓、曲線、下限、減衰、例外順序、読み取れるフィードバックを明示してください。",
+  "learning": "計測サンプル、窓の長さ、しきい値、減衰曲線、最小倍率、例外、初撃、減衰、フェーズリセット、マルチプレイ集計、適用順、安定したhit id、rollback、raw/applied/prevented damageのテレメトリを定義します。",
+  "category": "状態・リソース・スケーリング",
+  "readTime": "10分",
+  "demo": {
+    "title": "単発の剣撃と連撃を比較し、上限の回復を待つ",
+    "timeline": "適応型ダメージレート上限のタイムライン",
+    "step": "単発、減衰する連撃、消失、回復した一撃",
+    "phaseNames": ["全ダメージを基準にする", "直近ダメージ窓を満たす", "減衰を消失させる"],
+    "phaseDescriptions": [
+      "タヴィは0.92秒に18の単発攻撃を当てます。直近ダメージがないため18すべてが適用され、ケルンの体力は100から82になります。",
+      "2.08秒から4連撃が始まります。同じraw 18でも、窓が満ちるにつれて適用値は18、9、6、5となり、体力は10ではなく44になります。",
+      "3.48〜4.48秒にメーターが空になります。4.94秒の18ダメージは再び18すべてが適用され、無敵ではなくペース制御だと示します。"
+    ],
+    "boss": "ボス",
+    "player": "プレイヤー",
+    "danger": "各ヒットは一度だけ解決され、計測圧力・曲線・下限によって適用量だけが変わる",
+    "locked": "窓への所属、しきい値、倍率、例外順、フェーズリセット、マルチプレイ所有権、rollback、体力更新は戦闘ロジックが管理する",
+    "safe": "rawとapplied damage、直近窓、変化する防御、正確な体力結果を表示する",
+    "reducedMotion": "視差軽減時は自動再生しません。0.34、0.92、1.72、2.08、2.43、2.78、3.13、3.48、4.48、4.94、5.42秒を確認してください。",
+    "diagramDescription": "タヴィの単発は全ダメージになり、続く同じ強さの連撃はメーターが満ちるほど小さくなります。メーターが空になると再び全ダメージになります。"
+  },
+  "steps": [
+    {
+      "title": "何の圧力を計測するか？",
+      "body": "移動合計、重み付き履歴、武器のburst-DPSなど明示的なサンプルを選びます。含む攻撃、期限、共有窓、現在のヒットを評価前後どちらで追加するかを記録します。"
+    },
+    {
+      "title": "圧力がヒットをどう変えるか？",
+      "body": "文書化したしきい値、曲線、ゼロでない下限で倍率へ変換します。決定論を保ち、クリティカル、装甲、弱点、シールド、減衰の順序を決めます。"
+    },
+    {
+      "title": "どう読み、どうテストするか？",
+      "body": "適用ダメージ、体力減少、回復を区別します。単発、連撃、DoT、多段、集中攻撃、フェーズ、遅延、重複、しきい値の両側のビルドを試します。"
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "強化しても説明なく同じ結果になる",
+      "body": "数値、反応、体力が減衰を示さないと不具合に見えます。しきい値の前後でも意味ある成長を残し、倍率変化を伝えます。"
+    },
+    {
+      "title": "上限が隠れた無敵になる",
+      "body": "ゼロに近い下限、長すぎる記憶、常時更新される窓は有効なプレイを消します。寿命を制限し、各ヒットに有用な寄与を残します。"
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "ダメージ取引の順序を保つ",
+      "body": "hitId、sourceId、rawDamage、recentSample、threshold、multiplier、appliedDamage、preventedDamage、healthBefore、healthAfter、時刻を保存し、同じidを二重適用しません。"
+    },
+    {
+      "title": "何の技量を報いるか決める",
+      "body": "移動窓は間合いと休止を報い、武器DPSモデルは装備差をならします。守りたい戦闘動詞を無効にせず構造を保護します。"
+    },
+    {
+      "title": "勝敗だけでなく圧縮を測る",
+      "body": "raw/applied比、しきい値超過時間、防いだ量、討伐時間、フェーズ飛ばし、初撃スパイク、集中度、理解度を記録します。"
+    }
+  ],
+  "story": {
+    "title": "連撃に反応してケルンのルーンが硬化する",
+    "body": "一度の斬撃は石を深く切ります。タヴィが攻撃を重ねるとルーンが力を分散し、静かな一拍の後に光が消えて刃が再び深く入ります。"
+  },
+  "adaptation": {
+    "title": "数値以外でも圧力と回復を示す",
+    "body": "体力バー、音、衝撃、色、振動、防御オーラ、任意のメーターを組み合わせます。曲線を緩くし、窓を短くし、下限を上げ、しきい値を表示できます。"
+  },
+  "distinction": {
+    "title": "装甲、単発上限、health gateではない",
+    "body": "装甲は安定して減らし、単発上限は大打撃を切り、health gateは固定点で止めます。この仕組みは直近または推定圧力で後続ヒットを変え、圧力の消失後に戻ります。"
+  },
+  "lensNotes": [
+    {
+      "id": "progress-clarity",
+      "body": "raw、applied、圧力メーター、体力で連撃中の進行圧縮と回復を説明します。"
+    },
+    {
+      "id": "risk-reward",
+      "body": "連撃継続はテンポを保つ代わりに効率を失い、休止は時間と位置を払って効率を戻します。"
+    },
+    {
+      "id": "rule-exception",
+      "body": "初撃、クリティカル、DoT、多段、フェーズリセット、集中攻撃、重複に明示的な順序が必要です。"
+    },
+    {
+      "id": "player-expression",
+      "body": "曲線は瞬間火力、継続火力、同期射撃、意図的な間合いを別のスタイルとして残すか決めます。"
+    },
+    {
+      "id": "difficulty-rhythm",
+      "body": "窓と減衰が作る圧力と解放のリズムをボスの攻撃機会に合わせます。"
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "The Binding of Isaac: Repentance",
+      "boss": "Hush",
+      "screenshot": "https://i.ytimg.com/vi/SAy8fV6yGRA/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=SAy8fV6yGRA&t=120s",
+      "video": "https://www.youtube.com/watch?v=SAy8fV6yGRA&t=120s",
+      "videoDurationSeconds": 508,
+      "body": "2:00以降の第2形態は極端な瞬間火力から長期戦を守ります。Damage Scalingは過去4秒の未修正ダメージを追跡し、倍率を下限へ近づけます。"
+    },
+    {
+      "dimension": "3D",
+      "game": "Warframe",
+      "boss": "Archon Boreal",
+      "screenshot": "https://i.ytimg.com/vi/rtl0o3M0e-A/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=rtl0o3M0e-A&t=462s",
+      "video": "https://www.youtube.com/watch?v=rtl0o3M0e-A&t=462s",
+      "videoDurationSeconds": 842,
+      "body": "7:42では極端な初撃構成がDamage Attenuationを越えます。初期化と演算順が曲線と同じくらい重要だと分かります。"
+    },
+    {
+      "dimension": "3D",
+      "game": "Warframe",
+      "boss": "The Fragmented One",
+      "screenshot": "https://i.ytimg.com/vi/s8ur1I8hi7I/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=s8ur1I8hi7I&t=660s",
+      "video": "https://www.youtube.com/watch?v=s8ur1I8hi7I&t=660s",
+      "videoDurationSeconds": 831,
+      "body": "11:00からの戦闘ではDamage Attenuationと最大DPSが使われます。連射武器、状態異常、長い体力表示で検証する必要があります。"
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

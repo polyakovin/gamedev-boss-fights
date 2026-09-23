@@ -405,9 +405,9 @@ test('volley releases three parallel bolts on one beat and clears its outside ro
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
 });
 
-test('catalog and builder reuse the 92 promoted rule-specific previews', async ({ page }) => {
+test('catalog and builder reuse the 93 promoted rule-specific previews', async ({ page }) => {
   await page.goto('en/');
-  await expect(page.locator('[data-blueprint-preview]')).toHaveCount(92);
+  await expect(page.locator('[data-blueprint-preview]')).toHaveCount(93);
   const catalogLayouts = await page.locator('[data-blueprint-preview]').evaluateAll((previews) =>
     previews.map((preview) => {
       const boss = preview.querySelector('[data-character-art-preview="kern"]');
@@ -431,7 +431,7 @@ test('catalog and builder reuse the 92 promoted rule-specific previews', async (
   expect(new Set(catalogLayouts.map(({ layout }) => layout)).size).toBeGreaterThanOrEqual(18);
 
   await page.goto('en/builder/');
-  await expect(page.locator('[data-blueprint-preview]')).toHaveCount(92);
+  await expect(page.locator('[data-blueprint-preview]')).toHaveCount(93);
   const builderLayouts = await page.locator('[data-blueprint-preview]').evaluateAll((previews) =>
     previews.map((preview) => {
       const boss = preview.querySelector('[data-character-art-preview="kern"]');
@@ -3709,6 +3709,47 @@ test('external healing source cancels one packet and resolves one surviving deli
     'data-blueprint-external-healing-source-result-id',
     'external-heal-healing-source-2',
   );
+  await page.setViewportSize({ width: 375, height: 812 });
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+});
+
+test('damage-rate cap compresses a burst and restores the next hit after decay', async ({
+  page,
+}) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.goto('en/mechanics/damage-rate-cap/');
+  const widget = page.locator('[data-blueprint-demo]');
+  const timeline = widget.locator('[data-blueprint-timeline]');
+  const seek = (milliseconds) =>
+    timeline.evaluate((element, value) => {
+      element.value = String(value);
+      element.dispatchEvent(new Event('input', { bubbles: true }));
+    }, milliseconds);
+
+  await expect(page.locator('.lesson-title-line h1')).toHaveText('Adaptive damage-rate cap');
+  await expect(page.locator('.wip-badge, .draft-profile')).toHaveCount(0);
+  await expect(page.locator('.game-example')).toHaveCount(3);
+  await seek(950);
+  await expect(widget).toHaveAttribute('data-blueprint-damage-rate-cap-hit-count', '1');
+  await expect(widget).toHaveAttribute('data-blueprint-damage-rate-cap-raw', '18');
+  await expect(widget).toHaveAttribute('data-blueprint-damage-rate-cap-applied', '18');
+  await expect(widget).toHaveAttribute('data-blueprint-damage-rate-cap-boss-health', '82');
+  await seek(3200);
+  await expect(widget).toHaveAttribute('data-blueprint-damage-rate-cap-burst-active', 'true');
+  await expect(widget).toHaveAttribute('data-blueprint-damage-rate-cap-hit-count', '5');
+  await expect(widget).toHaveAttribute('data-blueprint-damage-rate-cap-applied', '5');
+  await expect(widget).toHaveAttribute('data-blueprint-damage-rate-cap-prevented', '13');
+  await expect(widget).toHaveAttribute('data-blueprint-damage-rate-cap-multiplier', '0.250');
+  await expect(widget).toHaveAttribute('data-blueprint-damage-rate-cap-boss-health', '44');
+  await seek(4600);
+  await expect(widget).toHaveAttribute('data-blueprint-damage-rate-cap-window-recovered', 'true');
+  await expect(widget).toHaveAttribute('data-blueprint-damage-rate-cap-recent', '0');
+  await expect(widget).toHaveAttribute('data-blueprint-damage-rate-cap-multiplier', '1.000');
+  await seek(5000);
+  await expect(widget).toHaveAttribute('data-blueprint-damage-rate-cap-hit-count', '6');
+  await expect(widget).toHaveAttribute('data-blueprint-damage-rate-cap-applied', '18');
+  await expect(widget).toHaveAttribute('data-blueprint-damage-rate-cap-boss-health', '26');
+  await expect(widget).toHaveAttribute('data-blueprint-damage-rate-cap-last-hit-id', 'recovered-1');
   await page.setViewportSize({ width: 375, height: 812 });
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
 });
