@@ -1,0 +1,32 @@
+{
+  "id": "escape-phase",
+  "number": 71,
+  "published": true,
+  "sourceLocale": "en",
+  "contentVersion": 1,
+  "animation": "escape-phase",
+  "lenses": ["encounter-purpose", "progress-clarity", "counterplay", "risk-reward"],
+  "related": ["chase-herding", "interruptible-wind-up", "recovery"],
+  "sources": [
+    {
+      "title": "GDC · Itay Keren — Boss Battle Design Fundamentals and Retrospective",
+      "url": "https://www.gdcvault.com/play/1024921/Boss-Up-Boss-Battle-Design"
+    },
+    {
+      "title": "Destructoid — How to beat Yawie in Dave the Diver",
+      "url": "https://www.destructoid.com/how-to-beat-yawie-in-dave-the-diver/"
+    },
+    {
+      "title": "PC Gamer — Killing Floor 2’s next boss revealed: the Patriarch is back",
+      "url": "https://www.pcgamer.com/killing-floor-2-patriarch-boss-reveal/"
+    },
+    {
+      "title": "Windows Central — Killing Floor 2 boss guide",
+      "url": "https://www.windowscentral.com/killing-floor-2-boss-guide"
+    },
+    {
+      "title": "GameWatcher — How to kill Rathalos in Monster Hunter: World",
+      "url": "https://www.gamewatcher.com/monster-hunter-world-rathalos-how-to-kill-rathalos-monster-hunter-world"
+    }
+  ]
+}

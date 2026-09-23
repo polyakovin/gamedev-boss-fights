@@ -1,0 +1,134 @@
+{
+  "title": "Fase de escape",
+  "subtitle": "Convierte la retirada del jefe en una carrera visible con coste, ruta y ventana de respuesta definidos.",
+  "variant": "Tavi lee la runa de retirada agrietada de Kern, intercepta al elemental antes del sello de salida y obtiene una breve apertura con la espada",
+  "summary": "Una fase de escape da al jefe un destino fuera del combate normal. El jugador debe interrumpir, perseguir o aceptar el resultado anunciado.",
+  "overview": "A los 0,55 s la runa rota de Kern revela una salida y un medidor. Entre 1,15 y 2,85 s el elemental sigue una ruta fija y Tavi toma un atajo. Un golpe de espada detiene la huida antes de la puerta y crea una apertura limitada, sin reiniciar el combate en secreto.",
+  "learning": "Implementa el disparador, destino, presupuesto de recorrido, respuestas válidas, resultados, reglas de punto de control y retorno como una máquina de estados determinista.",
+  "category": "Espacio, movimiento y percepción",
+  "readTime": "7 min",
+  "demo": {
+    "title": "Muestra el precio de alcanzar la salida antes de correr",
+    "timeline": "Cronología de la fase de escape",
+    "step": "Estados de la fase de escape",
+    "phaseNames": ["Revelar umbral y salida", "Correr para interrumpir", "Resolver y volver"],
+    "phaseDescriptions": [
+      "A los 0,55 s el umbral de salud agrieta la runa. La puerta, la ruta fija, el punto de interrupción y el medidor vacío aparecen juntos para mostrar destino y consecuencia antes del movimiento.",
+      "Entre 1,15 y 2,85 s Kern se compromete con una ruta legible mientras el medidor se llena. Tavi puede llegar con movimiento normal por una línea más corta; el jefe no esquiva la respuesta después de iniciarla.",
+      "La espada de Tavi conecta a los 2,85 s y detiene el medidor. Kern queda aturdido hasta 3,35 s, vulnerable hasta 4,45 s y después actores y medidor regresan de forma continua."
+    ],
+    "boss": "Jefe",
+    "player": "Jugador",
+    "danger": "La ruta no causa daño de contacto; el fallo es la consecuencia definida cuando el jefe alcanza la salida",
+    "locked": "Umbral, destino, ruta, tiempo, interrupción válida, coste del fallo y punto de control están definidos",
+    "safe": "Lee la salida, toma el atajo y usa la interrupción indicada antes de que se complete el medidor",
+    "reducedMotion": "Con movimiento reducido no hay reproducción automática. Recorre 0,55, 1,15, 2,2, 2,85, 3,35, 4,45 y 5,15 s.",
+    "diagramDescription": "Una arena fija muestra a Kern corriendo por una ruta discontinua hacia una puerta alta, un medidor que se llena, el atajo de Tavi y un golpe que detiene la huida."
+  },
+  "steps": [
+    {
+      "title": "¿Qué inicia la huida y qué cuesta el éxito del jefe?",
+      "body": "Define el disparador exacto: salud, parte rota, objetivo vencido, recurso robado o umbral de guion. Revela destino y consecuencia a la vez. La salida puede curar, cambiar la arena, quitar una recompensa, reforzar la siguiente fase o terminar el intento, pero el jugador debe conocer la apuesta antes de perseguir."
+    },
+    {
+      "title": "¿Puede el jugador alcanzarlo con las herramientas prometidas?",
+      "body": "Mide la ruta frente a la velocidad normal, el cuerpo completo, el retraso de cámara y el inicio de cada interrupción. Compromete al jefe con giros definidos. Si hace falta aturdir, agarrar, disparar o activar un dispositivo, muestra su validez y conserva una ruta recuperable tras un error pequeño."
+    },
+    {
+      "title": "¿Cómo cambia el encuentro cada resultado?",
+      "body": "Resuelve interrupción y escape como estados explícitos. Detén la locomoción antes de abrir vulnerabilidad o mueve al jefe por completo a la siguiente arena. Define daño conservado, curación, recursos, puntos de control, entradas multijugador y límite de repeticiones."
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "El jefe huye en un umbral invisible",
+      "body": "Una carrera repentina mientras el jugador está atado a un ataque largo convierte un valor oculto en la prueba real. Señala el umbral, protege un breve tiempo de reacción y muestra la dirección de salida antes de exigir velocidad."
+    },
+    {
+      "title": "Fallar solo repite el daño ya hecho",
+      "body": "Una curación total sin regla nueva convierte una intercepción perdida en repetición. Limita las retiradas, conserva progreso o cambia tácticamente la fase siguiente."
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "Calcula la carrera desde la respuesta válida más lenta",
+      "body": "Mide por separado tiempo de salida, reacción, ruta, aceleración, inicio de interrupción, hit-stop y latencia. Prueba la última entrada válida, no solo una captura perfecta."
+    },
+    {
+      "title": "Mantén destino y objetivo en el mismo ciclo de lectura",
+      "body": "Usa una puerta persistente, ruta, indicador de borde o medidor si el jefe sale de cámara. El jugador no debe elegir entre leer ataques y descubrir la dirección."
+    },
+    {
+      "title": "Aclara quién puede interrumpir",
+      "body": "Especifica tipos de daño, estados, partes, jugadores o dispositivos válidos. Confirma los golpes correctos y rechaza los demás con claridad."
+    },
+    {
+      "title": "Prueba repetición, accesibilidad y multijugador",
+      "body": "Ejecuta la fase con ayudas de movimiento y cámara, solo y en grupo, con aliados lejanos y fallos repetidos. Decide si la puerta espera y cuántas huidas admite."
+    }
+  ],
+  "story": {
+    "title": "Kern abre un sello de un solo uso hacia la cantera",
+    "body": "Al romperse el núcleo, Kern se dirige a una puerta antigua capaz de reconstruir su cuerpo. El conducto luminoso revela a Tavi la ruta y el instante en que el sello aceptará al elemental."
+  },
+  "adaptation": {
+    "title": "Haz que Tavi interrumpa con su espada conocida",
+    "body": "Tavi no recibe una acción exclusiva. El movimiento normal llega al cruce marcado y un golpe oportuno rompe la runa. La recompensa es una apertura breve; fallar deja resolver la consecuencia sin teletransportes."
+  },
+  "distinction": {
+    "title": "Una salida con consecuencias, no pastoreo ni cámara móvil",
+    "body": "La persecución guiada depende de la relación y dirección del objetivo. El desplazamiento forzado mueve el espacio según un horario. La fase de escape nace de un estado y pregunta si el jefe alcanza una salida que cambia el encuentro."
+  },
+  "lensNotes": [
+    {
+      "id": "encounter-purpose",
+      "body": "El objetivo inmediato cambia de daño normal a impedir o aceptar conscientemente un resultado de retirada."
+    },
+    {
+      "id": "progress-clarity",
+      "body": "El umbral, la salida persistente, la ruta y el medidor muestran causa y tiempo restante."
+    },
+    {
+      "id": "counterplay",
+      "body": "Una ruta comprometida y una interrupción explícita ofrecen una respuesta fiable sin borrar el coste de llegar tarde."
+    },
+    {
+      "id": "risk-reward",
+      "body": "El atajo rápido puede gastar posición o recursos; aceptar la huida conserva seguridad a cambio del coste anunciado."
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "Dave the Diver",
+      "boss": "Yawie",
+      "screenshot": "https://i.ytimg.com/vi/4Y89D11wJGc/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=4Y89D11wJGc&t=3150s",
+      "body": "Tras suficiente daño, Yawie deja la arena y la lucha se vuelve una persecución lateral. Es una transición, no un reinicio: el jefe sigue siendo objetivo, nuevos proyectiles ocupan la ruta y la presión lleva el progreso a la inversión siguiente.",
+      "video": "https://www.youtube.com/watch?v=4Y89D11wJGc&t=3150s",
+      "videoDurationSeconds": 3852
+    },
+    {
+      "dimension": "3D",
+      "game": "Killing Floor 2",
+      "boss": "The Patriarch",
+      "screenshot": "https://i.ytimg.com/vi/gWXy2l9m_pc/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=gWXy2l9m_pc&t=130s",
+      "body": "En un umbral el Patriarch se oculta, corre a cubierto e intenta gastar una jeringa limitada. El equipo puede seguir el brillo, bloquear rutas y mantener daño; perder contacto convierte distancia en una gran cura y una fase más agresiva.",
+      "video": "https://www.youtube.com/watch?v=gWXy2l9m_pc&t=130s",
+      "videoDurationSeconds": 327
+    },
+    {
+      "dimension": "3D",
+      "game": "Monster Hunter: World",
+      "boss": "Rathalos",
+      "screenshot": "https://i.ytimg.com/vi/KYVpE-PfRgo/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=KYVpE-PfRgo&t=1150s",
+      "body": "Un Rathalos debilitado abandona la zona y vuelve a su nido. La cojera, el mapa, las luciérnagas guía y un destino conocido hacen legible la retirada; el nido abre decisiones de sueño, captura, entorno o golpe de despertar sin borrar la caza.",
+      "video": "https://www.youtube.com/watch?v=KYVpE-PfRgo&t=1150s",
+      "videoDurationSeconds": 1284
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

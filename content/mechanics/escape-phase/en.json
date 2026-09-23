@@ -1,0 +1,134 @@
+{
+  "title": "Escape phase",
+  "subtitle": "Turn a boss retreat into a visible race with an authored cost, route, and response window.",
+  "variant": "Tavi reads Kern's cracked retreat rune, intercepts the elemental before the exit seal, and earns a short sword opening",
+  "summary": "An escape phase gives the boss a destination and consequence outside ordinary combat. The player must interrupt, pursue, or accept the clearly stated result.",
+  "overview": "At 0.55 seconds Kern's cracked rune reveals a marked exit and escape meter. From 1.15–2.85 seconds the elemental follows one committed route while Tavi takes a shorter intercept. A sword hit stops the escape before the gate, then creates a bounded opening instead of silently resetting the fight.",
+  "learning": "Implement the escape trigger, destination, travel budget, allowed responses, success and failure outcomes, checkpoint policy, and return as one deterministic state machine.",
+  "category": "Space, movement, and perception",
+  "readTime": "7 min",
+  "demo": {
+    "title": "Show the price of reaching the exit before the run begins",
+    "timeline": "Escape phase timeline",
+    "step": "Escape phase states",
+    "phaseNames": ["Reveal threshold and exit", "Race to interrupt", "Resolve and return"],
+    "phaseDescriptions": [
+      "At 0.55 s Kern's health threshold cracks the retreat rune. The exit gate, fixed route, interrupt point, and empty escape meter appear together, so the player sees both destination and consequence before movement.",
+      "From 1.15–2.85 s Kern commits to one readable route and the meter fills toward the gate. Tavi has a shorter ordinary-movement line to the marked interrupt point; the boss does not steer away after the response begins.",
+      "Tavi's sword connects at 2.85 s and freezes the meter below completion. Kern staggers from 2.85–3.35 s, remains vulnerable until 4.45 s, then both actors and the meter return continuously for another deterministic attempt."
+    ],
+    "boss": "Boss",
+    "player": "Player",
+    "danger": "The route itself is not contact damage; failure is the authored consequence when the boss reaches the exit",
+    "locked": "Trigger threshold, destination, route, travel time, interrupt eligibility, failure cost, and checkpoint behavior are authored",
+    "safe": "Read the exit early, take the shorter intercept line, and spend the stated interrupt before the meter completes",
+    "reducedMotion": "Autoplay is disabled by reduced motion. Scrub across 0.55, 1.15, 2.2, 2.85, 3.35, 4.45, and 5.15 seconds to inspect the escape contract.",
+    "diagramDescription": "A fixed arena shows Kern running along a dashed route toward a tall exit gate, an escape meter filling above the route, Tavi taking a shorter intercept line, and a sword interruption that stops the meter before the gate."
+  },
+  "steps": [
+    {
+      "title": "What starts the escape and what does success cost?",
+      "body": "Name the exact trigger: health threshold, broken part, expired objective, stolen resource, or scripted phase gate. Reveal the destination and consequence at the same moment. Reaching the exit may heal the boss, relocate the encounter, remove a reward, strengthen the next phase, or end the attempt, but the player must know which result is at stake before committing to pursuit."
+    },
+    {
+      "title": "Can the player catch the boss with the promised tools?",
+      "body": "Measure the boss route against ordinary player speed, full-body collision, camera lag, and the startup of every valid interrupt. Commit the boss to authored turns instead of continuously dodging the pursuer. If the intended response needs a stun, grapple, mount, ranged hit, or environmental switch, surface its eligibility and preserve at least one recoverable line after a small mistake."
+    },
+    {
+      "title": "How does each outcome change the encounter?",
+      "body": "Resolve interruption and escape as explicit states. Stop locomotion before opening vulnerability, or move the boss fully into the next arena before restoring combat. Define retained damage, healing, resources, checkpoints, multiplayer joins, and repeat limits. A failed catch should create a legible new condition, not an unexplained health reset."
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "The boss leaves on an invisible threshold",
+      "body": "A sudden sprint while the player is committed to a long attack turns knowledge of an unseen health value into the real test. Telegraph the threshold, protect a short reaction beat, and keep the exit direction readable before speed matters."
+    },
+    {
+      "title": "Failure only repeats damage already dealt",
+      "body": "A full heal with no new rule can turn one missed intercept into pure repetition. Cap the number of retreats, preserve some progress, change the next phase, or make the recovery state tactically different enough to justify its time cost."
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "Budget the race from the slowest valid response",
+      "body": "Compute time to exit, reaction delay, route length, acceleration, interrupt startup, hit-stop, and network latency separately. Test the last valid input rather than only a perfect early catch, and expose a margin that survives the animation and camera contracts."
+    },
+    {
+      "title": "Keep destination and target in the same reading loop",
+      "body": "Use a persistent gate marker, route line, compass edge cue, or progress meter when the boss can leave the camera. The player should not have to choose between watching incoming attacks and discovering where the retreat is going."
+    },
+    {
+      "title": "Make interruption ownership unambiguous",
+      "body": "Specify which damage types, status effects, body parts, players, or arena devices can stop the escape. Give qualified hits distinct feedback and reject invalid hits clearly so teams can diagnose the outcome instead of blaming latency or damage totals."
+    },
+    {
+      "title": "Test repetition, accessibility, and multiplayer",
+      "body": "Run the phase with slower movement assists, camera aids, solo and full parties, dead or distant teammates, and repeated failures. Decide whether the gate waits for all players, whether crowd control scales, and how many retreats remain before fatigue replaces tension."
+    }
+  ],
+  "story": {
+    "title": "Kern opens a one-use seal back to the quarry",
+    "body": "When its core fractures, Kern turns toward an ancient gate that can rebuild the stone shell. The glowing route is a physical conduit, so Tavi can read both the destination and the moment the seal will accept the elemental."
+  },
+  "adaptation": {
+    "title": "Let Tavi interrupt with the familiar sword",
+    "body": "Tavi does not gain a chase-only verb. Ordinary movement reaches a marked crossing, and one clearly timed sword hit breaks the retreat rune. The reward is a short opening; missing it lets the authored escape consequence resolve instead of teleporting either actor."
+  },
+  "distinction": {
+    "title": "A consequential exit, not continuous herding or camera motion",
+    "body": "Chase herding progresses while the player maintains a relationship and steers a moving target. Forced scrolling advances space on a schedule. An escape phase begins from a state trigger and asks whether the boss reaches a specific exit whose success changes the encounter."
+  },
+  "lensNotes": [
+    {
+      "id": "encounter-purpose",
+      "body": "The immediate goal changes from ordinary damage to preventing or deliberately accepting a specific retreat outcome."
+    },
+    {
+      "id": "progress-clarity",
+      "body": "The threshold cue, persistent exit, route, and escape meter expose why the boss is moving and how much response time remains."
+    },
+    {
+      "id": "counterplay",
+      "body": "A committed route and explicit interrupt eligibility give the player a reliable answer without removing the cost of arriving late."
+    },
+    {
+      "id": "risk-reward",
+      "body": "Taking the fastest intercept may spend position or resources, while accepting escape can preserve safety at the cost declared by the encounter."
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "Dave the Diver",
+      "boss": "Yawie",
+      "screenshot": "https://i.ytimg.com/vi/4Y89D11wJGc/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=4Y89D11wJGc&t=3150s",
+      "body": "After enough damage, Yawie leaves the initial arena and the fight becomes a side-scrolling pursuit. The escape is a phase transition rather than a reset: the boss remains a target, new projectile patterns occupy the route, and sustained pressure carries progress into the following reversal.",
+      "video": "https://www.youtube.com/watch?v=4Y89D11wJGc&t=3150s",
+      "videoDurationSeconds": 3852
+    },
+    {
+      "dimension": "3D",
+      "game": "Killing Floor 2",
+      "boss": "The Patriarch",
+      "screenshot": "https://i.ytimg.com/vi/gWXy2l9m_pc/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=gWXy2l9m_pc&t=130s",
+      "body": "At a health threshold the Patriarch cloaks, runs for cover, and tries to spend a limited healing syringe. Players can follow the shimmer, block routes, apply control, and continue damage; losing contact converts distance into a large heal and a more aggressive next phase.",
+      "video": "https://www.youtube.com/watch?v=gWXy2l9m_pc&t=130s",
+      "videoDurationSeconds": 327
+    },
+    {
+      "dimension": "3D",
+      "game": "Monster Hunter: World",
+      "boss": "Rathalos",
+      "screenshot": "https://i.ytimg.com/vi/KYVpE-PfRgo/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=KYVpE-PfRgo&t=1150s",
+      "body": "A weakened Rathalos leaves the current combat space and returns toward its nest. Limping, map state, scoutflies, and a known destination turn the retreat into readable pursuit; reaching the nest can create sleep, capture, environmental, or wake-up decisions instead of erasing the hunt.",
+      "video": "https://www.youtube.com/watch?v=KYVpE-PfRgo&t=1150s",
+      "videoDurationSeconds": 1284
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

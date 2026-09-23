@@ -10,6 +10,7 @@ import {
   attackReflectionState,
   boundaryAttackState,
   chaseHerdingState,
+  escapePhaseState,
   forcedScrollingOffset,
   forcedScrollingState,
   counterStanceOutcome,
@@ -39,8 +40,8 @@ import {
   renderBlueprintThumbnail,
 } from '../lib/blueprint-view.mjs';
 
-test('all 64 promoted lesson animations have distinct rule modes and complete moving frames', () => {
-  assert.equal(BLUEPRINT_MECHANIC_IDS.length, 64);
+test('all 65 promoted lesson animations have distinct rule modes and complete moving frames', () => {
+  assert.equal(BLUEPRINT_MECHANIC_IDS.length, 65);
   const modes = new Set();
   for (const id of BLUEPRINT_MECHANIC_IDS) {
     for (let time = 0; time <= BLUEPRINT_DURATION; time += 0.1) {
@@ -61,7 +62,7 @@ test('all 64 promoted lesson animations have distinct rule modes and complete mo
           assert.ok(Number.isFinite(value), `${id} has an invalid ${primitive.type}`);
     }
   }
-  assert.equal(modes.size, 64);
+  assert.equal(modes.size, 65);
 });
 
 test('every blueprint exposes signal, committed action, and recovery without player teleports', () => {
@@ -85,7 +86,8 @@ test('every blueprint exposes signal, committed action, and recovery without pla
       id !== 'survival-phase' &&
       id !== 'teleport' &&
       id !== 'boundary-attack' &&
-      id !== 'chase-herding'
+      id !== 'chase-herding' &&
+      id !== 'escape-phase'
     )
       assert.equal(blueprintFrame(id, 3).dangerActive, true, id);
     assert.equal(blueprintFrame(id, 3).playerSafe, true, id);
@@ -167,7 +169,8 @@ test('every damaging promoted animation derives safety from its own active geome
       id !== 'survival-phase' &&
       id !== 'teleport' &&
       id !== 'boundary-attack' &&
-      id !== 'chase-herding',
+      id !== 'chase-herding' &&
+      id !== 'escape-phase',
   )) {
     const frame = blueprintFrame(id, 3);
     let point = unsafePoints[id];
@@ -1756,5 +1759,49 @@ test('chase herding keeps a readable distance band, a bounded intercept, and a c
   assert.match(
     renderBlueprintThumbnail(id, 'test-chase-herding'),
     /data-blueprint-preview="chase-herding"/,
+  );
+});
+
+test('escape phase signals a finite route, supports interruption, and resolves into an opening', () => {
+  const id = 'escape-phase';
+  assert.deepEqual([0, 0.8, 1.8, 3, 3.7, 5.4].map(escapePhaseState), [
+    'combat',
+    'exit-signal',
+    'escape-run',
+    'interrupted',
+    'opening',
+    'reset',
+  ]);
+
+  const signal = blueprintFrame(id, 0.8);
+  assert.equal(signal.escapeActive, false);
+  assert.equal(signal.escapeInterrupted, false);
+  assert.ok(signal.primitives[1].opacity > 0.6, 'the exit route appears before the run');
+  assert.ok(signal.primitives[3].opacity > 0.7, 'the exit gate is explicit');
+
+  const escape = blueprintFrame(id, 2.1);
+  assert.equal(escape.escapePhaseState, 'escape-run');
+  assert.equal(escape.escapeActive, true);
+  assert.equal(escape.escapeSucceeded, false);
+  assert.ok(escape.escapeProgress > 0 && escape.escapeProgress < 0.72);
+  assert.ok(escape.bossMotion.stride > 0.7);
+  assert.equal(escape.playerSafe, true);
+
+  const interrupted = blueprintFrame(id, 2.85);
+  assert.equal(interrupted.escapePhaseState, 'interrupted');
+  assert.equal(interrupted.escapeInterrupted, true);
+  assert.equal(interrupted.escapeInterruptStrike, true);
+  assert.equal(interrupted.escapeProgress, 0.72);
+  assert.ok(interrupted.primitives[9].opacity > 0.6, 'the interrupt ripple confirms success');
+
+  const punish = blueprintFrame(id, 3.72);
+  assert.equal(punish.escapePhaseState, 'opening');
+  assert.equal(punish.punishStrike, true);
+  assert.ok(punish.primitives[10].opacity > 0, 'the sword response lands during the opening');
+  assert.deepEqual(blueprintFrame(id, 0).player, blueprintFrame(id, 6).player);
+  assert.deepEqual(blueprintFrame(id, 0).boss, blueprintFrame(id, 6).boss);
+  assert.match(
+    renderBlueprintThumbnail(id, 'test-escape-phase'),
+    /data-blueprint-preview="escape-phase"/,
   );
 });

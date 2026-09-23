@@ -192,6 +192,15 @@ export function initializeBlueprint(widget) {
       widget.dataset.blueprintChaseCaptured = String(frame.chaseCaptured);
       widget.dataset.blueprintPunishStrike = String(frame.punishStrike);
     }
+    if (mechanicId === 'escape-phase') {
+      widget.dataset.blueprintEscapePhase = frame.escapePhaseState;
+      widget.dataset.blueprintEscapeProgress = frame.escapeProgress.toFixed(3);
+      widget.dataset.blueprintEscapeActive = String(frame.escapeActive);
+      widget.dataset.blueprintEscapeInterrupted = String(frame.escapeInterrupted);
+      widget.dataset.blueprintEscapeSucceeded = String(frame.escapeSucceeded);
+      widget.dataset.blueprintEscapeInterruptStrike = String(frame.escapeInterruptStrike);
+      widget.dataset.blueprintPunishStrike = String(frame.punishStrike);
+    }
     boss.setAttribute(
       'transform',
       `translate(${frame.boss.x} ${frame.boss.y}) scale(${frame.bossScale})`,

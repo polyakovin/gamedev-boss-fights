@@ -551,6 +551,32 @@ const SPECS = {
       [445, 620],
     ],
   },
+  'escape-phase': {
+    mode: 'escape-phase',
+    boss: [170, 620],
+    player: [98, 710],
+    target: [350, 620],
+    triggerAt: 0.55,
+    escape: [1.15, 2.85],
+    staggerEnd: 3.35,
+    openingEnd: 4.45,
+    punishAt: 3.72,
+    resetAt: 5.15,
+    exitGate: [468, 520],
+    interruptPoint: [390, 555],
+    bossRoute: [
+      [170, 620],
+      [260, 575],
+      [330, 610],
+      [390, 555],
+    ],
+    playerRoute: [
+      [98, 710],
+      [195, 680],
+      [280, 625],
+      [350, 620],
+    ],
+  },
   'wide-swing': { mode: 'arc', boss: [280, 310], player: [410, 470], target: [470, 650] },
   lunge: { mode: 'lunge', boss: [170, 290], player: [390, 590], target: [470, 660] },
   grab: { mode: 'grab', boss: [280, 300], player: [390, 485], target: [470, 610] },
@@ -1067,6 +1093,17 @@ export function chaseHerdingState(time) {
   if (t < 2.55) return 'maintain-distance';
   if (t < spec.active[1]) return 'intercept';
   if (t < spec.captureEnd) return 'captured';
+  if (t < spec.resetAt) return 'opening';
+  return 'reset';
+}
+
+export function escapePhaseState(time) {
+  const spec = SPECS['escape-phase'];
+  const t = localTime(time);
+  if (t < spec.triggerAt) return 'combat';
+  if (t < spec.escape[0]) return 'exit-signal';
+  if (t < spec.escape[1]) return 'escape-run';
+  if (t < spec.staggerEnd) return 'interrupted';
   if (t < spec.resetAt) return 'opening';
   return 'reset';
 }
@@ -2253,6 +2290,96 @@ function primitivesFor(spec, frame) {
       circle(spec.safePosition[0], spec.safePosition[1], 24, chasing ? 0.7 : 0.2, 'safe', 5, 0.06),
       line(frame.player.x, frame.player.y, frame.boss.x, frame.boss.y, strike, 'safe', 9),
       circle(frame.boss.x - 32, frame.boss.y - 5, 12 + strike * 24, strike, 'safe', 7, 0.12),
+    ];
+  }
+  if (mode === 'escape-phase') {
+    const signalProgress = clamp((frame.time - spec.triggerAt) / (spec.escape[0] - spec.triggerAt));
+    const escaping = frame.time >= spec.escape[0] && frame.time < spec.escape[1];
+    const resolved = frame.time >= spec.escape[1] && frame.time < spec.resetAt;
+    const signalVisible = frame.time >= spec.triggerAt && frame.time < spec.escape[0];
+    const strike = strikePulse(frame.time, spec.punishAt, 0.38);
+    const gate = point(spec.exitGate);
+    const interrupt = point(spec.interruptPoint);
+    const meterX = 92;
+    const meterWidth = 360;
+    return [
+      rect(58, 390, 444, 390, 0.45, 'muted', 0.02),
+      path(
+        `M ${spec.bossRoute.map(([x, y]) => `${x} ${y}`).join(' L ')}`,
+        resolved ? 0.24 : signalVisible || escaping ? 0.72 : 0.18,
+        'accent',
+        6,
+        0,
+        '12 10',
+      ),
+      path(
+        `M ${spec.playerRoute.map(([x, y]) => `${x} ${y}`).join(' L ')}`,
+        escaping ? 0.66 : signalVisible ? 0.38 : 0.16,
+        'safe',
+        5,
+        0,
+        '10 10',
+      ),
+      rect(
+        gate.x - 30,
+        gate.y - 94,
+        60,
+        188,
+        frame.escapeInterrupted ? 0.34 : frame.time >= spec.triggerAt ? 0.82 : 0.2,
+        frame.escapeInterrupted ? 'safe' : 'signal',
+        frame.escapeInterrupted ? 0.04 : 0.12,
+      ),
+      line(gate.x - 38, gate.y - 94, gate.x - 38, gate.y + 94, 0.8, 'accent', 7),
+      circle(
+        interrupt.x,
+        interrupt.y,
+        27,
+        signalVisible || escaping || resolved ? 0.78 : 0.18,
+        frame.escapeInterrupted ? 'safe' : 'accent',
+        frame.escapeInterrupted ? 8 : 5,
+        frame.escapeInterrupted ? 0.18 : 0.04,
+        frame.escapeInterrupted ? '' : '8 8',
+      ),
+      rect(meterX, 418, meterWidth, 18, frame.time >= spec.triggerAt ? 0.78 : 0.22, 'muted', 0.08),
+      rect(
+        meterX,
+        418,
+        meterWidth * frame.escapeProgress,
+        18,
+        frame.time >= spec.triggerAt ? 0.92 : 0,
+        frame.escapeInterrupted ? 'safe' : 'signal',
+        0.32,
+      ),
+      line(
+        meterX + meterWidth * 0.72,
+        409,
+        meterX + meterWidth * 0.72,
+        445,
+        frame.time >= spec.triggerAt ? 0.86 : 0,
+        'accent',
+        4,
+        '5 5',
+      ),
+      circle(
+        frame.boss.x,
+        frame.boss.y,
+        44 + strikePulse(frame.time, spec.escape[1], 0.46) * 22,
+        frame.escapeInterrupted ? 0.7 : 0,
+        'safe',
+        7,
+        0.08,
+      ),
+      line(frame.player.x, frame.player.y, frame.boss.x, frame.boss.y, strike, 'safe', 10),
+      circle(frame.boss.x - 30, frame.boss.y - 8, 12 + strike * 24, strike, 'safe', 7, 0.12),
+      circle(
+        gate.x,
+        gate.y,
+        24 + signalProgress * 18,
+        signalVisible ? 0.4 + signalProgress * 0.4 : escaping ? 0.52 : 0.18,
+        'signal',
+        5,
+        0.08,
+      ),
     ];
   }
   if (mode === 'landing') {
@@ -3552,6 +3679,7 @@ function pointClearsThreat(spec, frame, value, radius = BLUEPRINT_PLAYER_RADIUS)
     );
   if (mode === 'forced-scrolling') return !frame.dangerActive || value.y + radius < spec.hazardTop;
   if (mode === 'chase-herding') return true;
+  if (mode === 'escape-phase') return true;
   if (mode === 'spiral')
     return (
       distanceFromBoss > 52 + radius &&
@@ -3742,6 +3870,20 @@ export function blueprintFrame(id, time) {
       const reset = smooth((t - spec.resetAt) / (BLUEPRINT_DURATION - spec.resetAt));
       boss = { x: mix(capture.x, startBoss.x, reset), y: mix(capture.y, startBoss.y, reset) };
     }
+  } else if (spec.mode === 'escape-phase') {
+    const interrupted = point(spec.interruptPoint);
+    if (t < spec.escape[0]) boss = startBoss;
+    else if (t < spec.escape[1]) {
+      const escape = smooth((t - spec.escape[0]) / (spec.escape[1] - spec.escape[0]));
+      boss = pointAlongPolyline(spec.bossRoute.map(point), escape);
+    } else if (t < spec.resetAt) boss = interrupted;
+    else {
+      const reset = smooth((t - spec.resetAt) / (BLUEPRINT_DURATION - spec.resetAt));
+      boss = {
+        x: mix(interrupted.x, startBoss.x, reset),
+        y: mix(interrupted.y, startBoss.y, reset),
+      };
+    }
   } else if (spec.mode === 'lunge') {
     const travel = phase === 0 ? 0 : phase === 1 ? smooth(action / 0.62) : 1 - recover;
     boss = { x: mix(170, 430, travel), y: mix(290, 590, travel) };
@@ -3812,6 +3954,7 @@ export function blueprintFrame(id, time) {
   else if (spec.mode === 'boundary-attack') responseProgress = 0;
   else if (spec.mode === 'forced-scrolling') responseProgress = 0;
   else if (spec.mode === 'chase-herding') responseProgress = 0;
+  else if (spec.mode === 'escape-phase') responseProgress = 0;
   else if (spec.mode === 'knockback')
     responseProgress = phase === 0 ? 0 : phase === 1 ? smooth(action) : 1;
   else if (spec.mode === 'target-lock')
@@ -4116,6 +4259,15 @@ export function blueprintFrame(id, time) {
       y: mix(punish.y, startPlayer.y, reset),
     };
   }
+  if (spec.mode === 'escape-phase') {
+    const interceptProgress = smooth((t - 0.72) / (spec.escape[1] - 0.72));
+    const intercept = pointAlongPolyline(spec.playerRoute.map(point), interceptProgress);
+    const reset = smooth((t - spec.resetAt) / (BLUEPRINT_DURATION - spec.resetAt));
+    player = {
+      x: mix(intercept.x, startPlayer.x, reset),
+      y: mix(intercept.y, startPlayer.y, reset),
+    };
+  }
   if (spec.mode === 'rotating' && phase === 0) {
     const initialPosition = polar(boss, 255, Math.PI / 3);
     player = {
@@ -4225,7 +4377,13 @@ export function blueprintFrame(id, time) {
                       pulse(smooth((t - spec.active[1]) / 0.72)),
                       pulse(smooth((t - spec.resetAt) / (BLUEPRINT_DURATION - spec.resetAt))) * 0.8,
                     )
-                  : pulse(responseProgress) + pulse(returnProgress) * 0.8;
+                  : spec.mode === 'escape-phase'
+                    ? Math.max(
+                        pulse(smooth((t - 0.72) / (spec.escape[1] - 0.72))),
+                        pulse(smooth((t - spec.resetAt) / (BLUEPRINT_DURATION - spec.resetAt))) *
+                          0.8,
+                      )
+                    : pulse(responseProgress) + pulse(returnProgress) * 0.8;
   const bossVisible =
     spec.mode === 'burrow' && phase === 1 && action < 0.68
       ? 0
@@ -4357,7 +4515,9 @@ export function blueprintFrame(id, time) {
                                                               t < spec.active[1]
                                                             : spec.mode === 'chase-herding'
                                                               ? false
-                                                              : phase === 1;
+                                                              : spec.mode === 'escape-phase'
+                                                                ? false
+                                                                : phase === 1;
   const frame = {
     id,
     mode: spec.mode,
@@ -4399,7 +4559,9 @@ export function blueprintFrame(id, time) {
             ? -90
             : spec.mode === 'chase-herding'
               ? 90
-              : 90,
+              : spec.mode === 'escape-phase'
+                ? 90
+                : 90,
     playerFacing:
       spec.mode === 'directional-shield'
         ? mix(-90, -180, smooth((t - 2.7) / 0.68)) * (1 - returnProgress) - 90 * returnProgress
@@ -4417,20 +4579,26 @@ export function blueprintFrame(id, time) {
                     ? (Math.atan2(boss.y - player.y, boss.x - player.x) * 180) / Math.PI
                     : spec.mode === 'chase-herding'
                       ? (Math.atan2(boss.y - player.y, boss.x - player.x) * 180) / Math.PI
-                      : spec.mode === 'damage-type-resistance' ||
-                          spec.mode === 'situational-immunity' ||
-                          spec.mode === 'part-break' ||
-                          spec.mode === 'attack-reflection' ||
-                          spec.mode === 'counter-stance' ||
-                          spec.mode === 'absorption-power-up' ||
-                          spec.mode === 'interruptible-wind-up' ||
-                          spec.mode === 'loadout-adaptation' ||
-                          spec.mode === 'wind-up'
-                        ? -180
-                        : -90,
+                      : spec.mode === 'escape-phase'
+                        ? (Math.atan2(boss.y - player.y, boss.x - player.x) * 180) / Math.PI
+                        : spec.mode === 'damage-type-resistance' ||
+                            spec.mode === 'situational-immunity' ||
+                            spec.mode === 'part-break' ||
+                            spec.mode === 'attack-reflection' ||
+                            spec.mode === 'counter-stance' ||
+                            spec.mode === 'absorption-power-up' ||
+                            spec.mode === 'interruptible-wind-up' ||
+                            spec.mode === 'loadout-adaptation' ||
+                            spec.mode === 'wind-up'
+                          ? -180
+                          : -90,
     bossMotion: motion({
-      gait: spec.mode === 'chase-herding' ? t * 6 : 0,
-      stride: spec.mode === 'chase-herding' && t >= spec.active[0] && t < spec.active[1] ? 0.72 : 0,
+      gait: spec.mode === 'chase-herding' || spec.mode === 'escape-phase' ? t * 6 : 0,
+      stride:
+        (spec.mode === 'chase-herding' && t >= spec.active[0] && t < spec.active[1]) ||
+        (spec.mode === 'escape-phase' && t >= spec.escape[0] && t < spec.escape[1])
+          ? 0.72
+          : 0,
       lean:
         spec.mode === 'landing'
           ? phase === 0
@@ -4470,9 +4638,14 @@ export function blueprintFrame(id, time) {
                               smooth((t - spec.signal[0]) / 0.5) *
                               (1 - smooth((t - spec.active[1]) / 0.42)) +
                             0.32 * strikePulse(t, spec.active[1], 0.58)
-                          : phase === 0
-                            ? -0.22 * prepare
-                            : 0.24 * pulse(action),
+                          : spec.mode === 'escape-phase'
+                            ? -0.3 *
+                                smooth((t - spec.triggerAt) / 0.5) *
+                                (1 - smooth((t - spec.escape[1]) / 0.42)) +
+                              0.4 * strikePulse(t, spec.escape[1], 0.58)
+                            : phase === 0
+                              ? -0.22 * prepare
+                              : 0.24 * pulse(action),
       crouch:
         spec.mode === 'landing'
           ? phase === 0
@@ -4499,7 +4672,11 @@ export function blueprintFrame(id, time) {
                         ? 0.18 *
                           smooth((t - spec.signal[0]) / 0.5) *
                           (1 - smooth((t - spec.active[1]) / 0.45))
-                        : 0.2 * prepare,
+                        : spec.mode === 'escape-phase'
+                          ? 0.2 *
+                            smooth((t - spec.triggerAt) / 0.5) *
+                            (1 - smooth((t - spec.escape[1]) / 0.45))
+                          : 0.2 * prepare,
       lift: spec.mode === 'landing' && phase === 1 ? pulse(clamp(action / 0.52)) : 0,
       attack:
         spec.mode === 'speed-change'
@@ -4647,11 +4824,17 @@ export function blueprintFrame(id, time) {
                                                 0.55 * strikePulse(t, spec.active[1], 0.32),
                                                 0.85 * strikePulse(t, spec.punishAt, 0.3),
                                               )
-                                            : spec.mode === 'shockwave' || spec.mode === 'knockback'
-                                              ? pulse(action * 3)
-                                              : spec.mode === 'chain-explosions'
-                                                ? pulse((action * 5) % 1)
-                                                : 0,
+                                            : spec.mode === 'escape-phase'
+                                              ? Math.max(
+                                                  0.72 * strikePulse(t, spec.escape[1], 0.32),
+                                                  0.85 * strikePulse(t, spec.punishAt, 0.3),
+                                                )
+                                              : spec.mode === 'shockwave' ||
+                                                  spec.mode === 'knockback'
+                                                ? pulse(action * 3)
+                                                : spec.mode === 'chain-explosions'
+                                                  ? pulse((action * 5) % 1)
+                                                  : 0,
     }),
     playerMotion: motion({
       gait:
@@ -4669,7 +4852,9 @@ export function blueprintFrame(id, time) {
                     ? t * 7 * stride
                     : spec.mode === 'chase-herding'
                       ? t * 7 * stride
-                      : (route * responseProgress + route * returnProgress) / 20,
+                      : spec.mode === 'escape-phase'
+                        ? t * 7 * stride
+                        : (route * responseProgress + route * returnProgress) / 20,
       stride,
       lean: stride * 0.45,
       crouch: stride * 0.16,
@@ -4724,11 +4909,16 @@ export function blueprintFrame(id, time) {
                                       ? strikePulse(t, spec.punishAt, 0.38)
                                       : spec.mode === 'chase-herding'
                                         ? strikePulse(t, spec.punishAt, 0.38)
-                                        : spec.mode === 'decoy' && phase === 1
-                                          ? pulse(clamp((action - 0.52) / 0.3))
-                                          : spec.mode === 'weak-point' && phase === 1
-                                            ? pulse(action * 1.5)
-                                            : 0,
+                                        : spec.mode === 'escape-phase'
+                                          ? Math.max(
+                                              strikePulse(t, spec.escape[1], 0.38),
+                                              strikePulse(t, spec.punishAt, 0.38),
+                                            )
+                                          : spec.mode === 'decoy' && phase === 1
+                                            ? pulse(clamp((action - 0.52) / 0.3))
+                                            : spec.mode === 'weak-point' && phase === 1
+                                              ? pulse(action * 1.5)
+                                              : 0,
     }),
   };
   if (spec.mode === 'directional-shield') {
@@ -4841,6 +5031,17 @@ export function blueprintFrame(id, time) {
     frame.chaseCaptured = t >= spec.active[1] && t < spec.resetAt;
     frame.punishStrike = strikePulse(t, spec.punishAt, 0.38) > 0.5;
   }
+  if (spec.mode === 'escape-phase') {
+    frame.escapePhaseState = escapePhaseState(t);
+    const escaped = smooth((t - spec.escape[0]) / (spec.escape[1] - spec.escape[0]));
+    const reset = smooth((t - spec.resetAt) / (BLUEPRINT_DURATION - spec.resetAt));
+    frame.escapeProgress = 0.72 * escaped * (1 - reset);
+    frame.escapeActive = t >= spec.escape[0] && t < spec.escape[1];
+    frame.escapeInterrupted = t >= spec.escape[1] && t < spec.resetAt;
+    frame.escapeSucceeded = false;
+    frame.escapeInterruptStrike = strikePulse(t, spec.escape[1], 0.38) > 0.5;
+    frame.punishStrike = strikePulse(t, spec.punishAt, 0.38) > 0.5;
+  }
   if (spec.mode === 'boundary-attack') {
     frame.boundaryAttackState = boundaryAttackState(t);
     frame.boundarySignalActive = t >= spec.signal[0] && t < spec.active[0];
@@ -4906,7 +5107,8 @@ export function blueprintFrame(id, time) {
       spec.mode === 'teleport' ||
       spec.mode === 'boundary-attack' ||
       spec.mode === 'forced-scrolling' ||
-      spec.mode === 'chase-herding'
+      spec.mode === 'chase-herding' ||
+      spec.mode === 'escape-phase'
         ? 92
         : -62),
   };
