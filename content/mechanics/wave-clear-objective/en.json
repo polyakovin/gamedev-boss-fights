@@ -27,7 +27,7 @@
     "locked": "Wave manifests, spawn gates, queue seal, registered target IDs, living count, clear event, inter-wave delay, final resolution, reward, failure policy, and reset are authored",
     "safe": "Show the complete wave count, keep every remaining target locatable and reachable, provide a readable cleanup route, and hold the handoff until all required defeats are confirmed",
     "reducedMotion": "Autoplay is disabled by reduced motion. Scrub across 0.75, 1.08, 1.38, 1.58, 1.90, 2.20, 2.48, 2.76, 2.98, 3.28, 3.62, 3.94, 4.28, 4.50, 4.72, 4.95, and 5.28 seconds to inspect each sealed roster, defeat, clear, handoff, resolution, reward, and reset.",
-    "diagramDescription": "Kern stands inside a rune field above three wave marks. Two side gates emit simple crossed runeling tokens. Tavi follows one continuous route through each finite group; sword flashes remove tokens, the living-roster bar shrinks, each wave mark fills only when its group is empty, and a final pulse opens the reward state after 3/3."
+    "diagramDescription": "Kern waits behind a stone portcullis with three rune locks. Small horned stone creatures emerge from the two side doorways, and Tavi runs close enough to strike each one. The remaining-enemies bar shrinks with actual defeats; one lock lights after each empty wave. After all three locks light, the gate fades and the lid of a nearby reward chest opens."
   },
   "steps": [
     {

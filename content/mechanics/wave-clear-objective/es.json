@@ -27,7 +27,7 @@
     "locked": "Se definen manifiestos, portales, cierre de cola, ID registrados, recuento vivo, evento de limpieza, pausa, resolución final, recompensa, fallo y reinicio",
     "safe": "Muestra el número total de oleadas, conserva cada objetivo localizable y accesible, ofrece una ruta de remate legible y espera a confirmar todas las derrotas obligatorias",
     "reducedMotion": "Con movimiento reducido se detiene la reproducción automática. Recorre 0,75; 1,08; 1,38; 1,58; 1,90; 2,20; 2,48; 2,76; 2,98; 3,28; 3,62; 3,94; 4,28; 4,50; 4,72; 4,95 y 5,28 s para revisar listas, derrotas, limpiezas, relevos, recompensa y reinicio.",
-    "diagramDescription": "Kern está dentro de un campo rúnico sobre tres marcas. Dos portales laterales emiten fichas simples de esbirros cruzadas. Tavi sigue una ruta continua: los destellos de espada quitan fichas, la barra de vivos baja, cada marca se llena solo con la lista vacía y un pulso final abre la recompensa tras 3/3."
+    "diagramDescription": "Kern espera tras una reja de piedra con tres cerraduras rúnicas. Pequeñas criaturas de piedra con cuernos salen por las dos puertas laterales, y Tavi se acerca para golpear a cada una. La barra de enemigos restantes disminuye con cada derrota real; se ilumina una cerradura tras vaciar cada oleada. Cuando brillan las tres, la reja desaparece y se abre un cofre de recompensa cercano."
   },
   "steps": [
     {

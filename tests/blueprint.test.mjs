@@ -2449,11 +2449,41 @@ test('wave-clear objective advances only from sealed and empty enemy rosters', (
   assert.equal(firstActive.waveClearSpawnQueueSealed, true);
   assert.equal(firstActive.waveClearRemainingEnemies, 2);
   assert.equal(firstActive.waveClearRosterEmpty, false);
-  assert.ok(firstActive.primitives[7].opacity > 0.8, 'the first roster is visible');
+  assert.ok(firstActive.primitives[15].opacity > 0.8, 'the first stone creature is visible');
 
   const firstDefeat = blueprintFrame(id, 1.08);
   assert.equal(firstDefeat.waveClearHitIndex, 0);
-  assert.ok(firstDefeat.primitives[13].opacity > 0.8, 'the sword connects to a roster target');
+  assert.ok(firstDefeat.primitives[24].opacity > 0.8, 'the sword connects to a roster target');
+  const enemyPositions = [
+    [
+      [160, 620],
+      [390, 620],
+    ],
+    [
+      [420, 570],
+      [280, 700],
+      [140, 570],
+    ],
+    [
+      [155, 650],
+      [280, 600],
+      [405, 650],
+    ],
+  ];
+  const hitTimes = [
+    [1.08, 1.38],
+    [2.2, 2.48, 2.76],
+    [3.62, 3.94, 4.28],
+  ];
+  for (const [waveIndex, times] of hitTimes.entries())
+    for (const [enemyIndex, time] of times.entries()) {
+      const player = blueprintFrame(id, time).player;
+      const [x, y] = enemyPositions[waveIndex][enemyIndex];
+      assert.ok(
+        Math.hypot(player.x - x, player.y - y) < 80,
+        `wave ${waveIndex + 1} hit stays near its target`,
+      );
+    }
 
   const firstEmpty = waveClearObjectiveProgress(1.45);
   assert.equal(firstEmpty.spawnQueueSealed, true);
@@ -2464,7 +2494,7 @@ test('wave-clear objective advances only from sealed and empty enemy rosters', (
   const firstCleared = blueprintFrame(id, 1.65);
   assert.equal(firstCleared.waveClearCompletedWaves, 1);
   assert.equal(firstCleared.waveClearWave, 2);
-  assert.ok(firstCleared.primitives[4].fill > 0.2, 'the first wave pip stays complete');
+  assert.ok(firstCleared.primitives[5].fill > 0.8, 'the first gate seal stays complete');
 
   const second = waveClearObjectiveProgress(2.4);
   assert.equal(second.wave, 2);
@@ -2475,7 +2505,11 @@ test('wave-clear objective advances only from sealed and empty enemy rosters', (
   assert.equal(finalActive.waveClearWave, 3);
   assert.equal(finalActive.waveClearCompletedWaves, 2);
   assert.equal(finalActive.waveClearAllComplete, false);
-  assert.ok(finalActive.primitives[8].radius > finalActive.primitives[7].radius);
+  const headLeft = (primitive) => Number(primitive.data.match(/^M ([\d.]+)/)[1]);
+  assert.ok(
+    280 - headLeft(finalActive.primitives[19]) > 155 - headLeft(finalActive.primitives[18]),
+    'the elite stone creature has a larger silhouette',
+  );
 
   const resolved = blueprintFrame(id, 4.6);
   assert.equal(resolved.waveClearCompletedWaves, 3);
@@ -2484,7 +2518,7 @@ test('wave-clear objective advances only from sealed and empty enemy rosters', (
 
   const reward = blueprintFrame(id, 5.1);
   assert.equal(reward.waveClearRewardOpen, true);
-  assert.ok(reward.primitives[22].opacity > 0.8, 'the reward opens after final resolution');
+  assert.ok(reward.primitives[29].opacity > 0.8, 'the chest opens after final resolution');
 
   const reset = blueprintFrame(id, 5.4);
   assert.equal(reset.waveClearWave, 0);

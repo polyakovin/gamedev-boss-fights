@@ -913,10 +913,9 @@ const SPECS = {
   },
   'wave-clear-objective': {
     mode: 'wave-clear-objective',
-    boss: [280, 370],
+    boss: [280, 290],
     player: [280, 780],
-    target: [340, 520],
-    arena: [56, 330, 448, 560],
+    target: [340, 560],
     waveSpawns: [0.75, 1.9, 3.28],
     waveKills: [
       [1.08, 1.38],
@@ -928,13 +927,13 @@ const SPECS = {
     rewardAt: 4.95,
     resetAt: 5.28,
     gates: [
-      [88, 610],
-      [472, 610],
+      [70, 590],
+      [490, 590],
     ],
     waveEnemies: [
       [
-        [140, 620],
-        [420, 620],
+        [160, 620],
+        [390, 620],
       ],
       [
         [420, 570],
@@ -942,37 +941,30 @@ const SPECS = {
         [140, 570],
       ],
       [
-        [145, 650],
+        [155, 650],
         [280, 600],
-        [415, 650],
+        [405, 650],
       ],
     ],
-    playerRoutes: [
-      [
-        [280, 780],
-        [180, 690],
-        [380, 690],
-      ],
-      [
-        [380, 690],
-        [385, 610],
-        [320, 735],
-        [175, 610],
-      ],
-      [
-        [175, 610],
-        [185, 700],
-        [320, 650],
-        [375, 700],
-      ],
+    playerTimeline: [
+      [0, 280, 780],
+      [0.75, 280, 780],
+      [1.08, 190, 665],
+      [1.38, 360, 665],
+      [1.58, 360, 665],
+      [2.2, 365, 610],
+      [2.48, 280, 670],
+      [2.76, 190, 610],
+      [2.98, 190, 610],
+      [3.62, 190, 670],
+      [3.94, 280, 640],
+      [4.28, 370, 670],
+      [4.5, 370, 670],
+      [4.95, 340, 560],
+      [5.28, 340, 560],
+      [6, 280, 780],
     ],
-    rewardPoint: [340, 520],
-    resetRoute: [
-      [340, 520],
-      [340, 620],
-      [310, 700],
-      [280, 780],
-    ],
+    rewardChest: [440, 485],
   },
   'environmental-weapon': {
     mode: 'environmental-weapon',
@@ -4812,97 +4804,118 @@ function primitivesFor(spec, frame) {
     const waveIndex = Math.max(0, Math.min(spec.waveEnemies.length - 1, frame.waveClearWave - 1));
     const enemies = spec.waveEnemies[waveIndex].map(point);
     const kills = spec.waveKills[waveIndex];
-    const activeEnemy =
-      frame.waveClearHitIndex >= 0 ? enemies[frame.waveClearHitIndex] : enemies[0];
-    const hitPulse = Math.max(...kills.map((kill) => strikePulse(frame.time, kill, 0.28)));
-    const spawnPulse = strikePulse(frame.time, spec.waveSpawns[waveIndex], 0.42);
-    const clearPulse = Math.max(
-      ...spec.waveClears.map((clear) => strikePulse(frame.time, clear, 0.42)),
-    );
     const active = frame.waveClearSpawnQueueSealed;
     const resolved = frame.waveClearAllComplete;
+    const gateOpacity = frame.time >= spec.resolveAt ? 0.12 : 0.92;
+    const creature = (index) => {
+      const enemy = enemies[index] ?? point(spec.gates[index % spec.gates.length]);
+      const exists = index < kills.length;
+      const alive = exists && active && frame.time < kills[index];
+      const collapse = exists ? smooth((frame.time - kills[index]) / 0.22) : 1;
+      const scale = index === 1 && waveIndex === 2 ? 1.35 : 1;
+      const size = scale * (1 - collapse * 0.42);
+      const bob = alive ? Math.sin(frame.time * 9 + index * 1.7) * 2 : collapse * 18;
+      const x = enemy.x;
+      const y = enemy.y + bob;
+      const opacity = alive ? 0.96 : exists && active ? 0.38 * (1 - collapse) : 0;
+      return { x, y, size, opacity, hit: exists ? strikePulse(frame.time, kills[index], 0.24) : 0 };
+    };
+    const creatures = [0, 1, 2].map(creature);
+    const chest = point(spec.rewardChest);
     return [
-      rect(...spec.arena, 0.52, 'muted', 0.025),
-      ...spec.gates.map(([x, y]) =>
-        circle(x, y, 40 + spawnPulse * 18, active ? 0.78 : 0.24, 'accent', 7, 0.08, '8 8'),
+      path('M 160 56 H 400 V 76 H 160 Z', 0.65, 'muted', 0, 0.78),
+      path(
+        `M 160 56 H ${160 + 240 * (frame.waveClearRemainingEnemies / Math.max(1, kills.length))} V 76 H 160 Z`,
+        active ? 0.96 : 0,
+        'signal',
+        0,
+        0.88,
       ),
-      circle(
-        frame.boss.x,
-        frame.boss.y,
-        88 + clearPulse * 24,
-        resolved ? 0.16 : 0.72,
-        resolved ? 'safe' : 'accent',
-        resolved ? 5 : 9,
-        resolved ? 0.02 : 0.12,
-        '10 8',
+      path('M 150 364 L 280 344 L 410 364 L 378 382 H 182 Z', 0.68, 'muted', 0, 0.78),
+      path('M 155 393 H 405 V 415 H 155 Z', gateOpacity, 'muted', 0, 0.84),
+      path(
+        Array.from({ length: 8 }, (_, index) => {
+          const x = 165 + index * 32;
+          return `M ${x} 413 H ${x + 12} V 472 H ${x} Z`;
+        }).join(' '),
+        gateOpacity,
+        'accent',
+        0,
+        0.74,
       ),
       ...[0, 1, 2].map((index) =>
-        circle(
-          248 + index * 32,
-          500,
-          10,
-          0.92,
+        path(
+          `M ${226 + index * 54} 429 L ${244 + index * 54} 429 L ${250 + index * 54} 442 L ${235 + index * 54} 456 L ${220 + index * 54} 442 Z`,
+          gateOpacity,
           index < frame.waveClearCompletedWaves ? 'safe' : 'accent',
-          4,
-          index < frame.waveClearCompletedWaves ? 0.24 : 0.04,
+          0,
+          index < frame.waveClearCompletedWaves ? 0.88 : 0.46,
         ),
       ),
-      ...[0, 1, 2].map((index) => {
-        const enemy = enemies[index] ?? point(spec.gates[index % spec.gates.length]);
-        const exists = index < kills.length;
-        const alive = exists && active && frame.time < kills[index];
-        const killed =
-          exists && frame.time >= kills[index] && frame.time < spec.waveClears[waveIndex];
-        return circle(
-          enemy.x,
-          enemy.y,
-          index === 1 && waveIndex === 2 ? 34 : 26,
-          alive ? 0.92 : killed ? 0.16 : 0,
-          alive ? 'signal' : 'muted',
-          alive ? 8 : 4,
-          alive ? 0.16 : 0.02,
-        );
-      }),
-      ...[0, 1, 2].map((index) => {
-        const enemy = enemies[index] ?? point(spec.gates[index % spec.gates.length]);
-        const exists = index < kills.length;
-        const alive = exists && active && frame.time < kills[index];
-        return path(
-          `M ${enemy.x - 13} ${enemy.y - 13} L ${enemy.x + 13} ${enemy.y + 13} M ${enemy.x + 13} ${enemy.y - 13} L ${enemy.x - 13} ${enemy.y + 13}`,
-          alive ? 0.86 : 0,
-          'signal',
-          5,
-        );
-      }),
-      ...[0, 1, 2].map((index) => {
-        const enemy = enemies[index] ?? activeEnemy;
-        const pulseAtTarget = index === frame.waveClearHitIndex ? hitPulse : 0;
-        return line(frame.player.x, frame.player.y, enemy.x, enemy.y, pulseAtTarget, 'safe', 9);
-      }),
-      ...[0, 1, 2].map((index) => {
-        const enemy = enemies[index] ?? activeEnemy;
-        const pulseAtTarget = index === frame.waveClearHitIndex ? hitPulse : 0;
-        return circle(enemy.x, enemy.y, 14 + pulseAtTarget * 24, pulseAtTarget, 'safe', 7, 0.12);
-      }),
-      rect(196, 530, 168, 14, 0.42, 'muted', 0.025),
-      rect(
-        196,
-        530,
-        168 * (frame.waveClearRemainingEnemies / Math.max(1, kills.length)),
-        14,
-        active ? 0.9 : 0,
-        'signal',
-        0.12,
+      path('M 43 669 V 549 Q 70 520 97 549 V 669 H 43 Z', 0.88, 'muted', 0, 0.82),
+      path('M 463 669 V 549 Q 490 520 517 549 V 669 H 463 Z', 0.88, 'muted', 0, 0.82),
+      path('M 56 654 V 558 Q 70 540 84 558 V 654 Z', active ? 0.86 : 0.35, 'signal', 0, 0.36),
+      path('M 476 654 V 558 Q 490 540 504 558 V 654 Z', active ? 0.86 : 0.35, 'signal', 0, 0.36),
+      ...creatures.map(({ x, y, size, opacity }) =>
+        path(
+          `M ${x - 20 * size} ${y + 32 * size} Q ${x} ${y + 22 * size} ${x + 20 * size} ${y + 32 * size} Z`,
+          opacity * 0.48,
+          'muted',
+          0,
+          0.74,
+        ),
       ),
-      circle(frame.boss.x, frame.boss.y, 70 + clearPulse * 85, clearPulse, 'safe', 8, 0.04),
-      circle(
-        spec.rewardPoint[0],
-        spec.rewardPoint[1],
-        28 + frame.waveClearResolution * 18,
-        frame.waveClearRewardOpen ? 0.92 : 0,
+      ...creatures.map(({ x, y, size, opacity }) =>
+        path(
+          `M ${x - 14 * size} ${y - 6 * size} L ${x - 25 * size} ${y + 4 * size} L ${x - 23 * size} ${y + 14 * size} L ${x - 14 * size} ${y + 10 * size} L ${x - 12 * size} ${y + 27 * size} H ${x - 2 * size} L ${x} ${y + 12 * size} L ${x + 2 * size} ${y + 27 * size} H ${x + 12 * size} L ${x + 14 * size} ${y + 10 * size} L ${x + 23 * size} ${y + 14 * size} L ${x + 25 * size} ${y + 4 * size} L ${x + 14 * size} ${y - 6 * size} Z`,
+          opacity,
+          'muted',
+          0,
+          0.92,
+        ),
+      ),
+      ...creatures.map(({ x, y, size, opacity }) =>
+        path(
+          `M ${x - 16 * size} ${y - 18 * size} L ${x - 20 * size} ${y - 34 * size} L ${x - 7 * size} ${y - 27 * size} L ${x} ${y - 35 * size} L ${x + 7 * size} ${y - 27 * size} L ${x + 20 * size} ${y - 34 * size} L ${x + 16 * size} ${y - 18 * size} L ${x + 10 * size} ${y - 8 * size} H ${x - 10 * size} Z`,
+          opacity,
+          'signal',
+          0,
+          0.88,
+        ),
+      ),
+      ...creatures.map(({ x, y, size, opacity }) =>
+        path(
+          `M ${x - 8 * size} ${y - 20 * size} H ${x - 3 * size} M ${x + 3 * size} ${y - 20 * size} H ${x + 8 * size}`,
+          opacity,
+          'muted',
+          3,
+        ),
+      ),
+      ...creatures.map(({ x, y, hit }) =>
+        path(`M ${x - 28} ${y + 8} Q ${x} ${y - 42} ${x + 27} ${y + 4}`, hit, 'safe', 7),
+      ),
+      path(
+        `M ${chest.x - 30} ${chest.y + 3} H ${chest.x + 30} V ${chest.y + 33} H ${chest.x - 30} Z`,
+        0.88,
+        'muted',
+        0,
+        0.86,
+      ),
+      path(
+        frame.waveClearRewardOpen
+          ? `M ${chest.x - 31} ${chest.y - 14} L ${chest.x + 31} ${chest.y - 24} L ${chest.x + 31} ${chest.y - 9} L ${chest.x - 31} ${chest.y + 1} Z`
+          : `M ${chest.x - 31} ${chest.y - 9} H ${chest.x + 31} V ${chest.y + 7} H ${chest.x - 31} Z`,
+        0.94,
+        frame.waveClearRewardOpen ? 'safe' : 'accent',
+        0,
+        0.88,
+      ),
+      path(
+        `M ${chest.x - 8} ${chest.y + 10} L ${chest.x} ${chest.y - 1} L ${chest.x + 8} ${chest.y + 10} L ${chest.x} ${chest.y + 21} Z`,
+        frame.waveClearRewardOpen ? 0.98 : 0,
         'safe',
-        7,
-        0.16,
+        0,
+        0.94,
       ),
     ];
   }
@@ -8653,35 +8666,12 @@ export function blueprintFrame(id, time) {
     }
   }
   if (spec.mode === 'wave-clear-objective') {
-    const progress = waveClearObjectiveProgress(t);
-    const waveIndex = Math.max(0, Math.min(spec.waveKills.length - 1, progress.wave - 1));
-    if (t < 0.55) player = startPlayer;
-    else if (t < spec.waveClears[0]) {
-      const routeProgress = smooth((t - 0.55) / (spec.waveKills[0].at(-1) - 0.55));
-      player = pointAlongPolyline(spec.playerRoutes[0].map(point), routeProgress);
-    } else if (t < spec.waveClears[1]) {
-      const routeProgress = smooth(
-        (t - spec.waveClears[0]) / (spec.waveKills[1].at(-1) - spec.waveClears[0]),
-      );
-      player = pointAlongPolyline(spec.playerRoutes[1].map(point), routeProgress);
-    } else if (t < spec.waveClears[2]) {
-      const routeProgress = smooth(
-        (t - spec.waveClears[1]) / (spec.waveKills[2].at(-1) - spec.waveClears[1]),
-      );
-      player = pointAlongPolyline(spec.playerRoutes[2].map(point), routeProgress);
-    } else if (t < spec.rewardAt) {
-      const routeProgress = smooth((t - spec.waveClears[2]) / (spec.rewardAt - spec.waveClears[2]));
-      const start = point(spec.playerRoutes[waveIndex].at(-1));
-      const reward = point(spec.rewardPoint);
-      player = {
-        x: mix(start.x, reward.x, routeProgress),
-        y: mix(start.y, reward.y, routeProgress),
-      };
-    } else if (t < spec.resetAt) player = point(spec.rewardPoint);
-    else {
-      const reset = smooth((t - spec.resetAt) / (BLUEPRINT_DURATION - spec.resetAt));
-      player = pointAlongPolyline(spec.resetRoute.map(point), reset);
-    }
+    const route = spec.playerTimeline;
+    const nextIndex = route.findIndex(([at]) => at > t);
+    const [startAt, startX, startY] = route[nextIndex - 1];
+    const [endAt, endX, endY] = route[nextIndex];
+    const progress = smooth((t - startAt) / (endAt - startAt));
+    player = { x: mix(startX, endX, progress), y: mix(startY, endY, progress) };
   }
   if (spec.mode === 'environmental-weapon') {
     if (t < spec.routeStartsAt) player = startPlayer;

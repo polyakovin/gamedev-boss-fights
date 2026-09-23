@@ -2858,6 +2858,8 @@ test('wave-clear objective seals and empties each finite roster before advancing
   await expect(page.locator('.lesson-title-line h1')).toHaveText('Wave-clear objective');
   await expect(page.locator('.wip-badge, .draft-profile')).toHaveCount(0);
   await expect(page.locator('.game-example')).toHaveCount(3);
+  await expect(widget).toHaveAttribute('data-blueprint-full-height', 'true');
+  expect((await widget.boundingBox()).height).toBeGreaterThan(800);
 
   await seek(600);
   await expect(widget).toHaveAttribute('data-blueprint-wave-clear', 'wave-1-preview');
@@ -2868,7 +2870,7 @@ test('wave-clear objective seals and empties each finite roster before advancing
   await expect(widget).toHaveAttribute('data-blueprint-wave', '1');
   await expect(widget).toHaveAttribute('data-blueprint-wave-remaining', '2');
   await expect(widget).toHaveAttribute('data-blueprint-wave-queue-sealed', 'true');
-  await expect(widget.locator('[data-blueprint-primitive="7"] circle')).not.toHaveAttribute(
+  await expect(widget.locator('[data-blueprint-primitive="15"] path')).not.toHaveAttribute(
     'opacity',
     '0',
   );
@@ -2890,13 +2892,13 @@ test('wave-clear objective seals and empties each finite roster before advancing
   await seek(3800);
   await expect(widget).toHaveAttribute('data-blueprint-wave-clear', 'wave-3-active');
   await expect(widget).toHaveAttribute('data-blueprint-waves-complete', '2');
-  const firstEnemyRadius = Number(
-    await widget.locator('[data-blueprint-primitive="7"] circle').getAttribute('r'),
-  );
-  const eliteRadius = Number(
-    await widget.locator('[data-blueprint-primitive="8"] circle').getAttribute('r'),
-  );
-  expect(eliteRadius).toBeGreaterThan(firstEnemyRadius);
+  const firstEnemyWidth = await widget
+    .locator('[data-blueprint-primitive="18"] path')
+    .evaluate((element) => element.getBBox().width);
+  const eliteWidth = await widget
+    .locator('[data-blueprint-primitive="19"] path')
+    .evaluate((element) => element.getBBox().width);
+  expect(eliteWidth).toBeGreaterThan(firstEnemyWidth);
 
   await seek(4600);
   await expect(widget).toHaveAttribute('data-blueprint-wave-clear', 'all-waves-cleared');
@@ -2906,7 +2908,7 @@ test('wave-clear objective seals and empties each finite roster before advancing
   await seek(5100);
   await expect(widget).toHaveAttribute('data-blueprint-wave-clear', 'reward-open');
   await expect(widget).toHaveAttribute('data-blueprint-wave-reward-open', 'true');
-  await expect(widget.locator('[data-blueprint-primitive="22"] circle')).not.toHaveAttribute(
+  await expect(widget.locator('[data-blueprint-primitive="29"] path')).not.toHaveAttribute(
     'opacity',
     '0',
   );
