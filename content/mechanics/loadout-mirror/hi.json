@@ -1,0 +1,134 @@
+{
+  "title": "लोडआउट मिरर",
+  "subtitle": "खिलाड़ी के चुने हुए बिल्ड को बॉस के नियंत्रित पैकेज में बदलें",
+  "variant": "संकेत · स्नैपशॉट · सामान्यीकरण · उपयोग",
+  "summary": "घोषित क्षण पर बॉस खिलाड़ी के बिल्ड के चुने हुए हिस्सों का स्नैपशॉट लेकर स्थिर मुकाबला पैकेज बनाता है।",
+  "overview": "लोडआउट मिरर एक स्पष्ट क्षण पर हथियार, मंत्र, वस्तु, आँकड़े या डेक प्रविष्टियाँ पढ़ता है और उनसे निश्चित बॉस पैकेज बनाता है। इससे मनमाना इन्वेंटरी डेटा सीधे चलाए बिना खिलाड़ी की अभिव्यक्ति लौटती है।",
+  "learning": "स्नैपशॉट ट्रिगर, मान्य स्लॉट और canonical id, कॉपी मान, सामान्यीकरण, अमान्य मान का fallback, multiplayer owner, बाद के बदलाव, phase lifetime, save और rollback, संकेत, counterplay तथा telemetry तय करें।",
+  "category": "अवस्थाएँ, संसाधन और स्केलिंग",
+  "readTime": "10 मिनट",
+  "demo": {
+    "title": "टावी के तीन स्लॉट कैप्चर करें और बदलाव के बाद भी केर्न का स्नैपशॉट स्थिर दिखाएँ",
+    "timeline": "लोडआउट मिरर टाइमलाइन",
+    "step": "स्कैन, लॉक, बदलाव और कॉपी हमला",
+    "phaseNames": ["स्नैपशॉट घोषित करें", "canonical पैकेज लॉक करें", "स्थिर कॉपी उपयोग करें"],
+    "phaseDescriptions": [
+      "0.32 से 1.14 सेकंड तक तीन रेखाएँ टावी की तलवार, ward और ember स्लॉट को केर्न से जोड़ती हैं। 1.14 सेकंड पर स्थिर id के साथ केवल एक कैप्चर होता है।",
+      "केर्न तीन कॉपी स्लॉट दिखाता है और टावी 2.62 सेकंड पर bow, dash और frost चुनता है। बॉस दोबारा स्कैन नहीं करता।",
+      "3.42 सेकंड पर केर्न कॉपी किया sword पैकेज चलाता है। मूल चिह्न बॉस के पास रहते हैं, इसलिए हमला वर्तमान इन्वेंटरी नहीं, स्नैपशॉट पढ़ता है।"
+    ],
+    "boss": "बॉस",
+    "player": "खिलाड़ी",
+    "danger": "मिरर शक्तिशाली या असामान्य बिल्ड को खिलाड़ी के विरुद्ध कर सकता है, पर सीमा केवल encounter contract से मान्य डेटा पार करे",
+    "locked": "समय, स्लॉट पात्रता, सामान्यीकरण, fallback, ownership, persistence और idempotence encounter logic के नियम हैं",
+    "safe": "दिखाएँ कि कौन से स्लॉट स्कैन हुए, कब लॉक हुए, बॉस को क्या मिला और बाद के बदलाव मायने रखते हैं या नहीं",
+    "reducedMotion": "कम गति में autoplay बंद है। 0.32, 1.14, 2.18, 2.62, 3.42, 4.12, 5.28 और 5.42 सेकंड पर स्नैपशॉट देखें।",
+    "diagramDescription": "तीन उपकरण स्लॉट स्कैन होकर टावी से केर्न तक जाते हैं। टावी तीनों बदलता है, जबकि केर्न मूल पैकेज रखकर उससे हमला करता है।"
+  },
+  "steps": [
+    {
+      "title": "स्नैपशॉट में ठीक क्या जाता है?",
+      "body": "मान्य स्लॉट और canonical id सूचीबद्ध करें: weapon family, upgrade tier, spell tags, charges, passives, stats या deck entries। केवल दृश्य डेटा हटाएँ और हर खाली या unsupported मान के लिए सुरक्षित fallback दें।"
+    },
+    {
+      "title": "कॉपी शक्ति बॉस व्यवहार कैसे बनती है?",
+      "body": "मनमाना player content चलाने के बजाय स्नैपशॉट को सीमित पैकेज में map करें। damage, range, cooldown, status strength, resources और animation requirements सामान्य करें।"
+    },
+    {
+      "title": "स्नैपशॉट कब बदल सकता है?",
+      "body": "एक capture event और lifetime चुनें: प्रवेश, transformation, summon या phase start। मानों की deep copy करें, duplicate callback अनदेखे करें और loadout change, death, multiplayer handoff, reload या rollback के नियम स्पष्ट करें।"
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "सबसे अच्छा हल बिना उपकरण कमरे में जाना है",
+      "body": "यदि बॉस raw power एक बार कॉपी करे और खिलाड़ी तुरंत दोबारा equip कर सके, तैयारी inventory trick बन जाती है। बदलाव थोड़ी देर lock करें, copy सामान्य करें, package पहले दिखाएँ या हर build को उपयोगी counterplay दें।"
+    },
+    {
+      "title": "बॉस बदलती इन्वेंटरी को live पढ़ता है",
+      "body": "हमले के बीच polling से race, animation gap, network disagreement और save bugs बनते हैं। हमले immutable snapshot से resolve करें और resnapshot को नया, साफ संकेतित event बनाएँ।"
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "खिलाड़ी डेटा को बॉस verbs से अलग रखें",
+      "body": "heavy, ranged, guard, fire या healing जैसे canonical tags को जाँची हुई boss actions में बदलें। player animation, projectile, item script या resource model को सीधे सुरक्षित न मानें।"
+    },
+    {
+      "title": "कॉपी को पढ़ने योग्य बनाएँ",
+      "body": "capture से पहले चुने स्लॉट दिखाएँ, अलग संकेत से lock पुष्टि करें और जहाँ संभव हो copied icons बने रहने दें। बाद का boss action उस build choice से जुड़ना चाहिए जिसने उसे बनाया।"
+    },
+    {
+      "title": "state boundary जाँचें",
+      "body": "snapshotId, ownerId, input और output ids, capture count, rejected values, fallback, resnapshot count, phase और copied action ids दर्ज करें। empty, duplicate, modded, disabled, networked और restored inventories जाँचें।"
+    }
+  ],
+  "story": {
+    "title": "केर्न टावी के उपकरण पर बने rune याद रखता है",
+    "body": "हल्की scan रेखा टावी की तलवार, ward और ember charm से गुजरती है। केर्न तीनों निशान पत्थर पर काटता है; टावी kit बदल दे, फिर भी elemental सीखे pattern से वार करता है।"
+  },
+  "adaptation": {
+    "title": "पूर्वानुमेय या सामान्यीकृत मिरर दें",
+    "body": "लड़ाई से पहले मान्य स्लॉट का सार, captured package का icon और रंग से स्वतंत्र slot shapes दें। एक विकल्प builds को कुछ fixed packages में बदल सकता है। दबाव में तेज inventory बदलाव न माँगें।"
+  },
+  "distinction": {
+    "title": "यह स्नैपशॉट है, adaptive counter-pick या पूरा control नहीं",
+    "body": "Loadout adaptation खिलाड़ी को वर्गीकृत कर counter package चुनता है; mirror उसके build के चुने input सुरक्षित रखता है। Player-controlled boss agency देता है, यहाँ सीमित data दिया जाता है।"
+  },
+  "lensNotes": [
+    {
+      "id": "player-expression",
+      "body": "मुकाबला build choices को दिखने वाले boss behavior में लौटाता है; पात्रता और सामान्यीकरण तय करते हैं कि कौन सी अभिव्यक्ति बचेगी।"
+    },
+    {
+      "id": "risk-reward",
+      "body": "मजबूत build मजबूत mirror बना सकता है, पर खिलाड़ी उसकी ताकत जानता है और सार्थक जवाब तैयार कर सकता है।"
+    },
+    {
+      "id": "rule-exception",
+      "body": "खाली स्लॉट, consumables, upgrades, duplicate ids, forbidden content, multiplayer owners, reload और phase change के स्पष्ट fallback चाहिए।"
+    },
+    {
+      "id": "progress-clarity",
+      "body": "scan, lock confirmation, टिके icons और action feedback बताएँ कि क्या capture हुआ और क्या बदल सकता है।"
+    },
+    {
+      "id": "counterplay",
+      "body": "counterplay mirrored package को समझने से आए, छिपी inventory timing race से नहीं।"
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "3D",
+      "game": "Elden Ring",
+      "boss": "Mimic Tear",
+      "screenshot": "https://i.ytimg.com/vi/42alQxG2XRE/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=42alQxG2XRE&t=13s",
+      "video": "https://www.youtube.com/watch?v=42alQxG2XRE&t=13s",
+      "videoDurationSeconds": 92,
+      "body": "0:13 से silver tear खिलाड़ी का रूप लेकर captured equipment और abilities से लड़ता है। यह व्यक्तिगत copy entry-time gear और बाद के बदलावों के नियम स्पष्ट करने की जरूरत दिखाती है।"
+    },
+    {
+      "dimension": "2D",
+      "game": "Castlevania: Portrait of Ruin",
+      "boss": "Doppelganger",
+      "screenshot": "https://i.ytimg.com/vi/M3KtcwsqhA4/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=M3KtcwsqhA4&t=2206s",
+      "video": "https://www.youtube.com/watch?v=M3KtcwsqhA4&t=2206s",
+      "videoDurationSeconds": 2645,
+      "body": "36:46 पर Doppelganger copied character package के साथ आता है। दर्ज room-entry snapshot को पहले gear उतारकर और बाद में पहनकर exploit किया जा सकता है—गलत capture timing की साफ चेतावनी।"
+    },
+    {
+      "dimension": "2D",
+      "game": "Library of Ruina",
+      "boss": "Pinocchio the Copycat",
+      "screenshot": "https://i.ytimg.com/vi/EngMNNJFjBE/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=EngMNNJFjBE&t=130s",
+      "video": "https://www.youtube.com/watch?v=EngMNNJFjBE&t=130s",
+      "videoDurationSeconds": 578,
+      "body": "2:10 से Pinocchio की copied combat pages दिखती हैं। Librarian की bookshelf कॉपी करना दिखाता है कि payload केवल हथियार या stats नहीं, authored actions का set भी हो सकता है।"
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

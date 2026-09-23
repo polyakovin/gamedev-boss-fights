@@ -405,9 +405,9 @@ test('volley releases three parallel bolts on one beat and clears its outside ro
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
 });
 
-test('catalog and builder reuse the 93 promoted rule-specific previews', async ({ page }) => {
+test('catalog and builder reuse the 94 promoted rule-specific previews', async ({ page }) => {
   await page.goto('en/');
-  await expect(page.locator('[data-blueprint-preview]')).toHaveCount(93);
+  await expect(page.locator('[data-blueprint-preview]')).toHaveCount(94);
   const catalogLayouts = await page.locator('[data-blueprint-preview]').evaluateAll((previews) =>
     previews.map((preview) => {
       const boss = preview.querySelector('[data-character-art-preview="kern"]');
@@ -431,7 +431,7 @@ test('catalog and builder reuse the 93 promoted rule-specific previews', async (
   expect(new Set(catalogLayouts.map(({ layout }) => layout)).size).toBeGreaterThanOrEqual(18);
 
   await page.goto('en/builder/');
-  await expect(page.locator('[data-blueprint-preview]')).toHaveCount(93);
+  await expect(page.locator('[data-blueprint-preview]')).toHaveCount(94);
   const builderLayouts = await page.locator('[data-blueprint-preview]').evaluateAll((previews) =>
     previews.map((preview) => {
       const boss = preview.querySelector('[data-character-art-preview="kern"]');
@@ -3824,6 +3824,53 @@ test('damage-rate cap compresses a burst and restores the next hit after decay',
   await expect(widget).toHaveAttribute('data-blueprint-damage-rate-cap-applied', '18');
   await expect(widget).toHaveAttribute('data-blueprint-damage-rate-cap-boss-health', '26');
   await expect(widget).toHaveAttribute('data-blueprint-damage-rate-cap-last-hit-id', 'recovered-1');
+  await page.setViewportSize({ width: 375, height: 812 });
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+});
+
+test('loadout mirror keeps the captured package after the player changes loadout', async ({
+  page,
+}) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.goto('en/mechanics/loadout-mirror/');
+  const widget = page.locator('[data-blueprint-demo]');
+  const timeline = widget.locator('[data-blueprint-timeline]');
+  const seek = (milliseconds) =>
+    timeline.evaluate((element, value) => {
+      element.value = String(value);
+      element.dispatchEvent(new Event('input', { bubbles: true }));
+    }, milliseconds);
+
+  await expect(page.locator('.lesson-title-line h1')).toHaveText('Loadout mirror');
+  await expect(page.locator('.wip-badge, .draft-profile')).toHaveCount(0);
+  await expect(page.locator('.game-example')).toHaveCount(3);
+  await seek(1300);
+  await expect(widget).toHaveAttribute('data-blueprint-loadout-mirror-snapshot-captured', 'true');
+  await expect(widget).toHaveAttribute(
+    'data-blueprint-loadout-mirror-copied-loadout',
+    'sword,ward,ember',
+  );
+  await expect(widget).toHaveAttribute('data-blueprint-loadout-mirror-snapshot-events', '1');
+  await seek(2800);
+  await expect(widget).toHaveAttribute('data-blueprint-loadout-mirror-player-changed', 'true');
+  await expect(widget).toHaveAttribute(
+    'data-blueprint-loadout-mirror-player-loadout',
+    'bow,dash,frost',
+  );
+  await expect(widget).toHaveAttribute(
+    'data-blueprint-loadout-mirror-copied-loadout',
+    'sword,ward,ember',
+  );
+  await expect(widget).toHaveAttribute('data-blueprint-loadout-mirror-live-resnapshots', '0');
+  await seek(3600);
+  await expect(widget).toHaveAttribute(
+    'data-blueprint-loadout-mirror-boss-used-copied-attack',
+    'true',
+  );
+  await expect(widget).toHaveAttribute(
+    'data-blueprint-loadout-mirror-boss-package',
+    'sword+ward+ember',
+  );
   await page.setViewportSize({ width: 375, height: 812 });
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
 });

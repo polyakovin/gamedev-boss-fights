@@ -617,6 +617,31 @@ export function initializeBlueprint(widget) {
       widget.dataset.blueprintDamageRateCapEventCount = String(frame.damageRateCapEventCount);
       widget.dataset.blueprintDamageRateCapLastHitId = frame.damageRateCapLastHitId;
     }
+    if (mechanicId === 'loadout-mirror') {
+      widget.dataset.blueprintLoadoutMirror = frame.loadoutMirrorState;
+      widget.dataset.blueprintLoadoutMirrorSnapshotCaptured = String(
+        frame.loadoutMirrorSnapshotCaptured,
+      );
+      widget.dataset.blueprintLoadoutMirrorSnapshotId = frame.loadoutMirrorSnapshotId;
+      widget.dataset.blueprintLoadoutMirrorSnapshotEvents = String(
+        frame.loadoutMirrorSnapshotEventCount,
+      );
+      widget.dataset.blueprintLoadoutMirrorPlayerLoadout =
+        frame.loadoutMirrorPlayerLoadoutIds.join(',');
+      widget.dataset.blueprintLoadoutMirrorCopiedLoadout =
+        frame.loadoutMirrorCopiedLoadoutIds.join(',');
+      widget.dataset.blueprintLoadoutMirrorCopyMatchesSnapshot = String(
+        frame.loadoutMirrorCopyMatchesSnapshot,
+      );
+      widget.dataset.blueprintLoadoutMirrorPlayerChanged = String(frame.loadoutMirrorPlayerChanged);
+      widget.dataset.blueprintLoadoutMirrorLiveResnapshots = String(
+        frame.loadoutMirrorLiveResnapshotCount,
+      );
+      widget.dataset.blueprintLoadoutMirrorBossPackage = frame.loadoutMirrorBossPackage;
+      widget.dataset.blueprintLoadoutMirrorBossUsedCopiedAttack = String(
+        frame.loadoutMirrorBossUsedCopiedAttack,
+      );
+    }
     boss.setAttribute(
       'transform',
       `translate(${frame.boss.x} ${frame.boss.y}) scale(${frame.bossScale})`,

@@ -55,6 +55,8 @@ import {
   externalHealingSourceResolve,
   damageRateCapState,
   damageRateCapResolve,
+  loadoutMirrorState,
+  loadoutMirrorSnapshot,
   counterStanceOutcome,
   counterStanceState,
   blueprintFrame,
@@ -82,8 +84,8 @@ import {
   renderBlueprintThumbnail,
 } from '../lib/blueprint-view.mjs';
 
-test('all 93 promoted lesson animations have distinct rule modes and complete moving frames', () => {
-  assert.equal(BLUEPRINT_MECHANIC_IDS.length, 93);
+test('all 94 promoted lesson animations have distinct rule modes and complete moving frames', () => {
+  assert.equal(BLUEPRINT_MECHANIC_IDS.length, 94);
   const modes = new Set();
   for (const id of BLUEPRINT_MECHANIC_IDS) {
     for (let time = 0; time <= BLUEPRINT_DURATION; time += 0.1) {
@@ -104,7 +106,7 @@ test('all 93 promoted lesson animations have distinct rule modes and complete mo
           assert.ok(Number.isFinite(value), `${id} has an invalid ${primitive.type}`);
     }
   }
-  assert.equal(modes.size, 93);
+  assert.equal(modes.size, 94);
 });
 
 test('every blueprint exposes signal, committed action, and recovery without player teleports', () => {
@@ -147,7 +149,8 @@ test('every blueprint exposes signal, committed action, and recovery without pla
       id !== 'on-hit-healing' &&
       id !== 'self-heal-cast' &&
       id !== 'external-healing-source' &&
-      id !== 'damage-rate-cap'
+      id !== 'damage-rate-cap' &&
+      id !== 'loadout-mirror'
     )
       assert.equal(blueprintFrame(id, 3).dangerActive, true, id);
     assert.equal(blueprintFrame(id, 3).playerSafe, true, id);
@@ -240,6 +243,7 @@ test('every damaging promoted animation derives safety from its own active geome
       id !== 'self-heal-cast' &&
       id !== 'external-healing-source' &&
       id !== 'damage-rate-cap' &&
+      id !== 'loadout-mirror' &&
       id !== 'part-break' &&
       id !== 'counter-stance' &&
       id !== 'absorption-power-up' &&
@@ -3716,5 +3720,61 @@ test('damage-rate cap attenuates a burst and restores full damage after decay', 
   assert.match(
     renderBlueprintThumbnail(id, 'test-damage-rate-cap'),
     /data-blueprint-preview="damage-rate-cap"/,
+  );
+});
+
+test('loadout mirror captures once and keeps the copied package after the player swaps', () => {
+  const id = 'loadout-mirror';
+  assert.deepEqual([0, 0.5, 1.2, 2.3, 2.8, 3.6, 4.4, 5.32, 5.5].map(loadoutMirrorState), [
+    'ready',
+    'scanning',
+    'snapshot-captured',
+    'copy-locked',
+    'player-loadout-changed',
+    'copied-package-active',
+    'snapshot-stable',
+    'recovery',
+    'reset',
+  ]);
+  assert.deepEqual(loadoutMirrorSnapshot(), {
+    snapshotId: 'loadout-snapshot-1',
+    equippedIds: ['sword', 'ward', 'ember'],
+    copiedIds: ['sword', 'ward', 'ember'],
+    captured: true,
+    eventCount: 1,
+  });
+  assert.deepEqual(
+    loadoutMirrorSnapshot({
+      equippedIds: ['bow', 'dash', 'frost'],
+      existingCopiedIds: ['sword', 'ward', 'ember'],
+      alreadyCaptured: true,
+    }),
+    {
+      snapshotId: 'loadout-snapshot-1',
+      equippedIds: ['bow', 'dash', 'frost'],
+      copiedIds: ['sword', 'ward', 'ember'],
+      captured: false,
+      eventCount: 0,
+    },
+  );
+
+  const captured = blueprintFrame(id, 1.3);
+  assert.equal(captured.loadoutMirrorSnapshotCaptured, true);
+  assert.equal(captured.loadoutMirrorSnapshotEventCount, 1);
+  assert.deepEqual(captured.loadoutMirrorCopiedLoadoutIds, ['sword', 'ward', 'ember']);
+  const swapped = blueprintFrame(id, 2.8);
+  assert.equal(swapped.loadoutMirrorPlayerChanged, true);
+  assert.deepEqual(swapped.loadoutMirrorPlayerLoadoutIds, ['bow', 'dash', 'frost']);
+  assert.deepEqual(swapped.loadoutMirrorCopiedLoadoutIds, ['sword', 'ward', 'ember']);
+  assert.equal(swapped.loadoutMirrorLiveResnapshotCount, 0);
+  const used = blueprintFrame(id, 3.6);
+  assert.equal(used.loadoutMirrorBossUsedCopiedAttack, true);
+  assert.equal(used.loadoutMirrorBossPackage, 'sword+ward+ember');
+  assert.equal(used.loadoutMirrorCopyMatchesSnapshot, true);
+  assert.equal(blueprintPointSafe(id, 3.6, used.player), true);
+  assert.deepEqual(blueprintFrame(id, 0).player, blueprintFrame(id, 6).player);
+  assert.match(
+    renderBlueprintThumbnail(id, 'test-loadout-mirror'),
+    /data-blueprint-preview="loadout-mirror"/,
   );
 });

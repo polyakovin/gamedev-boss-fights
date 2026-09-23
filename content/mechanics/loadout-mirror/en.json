@@ -1,0 +1,134 @@
+{
+  "title": "Loadout mirror",
+  "subtitle": "Turn the player’s chosen build into the boss’s authored package",
+  "variant": "Signal · snapshot · normalize · use",
+  "summary": "At a declared moment, the boss snapshots selected parts of the player’s build and converts them into a stable encounter package.",
+  "overview": "A loadout mirror reads chosen weapons, spells, items, stats, or deck entries at one explicit moment, then gives the boss a deterministic package derived from that snapshot. It reflects player expression without requiring the boss to execute arbitrary inventory data live.",
+  "learning": "Define the snapshot trigger, eligible slots, canonical ids, copied values, normalization, invalid-item fallback, multiplayer owner, post-snapshot changes, phase lifetime, save and rollback behavior, telegraph, counterplay, and telemetry.",
+  "category": "States, resources, and scaling",
+  "readTime": "10 min",
+  "demo": {
+    "title": "Capture Tavi’s three-slot loadout, then prove Kern keeps the snapshot after a swap",
+    "timeline": "Loadout mirror timeline",
+    "step": "Scan, lock, player swap, and copied attack",
+    "phaseNames": ["Declare the snapshot", "Lock a canonical package", "Use the stable copy"],
+    "phaseDescriptions": [
+      "From 0.32 to 1.14 seconds, three lines connect Tavi’s sword, ward, and ember slots to Kern. The capture happens once at 1.14 seconds under one stable snapshot id.",
+      "Kern reveals the copied three-slot package while Tavi changes to bow, dash, and frost at 2.62 seconds. The boss does not rescan or inherit the later change.",
+      "At 3.42 seconds Kern uses the copied sword package. The original icons remain locked beside the boss, proving that resolution reads the snapshot rather than the current player inventory."
+    ],
+    "boss": "Boss",
+    "player": "Player",
+    "danger": "A mirror can turn a powerful or unusual build back on the player, but only data admitted by the encounter contract may cross the boundary",
+    "locked": "Snapshot timing, slot eligibility, value normalization, fallbacks, ownership, persistence, and idempotence belong to encounter logic",
+    "safe": "Show which slots were scanned, when the snapshot locked, what package the boss received, and whether later player changes matter",
+    "reducedMotion": "Autoplay is disabled by reduced motion. Scrub across 0.32, 1.14, 2.18, 2.62, 3.42, 4.12, 5.28, and 5.42 seconds to inspect the snapshot.",
+    "diagramDescription": "Three equipment slots travel from Tavi to Kern during a scan. Tavi then changes all three slots, while Kern retains and attacks with the original copied package."
+  },
+  "steps": [
+    {
+      "title": "What exactly enters the snapshot?",
+      "body": "List eligible slots and canonical ids: weapon family, upgrade tier, spell tags, item charges, passives, stats, or deck entries. Exclude presentation-only data and define a safe authored fallback for every unsupported or empty value."
+    },
+    {
+      "title": "How does copied power become boss behavior?",
+      "body": "Map snapshot data to a bounded package instead of executing arbitrary player content directly. Normalize damage, range, cooldowns, status strength, resources, and animation requirements so every accepted combination remains readable and fair."
+    },
+    {
+      "title": "When can the snapshot change?",
+      "body": "Choose one capture event and one lifetime: encounter entry, transformation, summon, or phase start. Give it a stable id, deep-copy the values, ignore duplicate callbacks, and explicitly decide whether loadout changes, death, multiplayer handoff, reload, or rollback can replace it."
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "The optimal answer is to enter the room unequipped",
+      "body": "If the boss copies raw power once and the player can immediately re-equip, preparation collapses into inventory cheese. Lock loadout changes briefly, normalize the copy, preview the captured package, or make every supported build create useful counterplay."
+    },
+    {
+      "title": "The boss live-reads mutable inventory",
+      "body": "Polling current equipment during attacks creates races, animation gaps, multiplayer disagreement, and save-state bugs. Resolve attacks from an immutable snapshot and treat a resnapshot as a new, clearly signaled event."
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "Separate player data from boss verbs",
+      "body": "Translate canonical tags such as heavy, ranged, guard, fire, or healing into tested boss actions. Never assume a player animation, projectile, item script, or resource model is safe to reuse as boss logic."
+    },
+    {
+      "title": "Make the copy legible",
+      "body": "Show the selected slots before capture, confirm the lock with a distinct cue, and keep the copied package visible when practical. Players should be able to connect a later boss action to the build choice that produced it."
+    },
+    {
+      "title": "Test the state boundary",
+      "body": "Record snapshotId, ownerId, eligible input ids, normalized output ids, capture count, rejected values, fallback use, resnapshot count, phase, and the id of every copied action. Test empty, duplicated, modded, disabled, networked, and restored inventories."
+    }
+  ],
+  "story": {
+    "title": "Kern remembers the runes on Tavi’s gear",
+    "body": "A pale scan crosses Tavi’s sword, ward, and ember charm. Kern carves those three signs into stone; even after Tavi reaches for a new kit, the elemental swings with the pattern it already learned."
+  },
+  "adaptation": {
+    "title": "Offer a predictable or normalized mirror",
+    "body": "Provide a pre-fight summary of eligible slots, an icon for the captured package, color-independent slot shapes, and an option that maps builds to a small fixed set. Avoid reaction-time pressure during inventory changes and announce any intentional resnapshot."
+  },
+  "distinction": {
+    "title": "A snapshot, not adaptive counter-picking or full character control",
+    "body": "Loadout adaptation selects a counter package after classifying the player, while a loadout mirror preserves selected input from the player’s build. A player-controlled boss transfers agency; this mechanic transfers bounded data."
+  },
+  "lensNotes": [
+    {
+      "id": "player-expression",
+      "body": "The encounter reflects the player’s build choices back as visible boss behavior, so eligibility and normalization decide which expressions survive."
+    },
+    {
+      "id": "risk-reward",
+      "body": "A strong build may produce a stronger mirrored package, but the player also knows its strengths and can prepare meaningful answers."
+    },
+    {
+      "id": "rule-exception",
+      "body": "Empty slots, consumables, upgrade levels, duplicate ids, forbidden content, multiplayer owners, reloads, and phase changes need explicit fallbacks."
+    },
+    {
+      "id": "progress-clarity",
+      "body": "The scan, lock confirmation, persistent copied icons, and action feedback must explain what was captured and whether it can change."
+    },
+    {
+      "id": "counterplay",
+      "body": "Counterplay should come from understanding the mirrored package, not from exploiting a silent inventory timing race."
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "3D",
+      "game": "Elden Ring",
+      "boss": "Mimic Tear",
+      "screenshot": "https://i.ytimg.com/vi/42alQxG2XRE/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=42alQxG2XRE&t=13s",
+      "video": "https://www.youtube.com/watch?v=42alQxG2XRE&t=13s",
+      "videoDurationSeconds": 92,
+      "body": "From 0:13, the silver tear assumes the player’s form and fights with the captured equipment and abilities. The example makes the snapshot highly personal, but also exposes the need to define how entry-time equipment and later changes are handled."
+    },
+    {
+      "dimension": "2D",
+      "game": "Castlevania: Portrait of Ruin",
+      "boss": "Doppelganger",
+      "screenshot": "https://i.ytimg.com/vi/M3KtcwsqhA4/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=M3KtcwsqhA4&t=2206s",
+      "video": "https://www.youtube.com/watch?v=M3KtcwsqhA4&t=2206s",
+      "videoDurationSeconds": 2645,
+      "body": "At 36:46, Doppelganger appears with the copied character package. Its documented room-entry equipment snapshot can be manipulated by unequipping first and re-equipping afterward, a clear warning about snapshot timing and degenerate preparation."
+    },
+    {
+      "dimension": "2D",
+      "game": "Library of Ruina",
+      "boss": "Pinocchio the Copycat",
+      "screenshot": "https://i.ytimg.com/vi/EngMNNJFjBE/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=EngMNNJFjBE&t=130s",
+      "video": "https://www.youtube.com/watch?v=EngMNNJFjBE&t=130s",
+      "videoDurationSeconds": 578,
+      "body": "From 2:10, Pinocchio’s copied combat pages are visible in the deck-driven battle. Copying a librarian’s bookshelf demonstrates that the mirrored payload can be a set of authored actions rather than physical weapons or character stats."
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}
