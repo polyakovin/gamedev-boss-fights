@@ -2406,13 +2406,15 @@ test('forced inertia previews one endpoint, preserves the slide, and restores co
   await expect(page.locator('.wip-badge, .draft-profile')).toHaveCount(0);
   await expect(page.locator('.game-example')).toHaveCount(3);
   await expect(widget).toHaveAttribute('data-blueprint-playing', 'false');
+  await expect(widget).toHaveAttribute('data-blueprint-full-height', 'true');
+  expect((await widget.boundingBox()).height).toBeGreaterThan(800);
 
   await seek(1100);
   await expect(widget).toHaveAttribute('data-blueprint-forced-inertia', 'endpoint-preview');
   await expect(widget).toHaveAttribute('data-blueprint-inertia-frozen', 'true');
   await expect(widget).toHaveAttribute('data-blueprint-inertia-vector', 'true');
   await expect(widget).toHaveAttribute('data-blueprint-inertia-committed', 'false');
-  await expect(widget.locator('[data-blueprint-primitive="3"] line')).not.toHaveAttribute(
+  await expect(widget.locator('[data-blueprint-primitive="10"] path')).not.toHaveAttribute(
     'opacity',
     '0',
   );
@@ -2423,7 +2425,7 @@ test('forced inertia previews one endpoint, preserves the slide, and restores co
   await expect(widget).toHaveAttribute('data-blueprint-inertia-sliding', 'true');
   await expect(widget).toHaveAttribute('data-blueprint-inertia-speed', '1.000');
   await expect(widget).toHaveAttribute('data-blueprint-outcome', 'safe');
-  await expect(widget.locator('[data-blueprint-primitive="7"] line')).not.toHaveAttribute(
+  await expect(widget.locator('[data-blueprint-primitive="13"] path')).not.toHaveAttribute(
     'opacity',
     '0',
   );
@@ -2438,7 +2440,7 @@ test('forced inertia previews one endpoint, preserves the slide, and restores co
   await expect(widget).toHaveAttribute('data-blueprint-forced-inertia', 'control-restored');
   await expect(widget).toHaveAttribute('data-blueprint-inertia-control', 'true');
   await expect(widget).toHaveAttribute('data-blueprint-inertia-speed', '0.000');
-  await expect(widget.locator('[data-blueprint-primitive="16"] circle')).not.toHaveAttribute(
+  await expect(widget.locator('[data-blueprint-primitive="15"] path')).not.toHaveAttribute(
     'opacity',
     '0',
   );
@@ -2446,7 +2448,7 @@ test('forced inertia previews one endpoint, preserves the slide, and restores co
   await seek(3720);
   await expect(widget).toHaveAttribute('data-blueprint-forced-inertia', 'counter-window');
   await expect(widget).toHaveAttribute('data-blueprint-punish-strike', 'true');
-  await expect(widget.locator('[data-blueprint-primitive="12"] line')).not.toHaveAttribute(
+  await expect(widget.locator('[data-blueprint-primitive="16"] line')).not.toHaveAttribute(
     'opacity',
     '0',
   );

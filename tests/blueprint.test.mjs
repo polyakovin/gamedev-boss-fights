@@ -2092,8 +2092,8 @@ test('forced inertia preserves one committed vector until the authored braking p
   assert.equal(preview.forcedInertiaFrozen, true);
   assert.equal(preview.forcedInertiaVectorVisible, true);
   assert.equal(preview.forcedInertiaCommitted, false);
-  assert.ok(preview.primitives[3].opacity > 0.7, 'the complete slide vector is visible');
-  assert.ok(preview.primitives[5].opacity > 0.8, 'the braking endpoint is visible');
+  assert.ok(preview.primitives[10].opacity > 0.5, 'the complete slide groove is visible');
+  assert.ok(preview.primitives[11].opacity > 0.8, 'the braking stone is visible');
 
   const sliding = blueprintFrame(id, 2.2);
   assert.equal(sliding.forcedInertiaState, 'unsteerable-slide');
@@ -2103,7 +2103,7 @@ test('forced inertia preserves one committed vector until the authored braking p
   assert.equal(sliding.dangerActive, true);
   assert.equal(sliding.playerSafe, true);
   assert.equal(blueprintPointSafe(id, 2.2, { x: 492, y: 620 }), false);
-  assert.ok(sliding.primitives[7].opacity > 0.7, 'the preserved momentum trail is visible');
+  assert.ok(sliding.primitives[13].opacity > 0.7, 'the preserved momentum trail is visible');
 
   const braking = blueprintFrame(id, 3);
   assert.equal(braking.forcedInertiaBraking, true);
@@ -2112,11 +2112,11 @@ test('forced inertia preserves one committed vector until the authored braking p
   const restored = blueprintFrame(id, 3.5);
   assert.equal(restored.forcedInertiaControlRestored, true);
   assert.equal(restored.forcedInertiaSpeed, 0);
-  assert.ok(restored.primitives[16].opacity > 0.7, 'control return is explicit');
+  assert.ok(restored.primitives[15].opacity > 0.7, 'control return is explicit');
 
   const punish = blueprintFrame(id, 3.72);
   assert.equal(punish.punishStrike, true);
-  assert.ok(punish.primitives[12].opacity > 0.9, 'the sword response follows control return');
+  assert.ok(punish.primitives[16].opacity > 0.9, 'the sword response follows control return');
 
   assert.deepEqual(blueprintFrame(id, 0).player, blueprintFrame(id, 6).player);
   assert.deepEqual(blueprintFrame(id, 0).boss, blueprintFrame(id, 6).boss);

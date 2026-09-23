@@ -27,7 +27,7 @@
     "locked": "Surface bounds, captured heading, entry speed, steering authority, friction, stopping patch, danger edge, control-return beat, and reset are authored",
     "safe": "Read the complete projected path, enter at the shown angle, let the slide finish without corrective inputs, then move only after the control-return pulse",
     "reducedMotion": "Autoplay is disabled by reduced motion. Scrub across 0.44, 0.82, 1.34, 1.62, 2.82, 3.28, 3.72, and 4.85 seconds to inspect freezing, commitment, sliding, braking, and reset.",
-    "diagramDescription": "Kern freezes a rectangular arena with a lethal outer edge. A dashed diagonal predicts Tavi's stopping point on a rough rune patch; Tavi commits, slides along that fixed line with a visible speed gauge, brakes, regains control, and runs to Kern for one sword strike."
+    "diagramDescription": "Kern freezes the quarry floor from top to bottom, leaving a lethal cliff at the right edge. An icy groove points to the rough rune patch where Tavi will stop; Tavi commits, slides along the fixed route with a visible ice trail, brakes, regains control, and runs to Kern for one sword strike."
   },
   "steps": [
     {

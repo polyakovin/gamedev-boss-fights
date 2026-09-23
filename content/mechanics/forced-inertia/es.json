@@ -27,7 +27,7 @@
     "locked": "Se definen límites, dirección capturada, velocidad de entrada, autoridad de giro, fricción, zona de parada, borde peligroso, retorno del control y reinicio",
     "safe": "Lee todo el recorrido previsto, entra con el ángulo indicado, deja terminar el deslizamiento sin corregir y muévete solo tras el pulso de control recuperado",
     "reducedMotion": "Con movimiento reducido no hay reproducción automática. Recorre 0,44, 0,82, 1,34, 1,62, 2,82, 3,28, 3,72 y 4,85 s para revisar congelación, compromiso, deslizamiento, frenado y reinicio.",
-    "diagramDescription": "Kern congela una arena rectangular con un borde exterior letal. Una diagonal discontinua anticipa la parada de Tavi en una zona rúnica rugosa; Tavi se compromete, se desliza por la línea fija con un indicador de velocidad, frena, recupera el control y corre hacia Kern para dar un espadazo."
+    "diagramDescription": "Kern congela todo el suelo de la cantera y deja un precipicio letal a la derecha. Un surco en el hielo lleva a la losa rúnica rugosa donde se detendrá Tavi; Tavi fija la dirección, se desliza por la ruta sin desviarse y deja una estela de hielo visible, frena, recupera el control y corre hacia Kern para dar un espadazo."
   },
   "steps": [
     {
