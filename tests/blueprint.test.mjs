@@ -23,6 +23,8 @@ import {
   beatSyncedAttackState,
   secondaryCuesInvisibilityState,
   soundDetectionState,
+  objectiveLinkedInvulnerabilityOutcome,
+  objectiveLinkedInvulnerabilityState,
   counterStanceOutcome,
   counterStanceState,
   blueprintFrame,
@@ -50,8 +52,8 @@ import {
   renderBlueprintThumbnail,
 } from '../lib/blueprint-view.mjs';
 
-test('all 74 promoted lesson animations have distinct rule modes and complete moving frames', () => {
-  assert.equal(BLUEPRINT_MECHANIC_IDS.length, 74);
+test('all 75 promoted lesson animations have distinct rule modes and complete moving frames', () => {
+  assert.equal(BLUEPRINT_MECHANIC_IDS.length, 75);
   const modes = new Set();
   for (const id of BLUEPRINT_MECHANIC_IDS) {
     for (let time = 0; time <= BLUEPRINT_DURATION; time += 0.1) {
@@ -72,7 +74,7 @@ test('all 74 promoted lesson animations have distinct rule modes and complete mo
           assert.ok(Number.isFinite(value), `${id} has an invalid ${primitive.type}`);
     }
   }
-  assert.equal(modes.size, 74);
+  assert.equal(modes.size, 75);
 });
 
 test('every blueprint exposes signal, committed action, and recovery without player teleports', () => {
@@ -176,6 +178,7 @@ test('every damaging promoted animation derives safety from its own active geome
       id !== 'directional-shield' &&
       id !== 'damage-type-resistance' &&
       id !== 'situational-immunity' &&
+      id !== 'objective-linked-invulnerability' &&
       id !== 'part-break' &&
       id !== 'counter-stance' &&
       id !== 'absorption-power-up' &&
@@ -2290,5 +2293,80 @@ test('sound detection commits to an audible event instead of the live player pos
   assert.match(
     renderBlueprintThumbnail(id, 'test-sound-detection'),
     /data-blueprint-preview="sound-detection"/,
+  );
+});
+
+test('objective-linked invulnerability opens only after every protection objective', () => {
+  const id = 'objective-linked-invulnerability';
+  assert.deepEqual(
+    [0, 0.5, 0.9, 1.3, 2.1, 2.75, 2.95, 3.2, 3.5, 4.1, 4.5, 5.3].map(
+      objectiveLinkedInvulnerabilityState,
+    ),
+    [
+      'protected-objectives',
+      'blocked-check',
+      'approach-first-objective',
+      'first-objective-cleared',
+      'second-objective-cleared',
+      'all-objectives-cleared',
+      'protection-releasing',
+      'vulnerability-window',
+      'boss-hit',
+      'window-closing',
+      'protection-restored',
+      'reset',
+    ],
+  );
+
+  const blocked = blueprintFrame(id, 0.62);
+  assert.equal(blocked.objectiveBlockedStrike, true);
+  assert.equal(blocked.objectiveShielded, true);
+  assert.equal(objectiveLinkedInvulnerabilityOutcome(0.62), 'immune');
+  assert.ok(blocked.primitives[12].opacity > 0.8, 'the first sword strike visibly stops');
+
+  const first = blueprintFrame(id, 1.3);
+  assert.equal(first.objectiveCompletedCount, 1);
+  assert.equal(objectiveLinkedInvulnerabilityOutcome(1.3, 'objective-1'), 'complete');
+  assert.ok(first.primitives[1].opacity < 0.2, 'the completed seal severs its protection link');
+
+  const complete = blueprintFrame(id, 2.75);
+  assert.equal(complete.objectiveCompletedCount, 3);
+  assert.equal(complete.objectiveAllComplete, true);
+  assert.equal(complete.objectiveShielded, true, 'completion precedes the release transition');
+
+  const releasing = blueprintFrame(id, 2.95);
+  assert.ok(releasing.objectiveShieldOpacity > 0 && releasing.objectiveShieldOpacity < 1);
+  assert.ok(releasing.primitives[16].opacity > 0, 'the final ledger emits a release pulse');
+
+  const vulnerable = blueprintFrame(id, 3.2);
+  assert.equal(objectiveLinkedInvulnerabilityOutcome(3.2), 'vulnerable');
+  assert.equal(vulnerable.objectiveShielded, false);
+  assert.ok(vulnerable.objectiveWindowRemaining > 0);
+  assert.ok(vulnerable.primitives[11].opacity > 0.7, 'the exposed core is readable');
+
+  const hit = blueprintFrame(id, 3.46);
+  assert.equal(hit.objectiveBossStrike, true);
+  assert.ok(hit.primitives[17].opacity > 0.8, 'the sword crosses the boss during the window');
+  assert.ok(hit.primitives[18].opacity > 0.8, 'the accepted hit confirms at the core');
+
+  const closing = blueprintFrame(id, 4.1);
+  assert.equal(closing.objectiveLinkedInvulnerabilityState, 'window-closing');
+  assert.equal(objectiveLinkedInvulnerabilityOutcome(4.1), 'immune');
+  assert.ok(closing.objectiveShieldOpacity > 0 && closing.objectiveShieldOpacity < 1);
+
+  const restored = blueprintFrame(id, 4.5);
+  assert.equal(restored.objectiveShielded, true);
+  assert.equal(restored.objectiveCompletedCount, 3);
+
+  const reset = blueprintFrame(id, 5.3);
+  assert.equal(reset.objectiveCompletedCount, 0);
+  assert.equal(reset.objectiveAllComplete, false);
+  assert.equal(objectiveLinkedInvulnerabilityOutcome(5.3, 'objective-1'), 'active');
+
+  assert.deepEqual(blueprintFrame(id, 0).player, blueprintFrame(id, 6).player);
+  assert.deepEqual(blueprintFrame(id, 0).boss, blueprintFrame(id, 6).boss);
+  assert.match(
+    renderBlueprintThumbnail(id, 'test-objective-linked-invulnerability'),
+    /data-blueprint-preview="objective-linked-invulnerability"/,
   );
 });

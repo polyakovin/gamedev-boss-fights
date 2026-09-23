@@ -1289,12 +1289,12 @@
         "en": {
           "title": "Objective-linked invulnerability",
           "category": "Encounter goals and vulnerability",
-          "summary": "Draft outline for the objective-linked invulnerability mechanic. Rules, tuning guidance, and examples are still in progress."
+          "summary": "The boss ignores normal damage until a finite set of visible protection objectives is complete, then opens for a timed damage window."
         },
         "ru": {
           "title": "Неуязвимость, привязанная к цели",
           "category": "Цель боя и открытие уязвимости",
-          "summary": "Босс не получает обычный урон, пока игрок не отключит отдельные источники защиты."
+          "summary": "Босс не получает обычный урон, пока не завершён конечный набор видимых целей защиты, после чего открывается на ограниченное окно."
         }
       }
     },

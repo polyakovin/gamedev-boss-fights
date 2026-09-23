@@ -884,6 +884,33 @@ const SPECS = {
       [430, 700],
     ],
   },
+  'objective-linked-invulnerability': {
+    mode: 'objective-linked-invulnerability',
+    boss: [280, 400],
+    player: [420, 500],
+    target: [220, 515],
+    arena: [56, 350, 448, 540],
+    blockedStrike: 0.62,
+    objectiveHits: [1.18, 1.92, 2.68],
+    gateDropsAt: 2.88,
+    vulnerable: [3.05, 4.05],
+    bossStrike: 3.46,
+    shieldReturns: 4.22,
+    resetAt: 5.1,
+    shieldRadius: 86,
+    objectives: [
+      [445, 680],
+      [280, 800],
+      [115, 680],
+    ],
+    strikePoint: [220, 515],
+    retreatPoint: [390, 610],
+    resetRoute: [
+      [390, 610],
+      [420, 560],
+      [420, 500],
+    ],
+  },
   'wide-swing': { mode: 'arc', boss: [280, 310], player: [410, 470], target: [470, 650] },
   lunge: { mode: 'lunge', boss: [170, 290], player: [390, 590], target: [470, 660] },
   grab: { mode: 'grab', boss: [280, 300], player: [390, 485], target: [470, 610] },
@@ -1530,6 +1557,36 @@ export function soundDetectionState(time) {
   if (t < spec.punishAt) return 'counter-approach';
   if (t < spec.resetAt) return 'counter-window';
   return 'reset';
+}
+
+export function objectiveLinkedInvulnerabilityState(time) {
+  const spec = SPECS['objective-linked-invulnerability'];
+  const t = localTime(time);
+  if (t < 0.42) return 'protected-objectives';
+  if (t < 0.82) return 'blocked-check';
+  if (t < spec.objectiveHits[0]) return 'approach-first-objective';
+  if (t < spec.objectiveHits[1]) return 'first-objective-cleared';
+  if (t < spec.objectiveHits[2]) return 'second-objective-cleared';
+  if (t < spec.gateDropsAt) return 'all-objectives-cleared';
+  if (t < spec.vulnerable[0]) return 'protection-releasing';
+  if (t < spec.bossStrike) return 'vulnerability-window';
+  if (t < spec.vulnerable[1]) return 'boss-hit';
+  if (t < spec.shieldReturns) return 'window-closing';
+  if (t < spec.resetAt) return 'protection-restored';
+  return 'reset';
+}
+
+export function objectiveLinkedInvulnerabilityOutcome(time, target = 'boss') {
+  const spec = SPECS['objective-linked-invulnerability'];
+  const t = localTime(time);
+  if (target === 'boss')
+    return t >= spec.vulnerable[0] && t < spec.vulnerable[1] ? 'vulnerable' : 'immune';
+  const match = /^objective-(\d)$/.exec(target);
+  if (!match) throw new Error(`Unknown objective target: ${target}`);
+  const index = Number(match[1]) - 1;
+  if (index < 0 || index >= spec.objectiveHits.length)
+    throw new Error(`Unknown objective target: ${target}`);
+  return t >= spec.objectiveHits[index] && t < spec.resetAt ? 'complete' : 'active';
 }
 
 const segmentIntersectsRect = (start, end, bounds) => {
@@ -3610,6 +3667,139 @@ function primitivesFor(spec, frame) {
       ),
     ];
   }
+  if (mode === 'objective-linked-invulnerability') {
+    const objectives = spec.objectives.map(point);
+    const activeObjective =
+      frame.objectiveHitIndex >= 0 ? objectives[frame.objectiveHitIndex] : objectives[0];
+    const objectivePulse = Math.max(
+      ...spec.objectiveHits.map((hit) => strikePulse(frame.time, hit, 0.3)),
+    );
+    const gatePulse = strikePulse(frame.time, spec.gateDropsAt, 0.5);
+    const bossStrike = strikePulse(frame.time, spec.bossStrike, 0.36);
+    const blocked = strikePulse(frame.time, spec.blockedStrike, 0.34);
+    return [
+      rect(...spec.arena, 0.52, 'muted', 0.025),
+      ...objectives.map((objective, index) =>
+        line(
+          frame.boss.x,
+          frame.boss.y + 28,
+          objective.x,
+          objective.y,
+          index < frame.objectiveCompletedCount ? 0.1 : frame.objectiveShielded ? 0.66 : 0,
+          index < frame.objectiveCompletedCount ? 'muted' : 'accent',
+          5,
+          '9 9',
+        ),
+      ),
+      ...objectives.map((objective, index) =>
+        circle(
+          objective.x,
+          objective.y,
+          40,
+          index < frame.objectiveCompletedCount ? 0.68 : 0.92,
+          index < frame.objectiveCompletedCount ? 'safe' : 'accent',
+          index < frame.objectiveCompletedCount ? 6 : 8,
+          index < frame.objectiveCompletedCount ? 0.08 : 0.15,
+        ),
+      ),
+      ...objectives.map((objective, index) =>
+        path(
+          `M ${objective.x} ${objective.y - 19} L ${objective.x + 19} ${objective.y} L ${objective.x} ${objective.y + 19} L ${objective.x - 19} ${objective.y} Z`,
+          index < frame.objectiveCompletedCount ? 0.9 : 0.72,
+          index < frame.objectiveCompletedCount ? 'safe' : 'accent',
+          5,
+          index < frame.objectiveCompletedCount ? 0.2 : 0.05,
+        ),
+      ),
+      circle(
+        frame.boss.x,
+        frame.boss.y,
+        spec.shieldRadius,
+        frame.objectiveShieldOpacity,
+        'accent',
+        frame.objectiveShielded ? 11 : 5,
+        frame.objectiveShielded ? 0.16 : 0.03,
+        '10 8',
+      ),
+      circle(
+        frame.boss.x,
+        frame.boss.y - 8,
+        34 + 16 * pulse(frame.objectiveVulnerabilityProgress),
+        frame.objectiveVulnerable ? 0.92 : 0.18,
+        frame.objectiveVulnerable ? 'safe' : 'muted',
+        7,
+        frame.objectiveVulnerable ? 0.18 : 0.03,
+      ),
+      line(
+        spec.player[0],
+        spec.player[1],
+        frame.boss.x + 44,
+        frame.boss.y + 28,
+        blocked,
+        'safe',
+        9,
+      ),
+      circle(frame.boss.x + 45, frame.boss.y + 28, 16 + blocked * 26, blocked, 'accent', 8, 0.08),
+      line(
+        frame.player.x,
+        frame.player.y,
+        activeObjective.x,
+        activeObjective.y,
+        objectivePulse,
+        'safe',
+        9,
+      ),
+      circle(
+        activeObjective.x,
+        activeObjective.y,
+        16 + objectivePulse * 26,
+        objectivePulse,
+        'safe',
+        7,
+        0.12,
+      ),
+      circle(frame.boss.x, frame.boss.y, 70 + gatePulse * 70, gatePulse, 'safe', 8, 0.04),
+      line(
+        frame.player.x,
+        frame.player.y,
+        frame.boss.x - 24,
+        frame.boss.y + 20,
+        bossStrike,
+        'safe',
+        11,
+      ),
+      circle(
+        frame.boss.x - 24,
+        frame.boss.y + 20,
+        14 + bossStrike * 30,
+        bossStrike,
+        'safe',
+        8,
+        0.16,
+      ),
+      ...objectives.map((_, index) =>
+        circle(
+          248 + index * 32,
+          520,
+          10,
+          0.92,
+          index < frame.objectiveCompletedCount ? 'safe' : 'accent',
+          4,
+          index < frame.objectiveCompletedCount ? 0.24 : 0.04,
+        ),
+      ),
+      rect(182, 548, 196, 14, frame.objectiveVulnerable ? 0.5 : 0.18, 'muted', 0.025),
+      rect(
+        182,
+        548,
+        196 * frame.objectiveWindowRemaining,
+        14,
+        frame.objectiveVulnerable ? 0.92 : 0,
+        'safe',
+        0.16,
+      ),
+    ];
+  }
   if (mode === 'landing') {
     const landing = point(spec.landing);
     const contact = phase === 1 ? clamp(1 - Math.abs(action - 0.52) / 0.2) : 0;
@@ -4941,6 +5131,7 @@ function pointClearsThreat(spec, frame, value, radius = BLUEPRINT_PLAYER_RADIUS)
       Math.hypot(value.x - spec.soundPoint[0], value.y - spec.soundPoint[1]) >
         spec.dangerRadius + radius
     );
+  if (mode === 'objective-linked-invulnerability') return true;
   if (mode === 'spiral')
     return (
       distanceFromBoss > 52 + radius &&
@@ -5286,6 +5477,7 @@ export function blueprintFrame(id, time) {
   else if (spec.mode === 'beat-synced-attack') responseProgress = 0;
   else if (spec.mode === 'secondary-cues-invisibility') responseProgress = 0;
   else if (spec.mode === 'sound-detection') responseProgress = 0;
+  else if (spec.mode === 'objective-linked-invulnerability') responseProgress = 0;
   else if (spec.mode === 'knockback')
     responseProgress = phase === 0 ? 0 : phase === 1 ? smooth(action) : 1;
   else if (spec.mode === 'target-lock')
@@ -5821,6 +6013,40 @@ export function blueprintFrame(id, time) {
       player = pointAlongPolyline(spec.resetRoute.map(point), reset);
     }
   }
+  if (spec.mode === 'objective-linked-invulnerability') {
+    const [first, second, third] = spec.objectives.map(point);
+    const strike = point(spec.strikePoint);
+    const retreat = point(spec.retreatPoint);
+    if (t < 0.74) player = startPlayer;
+    else if (t < spec.objectiveHits[0]) {
+      const progress = smooth((t - 0.74) / (spec.objectiveHits[0] - 0.74));
+      player = {
+        x: mix(startPlayer.x, first.x, progress),
+        y: mix(startPlayer.y, first.y, progress),
+      };
+    } else if (t < spec.objectiveHits[1]) {
+      const progress = smooth(
+        (t - spec.objectiveHits[0]) / (spec.objectiveHits[1] - spec.objectiveHits[0]),
+      );
+      player = { x: mix(first.x, second.x, progress), y: mix(first.y, second.y, progress) };
+    } else if (t < spec.objectiveHits[2]) {
+      const progress = smooth(
+        (t - spec.objectiveHits[1]) / (spec.objectiveHits[2] - spec.objectiveHits[1]),
+      );
+      player = { x: mix(second.x, third.x, progress), y: mix(second.y, third.y, progress) };
+    } else if (t < 3.3) {
+      const progress = smooth((t - spec.objectiveHits[2]) / (3.3 - spec.objectiveHits[2]));
+      player = { x: mix(third.x, strike.x, progress), y: mix(third.y, strike.y, progress) };
+    } else if (t < spec.bossStrike) player = strike;
+    else if (t < spec.shieldReturns) {
+      const progress = smooth((t - spec.bossStrike) / (spec.shieldReturns - spec.bossStrike));
+      player = { x: mix(strike.x, retreat.x, progress), y: mix(strike.y, retreat.y, progress) };
+    } else if (t < spec.resetAt) player = retreat;
+    else {
+      const reset = smooth((t - spec.resetAt) / (BLUEPRINT_DURATION - spec.resetAt));
+      player = pointAlongPolyline(spec.resetRoute.map(point), reset);
+    }
+  }
   if (spec.mode === 'rotating' && phase === 0) {
     const initialPosition = polar(boss, 255, Math.PI / 3);
     player = {
@@ -6057,7 +6283,36 @@ export function blueprintFrame(id, time) {
                                           ),
                                         ) * 0.8,
                                       )
-                                    : pulse(responseProgress) + pulse(returnProgress) * 0.8;
+                                    : spec.mode === 'objective-linked-invulnerability'
+                                      ? Math.max(
+                                          pulse(smooth((t - 0.74) / 0.44)),
+                                          pulse(
+                                            smooth(
+                                              (t - spec.objectiveHits[0]) /
+                                                (spec.objectiveHits[1] - spec.objectiveHits[0]),
+                                            ),
+                                          ),
+                                          pulse(
+                                            smooth(
+                                              (t - spec.objectiveHits[1]) /
+                                                (spec.objectiveHits[2] - spec.objectiveHits[1]),
+                                            ),
+                                          ),
+                                          pulse(smooth((t - spec.objectiveHits[2]) / 0.62)),
+                                          pulse(
+                                            smooth(
+                                              (t - spec.vulnerable[1]) /
+                                                (spec.shieldReturns - spec.vulnerable[1]),
+                                            ),
+                                          ),
+                                          pulse(
+                                            smooth(
+                                              (t - spec.resetAt) /
+                                                (BLUEPRINT_DURATION - spec.resetAt),
+                                            ),
+                                          ) * 0.8,
+                                        )
+                                      : pulse(responseProgress) + pulse(returnProgress) * 0.8;
   const bossVisible =
     spec.mode === 'secondary-cues-invisibility'
       ? t < spec.vanishAt
@@ -6341,24 +6596,28 @@ export function blueprintFrame(id, time) {
                                     : spec.mode === 'sound-detection'
                                       ? (Math.atan2(boss.y - player.y, boss.x - player.x) * 180) /
                                         Math.PI
-                                      : spec.mode === 'boss-as-terrain'
+                                      : spec.mode === 'objective-linked-invulnerability'
                                         ? (Math.atan2(boss.y - player.y, boss.x - player.x) * 180) /
                                           Math.PI
-                                        : spec.mode === 'control-mode-shift'
+                                        : spec.mode === 'boss-as-terrain'
                                           ? (Math.atan2(boss.y - player.y, boss.x - player.x) *
                                               180) /
                                             Math.PI
-                                          : spec.mode === 'damage-type-resistance' ||
-                                              spec.mode === 'situational-immunity' ||
-                                              spec.mode === 'part-break' ||
-                                              spec.mode === 'attack-reflection' ||
-                                              spec.mode === 'counter-stance' ||
-                                              spec.mode === 'absorption-power-up' ||
-                                              spec.mode === 'interruptible-wind-up' ||
-                                              spec.mode === 'loadout-adaptation' ||
-                                              spec.mode === 'wind-up'
-                                            ? -180
-                                            : -90,
+                                          : spec.mode === 'control-mode-shift'
+                                            ? (Math.atan2(boss.y - player.y, boss.x - player.x) *
+                                                180) /
+                                              Math.PI
+                                            : spec.mode === 'damage-type-resistance' ||
+                                                spec.mode === 'situational-immunity' ||
+                                                spec.mode === 'part-break' ||
+                                                spec.mode === 'attack-reflection' ||
+                                                spec.mode === 'counter-stance' ||
+                                                spec.mode === 'absorption-power-up' ||
+                                                spec.mode === 'interruptible-wind-up' ||
+                                                spec.mode === 'loadout-adaptation' ||
+                                                spec.mode === 'wind-up'
+                                              ? -180
+                                              : -90,
     bossMotion: motion({
       gait:
         spec.mode === 'chase-herding' ||
@@ -6581,84 +6840,87 @@ export function blueprintFrame(id, time) {
               : spec.mode === 'situational-immunity'
                 ? 0.12 * strikePulse(t, spec.blockedStrike, 0.25) +
                   0.9 * strikePulse(t, spec.openStrike, 0.28)
-                : spec.mode === 'part-break'
-                  ? 0.75 * strikePulse(t, spec.breakAt, 0.26)
-                  : spec.mode === 'attack-reflection'
-                    ? 0.85 * strikePulse(t, spec.meleeStrike, 0.27)
-                    : spec.mode === 'counter-stance'
-                      ? 0.85 * strikePulse(t, spec.openStrike, 0.27)
-                      : spec.mode === 'absorption-power-up'
+                : spec.mode === 'objective-linked-invulnerability'
+                  ? 0.12 * strikePulse(t, spec.blockedStrike, 0.25) +
+                    0.9 * strikePulse(t, spec.bossStrike, 0.3)
+                  : spec.mode === 'part-break'
+                    ? 0.75 * strikePulse(t, spec.breakAt, 0.26)
+                    : spec.mode === 'attack-reflection'
+                      ? 0.85 * strikePulse(t, spec.meleeStrike, 0.27)
+                      : spec.mode === 'counter-stance'
                         ? 0.85 * strikePulse(t, spec.openStrike, 0.27)
-                        : spec.mode === 'interruptible-wind-up'
-                          ? 0.9 * strikePulse(t, spec.interruptAt, 0.3)
-                          : spec.mode === 'wind-up'
-                            ? 0.65 *
-                              Math.max(
-                                strikePulse(t, spec.firstRelease[0], 0.28),
-                                strikePulse(t, spec.secondRelease[0], 0.28),
-                              )
-                            : spec.mode === 'attack-lock'
-                              ? 0.55 *
+                        : spec.mode === 'absorption-power-up'
+                          ? 0.85 * strikePulse(t, spec.openStrike, 0.27)
+                          : spec.mode === 'interruptible-wind-up'
+                            ? 0.9 * strikePulse(t, spec.interruptAt, 0.3)
+                            : spec.mode === 'wind-up'
+                              ? 0.65 *
                                 Math.max(
                                   strikePulse(t, spec.firstRelease[0], 0.28),
                                   strikePulse(t, spec.secondRelease[0], 0.28),
                                 )
-                              : spec.mode === 'active-phase'
-                                ? strikePulse(t, spec.active[0], 0.3)
-                                : spec.mode === 'recovery'
-                                  ? Math.max(
-                                      0.55 * strikePulse(t, spec.active[0], 0.3),
-                                      0.85 * strikePulse(t, spec.punishAt, 0.3),
-                                    )
-                                  : spec.mode === 'survival-phase'
+                              : spec.mode === 'attack-lock'
+                                ? 0.55 *
+                                  Math.max(
+                                    strikePulse(t, spec.firstRelease[0], 0.28),
+                                    strikePulse(t, spec.secondRelease[0], 0.28),
+                                  )
+                                : spec.mode === 'active-phase'
+                                  ? strikePulse(t, spec.active[0], 0.3)
+                                  : spec.mode === 'recovery'
                                     ? Math.max(
-                                        ...spec.hazards.map(
-                                          ({ active }) => 0.45 * strikePulse(t, active[0], 0.28),
-                                        ),
+                                        0.55 * strikePulse(t, spec.active[0], 0.3),
                                         0.85 * strikePulse(t, spec.punishAt, 0.3),
                                       )
-                                    : spec.mode === 'teleport'
+                                    : spec.mode === 'survival-phase'
                                       ? Math.max(
-                                          0.6 * strikePulse(t, spec.active[0], 0.3),
+                                          ...spec.hazards.map(
+                                            ({ active }) => 0.45 * strikePulse(t, active[0], 0.28),
+                                          ),
                                           0.85 * strikePulse(t, spec.punishAt, 0.3),
                                         )
-                                      : spec.mode === 'boundary-attack'
+                                      : spec.mode === 'teleport'
                                         ? Math.max(
-                                            0.7 * strikePulse(t, spec.impactAt, 0.3),
+                                            0.6 * strikePulse(t, spec.active[0], 0.3),
                                             0.85 * strikePulse(t, spec.punishAt, 0.3),
                                           )
-                                        : spec.mode === 'forced-scrolling'
+                                        : spec.mode === 'boundary-attack'
                                           ? Math.max(
-                                              0.55 * strikePulse(t, spec.active[1], 0.32),
+                                              0.7 * strikePulse(t, spec.impactAt, 0.3),
                                               0.85 * strikePulse(t, spec.punishAt, 0.3),
                                             )
-                                          : spec.mode === 'chase-herding'
+                                          : spec.mode === 'forced-scrolling'
                                             ? Math.max(
                                                 0.55 * strikePulse(t, spec.active[1], 0.32),
                                                 0.85 * strikePulse(t, spec.punishAt, 0.3),
                                               )
-                                            : spec.mode === 'escape-phase'
+                                            : spec.mode === 'chase-herding'
                                               ? Math.max(
-                                                  0.72 * strikePulse(t, spec.escape[1], 0.32),
+                                                  0.55 * strikePulse(t, spec.active[1], 0.32),
                                                   0.85 * strikePulse(t, spec.punishAt, 0.3),
                                                 )
-                                              : spec.mode === 'relocated-arena'
-                                                ? 0.72 * strikePulse(t, spec.transfer[1], 0.32)
-                                                : spec.mode === 'control-mode-shift'
-                                                  ? 0.85 * strikePulse(t, spec.punishAt, 0.3)
-                                                  : spec.mode === 'forced-inertia'
-                                                    ? Math.max(
-                                                        0.55 * strikePulse(t, spec.frostAt, 0.36),
-                                                        0.85 * strikePulse(t, spec.punishAt, 0.3),
-                                                      )
-                                                    : spec.mode === 'cover-line-of-sight'
-                                                      ? 0.85 * strikePulse(t, spec.punishAt, 0.3)
-                                                      : spec.mode === 'shockwave' ||
-                                                          spec.mode === 'knockback'
-                                                        ? pulse(action * 3)
-                                                        : spec.mode === 'chain-explosions'
-                                                          ? pulse((action * 5) % 1)
-                                                          : 0,
+                                              : spec.mode === 'escape-phase'
+                                                ? Math.max(
+                                                    0.72 * strikePulse(t, spec.escape[1], 0.32),
+                                                    0.85 * strikePulse(t, spec.punishAt, 0.3),
+                                                  )
+                                                : spec.mode === 'relocated-arena'
+                                                  ? 0.72 * strikePulse(t, spec.transfer[1], 0.32)
+                                                  : spec.mode === 'control-mode-shift'
+                                                    ? 0.85 * strikePulse(t, spec.punishAt, 0.3)
+                                                    : spec.mode === 'forced-inertia'
+                                                      ? Math.max(
+                                                          0.55 * strikePulse(t, spec.frostAt, 0.36),
+                                                          0.85 * strikePulse(t, spec.punishAt, 0.3),
+                                                        )
+                                                      : spec.mode === 'cover-line-of-sight'
+                                                        ? 0.85 * strikePulse(t, spec.punishAt, 0.3)
+                                                        : spec.mode === 'shockwave' ||
+                                                            spec.mode === 'knockback'
+                                                          ? pulse(action * 3)
+                                                          : spec.mode === 'chain-explosions'
+                                                            ? pulse((action * 5) % 1)
+                                                            : 0,
     }),
     playerMotion: motion({
       gait:
@@ -6696,8 +6958,10 @@ export function blueprintFrame(id, time) {
                                         ? t * 7 * stride
                                         : spec.mode === 'sound-detection'
                                           ? t * 7 * stride
-                                          : (route * responseProgress + route * returnProgress) /
-                                            20,
+                                          : spec.mode === 'objective-linked-invulnerability'
+                                            ? t * 7 * stride
+                                            : (route * responseProgress + route * returnProgress) /
+                                              20,
       stride,
       lean: stride * 0.45,
       crouch:
@@ -6797,12 +7061,31 @@ export function blueprintFrame(id, time) {
                                                           ? strikePulse(t, spec.punishAt, 0.38)
                                                           : spec.mode === 'sound-detection'
                                                             ? strikePulse(t, spec.punishAt, 0.38)
-                                                            : spec.mode === 'decoy' && phase === 1
-                                                              ? pulse(clamp((action - 0.52) / 0.3))
-                                                              : spec.mode === 'weak-point' &&
-                                                                  phase === 1
-                                                                ? pulse(action * 1.5)
-                                                                : 0,
+                                                            : spec.mode ===
+                                                                'objective-linked-invulnerability'
+                                                              ? Math.max(
+                                                                  strikePulse(
+                                                                    t,
+                                                                    spec.blockedStrike,
+                                                                    0.32,
+                                                                  ),
+                                                                  ...spec.objectiveHits.map((hit) =>
+                                                                    strikePulse(t, hit, 0.32),
+                                                                  ),
+                                                                  strikePulse(
+                                                                    t,
+                                                                    spec.bossStrike,
+                                                                    0.36,
+                                                                  ),
+                                                                )
+                                                              : spec.mode === 'decoy' && phase === 1
+                                                                ? pulse(
+                                                                    clamp((action - 0.52) / 0.3),
+                                                                  )
+                                                                : spec.mode === 'weak-point' &&
+                                                                    phase === 1
+                                                                  ? pulse(action * 1.5)
+                                                                  : 0,
     }),
   };
   if (spec.mode === 'directional-shield') {
@@ -6898,6 +7181,30 @@ export function blueprintFrame(id, time) {
     frame.hitboxActive = dangerActive;
     frame.followThroughVisible = t >= spec.active[1] && t < spec.followThroughEnd;
     frame.punishStrike = strikePulse(t, spec.punishAt, 0.38) > 0.5;
+  }
+  if (spec.mode === 'objective-linked-invulnerability') {
+    frame.objectiveLinkedInvulnerabilityState = objectiveLinkedInvulnerabilityState(t);
+    frame.objectiveCompletedCount =
+      t >= spec.resetAt ? 0 : spec.objectiveHits.filter((hit) => t >= hit).length;
+    frame.objectiveHitIndex = spec.objectiveHits.findIndex((hit) => Math.abs(t - hit) <= 0.15);
+    frame.objectiveShielded = objectiveLinkedInvulnerabilityOutcome(t) === 'immune';
+    frame.objectiveVulnerable = !frame.objectiveShielded;
+    frame.objectiveBlockedStrike = strikePulse(t, spec.blockedStrike, 0.3) > 0.5;
+    frame.objectiveBossStrike = strikePulse(t, spec.bossStrike, 0.32) > 0.5;
+    frame.objectiveAllComplete = frame.objectiveCompletedCount === spec.objectiveHits.length;
+    frame.objectiveVulnerabilityProgress = frame.objectiveVulnerable
+      ? clamp((t - spec.vulnerable[0]) / (spec.vulnerable[1] - spec.vulnerable[0]))
+      : 0;
+    frame.objectiveWindowRemaining = frame.objectiveVulnerable
+      ? clamp(1 - (t - spec.vulnerable[0]) / (spec.vulnerable[1] - spec.vulnerable[0]))
+      : 0;
+    frame.objectiveShieldOpacity = frame.objectiveVulnerable
+      ? 0
+      : t >= spec.gateDropsAt && t < spec.vulnerable[0]
+        ? 1 - smooth((t - spec.gateDropsAt) / (spec.vulnerable[0] - spec.gateDropsAt))
+        : t >= spec.vulnerable[1] && t < spec.shieldReturns
+          ? smooth((t - spec.vulnerable[1]) / (spec.shieldReturns - spec.vulnerable[1]))
+          : 0.92;
   }
   if (spec.mode === 'sound-detection') {
     frame.soundDetectionState = soundDetectionState(t);
@@ -7171,7 +7478,8 @@ export function blueprintFrame(id, time) {
       spec.mode === 'wraparound-projectile' ||
       spec.mode === 'beat-synced-attack' ||
       spec.mode === 'secondary-cues-invisibility' ||
-      spec.mode === 'sound-detection'
+      spec.mode === 'sound-detection' ||
+      spec.mode === 'objective-linked-invulnerability'
         ? 92
         : -62),
   };

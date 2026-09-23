@@ -292,6 +292,17 @@ export function initializeBlueprint(widget) {
       widget.dataset.blueprintSoundNoiseLevel = frame.soundDetectionNoiseLevel.toFixed(3);
       widget.dataset.blueprintPunishStrike = String(frame.punishStrike);
     }
+    if (mechanicId === 'objective-linked-invulnerability') {
+      widget.dataset.blueprintObjectiveLinkedInvulnerability =
+        frame.objectiveLinkedInvulnerabilityState;
+      widget.dataset.blueprintObjectiveCount = String(frame.objectiveCompletedCount);
+      widget.dataset.blueprintObjectiveShielded = String(frame.objectiveShielded);
+      widget.dataset.blueprintObjectiveVulnerable = String(frame.objectiveVulnerable);
+      widget.dataset.blueprintObjectiveBlocked = String(frame.objectiveBlockedStrike);
+      widget.dataset.blueprintObjectiveBossHit = String(frame.objectiveBossStrike);
+      widget.dataset.blueprintObjectiveAllComplete = String(frame.objectiveAllComplete);
+      widget.dataset.blueprintObjectiveWindow = frame.objectiveWindowRemaining.toFixed(3);
+    }
     boss.setAttribute(
       'transform',
       `translate(${frame.boss.x} ${frame.boss.y}) scale(${frame.bossScale})`,

@@ -209,6 +209,9 @@ const [auditSource, existingIndexSource] = await Promise.all([
   fs.readFile(OUTPUT, 'utf8'),
 ]);
 const existingIndex = JSON.parse(existingIndexSource);
+const englishById = new Map(
+  existingIndex.mechanics.map((mechanic) => [mechanic.id, mechanic.translations.en]),
+);
 const russianById = new Map(
   existingIndex.mechanics.map((mechanic) => [mechanic.id, mechanic.translations.ru]),
 );
@@ -237,19 +240,25 @@ const localizedRussian = (id) => {
   return translation;
 };
 
+const localizedEnglish = (id, fallback) => {
+  const translation = englishById.get(id);
+  return translation ?? fallback;
+};
+
 const mechanics = [
   ...originalEnglishTitles.map((titleEn, index) => {
     const sourceEntry = original[index];
     const id = publishedIdOverrides.get(titleEn) ?? slugify(titleEn);
+    const fallback = {
+      title: titleEn,
+      category: categoryEnglish.get(sourceEntry.category),
+      summary: genericSummary(titleEn),
+    };
     return {
       id,
       number: index + 1,
       translations: {
-        en: {
-          title: titleEn,
-          category: categoryEnglish.get(sourceEntry.category),
-          summary: genericSummary(titleEn),
-        },
+        en: localizedEnglish(id, fallback),
         ru: localizedRussian(id),
       },
     };
@@ -257,15 +266,16 @@ const mechanics = [
   ...additions.map((sourceEntry, index) => {
     const compactTitleEn = sourceEntry.title.split(' / ')[0].trim();
     const id = newIds[index];
+    const fallback = {
+      title: compactTitleEn,
+      category: categoryEnglish.get(sourceEntry.category),
+      summary: genericSummary(compactTitleEn),
+    };
     return {
       id,
       number: original.length + index + 1,
       translations: {
-        en: {
-          title: compactTitleEn,
-          category: categoryEnglish.get(sourceEntry.category),
-          summary: genericSummary(compactTitleEn),
-        },
+        en: localizedEnglish(id, fallback),
         ru: localizedRussian(id),
       },
     };
