@@ -405,9 +405,9 @@ test('volley releases three parallel bolts on one beat and clears its outside ro
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
 });
 
-test('catalog and builder reuse the 81 promoted rule-specific previews', async ({ page }) => {
+test('catalog and builder reuse the 82 promoted rule-specific previews', async ({ page }) => {
   await page.goto('en/');
-  await expect(page.locator('[data-blueprint-preview]')).toHaveCount(81);
+  await expect(page.locator('[data-blueprint-preview]')).toHaveCount(82);
   const catalogLayouts = await page.locator('[data-blueprint-preview]').evaluateAll((previews) =>
     previews.map((preview) => {
       const boss = preview.querySelector('[data-character-art-preview="kern"]');
@@ -431,7 +431,7 @@ test('catalog and builder reuse the 81 promoted rule-specific previews', async (
   expect(new Set(catalogLayouts.map(({ layout }) => layout)).size).toBeGreaterThanOrEqual(18);
 
   await page.goto('en/builder/');
-  await expect(page.locator('[data-blueprint-preview]')).toHaveCount(81);
+  await expect(page.locator('[data-blueprint-preview]')).toHaveCount(82);
   const builderLayouts = await page.locator('[data-blueprint-preview]').evaluateAll((previews) =>
     previews.map((preview) => {
       const boss = preview.querySelector('[data-character-art-preview="kern"]');
@@ -3209,6 +3209,60 @@ test('baited self-hit locks the charge, consumes one rune, and separates the swo
 
   await seek(4500);
   await expect(widget).toHaveAttribute('data-blueprint-bait-vulnerable', 'false');
+  await page.setViewportSize({ width: 375, height: 812 });
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+});
+
+test('posture gauge visibly recovers, breaks, and advances only through one finisher', async ({
+  page,
+}) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.goto('en/mechanics/posture-stagger-gauge/');
+  const widget = page.locator('[data-blueprint-demo]');
+  const timeline = widget.locator('[data-blueprint-timeline]');
+  const seek = (milliseconds) =>
+    timeline.evaluate((element, value) => {
+      element.value = String(value);
+      element.dispatchEvent(new Event('input', { bubbles: true }));
+    }, milliseconds);
+
+  await expect(page.locator('.lesson-title-line h1')).toHaveText('Posture stagger gauge');
+  await expect(page.locator('.wip-badge, .draft-profile')).toHaveCount(0);
+  await expect(page.locator('.game-example')).toHaveCount(3);
+
+  await seek(800);
+  await expect(widget).toHaveAttribute('data-blueprint-posture-stagger-gauge', 'pressure-started');
+  await expect(widget).toHaveAttribute('data-blueprint-posture-value', '32');
+  await expect(widget).toHaveAttribute('data-blueprint-posture-health-changed', 'false');
+
+  await seek(1200);
+  await expect(widget).toHaveAttribute(
+    'data-blueprint-posture-stagger-gauge',
+    'recovering-posture',
+  );
+  await expect(widget).toHaveAttribute('data-blueprint-posture-recovering', 'true');
+  expect(Number(await widget.getAttribute('data-blueprint-posture-value'))).toBeLessThan(32);
+
+  await seek(2700);
+  await expect(widget).toHaveAttribute('data-blueprint-posture-stagger-gauge', 'posture-broken');
+  await expect(widget).toHaveAttribute('data-blueprint-posture-value', '100');
+  await expect(widget).toHaveAttribute('data-blueprint-posture-break-id', 'posture-break-1');
+  await expect(widget).toHaveAttribute('data-blueprint-posture-reward-grants', '0');
+
+  await seek(2900);
+  await expect(widget).toHaveAttribute('data-blueprint-posture-critical-ready', 'true');
+  await expect(widget).toHaveAttribute('data-blueprint-posture-finisher-eligible', 'true');
+  await expect(widget).toHaveAttribute('data-blueprint-posture-phase-tokens', '3');
+
+  await seek(3500);
+  await expect(widget).toHaveAttribute('data-blueprint-posture-finisher-consumed', 'true');
+  await expect(widget).toHaveAttribute('data-blueprint-posture-critical-ready', 'false');
+  await expect(widget).toHaveAttribute('data-blueprint-posture-phase-tokens', '2');
+  await expect(widget).toHaveAttribute('data-blueprint-posture-reward-grants', '1');
+  await expect(widget).toHaveAttribute('data-blueprint-posture-health-changed', 'true');
+
+  await seek(4100);
+  await expect(widget).toHaveAttribute('data-blueprint-posture-reward-grants', '1');
   await page.setViewportSize({ width: 375, height: 812 });
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
 });

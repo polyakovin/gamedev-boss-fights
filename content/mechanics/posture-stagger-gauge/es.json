@@ -1,0 +1,142 @@
+{
+  "title": "Medidor de postura y remate",
+  "subtitle": "Acumula una presión distinta y conviértela deliberadamente en progreso",
+  "variant": "Presión · recuperación · ruptura · remate",
+  "summary": "Ataques y contraacciones definidos presionan un medidor de postura separado; la ruptura abre un estado crítico limitado que solo consume un remate explícito.",
+  "overview": "El medidor de postura convierte una presión sostenida y legible en un estado crítico temporal, no en daño normal. La postura se recupera cuando cesa la presión, pero una ruptura completa abre una ventana limitada; la fase solo avanza al ejecutar el remate definido, de modo que acumulación, ruptura y recompensa siguen siendo decisiones distintas.",
+  "learning": "Define ganancia por acción, retraso y velocidad de recuperación, relación con la salud, umbral y exceso, duración crítica, elegibilidad y alcance del remate, búfer, interrupciones, consumo del marcador de fase, reinicio, propiedad cooperativa, señales accesibles y telemetría que demuestre un solo resultado por ruptura.",
+  "category": "Objetivos del encuentro y vulnerabilidad",
+  "readTime": "10 min",
+  "demo": {
+    "title": "Presiona las runas de Kern, muestra una recuperación y consume una ruptura",
+    "timeline": "Cronología del medidor de postura",
+    "step": "Estados del medidor de postura",
+    "phaseNames": [
+      "Acumula postura y muestra su recuperación",
+      "Rompe el medidor y abre un estado crítico limitado",
+      "Gasta un remate y reinicia el ciclo"
+    ],
+    "phaseDescriptions": [
+      "El primer contacto de Tavi añade 32 puntos a los 0,72 s. Una pausa desde 1,02 s reduce el valor de 32 a 18 y hace visible la recuperación; dos desvíos y otro golpe reconstruyen la presión sin mover la salud de Kern.",
+      "El contacto de 2,62 s alcanza 100. Kern entra en estado crítico, aparece un rombo, se detiene la recuperación y la ventana dura hasta 3,88 s. El medidor lleno demuestra la ruptura, pero aún no concede progreso de fase.",
+      "Tavi entra en alcance y se compromete a los 3,46 s. El encuentro consume exactamente un marcador de fase, reduce la salud una vez, retira la marca y mantiene la recuperación hasta el reinicio tras 5,20 s. Si expira, no hay recompensa."
+    ],
+    "boss": "Jefe",
+    "player": "Jugador",
+    "danger": "La postura se recupera tras el retraso y una ruptura no consumida antes del cierre no concede progreso de fase",
+    "locked": "Propietario del medidor, ganancias, recuperación, id de ruptura, límite crítico, elegibilidad del remate, marcador de fase, salud y reinicio pertenecen al encuentro",
+    "safe": "Combina segmentos, muescas, flecha de recuperación, destello, marca con forma, temporizador, sonido, subtítulos y vibración; no dependas solo del color",
+    "reducedMotion": "Con movimiento reducido no hay reproducción automática. Recorre 0,72, 1,02, 1,42, 1,72, 2,12, 2,62, 2,82, 3,46, 3,88 y 5,20 s para revisar ganancia, recuperación, presión, ruptura, consumo, cierre y reinicio.",
+    "diagramDescription": "Tavi enfrenta a Kern bajo un medidor segmentado. Golpes y desvíos añaden muescas, una pausa vacía parte del medidor y el último contacto lo llena. Un rombo y un temporizador aparecen sobre el jefe. Tavi se acerca y ejecuta un remate; un marcador de fase desaparece y la salud solo cambia al resolverlo."
+  },
+  "steps": [
+    {
+      "title": "¿Qué acciones crean presión y cómo se recupera?",
+      "body": "Asigna valores a eventos definidos—ataques limpios, desvíos, daño de guardia, puntos débiles o respuestas posicionales—en vez de derivarlos de todo daño. Elige retraso, velocidad y relación con salud, y muestra ganancia y pérdida. Una pausa debe explicar si el progreso se conserva, decae o se reinicia."
+    },
+    {
+      "title": "¿Qué se vuelve cierto al romper el medidor?",
+      "body": "Crea un único id autorizado al cruzar el umbral. Detén la recuperación, entra en estado crítico, expón objetivo y plazo, y define interrupciones. No otorgues daño, fase y remate desde tres colisiones inconexas."
+    },
+    {
+      "title": "¿Cómo se consume sin progreso duplicado?",
+      "body": "Al iniciar el remate valida id, estado, objetivo, alcance, orientación y plazo. Reserva el resultado, reproduce la resolución, consume un marcador y rechaza repeticiones. Al expirar, restaura al jefe con postura documentada y sin recompensa."
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "El medidor solo es otra barra de salud",
+      "body": "Si todo daño suma igual y el llenado quita salud automáticamente, no hay decisión nueva. Separa presión, recuperación y consumo para elegir entre mantener postura y buscar daño normal."
+    },
+    {
+      "title": "La animación oculta la ventana útil",
+      "body": "Un tambaleo espectacular sin marca, alcance ni cierre vuelve incoherente el remate. Inicia el plazo en un momento definido, conserva el objetivo y muestra la expiración aparte del adorno."
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "Usa un registro, no una suma flotante",
+      "body": "Registra acción, fuente, delta, tiempo, valor anterior y posterior, recuperación, id, plazo, reclamante, consumo, marcador y salud. Limita una vez y deja creación y consumo a una autoridad."
+    },
+    {
+      "title": "Ajusta el ritmo contra la recuperación",
+      "body": "Mide el intervalo previsto entre acciones y coloca el retraso según la maestría buscada. Ajusta juntos ganancia, retraso, decaimiento, movilidad y oportunidades de respuesta."
+    },
+    {
+      "title": "Presupuesta aparte el acercamiento crítico",
+      "body": "La ruptura puede ocurrir lejos o tras retroceso. Comprueba que el movimiento normal alcance el objetivo desde toda posición legal. Si hay atracción, muestra alcance y colisión."
+    },
+    {
+      "title": "Prueba solapamientos y ciclo de vida",
+      "body": "Simula impactos simultáneos, daño periódico, varios jugadores, interrupción, cambio de fase, muerte, rollback, pocos FPS, límite de plazo y entradas repetidas. Cada ruptura termina en un consumo o una expiración."
+    }
+  ],
+  "story": {
+    "title": "Las runas resisten hasta perder el ritmo",
+    "body": "Cada contacto enciende una junta del cuerpo pétreo de Kern. Si Tavi duda, las marcas se apagan y se cierran. La presión sostenida alinea la inscripción, el elemental se arrodilla y un golpe deliberado sella la ruptura antes de que la cantera se recomponga."
+  },
+  "adaptation": {
+    "title": "Haz legibles mantenimiento y consumo a distintos ritmos",
+    "body": "Ofrece presets de recuperación y ventana, búfer generoso, atracción opcional, sonido fuerte, vibración, subtítulos de estados y medidor segmentado no basado solo en color. En cooperativo muestra al reclamante y permite un relevo documentado."
+  },
+  "distinction": {
+    "title": "Presión reversible con un paso explícito de consumo",
+    "body": "Un aturdimiento puede seguir a un golpe sin acumulación; un punto débil cambia dónde entra el daño; una puerta de fase responde a salud u objetivo. La postura puede recuperarse antes de romperse y crea un estado temporal que otro remate convierte en progreso."
+  },
+  "lensNotes": [
+    {
+      "id": "progress-clarity",
+      "body": "Postura, salud, estado crítico y marcadores separados muestran qué progreso cambió."
+    },
+    {
+      "id": "risk-reward",
+      "body": "Mantener presión cercana arriesga exposición y la ruptura recompensa con una acción limitada, no daño automático."
+    },
+    {
+      "id": "commitment",
+      "body": "El remate reserva un id vivo y compromete a ambos actores a una resolución única."
+    },
+    {
+      "id": "counterplay",
+      "body": "Desvíos, ataques y posición aportan valores distintos y convierten defensa en progreso ofensivo."
+    },
+    {
+      "id": "difficulty-rhythm",
+      "body": "Retraso y decaimiento determinan cuánto puede detenerse el ritmo de presión."
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "Eastern Exorcist",
+      "boss": "Chu",
+      "screenshot": "https://i.ytimg.com/vi/5rerWOhKv2o/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=5rerWOhKv2o&t=54s",
+      "body": "El medidor azul de armadura de Chu baja con la presión. Al vaciarlo hay ruptura visible, tambaleo y defensa reducida temporalmente: una ventana valiosa, no otra barra de salud.",
+      "video": "https://www.youtube.com/watch?v=5rerWOhKv2o&t=54s",
+      "videoDurationSeconds": 371
+    },
+    {
+      "dimension": "3D",
+      "game": "Sifu",
+      "boss": "Fajar — The Botanist",
+      "screenshot": "https://i.ytimg.com/vi/hfRZaSwTD3I/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=hfRZaSwTD3I&t=36s",
+      "body": "La Structure de Fajar recibe presión de ataques y respuestas defensivas. La ruptura muestra el takedown; esa acción separada consume la apertura y avanza el combate.",
+      "video": "https://www.youtube.com/watch?v=hfRZaSwTD3I&t=36s",
+      "videoDurationSeconds": 121
+    },
+    {
+      "dimension": "3D",
+      "game": "Sekiro: Shadows Die Twice",
+      "boss": "Genichiro Ashina",
+      "screenshot": "https://i.ytimg.com/vi/Q08JYdkPndM/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=Q08JYdkPndM&t=147s",
+      "body": "La Posture de Genichiro sube con ataques y desvíos y puede recuperarse. Al llenarse aparece brevemente la marca Deathblow; consumirla elimina un nodo de vida, por lo que el resultado pertenece a la acción crítica.",
+      "video": "https://www.youtube.com/watch?v=Q08JYdkPndM&t=147s",
+      "videoDurationSeconds": 392
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

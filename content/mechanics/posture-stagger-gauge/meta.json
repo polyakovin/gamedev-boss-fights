@@ -1,0 +1,28 @@
+{
+  "id": "posture-stagger-gauge",
+  "number": 88,
+  "published": true,
+  "sourceLocale": "en",
+  "contentVersion": 1,
+  "animation": "posture-stagger-gauge",
+  "lenses": ["progress-clarity", "risk-reward", "commitment", "counterplay", "difficulty-rhythm"],
+  "related": ["counter-stance", "weak-point", "part-break", "attack-combination"],
+  "sources": [
+    {
+      "title": "Boss Up: Boss Battle Design",
+      "url": "https://media.gdcvault.com/gdc2018/presentations/Keren_Itay_BossUp.pdf"
+    },
+    {
+      "title": "How Sifu's Kung Fu combat works — PlayStation Blog",
+      "url": "https://blog.playstation.com/2021/11/18/how-sifus-kung-fu-combat-works/"
+    },
+    {
+      "title": "Sekiro: Shadows Die Twice gameplay overview — Activision",
+      "url": "https://blog.activision.com/sekiro/2019-03/Sekiro-Shadows-Die-Twice-Gameplay-Overview-Trailer-is-Here"
+    },
+    {
+      "title": "Eastern Exorcist — Steam",
+      "url": "https://store.steampowered.com/app/1120810/_Eastern_Exorcist/"
+    }
+  ]
+}

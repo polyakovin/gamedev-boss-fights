@@ -1399,14 +1399,14 @@
       "number": 88,
       "translations": {
         "en": {
-          "title": "Posture",
+          "title": "Posture stagger gauge",
           "category": "Encounter goals and vulnerability",
-          "summary": "Draft outline for the posture mechanic. Rules, tuning guidance, and examples are still in progress."
+          "summary": "Authored attacks and counters pressure a separate posture gauge; a break opens a bounded critical state that an explicit finisher consumes."
         },
         "ru": {
           "title": "Шкала стойкости и добивание",
           "category": "Цель боя и открытие уязвимости",
-          "summary": "Давление заполняет или опустошает отдельную шкалу; её слом открывает обязательное критическое действие."
+          "summary": "Заданные атаки и контрдействия заполняют отдельную шкалу стойкости; её слом открывает ограниченное критическое состояние для явного добивания."
         }
       }
     },

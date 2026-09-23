@@ -1,0 +1,142 @@
+{
+  "title": "Posture stagger gauge",
+  "subtitle": "Build a second kind of pressure, then cash it out deliberately",
+  "variant": "Pressure · recover · break · finish",
+  "summary": "Authored attacks and counters pressure a separate posture gauge; a break opens a bounded critical state that only an explicit finisher can consume.",
+  "overview": "A posture stagger gauge converts sustained pressure into a temporary critical state instead of ordinary health damage. The boss can recover when pressure stops, but a full break creates a bounded opening; phase progress occurs only when the player performs the authored finisher, so buildup, break, and reward remain distinct decisions.",
+  "learning": "Define posture gain by action, recovery delay and rate, health coupling, break threshold, overfill policy, critical-ready duration, finisher eligibility and reach, input buffering, interruption, phase token consumption, reset rules, multiplayer ownership, accessibility signals, and telemetry that proves each break grants at most one critical result.",
+  "category": "Encounter goals and vulnerability",
+  "readTime": "10 min",
+  "demo": {
+    "title": "Pressure Kern's runes, let the gauge recover once, then consume one break",
+    "timeline": "Posture stagger gauge timeline",
+    "step": "Posture stagger gauge states",
+    "phaseNames": [
+      "Build posture and expose its recovery rule",
+      "Break the gauge and open a bounded critical state",
+      "Spend one finisher, then reset the cycle"
+    ],
+    "phaseDescriptions": [
+      "Tavi's first sword contact adds 32 posture at 0.72 s. A deliberate pause after 1.02 s lets the gauge fall from 32 to 18, making recovery visible before two deflects and one strike rebuild pressure. Kern's health does not move during this setup.",
+      "The contact at 2.62 s reaches the 100-point threshold. Kern enters critical-ready, a diamond marker appears, posture recovery stops, and the opening lasts until 3.88 s. The filled gauge is evidence of a break, not phase progress by itself.",
+      "Tavi steps into finisher reach and commits at 3.46 s. The encounter consumes exactly one phase token, reduces boss health once, clears the marker, and holds Kern in recovery before posture and positions reset after 5.20 s. An unconsumed opening would simply close with no token awarded."
+    ],
+    "boss": "Boss",
+    "player": "Player",
+    "danger": "Posture can recover after the pressure delay, and a break that is not consumed before the critical window closes grants no phase progress",
+    "locked": "Gauge owner, gain events, recovery delay and rate, break id, critical deadline, finisher eligibility, consumed phase token, health result, and reset are encounter-owned",
+    "safe": "Pair gauge fill with segments, impact notches, a recovery arrow, break flash, shaped critical marker, timer ring, sound, captions, and controller feedback rather than color alone",
+    "reducedMotion": "Autoplay is disabled by reduced motion. Scrub across 0.72, 1.02, 1.42, 1.72, 2.12, 2.62, 2.82, 3.46, 3.88, and 5.20 seconds to inspect gain, recovery, renewed pressure, break, eligibility, consumption, close, and reset.",
+    "diagramDescription": "Tavi faces Kern beneath a separate segmented posture gauge. Sword and deflect contacts add visible notches, one pause drains part of the gauge, and the final contact fills it. A diamond critical marker and shrinking timer ring appear over the staggered boss. Tavi closes the distance and performs one finisher; one phase token empties and boss health changes only at that resolution."
+  },
+  "steps": [
+    {
+      "title": "Which actions create posture pressure, and how does it recover?",
+      "body": "Assign posture values to specific authored events—clean attacks, deflects, guard damage, weak-point hits, or positional counters—rather than deriving it invisibly from all damage. Choose a recovery delay, rate, and vitality relationship, then show both gain and loss. A short pause should demonstrate whether progress is banked, decays gradually, or resets by phase."
+    },
+    {
+      "title": "What exactly becomes true when the gauge breaks?",
+      "body": "Create one authoritative break id when the threshold is crossed. Freeze or replace gauge recovery, enter a named critical-ready state, expose the eligible target and deadline, and define what interrupts it. Do not award health damage, a phase token, and a finisher from three unrelated collision callbacks."
+    },
+    {
+      "title": "How is the break consumed without duplicate progress?",
+      "body": "Validate the current break id, player state, target, range, facing, and deadline when the finisher begins. Reserve the result, play the authored resolution, consume one token, and reject repeated inputs or network retries. If the deadline expires, restore the boss with a documented posture value and no critical reward."
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "The gauge is only a second health bar",
+      "body": "If every damaging hit adds the same amount and a full bar automatically removes health, posture introduces no new decision. Give pressure actions, recovery, and the critical consume step their own readable rules so the player chooses between maintaining posture and pursuing ordinary damage."
+    },
+    {
+      "title": "The break animation hides the usable window",
+      "body": "A dramatic stagger without a shaped marker, reach cue, or closing signal makes the finisher feel inconsistent. Start the gameplay deadline at a documented moment, keep the target available for the promised duration, and show expiration independently of animation flair."
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "Use a ledger, not a floating sum",
+      "body": "Record action id, source, posture delta, time, gauge before and after, recovery suppression, break id, critical deadline, claimant, consume time, phase token, and resulting health. Clamp once at the threshold and make one authority own break creation and consumption."
+    },
+    {
+      "title": "Tune pressure cadence against recovery",
+      "body": "Measure the longest intended gap between successful pressure actions, then place recovery delay just beyond or within it according to desired mastery. Adjust gain, delay, decay rate, boss mobility, and counter opportunity together; a faster drain can erase otherwise valid defensive play."
+    },
+    {
+      "title": "Budget the critical approach separately",
+      "body": "The break may occur at the edge of the arena or after knockback. Test that ordinary movement can reach the finisher target before expiry from every legal break position. If the finisher teleports or magnetizes the player, expose its range and collision rules instead of relying on hidden correction."
+    },
+    {
+      "title": "Test overlap and lifecycle boundaries",
+      "body": "Simulate threshold crossing from multiple hits in one frame, damage-over-time, simultaneous players, boss interruption, phase transition, death, rollback, low frame rate, a finisher begun at the deadline, and repeated input. Each break must resolve to exactly one consume or one expiry."
+    }
+  ],
+  "story": {
+    "title": "The runes hold until their rhythm fails",
+    "body": "Each clean contact drives light into a different seam of Kern's stone frame. When Tavi hesitates, the marks dim and knit together again. Sustained pressure finally aligns the whole inscription; the elemental kneels, one central rune opens, and a deliberate sword seal breaks the current layer before the quarry reforms it."
+  },
+  "adaptation": {
+    "title": "Make maintenance and consumption readable at different tempos",
+    "body": "Offer presets for recovery delay and critical duration, generous finisher buffering, optional target magnetism, strong break audio, vibration, captions for posture rising, recovering, broken, and expiring, and a segmented non-color gauge. In co-op, show the active break claimant while still allowing a documented handoff if that player cannot complete the finisher."
+  },
+  "distinction": {
+    "title": "A reversible pressure resource with an explicit consume step",
+    "body": "Ordinary stun can follow one attack or timer without accumulated pressure. A weak point changes where damage is accepted. A phase gate advances when health or an objective crosses a threshold. A posture stagger gauge can recover before break and creates a temporary critical state whose authored finisher or critical action must separately convert pressure into encounter progress."
+  },
+  "lensNotes": [
+    {
+      "id": "progress-clarity",
+      "body": "Separate posture, health, critical readiness, and phase tokens show which kind of progress each action actually changed."
+    },
+    {
+      "id": "risk-reward",
+      "body": "Maintaining close pressure risks exposure, while a successful break earns a bounded high-value action rather than automatic damage."
+    },
+    {
+      "id": "commitment",
+      "body": "The finisher reserves one live break id and commits both actors to a resolution that cannot be claimed twice."
+    },
+    {
+      "id": "counterplay",
+      "body": "Deflects, attacks, and positioning can contribute different posture values, letting defensive responses become offensive progress."
+    },
+    {
+      "id": "difficulty-rhythm",
+      "body": "Recovery delay and decay rate determine how long the player may pause before the pressure rhythm collapses."
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "Eastern Exorcist",
+      "boss": "Chu",
+      "screenshot": "https://i.ytimg.com/vi/5rerWOhKv2o/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=5rerWOhKv2o&t=54s",
+      "body": "Chu's separate blue armor gauge drains under authored combat pressure. Emptying it produces a visible armor-break stagger and a temporary defense reduction, so the gauge state creates a bounded high-value punish window instead of acting as another copy of health.",
+      "video": "https://www.youtube.com/watch?v=5rerWOhKv2o&t=54s",
+      "videoDurationSeconds": 371
+    },
+    {
+      "dimension": "3D",
+      "game": "Sifu",
+      "boss": "Fajar — The Botanist",
+      "screenshot": "https://i.ytimg.com/vi/hfRZaSwTD3I/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=hfRZaSwTD3I&t=36s",
+      "body": "Fajar's Structure can be pressured through attacks and well-timed defensive responses. A full break exposes the takedown prompt; that separate action consumes the opening and advances the authored fight, keeping pressure and resolution as distinct steps.",
+      "video": "https://www.youtube.com/watch?v=hfRZaSwTD3I&t=36s",
+      "videoDurationSeconds": 121
+    },
+    {
+      "dimension": "3D",
+      "game": "Sekiro: Shadows Die Twice",
+      "boss": "Genichiro Ashina",
+      "screenshot": "https://i.ytimg.com/vi/Q08JYdkPndM/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=Q08JYdkPndM&t=147s",
+      "body": "Genichiro's Posture rises through attacks and deflections and can recover when pressure breaks, with vitality influencing that recovery. Filling it opens a short red Deathblow marker; consuming that marker removes one boss life node, making the critical action—not the filled bar—the phase result.",
+      "video": "https://www.youtube.com/watch?v=Q08JYdkPndM&t=147s",
+      "videoDurationSeconds": 392
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

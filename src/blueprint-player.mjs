@@ -379,6 +379,19 @@ export function initializeBlueprint(widget) {
       widget.dataset.blueprintBaitCollisionPair = frame.baitCollisionPair;
       widget.dataset.blueprintBaitRewardGrants = String(frame.baitRewardGrants);
     }
+    if (mechanicId === 'posture-stagger-gauge') {
+      widget.dataset.blueprintPostureStaggerGauge = frame.postureStaggerGaugeState;
+      widget.dataset.blueprintPostureValue = String(Math.round(frame.postureValue));
+      widget.dataset.blueprintPostureRecovering = String(frame.postureRecovering);
+      widget.dataset.blueprintPostureBroken = String(frame.postureBroken);
+      widget.dataset.blueprintPostureBreakId = frame.postureBreakId;
+      widget.dataset.blueprintPostureCriticalReady = String(frame.postureCriticalReady);
+      widget.dataset.blueprintPostureFinisherEligible = String(frame.postureFinisherEligible);
+      widget.dataset.blueprintPostureFinisherConsumed = String(frame.postureFinisherConsumed);
+      widget.dataset.blueprintPosturePhaseTokens = String(frame.posturePhaseTokens);
+      widget.dataset.blueprintPostureRewardGrants = String(frame.postureRewardGrants);
+      widget.dataset.blueprintPostureHealthChanged = String(frame.postureHealthChanged);
+    }
     boss.setAttribute(
       'transform',
       `translate(${frame.boss.x} ${frame.boss.y}) scale(${frame.bossScale})`,

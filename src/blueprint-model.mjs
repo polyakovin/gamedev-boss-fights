@@ -1142,6 +1142,27 @@ const SPECS = {
     retreatAt: 3.62,
     resetAt: 5.2,
   },
+  'posture-stagger-gauge': {
+    mode: 'posture-stagger-gauge',
+    boss: [300, 390],
+    player: [300, 720],
+    target: [300, 720],
+    arena: [55, 310, 450, 570],
+    pressurePoint: [300, 570],
+    finisherPoint: [300, 555],
+    contacts: [0.72, 1.72, 2.12, 2.62],
+    postureAfterContact: [32, 48, 72, 100],
+    recovery: [1.02, 1.42],
+    recoveryFloor: 18,
+    pressureApproachAt: 0.28,
+    breakAt: 2.62,
+    criticalReadyAt: 2.78,
+    finisherApproachAt: 2.9,
+    finisherAt: 3.46,
+    criticalEndsAt: 3.88,
+    recoveryEndsAt: 4.72,
+    resetAt: 5.2,
+  },
   'wide-swing': { mode: 'arc', boss: [280, 310], player: [410, 470], target: [470, 650] },
   lunge: { mode: 'lunge', boss: [170, 290], player: [390, 590], target: [470, 660] },
   grab: { mode: 'grab', boss: [280, 300], player: [390, 485], target: [470, 610] },
@@ -1954,6 +1975,37 @@ export function baitedSelfHitState(time) {
   if (t < spec.resetAt) return 'recovery';
   return 'reset';
 }
+
+export function postureStaggerGaugeState(time) {
+  const spec = SPECS['posture-stagger-gauge'];
+  const t = localTime(time);
+  if (t < spec.contacts[0]) return 'ready';
+  if (t < spec.recovery[0]) return 'pressure-started';
+  if (t < spec.recovery[1]) return 'recovering-posture';
+  if (t < spec.breakAt) return 'sustained-pressure';
+  if (t < spec.criticalReadyAt) return 'posture-broken';
+  if (t < spec.finisherAt) return 'critical-ready';
+  if (t < spec.criticalEndsAt) return 'finisher-consumed';
+  if (t < spec.resetAt) return 'boss-recovery';
+  return 'reset';
+}
+
+const postureValueAt = (spec, time) => {
+  if (time < spec.contacts[0]) return 0;
+  if (time < spec.recovery[0]) return spec.postureAfterContact[0];
+  if (time < spec.recovery[1])
+    return mix(
+      spec.postureAfterContact[0],
+      spec.recoveryFloor,
+      smooth((time - spec.recovery[0]) / (spec.recovery[1] - spec.recovery[0])),
+    );
+  if (time < spec.contacts[1]) return spec.recoveryFloor;
+  if (time < spec.contacts[2]) return spec.postureAfterContact[1];
+  if (time < spec.contacts[3]) return spec.postureAfterContact[2];
+  if (time < spec.finisherAt) return 100;
+  if (time < spec.resetAt) return 0;
+  return 0;
+};
 
 const projectileRallyLegAt = (spec, time) => {
   const index = spec.legs.findIndex(({ start, end }) => time >= start && time < end);
@@ -4758,6 +4810,105 @@ function primitivesFor(spec, frame) {
       circle(frame.boss.x, frame.boss.y, 62 + punishPulse * 34, punishPulse, 'accent', 8, 0.04),
     ];
   }
+  if (mode === 'posture-stagger-gauge') {
+    const postureWidth = 200 * (frame.postureValue / 100);
+    const finisherPulse = strikePulse(frame.time, spec.finisherAt, 0.44);
+    const breakPulse = strikePulse(frame.time, spec.breakAt, 0.5);
+    const contactPulse = Math.max(
+      ...spec.contacts.map((contact) => strikePulse(frame.time, contact, 0.28)),
+    );
+    const criticalRemaining = frame.postureCriticalReady
+      ? clamp((spec.criticalEndsAt - frame.time) / (spec.criticalEndsAt - spec.criticalReadyAt))
+      : 0;
+    const bossHealth = frame.postureFinisherConsumed ? 116 : 172;
+    return [
+      rect(...spec.arena, 0.52, 'muted', 0.025),
+      rect(180, 318, 240, 22, 0.62, 'muted', 0.035),
+      rect(200, 322, postureWidth, 14, 0.96, frame.postureBroken ? 'signal' : 'accent', 0.2),
+      ...Array.from({ length: 4 }, (_, index) =>
+        line(250 + index * 50, 321, 250 + index * 50, 338, 0.82, 'muted', 3),
+      ),
+      path(
+        'M 408 330 L 430 330 M 420 320 L 430 330 L 420 340',
+        frame.postureRecovering ? 0.92 : 0.18,
+        'safe',
+        5,
+      ),
+      rect(214, 352, 172, 12, 0.5, 'muted', 0.025),
+      rect(214, 352, bossHealth, 12, 0.9, frame.postureFinisherConsumed ? 'signal' : 'safe', 0.14),
+      circle(frame.boss.x, frame.boss.y, 84 + breakPulse * 34, breakPulse, 'signal', 9, 0.05),
+      circle(
+        frame.boss.x,
+        frame.boss.y,
+        76 + pulse(frame.time * 2) * 5,
+        frame.postureCriticalReady ? 0.9 : 0,
+        'safe',
+        7,
+        0.02,
+        '9 7',
+      ),
+      path(
+        `M ${frame.boss.x} ${frame.boss.y - 120} L ${frame.boss.x + 22} ${frame.boss.y - 96} L ${frame.boss.x} ${frame.boss.y - 72} L ${frame.boss.x - 22} ${frame.boss.y - 96} Z`,
+        frame.postureCriticalReady ? 0.98 : 0,
+        'signal',
+        7,
+        0.2,
+      ),
+      rect(200, 374, 200, 8, frame.postureCriticalReady ? 0.44 : 0, 'muted', 0.02),
+      rect(
+        200,
+        374,
+        200 * criticalRemaining,
+        8,
+        frame.postureCriticalReady ? 0.92 : 0,
+        'signal',
+        0.18,
+      ),
+      path(
+        `M ${frame.player.x} ${frame.player.y - 44} Q ${frame.player.x} ${frame.player.y - 118} ${frame.boss.x} ${frame.boss.y + 40}`,
+        contactPulse,
+        frame.postureBroken ? 'signal' : 'accent',
+        9,
+      ),
+      circle(
+        frame.boss.x,
+        frame.boss.y + 48,
+        24 + contactPulse * 35,
+        contactPulse,
+        'accent',
+        7,
+        0.08,
+      ),
+      circle(
+        frame.boss.x,
+        frame.boss.y,
+        54 + finisherPulse * 46,
+        finisherPulse,
+        'signal',
+        10,
+        0.08,
+      ),
+      ...Array.from({ length: 3 }, (_, index) =>
+        path(
+          `M ${238 + index * 62} 410 L ${253 + index * 62} 425 L ${238 + index * 62} 440 L ${223 + index * 62} 425 Z`,
+          0.9,
+          index < frame.posturePhaseTokens ? 'safe' : 'muted',
+          5,
+          index < frame.posturePhaseTokens ? 0.16 : 0.02,
+        ),
+      ),
+      line(
+        frame.player.x,
+        frame.player.y - 36,
+        frame.boss.x,
+        frame.boss.y + 55,
+        frame.postureFinisherEligible && !frame.postureFinisherConsumed ? 0.58 : 0.08,
+        'safe',
+        5,
+        '8 7',
+      ),
+    ];
+  }
   if (mode === 'encounter-specific-tool') {
     const pedestal = point(spec.pedestal);
     const spearBase = { x: frame.player.x - 8, y: frame.player.y - 22 };
@@ -6227,6 +6378,7 @@ function pointClearsThreat(spec, frame, value, radius = BLUEPRINT_PLAYER_RADIUS)
       !frame.dangerActive ||
       distanceToSegment(value, point(spec.boss), point(spec.laneEnd)) > spec.laneHalfWidth + radius
     );
+  if (mode === 'posture-stagger-gauge') return true;
   if (mode === 'projectile-rally')
     return (
       !frame.dangerActive ||
@@ -6530,6 +6682,7 @@ export function blueprintFrame(id, time) {
       boss = { x: mix(impact.x, startBoss.x, reset), y: mix(impact.y, startBoss.y, reset) };
     } else boss = startBoss;
   }
+  if (spec.mode === 'posture-stagger-gauge') boss = startBoss;
   let responseProgress = response;
   if (spec.mode === 'landing')
     responseProgress = phase === 0 ? 0 : phase === 1 ? smooth(action / 0.4) : 1;
@@ -6602,6 +6755,7 @@ export function blueprintFrame(id, time) {
   else if (spec.mode === 'player-controlled-boss') responseProgress = 0;
   else if (spec.mode === 'projectile-rally') responseProgress = 0;
   else if (spec.mode === 'baited-self-hit') responseProgress = 0;
+  else if (spec.mode === 'posture-stagger-gauge') responseProgress = 0;
   else if (spec.mode === 'knockback')
     responseProgress = phase === 0 ? 0 : phase === 1 ? smooth(action) : 1;
   else if (spec.mode === 'target-lock')
@@ -7307,6 +7461,37 @@ export function blueprintFrame(id, time) {
       player = { x: mix(safe.x, startPlayer.x, reset), y: mix(safe.y, startPlayer.y, reset) };
     } else player = startPlayer;
   }
+  if (spec.mode === 'posture-stagger-gauge') {
+    const pressure = point(spec.pressurePoint);
+    const finisher = point(spec.finisherPoint);
+    if (t < spec.pressureApproachAt) player = startPlayer;
+    else if (t < spec.contacts[0]) {
+      const approach = smooth(
+        (t - spec.pressureApproachAt) / (spec.contacts[0] - spec.pressureApproachAt),
+      );
+      player = {
+        x: mix(startPlayer.x, pressure.x, approach),
+        y: mix(startPlayer.y, pressure.y, approach),
+      };
+    } else if (t < spec.breakAt) player = pressure;
+    else if (t < spec.finisherApproachAt) player = pressure;
+    else if (t < spec.finisherAt) {
+      const approach = smooth(
+        (t - spec.finisherApproachAt) / (spec.finisherAt - spec.finisherApproachAt),
+      );
+      player = {
+        x: mix(pressure.x, finisher.x, approach),
+        y: mix(pressure.y, finisher.y, approach),
+      };
+    } else if (t < spec.criticalEndsAt) player = finisher;
+    else if (t < spec.resetAt) {
+      const retreat = smooth((t - spec.criticalEndsAt) / (spec.resetAt - spec.criticalEndsAt));
+      player = {
+        x: mix(finisher.x, startPlayer.x, retreat),
+        y: mix(finisher.y, startPlayer.y, retreat),
+      };
+    } else player = startPlayer;
+  }
   if (spec.mode === 'rotating' && phase === 0) {
     const initialPosition = polar(boss, 255, Math.PI / 3);
     player = {
@@ -7683,6 +7868,11 @@ export function blueprintFrame(id, time) {
       pulse(smooth((t - spec.retreatAt) / (spec.vulnerableUntil - spec.retreatAt))),
       pulse(smooth((t - spec.vulnerableUntil) / (spec.resetAt - spec.vulnerableUntil))) * 0.8,
     );
+  if (spec.mode === 'posture-stagger-gauge')
+    stride = Math.max(
+      pulse(smooth((t - spec.finisherApproachAt) / (spec.finisherAt - spec.finisherApproachAt))),
+      pulse(smooth((t - spec.criticalEndsAt) / (spec.resetAt - spec.criticalEndsAt))),
+    );
   const bossVisible =
     spec.mode === 'secondary-cues-invisibility'
       ? t < spec.vanishAt
@@ -7943,7 +8133,8 @@ export function blueprintFrame(id, time) {
         ? mix(-90, -180, smooth((t - 2.7) / 0.68)) * (1 - returnProgress) - 90 * returnProgress
         : spec.mode === 'player-controlled-boss' ||
             spec.mode === 'projectile-rally' ||
-            spec.mode === 'baited-self-hit'
+            spec.mode === 'baited-self-hit' ||
+            spec.mode === 'posture-stagger-gauge'
           ? (Math.atan2(boss.y - player.y, boss.x - player.x) * 180) / Math.PI
           : spec.mode === 'active-phase'
             ? (Math.atan2(boss.y - player.y, boss.x - player.x) * 180) / Math.PI
@@ -8789,6 +8980,35 @@ export function blueprintFrame(id, time) {
       strikePulse(t, spec.punishAt, 0.32),
     );
   }
+  if (spec.mode === 'posture-stagger-gauge') {
+    frame.postureStaggerGaugeState = postureStaggerGaugeState(t);
+    frame.postureValue = postureValueAt(spec, t);
+    frame.postureRecovering = t >= spec.recovery[0] && t < spec.recovery[1];
+    frame.postureBroken = t >= spec.breakAt && t < spec.resetAt;
+    frame.postureBreakId = frame.postureBroken ? 'posture-break-1' : 'none';
+    frame.postureCriticalReady =
+      t >= spec.criticalReadyAt && t < spec.finisherAt && t < spec.criticalEndsAt;
+    frame.postureFinisherEligible = frame.postureCriticalReady;
+    frame.postureFinisherConsumed = t >= spec.finisherAt && t < spec.resetAt;
+    frame.posturePhaseTokens = frame.postureFinisherConsumed ? 2 : 3;
+    frame.postureRewardGrants = frame.postureFinisherConsumed ? 1 : 0;
+    frame.postureHealthChanged = frame.postureFinisherConsumed;
+    frame.dangerActive = false;
+    frame.punishStrike = strikePulse(t, spec.finisherAt, 0.44) > 0.5;
+    frame.playerMotion.attack = Math.max(
+      ...spec.contacts.map((contact) => strikePulse(t, contact, 0.28)),
+      strikePulse(t, spec.finisherAt, 0.44),
+    );
+    frame.playerMotion.dodge = Math.max(
+      strikePulse(t, spec.contacts[1], 0.28),
+      strikePulse(t, spec.contacts[2], 0.28),
+    );
+    frame.bossMotion.impact = Math.max(
+      ...spec.contacts.map((contact) => strikePulse(t, contact, 0.3)),
+      strikePulse(t, spec.finisherAt, 0.42),
+    );
+    frame.bossMotion.lean = frame.postureCriticalReady ? 0.38 : 0;
+  }
   if (spec.mode === 'sound-detection') {
     frame.soundDetectionState = soundDetectionState(t);
     frame.soundDetectionHeard = t >= spec.heardAt && t < spec.resetAt;
@@ -9068,7 +9288,8 @@ export function blueprintFrame(id, time) {
       spec.mode === 'encounter-specific-tool' ||
       spec.mode === 'player-controlled-boss' ||
       spec.mode === 'projectile-rally' ||
-      spec.mode === 'baited-self-hit'
+      spec.mode === 'baited-self-hit' ||
+      spec.mode === 'posture-stagger-gauge'
         ? 92
         : -62),
   };

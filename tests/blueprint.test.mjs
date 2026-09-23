@@ -32,6 +32,7 @@ import {
   playerControlledBossState,
   projectileRallyState,
   baitedSelfHitState,
+  postureStaggerGaugeState,
   counterStanceOutcome,
   counterStanceState,
   blueprintFrame,
@@ -59,8 +60,8 @@ import {
   renderBlueprintThumbnail,
 } from '../lib/blueprint-view.mjs';
 
-test('all 81 promoted lesson animations have distinct rule modes and complete moving frames', () => {
-  assert.equal(BLUEPRINT_MECHANIC_IDS.length, 81);
+test('all 82 promoted lesson animations have distinct rule modes and complete moving frames', () => {
+  assert.equal(BLUEPRINT_MECHANIC_IDS.length, 82);
   const modes = new Set();
   for (const id of BLUEPRINT_MECHANIC_IDS) {
     for (let time = 0; time <= BLUEPRINT_DURATION; time += 0.1) {
@@ -81,7 +82,7 @@ test('all 81 promoted lesson animations have distinct rule modes and complete mo
           assert.ok(Number.isFinite(value), `${id} has an invalid ${primitive.type}`);
     }
   }
-  assert.equal(modes.size, 81);
+  assert.equal(modes.size, 82);
 });
 
 test('every blueprint exposes signal, committed action, and recovery without player teleports', () => {
@@ -112,7 +113,8 @@ test('every blueprint exposes signal, committed action, and recovery without pla
       id !== 'forced-inertia' &&
       id !== 'wraparound-projectile' &&
       id !== 'beat-synced-attack' &&
-      id !== 'baited-self-hit'
+      id !== 'baited-self-hit' &&
+      id !== 'posture-stagger-gauge'
     )
       assert.equal(blueprintFrame(id, 3).dangerActive, true, id);
     assert.equal(blueprintFrame(id, 3).playerSafe, true, id);
@@ -193,6 +195,7 @@ test('every damaging promoted animation derives safety from its own active geome
       id !== 'player-controlled-boss' &&
       id !== 'projectile-rally' &&
       id !== 'baited-self-hit' &&
+      id !== 'posture-stagger-gauge' &&
       id !== 'part-break' &&
       id !== 'counter-stance' &&
       id !== 'absorption-power-up' &&
@@ -2778,5 +2781,58 @@ test('baited self-hit requires an armed trap, a fixed boss path, and one owned r
   assert.match(
     renderBlueprintThumbnail(id, 'test-baited-self-hit'),
     /data-blueprint-preview="baited-self-hit"/,
+  );
+});
+
+test('posture break recovers under lost pressure and advances only through one finisher', () => {
+  const id = 'posture-stagger-gauge';
+  assert.deepEqual([0, 0.8, 1.2, 1.5, 2.7, 2.9, 3.5, 4.1, 5.3].map(postureStaggerGaugeState), [
+    'ready',
+    'pressure-started',
+    'recovering-posture',
+    'sustained-pressure',
+    'posture-broken',
+    'critical-ready',
+    'finisher-consumed',
+    'boss-recovery',
+    'reset',
+  ]);
+
+  const firstHit = blueprintFrame(id, 0.8);
+  assert.equal(firstHit.postureValue, 32);
+  assert.equal(firstHit.postureHealthChanged, false);
+
+  const recovering = blueprintFrame(id, 1.2);
+  assert.equal(recovering.postureRecovering, true);
+  assert.ok(recovering.postureValue < firstHit.postureValue);
+  assert.ok(recovering.postureValue > 18);
+
+  const broken = blueprintFrame(id, 2.7);
+  assert.equal(broken.postureValue, 100);
+  assert.equal(broken.postureBroken, true);
+  assert.equal(broken.postureBreakId, 'posture-break-1');
+  assert.equal(broken.postureRewardGrants, 0);
+  assert.equal(broken.postureHealthChanged, false);
+
+  const ready = blueprintFrame(id, 2.9);
+  assert.equal(ready.postureCriticalReady, true);
+  assert.equal(ready.postureFinisherEligible, true);
+  assert.equal(ready.posturePhaseTokens, 3);
+
+  const consumed = blueprintFrame(id, 3.5);
+  assert.equal(consumed.postureFinisherConsumed, true);
+  assert.equal(consumed.postureCriticalReady, false);
+  assert.equal(consumed.postureRewardGrants, 1);
+  assert.equal(consumed.posturePhaseTokens, 2);
+  assert.equal(consumed.postureHealthChanged, true);
+  assert.ok(consumed.playerMotion.attack > 0.5);
+
+  const recovery = blueprintFrame(id, 4.1);
+  assert.equal(recovery.postureRewardGrants, 1, 'the finisher result is not duplicated');
+  assert.deepEqual(blueprintFrame(id, 0).player, blueprintFrame(id, 6).player);
+  assert.deepEqual(blueprintFrame(id, 0).boss, blueprintFrame(id, 6).boss);
+  assert.match(
+    renderBlueprintThumbnail(id, 'test-posture-stagger-gauge'),
+    /data-blueprint-preview="posture-stagger-gauge"/,
   );
 });
