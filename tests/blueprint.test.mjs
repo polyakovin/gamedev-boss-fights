@@ -2734,13 +2734,31 @@ test('projectile rally preserves one orb through accelerating ownership transfer
   assert.equal(miss.projectileRallyBossMiss, true);
   assert.equal(miss.projectileRallyVulnerable, true);
   assert.equal(miss.projectileRallyDamageSource, 'rally-orb');
-  assert.ok(miss.primitives[17].opacity > 0.2, 'the boss miss has a visible impact');
+  assert.ok(
+    miss.primitives.some(
+      (primitive) =>
+        primitive.type === 'circle' &&
+        primitive.x === 300 &&
+        primitive.y === 400 &&
+        primitive.radius === 42 &&
+        primitive.opacity > 0.2,
+    ),
+    'the boss miss has a visible impact',
+  );
 
   const punish = blueprintFrame(id, 4);
   assert.equal(punish.projectileRallyPunished, true);
   assert.equal(punish.projectileRallyVulnerable, true);
   assert.ok(punish.playerMotion.attack > 0.5, 'Tavi owns a separate sword punish');
-  assert.ok(punish.primitives[18].opacity > 0.8, 'the opening remains visibly bounded');
+  assert.ok(
+    punish.primitives.some(
+      (primitive) =>
+        primitive.type === 'path' &&
+        primitive.data.includes('M 283 303') &&
+        primitive.opacity > 0.8,
+    ),
+    'the cracked chest core marks the opening',
+  );
 
   const closed = blueprintFrame(id, 4.7);
   assert.equal(closed.projectileRallyVulnerable, false);

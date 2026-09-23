@@ -1087,28 +1087,28 @@ const SPECS = {
   },
   'projectile-rally': {
     mode: 'projectile-rally',
-    boss: [300, 350],
-    player: [300, 760],
-    target: [300, 760],
-    arena: [55, 310, 450, 570],
-    bossContact: [300, 470],
-    playerContact: [300, 650],
+    boss: [300, 300],
+    player: [300, 720],
+    target: [300, 720],
+    arena: [40, 145, 480, 715],
+    bossContact: [300, 400],
+    playerContact: [300, 630],
     projectileRadius: 18,
     serveAt: 0.78,
     legs: [
-      { owner: 'boss', start: 0.78, end: 1.48, from: [300, 470], to: [300, 650] },
-      { owner: 'player', start: 1.48, end: 2.05, from: [300, 650], to: [300, 470] },
-      { owner: 'boss', start: 2.05, end: 2.48, from: [300, 470], to: [300, 650] },
-      { owner: 'player', start: 2.48, end: 2.86, from: [300, 650], to: [300, 470] },
-      { owner: 'boss', start: 2.86, end: 3.15, from: [300, 470], to: [300, 650] },
-      { owner: 'player', start: 3.15, end: 3.48, from: [300, 650], to: [300, 470] },
+      { owner: 'boss', start: 0.78, end: 1.48, from: [300, 400], to: [300, 630] },
+      { owner: 'player', start: 1.48, end: 2.05, from: [300, 630], to: [300, 400] },
+      { owner: 'boss', start: 2.05, end: 2.48, from: [300, 400], to: [300, 630] },
+      { owner: 'player', start: 2.48, end: 2.86, from: [300, 630], to: [300, 400] },
+      { owner: 'boss', start: 2.86, end: 3.15, from: [300, 400], to: [300, 630] },
+      { owner: 'player', start: 3.15, end: 3.48, from: [300, 630], to: [300, 400] },
     ],
     playerContacts: [1.48, 2.48, 3.15],
     bossReturns: [2.05, 2.86],
     bossMissAt: 3.48,
     vulnerableUntil: 4.55,
     punishAt: 3.9,
-    punishPoint: [300, 570],
+    punishPoint: [300, 500],
     retreatAt: 4.18,
     resetAt: 5.2,
   },
@@ -5136,120 +5136,95 @@ function primitivesFor(spec, frame) {
   }
   if (mode === 'projectile-rally') {
     const orb = frame.projectileRallyOrb;
-    const bossContact = point(spec.bossContact);
-    const playerContact = point(spec.playerContact);
     const orbTone = frame.projectileRallyOwner === 'player' ? 'safe' : 'signal';
     const trailLength = 44 - frame.projectileRallySpeedTier * 7;
     const trailDirection = frame.projectileRallyOwner === 'player' ? 1 : -1;
-    const contactPulse = Math.max(
-      ...[...spec.playerContacts, ...spec.bossReturns].map((contact) =>
-        strikePulse(frame.time, contact, 0.22),
-      ),
-    );
+    const playerHit = spec.playerContacts.some((contact) => Math.abs(frame.time - contact) < 0.12);
+    const bossHit = spec.bossReturns.some((contact) => Math.abs(frame.time - contact) < 0.12);
     const impactPulse = strikePulse(frame.time, spec.bossMissAt, 0.48);
+    const punishPulse = strikePulse(frame.time, spec.punishAt, 0.36);
     return [
-      rect(...spec.arena, 0.52, 'muted', 0.025),
-      line(
-        bossContact.x,
-        bossContact.y,
-        playerContact.x,
-        playerContact.y,
-        0.42,
+      path('M 120 82 H 440 V 104 H 120 Z', 0.66, 'muted', 0, 0.64),
+      path(
+        `M 120 82 H ${frame.projectileRallyPunished ? 350 : 440} V 104 H 120 Z`,
+        0.96,
         'accent',
-        5,
-        '12 12',
+        0,
+        0.9,
       ),
-      circle(
-        bossContact.x,
-        bossContact.y,
-        34 + pulse(frame.time * 2) * 5,
-        0.72,
-        'accent',
-        5,
-        0.03,
-        '8 7',
-      ),
-      circle(
-        playerContact.x,
-        playerContact.y,
-        34 + pulse(frame.time * 2 + 0.5) * 5,
-        0.72,
-        'safe',
-        5,
-        0.03,
-        '8 7',
-      ),
-      line(
-        orb.x,
-        orb.y + trailDirection * trailLength,
-        orb.x,
-        orb.y,
-        frame.projectileRallyOrbVisible ? 0.72 : 0,
+      ...Array.from({ length: 5 }, (_, index) => {
+        const y = 242 + index * 56;
+        const recorded = index < frame.projectileRallyExchangeCount;
+        return [
+          path(
+            `M 452 ${y - 17} L 479 ${y - 17} L 487 ${y + 7} L 466 ${y + 24} L 445 ${y + 7} Z`,
+            0.9,
+            recorded ? 'safe' : 'muted',
+            0,
+            recorded ? 0.86 : 0.62,
+          ),
+          path(
+            `M 458 ${y - 4} L 466 ${y + 8} L 475 ${y - 4}`,
+            recorded ? 0.94 : 0.24,
+            recorded ? 'muted' : 'accent',
+            3,
+          ),
+        ];
+      }).flat(),
+      path(
+        `M ${orb.x - 9} ${orb.y + trailDirection * trailLength} L ${orb.x + 9} ${orb.y + trailDirection * trailLength} L ${orb.x + 16} ${orb.y} L ${orb.x - 16} ${orb.y} Z`,
+        frame.projectileRallyOrbVisible ? 0.46 : 0,
         orbTone,
-        10,
+        0,
+        0.48,
       ),
       circle(
         orb.x,
         orb.y,
-        spec.projectileRadius + contactPulse * 7,
+        spec.projectileRadius,
         frame.projectileRallyOrbVisible ? 0.98 : 0,
-        orbTone,
-        7,
-        0.22,
+        'muted',
+        0,
+        0.9,
       ),
-      circle(orb.x, orb.y, 7, frame.projectileRallyOrbVisible ? 0.98 : 0, orbTone, 4, 0.72),
-      ...Array.from({ length: 3 }, (_, index) =>
-        path(
-          `M ${338 + index * 25} 548 L ${350 + index * 25} 560 L ${338 + index * 25} 572`,
-          index < frame.projectileRallySpeedTier ? 0.9 : 0.2,
-          index < frame.projectileRallySpeedTier ? 'signal' : 'muted',
-          6,
-        ),
-      ),
-      ...Array.from({ length: 5 }, (_, index) =>
-        circle(
-          210 + index * 45,
-          825,
-          12,
-          0.9,
-          index < frame.projectileRallyExchangeCount ? 'safe' : 'muted',
-          5,
-          index < frame.projectileRallyExchangeCount ? 0.44 : 0.03,
-        ),
-      ),
+      circle(orb.x, orb.y, 12, frame.projectileRallyOrbVisible ? 0.98 : 0, orbTone, 0, 0.88),
       path(
-        'M 262 673 Q 300 625 338 673',
-        spec.playerContacts.some((contact) => Math.abs(frame.time - contact) < 0.15) ? 0.96 : 0,
-        'safe',
-        9,
+        `M ${orb.x - 6} ${orb.y - 7} L ${orb.x} ${orb.y + 2} L ${orb.x + 6} ${orb.y - 7} M ${orb.x} ${orb.y + 2} V ${orb.y + 9}`,
+        frame.projectileRallyOrbVisible ? 0.96 : 0,
+        'muted',
+        3,
       ),
-      path(
-        'M 262 447 Q 300 495 338 447',
-        spec.bossReturns.some((contact) => Math.abs(frame.time - contact) < 0.15) ? 0.96 : 0,
-        'accent',
-        9,
-      ),
+      path(`M 260 624 L 300 604 L 340 624 L 300 616 Z`, playerHit ? 0.92 : 0, 'safe', 0, 0.82),
+      path(`M 260 408 L 300 428 L 340 408 L 300 416 Z`, bossHit ? 0.92 : 0, 'accent', 0, 0.82),
       circle(
-        bossContact.x,
-        bossContact.y,
-        26 + impactPulse * 46,
-        frame.projectileRallyBossMiss ? Math.max(0.26, 0.96 - impactPulse * 0.3) : 0,
+        spec.bossContact[0],
+        spec.bossContact[1],
+        spec.projectileRadius + 24,
+        impactPulse * 0.74,
         'signal',
-        8,
-        0.14,
+        0,
+        0.5,
       ),
-      circle(
-        frame.boss.x,
-        frame.boss.y,
-        78 + pulse(frame.time * 1.6) * 10,
-        frame.projectileRallyVulnerable ? 0.88 : 0,
-        'safe',
-        7,
-        0.025,
-        '10 8',
+      path(
+        `M ${frame.boss.x - 17} ${frame.boss.y + 3} L ${frame.boss.x} ${frame.boss.y - 3} L ${frame.boss.x + 17} ${frame.boss.y + 3} L ${frame.boss.x + 12} ${frame.boss.y + 27} L ${frame.boss.x} ${frame.boss.y + 34} L ${frame.boss.x - 12} ${frame.boss.y + 27} Z`,
+        frame.projectileRallyVulnerable ? 0.96 : 0.18,
+        'signal',
+        0,
+        0.88,
       ),
-      rect(214, 508, 172, 14, 0.54, 'muted', 0.03),
-      rect(214, 508, frame.projectileRallyPunished ? 124 : 172, 14, 0.92, 'signal', 0.16),
+      path(
+        `M ${frame.boss.x - 8} ${frame.boss.y + 6} L ${frame.boss.x + 4} ${frame.boss.y + 15} L ${frame.boss.x - 2} ${frame.boss.y + 25} L ${frame.boss.x + 9} ${frame.boss.y + 33}`,
+        frame.projectileRallyVulnerable ? 0.96 : 0,
+        'muted',
+        4,
+      ),
+      path(
+        `M ${frame.player.x - 10} ${frame.player.y - 48} L ${frame.boss.x - 9} ${frame.boss.y + 29} L ${frame.boss.x + 16} ${frame.boss.y + 16} L ${frame.player.x + 6} ${frame.player.y - 42} Z`,
+        punishPulse * 0.8,
+        'accent',
+        0,
+        0.76,
+      ),
     ];
   }
   if (mode === 'baited-self-hit') {
@@ -11295,7 +11270,8 @@ export function blueprintFrame(id, time) {
       spec.mode === 'persistent-progress' ||
       spec.mode === 'pacifist-resolution' ||
       spec.mode === 'posture-stagger-gauge' ||
-      spec.mode === 'baited-self-hit'
+      spec.mode === 'baited-self-hit' ||
+      spec.mode === 'projectile-rally'
         ? 55
         : spec.mode === 'directional-shield' ||
             spec.mode === 'damage-type-resistance' ||

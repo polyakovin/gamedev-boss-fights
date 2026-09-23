@@ -17,9 +17,9 @@
       "Resolve the boss miss into a bounded opening"
     ],
     "phaseDescriptions": [
-      "Kern charges one rune orb, fixes its lane, and releases it at 0.78 s. A response ring appears around Tavi's sword before contact, distinguishing a returnable serve from ordinary projectiles.",
+      "Kern charges one rune orb, fixes its lane, and releases it at 0.78 s. The rune on the single orb changes when Tavi returns it with the sword, distinguishing this serve from ordinary projectiles.",
       "Tavi returns the same orb at 1.48 s; Kern sends it back at 2.05 s; Tavi and Kern answer again at 2.48 and 2.86 s; Tavi makes the final return at 3.15 s. Every transfer changes the ownership mark and shortens the next travel beat without teleporting or spawning a replacement orb.",
-      "Kern misses at 3.48 s. The orb connects, the exchange counter closes, and a vulnerability ring remains until 4.55 s. Tavi's punish at 3.90 s belongs to the opening rather than to the reflected projectile, and the complete contract resets after 5.20 s."
+      "Kern misses at 3.48 s. The orb connects, the exchange counter closes, and the cracked chest core marks an opening until 4.55 s. Tavi's punish at 3.90 s belongs to the opening rather than to the reflected projectile, and the complete contract resets after 5.20 s."
     ],
     "boss": "Boss",
     "player": "Player",
@@ -27,7 +27,7 @@
     "locked": "One projectile identity, current owner, contact points, valid response, timing windows, speed curve, exchange cap, miss outcome, opening, damage, and reset are encounter-owned",
     "safe": "Show the next contact, owner, beat, and failure state with shape, motion, sound, captions, and forgiving input buffering rather than color alone",
     "reducedMotion": "Autoplay is disabled by reduced motion. Scrub across 0.78, 1.48, 2.05, 2.48, 2.86, 3.15, 3.48, 3.90, 4.55, and 5.20 seconds to inspect serve, every ownership transfer, acceleration, miss, opening, punish, close, and reset.",
-    "diagramDescription": "Tavi and Kern face each other across a fixed lane. One rune orb travels between their contact rings while an exchange ledger fills from one to five. Alternating player and boss ownership marks follow that same orb, its trail becomes shorter as the tempo rises, and the final return strikes Kern to reveal a timed vulnerability ring."
+    "diagramDescription": "Kern and Tavi exchange the same carved stone orb between them. Its colored rune changes with each owner and its solid trail shortens as the volleys speed up. Five small stone tablets at the side record completed returns. On the last return the orb hits Kern, cracks the boss’s chest core, and leaves a separate opening for Tavi’s sword."
   },
   "steps": [
     {

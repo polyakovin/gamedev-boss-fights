@@ -17,9 +17,9 @@
       "Convertir el fallo del jefe en una ventana limitada"
     ],
     "phaseDescriptions": [
-      "Kern carga un orbe rúnico, fija su carril y lo lanza a 0,78 s. Un anillo alrededor de la espada de Tavi distingue el servicio retornable de un proyectil común.",
+      "Kern carga un orbe rúnico, fija su carril y lo lanza a 0,78 s. La runa de la misma esfera cambia de color cuando Tavi la devuelve con la espada, diferenciando este servicio de un proyectil común.",
       "Tavi devuelve el mismo orbe a 1,48 s; Kern a 2,05; ambos responden a 2,48 y 2,86; Tavi hace la última devolución a 3,15. Cada contacto cambia el dueño y acorta el compás sin teletransportar ni crear otro orbe.",
-      "Kern falla a 3,48 s. El orbe impacta, el contador se cierra y el anillo vulnerable dura hasta 4,55. El golpe de Tavi a 3,90 pertenece a la apertura, no al proyectil, y el contrato reinicia después de 5,20."
+      "Kern falla a 3,48 s. El orbe impacta, el contador se cierra y el núcleo agrietado del pecho señala la apertura hasta 4,55. El golpe de Tavi a 3,90 pertenece a la apertura, no al proyectil, y el contrato reinicia después de 5,20."
     ],
     "boss": "Jefe",
     "player": "Jugador",
@@ -27,7 +27,7 @@
     "locked": "Identidad, dueño, contactos, respuesta, ventanas, velocidad, límite, resultado del fallo, apertura, daño y reinicio pertenecen al encuentro",
     "safe": "Muestra contacto, dueño, pulso y fallo con forma, movimiento, sonido, subtítulos y búfer, no solo color",
     "reducedMotion": "Con movimiento reducido no hay autoplay. Recorre 0,78, 1,48, 2,05, 2,48, 2,86, 3,15, 3,48, 3,90, 4,55 y 5,20 s para revisar servicio, transferencias, aceleración, fallo, apertura, golpe, cierre y reinicio.",
-    "diagramDescription": "Tavi y Kern ocupan los extremos de un carril fijo. Un solo orbe viaja entre anillos de contacto y un registro crece de uno a cinco. Los símbolos de dueño siguen el mismo orbe, su estela se acorta con el tempo y la devolución final golpea a Kern para mostrar una vulnerabilidad limitada."
+    "diagramDescription": "Kern y Tavi se devuelven la misma esfera de piedra tallada. La runa cambia de color con cada dueño y su estela sólida se acorta al acelerar el intercambio. Cinco tablillas de piedra al lado registran las devoluciones. La última esfera golpea a Kern, agrieta el núcleo de su pecho y deja una apertura distinta para la espada de Tavi."
   },
   "steps": [
     {

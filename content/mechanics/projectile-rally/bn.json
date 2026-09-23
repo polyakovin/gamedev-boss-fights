@@ -17,9 +17,9 @@
       "বসের মিসকে সীমিত opening-এ মেটান"
     ],
     "phaseDescriptions": [
-      "কার্ন একটি rune orb charge করে, lane স্থির করে এবং ০.৭৮ সেকেন্ডে ছাড়ে। Contact-এর আগে টাভির তরবারির চারপাশে response ring দেখা যায়, তাই ফেরানো যায় এমন serve সাধারণ projectile থেকে আলাদা।",
+      "কার্ন একটি rune orb charge করে, lane স্থির করে এবং ০.৭৮ সেকেন্ডে ছাড়ে। তাভি তরবারি দিয়ে একই গোলা ফেরালে তার রুনের রং বদলায়, তাই এই serve সাধারণ projectile থেকে আলাদা।",
       "টাভি ১.৪৮ সেকেন্ডে একই গোলা ফেরায়; কার্ন ২.০৫-এ পাঠায়; টাভি ও কার্ন ২.৪৮ ও ২.৮৬-এ আবার উত্তর দেয়; টাভি ৩.১৫-এ শেষ return করে। প্রতিটি transfer ownership mark বদলায় ও পরের beat ছোট করে, কিন্তু গোলা teleport বা replace হয় না।",
-      "কার্ন ৩.৪৮ সেকেন্ডে মিস করে। গোলা আঘাত করে, exchange counter বন্ধ হয় এবং vulnerability ring ৪.৫৫ পর্যন্ত থাকে। ৩.৯০-এ টাভির punish opening-এর অংশ, reflected projectile-এর নয়; পুরো contract ৫.২০-এ reset হয়।"
+      "কার্ন ৩.৪৮ সেকেন্ডে মিস করে। গোলা আঘাত করে, exchange counter বন্ধ হয় এবং বুকের ফাটা কেন্দ্র ৪.৫৫ পর্যন্ত সুযোগ দেখায়। ৩.৯০-এ টাভির punish opening-এর অংশ, reflected projectile-এর নয়; পুরো contract ৫.২০-এ reset হয়।"
     ],
     "boss": "বস",
     "player": "খেলোয়াড়",
@@ -27,7 +27,7 @@
     "locked": "এক projectile identity, বর্তমান owner, contact points, valid response, timing windows, speed curve, exchange cap, miss outcome, opening, damage ও reset encounter-owned",
     "safe": "পরের contact, owner, beat ও failure shape, motion, sound, captions এবং forgiving input buffering দিয়ে দেখান; শুধু রঙের উপর নির্ভর করবেন না",
     "reducedMotion": "Reduced motion-এ autoplay বন্ধ। Serve, ownership transfer, acceleration, miss, opening, punish, close ও reset দেখতে ০.৭৮, ১.৪৮, ২.০৫, ২.৪৮, ২.৮৬, ৩.১৫, ৩.৪৮, ৩.৯০, ৪.৫৫ এবং ৫.২০ সেকেন্ডে scrub করুন।",
-    "diagramDescription": "টাভি ও কার্ন একটি স্থির lane-এর দুই প্রান্তে মুখোমুখি। একটি rune orb তাদের contact ring-এর মধ্যে চলে এবং exchange ledger এক থেকে পাঁচ পূর্ণ হয়। Player ও boss ownership mark একই গোলার সঙ্গে পাল্টায়, tempo বাড়লে trail ছোট হয় এবং শেষ return কার্নকে আঘাত করে timed vulnerability ring প্রকাশ করে।"
+    "diagramDescription": "কার্ন ও তাভি একই খোদাই করা পাথরের গোলা পরস্পর ফেরায়। মালিক বদলালে এর রুনের রং বদলায় এবং গতি বাড়ার সঙ্গে ভরাট চলার দাগ ছোট হয়। পাশের পাঁচটি ছোট পাথরফলক ফেরত আঘাত নথিভুক্ত করে। শেষ ফেরত গোলা কার্নকে আঘাত করে, বুকের কেন্দ্র ফাটায় এবং তাভির তলোয়ারের জন্য আলাদা সুযোগ খোলে।"
   },
   "steps": [
     {

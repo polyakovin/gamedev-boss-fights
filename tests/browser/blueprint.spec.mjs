@@ -3113,6 +3113,8 @@ test('projectile rally keeps one accelerating orb and opens only after the boss 
     }, milliseconds);
 
   await expect(page.locator('.lesson-title-line h1')).toHaveText('Projectile rally');
+  await expect(widget).toHaveAttribute('data-blueprint-full-height', 'true');
+  expect((await widget.boundingBox()).height).toBeGreaterThan(800);
   await expect(page.locator('.wip-badge, .draft-profile')).toHaveCount(0);
   await expect(page.locator('.game-example')).toHaveCount(3);
 
@@ -3147,10 +3149,9 @@ test('projectile rally keeps one accelerating orb and opens only after the boss 
 
   await seek(4000);
   await expect(widget).toHaveAttribute('data-blueprint-projectile-rally-punished', 'true');
-  await expect(widget.locator('[data-blueprint-primitive="18"] circle')).not.toHaveAttribute(
-    'opacity',
-    '0',
-  );
+  await expect(
+    widget.locator('[data-blueprint-primitives] path[d^="M 283 303"]'),
+  ).not.toHaveAttribute('opacity', '0');
 
   await seek(4700);
   await expect(widget).toHaveAttribute('data-blueprint-projectile-rally-vulnerable', 'false');
