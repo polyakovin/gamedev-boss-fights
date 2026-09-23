@@ -1,0 +1,28 @@
+{
+  "id": "sound-detection",
+  "number": 80,
+  "published": true,
+  "sourceLocale": "en",
+  "contentVersion": 1,
+  "animation": "sound-detection",
+  "lenses": ["telegraphing", "access-paths", "counterplay", "rule-exception"],
+  "related": ["target-lock", "decoy", "source-tracking"],
+  "sources": [
+    {
+      "title": "GDC · Itay Keren — Boss Battle Design Fundamentals and Retrospective",
+      "url": "https://www.gdcvault.com/play/1024921/Boss-Up-Boss-Battle-Design"
+    },
+    {
+      "title": "GameFAQs — Little Nightmares Walkthrough: The Lair",
+      "url": "https://gamefaqs.gamespot.com/xboxone/194378-little-nightmares/faqs/75158/walkthrough"
+    },
+    {
+      "title": "Game8 — Resident Evil 4 Remake Chapter 7 Walkthrough",
+      "url": "https://game8.co/games/Resident-Evil-4-Remake/archives/408592"
+    },
+    {
+      "title": "Game8 — How to Sneak Up on The End",
+      "url": "https://game8.co/games/Metal-Gear-Solid-Delta-Snake-Eater/archives/548404"
+    }
+  ]
+}

@@ -280,6 +280,18 @@ export function initializeBlueprint(widget) {
       widget.dataset.blueprintInvisibilityReveal = String(frame.invisibilityRevealVisible);
       widget.dataset.blueprintPunishStrike = String(frame.punishStrike);
     }
+    if (mechanicId === 'sound-detection') {
+      widget.dataset.blueprintSoundDetection = frame.soundDetectionState;
+      widget.dataset.blueprintSoundHeard = String(frame.soundDetectionHeard);
+      widget.dataset.blueprintSoundNoiseVisible = String(frame.soundDetectionNoiseVisible);
+      widget.dataset.blueprintSoundSourceLocked = String(frame.soundDetectionSourceLocked);
+      widget.dataset.blueprintSoundAttack = String(frame.soundDetectionAttackActive);
+      widget.dataset.blueprintSoundLivePosition = String(
+        frame.soundDetectionBossHasLivePlayerPosition,
+      );
+      widget.dataset.blueprintSoundNoiseLevel = frame.soundDetectionNoiseLevel.toFixed(3);
+      widget.dataset.blueprintPunishStrike = String(frame.punishStrike);
+    }
     boss.setAttribute(
       'transform',
       `translate(${frame.boss.x} ${frame.boss.y}) scale(${frame.bossScale})`,

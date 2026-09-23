@@ -405,9 +405,9 @@ test('volley releases three parallel bolts on one beat and clears its outside ro
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
 });
 
-test('catalog and builder reuse the 73 promoted rule-specific previews', async ({ page }) => {
+test('catalog and builder reuse the 74 promoted rule-specific previews', async ({ page }) => {
   await page.goto('en/');
-  await expect(page.locator('[data-blueprint-preview]')).toHaveCount(73);
+  await expect(page.locator('[data-blueprint-preview]')).toHaveCount(74);
   const catalogLayouts = await page.locator('[data-blueprint-preview]').evaluateAll((previews) =>
     previews.map((preview) => {
       const boss = preview.querySelector('[data-character-art-preview="kern"]');
@@ -431,7 +431,7 @@ test('catalog and builder reuse the 73 promoted rule-specific previews', async (
   expect(new Set(catalogLayouts.map(({ layout }) => layout)).size).toBeGreaterThanOrEqual(18);
 
   await page.goto('en/builder/');
-  await expect(page.locator('[data-blueprint-preview]')).toHaveCount(73);
+  await expect(page.locator('[data-blueprint-preview]')).toHaveCount(74);
   const builderLayouts = await page.locator('[data-blueprint-preview]').evaluateAll((previews) =>
     previews.map((preview) => {
       const boss = preview.querySelector('[data-character-art-preview="kern"]');
@@ -2661,6 +2661,73 @@ test('invisibility replaces the body with bounded traces before a fixed hidden s
   );
   await expect(widget).toHaveAttribute('data-blueprint-punish-strike', 'true');
   await expect(widget.locator('[data-blueprint-primitive="13"] line')).not.toHaveAttribute(
+    'opacity',
+    '0',
+  );
+
+  await page.setViewportSize({ width: 375, height: 812 });
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+});
+
+test('sound detection attacks a recorded event while a quiet player relocates', async ({
+  page,
+}) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.goto('en/mechanics/sound-detection/');
+  const widget = page.locator('[data-blueprint-demo]');
+  const timeline = widget.locator('[data-blueprint-timeline]');
+  const seek = (milliseconds) =>
+    timeline.evaluate((element, value) => {
+      element.value = String(value);
+      element.dispatchEvent(new Event('input', { bubbles: true }));
+    }, milliseconds);
+
+  await expect(page.locator('.lesson-title-line h1')).toHaveText('Sound detection');
+  await expect(page.locator('.wip-badge, .draft-profile')).toHaveCount(0);
+  await expect(page.locator('.game-example')).toHaveCount(3);
+  await expect(widget).toHaveAttribute('data-blueprint-playing', 'false');
+
+  await seek(800);
+  await expect(widget).toHaveAttribute('data-blueprint-sound-detection', 'quiet-movement');
+  await expect(widget).toHaveAttribute('data-blueprint-sound-live-position', 'false');
+
+  await seek(1400);
+  await expect(widget).toHaveAttribute('data-blueprint-sound-detection', 'noise-emitted');
+  await expect(widget).toHaveAttribute('data-blueprint-sound-noise-visible', 'true');
+  await expect(widget.locator('[data-blueprint-primitive="4"] circle')).not.toHaveAttribute(
+    'opacity',
+    '0',
+  );
+
+  await seek(2000);
+  await expect(widget).toHaveAttribute(
+    'data-blueprint-sound-detection',
+    'investigating-last-heard',
+  );
+  await expect(widget).toHaveAttribute('data-blueprint-sound-heard', 'true');
+  await expect(widget).toHaveAttribute('data-blueprint-sound-live-position', 'false');
+  await expect(widget.locator('[data-blueprint-primitive="7"] line')).not.toHaveAttribute(
+    'opacity',
+    '0',
+  );
+
+  await seek(2700);
+  await expect(widget).toHaveAttribute('data-blueprint-sound-detection', 'stale-source-locked');
+  await expect(widget).toHaveAttribute('data-blueprint-sound-source-locked', 'true');
+
+  await seek(3050);
+  await expect(widget).toHaveAttribute('data-blueprint-sound-detection', 'source-attack');
+  await expect(widget).toHaveAttribute('data-blueprint-sound-attack', 'true');
+  await expect(widget).toHaveAttribute('data-blueprint-outcome', 'safe');
+  await expect(widget.locator('[data-blueprint-primitive="9"] circle')).not.toHaveAttribute(
+    'opacity',
+    '0',
+  );
+
+  await seek(4280);
+  await expect(widget).toHaveAttribute('data-blueprint-sound-detection', 'counter-window');
+  await expect(widget).toHaveAttribute('data-blueprint-punish-strike', 'true');
+  await expect(widget.locator('[data-blueprint-primitive="14"] line')).not.toHaveAttribute(
     'opacity',
     '0',
   );

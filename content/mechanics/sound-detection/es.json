@@ -1,0 +1,138 @@
+{
+  "title": "Detección por sonido",
+  "subtitle": "Haz que el jefe conozca una ubicación solo mediante eventos audibles, de modo que la velocidad, las superficies, las armas y las distracciones deliberadas formen parte de la economía de información del encuentro.",
+  "variant": "Tavi cruza una alfombra rúnica que amortigua el sonido, da un golpe fuerte con la espada sobre piedra desnuda y se recoloca en silencio; Kern investiga y ataca la fuente registrada en vez de hacer trampa siguiendo la posición actual de Tavi, y deja un contraataque tras la búsqueda",
+  "summary": "El jefe aprende ubicaciones por eventos audibles en vez de leer la posición actual del jugador, por lo que el ruido pasa a formar parte de las decisiones de movimiento y ataque.",
+  "overview": "La detección por sonido limita el conocimiento del jefe. Cada acción emite un evento con origen, intensidad, radio, material y duración. Si la percepción tiene éxito, el jefe guarda esa posición conocida, la investiga y se compromete allí aunque el jugador ya se haya movido en silencio.",
+  "learning": "Implementa eventos de ruido deterministas, volumen por acción y superficie, atenuación y oclusión, un umbral observable, una última posición conocida en vez de seguimiento en vivo, estados de investigación y búsqueda, ataques a información obsoleta, enmascaramiento y señuelos, respuesta multisensorial, ayudas de accesibilidad y una respuesta útil tras resolver una ubicación equivocada.",
+  "category": "Espacio, movimiento y percepción",
+  "readTime": "8 min",
+  "demo": {
+    "title": "Da pruebas al jefe, no omnisciencia",
+    "timeline": "Cronología de detección por sonido",
+    "step": "Estados de detección por sonido",
+    "phaseNames": [
+      "Calibrar el movimiento silencioso y emitir un ruido fuerte",
+      "Investigar y atacar la última fuente oída",
+      "Terminar la búsqueda y abrir el contraataque"
+    ],
+    "phaseDescriptions": [
+      "Desde 0,52 s, Tavi cruza una alfombra rúnica amortiguadora por debajo del umbral auditivo de Kern. A 1,36 s, un golpe de espada en piedra desnuda emite un evento visible; Kern registra el origen a 1,50 s mientras Tavi empieza a recolocarse en silencio.",
+      "Kern avanza hacia el punto registrado entre 1,68 y 2,58 s. La fuente queda fijada sin seguir a Tavi, que alcanza una posición segura con todo el cuerpo. Kern ataca la ubicación obsoleta entre 2,92 y 3,32 s.",
+      "La búsqueda termina a 3,72 s y descarta expresamente la ubicación antigua. Tavi se acerca durante la apertura diseñada, golpea con la espada a 4,28 s y ambos vuelven al inicio después de 5,12 s."
+    ],
+    "boss": "Jefe",
+    "player": "Jugador",
+    "danger": "Solo el ataque circular alrededor de la fuente registrada hace daño; tras fijarla, el jefe nunca la sustituye por la transformación actual del jugador",
+    "locked": "Se diseñan el origen, volumen, material, atenuación, umbral, memoria, ruta de investigación, geometría de ataque, fin de búsqueda, respuesta y reinicio",
+    "safe": "Mantén las acciones silenciosas bajo el umbral visible, recolócate tras un evento fuerte, abandona por completo el radio guardado y acércate solo al terminar la búsqueda",
+    "reducedMotion": "Con movimiento reducido, la reproducción automática se desactiva. Recorre 0,52; 1,36; 1,50; 1,68; 2,58; 2,92; 3,32; 3,72; 4,28 y 5,12 segundos para inspeccionar silencio, emisión, registro, investigación, fijación, ataque, fin de búsqueda, contraataque y reinicio.",
+    "diagramDescription": "Una alfombra rúnica blanda y una zona de piedra ruidosa dividen la cantera. Tavi crea ondas de sonido en un punto y se desplaza en silencio hasta una marca segura lejana. Kern sigue una línea discontinua hasta la fuente guardada y ataca ese círculo sin girarse hacia Tavi, antes de quedar abierto a la espada."
+  },
+  "steps": [
+    {
+      "title": "¿Qué acciones publican un evento de ruido?",
+      "body": "Asigna volumen base explícito a pasos, aterrizajes, volteretas, armas, choques, voz y objetos interactivos. Multiplícalo por velocidad, postura, equipo y superficie; después publica un evento inmutable con origen, tiempo, categoría, radio y dueño. No dejes que el volumen de la mezcla decida la detección: la compresión, el ajuste del usuario o la ausencia de reproducción no deben cambiar la simulación. Muestra evento y umbral en depuración."
+    },
+    {
+      "title": "¿Qué sabe el jefe después de oírlo?",
+      "body": "Resuelve alcance, atenuación, oclusión, enmascaramiento y facciones una sola vez; guarda después un punto conocido con confianza y caducidad. La investigación usa esa instantánea, no la transformación actual del jugador. Decide si un evento más fuerte lo reemplaza, si señales débiles amplían la incertidumbre y cómo crece la búsqueda tras llegar. En red, replica el evento y resultado autoritativos en vez de recalcularlos desde el audio del cliente."
+    },
+    {
+      "title": "¿Puede el jugador predecir, explotar y percibir la regla?",
+      "body": "Expón un medidor o reacción del material antes de detectar, muestra cuándo el jefe registra un sonido y distingue investigación, fuente fijada, búsqueda y memoria limpia. Permite distracciones deliberadas solo con coste y propiedad claros. Duplica el audio esencial con ondas, iconos, vibración, subtítulos y vistas opcionales del umbral para que el éxito no dependa del oído ni de la mezcla del dispositivo."
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "El jefe que oye sigue en secreto coordenadas actuales",
+      "body": "Si el jefe gira tras una recolocación silenciosa que no ha oído, invalida la regla central. Congela la fuente percibida cuando se detecta, dirige orientación y ataques desde la memoria y comprueba que el objetivo no cambia sin un nuevo evento válido. La predicción visual debe coincidir con el punto usado por IA y colisión."
+    },
+    {
+      "title": "El radio sonoro es arbitrario o invisible",
+      "body": "Si acciones idénticas alternan entre seguras y detectadas por multiplicadores ocultos, eventos de animación u orden de fotogramas, no puede formarse un modelo. Mantén estables los niveles, anuncia materiales especiales, aplica la atenuación igual y responde tanto al emitir como al registrar, no solo cuando empieza el castigo."
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "Separa el ruido simulado de la mezcla",
+      "body": "Un evento de ruido jugable es dato; el sonido audible es una presentación. Separarlos mantiene coherentes subtítulos, accesibilidad, repeticiones, pruebas deterministas, pausa y autoridad de red. Ambos comparten categoría y tiempo, pero un control de volumen jamás reduce el alcance auditivo del jefe."
+    },
+    {
+      "title": "Crea memoria perceptiva, no un atajo al objetivo",
+      "body": "Guarda origen, edad, confianza, categoría y propagación. La máquina de estados puede investigar, buscar en celdas cercanas, abandonar pruebas viejas o combinar eventos compatibles. Una referencia directa al jugador impide los señuelos y crea omnisciencia accidental cuando otro sistema pide un objetivo."
+    },
+    {
+      "title": "Diseña superficies y enmascaramiento como rutas",
+      "body": "Tela blanda, agua somera, cadenas sueltas, cerámica frágil y maquinaria pueden cambiar el volumen efectivo de la misma acción. Colócalos para que se lean una ruta silenciosa y un atajo ruidoso deliberado. Las ventanas de enmascaramiento necesitan equivalentes visuales o táctiles y deben afectar a la regla y a su respuesta."
+    },
+    {
+      "title": "Presupuesta el ciclo desde emisión hasta contraataque",
+      "body": "Mide juntos latencia de detección, viaje, fijación, ataque, caducidad y distancia de recolocación silenciosa. Un señuelo sirve solo si la ubicación obsoleta permanece fijada suficiente tiempo para crear espacio. Las fases posteriores pueden recordar más u oír más lejos, pero deben conservar una forma fiable de limpiar o sustituir pruebas."
+    }
+  ],
+  "story": {
+    "title": "Kern escucha a través del suelo de la cantera",
+    "body": "Kern reúne las runas en el rostro y apoya una mano de piedra en el suelo. La roca desnuda transmite el golpe de Tavi como ondas turquesas, mientras las viejas alfombras tejidas absorben pasos. El elemental sigue la vibración dejada en la cantera en vez de ver a través de los muros."
+  },
+  "adaptation": {
+    "title": "Deja que Tavi elija cuándo hacerse audible",
+    "body": "Tavi usa movimiento normal y su espada. El trayecto silencioso queda bajo el umbral, un golpe deliberado publica una fuente fuerte y la ruta segura permite recolocar todo el cuerpo antes de que Kern se comprometa. El contraataque empieza solo cuando se descarta visiblemente la prueba antigua."
+  },
+  "distinction": {
+    "title": "Prueba percibida, no seguimiento de fuente",
+    "body": "El seguimiento de fuente gira continuamente un ataque hacia un objetivo conocido hasta fijarlo. La detección por sonido crea una prueba discreta que quizá ya esté obsoleta; el jefe actúa sobre el último evento percibido. Un sonido puede alimentar un ataque guiado, pero detección, memoria, investigación y fijación siguen siendo estados distintos con fallos distintos."
+  },
+  "lensNotes": [
+    {
+      "id": "telegraphing",
+      "body": "Ondas de emisión, registro, ruta, fuente fijada, radio activo y borrado de memoria comunican la máquina perceptiva completa."
+    },
+    {
+      "id": "access-paths",
+      "body": "Ondas visibles, medidor de ruido, tratamiento de superficie, vibración, subtítulos y ayuda de umbral exponen la misma regla sin exigir oído."
+    },
+    {
+      "id": "counterplay",
+      "body": "El jugador controla su ruido, se recoloca tras publicar la prueba, hace que el jefe gaste un ataque en información vieja y usa el enfriamiento de búsqueda."
+    },
+    {
+      "id": "rule-exception",
+      "body": "El encuentro sustituye deliberadamente el apuntado omnisciente por conocimiento limitado a la percepción; toda excepción posterior necesita una señal expresa."
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "Little Nightmares",
+      "boss": "The Janitor",
+      "screenshot": "https://i.ytimg.com/vi/XowPwgjFlpc/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=XowPwgjFlpc&t=54s",
+      "body": "El Conserje ciego convierte pequeños ruidos en objetivos de búsqueda. Las tablas que crujen delatan a Six, mientras las rutas con tela y sonidos ambientales más fuertes alteran lo que detecta. Al jugarse de lado, el contraste entre material silencioso y objetos ruidosos hace del oído una regla espacial de ruta y no una estadística invisible de IA.",
+      "video": "https://www.youtube.com/watch?v=XowPwgjFlpc&t=54s",
+      "videoDurationSeconds": 745
+    },
+    {
+      "dimension": "3D",
+      "game": "Resident Evil 4",
+      "boss": "Garrador",
+      "screenshot": "https://i.ytimg.com/vi/a1z5pmutRGA/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=a1z5pmutRGA&t=44s",
+      "body": "El Garrador ciego carga hacia el origen de carreras, disparos, cadenas y campanas. Caminar agachado permite abandonar el punto sin actualizarlo y exponer su espalda tras el compromiso. Un sonido fuerte es a la vez riesgo y señuelo deliberado, con la geometría resultante vinculada claramente a la fuente oída.",
+      "video": "https://www.youtube.com/watch?v=a1z5pmutRGA&t=44s",
+      "videoDurationSeconds": 175
+    },
+    {
+      "dimension": "3D",
+      "game": "Metal Gear Solid Delta: Snake Eater",
+      "boss": "The End",
+      "screenshot": "https://i.ytimg.com/vi/BZLJmWGs_tg/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=BZLJmWGs_tg&t=94s",
+      "body": "El duelo de francotiradores con The End combina visión, camuflaje y oído en varias zonas de jungla. Cerca de él se oyen la marcha normal, agachada o arrastrada, mientras Stalk y el equipo que suprime pasos conservan una aproximación silenciosa. El ejemplo sitúa el ruido en un modelo perceptivo más amplio y muestra el intercambio entre velocidad y control de información.",
+      "video": "https://www.youtube.com/watch?v=BZLJmWGs_tg&t=94s",
+      "videoDurationSeconds": 585
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

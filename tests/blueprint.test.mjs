@@ -22,6 +22,7 @@ import {
   wraparoundProjectileState,
   beatSyncedAttackState,
   secondaryCuesInvisibilityState,
+  soundDetectionState,
   counterStanceOutcome,
   counterStanceState,
   blueprintFrame,
@@ -49,8 +50,8 @@ import {
   renderBlueprintThumbnail,
 } from '../lib/blueprint-view.mjs';
 
-test('all 73 promoted lesson animations have distinct rule modes and complete moving frames', () => {
-  assert.equal(BLUEPRINT_MECHANIC_IDS.length, 73);
+test('all 74 promoted lesson animations have distinct rule modes and complete moving frames', () => {
+  assert.equal(BLUEPRINT_MECHANIC_IDS.length, 74);
   const modes = new Set();
   for (const id of BLUEPRINT_MECHANIC_IDS) {
     for (let time = 0; time <= BLUEPRINT_DURATION; time += 0.1) {
@@ -71,7 +72,7 @@ test('all 73 promoted lesson animations have distinct rule modes and complete mo
           assert.ok(Number.isFinite(value), `${id} has an invalid ${primitive.type}`);
     }
   }
-  assert.equal(modes.size, 73);
+  assert.equal(modes.size, 74);
 });
 
 test('every blueprint exposes signal, committed action, and recovery without player teleports', () => {
@@ -140,6 +141,7 @@ test('every damaging promoted animation derives safety from its own active geome
     'limited-spread': null,
     'attack-reflection': null,
     'secondary-cues-invisibility': { x: 300, y: 625 },
+    'sound-detection': { x: 380, y: 650 },
     'forced-scrolling': { x: 350, y: 750 },
     'control-mode-shift': { x: 120, y: 724 },
     'cover-line-of-sight': { x: 470, y: 850 },
@@ -2235,5 +2237,58 @@ test('invisibility preserves a continuous hidden body through bounded secondary 
   assert.match(
     renderBlueprintThumbnail(id, 'test-secondary-cues-invisibility'),
     /data-blueprint-preview="secondary-cues-invisibility"/,
+  );
+});
+
+test('sound detection commits to an audible event instead of the live player position', () => {
+  const id = 'sound-detection';
+  assert.deepEqual([0, 0.8, 1.4, 1.55, 2, 2.7, 3.05, 3.5, 4, 4.28, 5.3].map(soundDetectionState), [
+    'unaware-patrol',
+    'quiet-movement',
+    'noise-emitted',
+    'sound-registered',
+    'investigating-last-heard',
+    'stale-source-locked',
+    'source-attack',
+    'search-cooldown',
+    'counter-approach',
+    'counter-window',
+    'reset',
+  ]);
+
+  const quiet = blueprintFrame(id, 0.8);
+  assert.equal(quiet.soundDetectionQuietMove, true);
+  assert.ok(quiet.soundDetectionNoiseLevel < 0.3);
+
+  const emitted = blueprintFrame(id, 1.4);
+  assert.equal(emitted.soundDetectionNoiseVisible, true);
+  assert.equal(emitted.soundDetectionNoiseLevel, 1);
+  assert.ok(emitted.primitives[4].opacity > 0, 'the emitted event expands from its source');
+
+  const investigating = blueprintFrame(id, 2);
+  assert.equal(investigating.soundDetectionHeard, true);
+  assert.equal(investigating.soundDetectionBossHasLivePlayerPosition, false);
+  assert.ok(investigating.primitives[7].opacity > 0, 'the boss follows the stored source');
+
+  const locked = blueprintFrame(id, 2.7);
+  assert.equal(locked.soundDetectionSourceLocked, true);
+  assert.deepEqual(locked.player, { x: 480, y: 790 });
+
+  const active = blueprintFrame(id, 3.05);
+  assert.equal(active.soundDetectionAttackActive, true);
+  assert.equal(active.playerSafe, true);
+  assert.equal(blueprintPointSafe(id, 3.05, { x: 380, y: 650 }), false);
+  assert.equal(blueprintPointSafe(id, 3.05, { x: 480, y: 790 }), true);
+  assert.ok(active.primitives[9].opacity > 0.9, 'the attack stays on the stale sound source');
+
+  const punish = blueprintFrame(id, 4.28);
+  assert.equal(punish.punishStrike, true);
+  assert.ok(punish.primitives[14].opacity > 0.9, 'the sword response follows the search');
+
+  assert.deepEqual(blueprintFrame(id, 0).player, blueprintFrame(id, 6).player);
+  assert.deepEqual(blueprintFrame(id, 0).boss, blueprintFrame(id, 6).boss);
+  assert.match(
+    renderBlueprintThumbnail(id, 'test-sound-detection'),
+    /data-blueprint-preview="sound-detection"/,
   );
 });

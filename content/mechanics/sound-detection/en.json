@@ -1,0 +1,138 @@
+{
+  "title": "Sound detection",
+  "subtitle": "Let the boss learn a location only from audible events, so movement speed, surfaces, weapons, and deliberate distractions become part of the encounter's information economy.",
+  "variant": "Tavi crosses a muffling rune mat, makes one loud sword impact on bare stone, and then relocates quietly; Kern investigates and attacks the recorded source rather than cheating toward Tavi's live position, leaving a counter after the search",
+  "summary": "The boss learns a location from audible events instead of reading the player's live position, making noise output part of movement and attack choices.",
+  "overview": "Sound detection limits the boss's knowledge. Each action emits a noise event with an origin, intensity, radius, material, and lifetime. If perception succeeds, the boss records that event as a last-known position, investigates it, and commits there even when the player has already moved silently elsewhere.",
+  "learning": "Implement a deterministic noise-event pipeline, action and surface loudness, attenuation and occlusion, an observable hearing threshold, last-known rather than live position, investigation and search states, stale-information attacks, masking and distractions, multisensory feedback, accessibility assists, and a useful counter window after the boss resolves the wrong location.",
+  "category": "Space, movement, and perception",
+  "readTime": "8 min",
+  "demo": {
+    "title": "Give the boss evidence, not omniscience",
+    "timeline": "Sound-detection timeline",
+    "step": "Sound-detection states",
+    "phaseNames": [
+      "Calibrate quiet movement and emit one loud event",
+      "Investigate and attack the last-known source",
+      "End the search and expose a counter"
+    ],
+    "phaseDescriptions": [
+      "From 0.52 s Tavi crosses a muffling rune mat below Kern's hearing threshold. At 1.36 s a sword impact on bare stone emits a visible sound event; Kern registers its origin at 1.50 s, while Tavi begins a quiet relocation.",
+      "Kern travels toward the recorded point from 1.68 to 2.58 s. The source locks without following Tavi, who reaches a full-body safe position. Kern attacks the stale location from 2.92 to 3.32 s.",
+      "The search cools down at 3.72 s, explicitly discarding the old location. Tavi approaches during the authored opening, strikes with the sword at 4.28 s, and both actors return after 5.12 s."
+    ],
+    "boss": "Boss",
+    "player": "Player",
+    "danger": "Only the circular attack around the recorded sound source deals damage; the boss never substitutes the player's current transform after the source is locked",
+    "locked": "Noise origin, loudness, material modifier, attenuation, hearing threshold, memory lifetime, investigation route, attack geometry, search expiry, counter, and reset are authored",
+    "safe": "Keep quiet actions below the visible threshold, relocate after a loud event, clear the full radius around its stored origin, and approach only after the search state ends",
+    "reducedMotion": "Autoplay is disabled by reduced motion. Scrub across 0.52, 1.36, 1.50, 1.68, 2.58, 2.92, 3.32, 3.72, 4.28, and 5.12 seconds to inspect quiet output, emission, registration, investigation, source lock, attack, search expiry, counter, and reset.",
+    "diagramDescription": "A soft rune mat and loud bare-stone area divide the quarry floor. Tavi creates expanding sound rings at one point, then moves quietly to a distant safe marker. Kern follows a dashed line to the stored source and attacks that circle rather than turning toward Tavi, then opens for a sword counter."
+  },
+  "steps": [
+    {
+      "title": "Which actions publish a noise event?",
+      "body": "Give footsteps, landings, rolls, weapons, collisions, voice, and interactables explicit base loudness. Multiply that value by movement speed, stance, equipment, and surface material, then publish an immutable event with origin, time, category, radius, and owner. Do not let audio mix volume decide gameplay detection: compression, user volume, and missing playback must not alter simulation. Visualize the event and threshold in debug builds."
+    },
+    {
+      "title": "What does the boss know after hearing it?",
+      "body": "Resolve range, attenuation, occlusion, masking, and faction rules once, then store a last-known point with confidence and expiry. Investigation targets that snapshot, not the player's live transform. Define whether a new stronger event replaces it, whether weak events widen uncertainty, and how search expands after arrival. Networked play must replicate the authoritative event and perception result rather than recomputing from client audio."
+    },
+    {
+      "title": "Can players predict, exploit, and access the rule?",
+      "body": "Expose a meter or material response before detection, show when the boss registers a sound, and distinguish investigating, source-locked, searching, and cleared states. Allow deliberate distractions only when their cost and ownership are clear. Mirror essential audio with rings, icons, haptics, captions, and optional threshold previews so hearing ability or device mix does not determine success."
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "The hearing boss secretly tracks live coordinates",
+      "body": "A boss that turns with an unheard silent relocation invalidates the central rule. Freeze the perceived source when detection occurs, route all orientation and attacks through perception memory, and add assertions that the target does not change without a new eligible event. Visual prediction should match the exact point used by AI and collision."
+    },
+    {
+      "title": "Sound radius is arbitrary or invisible",
+      "body": "If identical actions alternate between safe and detected because of hidden surface multipliers, animation events, or frame order, players cannot form a model. Make loudness tiers stable, signal special materials before commitment, apply attenuation consistently, and provide feedback at emission and registration rather than only after the punishment begins."
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "Separate simulation noise from the audio mix",
+      "body": "A gameplay noise event is data; the audible sound is one presentation of it. This separation keeps subtitles, accessibility, replay, deterministic tests, pause, and network authority coherent. Both should share category and timestamp, but changing a volume slider must never shrink the boss's hearing radius."
+    },
+    {
+      "title": "Build a perception memory, not a target shortcut",
+      "body": "Store origin, age, confidence, source category, and propagation result. The state machine can investigate, search nearby cells, abandon stale evidence, or combine compatible events. A direct pointer to the player makes decoys impossible and encourages accidental omniscience whenever another system requests a target."
+    },
+    {
+      "title": "Author surfaces and masking as route choices",
+      "body": "Soft cloth, shallow water, loose chains, breakable pottery, and ambient machinery can change the same action's effective loudness. Place them so at least one quiet route and one deliberate noisy shortcut are legible. Masking windows need visible or tactile equivalents and must affect both the rule and its feedback."
+    },
+    {
+      "title": "Budget the loop from emission to counter",
+      "body": "Measure detection latency, travel time, lock delay, attack duration, search expiry, and the player's silent relocation distance together. A distraction is useful only if its stale location stays committed long enough to create space. Later phases may remember longer or hear farther, but preserve a reliable way to clear or replace evidence."
+    }
+  ],
+  "story": {
+    "title": "Kern listens through the quarry floor",
+    "body": "Kern closes the rune set into its face and presses a stone hand to the ground. Bare rock carries Tavi's sword impact as widening teal rings, while old woven rune mats swallow footsteps. The elemental follows the vibration left in the quarry rather than seeing through walls."
+  },
+  "adaptation": {
+    "title": "Let Tavi choose when to become audible",
+    "body": "Tavi uses ordinary movement and the existing sword. Quiet travel stays below the threshold, a deliberate sword impact publishes one strong source, and the safe route has enough time for full-body relocation before Kern commits. The counter begins only after the old evidence is visibly discarded."
+  },
+  "distinction": {
+    "title": "Perceived evidence, not source tracking",
+    "body": "Source tracking continuously turns an attack toward a known target until lock. Sound detection creates discrete evidence that may already be stale; the boss acts on the last event it successfully perceived. A sound can feed a tracking attack, but detection, memory, investigation, and lock remain separate states with separate failure cases."
+  },
+  "lensNotes": [
+    {
+      "id": "telegraphing",
+      "body": "Emission rings, registration, investigation path, source lock, active radius, and memory clear communicate the complete perception state machine."
+    },
+    {
+      "id": "access-paths",
+      "body": "Visible rings, a noise meter, surface treatment, haptics, captions, and threshold assists expose the same rule without requiring hearing."
+    },
+    {
+      "id": "counterplay",
+      "body": "The player controls noise output, relocates after publishing evidence, lets the boss spend an attack on stale information, and uses the search cooldown."
+    },
+    {
+      "id": "rule-exception",
+      "body": "The encounter deliberately replaces ordinary omniscient targeting with perception-limited knowledge, so every later exception needs an explicit signal."
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "Little Nightmares",
+      "boss": "The Janitor",
+      "screenshot": "https://i.ytimg.com/vi/XowPwgjFlpc/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=XowPwgjFlpc&t=54s",
+      "body": "The blind Janitor turns small noises into search targets. Creaking floorboards expose Six, while cloth-covered paths and louder environmental sounds change which actions he can detect. Because the encounter plays side-on, the readable contrast between quiet material and noisy objects turns hearing into a spatial route rule rather than an invisible AI statistic.",
+      "video": "https://www.youtube.com/watch?v=XowPwgjFlpc&t=54s",
+      "videoDurationSeconds": 745
+    },
+    {
+      "dimension": "3D",
+      "game": "Resident Evil 4",
+      "boss": "Garrador",
+      "screenshot": "https://i.ytimg.com/vi/a1z5pmutRGA/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=a1z5pmutRGA&t=44s",
+      "body": "The blind Garrador responds to running, gunfire, hanging chains, and bells by charging the sound's location. Quiet crouched movement can leave that point without updating it, exposing the creature's back after the commitment. The fight makes a strong sound event both a liability and a deliberate lure, with the resulting attack geometry clearly tied to the heard source.",
+      "video": "https://www.youtube.com/watch?v=a1z5pmutRGA&t=44s",
+      "videoDurationSeconds": 175
+    },
+    {
+      "dimension": "3D",
+      "game": "Metal Gear Solid Delta: Snake Eater",
+      "boss": "The End",
+      "screenshot": "https://i.ytimg.com/vi/BZLJmWGs_tg/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=BZLJmWGs_tg&t=94s",
+      "body": "The End's sniper duel combines vision, camouflage, and hearing across several jungle spaces. Near his position, ordinary walking, crouching, or crawling can be heard, while Stalk movement and equipment that suppresses footsteps preserve a quiet approach. The example shows how noise belongs in a broader perception model and how stance can explicitly trade speed for information control.",
+      "video": "https://www.youtube.com/watch?v=BZLJmWGs_tg&t=94s",
+      "videoDurationSeconds": 585
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

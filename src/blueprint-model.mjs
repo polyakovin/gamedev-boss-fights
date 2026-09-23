@@ -845,6 +845,45 @@ const SPECS = {
       [330, 690],
     ],
   },
+  'sound-detection': {
+    mode: 'sound-detection',
+    boss: [150, 390],
+    player: [430, 700],
+    target: [350, 585],
+    arena: [56, 350, 448, 540],
+    quietAt: 0.52,
+    noiseAt: 1.36,
+    heardAt: 1.5,
+    investigate: [1.68, 2.58],
+    lockAt: 2.58,
+    attack: [2.92, 3.32],
+    searchEndsAt: 3.72,
+    punishAt: 4.28,
+    resetAt: 5.12,
+    hearingRadius: 360,
+    soundPoint: [380, 650],
+    investigatePoint: [330, 575],
+    hidePoint: [480, 790],
+    strikePoint: [350, 585],
+    dangerRadius: 76,
+    approachRoute: [
+      [430, 700],
+      [410, 680],
+      [380, 650],
+    ],
+    silentRoute: [
+      [380, 650],
+      [420, 700],
+      [455, 745],
+      [480, 790],
+    ],
+    resetRoute: [
+      [350, 585],
+      [380, 620],
+      [410, 660],
+      [430, 700],
+    ],
+  },
   'wide-swing': { mode: 'arc', boss: [280, 310], player: [410, 470], target: [470, 650] },
   lunge: { mode: 'lunge', boss: [170, 290], player: [390, 590], target: [470, 660] },
   grab: { mode: 'grab', boss: [280, 300], player: [390, 485], target: [470, 610] },
@@ -1473,6 +1512,22 @@ export function secondaryCuesInvisibilityState(time) {
   if (t < spec.attack[1]) return 'hidden-strike';
   if (t < spec.revealAt) return 'reveal-signal';
   if (t < spec.punishAt) return 'revealed-opening';
+  if (t < spec.resetAt) return 'counter-window';
+  return 'reset';
+}
+
+export function soundDetectionState(time) {
+  const spec = SPECS['sound-detection'];
+  const t = localTime(time);
+  if (t < spec.quietAt) return 'unaware-patrol';
+  if (t < spec.noiseAt) return 'quiet-movement';
+  if (t < spec.heardAt) return 'noise-emitted';
+  if (t < spec.investigate[0]) return 'sound-registered';
+  if (t < spec.lockAt) return 'investigating-last-heard';
+  if (t < spec.attack[0]) return 'stale-source-locked';
+  if (t < spec.attack[1]) return 'source-attack';
+  if (t < spec.searchEndsAt) return 'search-cooldown';
+  if (t < spec.punishAt) return 'counter-approach';
   if (t < spec.resetAt) return 'counter-window';
   return 'reset';
 }
@@ -3480,6 +3535,81 @@ function primitivesFor(spec, frame) {
       ),
     ];
   }
+  if (mode === 'sound-detection') {
+    const sound = point(spec.soundPoint);
+    const safe = point(spec.hidePoint);
+    const heard = frame.soundDetectionHeard;
+    const active = frame.soundDetectionAttackActive;
+    const strike = strikePulse(frame.time, spec.punishAt, 0.38);
+    return [
+      rect(...spec.arena, 0.52, 'muted', 0.025),
+      rect(76, 560, 210, 250, 0.24, 'safe', 0.025),
+      rect(286, 560, 198, 250, 0.22, 'accent', 0.025),
+      circle(
+        frame.boss.x,
+        frame.boss.y,
+        spec.hearingRadius,
+        heard ? 0.22 : 0.09,
+        'accent',
+        5,
+        0,
+        '12 14',
+      ),
+      ...[0, 0.18, 0.36].map((offset) =>
+        circle(
+          sound.x,
+          sound.y,
+          20 + 155 * clamp(frame.soundDetectionWaveProgress - offset),
+          frame.soundDetectionNoiseVisible
+            ? Math.max(0, 0.88 - clamp(frame.soundDetectionWaveProgress - offset) * 0.72)
+            : 0,
+          'accent',
+          6,
+        ),
+      ),
+      line(frame.boss.x, frame.boss.y, sound.x, sound.y, heard ? 0.68 : 0, 'accent', 5, '10 9'),
+      circle(sound.x, sound.y, 34, heard ? 0.86 : 0.14, 'accent', 7, 0.08, '7 7'),
+      circle(
+        sound.x,
+        sound.y,
+        spec.dangerRadius,
+        active ? 0.96 : frame.soundDetectionSourceLocked ? 0.46 : 0.08,
+        active ? 'signal' : 'accent',
+        active ? 12 : 6,
+        active ? 0.24 : 0.04,
+      ),
+      circle(safe.x, safe.y, 40, heard ? 0.72 : 0.16, 'safe', 6, 0.08, '8 7'),
+      circle(
+        frame.player.x,
+        frame.player.y,
+        18 + frame.soundDetectionQuietNoise * 28,
+        frame.soundDetectionQuietMove ? 0.42 : 0,
+        'safe',
+        4,
+        0.03,
+      ),
+      rect(82, 842, 196, 18, 0.44, 'muted', 0.03),
+      rect(
+        82,
+        842,
+        196 * frame.soundDetectionNoiseLevel,
+        18,
+        0.92,
+        heard ? 'accent' : 'safe',
+        0.12,
+      ),
+      line(frame.player.x, frame.player.y, frame.boss.x, frame.boss.y, strike, 'safe', 10),
+      circle(frame.boss.x + 26, frame.boss.y - 16, 12 + strike * 24, strike, 'safe', 7, 0.14),
+      path(
+        'M 102 600 L 102 785 M 122 600 L 122 785 M 146 600 L 146 785 M 176 600 L 176 785 M 210 600 L 210 785 M 246 600 L 246 785',
+        0.18,
+        'safe',
+        5,
+        0,
+        '9 13',
+      ),
+    ];
+  }
   if (mode === 'landing') {
     const landing = point(spec.landing);
     const contact = phase === 1 ? clamp(1 - Math.abs(action - 0.52) / 0.2) : 0;
@@ -4805,6 +4935,12 @@ function pointClearsThreat(spec, frame, value, radius = BLUEPRINT_PLAYER_RADIUS)
       distanceToSegment(value, point(spec.hiddenRoute.at(-1)), point(spec.laneEnd)) >
         spec.laneHalfWidth + radius
     );
+  if (mode === 'sound-detection')
+    return (
+      !frame.dangerActive ||
+      Math.hypot(value.x - spec.soundPoint[0], value.y - spec.soundPoint[1]) >
+        spec.dangerRadius + radius
+    );
   if (mode === 'spiral')
     return (
       distanceFromBoss > 52 + radius &&
@@ -5065,6 +5201,25 @@ export function blueprintFrame(id, time) {
         y: mix(hiddenEnd.y, startBoss.y, reset),
       };
     }
+  } else if (spec.mode === 'sound-detection') {
+    const investigate = point(spec.investigatePoint);
+    if (t < spec.investigate[0]) boss = startBoss;
+    else if (t < spec.investigate[1]) {
+      const travel = smooth(
+        (t - spec.investigate[0]) / (spec.investigate[1] - spec.investigate[0]),
+      );
+      boss = {
+        x: mix(startBoss.x, investigate.x, travel),
+        y: mix(startBoss.y, investigate.y, travel),
+      };
+    } else if (t < spec.resetAt) boss = investigate;
+    else {
+      const reset = smooth((t - spec.resetAt) / (BLUEPRINT_DURATION - spec.resetAt));
+      boss = {
+        x: mix(investigate.x, startBoss.x, reset),
+        y: mix(investigate.y, startBoss.y, reset),
+      };
+    }
   }
   let responseProgress = response;
   if (spec.mode === 'landing')
@@ -5130,6 +5285,7 @@ export function blueprintFrame(id, time) {
   else if (spec.mode === 'wraparound-projectile') responseProgress = 0;
   else if (spec.mode === 'beat-synced-attack') responseProgress = 0;
   else if (spec.mode === 'secondary-cues-invisibility') responseProgress = 0;
+  else if (spec.mode === 'sound-detection') responseProgress = 0;
   else if (spec.mode === 'knockback')
     responseProgress = phase === 0 ? 0 : phase === 1 ? smooth(action) : 1;
   else if (spec.mode === 'target-lock')
@@ -5644,6 +5800,27 @@ export function blueprintFrame(id, time) {
       player = pointAlongPolyline(spec.resetRoute.map(point), reset);
     }
   }
+  if (spec.mode === 'sound-detection') {
+    const sound = point(spec.soundPoint);
+    const safe = point(spec.hidePoint);
+    const strike = point(spec.strikePoint);
+    if (t < spec.noiseAt) {
+      const approach = smooth((t - spec.quietAt) / (spec.noiseAt - spec.quietAt));
+      player = pointAlongPolyline(spec.approachRoute.map(point), approach);
+    } else if (t < spec.heardAt) player = sound;
+    else if (t < spec.lockAt) {
+      const relocate = smooth((t - spec.heardAt) / (spec.lockAt - spec.heardAt));
+      player = pointAlongPolyline(spec.silentRoute.map(point), relocate);
+    } else if (t < spec.searchEndsAt) player = safe;
+    else if (t < spec.punishAt) {
+      const approach = smooth((t - spec.searchEndsAt) / (spec.punishAt - spec.searchEndsAt));
+      player = { x: mix(safe.x, strike.x, approach), y: mix(safe.y, strike.y, approach) };
+    } else if (t < spec.resetAt) player = strike;
+    else {
+      const reset = clamp((t - spec.resetAt) / (BLUEPRINT_DURATION - spec.resetAt));
+      player = pointAlongPolyline(spec.resetRoute.map(point), reset);
+    }
+  }
   if (spec.mode === 'rotating' && phase === 0) {
     const initialPosition = polar(boss, 255, Math.PI / 3);
     player = {
@@ -5857,7 +6034,30 @@ export function blueprintFrame(id, time) {
                                         ),
                                       ) * 0.8,
                                     )
-                                  : pulse(responseProgress) + pulse(returnProgress) * 0.8;
+                                  : spec.mode === 'sound-detection'
+                                    ? Math.max(
+                                        pulse(
+                                          smooth(
+                                            (t - spec.quietAt) / (spec.noiseAt - spec.quietAt),
+                                          ),
+                                        ),
+                                        pulse(
+                                          smooth((t - spec.heardAt) / (spec.lockAt - spec.heardAt)),
+                                        ),
+                                        pulse(
+                                          smooth(
+                                            (t - spec.searchEndsAt) /
+                                              (spec.punishAt - spec.searchEndsAt),
+                                          ),
+                                        ),
+                                        pulse(
+                                          smooth(
+                                            (t - spec.resetAt) /
+                                              (BLUEPRINT_DURATION - spec.resetAt),
+                                          ),
+                                        ) * 0.8,
+                                      )
+                                    : pulse(responseProgress) + pulse(returnProgress) * 0.8;
   const bossVisible =
     spec.mode === 'secondary-cues-invisibility'
       ? t < spec.vanishAt
@@ -6039,7 +6239,14 @@ export function blueprintFrame(id, time) {
                                                                                     spec
                                                                                       .attack[0] &&
                                                                                   t < spec.attack[1]
-                                                                                : phase === 1;
+                                                                                : spec.mode ===
+                                                                                    'sound-detection'
+                                                                                  ? t >=
+                                                                                      spec
+                                                                                        .attack[0] &&
+                                                                                    t <
+                                                                                      spec.attack[1]
+                                                                                  : phase === 1;
   const frame = {
     id,
     mode: spec.mode,
@@ -6131,33 +6338,39 @@ export function blueprintFrame(id, time) {
                                   : spec.mode === 'secondary-cues-invisibility'
                                     ? (Math.atan2(boss.y - player.y, boss.x - player.x) * 180) /
                                       Math.PI
-                                    : spec.mode === 'boss-as-terrain'
+                                    : spec.mode === 'sound-detection'
                                       ? (Math.atan2(boss.y - player.y, boss.x - player.x) * 180) /
                                         Math.PI
-                                      : spec.mode === 'control-mode-shift'
+                                      : spec.mode === 'boss-as-terrain'
                                         ? (Math.atan2(boss.y - player.y, boss.x - player.x) * 180) /
                                           Math.PI
-                                        : spec.mode === 'damage-type-resistance' ||
-                                            spec.mode === 'situational-immunity' ||
-                                            spec.mode === 'part-break' ||
-                                            spec.mode === 'attack-reflection' ||
-                                            spec.mode === 'counter-stance' ||
-                                            spec.mode === 'absorption-power-up' ||
-                                            spec.mode === 'interruptible-wind-up' ||
-                                            spec.mode === 'loadout-adaptation' ||
-                                            spec.mode === 'wind-up'
-                                          ? -180
-                                          : -90,
+                                        : spec.mode === 'control-mode-shift'
+                                          ? (Math.atan2(boss.y - player.y, boss.x - player.x) *
+                                              180) /
+                                            Math.PI
+                                          : spec.mode === 'damage-type-resistance' ||
+                                              spec.mode === 'situational-immunity' ||
+                                              spec.mode === 'part-break' ||
+                                              spec.mode === 'attack-reflection' ||
+                                              spec.mode === 'counter-stance' ||
+                                              spec.mode === 'absorption-power-up' ||
+                                              spec.mode === 'interruptible-wind-up' ||
+                                              spec.mode === 'loadout-adaptation' ||
+                                              spec.mode === 'wind-up'
+                                            ? -180
+                                            : -90,
     bossMotion: motion({
       gait:
         spec.mode === 'chase-herding' ||
         spec.mode === 'escape-phase' ||
-        spec.mode === 'relocated-arena'
+        spec.mode === 'relocated-arena' ||
+        spec.mode === 'sound-detection'
           ? t * 6
           : 0,
       stride:
         (spec.mode === 'chase-herding' && t >= spec.active[0] && t < spec.active[1]) ||
         (spec.mode === 'escape-phase' && t >= spec.escape[0] && t < spec.escape[1]) ||
+        (spec.mode === 'sound-detection' && t >= spec.investigate[0] && t < spec.investigate[1]) ||
         (spec.mode === 'relocated-arena' && t >= spec.resetAt)
           ? 0.72
           : 0,
@@ -6481,7 +6694,10 @@ export function blueprintFrame(id, time) {
                                       ? t * 7 * stride
                                       : spec.mode === 'secondary-cues-invisibility'
                                         ? t * 7 * stride
-                                        : (route * responseProgress + route * returnProgress) / 20,
+                                        : spec.mode === 'sound-detection'
+                                          ? t * 7 * stride
+                                          : (route * responseProgress + route * returnProgress) /
+                                            20,
       stride,
       lean: stride * 0.45,
       crouch:
@@ -6579,12 +6795,14 @@ export function blueprintFrame(id, time) {
                                                         : spec.mode ===
                                                             'secondary-cues-invisibility'
                                                           ? strikePulse(t, spec.punishAt, 0.38)
-                                                          : spec.mode === 'decoy' && phase === 1
-                                                            ? pulse(clamp((action - 0.52) / 0.3))
-                                                            : spec.mode === 'weak-point' &&
-                                                                phase === 1
-                                                              ? pulse(action * 1.5)
-                                                              : 0,
+                                                          : spec.mode === 'sound-detection'
+                                                            ? strikePulse(t, spec.punishAt, 0.38)
+                                                            : spec.mode === 'decoy' && phase === 1
+                                                              ? pulse(clamp((action - 0.52) / 0.3))
+                                                              : spec.mode === 'weak-point' &&
+                                                                  phase === 1
+                                                                ? pulse(action * 1.5)
+                                                                : 0,
     }),
   };
   if (spec.mode === 'directional-shield') {
@@ -6679,6 +6897,28 @@ export function blueprintFrame(id, time) {
     frame.activePhaseState = activePhaseState(t);
     frame.hitboxActive = dangerActive;
     frame.followThroughVisible = t >= spec.active[1] && t < spec.followThroughEnd;
+    frame.punishStrike = strikePulse(t, spec.punishAt, 0.38) > 0.5;
+  }
+  if (spec.mode === 'sound-detection') {
+    frame.soundDetectionState = soundDetectionState(t);
+    frame.soundDetectionHeard = t >= spec.heardAt && t < spec.resetAt;
+    frame.soundDetectionNoiseVisible = t >= spec.noiseAt && t < spec.investigate[1];
+    frame.soundDetectionWaveProgress = clamp(
+      (t - spec.noiseAt) / (spec.investigate[1] - spec.noiseAt),
+    );
+    frame.soundDetectionSourceLocked = t >= spec.lockAt && t < spec.searchEndsAt;
+    frame.soundDetectionAttackActive = dangerActive;
+    frame.soundDetectionQuietMove =
+      (t >= spec.quietAt && t < spec.noiseAt) || (t >= spec.heardAt && t < spec.lockAt);
+    frame.soundDetectionQuietNoise = frame.soundDetectionQuietMove ? 0.18 + 0.08 * pulse(t * 3) : 0;
+    frame.soundDetectionNoiseLevel =
+      t >= spec.noiseAt && t < spec.heardAt
+        ? 1
+        : frame.soundDetectionQuietMove
+          ? frame.soundDetectionQuietNoise
+          : 0.06;
+    frame.soundDetectionLastKnownPoint = point(spec.soundPoint);
+    frame.soundDetectionBossHasLivePlayerPosition = false;
     frame.punishStrike = strikePulse(t, spec.punishAt, 0.38) > 0.5;
   }
   if (spec.mode === 'secondary-cues-invisibility') {
@@ -6930,7 +7170,8 @@ export function blueprintFrame(id, time) {
       spec.mode === 'forced-inertia' ||
       spec.mode === 'wraparound-projectile' ||
       spec.mode === 'beat-synced-attack' ||
-      spec.mode === 'secondary-cues-invisibility'
+      spec.mode === 'secondary-cues-invisibility' ||
+      spec.mode === 'sound-detection'
         ? 92
         : -62),
   };

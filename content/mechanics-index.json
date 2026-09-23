@@ -1273,7 +1273,7 @@
         "en": {
           "title": "Sound detection",
           "category": "Space, movement, and perception",
-          "summary": "Draft outline for the sound detection mechanic. Rules, tuning guidance, and examples are still in progress."
+          "summary": "The boss learns a location from audible events instead of reading the player's live position, making noise output part of movement and attack choices."
         },
         "ru": {
           "title": "Обнаружение игрока по шуму",
