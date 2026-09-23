@@ -1433,12 +1433,12 @@
         "en": {
           "title": "Persistent encounter progress",
           "category": "Encounter goals and vulnerability",
-          "summary": "Draft outline for the persistent encounter progress mechanic. Rules, tuning guidance, and examples are still in progress."
+          "summary": "Completed encounter objectives survive player defeat, so a new attempt resumes from an explicit authored milestone."
         },
         "ru": {
           "title": "Сохранение прогресса между попытками",
           "category": "Цель боя и открытие уязвимости",
-          "summary": "Выполненные части боя не сбрасываются после смерти игрока."
+          "summary": "Выполненные цели боя переживают поражение игрока, и новая попытка начинается с явно сохранённого этапа."
         }
       }
     },

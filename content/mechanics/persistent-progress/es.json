@@ -1,0 +1,142 @@
+{
+  "title": "Progreso persistente del encuentro",
+  "subtitle": "Mantén completos los hitos diseñados cuando empieza un nuevo intento",
+  "variant": "Completar · confirmar · fallar · restaurar",
+  "summary": "Los objetivos completados sobreviven a la derrota del jugador, y el nuevo intento continúa desde un hito diseñado y explícito.",
+  "overview": "El progreso persistente conserva ciertos objetivos del jefe después de la derrota. Cada hito se confirma antes de reiniciar el estado transitorio; el siguiente intento restaura ese registro y deriva de él lo que queda del combate, reduciendo repetición sin borrar la consecuencia del fallo.",
+  "learning": "Define la unidad persistente, el momento de confirmación, el límite del reintento, los campos transitorios, la geometría y ataques restaurados, recursos, dificultad, autoridad cooperativa, durabilidad, migración, recompensa y señales que expliquen exactamente qué se conservará.",
+  "category": "Objetivos del encuentro y vulnerabilidad",
+  "readTime": "10 min",
+  "demo": {
+    "title": "Rompe los dos anclajes rúnicos de Kern entre reintentos y abre el núcleo",
+    "timeline": "Cronología del progreso persistente",
+    "step": "Estados del progreso persistente",
+    "phaseNames": [
+      "Completa y confirma un hito antes del fallo",
+      "Reinicia el intento restaurando el registro guardado",
+      "Deriva el encuentro restante y resuélvelo una sola vez"
+    ],
+    "phaseDescriptions": [
+      "El primer intento empieza con dos anclajes intactos. Tavi rompe el izquierdo a 0,78 s; la revisión uno se confirma a 0,98 s antes de que un carril rúnico señalado derrote al jugador a 1,24 s. La salud temporal, los ataques y la posición pueden reiniciarse, pero el anclaje izquierdo ya no forma parte del siguiente intento.",
+      "Tavi reaparece a 1,58 s con la primera marca restaurada y rompe el anclaje derecho a 2,28 s. La revisión dos se confirma a 2,50 s antes del segundo fallo a 2,76 s. La reaparición de 3,10 s reconstruye la arena con ambos anclajes rotos y el núcleo de Kern expuesto; ningún objetivo completo se repite.",
+      "En el tercer intento, Tavi alcanza y golpea el núcleo a 3,92 s. Un único resultado se reserva a 4,18 s, se entrega una recompensa y el registro de tres marcas permanece visible hasta el reinicio posterior a 5,45 s. Una instantánea dañada o antigua se validaría y migraría antes de reconstruir."
+    ],
+    "boss": "Jefe",
+    "player": "Jugador",
+    "danger": "Cada reintento puede reiniciar salud, posición, ataques, proyectiles, temporizadores y recursos, pero nunca debe revivir un objetivo ya confirmado en el registro persistente",
+    "locked": "Los ids de objetivo, revisiones, reintentos, paquete de reinicio, fase restaurada, resultado, recompensa, versión y migración pertenecen al encuentro",
+    "safe": "Muestra objetivos confirmados como objetos rotos y marcas llenas; acompaña cada guardado con pulso, etiqueta, sonido, subtítulo y geometría restaurada coherente",
+    "reducedMotion": "Con movimiento reducido no hay reproducción automática. Recorre 0,78, 0,98, 1,24, 1,58, 2,28, 2,50, 2,76, 3,10, 3,92, 4,18 y 5,45 s para revisar confirmaciones, derrotas, restauraciones, resolución y reinicio.",
+    "diagramDescription": "Kern está tras dos anclajes y Tavi se acerca con espada. Un registro de tres casillas guarda el anclaje izquierdo y luego el derecho a través de dos derrotas y reapariciones visibles. Los anclajes rotos siguen oscuros y tachados aunque la salud temporal del jefe se recarga. En el tercer intento se abre el núcleo, Tavi golpea y aparecen exactamente una marca final y una recompensa."
+  },
+  "steps": [
+    {
+      "title": "¿Qué unidad de progreso merece sobrevivir al fallo?",
+      "body": "Conserva logros diseñados: un órgano destruido, un ritual, un aliado rescatado, una fase o una ruta resuelta. No guardes cada punto de daño salvo que el desgaste sea el propósito. Cada unidad necesita id estable, condición de finalización, cambio visible y dependencias para evitar estados imposibles."
+    },
+    {
+      "title": "¿Cuándo es durable el hito y qué se reinicia?",
+      "body": "Confirma cuando el objetivo ya es autoritativo, no al empezar su animación. Escribe la revisión antes del peligro letal posterior y reinicia salud, posición, ataques, temporizadores y mejoras temporales mediante un paquete documentado. Confirma la escritura antes de mostrar el aviso de guardado."
+    },
+    {
+      "title": "¿Cómo reconstruye el siguiente intento un combate coherente?",
+      "body": "Carga y valida el registro, reconstruye la geometría, selecciona objetivos y ataques restantes, coloca a los actores con seguridad y reconcilia recursos antes de devolver el control. Reserva un resultado y una recompensa. Prueba guardados antiguos, escrituras interrumpidas, desconexiones, cambios de dificultad y reintentos finales."
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "El icono de guardado aparece antes de que el hito sea durable",
+      "body": "Si el jugador muere después del pulso pero antes de completar la escritura, el siguiente intento contradice la interfaz. Confirma atómicamente y luego anúncialo. Ante un fallo, conserva la revisión válida anterior en lugar de cargar media arena."
+    },
+    {
+      "title": "La restauración revive geometría o ataques anteriores",
+      "body": "Un anclaje destruido que vuelve, un proyectil de una fase eliminada o una ruta cerrada sin llave rompe la confianza y puede bloquear el combate. Deriva objetos, ataques, navegación e interfaz del mismo registro validado."
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "Separa estado persistente y transitorio",
+      "body": "Lo persistente puede incluir ids de objetivos, fichas de fase, rutas, banderas narrativas, revisión, política de dificultad y recompensas. Lo transitorio incluye salud actual, tiempo, hitboxes, proyectiles, temporizadores, blancos y efectos. Haz explícito el límite en código y telemetría."
+    },
+    {
+      "title": "Ajusta tamaño y coste de cada tramo retenido",
+      "body": "Un hito debe eliminar repetición significativa sin hundir el reto restante. Mide tiempo hasta el hito, fallos posteriores, repetición ahorrada, recursos restaurados y reentrada de ataques. Los puntos grandes necesitan señales más fuertes y normalización cuidadosa."
+    },
+    {
+      "title": "Versiona, valida y migra el registro",
+      "body": "Guarda una versión y ids estables, no posiciones de un array. Rechaza datos futuros desconocidos, migra objetivos renombrados o divididos, corrige combinaciones imposibles y conserva la última revisión válida hasta confirmar la nueva. La carga debe ser idempotente tras un corte."
+    },
+    {
+      "title": "Prueba autoridad compartida y recompensa final",
+      "body": "En cooperativo, decide qué derrota reinicia, quién confirma objetivos y cómo recibe el registro quien entra tarde. Simula objetivo y derrota simultáneos, migración de anfitrión, rollback, golpes finales repetidos y reconexión. Solo pueden sobrevivir un resultado y una recompensa."
+    }
+  ],
+  "story": {
+    "title": "La cantera recuerda cada sello roto",
+    "body": "Tavi corta un anclaje antes de que el carril de Kern lo devuelva a la entrada. Al regresar, la piedra sigue oscura y el muro conserva una marca. El segundo intento deja otra cicatriz. En el tercero solo queda el núcleo, y la arena se convierte en el registro más claro del progreso."
+  },
+  "adaptation": {
+    "title": "Haz cada estado restaurado comprensible y recuperable",
+    "body": "Ofrece subtítulos de punto de control, formas distintas para progreso guardado y temporal, resumen del reintento, restauración de recursos ajustable y una pausa segura antes de reactivar ataques. Permite reiniciar desde cero cuando sea viable y deja evidencia persistente del intento anterior."
+  },
+  "distinction": {
+    "title": "Estado guardado del encuentro, no trayecto corto ni metaprogreso",
+    "body": "Un punto cercano reduce el camino pero puede reiniciar al jefe. El metaprogreso mejora futuras partidas sin conservar una parte concreta del combate. Aquí se restauran hitos diseñados dentro del mismo encuentro y cambian objetivos, geometría y fases restantes."
+  },
+  "lensNotes": [
+    {
+      "id": "progress-clarity",
+      "body": "El mundo, las marcas y el resumen deben coincidir sobre qué objetivos son permanentes."
+    },
+    {
+      "id": "phase-structure",
+      "body": "Cada hito confirmado crea un límite estable que cambia la fase y los objetivos que reconstruye el siguiente intento."
+    },
+    {
+      "id": "encounter-purpose",
+      "body": "El hito elegido revela qué logros valora el encuentro más que una ejecución continua."
+    },
+    {
+      "id": "risk-reward",
+      "body": "Una confirmación antes del peligro cambia cuánto progreso se arriesga y cuánta agresividad permite el siguiente objetivo."
+    },
+    {
+      "id": "context-and-sequence",
+      "body": "El intento restaurado conserva orden y consecuencias de los hitos previos aunque su contexto transitorio empiece otra vez."
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "3D",
+      "game": "Dark Souls",
+      "boss": "Bed of Chaos",
+      "screenshot": "https://i.ytimg.com/vi/THhfAmDDO54/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=THhfAmDDO54&t=42s",
+      "body": "Las dos raíces laterales son objetivos discretos de la arena, no daño normal. Una raíz destruida sigue así después de morir; el regreso reconstruye una arena más peligrosa y deja solo la ruta pendiente o el núcleo central.",
+      "video": "https://www.youtube.com/watch?v=THhfAmDDO54&t=42s",
+      "videoDurationSeconds": 175
+    },
+    {
+      "dimension": "2D",
+      "game": "Undertale",
+      "boss": "Omega Flowey",
+      "screenshot": "https://i.ytimg.com/vi/vw18fj56V6E/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=vw18fj56V6E&t=5s",
+      "body": "Omega Flowey convierte muerte y carga en partes visibles del encuentro. Los intervalos de las almas completados actúan como puntos diseñados, por lo que el game over especial reanuda la progresión actual sin repetir todos los anteriores.",
+      "video": "https://www.youtube.com/watch?v=vw18fj56V6E&t=5s",
+      "videoDurationSeconds": 60
+    },
+    {
+      "dimension": "3D",
+      "game": "Final Fantasy XVI: Echoes of the Fallen",
+      "boss": "Omega",
+      "screenshot": "https://i.ytimg.com/vi/421w-jizqQk/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=421w-jizqQk&t=129s",
+      "body": "Omega coloca puntos de salud dentro de su combate por etapas. Un game over tras el umbral puede reintentar desde esa salud retenida con recursos repuestos, separando progreso del jefe e inventario transitorio.",
+      "video": "https://www.youtube.com/watch?v=421w-jizqQk&t=129s",
+      "videoDurationSeconds": 170
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

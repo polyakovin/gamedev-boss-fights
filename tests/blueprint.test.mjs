@@ -35,6 +35,8 @@ import {
   postureStaggerGaugeState,
   pacifistResolutionState,
   pacifistResolutionOutcome,
+  persistentProgressState,
+  persistentProgressRestore,
   counterStanceOutcome,
   counterStanceState,
   blueprintFrame,
@@ -62,8 +64,8 @@ import {
   renderBlueprintThumbnail,
 } from '../lib/blueprint-view.mjs';
 
-test('all 83 promoted lesson animations have distinct rule modes and complete moving frames', () => {
-  assert.equal(BLUEPRINT_MECHANIC_IDS.length, 83);
+test('all 84 promoted lesson animations have distinct rule modes and complete moving frames', () => {
+  assert.equal(BLUEPRINT_MECHANIC_IDS.length, 84);
   const modes = new Set();
   for (const id of BLUEPRINT_MECHANIC_IDS) {
     for (let time = 0; time <= BLUEPRINT_DURATION; time += 0.1) {
@@ -84,7 +86,7 @@ test('all 83 promoted lesson animations have distinct rule modes and complete mo
           assert.ok(Number.isFinite(value), `${id} has an invalid ${primitive.type}`);
     }
   }
-  assert.equal(modes.size, 83);
+  assert.equal(modes.size, 84);
 });
 
 test('every blueprint exposes signal, committed action, and recovery without player teleports', () => {
@@ -117,7 +119,8 @@ test('every blueprint exposes signal, committed action, and recovery without pla
       id !== 'beat-synced-attack' &&
       id !== 'baited-self-hit' &&
       id !== 'posture-stagger-gauge' &&
-      id !== 'pacifist-resolution'
+      id !== 'pacifist-resolution' &&
+      id !== 'persistent-progress'
     )
       assert.equal(blueprintFrame(id, 3).dangerActive, true, id);
     assert.equal(blueprintFrame(id, 3).playerSafe, true, id);
@@ -200,6 +203,7 @@ test('every damaging promoted animation derives safety from its own active geome
       id !== 'baited-self-hit' &&
       id !== 'posture-stagger-gauge' &&
       id !== 'pacifist-resolution' &&
+      id !== 'persistent-progress' &&
       id !== 'part-break' &&
       id !== 'counter-stance' &&
       id !== 'absorption-power-up' &&
@@ -2908,5 +2912,85 @@ test('pacifist resolution keeps health intact and reserves one spared result', (
   assert.match(
     renderBlueprintThumbnail(id, 'test-pacifist-resolution'),
     /data-blueprint-preview="pacifist-resolution"/,
+  );
+});
+
+test('persistent progress restores committed objectives while transient combat resets', () => {
+  const id = 'persistent-progress';
+  assert.deepEqual(
+    [0, 0.8, 1.05, 1.2, 1.5, 1.9, 2.3, 2.56, 2.75, 3, 3.5, 4, 4.3, 5.5].map(
+      persistentProgressState,
+    ),
+    [
+      'attempt-1',
+      'anchor-1-broken',
+      'checkpoint-1',
+      'defeat-1',
+      'restore-1',
+      'attempt-2',
+      'anchor-2-broken',
+      'checkpoint-2',
+      'defeat-2',
+      'restore-2',
+      'core-open',
+      'core-strike',
+      'resolved',
+      'reset',
+    ],
+  );
+
+  assert.deepEqual(persistentProgressRestore({ completedObjectives: 1 }), {
+    status: 'restored',
+    completedObjectives: 1,
+    remainingObjectives: 2,
+    activeObjective: 'anchor-right',
+    bossTransientHealth: 100,
+    playerHealth: 100,
+  });
+  assert.deepEqual(persistentProgressRestore({ completedObjectives: 99 }), {
+    status: 'restored',
+    completedObjectives: 3,
+    remainingObjectives: 0,
+    activeObjective: 'complete',
+    bossTransientHealth: 0,
+    playerHealth: 100,
+  });
+  assert.equal(
+    persistentProgressRestore({ completedObjectives: 2, snapshotVersion: 2 }).status,
+    'unsupported-version',
+  );
+
+  const firstCommit = blueprintFrame(id, 1.05);
+  assert.equal(firstCommit.persistentProgressCompletedObjectives, 1);
+  assert.equal(firstCommit.persistentProgressRevision, 1);
+  assert.equal(firstCommit.persistentProgressBossHealth, 100);
+  const firstDefeat = blueprintFrame(id, 1.2);
+  assert.equal(firstDefeat.dangerActive, true);
+  assert.equal(firstDefeat.persistentProgressPlayerAlive, false);
+  assert.equal(firstDefeat.playerSafe, false, 'the demonstration intentionally proves a retry');
+  assert.equal(blueprintPointSafe(id, 1.2, { x: 300, y: 760 }), true);
+
+  const secondAttempt = blueprintFrame(id, 1.9);
+  assert.equal(secondAttempt.persistentProgressAttempt, 2);
+  assert.equal(secondAttempt.persistentProgressRetryCount, 1);
+  assert.equal(secondAttempt.persistentProgressCompletedObjectives, 1);
+  assert.equal(secondAttempt.persistentProgressBossHealth, 100);
+  const secondDefeat = blueprintFrame(id, 2.75);
+  assert.equal(secondDefeat.persistentProgressCompletedObjectives, 2);
+  assert.equal(secondDefeat.persistentProgressPlayerAlive, false);
+
+  const thirdAttempt = blueprintFrame(id, 3.5);
+  assert.equal(thirdAttempt.persistentProgressAttempt, 3);
+  assert.equal(thirdAttempt.persistentProgressCompletedObjectives, 2);
+  assert.equal(thirdAttempt.persistentProgressCoreOpen, true);
+  const resolved = blueprintFrame(id, 4.3);
+  assert.equal(resolved.persistentProgressCompletedObjectives, 3);
+  assert.equal(resolved.persistentProgressResultId, 'persistent-progress-1');
+  assert.equal(resolved.persistentProgressRewardGrants, 1);
+  assert.equal(resolved.persistentProgressBossHealth, 0);
+  assert.deepEqual(blueprintFrame(id, 0).player, blueprintFrame(id, 6).player);
+  assert.match(
+    renderBlueprintThumbnail(id, 'test-persistent-progress'),
+    /data-blueprint-preview="persistent-progress"/,
   );
 });

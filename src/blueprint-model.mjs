@@ -1188,6 +1188,39 @@ const SPECS = {
     resolvedAt: 4.05,
     resetAt: 5.2,
   },
+  'persistent-progress': {
+    mode: 'persistent-progress',
+    boss: [300, 375],
+    player: [300, 760],
+    target: [300, 760],
+    arena: [55, 310, 450, 570],
+    anchors: [
+      [180, 505],
+      [420, 505],
+    ],
+    strikePoints: [
+      [180, 585],
+      [420, 585],
+    ],
+    corePoint: [300, 555],
+    approachStarts: [0.32, 1.77, 3.29],
+    strikes: [0.78, 2.28, 3.92],
+    commits: [0.98, 2.5, 4.18],
+    hazards: [
+      { telegraph: [1.02, 1.14], active: [1.14, 1.4], laneY: 585 },
+      { telegraph: [2.54, 2.66], active: [2.66, 2.92], laneY: 585 },
+    ],
+    laneStart: [80, 585],
+    laneEnd: [520, 585],
+    laneHalfWidth: 34,
+    restores: [
+      [1.4, 1.77],
+      [2.92, 3.29],
+    ],
+    approachEnds: [0.72, 2.22, 3.83],
+    retreatAt: 4.48,
+    resetAt: 5.45,
+  },
   'wide-swing': { mode: 'arc', boss: [280, 310], player: [410, 470], target: [470, 650] },
   lunge: { mode: 'lunge', boss: [170, 290], player: [390, 590], target: [470, 660] },
   grab: { mode: 'grab', boss: [280, 300], player: [390, 485], target: [470, 610] },
@@ -2053,6 +2086,46 @@ export function pacifistResolutionOutcome({ conditionComplete, action, resultRes
   if (action === 'spare') return 'spared';
   if (action === 'attack') return 'route-closed';
   return 'choice-open';
+}
+
+export function persistentProgressState(time) {
+  const spec = SPECS['persistent-progress'];
+  const t = localTime(time);
+  if (t < spec.approachEnds[0]) return 'attempt-1';
+  if (t < spec.commits[0]) return 'anchor-1-broken';
+  if (t < spec.hazards[0].active[0]) return 'checkpoint-1';
+  if (t < spec.restores[0][0]) return 'defeat-1';
+  if (t < spec.restores[0][1]) return 'restore-1';
+  if (t < spec.approachEnds[1]) return 'attempt-2';
+  if (t < spec.commits[1]) return 'anchor-2-broken';
+  if (t < spec.hazards[1].active[0]) return 'checkpoint-2';
+  if (t < spec.restores[1][0]) return 'defeat-2';
+  if (t < spec.restores[1][1]) return 'restore-2';
+  if (t < spec.approachEnds[2]) return 'core-open';
+  if (t < spec.commits[2]) return 'core-strike';
+  if (t < spec.resetAt) return 'resolved';
+  return 'reset';
+}
+
+export function persistentProgressRestore({ completedObjectives = 0, snapshotVersion = 1 } = {}) {
+  if (snapshotVersion !== 1)
+    return Object.freeze({
+      status: 'unsupported-version',
+      completedObjectives: 0,
+      remainingObjectives: 3,
+      activeObjective: 'anchor-left',
+      bossTransientHealth: 100,
+      playerHealth: 100,
+    });
+  const completed = Math.max(0, Math.min(3, Math.trunc(Number(completedObjectives) || 0)));
+  return Object.freeze({
+    status: 'restored',
+    completedObjectives: completed,
+    remainingObjectives: 3 - completed,
+    activeObjective: ['anchor-left', 'anchor-right', 'core', 'complete'][completed],
+    bossTransientHealth: completed === 3 ? 0 : 100,
+    playerHealth: 100,
+  });
 }
 
 const projectileRallyLegAt = (spec, time) => {
@@ -5056,6 +5129,124 @@ function primitivesFor(spec, frame) {
       path('M 410 550 L 426 566 M 426 550 L 410 566', 0.34, 'muted', 5),
     ];
   }
+  if (mode === 'persistent-progress') {
+    const checkpointPulse = Math.max(
+      ...spec.commits.map((commit) => strikePulse(frame.time, commit, 0.42)),
+    );
+    const strike = Math.max(...spec.strikes.map((time) => strikePulse(frame.time, time, 0.34)));
+    const activeHazard = spec.hazards[frame.persistentProgressHazardIndex];
+    const laneY = activeHazard?.laneY ?? spec.laneStart[1];
+    const restorePulse = frame.persistentProgressRestoring
+      ? 0.72 + pulse(frame.time * 3) * 0.22
+      : 0;
+    const anchorPrimitives = spec.anchors.flatMap(([x, y], index) => {
+      const complete = index < frame.persistentProgressCompletedObjectives;
+      return [
+        path(
+          `M ${x} ${y - 34} L ${x + 28} ${y} L ${x} ${y + 34} L ${x - 28} ${y} Z`,
+          complete ? 0.35 : 0.94,
+          complete ? 'muted' : 'accent',
+          7,
+          complete ? 0.02 : 0.14,
+        ),
+        line(x - 19, y - 20, x + 19, y + 20, complete ? 0.96 : 0, 'signal', 7),
+        line(x + 19, y - 20, x - 19, y + 20, complete ? 0.96 : 0, 'signal', 7),
+        line(
+          x,
+          y - 34,
+          frame.boss.x,
+          frame.boss.y + 44,
+          complete ? 0.12 : 0.62,
+          complete ? 'muted' : 'accent',
+          5,
+          '8 7',
+        ),
+      ];
+    });
+    return [
+      rect(...spec.arena, frame.persistentProgressResolved ? 0.3 : 0.52, 'muted', 0.025),
+      rect(200, 318, 200, 12, 0.52, 'muted', 0.025),
+      rect(
+        200,
+        318,
+        200 * (frame.persistentProgressBossHealth / 100),
+        12,
+        0.92,
+        frame.persistentProgressResolved ? 'safe' : 'signal',
+        0.16,
+      ),
+      ...Array.from({ length: 3 }, (_, index) => {
+        const x = 238 + index * 62;
+        const complete = index < frame.persistentProgressCompletedObjectives;
+        return path(
+          `M ${x} 358 L ${x + 15} 373 L ${x} 388 L ${x - 15} 373 Z`,
+          complete ? 0.98 : 0.3,
+          complete ? 'safe' : 'muted',
+          5,
+          complete ? 0.18 : 0.02,
+        );
+      }),
+      circle(300, 373, 30 + checkpointPulse * 34, checkpointPulse, 'safe', 6, 0.04),
+      ...anchorPrimitives,
+      circle(
+        frame.boss.x,
+        frame.boss.y + 24,
+        35 + pulse(frame.time * 2) * 4,
+        frame.persistentProgressCoreOpen ? 0.94 : 0.16,
+        frame.persistentProgressResolved ? 'safe' : 'accent',
+        7,
+        frame.persistentProgressCoreOpen ? 0.15 : 0.02,
+      ),
+      path(
+        `M ${frame.boss.x - 18} ${frame.boss.y + 24} L ${frame.boss.x} ${frame.boss.y + 6} L ${frame.boss.x + 18} ${frame.boss.y + 24} L ${frame.boss.x} ${frame.boss.y + 42} Z`,
+        frame.persistentProgressCoreOpen ? 0.98 : 0.2,
+        frame.persistentProgressResolved ? 'safe' : 'signal',
+        6,
+        frame.persistentProgressCoreOpen ? 0.18 : 0.02,
+      ),
+      line(
+        spec.laneStart[0],
+        laneY,
+        spec.laneEnd[0],
+        laneY,
+        frame.persistentProgressHazardActive ? 0.94 : 0,
+        'signal',
+        spec.laneHalfWidth * 2,
+      ),
+      line(
+        spec.laneStart[0],
+        laneY,
+        spec.laneEnd[0],
+        laneY,
+        frame.persistentProgressHazardTelegraph ? 0.76 : 0,
+        'accent',
+        7,
+        '12 10',
+      ),
+      circle(
+        spec.player[0],
+        spec.player[1],
+        30 + restorePulse * 28,
+        restorePulse,
+        'safe',
+        6,
+        0.04,
+        '8 7',
+      ),
+      path(
+        `M ${frame.player.x} ${frame.player.y - 38} Q ${frame.player.x} ${frame.player.y - 105} ${frame.boss.x} ${frame.boss.y + 42}`,
+        strike,
+        frame.persistentProgressResolved ? 'safe' : 'accent',
+        9,
+      ),
+      path(
+        'M 438 398 L 474 434 L 438 470 M 474 434 L 407 434',
+        frame.persistentProgressResolved ? 0.92 : 0.16,
+        'safe',
+        8,
+      ),
+    ];
+  }
   if (mode === 'encounter-specific-tool') {
     const pedestal = point(spec.pedestal);
     const spearBase = { x: frame.player.x - 8, y: frame.player.y - 22 };
@@ -6534,6 +6725,12 @@ function pointClearsThreat(spec, frame, value, radius = BLUEPRINT_PLAYER_RADIUS)
       Math.abs(value.x - spec.attacks[frame.pacifistAttackIndex].laneX) >
         spec.laneHalfWidth + radius
     );
+  if (mode === 'persistent-progress')
+    return (
+      !frame.dangerActive ||
+      distanceToSegment(value, point(spec.laneStart), point(spec.laneEnd)) >
+        spec.laneHalfWidth + radius
+    );
   if (mode === 'projectile-rally')
     return (
       !frame.dangerActive ||
@@ -6839,6 +7036,7 @@ export function blueprintFrame(id, time) {
   }
   if (spec.mode === 'posture-stagger-gauge') boss = startBoss;
   if (spec.mode === 'pacifist-resolution') boss = startBoss;
+  if (spec.mode === 'persistent-progress') boss = startBoss;
   let responseProgress = response;
   if (spec.mode === 'landing')
     responseProgress = phase === 0 ? 0 : phase === 1 ? smooth(action / 0.4) : 1;
@@ -6913,6 +7111,7 @@ export function blueprintFrame(id, time) {
   else if (spec.mode === 'baited-self-hit') responseProgress = 0;
   else if (spec.mode === 'posture-stagger-gauge') responseProgress = 0;
   else if (spec.mode === 'pacifist-resolution') responseProgress = 0;
+  else if (spec.mode === 'persistent-progress') responseProgress = 0;
   else if (spec.mode === 'knockback')
     responseProgress = phase === 0 ? 0 : phase === 1 ? smooth(action) : 1;
   else if (spec.mode === 'target-lock')
@@ -7687,6 +7886,53 @@ export function blueprintFrame(id, time) {
       };
     } else player = startPlayer;
   }
+  if (spec.mode === 'persistent-progress') {
+    const first = point(spec.strikePoints[0]);
+    const second = point(spec.strikePoints[1]);
+    const core = point(spec.corePoint);
+    if (t < spec.approachStarts[0]) player = startPlayer;
+    else if (t < spec.approachEnds[0]) {
+      const approach = smooth(
+        (t - spec.approachStarts[0]) / (spec.approachEnds[0] - spec.approachStarts[0]),
+      );
+      player = {
+        x: mix(startPlayer.x, first.x, approach),
+        y: mix(startPlayer.y, first.y, approach),
+      };
+    } else if (t < spec.restores[0][0]) player = first;
+    else if (t < spec.restores[0][1]) {
+      const restore = smooth(
+        (t - spec.restores[0][0]) / (spec.restores[0][1] - spec.restores[0][0]),
+      );
+      player = { x: mix(first.x, startPlayer.x, restore), y: mix(first.y, startPlayer.y, restore) };
+    } else if (t < spec.approachEnds[1]) {
+      const approach = smooth(
+        (t - spec.approachStarts[1]) / (spec.approachEnds[1] - spec.approachStarts[1]),
+      );
+      player = {
+        x: mix(startPlayer.x, second.x, approach),
+        y: mix(startPlayer.y, second.y, approach),
+      };
+    } else if (t < spec.restores[1][0]) player = second;
+    else if (t < spec.restores[1][1]) {
+      const restore = smooth(
+        (t - spec.restores[1][0]) / (spec.restores[1][1] - spec.restores[1][0]),
+      );
+      player = {
+        x: mix(second.x, startPlayer.x, restore),
+        y: mix(second.y, startPlayer.y, restore),
+      };
+    } else if (t < spec.approachEnds[2]) {
+      const approach = smooth(
+        (t - spec.approachStarts[2]) / (spec.approachEnds[2] - spec.approachStarts[2]),
+      );
+      player = { x: mix(startPlayer.x, core.x, approach), y: mix(startPlayer.y, core.y, approach) };
+    } else if (t < spec.retreatAt) player = core;
+    else if (t < spec.resetAt) {
+      const retreat = smooth((t - spec.retreatAt) / (spec.resetAt - spec.retreatAt));
+      player = { x: mix(core.x, startPlayer.x, retreat), y: mix(core.y, startPlayer.y, retreat) };
+    } else player = startPlayer;
+  }
   if (spec.mode === 'rotating' && phase === 0) {
     const initialPosition = polar(boss, 255, Math.PI / 3);
     player = {
@@ -8085,6 +8331,14 @@ export function blueprintFrame(id, time) {
       pulse(smooth((t - spec.spareApproachAt) / (spec.spareAt - spec.spareApproachAt))),
       pulse(smooth((t - spec.choiceEndsAt) / (spec.resetAt - spec.choiceEndsAt))),
     );
+  if (spec.mode === 'persistent-progress')
+    stride = Math.max(
+      ...spec.approachStarts.map((start, index) =>
+        pulse(smooth((t - start) / (spec.approachEnds[index] - start))),
+      ),
+      ...spec.restores.map(([start, end]) => pulse(smooth((t - start) / (end - start)))),
+      pulse(smooth((t - spec.retreatAt) / (spec.resetAt - spec.retreatAt))),
+    );
   const bossVisible =
     spec.mode === 'secondary-cues-invisibility'
       ? t < spec.vanishAt
@@ -8347,7 +8601,8 @@ export function blueprintFrame(id, time) {
             spec.mode === 'projectile-rally' ||
             spec.mode === 'baited-self-hit' ||
             spec.mode === 'posture-stagger-gauge' ||
-            spec.mode === 'pacifist-resolution'
+            spec.mode === 'pacifist-resolution' ||
+            spec.mode === 'persistent-progress'
           ? (Math.atan2(boss.y - player.y, boss.x - player.x) * 180) / Math.PI
           : spec.mode === 'active-phase'
             ? (Math.atan2(boss.y - player.y, boss.x - player.x) * 180) / Math.PI
@@ -9263,6 +9518,55 @@ export function blueprintFrame(id, time) {
     );
     frame.bossMotion.lean = frame.pacifistResolved ? -0.18 : 0;
   }
+  if (spec.mode === 'persistent-progress') {
+    frame.persistentProgressState = persistentProgressState(t);
+    frame.persistentProgressCompletedObjectives =
+      t < spec.commits[0]
+        ? 0
+        : t < spec.commits[1]
+          ? 1
+          : t < spec.commits[2]
+            ? 2
+            : t < spec.resetAt
+              ? 3
+              : 0;
+    frame.persistentProgressRevision = frame.persistentProgressCompletedObjectives;
+    frame.persistentProgressAttempt = t < spec.restores[0][1] ? 1 : t < spec.restores[1][1] ? 2 : 3;
+    frame.persistentProgressRetryCount = frame.persistentProgressAttempt - 1;
+    frame.persistentProgressRestoring = spec.restores.some(([start, end]) => t >= start && t < end);
+    frame.persistentProgressPlayerAlive = !spec.hazards.some(
+      ({ active }) => t >= active[0] && t < active[1],
+    );
+    frame.persistentProgressHazardIndex = spec.hazards.findIndex(
+      ({ telegraph, active }) => t >= telegraph[0] && t < active[1],
+    );
+    frame.persistentProgressHazardTelegraph = spec.hazards.some(
+      ({ telegraph }) => t >= telegraph[0] && t < telegraph[1],
+    );
+    frame.persistentProgressHazardActive = spec.hazards.some(
+      ({ active }) => t >= active[0] && t < active[1],
+    );
+    frame.persistentProgressCoreOpen =
+      frame.persistentProgressCompletedObjectives >= 2 && t < spec.resetAt;
+    frame.persistentProgressResolved = t >= spec.commits[2] && t < spec.resetAt;
+    frame.persistentProgressBossHealth = frame.persistentProgressResolved ? 0 : 100;
+    frame.persistentProgressResultId = frame.persistentProgressResolved
+      ? 'persistent-progress-1'
+      : 'none';
+    frame.persistentProgressRewardGrants = frame.persistentProgressResolved ? 1 : 0;
+    frame.persistentProgressSnapshotVersion = 1;
+    frame.dangerActive = frame.persistentProgressHazardActive;
+    frame.playerMotion.attack = Math.max(
+      ...spec.strikes.map((strike) => strikePulse(t, strike, 0.34)),
+    );
+    frame.playerMotion.impact = frame.persistentProgressHazardActive ? 1 : 0;
+    frame.playerMotion.dodge = 0;
+    frame.bossMotion.attack = Math.max(
+      ...spec.hazards.map(({ active }) => strikePulse(t, active[0], 0.34)),
+    );
+    frame.bossMotion.impact = strikePulse(t, spec.strikes[2], 0.42);
+    frame.bossMotion.lean = frame.persistentProgressResolved ? -0.24 : 0;
+  }
   if (spec.mode === 'sound-detection') {
     frame.soundDetectionState = soundDetectionState(t);
     frame.soundDetectionHeard = t >= spec.heardAt && t < spec.resetAt;
@@ -9544,7 +9848,8 @@ export function blueprintFrame(id, time) {
       spec.mode === 'projectile-rally' ||
       spec.mode === 'baited-self-hit' ||
       spec.mode === 'posture-stagger-gauge' ||
-      spec.mode === 'pacifist-resolution'
+      spec.mode === 'pacifist-resolution' ||
+      spec.mode === 'persistent-progress'
         ? 92
         : -62),
   };

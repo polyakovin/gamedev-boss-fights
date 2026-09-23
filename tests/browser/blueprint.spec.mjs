@@ -405,9 +405,9 @@ test('volley releases three parallel bolts on one beat and clears its outside ro
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
 });
 
-test('catalog and builder reuse the 83 promoted rule-specific previews', async ({ page }) => {
+test('catalog and builder reuse the 84 promoted rule-specific previews', async ({ page }) => {
   await page.goto('en/');
-  await expect(page.locator('[data-blueprint-preview]')).toHaveCount(83);
+  await expect(page.locator('[data-blueprint-preview]')).toHaveCount(84);
   const catalogLayouts = await page.locator('[data-blueprint-preview]').evaluateAll((previews) =>
     previews.map((preview) => {
       const boss = preview.querySelector('[data-character-art-preview="kern"]');
@@ -431,7 +431,7 @@ test('catalog and builder reuse the 83 promoted rule-specific previews', async (
   expect(new Set(catalogLayouts.map(({ layout }) => layout)).size).toBeGreaterThanOrEqual(18);
 
   await page.goto('en/builder/');
-  await expect(page.locator('[data-blueprint-preview]')).toHaveCount(83);
+  await expect(page.locator('[data-blueprint-preview]')).toHaveCount(84);
   const builderLayouts = await page.locator('[data-blueprint-preview]').evaluateAll((previews) =>
     previews.map((preview) => {
       const boss = preview.querySelector('[data-character-art-preview="kern"]');
@@ -3321,6 +3321,57 @@ test('pacifist resolution survives three lanes and records spared without defeat
   await expect(widget).toHaveAttribute('data-blueprint-pacifist-defeated', 'false');
   await expect(widget).toHaveAttribute('data-blueprint-pacifist-boss-health', '100');
   await expect(widget).toHaveAttribute('data-blueprint-pacifist-reward-grants', '1');
+  await page.setViewportSize({ width: 375, height: 812 });
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+});
+
+test('persistent progress restores two committed anchors before one final result', async ({
+  page,
+}) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.goto('en/mechanics/persistent-progress/');
+  const widget = page.locator('[data-blueprint-demo]');
+  const timeline = widget.locator('[data-blueprint-timeline]');
+  const seek = (milliseconds) =>
+    timeline.evaluate((element, value) => {
+      element.value = String(value);
+      element.dispatchEvent(new Event('input', { bubbles: true }));
+    }, milliseconds);
+
+  await expect(page.locator('.lesson-title-line h1')).toHaveText('Persistent encounter progress');
+  await expect(page.locator('.wip-badge, .draft-profile')).toHaveCount(0);
+  await expect(page.locator('.game-example')).toHaveCount(3);
+
+  await seek(1050);
+  await expect(widget).toHaveAttribute('data-blueprint-persistent-progress', 'checkpoint-1');
+  await expect(widget).toHaveAttribute('data-blueprint-persistent-objectives', '1');
+  await expect(widget).toHaveAttribute('data-blueprint-persistent-revision', '1');
+  await seek(1200);
+  await expect(widget).toHaveAttribute('data-blueprint-persistent-player-alive', 'false');
+  await expect(widget).toHaveAttribute('data-blueprint-persistent-hazard', 'true');
+
+  await seek(1900);
+  await expect(widget).toHaveAttribute('data-blueprint-persistent-attempt', '2');
+  await expect(widget).toHaveAttribute('data-blueprint-persistent-objectives', '1');
+  await expect(widget).toHaveAttribute('data-blueprint-persistent-boss-health', '100');
+  await seek(2750);
+  await expect(widget).toHaveAttribute('data-blueprint-persistent-objectives', '2');
+  await expect(widget).toHaveAttribute('data-blueprint-persistent-player-alive', 'false');
+
+  await seek(3500);
+  await expect(widget).toHaveAttribute('data-blueprint-persistent-attempt', '3');
+  await expect(widget).toHaveAttribute('data-blueprint-persistent-retries', '2');
+  await expect(widget).toHaveAttribute('data-blueprint-persistent-core-open', 'true');
+  await expect(widget).toHaveAttribute('data-blueprint-persistent-snapshot-version', '1');
+
+  await seek(4300);
+  await expect(widget).toHaveAttribute('data-blueprint-persistent-objectives', '3');
+  await expect(widget).toHaveAttribute(
+    'data-blueprint-persistent-result-id',
+    'persistent-progress-1',
+  );
+  await expect(widget).toHaveAttribute('data-blueprint-persistent-reward-grants', '1');
+  await expect(widget).toHaveAttribute('data-blueprint-persistent-boss-health', '0');
   await page.setViewportSize({ width: 375, height: 812 });
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
 });

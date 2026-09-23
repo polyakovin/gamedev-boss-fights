@@ -1,0 +1,43 @@
+{
+  "id": "persistent-progress",
+  "number": 90,
+  "published": true,
+  "sourceLocale": "en",
+  "contentVersion": 1,
+  "animation": "persistent-progress",
+  "lenses": [
+    "progress-clarity",
+    "phase-structure",
+    "encounter-purpose",
+    "risk-reward",
+    "context-and-sequence"
+  ],
+  "related": [
+    "wave-clear-objective",
+    "objective-linked-invulnerability",
+    "fight-phase",
+    "recovery"
+  ],
+  "sources": [
+    {
+      "title": "Boss Up: Boss Battle Design",
+      "url": "https://media.gdcvault.com/gdc2018/presentations/Keren_Itay_BossUp.pdf"
+    },
+    {
+      "title": "Bed of Chaos persistent roots — Dark Souls Wiki",
+      "url": "https://darksouls.wikidot.com/the-bed-of-chaos"
+    },
+    {
+      "title": "Omega Flowey game-over behavior — Undertale Wiki",
+      "url": "https://undertale.wiki/w/Game_Over"
+    },
+    {
+      "title": "Final Fantasy XVI boss phase checkpoints",
+      "url": "https://game8.co/games/Final-Fantasy-XVI/archives/416293"
+    },
+    {
+      "title": "Omega health checkpoints — Gameranx",
+      "url": "https://gameranx.com/features/id/484934/article/final-fantasy-xvi-echoes-of-the-fallen-how-to-defeat-omega-and-complete-the-dlc/"
+    }
+  ]
+}

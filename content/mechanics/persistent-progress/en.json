@@ -1,0 +1,142 @@
+{
+  "title": "Persistent encounter progress",
+  "subtitle": "Keep authored milestones complete when a new attempt begins",
+  "variant": "Complete · commit · fail · restore",
+  "summary": "Completed encounter objectives survive player defeat, so a new attempt resumes from an explicit authored milestone instead of rebuilding the whole fight.",
+  "overview": "Persistent encounter progress preserves selected boss objectives after player defeat. Each completed milestone is committed before transient combat state resets, then the next attempt restores that ledger and derives the remaining fight from it, reducing repetition without pretending the failed attempt never happened.",
+  "learning": "Define the persistent unit, commit moment, retry boundary, transient fields that reset, restored geometry and attacks, resource policy, difficulty scaling, co-op ownership, save durability, sequence migration, reward authority, and signals that let the player predict exactly what the next attempt will retain.",
+  "category": "Encounter goals and vulnerability",
+  "readTime": "10 min",
+  "demo": {
+    "title": "Break Kern's two rune anchors across retries, then open the core",
+    "timeline": "Persistent progress timeline",
+    "step": "Persistent progress states",
+    "phaseNames": [
+      "Complete a milestone and commit it before failure",
+      "Reset the attempt while restoring the saved ledger",
+      "Derive the remaining encounter and resolve it once"
+    ],
+    "phaseDescriptions": [
+      "Attempt one starts with two intact anchors. Tavi breaks the left anchor at 0.78 s; revision one is committed at 0.98 s before a clearly marked rune lane defeats the player at 1.24 s. The boss's temporary health, attacks, and Tavi's position are allowed to reset, but the left anchor is no longer part of the next attempt.",
+      "Tavi respawns at 1.58 s with the first ledger mark restored and breaks the right anchor at 2.28 s. Revision two commits at 2.50 s before a second failure at 2.76 s. The second respawn at 3.10 s reconstructs the arena with both anchors broken and Kern's core exposed; no completed objective is replayed.",
+      "On attempt three, Tavi reaches and strikes the exposed core at 3.92 s. One encounter result is reserved at 4.18 s, one reward is granted, and the complete three-mark ledger remains visible until the demonstration resets after 5.45 s. A corrupt or older snapshot would be validated and migrated before reconstruction."
+    ],
+    "boss": "Boss",
+    "player": "Player",
+    "danger": "Each retry may reset health, position, active attacks, projectiles, timers, and consumable policy, but it must never revive an objective already committed to the persistent ledger",
+    "locked": "Objective ids, commit revisions, retry count, reset package, restored phase, result id, reward claim, persistence version, and migration are encounter-owned",
+    "safe": "Show committed objectives as broken arena objects and filled ledger marks; pair every save with a distinct pulse, label, sound, caption, and matching restored geometry",
+    "reducedMotion": "Autoplay is disabled by reduced motion. Scrub across 0.78, 0.98, 1.24, 1.58, 2.28, 2.50, 2.76, 3.10, 3.92, 4.18, and 5.45 seconds to inspect both commits, failures, restores, the core result, and reset.",
+    "diagramDescription": "Kern stands behind two rune anchors while Tavi approaches with a sword. A three-slot ledger records the left anchor, then the right anchor, across two visible defeat-and-respawn transitions. Broken anchors remain dark and crossed out after each retry while transient boss health refills. On the third attempt the core opens, Tavi strikes it, and exactly one final mark and reward appear."
+  },
+  "steps": [
+    {
+      "title": "Which progress unit is meaningful enough to survive failure?",
+      "body": "Persist authored accomplishments such as a destroyed organ, completed ritual, rescued ally, cleared phase, or solved arena route. Avoid silently saving every damage point unless incremental health attrition is the intended encounter. Give each unit a stable id, completion condition, visible world change, and dependency list so restoration cannot produce an impossible phase."
+    },
+    {
+      "title": "When is a milestone durable, and what still resets?",
+      "body": "Commit after the objective is authoritative, not when its animation merely begins. Write the revision before exposing lethal follow-up danger, then reset transient health, player position, spawned attacks, timers, and temporary buffs according to one documented retry package. Confirm the commit before showing a save cue; never promise persistence that is still pending."
+    },
+    {
+      "title": "How does the next attempt reconstruct a coherent fight?",
+      "body": "Load and validate the ledger, rebuild destroyed geometry, choose the correct remaining targets and attack package, place both actors safely, and reconcile resources before control returns. Reserve one terminal result and one reward claim. Test older saves, interrupted writes, co-op disconnects, difficulty changes, and retries after the final milestone."
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "The save icon appears before the milestone is durable",
+      "body": "If the player dies after a celebratory pulse but before the write finishes, the next attempt contradicts the interface. Commit atomically first, then acknowledge it. On failure, keep the old valid revision and surface recovery instead of loading a half-complete arena."
+    },
+    {
+      "title": "Restoration revives geometry or attacks from an earlier state",
+      "body": "A destroyed anchor that visually returns, a projectile owned by a removed phase, or a sealed route with no remaining key breaks trust and can soft-lock the fight. Derive arena objects, attack eligibility, navigation, and objective UI from the same validated ledger."
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "Separate persistent and transient state",
+      "body": "Persistent fields may include objective ids, phase tokens, route changes, narrative flags, checkpoint revision, difficulty policy, and result claims. Transient fields include current health, animation time, active hitboxes, projectiles, local timers, target locks, and temporary effects. Make the boundary explicit in code and telemetry."
+    },
+    {
+      "title": "Tune the size and cost of each retained chunk",
+      "body": "A milestone should remove meaningful repetition without collapsing the remaining challenge. Measure time-to-milestone, failure rate immediately after it, replay time saved, resource replenishment, and how restored attacks ramp back in. Large checkpoints need stronger transition cues and more careful resource normalization."
+    },
+    {
+      "title": "Version, validate, and migrate the ledger",
+      "body": "Store a schema version and stable objective ids rather than array positions. Reject unknown future data, migrate renamed or split objectives, clamp impossible combinations, and keep the last valid revision until the new one is durable. Loading must be idempotent and safe after a crash during commit."
+    },
+    {
+      "title": "Test shared authority and final rewards",
+      "body": "In co-op, decide whose death triggers a retry, who may commit a shared objective, and how late joins receive the ledger. Simulate simultaneous objective completion and defeat, host migration, rollback, repeated final hits, and reconnect. Exactly one encounter result and one reward grant may survive."
+    }
+  ],
+  "story": {
+    "title": "The quarry remembers every broken seal",
+    "body": "Tavi cuts one anchor before Kern's rune lane throws the scout back to the gate. On returning, the fractured stone is still dark and the wall inscription has gained a permanent mark. The second attempt leaves another scar. By the third, only the exposed core remains, making the arena itself the clearest record of progress."
+  },
+  "adaptation": {
+    "title": "Make every restored state understandable and recoverable",
+    "body": "Offer clear checkpoint captions, distinct shapes for saved and temporary progress, readable retry summaries, adjustable resource restoration, and a safe pause before restored attacks resume. Provide a restart-from-beginning option when practical, and never require the player to remember an earlier attempt without persistent visual evidence."
+  },
+  "distinction": {
+    "title": "Saved encounter state, not short runback or metaprogression",
+    "body": "A nearby checkpoint shortens travel but may reset the whole boss. Metaprogression strengthens later runs without preserving a completed part of this encounter. Persistent encounter progress instead restores authored boss milestones inside the same encounter definition, changing which objectives, geometry, and phases remain."
+  },
+  "lensNotes": [
+    {
+      "id": "progress-clarity",
+      "body": "The world state, ledger marks, and retry summary must agree about exactly which encounter objectives are permanent."
+    },
+    {
+      "id": "phase-structure",
+      "body": "Each committed milestone becomes a stable boundary that changes which phase and objectives the next attempt reconstructs."
+    },
+    {
+      "id": "encounter-purpose",
+      "body": "The chosen milestone reveals which accomplishments the encounter values more than one uninterrupted performance."
+    },
+    {
+      "id": "risk-reward",
+      "body": "A commit placed before a dangerous follow-up changes how much progress is risked and how aggressively the player can pursue the next target."
+    },
+    {
+      "id": "context-and-sequence",
+      "body": "A restored attempt must preserve the order and consequences of earlier milestones even though its transient combat context starts again."
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "3D",
+      "game": "Dark Souls",
+      "boss": "Bed of Chaos",
+      "screenshot": "https://i.ytimg.com/vi/THhfAmDDO54/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=THhfAmDDO54&t=42s",
+      "body": "The two side roots are discrete arena objectives rather than ordinary health damage. Once a root is destroyed it remains destroyed after death, while the next return reconstructs the more dangerous arena state and leaves only the unfinished route or central core.",
+      "video": "https://www.youtube.com/watch?v=THhfAmDDO54&t=42s",
+      "videoDurationSeconds": 175
+    },
+    {
+      "dimension": "2D",
+      "game": "Undertale",
+      "boss": "Omega Flowey",
+      "screenshot": "https://i.ytimg.com/vi/vw18fj56V6E/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=vw18fj56V6E&t=5s",
+      "body": "Omega Flowey turns death and reloading into visible parts of the encounter. Completed human-SOUL intervals act as authored checkpoints, so a special game over resumes the current progression instead of replaying every earlier interval.",
+      "video": "https://www.youtube.com/watch?v=vw18fj56V6E&t=5s",
+      "videoDurationSeconds": 60
+    },
+    {
+      "dimension": "3D",
+      "game": "Final Fantasy XVI: Echoes of the Fallen",
+      "boss": "Omega",
+      "screenshot": "https://i.ytimg.com/vi/421w-jizqQk/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=421w-jizqQk&t=129s",
+      "body": "Omega places health checkpoints inside its multi-stage fight. A game over after an authored threshold can retry from that retained health state with replenished resources, separating completed boss progress from the transient inventory and execution of the failed attempt.",
+      "video": "https://www.youtube.com/watch?v=421w-jizqQk&t=129s",
+      "videoDurationSeconds": 170
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

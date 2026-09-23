@@ -408,6 +408,25 @@ export function initializeBlueprint(widget) {
       widget.dataset.blueprintPacifistDefeated = String(frame.pacifistDefeated);
       widget.dataset.blueprintPacifistRewardGrants = String(frame.pacifistRewardGrants);
     }
+    if (mechanicId === 'persistent-progress') {
+      widget.dataset.blueprintPersistentProgress = frame.persistentProgressState;
+      widget.dataset.blueprintPersistentObjectives = String(
+        frame.persistentProgressCompletedObjectives,
+      );
+      widget.dataset.blueprintPersistentRevision = String(frame.persistentProgressRevision);
+      widget.dataset.blueprintPersistentAttempt = String(frame.persistentProgressAttempt);
+      widget.dataset.blueprintPersistentRetries = String(frame.persistentProgressRetryCount);
+      widget.dataset.blueprintPersistentRestoring = String(frame.persistentProgressRestoring);
+      widget.dataset.blueprintPersistentPlayerAlive = String(frame.persistentProgressPlayerAlive);
+      widget.dataset.blueprintPersistentHazard = String(frame.persistentProgressHazardActive);
+      widget.dataset.blueprintPersistentCoreOpen = String(frame.persistentProgressCoreOpen);
+      widget.dataset.blueprintPersistentBossHealth = String(frame.persistentProgressBossHealth);
+      widget.dataset.blueprintPersistentResultId = frame.persistentProgressResultId;
+      widget.dataset.blueprintPersistentRewardGrants = String(frame.persistentProgressRewardGrants);
+      widget.dataset.blueprintPersistentSnapshotVersion = String(
+        frame.persistentProgressSnapshotVersion,
+      );
+    }
     boss.setAttribute(
       'transform',
       `translate(${frame.boss.x} ${frame.boss.y}) scale(${frame.bossScale})`,
