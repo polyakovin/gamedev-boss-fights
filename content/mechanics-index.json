@@ -1383,9 +1383,9 @@
       "number": 87,
       "translations": {
         "en": {
-          "title": "Baited collision",
+          "title": "Baited self-hit",
           "category": "Encounter goals and vulnerability",
-          "summary": "Draft outline for the baited collision mechanic. Rules, tuning guidance, and examples are still in progress."
+          "summary": "The player prepares a valid hazard, baits a committed boss action through it, and turns the boss's own resolution into damage or stagger."
         },
         "ru": {
           "title": "Самоповреждение через приманку",

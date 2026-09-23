@@ -362,6 +362,23 @@ export function initializeBlueprint(widget) {
       widget.dataset.blueprintProjectileRallyPunished = String(frame.projectileRallyPunished);
       widget.dataset.blueprintProjectileRallyDamageSource = frame.projectileRallyDamageSource;
     }
+    if (mechanicId === 'baited-self-hit') {
+      widget.dataset.blueprintBaitedSelfHit = frame.baitedSelfHitState;
+      widget.dataset.blueprintBaitTrapId = frame.baitTrapId;
+      widget.dataset.blueprintBaitTrapArmed = String(frame.baitTrapArmed);
+      widget.dataset.blueprintBaitTargetAcquired = String(frame.baitTargetAcquired);
+      widget.dataset.blueprintBaitTargetLocked = String(frame.baitTargetLocked);
+      widget.dataset.blueprintBaitCharge = String(frame.baitChargeActive);
+      widget.dataset.blueprintBaitPlayerClear = String(frame.baitPlayerClear);
+      widget.dataset.blueprintBaitBossContact = String(frame.baitBossContact);
+      widget.dataset.blueprintBaitTrapConsumed = String(frame.baitTrapConsumed);
+      widget.dataset.blueprintBaitSelfHit = String(frame.baitSelfHitResolved);
+      widget.dataset.blueprintBaitVulnerable = String(frame.baitVulnerable);
+      widget.dataset.blueprintBaitPunished = String(frame.baitPunished);
+      widget.dataset.blueprintBaitDamageSource = frame.baitDamageSource;
+      widget.dataset.blueprintBaitCollisionPair = frame.baitCollisionPair;
+      widget.dataset.blueprintBaitRewardGrants = String(frame.baitRewardGrants);
+    }
     boss.setAttribute(
       'transform',
       `translate(${frame.boss.x} ${frame.boss.y}) scale(${frame.bossScale})`,

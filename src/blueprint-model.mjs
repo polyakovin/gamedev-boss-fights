@@ -1112,6 +1112,36 @@ const SPECS = {
     retreatAt: 4.18,
     resetAt: 5.2,
   },
+  'baited-self-hit': {
+    mode: 'baited-self-hit',
+    boss: [300, 350],
+    player: [300, 760],
+    target: [300, 760],
+    arena: [55, 310, 450, 570],
+    trap: [300, 610],
+    armPoint: [360, 650],
+    safePoint: [430, 730],
+    punishPoint: [405, 570],
+    impactPosition: [300, 520],
+    laneEnd: [300, 790],
+    laneHalfWidth: 40,
+    trapRadius: 30,
+    blastRadius: 82,
+    approachAt: 0.34,
+    armReachedAt: 0.7,
+    armedAt: 0.82,
+    aimAt: 1.05,
+    lockedAt: 1.38,
+    charge: [1.55, 2.45],
+    evade: [1.58, 2.12],
+    impactAt: 2.45,
+    selfHitAt: 2.58,
+    punishApproachAt: 2.72,
+    vulnerableUntil: 4.25,
+    punishAt: 3.25,
+    retreatAt: 3.62,
+    resetAt: 5.2,
+  },
   'wide-swing': { mode: 'arc', boss: [280, 310], player: [410, 470], target: [470, 650] },
   lunge: { mode: 'lunge', boss: [170, 290], player: [390, 590], target: [470, 660] },
   grab: { mode: 'grab', boss: [280, 300], player: [390, 485], target: [470, 610] },
@@ -1904,6 +1934,22 @@ export function projectileRallyState(time) {
   if (t < 3.15) return 'boss-return-2';
   if (t < spec.bossMissAt) return 'player-return-3';
   if (t < spec.punishAt) return 'boss-miss';
+  if (t < spec.vulnerableUntil) return 'punished-opening';
+  if (t < spec.resetAt) return 'recovery';
+  return 'reset';
+}
+
+export function baitedSelfHitState(time) {
+  const spec = SPECS['baited-self-hit'];
+  const t = localTime(time);
+  if (t < spec.approachAt) return 'available';
+  if (t < spec.armedAt) return 'arming';
+  if (t < spec.aimAt) return 'armed';
+  if (t < spec.lockedAt) return 'target-acquired';
+  if (t < spec.charge[0]) return 'target-locked';
+  if (t < spec.impactAt) return 'charging';
+  if (t < spec.selfHitAt) return 'boss-contact';
+  if (t < spec.punishAt) return 'self-hit-stagger';
   if (t < spec.vulnerableUntil) return 'punished-opening';
   if (t < spec.resetAt) return 'recovery';
   return 'reset';
@@ -4574,15 +4620,142 @@ function primitivesFor(spec, frame) {
         '10 8',
       ),
       rect(214, 508, 172, 14, 0.54, 'muted', 0.03),
-      rect(
-        214,
-        508,
-        frame.projectileRallyPunished ? 124 : 172,
-        14,
-        0.92,
-        'signal',
-        0.16,
+      rect(214, 508, frame.projectileRallyPunished ? 124 : 172, 14, 0.92, 'signal', 0.16),
+    ];
+  }
+  if (mode === 'baited-self-hit') {
+    const trap = point(spec.trap);
+    const target = point(spec.target);
+    const startBoss = point(spec.boss);
+    const safe = point(spec.safePoint);
+    const arm = point(spec.armPoint);
+    const armedOpacity = frame.baitTrapArmed ? 0.96 : frame.baitTrapConsumed ? 0.12 : 0.34;
+    const targetOpacity = frame.baitTargetAcquired ? 0.86 : 0.18;
+    const laneOpacity = frame.baitTargetAcquired ? (frame.baitTargetLocked ? 0.88 : 0.52) : 0.14;
+    const contactPulse = strikePulse(frame.time, spec.impactAt, 0.34);
+    const blastPulse = strikePulse(frame.time, spec.selfHitAt, 0.58);
+    const punishPulse = strikePulse(frame.time, spec.punishAt, 0.36);
+    const debrisOpacity = frame.baitSelfHitResolved
+      ? Math.max(0, 0.9 - (frame.time - spec.selfHitAt) / 1.2)
+      : 0;
+    const bossHealth = frame.baitPunished ? 108 : frame.baitSelfHitResolved ? 138 : 172;
+    return [
+      rect(...spec.arena, 0.52, 'muted', 0.025),
+      line(
+        startBoss.x,
+        startBoss.y + 55,
+        target.x,
+        target.y,
+        laneOpacity,
+        frame.baitTargetLocked ? 'signal' : 'accent',
+        frame.baitTargetLocked ? 8 : 5,
+        frame.baitTargetLocked ? '' : '14 11',
       ),
+      circle(target.x, target.y, 34, targetOpacity, 'accent', 5, 0.025, '8 7'),
+      path(
+        `M ${target.x} ${target.y - 18} L ${target.x + 18} ${target.y} L ${target.x} ${target.y + 18} L ${target.x - 18} ${target.y} Z`,
+        targetOpacity,
+        frame.baitTargetLocked ? 'signal' : 'accent',
+        5,
+        frame.baitTargetLocked ? 0.16 : 0.03,
+      ),
+      circle(
+        trap.x,
+        trap.y,
+        spec.trapRadius + pulse(frame.time * 2.2) * 4,
+        armedOpacity,
+        frame.baitTrapArmed ? 'safe' : 'muted',
+        6,
+        frame.baitTrapArmed ? 0.12 : 0.025,
+        '8 7',
+      ),
+      path(
+        `M ${trap.x} ${trap.y - 19} L ${trap.x + 17} ${trap.y} L ${trap.x} ${trap.y + 19} L ${trap.x - 17} ${trap.y} Z M ${trap.x - 12} ${trap.y} L ${trap.x + 12} ${trap.y} M ${trap.x} ${trap.y - 12} L ${trap.x} ${trap.y + 12}`,
+        armedOpacity,
+        frame.baitTrapArmed ? 'safe' : 'accent',
+        5,
+      ),
+      circle(
+        trap.x,
+        trap.y,
+        42 + pulse(frame.time * 3) * 5,
+        frame.baitTrapArmed ? 0.68 : 0.12,
+        'safe',
+        4,
+        0,
+        '5 8',
+      ),
+      line(
+        startBoss.x,
+        startBoss.y + 54,
+        target.x,
+        target.y,
+        frame.baitChargeActive ? 0.36 : 0,
+        'signal',
+        spec.laneHalfWidth * 2,
+      ),
+      path(
+        `M ${target.x} ${target.y} Q ${safe.x - 55} ${safe.y - 40} ${safe.x} ${safe.y}`,
+        frame.baitTargetLocked && !frame.baitSelfHitResolved ? 0.72 : 0.16,
+        'safe',
+        6,
+        0,
+        '10 9',
+      ),
+      circle(
+        trap.x,
+        trap.y,
+        spec.blastRadius + blastPulse * 34,
+        frame.baitSelfHitResolved ? Math.max(0.16, blastPulse) : 0,
+        'signal',
+        10,
+        0.08,
+      ),
+      path(
+        `M ${trap.x - 44} ${trap.y - 44} L ${trap.x + 44} ${trap.y + 44} M ${trap.x + 44} ${trap.y - 44} L ${trap.x - 44} ${trap.y + 44}`,
+        Math.max(contactPulse, blastPulse),
+        'signal',
+        9,
+      ),
+      circle(
+        frame.boss.x,
+        frame.boss.y,
+        82 + pulse(frame.time * 1.8) * 9,
+        frame.baitVulnerable ? 0.88 : 0,
+        'safe',
+        7,
+        0.025,
+        '10 8',
+      ),
+      rect(377, 390, 104, 82, frame.baitTargetAcquired ? 0.72 : 0.24, 'muted', 0.045),
+      circle(403, 416, 11, frame.baitSelfHitResolved ? 0.96 : 0.28, 'signal', 5, 0.22),
+      path(
+        'M 422 416 L 456 416 M 447 407 L 456 416 L 447 425',
+        frame.baitSelfHitResolved ? 0.92 : 0.24,
+        'signal',
+        6,
+      ),
+      rect(214, 330, 172, 14, 0.54, 'muted', 0.03),
+      rect(214, 330, bossHealth, 14, 0.92, frame.baitSelfHitResolved ? 'signal' : 'accent', 0.16),
+      path(
+        `M ${trap.x - 22} ${trap.y - 22} L ${trap.x + 22} ${trap.y + 22} M ${trap.x + 22} ${trap.y - 22} L ${trap.x - 22} ${trap.y + 22}`,
+        frame.baitTrapConsumed ? 0.86 : 0,
+        'muted',
+        7,
+      ),
+      line(trap.x, trap.y, trap.x - 64, trap.y - 42, debrisOpacity, 'signal', 6),
+      line(trap.x, trap.y, trap.x + 68, trap.y - 38, debrisOpacity, 'signal', 6),
+      line(trap.x, trap.y, trap.x - 72, trap.y + 35, debrisOpacity, 'accent', 5),
+      line(trap.x, trap.y, trap.x + 76, trap.y + 40, debrisOpacity, 'accent', 5),
+      path(
+        `M ${arm.x - 18} ${arm.y + 24} Q ${trap.x + 18} ${trap.y + 18} ${trap.x} ${trap.y}`,
+        frame.time >= spec.approachAt && frame.time < spec.armedAt ? 0.76 : 0.12,
+        'safe',
+        5,
+        0,
+        '7 7',
+      ),
+      circle(frame.boss.x, frame.boss.y, 62 + punishPulse * 34, punishPulse, 'accent', 8, 0.04),
     ];
   }
   if (mode === 'encounter-specific-tool') {
@@ -6049,6 +6222,11 @@ function pointClearsThreat(spec, frame, value, radius = BLUEPRINT_PLAYER_RADIUS)
   if (mode === 'wave-clear-objective') return true;
   if (mode === 'environmental-weapon') return true;
   if (mode === 'encounter-specific-tool') return true;
+  if (mode === 'baited-self-hit')
+    return (
+      !frame.dangerActive ||
+      distanceToSegment(value, point(spec.boss), point(spec.laneEnd)) > spec.laneHalfWidth + radius
+    );
   if (mode === 'projectile-rally')
     return (
       !frame.dangerActive ||
@@ -6340,6 +6518,18 @@ export function blueprintFrame(id, time) {
       };
     }
   }
+  if (spec.mode === 'baited-self-hit') {
+    const impact = point(spec.impactPosition);
+    if (t < spec.charge[0]) boss = startBoss;
+    else if (t < spec.impactAt) {
+      const travel = smooth((t - spec.charge[0]) / (spec.impactAt - spec.charge[0]));
+      boss = { x: mix(startBoss.x, impact.x, travel), y: mix(startBoss.y, impact.y, travel) };
+    } else if (t < spec.vulnerableUntil) boss = impact;
+    else if (t < spec.resetAt) {
+      const reset = smooth((t - spec.vulnerableUntil) / (spec.resetAt - spec.vulnerableUntil));
+      boss = { x: mix(impact.x, startBoss.x, reset), y: mix(impact.y, startBoss.y, reset) };
+    } else boss = startBoss;
+  }
   let responseProgress = response;
   if (spec.mode === 'landing')
     responseProgress = phase === 0 ? 0 : phase === 1 ? smooth(action / 0.4) : 1;
@@ -6411,6 +6601,7 @@ export function blueprintFrame(id, time) {
   else if (spec.mode === 'encounter-specific-tool') responseProgress = 0;
   else if (spec.mode === 'player-controlled-boss') responseProgress = 0;
   else if (spec.mode === 'projectile-rally') responseProgress = 0;
+  else if (spec.mode === 'baited-self-hit') responseProgress = 0;
   else if (spec.mode === 'knockback')
     responseProgress = phase === 0 ? 0 : phase === 1 ? smooth(action) : 1;
   else if (spec.mode === 'target-lock')
@@ -7082,6 +7273,40 @@ export function blueprintFrame(id, time) {
       };
     } else player = startPlayer;
   }
+  if (spec.mode === 'baited-self-hit') {
+    const arm = point(spec.armPoint);
+    const safe = point(spec.safePoint);
+    const punish = point(spec.punishPoint);
+    if (t < spec.approachAt) player = startPlayer;
+    else if (t < spec.armReachedAt) {
+      const approach = smooth((t - spec.approachAt) / (spec.armReachedAt - spec.approachAt));
+      player = { x: mix(startPlayer.x, arm.x, approach), y: mix(startPlayer.y, arm.y, approach) };
+    } else if (t < spec.armedAt) player = arm;
+    else if (t < spec.aimAt) {
+      const returnToBait = smooth((t - spec.armedAt) / (spec.aimAt - spec.armedAt));
+      player = {
+        x: mix(arm.x, startPlayer.x, returnToBait),
+        y: mix(arm.y, startPlayer.y, returnToBait),
+      };
+    } else if (t < spec.evade[0]) player = startPlayer;
+    else if (t < spec.evade[1]) {
+      const evade = smooth((t - spec.evade[0]) / (spec.evade[1] - spec.evade[0]));
+      player = { x: mix(startPlayer.x, safe.x, evade), y: mix(startPlayer.y, safe.y, evade) };
+    } else if (t < spec.punishApproachAt) player = safe;
+    else if (t < spec.punishAt) {
+      const approach = smooth(
+        (t - spec.punishApproachAt) / (spec.punishAt - spec.punishApproachAt),
+      );
+      player = { x: mix(safe.x, punish.x, approach), y: mix(safe.y, punish.y, approach) };
+    } else if (t < spec.retreatAt) player = punish;
+    else if (t < spec.vulnerableUntil) {
+      const retreat = smooth((t - spec.retreatAt) / (spec.vulnerableUntil - spec.retreatAt));
+      player = { x: mix(punish.x, safe.x, retreat), y: mix(punish.y, safe.y, retreat) };
+    } else if (t < spec.resetAt) {
+      const reset = smooth((t - spec.vulnerableUntil) / (spec.resetAt - spec.vulnerableUntil));
+      player = { x: mix(safe.x, startPlayer.x, reset), y: mix(safe.y, startPlayer.y, reset) };
+    } else player = startPlayer;
+  }
   if (spec.mode === 'rotating' && phase === 0) {
     const initialPosition = polar(boss, 255, Math.PI / 3);
     player = {
@@ -7449,6 +7674,15 @@ export function blueprintFrame(id, time) {
       pulse(smooth((t - spec.bossMissAt) / (spec.punishAt - spec.bossMissAt))),
       pulse(smooth((t - spec.retreatAt) / (spec.vulnerableUntil - spec.retreatAt))),
     );
+  if (spec.mode === 'baited-self-hit')
+    stride = Math.max(
+      pulse(smooth((t - spec.approachAt) / (spec.armReachedAt - spec.approachAt))),
+      pulse(smooth((t - spec.armedAt) / (spec.aimAt - spec.armedAt))),
+      pulse(smooth((t - spec.evade[0]) / (spec.evade[1] - spec.evade[0]))),
+      pulse(smooth((t - spec.punishApproachAt) / (spec.punishAt - spec.punishApproachAt))),
+      pulse(smooth((t - spec.retreatAt) / (spec.vulnerableUntil - spec.retreatAt))),
+      pulse(smooth((t - spec.vulnerableUntil) / (spec.resetAt - spec.vulnerableUntil))) * 0.8,
+    );
   const bossVisible =
     spec.mode === 'secondary-cues-invisibility'
       ? t < spec.vanishAt
@@ -7707,7 +7941,9 @@ export function blueprintFrame(id, time) {
     playerFacing:
       spec.mode === 'directional-shield'
         ? mix(-90, -180, smooth((t - 2.7) / 0.68)) * (1 - returnProgress) - 90 * returnProgress
-        : spec.mode === 'player-controlled-boss' || spec.mode === 'projectile-rally'
+        : spec.mode === 'player-controlled-boss' ||
+            spec.mode === 'projectile-rally' ||
+            spec.mode === 'baited-self-hit'
           ? (Math.atan2(boss.y - player.y, boss.x - player.x) * 180) / Math.PI
           : spec.mode === 'active-phase'
             ? (Math.atan2(boss.y - player.y, boss.x - player.x) * 180) / Math.PI
@@ -8520,6 +8756,39 @@ export function blueprintFrame(id, time) {
       -0.22 * smooth((t - 0.45) / (spec.serveAt - 0.45)) +
       0.38 * strikePulse(t, spec.bossMissAt, 0.52);
   }
+  if (spec.mode === 'baited-self-hit') {
+    frame.baitedSelfHitState = baitedSelfHitState(t);
+    frame.baitTrapId = 'quarry-rune-1';
+    frame.baitTrapArmed = t >= spec.armedAt && t < spec.impactAt;
+    frame.baitTargetAcquired = t >= spec.aimAt && t < spec.resetAt;
+    frame.baitTargetLocked = t >= spec.lockedAt && t < spec.resetAt;
+    frame.baitChargeActive = t >= spec.charge[0] && t < spec.impactAt;
+    frame.baitPlayerClear = t >= spec.evade[1] && t < spec.resetAt;
+    frame.baitBossContact = t >= spec.impactAt && t < spec.selfHitAt;
+    frame.baitTrapConsumed = t >= spec.selfHitAt && t < spec.resetAt;
+    frame.baitSelfHitResolved = t >= spec.selfHitAt && t < spec.resetAt;
+    frame.baitVulnerable = t >= spec.selfHitAt && t < spec.vulnerableUntil;
+    frame.baitPunished = t >= spec.punishAt && t < spec.resetAt;
+    frame.baitDamageSource = frame.baitSelfHitResolved ? 'prepared-hazard' : 'none';
+    frame.baitCollisionPair = frame.baitBossContact ? 'kern|quarry-rune-1' : 'none';
+    frame.baitRewardGrants = frame.baitSelfHitResolved ? 1 : 0;
+    frame.dangerActive = frame.baitChargeActive;
+    frame.punishStrike = strikePulse(t, spec.punishAt, 0.38) > 0.5;
+    frame.playerMotion.attack = Math.max(
+      strikePulse(t, spec.armedAt, 0.34),
+      strikePulse(t, spec.punishAt, 0.38),
+    );
+    frame.playerMotion.dodge = strikePulse(t, (spec.evade[0] + spec.evade[1]) / 2, 0.54);
+    frame.bossMotion.gait = t * 6;
+    frame.bossMotion.stride = frame.baitChargeActive ? 0.78 : 0;
+    frame.bossMotion.lean =
+      -0.28 * smooth((t - spec.lockedAt) / (spec.charge[0] - spec.lockedAt)) +
+      0.46 * strikePulse(t, spec.selfHitAt, 0.5);
+    frame.bossMotion.impact = Math.max(
+      strikePulse(t, spec.selfHitAt, 0.42),
+      strikePulse(t, spec.punishAt, 0.32),
+    );
+  }
   if (spec.mode === 'sound-detection') {
     frame.soundDetectionState = soundDetectionState(t);
     frame.soundDetectionHeard = t >= spec.heardAt && t < spec.resetAt;
@@ -8798,7 +9067,8 @@ export function blueprintFrame(id, time) {
       spec.mode === 'environmental-weapon' ||
       spec.mode === 'encounter-specific-tool' ||
       spec.mode === 'player-controlled-boss' ||
-      spec.mode === 'projectile-rally'
+      spec.mode === 'projectile-rally' ||
+      spec.mode === 'baited-self-hit'
         ? 92
         : -62),
   };

@@ -57,6 +57,7 @@ const promotedBlueprints = [
   'encounter-specific-tool',
   'player-controlled-boss',
   'projectile-rally',
+  'baited-self-hit',
   'wide-swing',
   'lunge',
   'grab',
@@ -106,13 +107,13 @@ test('a promoted mechanic uses the complete canonical lesson architecture', asyn
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
 });
 
-test('all 80 promoted blueprint mechanics expose a full lesson without WIP', async ({
+test('all 81 promoted blueprint mechanics expose a full lesson without WIP', async ({
   request,
 }) => {
   const index = await request.get('en/');
   const catalog = await index.text();
 
-  expect(promotedBlueprints).toHaveLength(80);
+  expect(promotedBlueprints).toHaveLength(81);
   for (const id of promotedBlueprints) {
     expect(catalog).toContain(`en/mechanics/${id}/`);
     const response = await request.get(`en/mechanics/${id}/`);

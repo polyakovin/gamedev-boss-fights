@@ -293,7 +293,13 @@ const PROFILE_OVERRIDES = {
     dimensions: ['2d', '3d'],
     lenses: ['telegraphing', 'counterplay', 'difficulty-rhythm', 'commitment', 'progress-clarity'],
   },
-  'baited-self-hit': { geometry: ['line', 'zone'], response: ['reposition', 'counter'] },
+  'baited-self-hit': {
+    geometry: ['line', 'zone', 'target'],
+    signal: ['marker', 'trajectory', 'state'],
+    response: ['reposition', 'manage', 'attack'],
+    dimensions: ['2d', '3d'],
+    lenses: ['telegraphing', 'commitment', 'counterplay', 'risk-reward', 'progress-clarity'],
+  },
   'posture-stagger-gauge': {
     geometry: ['target'],
     signal: ['state'],

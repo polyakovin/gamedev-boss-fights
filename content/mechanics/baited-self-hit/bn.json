@@ -1,0 +1,142 @@
+{
+  "title": "প্রলুব্ধ self-hit",
+  "subtitle": "বসকে সেই কাজটি শেষ করতে দিন যা তাকেই আঘাত করে",
+  "variant": "প্রস্তুত · lock · এড়ানো · সংঘর্ষ",
+  "summary": "খেলোয়াড় বৈধ hazard প্রস্তুত করে, committed boss action সেটির মধ্য দিয়ে আনে এবং বসের নিজস্ব resolution-কে damage বা stagger-এ বদলায়।",
+  "overview": "এই mechanic-এ ক্ষতিকর interaction সম্পূর্ণ করে বস। Player object বা position তৈরি করে, target দেয়, attack commitment-এর অপেক্ষা করে এবং পথ ছাড়ে। Boss প্রস্তুত hazard-এ ধাক্কা খায়, গিলে ফেলে, আঘাত করে বা প্রবেশ করে। সাধারণ player attack নয়, এই authored interaction-ই boss damage, stagger বা vulnerability window-এর মালিক।",
+  "learning": "Eligible lure, placement, armed state, boss action, target selection, lock moment, committed path, escape budget, collision volume, valid contact, damage attribution, stagger, opening, failure, consumption, co-op ownership, reset, accessibility signals এবং visible contact, collision ও reward authority sync রাখার test নির্ধারণ করুন।",
+  "category": "Encounter goals and vulnerability",
+  "readTime": "৯ মিনিট",
+  "demo": {
+    "title": "একটি rune arm করুন, charge lock করুন এবং Kern-কে collision শেষ করতে দিন",
+    "timeline": "প্রলুব্ধ self-hit timeline",
+    "step": "প্রলুব্ধ self-hit state",
+    "phaseNames": [
+      "যোগ্য trap প্রস্তুত করে target lock ডাকুন",
+      "Fixed path commit হওয়ার পরেই সরে যান",
+      "Ordinary damage খোলার আগে collision attribute করুন"
+    ],
+    "phaseDescriptions": [
+      "Tavi unstable rune-এর কাছে গিয়ে ০.৮২ সেকেন্ডে arm করে এবং তার পিছনে দাঁড়ায়। Kern ১.০৫-এ charge lane দেখায় ও ১.৩৮-এ Tavi-র marked position lock করে। Armed glyph ও locked lane আলাদা shape।",
+      "Kern ১.৫৫-এ charge শুরু করে। Tavi commitment-এর পর কিন্তু contact-এর আগে ১.৫৮–২.১২-তে পাশ কাটায়। Kern ফাঁকা target-এ steer করে না এবং ২.৪৫-এ rune পৌঁছায়; boss-এর পুরো collision body trap বন্ধ করে।",
+      "Rune ২.৫৮-এ বিস্ফোরিত হয় এবং encounter damage-কে self-hit interaction-এ দেয়। Kern ৪.২৫ পর্যন্ত stagger থাকে। ৩.২৫-এ Tavi-র sword punish opening-এর অংশ, rune একবার consume হয় এবং setup ৫.২০-এ reset হয়।"
+    ],
+    "boss": "বস",
+    "player": "খেলোয়াড়",
+    "danger": "Committed charge fixed lane-এ player-কে damage দেয়; খুব আগে সরে গেলে boss intended target নাও নিতে পারে",
+    "locked": "Trap identity, armed state, boss target, lock time, path, collision, qualifying contact, self-hit damage, stagger, opening, consumption ও reset encounter-owned",
+    "safe": "Eligibility, lock, commitment, escape, collision, damage owner ও opening আলাদা shape, motion, sound, caption ও non-color state change দিয়ে দেখান",
+    "reducedMotion": "Reduced motion-এ autoplay বন্ধ। Arming, aim, lock, charge, clearance, contact, self-hit, punish, close ও reset দেখতে ০.৮২, ১.০৫, ১.৩৮, ১.৫৫, ২.১২, ২.৪৫, ২.৫৮, ৩.২৫, ৪.২৫ ও ৫.২০ সেকেন্ডে scrub করুন।",
+    "diagramDescription": "Tavi Kern ও marked point-এর মাঝে unstable rune arm করে। Fixed lane Kern-কে mark-এর সঙ্গে যুক্ত করে; lock-এর পর Tavi পুরোপুরি বের হয় এবং charge rune-এ থামে। Explosion Kern-কে ঘিরে, ledger self-hit source দেখায় এবং sword follow-up-এর জন্য আলাদা vulnerability ring থাকে।"
+  },
+  "steps": [
+    {
+      "title": "এটি bait, direct damage নয় কেন?",
+      "body": "Interaction শেষ করতে boss-owned action বাধ্যতামূলক করুন। Player bomb রাখতে বা hazard-এর পিছনে দাঁড়াতে পারে, কিন্তু proximity একাই boss damage দেবে না। Lure, eligibility, committed boss action ও qualifying boss-object contact আলাদা রাখুন।"
+    },
+    {
+      "title": "Player কখন target point ছাড়তে পারে?",
+      "body": "Acquisition ও commitment আলাদা করুন। Lock-এর আগে movement path update বা cancel করবে; পরে target স্থির থাকবে এবং player-এর পুরো body lane ও blast ছাড়তে পারবে। Pose, trajectory, sound ও marker state দিয়ে handoff signal করুন।"
+    },
+    {
+      "title": "Damage, stagger ও opening কার?",
+      "body": "Contact একবার authoritative resolve করুন: trap consume, action stop, self-hit/stagger, fixed window এবং duplicate rejection। পরের sword strike opening-এর ordinary damage। অন্য actor আগে trigger করলে documented alternate outcome দিন।"
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "Visible commitment-এর আগে trap কাজ করে",
+      "body": "Aim-এর সময় player সরে গেলে boss গোপনে পুরোনো destination রাখলে success accidental লাগে। Acquisition, lock ও active travel আলাদা দেখান; early movement target বদলাবে, committed route স্থির থাকবে।"
+    },
+    {
+      "title": "Boss-এর কাছে যেকোনো explosion self-hit",
+      "body": "Distance-only test unrelated attack-এর false positive দেয়। Trap id, armed state, boss action, volume ও event order validate করুন; damage একবার attribute করে কারণ দেখান।"
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "Interaction-কে transaction করুন",
+      "body": "State: available, armed, target acquired, committed, player clear, contact, consumed, self-hit, staggered, closed, reset। Trap/action id, armer, times, target snapshot, collision pair, resolution, damage source ও reward রাখুন।"
+    },
+    {
+      "title": "তিনটি space budget করুন",
+      "body": "Target point, boss swept lane এবং trap blast/debris test করুন। Lure path trigger করবে এবং post-lock exit player-এর পুরো body-কে দুটো থেকেই clear করবে। Camera-তে boss, object, mark ও exit একসঙ্গে রাখুন।"
+    },
+    {
+      "title": "Speed-এর আগে risk tune করুন",
+      "body": "Tension commitment পর্যন্ত bait position ধরে রাখায়। Dodge ছোট করার আগে acquisition duration, lock clarity, exit distance, boss width, placement tolerance ও opening value tune করুন।"
+    },
+    {
+      "title": "Contention ও interruption test করুন",
+      "body": "Armer, claiming action, target before/after lock, contact, collision pair, damage source, stagger, follow-up, consumption ও reset log করুন। Two players, two traps, other trigger, interruption, phase change, rollback, low FPS ও repeated contact simulate করুন।"
+    }
+  ],
+  "story": {
+    "title": "খনি জানে কোথায় ভাঙতে হয়",
+    "body": "Tavi ফাটা survey rune জাগিয়ে তার আলো পেরিয়ে অপেক্ষা করে। Kern stone crown নামিয়ে quarry-এর সরল উত্তর বেছে নেয়। পথ seal হলেই sword-bearer সরে যায়; Kern fracture-এ আঘাত করে এবং নিজের momentum blast-কে core-এ ফেরায়।"
+  },
+  "adaptation": {
+    "title": "Precision-only timing ছাড়াই commitment ও clearance পাঠযোগ্য করুন",
+    "body": "Lock preset, wider placement/collision tolerance, early dodge buffer, persistent path marker, strong audio, vibration, armed/locked/self-hit caption ও optional exit guide দিন। Co-op-এ active bait-এর player ও trap owner দেখিয়ে duplicate claim আটকান।"
+  },
+  "distinction": {
+    "title": "Boss-completed interaction; reflection, weak point বা device fire নয়",
+    "body": "Reflection attack ফেরায়; weak point direct player damage নেয়; environmental weapon নিজ attack চালায়। Baited self-hit-এ committed boss movement/action prepared hazard touch, consume, strike বা enter করলেই progress হয়।"
+  },
+  "lensNotes": [
+    {
+      "id": "telegraphing",
+      "body": "Trap readiness, target acquisition, commitment, contact, self-hit ও opening-এর আলাদা signal দরকার।"
+    },
+    {
+      "id": "commitment",
+      "body": "Lock-এর পর boss target ও path রাখে যাতে player clear করে এবং interaction predictable থাকে।"
+    },
+    {
+      "id": "counterplay",
+      "body": "Player direct setup damage নয়, space ও timing দিয়ে dangerous boss action-কে progress বানায়।"
+    },
+    {
+      "id": "risk-reward",
+      "body": "Bait position ধরে finite setup খরচ করলে self-hit damage ও bounded opening মেলে।"
+    },
+    {
+      "id": "progress-clarity",
+      "body": "Consumed-object state ও damage-source ledger condition সম্পন্ন দেখিয়ে duplicate credit আটকায়।"
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "The Binding of Isaac: Rebirth",
+      "boss": "Chub",
+      "screenshot": "https://i.ytimg.com/vi/JXhXv5EcS3U/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=JXhXv5EcS3U&t=3s",
+      "body": "Chub Isaac-এর axis-এ এলে charge করে এবং path-এর bomb খায়। Committed movement পৌঁছানো পর্যন্ত object harmless; ingestion charge থামায়, bomb consume করে এবং boss approach-কে damage ও short stun বানায়।",
+      "video": "https://www.youtube.com/watch?v=JXhXv5EcS3U&t=3s",
+      "videoDurationSeconds": 27
+    },
+    {
+      "dimension": "3D",
+      "game": "The Legend of Zelda: Ocarina of Time",
+      "boss": "King Dodongo",
+      "screenshot": "https://i.ytimg.com/vi/ibLplbiV6tE/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=ibLplbiV6tE&t=6s",
+      "body": "King Dodongo-র inhale fire-breath commit করে। Active intake-এর bomb ভিতরে ফেটে action থামায় ও boss ফেলে; internal hit ও পরের sword opening আলাদা damage event।",
+      "video": "https://www.youtube.com/watch?v=ibLplbiV6tE&t=6s",
+      "videoDurationSeconds": 131
+    },
+    {
+      "dimension": "3D",
+      "game": "The Legend of Zelda: Skyward Sword",
+      "boss": "Scaldera",
+      "screenshot": "https://i.ytimg.com/vi/71_H1rP7Yf0/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=71_H1rP7Yf0&t=40s",
+      "body": "Scaldera ramp-এর bomb flower-এ লাগে এবং fireball-এর আগে inhaling mouth খোলে। Swallowed bomb ভেতর থেকে shell ভেঙে moving eye দেখায়, তাই boss-completed interaction state ও follow-up target বদলায়।",
+      "video": "https://www.youtube.com/watch?v=71_H1rP7Yf0&t=40s",
+      "videoDurationSeconds": 132
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

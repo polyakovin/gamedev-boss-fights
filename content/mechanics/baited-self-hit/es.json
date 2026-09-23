@@ -1,0 +1,142 @@
+{
+  "title": "Autogol provocado",
+  "subtitle": "Haz que el jefe complete la acción que le hace daño",
+  "variant": "Preparar · fijar · evadir · chocar",
+  "summary": "El jugador prepara un peligro válido, atrae una acción comprometida del jefe a través de él y convierte su propia resolución en daño o aturdimiento.",
+  "overview": "Esta mecánica exige que el jefe complete la interacción dañina. El jugador prepara un objeto o posición, se ofrece como objetivo, espera el bloqueo y despeja la trayectoria. El jefe choca, consume, golpea o entra en el peligro preparado. Esa interacción, no un ataque normal del jugador, posee el daño, el aturdimiento o la ventana vulnerable.",
+  "learning": "Define el señuelo elegible, colocación, armado, acción del jefe, selección y bloqueo del objetivo, ruta comprometida, margen de escape, volumen de colisión, contacto válido, atribución de daño, aturdimiento, ventana, fallos, consumo, propiedad cooperativa, reinicio, señales accesibles y pruebas que sincronicen contacto visible, colisión y recompensa.",
+  "category": "Objetivos del encuentro y vulnerabilidad",
+  "readTime": "9 min",
+  "demo": {
+    "title": "Arma una runa, bloquea la carga y deja que Kern cierre la colisión",
+    "timeline": "Cronología del autogol provocado",
+    "step": "Estados del autogol provocado",
+    "phaseNames": [
+      "Prepara la trampa e invita al bloqueo",
+      "Evade solo tras el compromiso con la ruta fija",
+      "Atribuye la colisión antes de abrir el daño normal"
+    ],
+    "phaseDescriptions": [
+      "Tavi se acerca a una runa inestable y la arma a los 0,82 s, quedándose detrás. Kern muestra el carril a los 1,05 s y fija la posición marcada de Tavi a los 1,38 s. El glifo armado y el carril bloqueado usan formas distintas.",
+      "Kern inicia la carga a los 1,55 s. Tavi se desplaza de lado entre 1,58 y 2,12 s, después del compromiso y antes del contacto. Kern no corrige la ruta y alcanza la runa a los 2,45 s; el volumen completo del jefe cierra la trampa.",
+      "La runa detona a los 2,58 s y el encuentro atribuye el daño al autogol. Kern queda aturdido hasta 4,25 s. El espadazo de Tavi a los 3,25 s pertenece a la apertura, la runa se consume una vez y el montaje regresa tras 5,20 s."
+    ],
+    "boss": "Jefe",
+    "player": "Jugador",
+    "danger": "La carga comprometida aún daña al jugador en su carril fijo; abandonar demasiado pronto puede impedir que el jefe elija el objetivo deseado",
+    "locked": "Identidad y armado de la trampa, objetivo, bloqueo, ruta, volumen, contacto, autodaño, aturdimiento, apertura, consumo y reinicio pertenecen al encuentro",
+    "safe": "Muestra elegibilidad, bloqueo, compromiso, escape, colisión, autor del daño y apertura con formas, movimiento, sonido, subtítulos y cambios no basados solo en color",
+    "reducedMotion": "Con movimiento reducido no hay reproducción automática. Recorre 0,82, 1,05, 1,38, 1,55, 2,12, 2,45, 2,58, 3,25, 4,25 y 5,20 s para inspeccionar armado, puntería, bloqueo, carga, salida, contacto, autogol, castigo, cierre y reinicio.",
+    "diagramDescription": "Tavi arma una runa entre Kern y el punto objetivo. Un carril fijo conecta al jefe con la marca; Tavi sale por completo tras el bloqueo y la carga termina en la runa. La explosión rodea a Kern, un registro identifica el autogol y un anillo vulnerable separado permite el golpe de espada."
+  },
+  "steps": [
+    {
+      "title": "¿Qué hace que sea un señuelo y no daño directo?",
+      "body": "Exige una acción del jefe para completar la interacción. El jugador puede colocar una bomba, exponer un pilar o situarse tras un peligro, pero el objeto preparado no concede daño por simple proximidad. Registra por separado el señuelo, su estado elegible, la acción comprometida y el contacto cualificado."
+    },
+    {
+      "title": "¿Cuándo puede abandonar el jugador el objetivo?",
+      "body": "Separa adquisición y compromiso. Antes del bloqueo, moverse puede actualizar o cancelar la ruta. Después, conserva el objetivo y da margen para que todo el cuerpo del jugador despeje carril y explosión. Señala el cambio con pose, trayectoria, sonido y marcador, no con un temporizador oculto."
+    },
+    {
+      "title": "¿Quién posee el daño y la apertura?",
+      "body": "Resuelve una sola vez: consume la trampa, detén la acción, aplica autodaño o aturdimiento, abre una ventana fija y rechaza contactos duplicados. El golpe de espada posterior es daño normal dentro de la apertura. Si otro actor activa antes el objeto, usa un resultado alternativo documentado."
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "La trampa funciona antes del compromiso visible",
+      "body": "Si el jugador sale durante la puntería y el jefe conserva en secreto el destino, el éxito parece accidental. Diferencia adquisición, bloqueo y viaje activo; permite actualizar el objetivo antes y fija la ruta después."
+    },
+    {
+      "title": "Cualquier explosión cercana cuenta como autogol",
+      "body": "Una prueba solo por distancia genera falsos positivos. Valida id de trampa, armado, acción, volumen y orden de eventos; atribuye el daño una vez y explica visualmente la causa."
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "Modela la interacción como transacción",
+      "body": "Usa estados disponible, armada, objetivo adquirido, comprometida, jugador fuera, contacto, consumida, autogol, aturdimiento, cierre y reinicio. Guarda ids de trampa y acción, armador, tiempos, objetivo, pareja de colisión, resolución, fuente de daño y recompensa."
+    },
+    {
+      "title": "Presupuesta tres espacios",
+      "body": "Prueba el punto objetivo, el barrido del cuerpo del jefe y la explosión o restos de la trampa. El señuelo debe tocar la ruta y la salida debe despejar ambas amenazas con el cuerpo completo. La cámara muestra jefe, objeto, marca y salida a la vez."
+    },
+    {
+      "title": "Ajusta el riesgo antes que la velocidad",
+      "body": "La tensión nace de sostener la posición hasta el compromiso. Ajusta duración de adquisición, claridad, distancia de salida, ancho del jefe, tolerancia de colocación y valor de la apertura antes de recortar el tiempo de evasión."
+    },
+    {
+      "title": "Prueba contención e interrupción",
+      "body": "Registra armador, acción reclamante, objetivo antes y después del bloqueo, contacto, fuente de daño, aturdimiento, daño posterior, consumo y reinicio. Simula dos jugadores, dos trampas, activación ajena, interrupción, cambio de fase, rollback, pocos FPS y contactos repetidos."
+    }
+  ],
+  "story": {
+    "title": "La cantera recuerda dónde romperse",
+    "body": "Tavi despierta una runa agrietada y espera tras su luz. Kern baja la corona de piedra y se compromete con la respuesta recta de la cantera. El espadachín se aparta cuando la ruta queda sellada; Kern golpea la fractura y su propio impulso devuelve la explosión al núcleo."
+  },
+  "adaptation": {
+    "title": "Haz legibles compromiso y salida sin exigir precisión extrema",
+    "body": "Ofrece presets de bloqueo, tolerancia de colocación y colisión, buffer de evasión temprana, marcador persistente, audio fuerte, vibración, subtítulos para armado, bloqueo y autogol, y una guía opcional de salida. En cooperativo muestra qué jugador y trampa poseen el señuelo."
+  },
+  "distinction": {
+    "title": "Interacción completada por el jefe, no reflejo, punto débil ni dispositivo",
+    "body": "El reflejo devuelve un ataque. Un punto débil recibe daño directo. Un arma ambiental dispara su propio ataque. El autogol provocado requiere que el movimiento o acción comprometida del jefe toque, consuma, golpee o entre en el peligro preparado antes de conceder progreso."
+  },
+  "lensNotes": [
+    {
+      "id": "telegraphing",
+      "body": "Preparación, adquisición, compromiso, contacto, autogol y apertura necesitan señales distintas."
+    },
+    {
+      "id": "commitment",
+      "body": "Tras el bloqueo, el jefe conserva objetivo y ruta para que la salida y la interacción sean predecibles."
+    },
+    {
+      "id": "counterplay",
+      "body": "El jugador convierte una acción peligrosa en progreso organizando espacio y tiempo, no con daño directo de preparación."
+    },
+    {
+      "id": "risk-reward",
+      "body": "Sostener el señuelo y gastar un recurso finito recompensa con autodaño y una apertura limitada."
+    },
+    {
+      "id": "progress-clarity",
+      "body": "El estado consumido y la fuente de daño confirman la condición y evitan crédito duplicado."
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "The Binding of Isaac: Rebirth",
+      "boss": "Chub",
+      "screenshot": "https://i.ytimg.com/vi/JXhXv5EcS3U/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=JXhXv5EcS3U&t=3s",
+      "body": "Chub carga por un eje al alinearse con Isaac y come una bomba en su ruta. El objeto no daña hasta que el movimiento comprometido lo alcanza; la ingestión interrumpe la carga, consume la bomba y convierte el acercamiento del jefe en daño y un breve aturdimiento.",
+      "video": "https://www.youtube.com/watch?v=JXhXv5EcS3U&t=3s",
+      "videoDurationSeconds": 27
+    },
+    {
+      "dimension": "3D",
+      "game": "The Legend of Zelda: Ocarina of Time",
+      "boss": "King Dodongo",
+      "screenshot": "https://i.ytimg.com/vi/ibLplbiV6tE/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=ibLplbiV6tE&t=6s",
+      "body": "La inhalación de King Dodongo compromete un ataque de fuego. Una bomba dentro del flujo explota internamente, detiene la acción y derriba al jefe. El golpe interno y la espada posterior son eventos de daño separados.",
+      "video": "https://www.youtube.com/watch?v=ibLplbiV6tE&t=6s",
+      "videoDurationSeconds": 131
+    },
+    {
+      "dimension": "3D",
+      "game": "The Legend of Zelda: Skyward Sword",
+      "boss": "Scaldera",
+      "screenshot": "https://i.ytimg.com/vi/71_H1rP7Yf0/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=71_H1rP7Yf0&t=40s",
+      "body": "Scaldera interactúa con flores bomba en la rampa y luego abre la boca antes de su bola de fuego. Una bomba tragada rompe el caparazón desde dentro y revela el ojo móvil, cambiando estado y objetivo posterior en lugar de ser daño explosivo ordinario.",
+      "video": "https://www.youtube.com/watch?v=71_H1rP7Yf0&t=40s",
+      "videoDurationSeconds": 132
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

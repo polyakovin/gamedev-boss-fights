@@ -1,0 +1,142 @@
+{
+  "title": "Baited self-hit",
+  "subtitle": "Make the boss complete the action that hurts it",
+  "variant": "Place · commit · evade · collide",
+  "summary": "The player places or exposes a valid hazard, baits a committed boss action through it, and turns the boss's own resolution into damage or stagger.",
+  "overview": "A baited self-hit makes the boss complete the harmful interaction. The player prepares a valid object or position, presents a target, waits for commitment, and clears the path. The boss then collides with, consumes, strikes, or enters the hazard. That authored contact—not an ordinary player attack—owns the resulting damage, stagger, or opening.",
+  "learning": "Define the eligible lure or hazard, placement rules, arming state, boss action, target selection, lock moment, committed path, player escape budget, collision volume, valid interaction, damage attribution, stagger, opening duration, failure outcomes, object consumption, multiplayer ownership, reset, accessibility signals, and tests that keep visible contact, collision, and reward authority synchronized.",
+  "category": "Encounter goals and vulnerability",
+  "readTime": "9 min",
+  "demo": {
+    "title": "Arm one rune, lock the charge, and let Kern complete the collision",
+    "timeline": "Baited self-hit timeline",
+    "step": "Baited self-hit states",
+    "phaseNames": [
+      "Prepare the eligible trap and invite the target lock",
+      "Evade only after Kern commits to the fixed path",
+      "Attribute the collision before opening ordinary damage"
+    ],
+    "phaseDescriptions": [
+      "Tavi approaches an unstable quarry rune and arms it at 0.82 s, then stands directly behind it. Kern previews the charge lane at 1.05 s and fixes Tavi's marked position at 1.38 s. The armed glyph and locked lane use different shapes, so readiness and targeting cannot be confused.",
+      "Kern starts the charge at 1.55 s. Tavi moves sideways between 1.58 and 2.12 s, after commitment but before contact. Kern does not steer around the now-empty target point and reaches the rune at 2.45 s; the boss's full collision body, not merely its origin point, closes the trap.",
+      "The rune detonates at 2.58 s and the encounter attributes that damage to the self-hit interaction. Kern remains staggered until 4.25 s. Tavi's sword punish at 3.25 s belongs to the resulting opening, the rune is consumed once, and the complete setup returns after 5.20 s."
+    ],
+    "boss": "Boss",
+    "player": "Player",
+    "danger": "The committed charge still damages the player along its fixed lane; leaving too early can prevent the boss from selecting the intended target",
+    "locked": "Trap identity, armed state, boss target, lock time, path, collision volume, qualifying contact, self-hit damage, stagger, opening, consumption, and reset are encounter-owned",
+    "safe": "Show trap eligibility, target lock, commitment, escape timing, collision, damage owner, and opening with distinct shape, motion, sound, captions, and non-color state changes",
+    "reducedMotion": "Autoplay is disabled by reduced motion. Scrub across 0.82, 1.05, 1.38, 1.55, 2.12, 2.45, 2.58, 3.25, 4.25, and 5.20 seconds to inspect arming, aim, lock, charge, clearance, collision, self-hit, punish, close, and reset.",
+    "diagramDescription": "Tavi arms one unstable rune between Kern and the marked target point. A fixed lane connects Kern to the mark, Tavi steps completely outside it after lock, and Kern's charge ends on the rune. The consumed rune bursts around Kern, a self-hit ledger records the damage source, and a separate vulnerability ring remains for Tavi's sword follow-up."
+  },
+  "steps": [
+    {
+      "title": "What makes the setup a bait rather than direct damage?",
+      "body": "Require a boss-owned action to complete the interaction. The player may place a bomb, expose a pillar, stand beyond a hazard, or redirect the boss's target, but ordinary contact with the prepared object should not automatically grant boss damage. Record the lure, its eligible state, the committed boss action, and the qualifying boss-object contact as separate facts."
+    },
+    {
+      "title": "When is the player allowed to leave the target point?",
+      "body": "Separate target acquisition from commitment. Before lock, leaving may cause the boss to choose another action or update the path. After lock, preserve the target and give enough movement budget for the player's full collision body to clear both the boss lane and the trap blast. Signal the handoff with a pose, trajectory change, sound, and marker state rather than a hidden timer."
+    },
+    {
+      "title": "Who owns damage, stagger, and the follow-up window?",
+      "body": "Resolve contact once through the encounter authority: consume or disable the trap, stop the boss action, apply self-hit damage or stagger, open a fixed vulnerability window, and reject duplicate collision messages. A later sword strike is ordinary player damage inside that opening. If the player or another enemy triggers the object first, follow a documented failure or alternate outcome."
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "The trap works before the boss visibly commits",
+      "body": "If the player can leave during aim while the boss silently preserves an old destination, success looks accidental. Show acquisition, lock, and active travel as different states. Let early movement update or cancel the target, then make the committed route stable enough to predict."
+    },
+    {
+      "title": "Any explosion near the boss counts as a self-hit",
+      "body": "A proximity-only shortcut erases the authored interaction and creates false positives from unrelated attacks. Validate the correct trap id, armed state, boss action, contact volume, and event order. Attribute damage once and display why the boss was hurt."
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "Model the interaction as a transaction",
+      "body": "Useful states are available, approached, armed, target acquired, committed, player clear, boss contact, consumed, self-hit resolved, staggered, opening closed, and reset. Store trap id, armer, arm time, boss action id, target snapshot, collision pair, resolution id, damage source, and reward state. One authoritative transition should consume the setup."
+    },
+    {
+      "title": "Budget three spaces, not one",
+      "body": "Test the target point, the boss's swept collision lane, and the trap's own blast or debris. The lure must be close enough to the path to trigger, while the post-lock escape must clear the boss and aftermath with the player's full body. Camera framing must show the boss, prepared object, target mark, and safe exit at once."
+    },
+    {
+      "title": "Tune risk before increasing execution speed",
+      "body": "The tension comes from holding the bait position until commitment. Adjust acquisition duration, lock clarity, escape distance, boss width, trap placement tolerance, and opening value before merely shortening the dodge. A stronger reward can justify a narrower setup, but failed attempts need a legible and recoverable outcome."
+    },
+    {
+      "title": "Test contention and interruption",
+      "body": "Log who armed the object, which boss action claimed it, target before and after lock, contact time, collision pair, damage source, stagger, follow-up damage, object consumption, and reset. Simulate two players, two traps, another enemy triggering the object, boss interruption, phase change, rollback, low frame rate, repeated contacts, and a player standing inside the blast."
+    }
+  ],
+  "story": {
+    "title": "The quarry remembers where to break",
+    "body": "Tavi wakes a cracked survey rune and waits beyond its pale glow. Kern lowers its stone crown and commits to the straight answer the quarry taught it. The sword-bearer slips aside only when the rune seals the path; Kern strikes the fracture, and its own momentum drives the burst back through the elemental's core."
+  },
+  "adaptation": {
+    "title": "Make commitment and clearance readable without precision-only timing",
+    "body": "Offer lock-duration presets, slightly wider placement and collision tolerance, early dodge buffering, a persistent committed-path marker, strong contact audio, controller vibration, captions for armed, locked, and self-hit states, and an optional safe-exit guide. In co-op, show which player and trap own the active bait and prevent another claimant from consuming the same result."
+  },
+  "distinction": {
+    "title": "Boss-completed interaction, not reflection, direct weakness, or device fire",
+    "body": "Attack reflection sends a boss attack back through a response action. A weak point accepts direct player damage at a special target. An environmental weapon is operated to fire its own attack. A baited self-hit instead requires the boss's committed movement or action to touch, consume, strike, or enter the prepared hazard before the encounter grants progress."
+  },
+  "lensNotes": [
+    {
+      "id": "telegraphing",
+      "body": "Trap readiness, target acquisition, commitment, live collision, self-hit, and the resulting opening need distinct signals."
+    },
+    {
+      "id": "commitment",
+      "body": "After lock, the boss preserves its target and path long enough for the player to clear and for the prepared interaction to remain predictable."
+    },
+    {
+      "id": "counterplay",
+      "body": "The player converts an otherwise dangerous boss action into progress by arranging space and timing rather than dealing direct setup damage."
+    },
+    {
+      "id": "risk-reward",
+      "body": "Holding the bait position and spending a finite setup earn self-hit damage plus a bounded follow-up opportunity."
+    },
+    {
+      "id": "progress-clarity",
+      "body": "A consumed-object state and damage-source ledger show that the boss completed the condition and prevent duplicate credit."
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "The Binding of Isaac: Rebirth",
+      "boss": "Chub",
+      "screenshot": "https://i.ytimg.com/vi/JXhXv5EcS3U/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=JXhXv5EcS3U&t=3s",
+      "body": "Chub selects a cardinal charge when aligned with Isaac and eats a bomb dropped in that path. The placed object is harmless to the boss until the committed movement reaches it; ingestion interrupts the charge, consumes the bomb, and turns the boss's own approach into considerable damage and a short stun.",
+      "video": "https://www.youtube.com/watch?v=JXhXv5EcS3U&t=3s",
+      "videoDurationSeconds": 27
+    },
+    {
+      "dimension": "3D",
+      "game": "The Legend of Zelda: Ocarina of Time",
+      "boss": "King Dodongo",
+      "screenshot": "https://i.ytimg.com/vi/ibLplbiV6tE/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=ibLplbiV6tE&t=6s",
+      "body": "King Dodongo's inhalation visibly commits to a fire-breath action. A bomb placed into that active intake is swallowed and explodes internally, stopping the authored attack and knocking the boss down. The internal hit and the later sword opening remain two separate damage events.",
+      "video": "https://www.youtube.com/watch?v=ibLplbiV6tE&t=6s",
+      "videoDurationSeconds": 131
+    },
+    {
+      "dimension": "3D",
+      "game": "The Legend of Zelda: Skyward Sword",
+      "boss": "Scaldera",
+      "screenshot": "https://i.ytimg.com/vi/71_H1rP7Yf0/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=71_H1rP7Yf0&t=40s",
+      "body": "Scaldera first interacts with bomb flowers while advancing on the ramp, then exposes an inhaling mouth before its fireball. A swallowed bomb breaks the rocky carapace from inside and reveals the mobile eye, so the boss-completed interaction changes both state and follow-up target rather than acting as ordinary explosive damage.",
+      "video": "https://www.youtube.com/watch?v=71_H1rP7Yf0&t=40s",
+      "videoDurationSeconds": 132
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

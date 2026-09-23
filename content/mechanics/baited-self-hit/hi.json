@@ -1,0 +1,142 @@
+{
+  "title": "लुभाकर कराया गया self-hit",
+  "subtitle": "बॉस से वही क्रिया पूरी कराएँ जो उसे नुकसान पहुँचाती है",
+  "variant": "तैयार · lock · बचें · टकराएँ",
+  "summary": "खिलाड़ी मान्य खतरा तैयार करता है, बॉस की committed क्रिया को उसमें लाता है और बॉस के अपने resolution को damage या stagger बनाता है।",
+  "overview": "इस mechanic में harmful interaction बॉस पूरा करता है। खिलाड़ी वस्तु या स्थान तैयार करता, लक्ष्य बनता, commitment की प्रतीक्षा करता और रास्ता छोड़ता है। बॉस hazard से टकराता, उसे निगलता, मारता या उसमें प्रवेश करता है। यही authored contact damage, stagger या opening का मालिक है, साधारण player attack नहीं।",
+  "learning": "Eligible lure, placement, armed state, boss action, target selection, lock moment, committed path, escape budget, collision volume, valid contact, damage attribution, stagger, opening duration, failure, object consumption, co-op ownership, reset, accessibility signals और visible contact, collision व reward authority को sync रखने वाले tests तय करें।",
+  "category": "मुठभेड़ के लक्ष्य और भेद्यता",
+  "readTime": "9 मिनट",
+  "demo": {
+    "title": "एक rune arm करें, charge lock करें और Kern को collision पूरा करने दें",
+    "timeline": "Baited self-hit timeline",
+    "step": "Baited self-hit states",
+    "phaseNames": [
+      "मान्य trap तैयार कर target lock बुलाएँ",
+      "Kern के fixed path पर commit होने के बाद ही हटें",
+      "Ordinary damage खुलने से पहले collision attribute करें"
+    ],
+    "phaseDescriptions": [
+      "Tavi unstable quarry rune के पास जाकर 0.82 s पर उसे arm करता और उसके पीछे खड़ा होता है। Kern 1.05 s पर charge lane दिखाता और 1.38 s पर Tavi की marked position lock करता है। Armed glyph और locked lane अलग shapes रखते हैं।",
+      "Kern 1.55 s पर charge शुरू करता है। Tavi commitment के बाद और contact से पहले 1.58–2.12 s में sideways निकलता है। Kern खाली target की ओर steer नहीं करता और 2.45 s पर rune तक पहुँचता है; boss का पूरा collision body trap बंद करता है।",
+      "Rune 2.58 s पर फटता है और encounter damage को self-hit interaction में attribute करता है। Kern 4.25 s तक stagger रहता है। 3.25 s पर Tavi का sword punish opening का भाग है, rune एक बार consume होता और setup 5.20 s पर लौटता है।"
+    ],
+    "boss": "बॉस",
+    "player": "खिलाड़ी",
+    "danger": "Committed charge fixed lane में खिलाड़ी को damage देता है; बहुत जल्दी हटने पर boss इच्छित target चुन ही नहीं सकता",
+    "locked": "Trap identity, armed state, boss target, lock time, path, collision, qualifying contact, self-hit damage, stagger, opening, consumption और reset encounter-owned हैं",
+    "safe": "Trap eligibility, lock, commitment, escape, collision, damage owner और opening को अलग shape, motion, sound, captions और non-color state changes से दिखाएँ",
+    "reducedMotion": "Reduced motion में autoplay बंद है। Arming, aim, lock, charge, clearance, contact, self-hit, punish, close और reset देखने के लिए 0.82, 1.05, 1.38, 1.55, 2.12, 2.45, 2.58, 3.25, 4.25 और 5.20 s पर scrub करें।",
+    "diagramDescription": "Tavi Kern और marked target के बीच unstable rune arm करता है। Fixed lane Kern को mark से जोड़ती है; lock के बाद Tavi पूरी तरह बाहर जाता और charge rune पर रुकता है। Explosion Kern को घेरता, ledger self-hit source दिखाता और sword follow-up के लिए अलग vulnerability ring रहती है।"
+  },
+  "steps": [
+    {
+      "title": "Setup bait है, direct damage क्यों नहीं?",
+      "body": "Interaction पूरा करने के लिए boss-owned action आवश्यक रखें। Player bomb रख सकता, pillar खोल सकता या hazard के पीछे खड़ा हो सकता है, पर केवल object proximity boss damage न दे। Lure, eligibility, committed boss action और qualifying boss-object contact अलग record करें।"
+    },
+    {
+      "title": "Player target point कब छोड़ सकता है?",
+      "body": "Target acquisition और commitment अलग करें। Lock से पहले movement path update या cancel करे; बाद में target स्थिर रहे और player का पूरा collision body boss lane तथा blast साफ कर सके। Handoff को pose, trajectory, sound और marker से signal करें।"
+    },
+    {
+      "title": "Damage, stagger और window किसके हैं?",
+      "body": "Contact एक बार authoritative resolve करें: trap consume करें, boss action रोकें, self-hit damage या stagger दें, fixed window खोलें और duplicates reject करें। बाद का sword hit ordinary player damage है। पहले किसी और trigger पर documented alternate outcome दें।"
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "Visible commitment से पहले trap काम करता है",
+      "body": "Aim के दौरान player हटे और boss चुपचाप पुराना destination रखे तो सफलता आकस्मिक लगती है। Acquisition, lock और active travel अलग दिखाएँ; early movement target बदले, committed route स्थिर रहे।"
+    },
+    {
+      "title": "Boss के पास हर explosion self-hit है",
+      "body": "Distance-only shortcut unrelated attacks के false positives देता है। सही trap id, armed state, boss action, contact volume और event order validate करें; damage एक बार attribute कर कारण दिखाएँ।"
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "Interaction को transaction बनाएँ",
+      "body": "States: available, armed, target acquired, committed, player clear, contact, consumed, self-hit, staggered, closed, reset। Trap/action ids, armer, times, target snapshot, collision pair, resolution, damage source और reward रखें।"
+    },
+    {
+      "title": "तीन spaces का budget रखें",
+      "body": "Target point, boss swept lane और trap blast/debris जाँचें। Lure path के पास हो और post-lock exit player के पूरे body को दोनों से clear करे। Camera में boss, object, mark और exit साथ दिखें।"
+    },
+    {
+      "title": "Speed से पहले risk tune करें",
+      "body": "Tension commitment तक bait position रोकने से आती है। Dodge घटाने से पहले acquisition duration, lock clarity, exit distance, boss width, placement tolerance और opening value tune करें।"
+    },
+    {
+      "title": "Contention और interruption test करें",
+      "body": "Armer, claiming boss action, target before/after lock, contact, collision pair, damage source, stagger, follow-up, consumption और reset log करें। Two players, two traps, other trigger, interruption, phase change, rollback, low FPS और repeated contact simulate करें।"
+    }
+  ],
+  "story": {
+    "title": "खदान को याद है कहाँ टूटना है",
+    "body": "Tavi cracked survey rune जगाता और उसकी रोशनी के पीछे रुकता है। Kern stone crown झुकाकर quarry का सीधा उत्तर चुनता है। रास्ता seal होने पर sword-bearer हटता है; Kern fracture पर लगता और अपना momentum blast को core में लौटा देता है।"
+  },
+  "adaptation": {
+    "title": "Precision-only timing के बिना commitment और clearance पढ़ाएँ",
+    "body": "Lock-duration presets, wider placement/collision tolerance, early dodge buffer, persistent path marker, strong contact audio, vibration, armed/locked/self-hit captions और optional exit guide दें। Co-op में active bait के player और trap owner दिखाएँ और duplicate claim रोकें।"
+  },
+  "distinction": {
+    "title": "Boss-completed interaction, reflection, weak point या device fire नहीं",
+    "body": "Reflection attack लौटाती है; weak point direct player damage लेता है; environmental weapon अपना attack चलाता है। Baited self-hit में boss का committed movement/action prepared hazard को touch, consume, strike या enter करने पर ही progress मिलता है।"
+  },
+  "lensNotes": [
+    {
+      "id": "telegraphing",
+      "body": "Trap readiness, target acquisition, commitment, contact, self-hit और opening को अलग signals चाहिए।"
+    },
+    {
+      "id": "commitment",
+      "body": "Lock के बाद boss target और path रखता है ताकि player clear कर सके और interaction predictable रहे।"
+    },
+    {
+      "id": "counterplay",
+      "body": "Player direct setup damage के बजाय space और timing से dangerous boss action को progress में बदलता है।"
+    },
+    {
+      "id": "risk-reward",
+      "body": "Bait position रोकना और finite setup खर्च करना self-hit damage व bounded opening देता है।"
+    },
+    {
+      "id": "progress-clarity",
+      "body": "Consumed-object state और damage-source ledger condition पूर्ण होना दिखाकर duplicate credit रोकते हैं।"
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "The Binding of Isaac: Rebirth",
+      "boss": "Chub",
+      "screenshot": "https://i.ytimg.com/vi/JXhXv5EcS3U/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=JXhXv5EcS3U&t=3s",
+      "body": "Chub Isaac से axis align होने पर charge करती और path में रखी bomb खाती है। Committed movement पहुँचने तक object harmless है; ingestion charge रोकती, bomb consume करती और boss approach को damage तथा short stun बनाती है।",
+      "video": "https://www.youtube.com/watch?v=JXhXv5EcS3U&t=3s",
+      "videoDurationSeconds": 27
+    },
+    {
+      "dimension": "3D",
+      "game": "The Legend of Zelda: Ocarina of Time",
+      "boss": "King Dodongo",
+      "screenshot": "https://i.ytimg.com/vi/ibLplbiV6tE/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=ibLplbiV6tE&t=6s",
+      "body": "King Dodongo का inhale fire-breath action commit करता है। Active intake में bomb भीतर फटकर attack रोकती और boss गिराती है; internal hit और बाद का sword opening अलग damage events हैं।",
+      "video": "https://www.youtube.com/watch?v=ibLplbiV6tE&t=6s",
+      "videoDurationSeconds": 131
+    },
+    {
+      "dimension": "3D",
+      "game": "The Legend of Zelda: Skyward Sword",
+      "boss": "Scaldera",
+      "screenshot": "https://i.ytimg.com/vi/71_H1rP7Yf0/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=71_H1rP7Yf0&t=40s",
+      "body": "Scaldera ramp पर bomb flowers से interact करती और fireball से पहले inhale mouth खोलती है। Swallowed bomb armor भीतर से तोड़कर moving eye खोलती है, इसलिए boss-completed interaction state व follow-up target बदलती है।",
+      "video": "https://www.youtube.com/watch?v=71_H1rP7Yf0&t=40s",
+      "videoDurationSeconds": 132
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

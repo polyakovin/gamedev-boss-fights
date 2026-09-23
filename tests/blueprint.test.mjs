@@ -31,6 +31,7 @@ import {
   encounterSpecificToolState,
   playerControlledBossState,
   projectileRallyState,
+  baitedSelfHitState,
   counterStanceOutcome,
   counterStanceState,
   blueprintFrame,
@@ -58,8 +59,8 @@ import {
   renderBlueprintThumbnail,
 } from '../lib/blueprint-view.mjs';
 
-test('all 80 promoted lesson animations have distinct rule modes and complete moving frames', () => {
-  assert.equal(BLUEPRINT_MECHANIC_IDS.length, 80);
+test('all 81 promoted lesson animations have distinct rule modes and complete moving frames', () => {
+  assert.equal(BLUEPRINT_MECHANIC_IDS.length, 81);
   const modes = new Set();
   for (const id of BLUEPRINT_MECHANIC_IDS) {
     for (let time = 0; time <= BLUEPRINT_DURATION; time += 0.1) {
@@ -80,7 +81,7 @@ test('all 80 promoted lesson animations have distinct rule modes and complete mo
           assert.ok(Number.isFinite(value), `${id} has an invalid ${primitive.type}`);
     }
   }
-  assert.equal(modes.size, 80);
+  assert.equal(modes.size, 81);
 });
 
 test('every blueprint exposes signal, committed action, and recovery without player teleports', () => {
@@ -110,7 +111,8 @@ test('every blueprint exposes signal, committed action, and recovery without pla
       id !== 'boss-as-terrain' &&
       id !== 'forced-inertia' &&
       id !== 'wraparound-projectile' &&
-      id !== 'beat-synced-attack'
+      id !== 'beat-synced-attack' &&
+      id !== 'baited-self-hit'
     )
       assert.equal(blueprintFrame(id, 3).dangerActive, true, id);
     assert.equal(blueprintFrame(id, 3).playerSafe, true, id);
@@ -190,6 +192,7 @@ test('every damaging promoted animation derives safety from its own active geome
       id !== 'encounter-specific-tool' &&
       id !== 'player-controlled-boss' &&
       id !== 'projectile-rally' &&
+      id !== 'baited-self-hit' &&
       id !== 'part-break' &&
       id !== 'counter-stance' &&
       id !== 'absorption-power-up' &&
@@ -2711,5 +2714,69 @@ test('projectile rally preserves one orb through accelerating ownership transfer
   assert.match(
     renderBlueprintThumbnail(id, 'test-projectile-rally'),
     /data-blueprint-preview="projectile-rally"/,
+  );
+});
+
+test('baited self-hit requires an armed trap, a fixed boss path, and one owned resolution', () => {
+  const id = 'baited-self-hit';
+  assert.deepEqual([0, 0.5, 0.9, 1.2, 1.45, 1.8, 2.5, 2.7, 3.4, 4.5, 5.3].map(baitedSelfHitState), [
+    'available',
+    'arming',
+    'armed',
+    'target-acquired',
+    'target-locked',
+    'charging',
+    'boss-contact',
+    'self-hit-stagger',
+    'punished-opening',
+    'recovery',
+    'reset',
+  ]);
+
+  const armed = blueprintFrame(id, 0.9);
+  assert.equal(armed.baitTrapId, 'quarry-rune-1');
+  assert.equal(armed.baitTrapArmed, true);
+  assert.equal(armed.baitTargetAcquired, false);
+
+  const locked = blueprintFrame(id, 1.45);
+  assert.equal(locked.baitTargetAcquired, true);
+  assert.equal(locked.baitTargetLocked, true);
+  assert.equal(locked.baitChargeActive, false);
+
+  const charging = blueprintFrame(id, 1.8);
+  assert.equal(charging.baitChargeActive, true);
+  assert.equal(charging.dangerActive, true);
+  assert.equal(blueprintPointSafe(id, 1.8, { x: 300, y: 760 }), false);
+
+  const cleared = blueprintFrame(id, 2.2);
+  assert.equal(cleared.baitPlayerClear, true);
+  assert.equal(cleared.playerSafe, true);
+  assert.equal(blueprintPointSafe(id, 2.2, { x: 300, y: 760 }), false);
+
+  const contact = blueprintFrame(id, 2.5);
+  assert.equal(contact.baitBossContact, true);
+  assert.equal(contact.baitCollisionPair, 'kern|quarry-rune-1');
+  assert.equal(contact.baitSelfHitResolved, false);
+
+  const resolved = blueprintFrame(id, 2.7);
+  assert.equal(resolved.baitTrapConsumed, true);
+  assert.equal(resolved.baitSelfHitResolved, true);
+  assert.equal(resolved.baitDamageSource, 'prepared-hazard');
+  assert.equal(resolved.baitRewardGrants, 1);
+  assert.equal(resolved.baitVulnerable, true);
+
+  const punished = blueprintFrame(id, 3.3);
+  assert.equal(punished.baitPunished, true);
+  assert.equal(punished.baitRewardGrants, 1, 'the collision reward is not duplicated');
+  assert.ok(punished.playerMotion.attack > 0.5, 'Tavi owns a separate sword punish');
+
+  const closed = blueprintFrame(id, 4.5);
+  assert.equal(closed.baitVulnerable, false);
+  assert.equal(closed.baitRewardGrants, 1);
+  assert.deepEqual(blueprintFrame(id, 0).player, blueprintFrame(id, 6).player);
+  assert.deepEqual(blueprintFrame(id, 0).boss, blueprintFrame(id, 6).boss);
+  assert.match(
+    renderBlueprintThumbnail(id, 'test-baited-self-hit'),
+    /data-blueprint-preview="baited-self-hit"/,
   );
 });

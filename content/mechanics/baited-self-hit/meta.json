@@ -1,0 +1,28 @@
+{
+  "id": "baited-self-hit",
+  "number": 87,
+  "published": true,
+  "sourceLocale": "en",
+  "contentVersion": 1,
+  "animation": "baited-self-hit",
+  "lenses": ["telegraphing", "commitment", "counterplay", "risk-reward", "progress-clarity"],
+  "related": ["charge", "mine", "environmental-weapon", "weak-point"],
+  "sources": [
+    {
+      "title": "Boss Up: Boss Battle Design",
+      "url": "https://media.gdcvault.com/gdc2018/presentations/Keren_Itay_BossUp.pdf"
+    },
+    {
+      "title": "Chub — The Binding of Isaac: Rebirth Wiki",
+      "url": "https://bindingofisaacrebirth.wiki.gg/wiki/Chub"
+    },
+    {
+      "title": "King Dodongo — Zelda Dungeon Wiki",
+      "url": "https://www.zeldadungeon.net/wiki/King_Dodongo"
+    },
+    {
+      "title": "Skyward Sword Walkthrough: Earth Temple — Zelda Dungeon",
+      "url": "https://www.zeldadungeon.net/skyward-sword-walkthrough/earth-temple/"
+    }
+  ]
+}
