@@ -27,6 +27,7 @@ import {
   objectiveLinkedInvulnerabilityState,
   waveClearObjectiveProgress,
   waveClearObjectiveState,
+  environmentalWeaponState,
   counterStanceOutcome,
   counterStanceState,
   blueprintFrame,
@@ -54,8 +55,8 @@ import {
   renderBlueprintThumbnail,
 } from '../lib/blueprint-view.mjs';
 
-test('all 76 promoted lesson animations have distinct rule modes and complete moving frames', () => {
-  assert.equal(BLUEPRINT_MECHANIC_IDS.length, 76);
+test('all 77 promoted lesson animations have distinct rule modes and complete moving frames', () => {
+  assert.equal(BLUEPRINT_MECHANIC_IDS.length, 77);
   const modes = new Set();
   for (const id of BLUEPRINT_MECHANIC_IDS) {
     for (let time = 0; time <= BLUEPRINT_DURATION; time += 0.1) {
@@ -76,7 +77,7 @@ test('all 76 promoted lesson animations have distinct rule modes and complete mo
           assert.ok(Number.isFinite(value), `${id} has an invalid ${primitive.type}`);
     }
   }
-  assert.equal(modes.size, 76);
+  assert.equal(modes.size, 77);
 });
 
 test('every blueprint exposes signal, committed action, and recovery without player teleports', () => {
@@ -182,6 +183,7 @@ test('every damaging promoted animation derives safety from its own active geome
       id !== 'situational-immunity' &&
       id !== 'objective-linked-invulnerability' &&
       id !== 'wave-clear-objective' &&
+      id !== 'environmental-weapon' &&
       id !== 'part-break' &&
       id !== 'counter-stance' &&
       id !== 'absorption-power-up' &&
@@ -2450,5 +2452,66 @@ test('wave-clear objective advances only from sealed and empty enemy rosters', (
   assert.match(
     renderBlueprintThumbnail(id, 'test-wave-clear-objective'),
     /data-blueprint-preview="wave-clear-objective"/,
+  );
+});
+
+test('environmental weapon attributes boss progress to a prepared fixed device', () => {
+  const id = 'environmental-weapon';
+  assert.deepEqual(
+    [0, 1, 1.4, 1.7, 2.5, 2.6, 2.9, 3.2, 3.55, 3.8, 4.8, 5.2].map(environmentalWeaponState),
+    [
+      'device-briefing',
+      'reach-power-node',
+      'prepare-power-node',
+      'reach-device',
+      'device-ready',
+      'aim-preview',
+      'aim-locked',
+      'device-fired',
+      'device-hit',
+      'damage-window',
+      'device-spent',
+      'reset',
+    ],
+  );
+
+  const powered = blueprintFrame(id, 1.6);
+  assert.equal(powered.environmentalDevicePowered, true);
+  assert.ok(powered.primitives[6].opacity > 0.8, 'the powered cable is readable');
+
+  const reached = blueprintFrame(id, 2.5);
+  assert.equal(reached.environmentalDeviceReached, true);
+  assert.ok(Math.hypot(reached.player.x - 430, reached.player.y - 690) < 1);
+
+  const preview = blueprintFrame(id, 2.7);
+  assert.equal(preview.environmentalAimLocked, false);
+  assert.ok(preview.primitives[10].opacity > 0.4, 'the device previews its line of fire');
+
+  const locked = blueprintFrame(id, 2.95);
+  assert.equal(locked.environmentalAimLocked, true);
+  assert.ok(locked.primitives[17].opacity > 0.8, 'the boss receives a distinct lock marker');
+
+  const fired = blueprintFrame(id, 3.25);
+  assert.equal(fired.environmentalDeviceFired, true);
+  assert.equal(fired.environmentalBossDamaged, false);
+  assert.equal(fired.playerMotion.attack, 0, 'the sword never owns the device shot');
+  assert.ok(fired.primitives[12].opacity > 0.9, 'the harpoon travels from the device');
+
+  const hit = blueprintFrame(id, 3.55);
+  assert.equal(hit.environmentalBossDamaged, true);
+  assert.equal(hit.environmentalDamageSource, 'device');
+  assert.equal(hit.primitives[15].rectWidth, 64);
+  assert.ok(hit.primitives[13].opacity > 0.8, 'impact and health loss resolve together');
+
+  const spent = blueprintFrame(id, 3.8);
+  assert.equal(spent.environmentalDeviceSpent, true);
+  assert.ok(spent.primitives[18].opacity > 0.7, 'the used device becomes visibly spent');
+
+  assert.equal(blueprintPointSafe(id, 3.25, fired.player), true);
+  assert.deepEqual(blueprintFrame(id, 0).player, blueprintFrame(id, 6).player);
+  assert.deepEqual(blueprintFrame(id, 0).boss, blueprintFrame(id, 6).boss);
+  assert.match(
+    renderBlueprintThumbnail(id, 'test-environmental-weapon'),
+    /data-blueprint-preview="environmental-weapon"/,
   );
 });

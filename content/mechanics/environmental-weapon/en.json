@@ -1,0 +1,142 @@
+{
+  "title": "Environmental weapon",
+  "subtitle": "Make arena machinery the authored source of boss damage",
+  "variant": "Reach · prepare · aim · fire",
+  "summary": "A fixed arena device must be reached and prepared; its resolved shot, not ordinary weapon damage, advances the encounter.",
+  "overview": "An environmental weapon makes a fixed arena device—not the player's ordinary attacks—the authoritative source of boss damage. The mechanic works when the access route, preparation state, aim commitment, and resolved hit are all readable, so operating the arena replaces a normal damage cycle without becoming a hidden interaction.",
+  "learning": "Define device ownership, access and interruption rules, preparation steps, interaction range and duration, aim commitment, projectile path, damage attribution, spent and reusable states, reset and checkpoint behavior, multiplayer authority, accessibility equivalents, and assertions that ordinary attacks cannot silently satisfy the objective.",
+  "category": "Encounter goals and vulnerability",
+  "readTime": "9 min",
+  "demo": {
+    "title": "Separate access, operation, and resolved device damage",
+    "timeline": "Environmental weapon timeline",
+    "step": "Environmental weapon states",
+    "phaseNames": [
+      "Reveal the device, power node, and reachable route",
+      "Prepare the device, lock its aim, and fire",
+      "Credit device damage, expose the result, and reset"
+    ],
+    "phaseDescriptions": [
+      "The fixed ballista, its power node, cable, two pieces of cover, and complete route are visible before commitment. Tavi reaches the node from 0.55 to 1.30 s, powers it at 1.55 s, then follows the lit cable around the cover to the device by 2.45 s.",
+      "The ballista becomes ready at 2.55 s. Its preview line firms into a locked line at 2.85 s, and the device fires at 3.12 s while Tavi's sword remains inactive. The harpoon follows one visible path from the muzzle to Kern rather than appearing as an unexplained damage event.",
+      "The harpoon resolves at 3.50 s and removes a large authored health segment; attribution belongs to the device. The ballista becomes visibly spent at 3.68 s, Tavi can leave the station, the result holds until 4.72 s, and the complete setup resets after 5.15 s."
+    ],
+    "boss": "Boss",
+    "player": "Player",
+    "danger": "Kern pressures the route while the arena device remains the only source that can resolve the demonstrated boss-damage event",
+    "locked": "Device identity, power dependency, route, interaction point, aim preview, aim lock, fire event, projectile path, damage attribution, spent state, reward, and reset are authored",
+    "safe": "Keep the node and device reachable with ordinary movement, preserve full-body clearance around cover, allow the operation to be abandoned, and show the same state through shape, motion, and text",
+    "reducedMotion": "Autoplay is disabled by reduced motion. Scrub across 0.55, 1.30, 1.55, 1.65, 2.45, 2.55, 2.85, 3.12, 3.50, 3.68, 4.72, and 5.15 seconds to inspect access, preparation, aim, fire, impact, spent, reward, and reset states.",
+    "diagramDescription": "Kern stands at the top of a compact arena. Tavi moves from the lower edge to a power node, follows a lit cable around two rectangular covers to a stationary ballista, locks a dashed sight line, and fires one bright harpoon. The boss health bar drops only on impact, and a cross marks the spent device before reset."
+  },
+  "steps": [
+    {
+      "title": "What owns the damage event?",
+      "body": "Give the arena device a stable ID and make its resolved hit the authoritative cause of progress. Ordinary attacks may control nearby threats or create breathing room, but they must not decrement the same objective unless the lesson explicitly combines rules. Log activation, fire, impact, damage, and objective credit as separate events so a designer can distinguish a missed shot, a blocked hit, and broken attribution."
+    },
+    {
+      "title": "What work unlocks one shot?",
+      "body": "Compose a readable sequence of access, preparation, operation, and commitment. Specify movement distance, cover, interaction range, hold duration, interruption policy, camera framing, aim limits, and whether another actor can operate the device. Signal every completed prerequisite on both the device and its connection; a newly usable control should never look like unchanged scenery."
+    },
+    {
+      "title": "How does the result resolve and reset?",
+      "body": "On impact, apply one named damage package, show the boss reaction and progress change together, and transition the device to spent, cooling, destroyed, or reusable. Define misses, premature activation, player death, boss movement, repeated input, checkpoint restoration, multiplayer contention, and network authority. Test that reset restores every prerequisite exactly once and cannot duplicate damage."
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "The weapon reads as decoration until a prompt appears",
+      "body": "A generic object with a late interaction prompt turns the mechanic into pixel hunting. Establish the device silhouette, its line of effect, the prerequisite connection, and the route before the player commits; reinforce readiness with geometry, state change, sound, caption, and a stable interaction point."
+    },
+    {
+      "title": "Operation steals control and the hit has no clear owner",
+      "body": "A long forced animation can convert an authored decision into an uninterruptible cutscene, while delayed or off-screen damage makes ordinary attacks and device fire indistinguishable. Keep entry and exit rules explicit, preserve relevant camera information, and synchronize projectile impact, boss reaction, health change, and device cooldown."
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "Budget the whole operation, not only interaction time",
+      "body": "Measure discovery, route travel, preparation, aim, fire, projectile travel, impact, exit, and recovery. The boss pressure pattern must leave a reachable opportunity for this complete sequence or provide interruption-safe checkpoints; shortening only the prompt hold does not repair an impossible route."
+    },
+    {
+      "title": "Treat access geometry as part of the weapon",
+      "body": "Validate player-radius clearance, camera occlusion, approach angles, cover ownership, knockback traps, and the return route. Place the device so the boss and aim line can be understood together, and test the slowest supported movement package without silently requiring a dash or invulnerability upgrade."
+    },
+    {
+      "title": "Make state inspectable and damage attributable",
+      "body": "Expose inactive, preparing, ready, aiming, locked, fired, hit, and spent states in tools and telemetry. Automated tests should prove that fire cannot precede preparation, the projectile originates at the device, boss progress changes only after impact, the sword remains non-authoritative, and one activation cannot resolve twice."
+    },
+    {
+      "title": "Preserve decisions in co-op and accessibility modes",
+      "body": "Separate operator, defender, and aimer roles only when every role has feedback and a recovery path. Alternatives may widen interaction range, reduce hold time, strengthen path contrast, caption readiness, or snap aim to an authored target; they should preserve reaching, preparing, committing, and resolving the device."
+    }
+  ],
+  "story": {
+    "title": "Tavi wakes an abandoned quarry ballista",
+    "body": "Kern's runes have sealed the old machine, but its power stone still answers to the quarry floor. Tavi crosses between two broken pillars, wakes the cable, and turns the ballista toward the elemental. The harpoon cracks one glowing plate, then the machine vents its last charge and becomes inert."
+  },
+  "adaptation": {
+    "title": "Use ordinary movement and one contextual operation",
+    "body": "Tavi reaches both stations without a special traversal upgrade and keeps the sword available for surrounding pressure, but the sword never substitutes for the ballista hit. A broad interaction ring, clear cable, stable camera, cancelable operation, and optional aim assist keep the sequence usable without changing its damage ownership."
+  },
+  "distinction": {
+    "title": "Arena machinery, not a carried tool or redirected boss attack",
+    "body": "An encounter-specific tool changes the player's temporary action set and can travel with the player. An environmental weapon remains anchored to the arena and asks the player to reach and operate it. Baited self-hit turns the boss's own attack back onto it; here the authored damage source is a separate device even when the boss pressures access."
+  },
+  "lensNotes": [
+    {
+      "id": "encounter-purpose",
+      "body": "A fixed weapon can turn one phase from ordinary damage optimization into traversal, preparation, operation, and a decisive authored payoff."
+    },
+    {
+      "id": "access-paths",
+      "body": "The power node, cover, station, camera, and return route form the real affordance; each must remain locatable, reachable, and recoverable."
+    },
+    {
+      "id": "counterplay",
+      "body": "Players choose when to cross, whether to abandon an interrupted operation, how to use cover, and when to commit the locked shot."
+    },
+    {
+      "id": "progress-clarity",
+      "body": "Connection state, aim lock, projectile, boss reaction, health change, and spent state explain what advanced the encounter and what remains."
+    },
+    {
+      "id": "risk-reward",
+      "body": "The exposed route and operating commitment buy a large, predictable damage package; tuning compares that risk with the payoff and retry cost."
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "Super Metroid",
+      "boss": "Draygon",
+      "screenshot": "https://i.ytimg.com/vi/gcemRrXqCbE/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=gcemRrXqCbE&t=20s",
+      "body": "Destroying an arena wall turret exposes an electrical point. The Grapple Beam can then connect that point through Draygon, turning fixed room infrastructure into a high-impact damage circuit. The setup is optional, spatial, and visibly distinct from ordinary weapon damage, so the arena itself becomes a tactical resource.",
+      "video": "https://www.youtube.com/watch?v=gcemRrXqCbE&t=20s",
+      "videoDurationSeconds": 67
+    },
+    {
+      "dimension": "3D",
+      "game": "Portal",
+      "boss": "GLaDOS",
+      "screenshot": "https://i.ytimg.com/vi/beNZZStCi-s/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=beNZZStCi-s&t=205s",
+      "body": "The fixed rocket turret locks onto Chell, while portals redirect its rocket into GLaDOS and detach a personality core. The device, target lock, portal route, impact, and detached core create a legible chain of ownership; direct portal-gun use does not damage the boss by itself.",
+      "video": "https://www.youtube.com/watch?v=beNZZStCi-s&t=205s",
+      "videoDurationSeconds": 299
+    },
+    {
+      "dimension": "3D",
+      "game": "Demon's Souls Remake",
+      "boss": "Dragon God",
+      "screenshot": "https://i.ytimg.com/vi/mWKb-FfQ92g/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=mWKb-FfQ92g&t=108s",
+      "body": "The phase centers on reaching and activating two fixed ballistae while the Dragon God controls exposed routes. Each machine delivers a large authored damage event and changes the encounter state. The example makes access timing, safe cover, device readiness, and unmistakable impact more important than a conventional attack rotation.",
+      "video": "https://www.youtube.com/watch?v=mWKb-FfQ92g&t=108s",
+      "videoDurationSeconds": 329
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

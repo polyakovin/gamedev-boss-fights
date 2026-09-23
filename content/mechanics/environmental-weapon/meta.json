@@ -1,0 +1,30 @@
+{
+  "id": "environmental-weapon",
+  "number": 83,
+  "published": true,
+  "sourceLocale": "en",
+  "contentVersion": 1,
+  "animation": "environmental-weapon",
+  "lenses": ["encounter-purpose", "access-paths", "counterplay", "progress-clarity", "risk-reward"],
+  "related": [
+    "objective-linked-invulnerability",
+    "cover-line-of-sight",
+    "attack-reflection",
+    "loadout-adaptation"
+  ],
+  "sources": [
+    {
+      "title": "Boss Up: Boss Battle Design",
+      "url": "https://media.gdcvault.com/gdc2018/presentations/Keren_Itay_BossUp.pdf"
+    },
+    {
+      "title": "School of Hard Knocks: Behind Demon's Souls' Design",
+      "url": "https://www.gamedeveloper.com/design/school-of-hard-knocks-behind-demon-s-souls-design-"
+    },
+    { "title": "Draygon — Metroid Wiki", "url": "https://www.metroidwiki.org/wiki/Draygon" },
+    {
+      "title": "Rocket Turret — Combine OverWiki",
+      "url": "https://www.combineoverwiki.net/wiki/Rocket_Turret"
+    }
+  ]
+}

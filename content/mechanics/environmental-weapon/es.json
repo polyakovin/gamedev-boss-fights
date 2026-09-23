@@ -1,0 +1,142 @@
+{
+  "title": "Arma del entorno",
+  "subtitle": "Convierte la maquinaria de la arena en la fuente prevista de daño al jefe",
+  "variant": "Llegar · preparar · apuntar · disparar",
+  "summary": "Hay que alcanzar y preparar un dispositivo fijo de la arena; su disparo resuelto, no el daño de armas normales, hace avanzar el encuentro.",
+  "overview": "Un arma del entorno convierte un dispositivo fijo de la arena, no los ataques normales, en la fuente autoritativa de daño al jefe. Si la ruta, la preparación, la puntería comprometida y el impacto se leen por separado, operar la arena sustituye un ciclo de daño sin ocultar la interacción.",
+  "learning": "Define la propiedad del dispositivo, las reglas de acceso e interrupción, la preparación, el alcance y duración de la interacción, el bloqueo de puntería, la trayectoria, la atribución del daño, los estados gastado y reutilizable, el reinicio, los puntos de control, la autoridad multijugador, las alternativas accesibles y pruebas que impidan que los ataques normales completen el objetivo.",
+  "category": "Objetivos del encuentro y vulnerabilidad",
+  "readTime": "9 min",
+  "demo": {
+    "title": "Separa acceso, operación y daño resuelto del dispositivo",
+    "timeline": "Cronología del arma del entorno",
+    "step": "Estados del arma del entorno",
+    "phaseNames": [
+      "Presenta el dispositivo, el nodo de energía y una ruta alcanzable",
+      "Prepara el dispositivo, bloquea la puntería y dispara",
+      "Atribuye el daño al dispositivo, muestra el resultado y reinicia"
+    ],
+    "phaseDescriptions": [
+      "La ballesta fija, su nodo de energía, el cable, dos coberturas y la ruta completa aparecen antes del compromiso. Tavi llega al nodo entre 0,55 y 1,30 s, lo enciende a 1,55 s y sigue el cable iluminado alrededor de la cobertura hasta el dispositivo a 2,45 s.",
+      "La ballesta queda lista a 2,55 s. La línea preliminar se fija a 2,85 s y el dispositivo dispara a 3,12 s mientras la espada de Tavi permanece inactiva. El arpón recorre una trayectoria visible desde la boca hasta Kern en vez de producir daño sin explicación.",
+      "El arpón impacta a 3,50 s y elimina un segmento grande de salud atribuido al dispositivo. La ballesta queda visiblemente gastada a 3,68 s, Tavi puede abandonar el puesto, el resultado permanece hasta 4,72 s y toda la preparación se reinicia después de 5,15 s."
+    ],
+    "boss": "Jefe",
+    "player": "Jugador",
+    "danger": "Kern presiona la ruta mientras el dispositivo de la arena sigue siendo la única fuente capaz de resolver el evento de daño mostrado",
+    "locked": "Se diseñan la identidad, energía, ruta, punto de interacción, preapuntado, bloqueo, disparo, trayectoria, atribución del daño, estado gastado, recompensa y reinicio",
+    "safe": "Mantén nodo y dispositivo alcanzables con movimiento normal, deja espacio para todo el cuerpo alrededor de la cobertura, permite cancelar la operación y comunica el estado con forma, movimiento y texto",
+    "reducedMotion": "Con movimiento reducido se desactiva la reproducción automática. Recorre 0,55, 1,30, 1,55, 1,65, 2,45, 2,55, 2,85, 3,12, 3,50, 3,68, 4,72 y 5,15 segundos para revisar acceso, preparación, puntería, disparo, impacto, gasto, recompensa y reinicio.",
+    "diagramDescription": "Kern está arriba en una arena compacta. Tavi va desde el borde inferior hasta un nodo, sigue un cable iluminado alrededor de dos coberturas rectangulares, llega a una ballesta fija, bloquea una mira discontinua y dispara un arpón brillante. La salud del jefe baja solo al impacto y una cruz marca el dispositivo gastado."
+  },
+  "steps": [
+    {
+      "title": "¿Quién posee el evento de daño?",
+      "body": "Da al dispositivo un ID estable y haz de su impacto resuelto la causa autoritativa del progreso. Los ataques normales pueden controlar amenazas o crear margen, pero no deben reducir el mismo objetivo salvo que la regla lo combine de forma explícita. Registra activación, disparo, impacto, daño y crédito por separado para distinguir un fallo, un bloqueo y una atribución rota."
+    },
+    {
+      "title": "¿Qué trabajo habilita un disparo?",
+      "body": "Compón una secuencia legible de acceso, preparación, operación y compromiso. Especifica distancia, cobertura, alcance, duración, interrupción, cámara, límites de puntería y quién puede operar. Señala cada requisito cumplido tanto en el dispositivo como en su conexión; un control recién habilitado no debe parecer decorado sin cambios."
+    },
+    {
+      "title": "¿Cómo se resuelve y reinicia el resultado?",
+      "body": "Al impactar, aplica un paquete de daño nombrado, muestra a la vez la reacción y el progreso, y pasa el dispositivo a gastado, enfriándose, destruido o reutilizable. Define fallos, activación prematura, muerte, movimiento del jefe, entradas repetidas, restauración, competencia multijugador y autoridad de red. Comprueba que el reinicio no duplique daño."
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "El arma parece decorativa hasta que aparece un aviso",
+      "body": "Un objeto genérico con un aviso tardío convierte la mecánica en buscar píxeles. Presenta antes la silueta, línea de efecto, conexión requerida y ruta; refuerza la disponibilidad mediante geometría, cambio de estado, sonido, texto y un punto de interacción estable."
+    },
+    {
+      "title": "La operación roba el control y el impacto no tiene dueño claro",
+      "body": "Una animación forzada larga convierte una decisión en una escena imposible de interrumpir; el daño tardío o fuera de cámara mezcla ataques normales y disparo del dispositivo. Define entrada y salida, conserva la información de cámara y sincroniza impacto, reacción, salud y enfriamiento."
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "Presupuesta toda la operación, no solo la interacción",
+      "body": "Mide descubrimiento, recorrido, preparación, puntería, disparo, vuelo, impacto, salida y recuperación. La presión del jefe debe dejar una oportunidad alcanzable para toda la secuencia o puntos seguros de interrupción; acortar solo la pulsación no arregla una ruta imposible."
+    },
+    {
+      "title": "Trata la geometría de acceso como parte del arma",
+      "body": "Valida el radio del jugador, oclusión de cámara, ángulos, propiedad de la cobertura, trampas de empuje y ruta de vuelta. Coloca el dispositivo para leer juntos al jefe y la mira, y prueba el movimiento compatible más lento sin exigir en secreto una carrera."
+    },
+    {
+      "title": "Haz inspeccionable el estado y atribuible el daño",
+      "body": "Expón estados inactivo, preparando, listo, apuntando, bloqueado, disparado, impactado y gastado. Las pruebas deben demostrar que no se dispara antes de preparar, el proyectil nace en el dispositivo, el progreso cambia tras el impacto, la espada no es autoritativa y una activación no resuelve dos veces."
+    },
+    {
+      "title": "Conserva decisiones en cooperativo y accesibilidad",
+      "body": "Separa operador, defensor y tirador solo si cada rol recibe información y recuperación. Se puede ampliar el alcance, reducir la pulsación, aumentar el contraste, subtitular la disponibilidad o ajustar la mira sin eliminar llegada, preparación, compromiso y resolución."
+    }
+  ],
+  "story": {
+    "title": "Tavi despierta una ballesta abandonada de la cantera",
+    "body": "Las runas de Kern sellaron la máquina antigua, pero su piedra de energía aún responde al suelo. Tavi cruza entre dos pilares rotos, enciende el cable y gira la ballesta hacia el elemental. El arpón rompe una placa luminosa y la máquina agota su última carga."
+  },
+  "adaptation": {
+    "title": "Usa movimiento normal y una operación contextual",
+    "body": "Tavi llega a ambas estaciones sin una mejora especial y conserva la espada para la presión cercana, pero la espada nunca sustituye al impacto de la ballesta. Un anillo amplio, cable claro, cámara estable, operación cancelable y ayuda de puntería mantienen la secuencia accesible sin cambiar la propiedad del daño."
+  },
+  "distinction": {
+    "title": "Maquinaria de arena, no herramienta transportada ni ataque redirigido",
+    "body": "Una herramienta específica cambia temporalmente las acciones del jugador y puede viajar con él. Un arma del entorno permanece anclada y exige alcanzarla y operarla. El autogol provocado devuelve el ataque del jefe; aquí la fuente de daño prevista es un dispositivo separado aunque el jefe presione el acceso."
+  },
+  "lensNotes": [
+    {
+      "id": "encounter-purpose",
+      "body": "Un arma fija transforma una fase de daño normal en recorrido, preparación, operación y una recompensa decisiva diseñada."
+    },
+    {
+      "id": "access-paths",
+      "body": "Nodo, cobertura, puesto, cámara y vuelta forman la oportunidad real; todo debe ser localizable, alcanzable y recuperable."
+    },
+    {
+      "id": "counterplay",
+      "body": "El jugador elige cuándo cruzar, si abandona una operación interrumpida, cómo usa la cobertura y cuándo confirma el disparo."
+    },
+    {
+      "id": "progress-clarity",
+      "body": "Conexión, bloqueo, proyectil, reacción, salud y estado gastado explican qué hizo avanzar el encuentro y qué queda."
+    },
+    {
+      "id": "risk-reward",
+      "body": "La ruta expuesta y el compromiso compran daño grande y predecible; el ajuste compara riesgo, recompensa y coste de reintento."
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "Super Metroid",
+      "boss": "Draygon",
+      "screenshot": "https://i.ytimg.com/vi/gcemRrXqCbE/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=gcemRrXqCbE&t=20s",
+      "body": "Destruir una torreta de pared expone un punto eléctrico. Grapple Beam conecta entonces ese punto a través de Draygon y convierte la infraestructura fija en un circuito de gran daño. La preparación es opcional, espacial y distinta del daño normal, por lo que la arena se vuelve un recurso táctico.",
+      "video": "https://www.youtube.com/watch?v=gcemRrXqCbE&t=20s",
+      "videoDurationSeconds": 67
+    },
+    {
+      "dimension": "3D",
+      "game": "Portal",
+      "boss": "GLaDOS",
+      "screenshot": "https://i.ytimg.com/vi/beNZZStCi-s/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=beNZZStCi-s&t=205s",
+      "body": "La torreta fija de cohetes bloquea a Chell y los portales redirigen el cohete hacia GLaDOS para desprender un núcleo. Dispositivo, bloqueo, ruta, impacto y núcleo crean una cadena clara de propiedad; la pistola de portales no daña sola al jefe.",
+      "video": "https://www.youtube.com/watch?v=beNZZStCi-s&t=205s",
+      "videoDurationSeconds": 299
+    },
+    {
+      "dimension": "3D",
+      "game": "Demon's Souls Remake",
+      "boss": "Dragon God",
+      "screenshot": "https://i.ytimg.com/vi/mWKb-FfQ92g/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=mWKb-FfQ92g&t=108s",
+      "body": "La fase se centra en alcanzar y activar dos ballestas fijas mientras Dragon God controla rutas expuestas. Cada máquina inflige un daño grande y cambia el estado del encuentro. El acceso, la cobertura, la disponibilidad y un impacto inequívoco importan más que una rotación convencional.",
+      "video": "https://www.youtube.com/watch?v=mWKb-FfQ92g&t=108s",
+      "videoDurationSeconds": 329
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

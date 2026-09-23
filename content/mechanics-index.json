@@ -1321,12 +1321,12 @@
         "en": {
           "title": "Environmental weapon",
           "category": "Encounter goals and vulnerability",
-          "summary": "Draft outline for the environmental weapon mechanic. Rules, tuning guidance, and examples are still in progress."
+          "summary": "A fixed arena device must be reached and prepared; its resolved shot, not ordinary weapon damage, advances the encounter."
         },
         "ru": {
-          "title": "Орудие арены",
+          "title": "Орудие окружения",
           "category": "Цель боя и открытие уязвимости",
-          "summary": "Основной урон наносит стационарный объект арены, до которого нужно добраться или который нужно подготовить."
+          "summary": "До стационарного орудия арены нужно добраться и подготовить его; бой продвигает подтверждённый выстрел устройства, а не обычный урон оружием."
         }
       }
     },

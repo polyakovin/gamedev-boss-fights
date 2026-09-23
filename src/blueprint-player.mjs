@@ -313,6 +313,16 @@ export function initializeBlueprint(widget) {
       widget.dataset.blueprintWaveAllComplete = String(frame.waveClearAllComplete);
       widget.dataset.blueprintWaveRewardOpen = String(frame.waveClearRewardOpen);
     }
+    if (mechanicId === 'environmental-weapon') {
+      widget.dataset.blueprintEnvironmentalWeapon = frame.environmentalWeaponState;
+      widget.dataset.blueprintEnvironmentalPowered = String(frame.environmentalDevicePowered);
+      widget.dataset.blueprintEnvironmentalReached = String(frame.environmentalDeviceReached);
+      widget.dataset.blueprintEnvironmentalAimLocked = String(frame.environmentalAimLocked);
+      widget.dataset.blueprintEnvironmentalFired = String(frame.environmentalDeviceFired);
+      widget.dataset.blueprintEnvironmentalBossDamaged = String(frame.environmentalBossDamaged);
+      widget.dataset.blueprintEnvironmentalSpent = String(frame.environmentalDeviceSpent);
+      widget.dataset.blueprintEnvironmentalDamageSource = frame.environmentalDamageSource;
+    }
     boss.setAttribute(
       'transform',
       `translate(${frame.boss.x} ${frame.boss.y}) scale(${frame.bossScale})`,

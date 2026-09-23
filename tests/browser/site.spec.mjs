@@ -634,13 +634,13 @@ test('boss builder persists a local draft and downloads portable JSON', async ({
   await expect(page.locator('.boss-builder-phases [data-boss-download]')).toHaveCount(1);
   await expect(page.locator('.boss-builder-form [data-boss-download]')).toHaveCount(0);
   await expect(page.locator('.boss-builder-mechanic')).toHaveCount(124);
-  await expect(page.locator('.boss-builder-mechanic--wip')).toHaveCount(42);
+  await expect(page.locator('.boss-builder-mechanic--wip')).toHaveCount(41);
   await expect(page.locator('.boss-builder-mechanic:not(.boss-builder-mechanic--wip)')).toHaveCount(
-    82,
+    83,
   );
-  await expect(page.locator('.boss-builder-mechanic [data-character-art="kern"]')).toHaveCount(82);
-  await expect(page.locator('.boss-builder-mechanic [data-character-art="tavi"]')).toHaveCount(82);
-  await expect(page.locator('.boss-builder-mechanic [data-blueprint-preview]')).toHaveCount(76);
+  await expect(page.locator('.boss-builder-mechanic [data-character-art="kern"]')).toHaveCount(83);
+  await expect(page.locator('.boss-builder-mechanic [data-character-art="tavi"]')).toHaveCount(83);
+  await expect(page.locator('.boss-builder-mechanic [data-blueprint-preview]')).toHaveCount(77);
   await expect(page.locator('.boss-builder-mechanic [data-pattern-preview]')).toHaveCount(5);
   await expect(page.locator('[data-boss-filter]')).toHaveCount(5);
   await page.locator('[data-boss-filter="geometry"]').selectOption('radial');
@@ -1177,28 +1177,29 @@ test('the root defaults to English and localized catalogs point to real pages', 
   ]);
   await expect(page.locator('.catalog-part')).toHaveCount(14);
   await expect(page.locator('.catalog-lesson')).toHaveCount(124);
-  await expect(page.locator('.catalog-lesson--wip')).toHaveCount(42);
-  await expect(page.locator('.catalog-lesson:not(.catalog-lesson--wip)')).toHaveCount(82);
+  await expect(page.locator('.catalog-lesson--wip')).toHaveCount(41);
+  await expect(page.locator('.catalog-lesson:not(.catalog-lesson--wip)')).toHaveCount(83);
   await expect(page.locator('.catalog-lesson__number').first()).toHaveText('1.1');
   await expect(page.locator('.catalog-lesson__number').last()).toHaveText('14.11');
   await expect(page.locator('.catalog-lesson__preview [data-character-art="kern"]')).toHaveCount(
-    82,
+    83,
   );
   await expect(page.locator('.catalog-lesson__preview [data-character-art="tavi"]')).toHaveCount(
-    82,
+    83,
   );
-  await expect(page.locator('.catalog-lesson__preview [data-blueprint-preview]')).toHaveCount(76);
+  await expect(page.locator('.catalog-lesson__preview [data-blueprint-preview]')).toHaveCount(77);
   await expect(page.locator('.catalog-lesson__preview [data-pattern-preview]')).toHaveCount(5);
-  const draftPage = await request.get('en/mechanics/environmental-weapon/');
+  const publishedPage = await request.get('en/mechanics/environmental-weapon/');
+  expect(publishedPage.status()).toBe(200);
+  expect(await publishedPage.text()).not.toContain('class="wip-badge"');
+  await page.goto('en/mechanics/environmental-weapon/');
+  await expect(page.locator('.lesson-title-line h1')).toHaveText('Environmental weapon');
+  await expect(page.locator('[data-blueprint-id="environmental-weapon"]')).toBeVisible();
+  await expect(page.locator('.game-example')).toHaveCount(3);
+  await expect(page.locator('.lens-chip')).toHaveCount(5);
+  const draftPage = await request.get('en/mechanics/encounter-specific-tool/');
   expect(draftPage.status()).toBe(200);
   expect(await draftPage.text()).toContain('class="wip-badge"');
-  await page.goto('en/mechanics/environmental-weapon/');
-  await expect(page.locator('.wip-mechanic-title h1')).toHaveText('Environmental weapon');
-  await expect(page.locator('.wip-mechanic-title .wip-badge')).toHaveText('WIP');
-  await expect(page.locator('.wip-builder-link')).toHaveAttribute(
-    'href',
-    '/gamedev-boss-fights/en/builder/',
-  );
   await page.setViewportSize({ width: 375, height: 812 });
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
 });

@@ -405,9 +405,9 @@ test('volley releases three parallel bolts on one beat and clears its outside ro
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
 });
 
-test('catalog and builder reuse the 76 promoted rule-specific previews', async ({ page }) => {
+test('catalog and builder reuse the 77 promoted rule-specific previews', async ({ page }) => {
   await page.goto('en/');
-  await expect(page.locator('[data-blueprint-preview]')).toHaveCount(76);
+  await expect(page.locator('[data-blueprint-preview]')).toHaveCount(77);
   const catalogLayouts = await page.locator('[data-blueprint-preview]').evaluateAll((previews) =>
     previews.map((preview) => {
       const boss = preview.querySelector('[data-character-art-preview="kern"]');
@@ -431,7 +431,7 @@ test('catalog and builder reuse the 76 promoted rule-specific previews', async (
   expect(new Set(catalogLayouts.map(({ layout }) => layout)).size).toBeGreaterThanOrEqual(18);
 
   await page.goto('en/builder/');
-  await expect(page.locator('[data-blueprint-preview]')).toHaveCount(76);
+  await expect(page.locator('[data-blueprint-preview]')).toHaveCount(77);
   const builderLayouts = await page.locator('[data-blueprint-preview]').evaluateAll((previews) =>
     previews.map((preview) => {
       const boss = preview.querySelector('[data-character-art-preview="kern"]');
@@ -2907,6 +2907,73 @@ test('wave-clear objective seals and empties each finite roster before advancing
   await expect(widget).toHaveAttribute('data-blueprint-wave-clear', 'reward-open');
   await expect(widget).toHaveAttribute('data-blueprint-wave-reward-open', 'true');
   await expect(widget.locator('[data-blueprint-primitive="22"] circle')).not.toHaveAttribute(
+    'opacity',
+    '0',
+  );
+
+  await page.setViewportSize({ width: 375, height: 812 });
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+});
+
+test('environmental weapon powers, aims, fires, and attributes damage to the fixed device', async ({
+  page,
+}) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.goto('en/mechanics/environmental-weapon/');
+  const widget = page.locator('[data-blueprint-demo]');
+  const timeline = widget.locator('[data-blueprint-timeline]');
+  const seek = (milliseconds) =>
+    timeline.evaluate((element, value) => {
+      element.value = String(value);
+      element.dispatchEvent(new Event('input', { bubbles: true }));
+    }, milliseconds);
+
+  await expect(page.locator('.lesson-title-line h1')).toHaveText('Environmental weapon');
+  await expect(page.locator('.wip-badge, .draft-profile')).toHaveCount(0);
+  await expect(page.locator('.game-example')).toHaveCount(3);
+
+  await seek(1600);
+  await expect(widget).toHaveAttribute('data-blueprint-environmental-powered', 'true');
+  await expect(widget.locator('[data-blueprint-primitive="6"] path')).not.toHaveAttribute(
+    'opacity',
+    '0',
+  );
+
+  await seek(2500);
+  await expect(widget).toHaveAttribute('data-blueprint-environmental-reached', 'true');
+  await expect(widget).toHaveAttribute('data-blueprint-environmental-weapon', 'device-ready');
+
+  await seek(2700);
+  await expect(widget).toHaveAttribute('data-blueprint-environmental-aim-locked', 'false');
+  await expect(widget.locator('[data-blueprint-primitive="10"] line')).not.toHaveAttribute(
+    'opacity',
+    '0',
+  );
+
+  await seek(2950);
+  await expect(widget).toHaveAttribute('data-blueprint-environmental-aim-locked', 'true');
+  await expect(widget).toHaveAttribute('data-blueprint-environmental-weapon', 'aim-locked');
+
+  await seek(3250);
+  await expect(widget).toHaveAttribute('data-blueprint-environmental-fired', 'true');
+  await expect(widget).toHaveAttribute('data-blueprint-environmental-boss-damaged', 'false');
+  await expect(widget).toHaveAttribute('data-blueprint-environmental-damage-source', 'none');
+  await expect(widget.locator('[data-blueprint-primitive="12"] circle')).not.toHaveAttribute(
+    'opacity',
+    '0',
+  );
+
+  await seek(3550);
+  await expect(widget).toHaveAttribute('data-blueprint-environmental-boss-damaged', 'true');
+  await expect(widget).toHaveAttribute('data-blueprint-environmental-damage-source', 'device');
+  await expect(widget.locator('[data-blueprint-primitive="15"] rect')).toHaveAttribute(
+    'width',
+    '64',
+  );
+
+  await seek(3800);
+  await expect(widget).toHaveAttribute('data-blueprint-environmental-spent', 'true');
+  await expect(widget.locator('[data-blueprint-primitive="18"] path')).not.toHaveAttribute(
     'opacity',
     '0',
   );

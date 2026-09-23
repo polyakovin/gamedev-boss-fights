@@ -974,6 +974,52 @@ const SPECS = {
       [280, 780],
     ],
   },
+  'environmental-weapon': {
+    mode: 'environmental-weapon',
+    boss: [280, 350],
+    player: [100, 760],
+    target: [430, 690],
+    arena: [55, 310, 450, 570],
+    powerNode: [112, 555],
+    device: [430, 690],
+    muzzle: [396, 602],
+    playerRoutes: {
+      power: [
+        [100, 760],
+        [100, 650],
+        [112, 555],
+      ],
+      device: [
+        [112, 555],
+        [150, 650],
+        [270, 750],
+        [390, 730],
+        [430, 690],
+      ],
+      retreat: [
+        [430, 690],
+        [395, 735],
+        [350, 760],
+      ],
+      reset: [
+        [350, 760],
+        [220, 790],
+        [100, 760],
+      ],
+    },
+    routeStartsAt: 0.55,
+    powerReachedAt: 1.3,
+    powerOnAt: 1.55,
+    deviceRouteAt: 1.65,
+    deviceReachedAt: 2.45,
+    aimPreviewAt: 2.55,
+    aimLockedAt: 2.85,
+    fireAt: 3.12,
+    hitAt: 3.5,
+    spentAt: 3.68,
+    rewardAt: 4.72,
+    resetAt: 5.15,
+  },
   'wide-swing': { mode: 'arc', boss: [280, 310], player: [410, 470], target: [470, 650] },
   lunge: { mode: 'lunge', boss: [170, 290], player: [390, 590], target: [470, 660] },
   grab: { mode: 'grab', boss: [280, 300], player: [390, 485], target: [470, 610] },
@@ -1700,6 +1746,23 @@ export function waveClearObjectiveProgress(time) {
     rosterEmpty: remainingEnemies === 0,
     allComplete: completedWaves === spec.waveClears.length,
   });
+}
+
+export function environmentalWeaponState(time) {
+  const spec = SPECS['environmental-weapon'];
+  const t = localTime(time);
+  if (t < spec.routeStartsAt) return 'device-briefing';
+  if (t < spec.powerReachedAt) return 'reach-power-node';
+  if (t < spec.powerOnAt) return 'prepare-power-node';
+  if (t < spec.deviceReachedAt) return 'reach-device';
+  if (t < spec.aimPreviewAt) return 'device-ready';
+  if (t < spec.aimLockedAt) return 'aim-preview';
+  if (t < spec.fireAt) return 'aim-locked';
+  if (t < spec.hitAt) return 'device-fired';
+  if (t < spec.spentAt) return 'device-hit';
+  if (t < spec.rewardAt) return 'damage-window';
+  if (t < spec.resetAt) return 'device-spent';
+  return 'reset';
 }
 
 const segmentIntersectsRect = (start, end, bounds) => {
@@ -4011,6 +4074,114 @@ function primitivesFor(spec, frame) {
       ),
     ];
   }
+  if (mode === 'environmental-weapon') {
+    const power = point(spec.powerNode);
+    const device = point(spec.device);
+    const muzzle = point(spec.muzzle);
+    const shotProgress = clamp((frame.time - spec.fireAt) / (spec.hitAt - spec.fireAt));
+    const bolt = {
+      x: mix(muzzle.x, frame.boss.x, shotProgress),
+      y: mix(muzzle.y, frame.boss.y, shotProgress),
+    };
+    const boltVisible = frame.environmentalDeviceFired && !frame.environmentalBossDamaged;
+    const aimVisible =
+      frame.time >= spec.aimPreviewAt &&
+      frame.time < spec.fireAt &&
+      !frame.environmentalDeviceSpent;
+    const impactPulse = strikePulse(frame.time, spec.hitAt, 0.42);
+    const interactionTarget = frame.environmentalDevicePowered ? device : power;
+    return [
+      rect(...spec.arena, 0.52, 'muted', 0.025),
+      path(
+        'M 100 760 L 100 650 L 112 555 M 112 555 L 150 650 L 270 750 L 390 730 L 430 690',
+        frame.environmentalDeviceReached ? 0.18 : 0.66,
+        'safe',
+        6,
+        0,
+        '10 10',
+      ),
+      rect(174, 505, 58, 156, 0.62, 'muted', 0.06),
+      rect(294, 535, 58, 136, 0.62, 'muted', 0.06),
+      circle(
+        power.x,
+        power.y,
+        35,
+        0.86,
+        frame.environmentalDevicePowered ? 'safe' : 'accent',
+        7,
+        0.08,
+      ),
+      circle(
+        power.x,
+        power.y,
+        13 + strikePulse(frame.time, spec.powerOnAt, 0.42) * 12,
+        frame.environmentalDevicePowered ? 0.92 : 0.34,
+        'safe',
+        5,
+        frame.environmentalDevicePowered ? 0.24 : 0.04,
+      ),
+      path(
+        'M 112 555 L 112 706 L 386 706 L 430 690',
+        frame.environmentalDevicePowered ? 0.92 : 0.24,
+        frame.environmentalDevicePowered ? 'safe' : 'muted',
+        frame.environmentalDevicePowered ? 8 : 5,
+        0,
+        '9 8',
+      ),
+      rect(386, 668, 92, 66, 0.82, frame.environmentalDeviceSpent ? 'muted' : 'accent', 0.1),
+      circle(430, 728, 27, 0.9, frame.environmentalDeviceSpent ? 'muted' : 'accent', 7, 0.08),
+      line(device.x, device.y, muzzle.x, muzzle.y, 0.96, 'accent', 15),
+      line(
+        muzzle.x,
+        muzzle.y,
+        frame.boss.x,
+        frame.boss.y,
+        aimVisible ? (frame.environmentalAimLocked ? 0.9 : 0.5) : 0,
+        frame.environmentalAimLocked ? 'signal' : 'accent',
+        frame.environmentalAimLocked ? 7 : 5,
+        '12 9',
+      ),
+      line(muzzle.x, muzzle.y, bolt.x, bolt.y, boltVisible ? 0.82 : 0, 'safe', 10),
+      circle(bolt.x, bolt.y, 17, boltVisible ? 0.96 : 0, 'safe', 7, 0.2),
+      circle(frame.boss.x, frame.boss.y, 38 + impactPulse * 64, impactPulse, 'signal', 9, 0.08),
+      rect(210, 490, 140, 14, 0.45, 'muted', 0.025),
+      rect(
+        210,
+        490,
+        frame.environmentalBossDamaged ? 64 : 140,
+        14,
+        0.9,
+        frame.environmentalBossDamaged ? 'signal' : 'accent',
+        0.12,
+      ),
+      circle(
+        interactionTarget.x,
+        interactionTarget.y,
+        48 + pulse(frame.time * 2.4) * 12,
+        frame.environmentalDeviceFired || frame.environmentalBossDamaged ? 0 : 0.72,
+        'safe',
+        5,
+        0.02,
+        '8 8',
+      ),
+      circle(
+        frame.boss.x,
+        frame.boss.y,
+        68,
+        frame.environmentalAimLocked && !frame.environmentalDeviceFired ? 0.9 : 0,
+        'signal',
+        6,
+        0.02,
+        '7 7',
+      ),
+      path(
+        'M 405 675 L 455 725 M 455 675 L 405 725',
+        frame.environmentalDeviceSpent ? 0.74 : 0,
+        'muted',
+        7,
+      ),
+    ];
+  }
   if (mode === 'landing') {
     const landing = point(spec.landing);
     const contact = phase === 1 ? clamp(1 - Math.abs(action - 0.52) / 0.2) : 0;
@@ -5344,6 +5515,7 @@ function pointClearsThreat(spec, frame, value, radius = BLUEPRINT_PLAYER_RADIUS)
     );
   if (mode === 'objective-linked-invulnerability') return true;
   if (mode === 'wave-clear-objective') return true;
+  if (mode === 'environmental-weapon') return true;
   if (mode === 'spiral')
     return (
       distanceFromBoss > 52 + radius &&
@@ -5691,6 +5863,7 @@ export function blueprintFrame(id, time) {
   else if (spec.mode === 'sound-detection') responseProgress = 0;
   else if (spec.mode === 'objective-linked-invulnerability') responseProgress = 0;
   else if (spec.mode === 'wave-clear-objective') responseProgress = 0;
+  else if (spec.mode === 'environmental-weapon') responseProgress = 0;
   else if (spec.mode === 'knockback')
     responseProgress = phase === 0 ? 0 : phase === 1 ? smooth(action) : 1;
   else if (spec.mode === 'target-lock')
@@ -6291,6 +6464,29 @@ export function blueprintFrame(id, time) {
       player = pointAlongPolyline(spec.resetRoute.map(point), reset);
     }
   }
+  if (spec.mode === 'environmental-weapon') {
+    if (t < spec.routeStartsAt) player = startPlayer;
+    else if (t < spec.powerReachedAt) {
+      const reachPower = smooth(
+        (t - spec.routeStartsAt) / (spec.powerReachedAt - spec.routeStartsAt),
+      );
+      player = pointAlongPolyline(spec.playerRoutes.power.map(point), reachPower);
+    } else if (t < spec.deviceRouteAt) player = point(spec.powerNode);
+    else if (t < spec.deviceReachedAt) {
+      const reachDevice = clamp(
+        (t - spec.deviceRouteAt) / (spec.deviceReachedAt - spec.deviceRouteAt),
+      );
+      player = pointAlongPolyline(spec.playerRoutes.device.map(point), reachDevice);
+    } else if (t < spec.spentAt) player = point(spec.device);
+    else if (t < spec.rewardAt) {
+      const retreat = smooth((t - spec.spentAt) / (spec.rewardAt - spec.spentAt));
+      player = pointAlongPolyline(spec.playerRoutes.retreat.map(point), retreat);
+    } else if (t < spec.resetAt) player = point(spec.playerRoutes.retreat.at(-1));
+    else {
+      const reset = smooth((t - spec.resetAt) / (BLUEPRINT_DURATION - spec.resetAt));
+      player = pointAlongPolyline(spec.playerRoutes.reset.map(point), reset);
+    }
+  }
   if (spec.mode === 'rotating' && phase === 0) {
     const initialPosition = polar(boss, 255, Math.PI / 3);
     player = {
@@ -6585,7 +6781,34 @@ export function blueprintFrame(id, time) {
                                               ),
                                             ) * 0.8,
                                           )
-                                        : pulse(responseProgress) + pulse(returnProgress) * 0.8;
+                                        : spec.mode === 'environmental-weapon'
+                                          ? Math.max(
+                                              pulse(
+                                                smooth(
+                                                  (t - spec.routeStartsAt) /
+                                                    (spec.powerReachedAt - spec.routeStartsAt),
+                                                ),
+                                              ),
+                                              pulse(
+                                                smooth(
+                                                  (t - spec.deviceRouteAt) /
+                                                    (spec.deviceReachedAt - spec.deviceRouteAt),
+                                                ),
+                                              ),
+                                              pulse(
+                                                smooth(
+                                                  (t - spec.spentAt) /
+                                                    (spec.rewardAt - spec.spentAt),
+                                                ),
+                                              ),
+                                              pulse(
+                                                smooth(
+                                                  (t - spec.resetAt) /
+                                                    (BLUEPRINT_DURATION - spec.resetAt),
+                                                ),
+                                              ) * 0.8,
+                                            )
+                                          : pulse(responseProgress) + pulse(returnProgress) * 0.8;
   const bossVisible =
     spec.mode === 'secondary-cues-invisibility'
       ? t < spec.vanishAt
@@ -6876,25 +7099,32 @@ export function blueprintFrame(id, time) {
                                           ? (Math.atan2(boss.y - player.y, boss.x - player.x) *
                                               180) /
                                             Math.PI
-                                          : spec.mode === 'boss-as-terrain'
+                                          : spec.mode === 'environmental-weapon'
                                             ? (Math.atan2(boss.y - player.y, boss.x - player.x) *
                                                 180) /
                                               Math.PI
-                                            : spec.mode === 'control-mode-shift'
+                                            : spec.mode === 'boss-as-terrain'
                                               ? (Math.atan2(boss.y - player.y, boss.x - player.x) *
                                                   180) /
                                                 Math.PI
-                                              : spec.mode === 'damage-type-resistance' ||
-                                                  spec.mode === 'situational-immunity' ||
-                                                  spec.mode === 'part-break' ||
-                                                  spec.mode === 'attack-reflection' ||
-                                                  spec.mode === 'counter-stance' ||
-                                                  spec.mode === 'absorption-power-up' ||
-                                                  spec.mode === 'interruptible-wind-up' ||
-                                                  spec.mode === 'loadout-adaptation' ||
-                                                  spec.mode === 'wind-up'
-                                                ? -180
-                                                : -90,
+                                              : spec.mode === 'control-mode-shift'
+                                                ? (Math.atan2(
+                                                    boss.y - player.y,
+                                                    boss.x - player.x,
+                                                  ) *
+                                                    180) /
+                                                  Math.PI
+                                                : spec.mode === 'damage-type-resistance' ||
+                                                    spec.mode === 'situational-immunity' ||
+                                                    spec.mode === 'part-break' ||
+                                                    spec.mode === 'attack-reflection' ||
+                                                    spec.mode === 'counter-stance' ||
+                                                    spec.mode === 'absorption-power-up' ||
+                                                    spec.mode === 'interruptible-wind-up' ||
+                                                    spec.mode === 'loadout-adaptation' ||
+                                                    spec.mode === 'wind-up'
+                                                  ? -180
+                                                  : -90,
     bossMotion: motion({
       gait:
         spec.mode === 'chase-herding' ||
@@ -7122,88 +7352,91 @@ export function blueprintFrame(id, time) {
                     0.9 * strikePulse(t, spec.bossStrike, 0.3)
                   : spec.mode === 'wave-clear-objective'
                     ? Math.max(...spec.waveKills.flat().map((kill) => strikePulse(t, kill, 0.26)))
-                    : spec.mode === 'part-break'
-                      ? 0.75 * strikePulse(t, spec.breakAt, 0.26)
-                      : spec.mode === 'attack-reflection'
-                        ? 0.85 * strikePulse(t, spec.meleeStrike, 0.27)
-                        : spec.mode === 'counter-stance'
-                          ? 0.85 * strikePulse(t, spec.openStrike, 0.27)
-                          : spec.mode === 'absorption-power-up'
+                    : spec.mode === 'environmental-weapon'
+                      ? 0.95 * strikePulse(t, spec.hitAt, 0.38)
+                      : spec.mode === 'part-break'
+                        ? 0.75 * strikePulse(t, spec.breakAt, 0.26)
+                        : spec.mode === 'attack-reflection'
+                          ? 0.85 * strikePulse(t, spec.meleeStrike, 0.27)
+                          : spec.mode === 'counter-stance'
                             ? 0.85 * strikePulse(t, spec.openStrike, 0.27)
-                            : spec.mode === 'interruptible-wind-up'
-                              ? 0.9 * strikePulse(t, spec.interruptAt, 0.3)
-                              : spec.mode === 'wind-up'
-                                ? 0.65 *
-                                  Math.max(
-                                    strikePulse(t, spec.firstRelease[0], 0.28),
-                                    strikePulse(t, spec.secondRelease[0], 0.28),
-                                  )
-                                : spec.mode === 'attack-lock'
-                                  ? 0.55 *
+                            : spec.mode === 'absorption-power-up'
+                              ? 0.85 * strikePulse(t, spec.openStrike, 0.27)
+                              : spec.mode === 'interruptible-wind-up'
+                                ? 0.9 * strikePulse(t, spec.interruptAt, 0.3)
+                                : spec.mode === 'wind-up'
+                                  ? 0.65 *
                                     Math.max(
                                       strikePulse(t, spec.firstRelease[0], 0.28),
                                       strikePulse(t, spec.secondRelease[0], 0.28),
                                     )
-                                  : spec.mode === 'active-phase'
-                                    ? strikePulse(t, spec.active[0], 0.3)
-                                    : spec.mode === 'recovery'
-                                      ? Math.max(
-                                          0.55 * strikePulse(t, spec.active[0], 0.3),
-                                          0.85 * strikePulse(t, spec.punishAt, 0.3),
-                                        )
-                                      : spec.mode === 'survival-phase'
+                                  : spec.mode === 'attack-lock'
+                                    ? 0.55 *
+                                      Math.max(
+                                        strikePulse(t, spec.firstRelease[0], 0.28),
+                                        strikePulse(t, spec.secondRelease[0], 0.28),
+                                      )
+                                    : spec.mode === 'active-phase'
+                                      ? strikePulse(t, spec.active[0], 0.3)
+                                      : spec.mode === 'recovery'
                                         ? Math.max(
-                                            ...spec.hazards.map(
-                                              ({ active }) =>
-                                                0.45 * strikePulse(t, active[0], 0.28),
-                                            ),
+                                            0.55 * strikePulse(t, spec.active[0], 0.3),
                                             0.85 * strikePulse(t, spec.punishAt, 0.3),
                                           )
-                                        : spec.mode === 'teleport'
+                                        : spec.mode === 'survival-phase'
                                           ? Math.max(
-                                              0.6 * strikePulse(t, spec.active[0], 0.3),
+                                              ...spec.hazards.map(
+                                                ({ active }) =>
+                                                  0.45 * strikePulse(t, active[0], 0.28),
+                                              ),
                                               0.85 * strikePulse(t, spec.punishAt, 0.3),
                                             )
-                                          : spec.mode === 'boundary-attack'
+                                          : spec.mode === 'teleport'
                                             ? Math.max(
-                                                0.7 * strikePulse(t, spec.impactAt, 0.3),
+                                                0.6 * strikePulse(t, spec.active[0], 0.3),
                                                 0.85 * strikePulse(t, spec.punishAt, 0.3),
                                               )
-                                            : spec.mode === 'forced-scrolling'
+                                            : spec.mode === 'boundary-attack'
                                               ? Math.max(
-                                                  0.55 * strikePulse(t, spec.active[1], 0.32),
+                                                  0.7 * strikePulse(t, spec.impactAt, 0.3),
                                                   0.85 * strikePulse(t, spec.punishAt, 0.3),
                                                 )
-                                              : spec.mode === 'chase-herding'
+                                              : spec.mode === 'forced-scrolling'
                                                 ? Math.max(
                                                     0.55 * strikePulse(t, spec.active[1], 0.32),
                                                     0.85 * strikePulse(t, spec.punishAt, 0.3),
                                                   )
-                                                : spec.mode === 'escape-phase'
+                                                : spec.mode === 'chase-herding'
                                                   ? Math.max(
-                                                      0.72 * strikePulse(t, spec.escape[1], 0.32),
+                                                      0.55 * strikePulse(t, spec.active[1], 0.32),
                                                       0.85 * strikePulse(t, spec.punishAt, 0.3),
                                                     )
-                                                  : spec.mode === 'relocated-arena'
-                                                    ? 0.72 * strikePulse(t, spec.transfer[1], 0.32)
-                                                    : spec.mode === 'control-mode-shift'
-                                                      ? 0.85 * strikePulse(t, spec.punishAt, 0.3)
-                                                      : spec.mode === 'forced-inertia'
-                                                        ? Math.max(
-                                                            0.55 *
-                                                              strikePulse(t, spec.frostAt, 0.36),
-                                                            0.85 *
-                                                              strikePulse(t, spec.punishAt, 0.3),
-                                                          )
-                                                        : spec.mode === 'cover-line-of-sight'
-                                                          ? 0.85 *
-                                                            strikePulse(t, spec.punishAt, 0.3)
-                                                          : spec.mode === 'shockwave' ||
-                                                              spec.mode === 'knockback'
-                                                            ? pulse(action * 3)
-                                                            : spec.mode === 'chain-explosions'
-                                                              ? pulse((action * 5) % 1)
-                                                              : 0,
+                                                  : spec.mode === 'escape-phase'
+                                                    ? Math.max(
+                                                        0.72 * strikePulse(t, spec.escape[1], 0.32),
+                                                        0.85 * strikePulse(t, spec.punishAt, 0.3),
+                                                      )
+                                                    : spec.mode === 'relocated-arena'
+                                                      ? 0.72 *
+                                                        strikePulse(t, spec.transfer[1], 0.32)
+                                                      : spec.mode === 'control-mode-shift'
+                                                        ? 0.85 * strikePulse(t, spec.punishAt, 0.3)
+                                                        : spec.mode === 'forced-inertia'
+                                                          ? Math.max(
+                                                              0.55 *
+                                                                strikePulse(t, spec.frostAt, 0.36),
+                                                              0.85 *
+                                                                strikePulse(t, spec.punishAt, 0.3),
+                                                            )
+                                                          : spec.mode === 'cover-line-of-sight'
+                                                            ? 0.85 *
+                                                              strikePulse(t, spec.punishAt, 0.3)
+                                                            : spec.mode === 'shockwave' ||
+                                                                spec.mode === 'knockback'
+                                                              ? pulse(action * 3)
+                                                              : spec.mode === 'chain-explosions'
+                                                                ? pulse((action * 5) % 1)
+                                                                : 0,
     }),
     playerMotion: motion({
       gait:
@@ -7245,9 +7478,11 @@ export function blueprintFrame(id, time) {
                                             ? t * 7 * stride
                                             : spec.mode === 'wave-clear-objective'
                                               ? t * 7 * stride
-                                              : (route * responseProgress +
-                                                  route * returnProgress) /
-                                                20,
+                                              : spec.mode === 'environmental-weapon'
+                                                ? t * 7 * stride
+                                                : (route * responseProgress +
+                                                    route * returnProgress) /
+                                                  20,
       stride,
       lean: stride * 0.45,
       crouch:
@@ -7372,15 +7607,20 @@ export function blueprintFrame(id, time) {
                                                                         strikePulse(t, kill, 0.32),
                                                                       ),
                                                                   )
-                                                                : spec.mode === 'decoy' &&
-                                                                    phase === 1
-                                                                  ? pulse(
-                                                                      clamp((action - 0.52) / 0.3),
-                                                                    )
-                                                                  : spec.mode === 'weak-point' &&
+                                                                : spec.mode ===
+                                                                    'environmental-weapon'
+                                                                  ? 0
+                                                                  : spec.mode === 'decoy' &&
                                                                       phase === 1
-                                                                    ? pulse(action * 1.5)
-                                                                    : 0,
+                                                                    ? pulse(
+                                                                        clamp(
+                                                                          (action - 0.52) / 0.3,
+                                                                        ),
+                                                                      )
+                                                                    : spec.mode === 'weak-point' &&
+                                                                        phase === 1
+                                                                      ? pulse(action * 1.5)
+                                                                      : 0,
     }),
   };
   if (spec.mode === 'directional-shield') {
@@ -7518,6 +7758,17 @@ export function blueprintFrame(id, time) {
       (t - spec.waveClears.at(-1)) / (spec.rewardAt - spec.waveClears.at(-1)),
     );
     frame.waveClearRewardOpen = t >= spec.rewardAt && t < spec.resetAt;
+  }
+  if (spec.mode === 'environmental-weapon') {
+    frame.environmentalWeaponState = environmentalWeaponState(t);
+    frame.environmentalDevicePowered = t >= spec.powerOnAt && t < spec.resetAt;
+    frame.environmentalDeviceReached = t >= spec.deviceReachedAt && t < spec.resetAt;
+    frame.environmentalAimLocked = t >= spec.aimLockedAt && t < spec.fireAt;
+    frame.environmentalDeviceFired = t >= spec.fireAt && t < spec.resetAt;
+    frame.environmentalBossDamaged = t >= spec.hitAt && t < spec.resetAt;
+    frame.environmentalDeviceSpent = t >= spec.spentAt && t < spec.resetAt;
+    frame.environmentalDamageSource = frame.environmentalBossDamaged ? 'device' : 'none';
+    frame.environmentalProjectileProgress = clamp((t - spec.fireAt) / (spec.hitAt - spec.fireAt));
   }
   if (spec.mode === 'sound-detection') {
     frame.soundDetectionState = soundDetectionState(t);
@@ -7793,7 +8044,8 @@ export function blueprintFrame(id, time) {
       spec.mode === 'secondary-cues-invisibility' ||
       spec.mode === 'sound-detection' ||
       spec.mode === 'objective-linked-invulnerability' ||
-      spec.mode === 'wave-clear-objective'
+      spec.mode === 'wave-clear-objective' ||
+      spec.mode === 'environmental-weapon'
         ? 92
         : -62),
   };

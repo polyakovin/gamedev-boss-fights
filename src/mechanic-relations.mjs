@@ -253,7 +253,13 @@ const PROFILE_OVERRIDES = {
     dimensions: ['2d', '3d'],
     lenses: ['progress-clarity', 'difficulty-rhythm', 'counterplay', 'encounter-purpose'],
   },
-  'environmental-weapon': { geometry: ['entity', 'line'], response: ['interact', 'attack'] },
+  'environmental-weapon': {
+    geometry: ['entity', 'line', 'arena'],
+    signal: ['environment', 'marker', 'state'],
+    response: ['interact', 'reposition', 'attack'],
+    dimensions: ['2d', '3d'],
+    lenses: ['encounter-purpose', 'access-paths', 'counterplay', 'progress-clarity', 'risk-reward'],
+  },
   'projectile-rally': {
     geometry: ['line'],
     signal: ['trajectory', 'rhythm'],
