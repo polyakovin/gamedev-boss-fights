@@ -43,6 +43,7 @@ export function initializeBlueprint(widget) {
   const boss = find('[data-blueprint-boss]');
   const decoy = find('[data-blueprint-decoy]');
   const player = find('[data-blueprint-player]');
+  const playerWeapon = player.querySelector('[data-rig-part="weapon"]');
   const animateBoss = createCharacterAnimator(boss, 'kern');
   const animateDecoy = decoy ? createCharacterAnimator(decoy, 'kern') : null;
   const animatePlayer = createCharacterAnimator(player, 'tavi');
@@ -549,6 +550,8 @@ export function initializeBlueprint(widget) {
     player.setAttribute('transform', `translate(${frame.player.x} ${frame.player.y})`);
     animateBoss(frame.bossMotion, frame.bossFacing);
     animatePlayer(frame.playerMotion, frame.playerFacing);
+    if (mechanicId === 'pacifist-resolution')
+      playerWeapon?.setAttribute('opacity', frame.pacifistWeaponSheathed ? '0' : '1');
     animateEffects(time, frame);
     bossLabel.setAttribute('x', frame.bossLabel.x);
     bossLabel.setAttribute('y', frame.bossLabel.y);

@@ -27,7 +27,7 @@
     "locked": "Condición, tiempo, eventos inválidos, salud, elegibilidad, plazo, id, estado perdonado, recompensa, salida, persistencia y reinicio pertenecen al encuentro",
     "safe": "Usa reloj segmentado, arma tachada, geometría de carriles, muesca completa, marca con forma, etiqueta, sonido, subtítulos y resultado distinto de derrota",
     "reducedMotion": "Con movimiento reducido no hay reproducción automática. Recorre 0,42, 0,55, 0,96, 1,22, 1,72, 1,98, 2,25, 2,60, 2,82, 3,46, 3,88 y 5,20 s.",
-    "diagramDescription": "Tavi enfrenta a Kern con una espada tachada y un reloj segmentado. Tres carriles verticales aparecen mientras Tavi sale por completo. La salud queda llena. Al completar el reloj aparece una hoja y una ruta segura. La interacción abre la salida y el registro marca perdonado, no derrotado."
+    "diagramDescription": "Tavi envaina la espada ante Kern mientras se llena una barra con reloj de arena; la barra con corazón sigue llena. Tres franjas de ataque cruzan la arena y Tavi sale de cada una. Aparece una hoja al cumplirse la condición pacífica y Tavi se acerca a Kern para confirmar la elección. Se abre una puerta de piedra y una tablilla con una hoja registra que el jefe fue perdonado."
   },
   "steps": [
     {

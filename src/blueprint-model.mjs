@@ -1165,24 +1165,24 @@ const SPECS = {
   },
   'pacifist-resolution': {
     mode: 'pacifist-resolution',
-    boss: [300, 375],
-    player: [300, 720],
-    target: [300, 720],
-    arena: [55, 310, 450, 570],
+    boss: [280, 245],
+    player: [280, 660],
+    target: [280, 660],
+    arena: [40, 145, 480, 715],
     attacks: [
-      { telegraph: [0.72, 0.96], active: [0.96, 1.22], laneX: 300 },
+      { telegraph: [0.72, 0.96], active: [0.96, 1.22], laneX: 280 },
       { telegraph: [1.45, 1.72], active: [1.72, 1.98], laneX: 390 },
-      { telegraph: [2.05, 2.25], active: [2.25, 2.5], laneX: 210 },
+      { telegraph: [2.05, 2.25], active: [2.25, 2.5], laneX: 170 },
     ],
-    laneTop: 435,
-    laneBottom: 820,
+    laneTop: 300,
+    laneBottom: 830,
     laneHalfWidth: 38,
     sheathAt: 0.42,
     restraintStartsAt: 0.55,
     conditionMetAt: 2.6,
     choiceOfferedAt: 2.78,
     spareApproachAt: 2.9,
-    sparePoint: [300, 555],
+    sparePoint: [280, 425],
     spareAt: 3.46,
     choiceEndsAt: 3.88,
     resolvedAt: 4.05,
@@ -5488,101 +5488,69 @@ function primitivesFor(spec, frame) {
   }
   if (mode === 'pacifist-resolution') {
     const liveAttack = spec.attacks[frame.pacifistAttackIndex];
-    const restraintWidth = 200 * frame.pacifistRestraintProgress;
-    const sparePulse = strikePulse(frame.time, spec.spareAt, 0.5);
-    const laneOpacity = frame.pacifistAttackActive ? 0.92 : 0;
-    const laneX = liveAttack?.laneX ?? 300;
-    const choiceOpacity = frame.pacifistChoiceOffered ? 0.96 : 0;
+    const laneX = liveAttack?.laneX ?? spec.attacks[0].laneX;
+    const sheathed = frame.time >= spec.sheathAt && frame.time < spec.resetAt;
+    const leafVisible = frame.pacifistChoiceOffered || frame.pacifistSpareCommitted;
+    const doorVisible = frame.pacifistResolved ? 0.96 : 0;
+    const swordX = frame.player.x - 34;
+    const swordY = frame.player.y - 25;
     return [
-      rect(...spec.arena, frame.pacifistResolved ? 0.28 : 0.52, 'muted', 0.025),
-      rect(180, 318, 240, 22, 0.62, 'muted', 0.035),
-      rect(
-        200,
-        322,
-        restraintWidth,
-        14,
-        0.96,
+      path('M 120 70 H 440 V 88 H 120 Z', 0.7, 'muted', 0, 0.68),
+      path(
+        `M 120 70 H ${120 + 320 * frame.pacifistRestraintProgress} V 88 H 120 Z`,
+        frame.pacifistRestraintProgress > 0 ? 0.98 : 0,
         frame.pacifistConditionComplete ? 'safe' : 'accent',
-        0.18,
+        0,
+        0.9,
       ),
-      ...Array.from({ length: 4 }, (_, index) =>
-        line(250 + index * 50, 321, 250 + index * 50, 338, 0.8, 'muted', 3),
-      ),
-      rect(214, 352, 172, 12, 0.5, 'muted', 0.025),
-      rect(214, 352, 172, 12, 0.92, 'safe', 0.15),
-      line(112, 388, 148, 432, frame.pacifistTracking ? 0.9 : 0.32, 'accent', 8),
-      line(148, 388, 112, 432, frame.pacifistTracking ? 0.9 : 0.32, 'accent', 8),
+      path('M 69 65 H 101 L 85 79 L 101 93 H 69 L 85 79 Z', 0.94, 'accent', 0, 0.8),
+      path('M 120 101 H 440 V 117 H 120 Z', 0.98, 'safe', 0, 0.88),
       path(
-        'M 115 420 Q 130 392 145 420 M 130 392 L 130 370',
-        frame.pacifistTracking ? 0.88 : 0.3,
-        'muted',
-        6,
+        'M 86 103 C 74 89 55 104 61 119 L 86 142 L 111 119 C 117 104 98 89 86 103 Z',
+        0.96,
+        'safe',
+        0,
+        0.86,
       ),
-      line(
-        laneX,
-        spec.laneTop,
-        laneX,
-        spec.laneBottom,
-        laneOpacity,
+      path(
+        `M ${laneX - spec.laneHalfWidth} ${spec.laneTop} H ${laneX + spec.laneHalfWidth} V ${spec.laneBottom} H ${laneX - spec.laneHalfWidth} Z`,
+        frame.pacifistAttackActive ? 0.85 : frame.pacifistAttackTelegraph ? 0.45 : 0,
         'signal',
-        spec.laneHalfWidth * 2,
+        0,
+        frame.pacifistAttackActive ? 0.62 : 0.36,
       ),
-      line(
-        laneX,
-        spec.laneTop,
-        laneX,
-        spec.laneBottom,
-        frame.pacifistAttackTelegraph ? 0.72 : 0,
+      path(
+        `M ${swordX - 7} ${swordY - 30} L ${swordX + 8} ${swordY - 28} L ${swordX + 17} ${swordY + 18} L ${swordX + 1} ${swordY + 23} Z`,
+        sheathed ? 0.98 : 0,
+        'muted',
+        0,
+        0.4,
+      ),
+      path(
+        `M ${swordX} ${swordY - 40} L ${swordX + 6} ${swordY - 28} M ${swordX - 10} ${swordY - 34} L ${swordX + 10} ${swordY - 38}`,
+        sheathed ? 0.98 : 0,
         'accent',
-        7,
-        '12 10',
-      ),
-      ...spec.attacks.map((attack, index) =>
-        path(
-          `M ${attack.laneX - 24} 455 L ${attack.laneX} 431 L ${attack.laneX + 24} 455`,
-          index === frame.pacifistAttackIndex ? 0.98 : 0.18,
-          index === frame.pacifistAttackIndex ? 'signal' : 'muted',
-          6,
-        ),
+        4,
       ),
       path(
-        `M ${frame.boss.x} ${frame.boss.y - 116} C ${frame.boss.x - 34} ${frame.boss.y - 146}, ${frame.boss.x - 52} ${frame.boss.y - 108}, ${frame.boss.x} ${frame.boss.y - 72} C ${frame.boss.x + 52} ${frame.boss.y - 108}, ${frame.boss.x + 34} ${frame.boss.y - 146}, ${frame.boss.x} ${frame.boss.y - 116} Z`,
-        choiceOpacity,
+        'M 367 187 C 342 189 345 224 364 228 C 389 226 393 195 367 187 Z',
+        leafVisible ? 0.96 : 0,
         'safe',
-        7,
-        0.18,
+        0,
+        0.86,
       ),
-      circle(
-        frame.boss.x,
-        frame.boss.y,
-        78 + pulse(frame.time * 2) * 5,
-        frame.pacifistChoiceOffered ? 0.76 : 0,
-        'safe',
-        7,
-        0.02,
-        '9 7',
-      ),
-      line(
-        frame.player.x,
-        frame.player.y - 36,
-        frame.boss.x,
-        frame.boss.y + 48,
-        frame.pacifistChoiceOffered ? 0.58 : 0.08,
-        'safe',
-        5,
-        '8 7',
-      ),
-      circle(frame.boss.x, frame.boss.y, 58 + sparePulse * 48, sparePulse, 'safe', 10, 0.08),
+      path('M 354 224 Q 369 211 380 197 M 354 224 L 347 237', leafVisible ? 0.96 : 0, 'muted', 4),
+      path('M 420 390 Q 460 357 500 390 V 542 H 420 Z', doorVisible, 'muted', 0, 0.86),
+      path('M 433 401 Q 460 379 487 401 V 539 H 433 Z', doorVisible, 'safe', 0, 0.22),
+      path('M 438 430 L 453 416 L 470 430 L 453 443 Z', doorVisible, 'safe', 0, 0.9),
+      path('M 74 232 L 106 232 L 113 274 L 90 286 L 67 274 Z', doorVisible, 'muted', 0, 0.86),
       path(
-        'M 438 394 L 474 430 L 438 466 M 474 430 L 407 430',
-        frame.pacifistResolved ? 0.92 : 0.18,
+        'M 90 246 C 72 250 79 272 90 272 C 103 270 107 249 90 246 Z',
+        doorVisible,
         'safe',
-        8,
+        0,
+        0.84,
       ),
-      circle(418, 515, 14, frame.pacifistResolved ? 0.96 : 0.24, 'safe', 5, 0.2),
-      path('M 411 515 L 417 521 L 428 507', frame.pacifistResolved ? 0.98 : 0.2, 'safe', 5),
-      circle(418, 558, 14, 0.28, 'muted', 5, 0.02),
-      path('M 410 550 L 426 566 M 426 550 L 410 566', 0.34, 'muted', 5),
     ];
   }
   if (mode === 'persistent-progress') {
@@ -10812,6 +10780,7 @@ export function blueprintFrame(id, time) {
   }
   if (spec.mode === 'pacifist-resolution') {
     frame.pacifistResolutionState = pacifistResolutionState(t);
+    frame.pacifistWeaponSheathed = t >= spec.sheathAt && t < spec.resetAt;
     frame.pacifistTracking = t >= spec.restraintStartsAt && t < spec.spareAt;
     frame.pacifistRestraintProgress =
       t < spec.restraintStartsAt
@@ -11352,7 +11321,8 @@ export function blueprintFrame(id, time) {
       spec.mode === 'maximum-health-reduction' ||
       spec.mode === 'instant-kill' ||
       spec.mode === 'status-buildup' ||
-      spec.mode === 'persistent-progress'
+      spec.mode === 'persistent-progress' ||
+      spec.mode === 'pacifist-resolution'
         ? 55
         : spec.mode === 'directional-shield' ||
             spec.mode === 'damage-type-resistance' ||

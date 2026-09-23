@@ -3281,6 +3281,8 @@ test('pacifist resolution survives three lanes and records spared without defeat
     }, milliseconds);
 
   await expect(page.locator('.lesson-title-line h1')).toHaveText('Pacifist resolution');
+  await expect(widget).toHaveAttribute('data-blueprint-full-height', 'true');
+  expect((await widget.boundingBox()).height).toBeGreaterThan(800);
   await expect(page.locator('.wip-badge, .draft-profile')).toHaveCount(0);
   await expect(page.locator('.game-example')).toHaveCount(3);
 
@@ -3289,6 +3291,10 @@ test('pacifist resolution survives three lanes and records spared without defeat
   await expect(widget).toHaveAttribute('data-blueprint-pacifist-attack', 'true');
   await expect(widget).toHaveAttribute('data-blueprint-pacifist-boss-health', '100');
   await expect(widget).toHaveAttribute('data-blueprint-pacifist-offensive-events', '0');
+  await expect(widget.locator('[data-blueprint-player] [data-rig-part="weapon"]')).toHaveAttribute(
+    'opacity',
+    '0',
+  );
 
   await seek(1800);
   await expect(widget).toHaveAttribute('data-blueprint-pacifist-resolution', 'restraint-threat-2');

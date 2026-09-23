@@ -27,7 +27,7 @@
     "locked": "Condition owner, qualifying time, disqualifying events, boss health, eligibility, choice deadline, resolution id, spared flag, reward, exit, persistence, and reset are encounter-owned",
     "safe": "Show restraint with a segmented clock, crossed weapon symbol, attack-lane geometry, completion notch, shaped spare marker, explicit choice label, sound, captions, and a distinct non-defeat result",
     "reducedMotion": "Autoplay is disabled by reduced motion. Scrub across 0.42, 0.55, 0.96, 1.22, 1.72, 1.98, 2.25, 2.60, 2.82, 3.46, 3.88, and 5.20 seconds to inspect sheathing, restraint, each lane, qualification, choice, spare, close, and reset.",
-    "diagramDescription": "Tavi faces Kern with a crossed sword icon and a segmented restraint clock above the arena. Three different vertical rune lanes appear in sequence while Tavi moves fully outside each one. The boss health bar remains full. When the clock completes, a leaf-shaped spare marker appears and a safe path leads to Kern. Tavi uses the interaction, the combat frame opens into an exit, and the outcome ledger marks spared while defeated remains empty."
+    "diagramDescription": "Tavi sheathes the sword beside Kern as an hourglass gauge fills; the separate heart gauge stays full. Three broad attack lanes reach across the arena, and Tavi walks clear of each. A leaf appears when the nonviolent condition is met, and Tavi approaches Kern to commit the choice. A stone doorway opens and a carved leaf tablet records that the boss was spared."
   },
   "steps": [
     {

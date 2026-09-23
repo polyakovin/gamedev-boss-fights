@@ -2903,9 +2903,9 @@ test('pacifist resolution keeps health intact and reserves one spared result', (
   assert.equal(pacifistResolutionOutcome({ conditionComplete: true, action: 'spare' }), 'spared');
 
   for (const [time, unsafe, safe] of [
-    [1, { x: 300, y: 720 }, { x: 180, y: 720 }],
-    [1.8, { x: 390, y: 720 }, { x: 300, y: 720 }],
-    [2.3, { x: 210, y: 720 }, { x: 420, y: 720 }],
+    [1, { x: 280, y: 660 }, { x: 180, y: 660 }],
+    [1.8, { x: 390, y: 660 }, { x: 300, y: 660 }],
+    [2.3, { x: 170, y: 660 }, { x: 420, y: 660 }],
   ]) {
     const frame = blueprintFrame(id, time);
     assert.equal(frame.dangerActive, true);
@@ -2914,6 +2914,7 @@ test('pacifist resolution keeps health intact and reserves one spared result', (
     assert.equal(frame.playerSafe, true);
     assert.equal(frame.pacifistBossHealth, 100);
     assert.equal(frame.pacifistOffensiveEvents, 0);
+    assert.equal(frame.pacifistWeaponSheathed, true);
   }
 
   const eligible = blueprintFrame(id, 2.9);
@@ -2936,6 +2937,10 @@ test('pacifist resolution keeps health intact and reserves one spared result', (
   assert.match(
     renderBlueprintThumbnail(id, 'test-pacifist-resolution'),
     /data-blueprint-preview="pacifist-resolution"/,
+  );
+  assert.match(
+    renderBlueprintThumbnail(id, 'test-pacifist-resolution'),
+    /data-rig-part="weapon" opacity="0"/,
   );
 });
 
