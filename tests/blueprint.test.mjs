@@ -1959,7 +1959,7 @@ test('control mode shift previews the remap, teaches its jump response, and rest
   assert.equal(preview.controlModePreviewed, true);
   assert.equal(preview.controlModeActive, false);
   assert.equal(preview.controlModeMapping, 'free-movement');
-  assert.ok(preview.primitives[6].opacity > 0.4, 'the handoff rune appears before remapping');
+  assert.ok(preview.primitives[5].opacity > 0.4, 'the carved rune lights before remapping');
 
   const handoff = blueprintFrame(id, 1.35);
   assert.equal(handoff.controlModeShiftState, 'control-handoff');
@@ -1972,11 +1972,11 @@ test('control mode shift previews the remap, teaches its jump response, and rest
   assert.equal(jump.controlModeWaveActive, true);
   assert.equal(jump.playerSafe, true);
   assert.ok(jump.player.y < 650, 'the remapped jump clears the grounded wave');
-  assert.ok(jump.primitives[13].opacity > 0.8, 'the active grounded wave remains visible');
+  assert.ok(jump.primitives[14].opacity > 0.8, 'the travelling ground spike remains visible');
 
   const punish = blueprintFrame(id, 3.85);
   assert.equal(punish.punishStrike, true);
-  assert.ok(punish.primitives[17].opacity > 0, 'the sword response lands after the mode lesson');
+  assert.ok(punish.primitives[15].opacity > 0, 'the sword response lands after the mode lesson');
 
   const returning = blueprintFrame(id, 5.2);
   assert.equal(returning.controlModeReturnVisible, true);

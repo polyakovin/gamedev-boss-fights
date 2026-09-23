@@ -2223,6 +2223,13 @@ test('control mode shift visibly hands free movement to a taught jump contract',
   await expect(page.locator('.wip-badge, .draft-profile')).toHaveCount(0);
   await expect(page.locator('.game-example')).toHaveCount(3);
   await expect(widget).toHaveAttribute('data-blueprint-playing', 'false');
+  await expect(widget).toHaveAttribute('data-blueprint-full-height', 'true');
+  expect(
+    await widget
+      .locator('[data-blueprint-primitives]')
+      .evaluate((element) => element.getBBox().height),
+  ).toBeGreaterThan(760);
+  await expect(widget.locator('[data-blueprint-primitives] [stroke-dasharray]')).toHaveCount(0);
 
   await seek(800);
   await expect(widget).toHaveAttribute('data-blueprint-control-mode-shift', 'mode-preview');
@@ -2241,7 +2248,7 @@ test('control mode shift visibly hands free movement to a taught jump contract',
     'horizontal-and-jump',
   );
   await expect(widget).toHaveAttribute('data-blueprint-control-mode-wave', 'true');
-  await expect(widget.locator('[data-blueprint-primitive="13"] circle')).not.toHaveAttribute(
+  await expect(widget.locator('[data-blueprint-primitive="14"] path')).not.toHaveAttribute(
     'opacity',
     '0',
   );

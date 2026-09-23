@@ -17,7 +17,7 @@
       "Restaurar el contrato original"
     ],
     "phaseDescriptions": [
-      "Tavi se mueve libremente. A los 0,55 s Kern revela la runa; la guía de cuatro direcciones se desvanece y un suelo con arco de salto anuncia la nueva gramática. Entre 1,15 y 1,65 s ambos se asientan sin peligro activo.",
+      "Tavi primero se mueve libremente sobre las losas de la cantera. A los 0,55 s Kern ilumina una runa de gravedad en lo alto del muro; el suelo se atenúa y una plataforma de piedra elevada anuncia movimiento lateral y salto. Entre 1,15 y 1,65 s ambos se asientan sin peligro activo.",
       "Ahora rigen el movimiento horizontal y el salto. Una onda terrestre se anticipa y viaja de 2,05 a 3,20 s; el salto de Tavi la supera con todo el cuerpo y crea una apertura para la espada a los 3,85 s.",
       "La apertura sigue legible tras el límite de fase. A los 4,75 s la runa se libera, vuelve la guía libre y ambos recorren rutas continuas hasta el inicio exacto del bucle."
     ],
@@ -27,7 +27,7 @@
     "locked": "Disparador, tabla de mapeo, cámara, inmunidad de transición, ataques, salida y restauración se definen juntos",
     "safe": "Lee la señal, prueba el verbo sustituto en un espacio protegido y úsalo ante la primera amenaza real",
     "reducedMotion": "El movimiento reducido desactiva la reproducción automática. Recorre 0,55, 1,15, 1,65, 2,05, 2,62, 3,20, 3,85 y 4,75 segundos para inspeccionar todo el relevo.",
-    "diagramDescription": "Una cantera pasa de una cuadrícula libre a un carril lateral con gravedad. La runa de Kern sustituye la guía de cuatro direcciones por un suelo y un arco; Tavi aterriza a salvo, salta la onda, ataca en la apertura y vuelve visiblemente al movimiento libre."
+    "diagramDescription": "El muro de la cantera y su runa de gravedad tallada llenan la escena. Las losas anchas dan paso a una plataforma de piedra elevada; Tavi aterriza a salvo, salta una espina móvil del suelo, ataca en la apertura y vuelve visiblemente al movimiento libre."
   },
   "steps": [
     {

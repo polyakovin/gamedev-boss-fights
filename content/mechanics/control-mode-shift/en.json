@@ -17,7 +17,7 @@
       "Restore the original contract"
     ],
     "phaseDescriptions": [
-      "Tavi first moves freely. At 0.55 s Kern exposes a gravity rune, the four-direction guide fades, and a floor plus jump arc previews the next control grammar. From 1.15–1.65 s both actors settle while danger remains disabled.",
+      "Tavi first moves across the quarry slabs. At 0.55 s Kern lights a gravity rune high on the wall; the free-movement floor dims as a raised stone platform previews horizontal movement and jumping. From 1.15–1.65 s both actors settle while danger remains disabled.",
       "Horizontal movement and jump are now active. A grounded rune wave is previewed before travelling from 2.05–3.20 s; Tavi's authored jump clears it with full-body space, then the new mode produces a sword opening at 3.85 s.",
       "The opening remains readable through the phase boundary. At 4.75 s the gravity rune releases, the free-movement guide returns, and both actors follow visible continuous paths to the exact loop start."
     ],
@@ -27,7 +27,7 @@
     "locked": "Trigger, mapping table, camera framing, transition immunity, attack set, exit condition, and restoration point are authored together",
     "safe": "Read the mode signal, test the replacement verb in protected space, then use that verb to clear the first real threat",
     "reducedMotion": "Autoplay is disabled by reduced motion. Scrub across 0.55, 1.15, 1.65, 2.05, 2.62, 3.20, 3.85, and 4.75 seconds to inspect the complete control handoff.",
-    "diagramDescription": "One quarry arena changes from a free-movement grid into a side-on gravity lane. Kern's rune replaces a four-direction control diagram with a horizontal floor and jump arc; Tavi settles safely, jumps a grounded wave, attacks during the opening, and visibly returns to free movement."
+    "diagramDescription": "A quarry wall and its carved gravity rune fill the arena. The broad floor slabs give way to a raised stone platform; Tavi settles safely, jumps a travelling ground spike, attacks during the opening, and visibly returns to free movement."
   },
   "steps": [
     {
