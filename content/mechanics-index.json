@@ -1463,9 +1463,9 @@
       "number": 92,
       "translations": {
         "en": {
-          "title": "Instant-kill",
+          "title": "Instant-kill condition",
           "category": "States, resources, and scaling",
-          "summary": "Draft outline for the instant-kill mechanic. Rules, tuning guidance, and examples are still in progress."
+          "summary": "A clearly signaled condition bypasses ordinary damage and ends the current attempt through one authoritative result."
         },
         "ru": {
           "title": "Мгновенная казнь",

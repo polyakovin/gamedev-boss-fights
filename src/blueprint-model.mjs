@@ -1248,6 +1248,27 @@ const SPECS = {
     immunityEndsAt: 4.42,
     resetAt: 5.2,
   },
+  'instant-kill': {
+    mode: 'instant-kill',
+    boss: [300, 375],
+    player: [300, 610],
+    target: [455, 720],
+    arena: [55, 310, 450, 570],
+    executionCenter: [300, 610],
+    safePoint: [455, 720],
+    executionRadius: 92,
+    firstTelegraph: [0.3, 0.96],
+    firstEscape: [0.48, 0.88],
+    firstResolveAt: 0.98,
+    return: [1.16, 1.58],
+    secondTelegraph: [1.82, 2.58],
+    conditionLockedAt: 2.58,
+    executeAt: 2.86,
+    executionWindow: [2.78, 2.98],
+    resultVisibleAt: 3.02,
+    restore: [4.18, 4.72],
+    resetAt: 5.2,
+  },
   'wide-swing': { mode: 'arc', boss: [280, 310], player: [410, 470], target: [470, 650] },
   lunge: { mode: 'lunge', boss: [170, 290], player: [390, 590], target: [470, 660] },
   grab: { mode: 'grab', boss: [280, 300], player: [390, 485], target: [470, 610] },
@@ -2199,6 +2220,33 @@ const statusBuildupValueAt = (spec, time) => {
   if (time < spec.effectEndsAt) return 100;
   return 0;
 };
+
+export function instantKillState(time) {
+  const spec = SPECS['instant-kill'];
+  const t = localTime(time);
+  if (t < spec.firstTelegraph[0]) return 'ready';
+  if (t < spec.firstResolveAt) return 'first-telegraph';
+  if (t < spec.return[0]) return 'first-avoided';
+  if (t < spec.secondTelegraph[0]) return 'repositioning';
+  if (t < spec.conditionLockedAt) return 'second-telegraph';
+  if (t < spec.executeAt) return 'condition-locked';
+  if (t < spec.resultVisibleAt) return 'executing';
+  if (t < spec.restore[0]) return 'attempt-ended';
+  if (t < spec.restore[1]) return 'restoring';
+  if (t < spec.resetAt) return 'ready';
+  return 'reset';
+}
+
+export function instantKillResolve({
+  conditionMet = false,
+  targetAlive = true,
+  resultReserved = false,
+} = {}) {
+  if (resultReserved) return Object.freeze({ outcome: 'locked', resultCount: 0, damage: 0 });
+  if (!targetAlive) return Object.freeze({ outcome: 'ignored', resultCount: 0, damage: 0 });
+  if (!conditionMet) return Object.freeze({ outcome: 'avoided', resultCount: 0, damage: 0 });
+  return Object.freeze({ outcome: 'executed', resultCount: 1, damage: 0 });
+}
 
 const projectileRallyLegAt = (spec, time) => {
   const index = spec.legs.findIndex(({ start, end }) => time >= start && time < end);
@@ -5418,6 +5466,96 @@ function primitivesFor(spec, frame) {
       ),
     ];
   }
+  if (mode === 'instant-kill') {
+    const center = point(spec.executionCenter);
+    const firstTelegraph = frame.time >= spec.firstTelegraph[0] && frame.time < spec.firstResolveAt;
+    const secondTelegraph = frame.time >= spec.secondTelegraph[0] && frame.time < spec.executeAt;
+    const telegraph = firstTelegraph || secondTelegraph;
+    const resolvePulse = Math.max(
+      strikePulse(frame.time, spec.firstResolveAt, 0.36),
+      strikePulse(frame.time, spec.executeAt, 0.48),
+    );
+    const countdown = secondTelegraph
+      ? clamp((frame.time - spec.secondTelegraph[0]) / (spec.executeAt - spec.secondTelegraph[0]))
+      : firstTelegraph
+        ? clamp(
+            (frame.time - spec.firstTelegraph[0]) / (spec.firstResolveAt - spec.firstTelegraph[0]),
+          )
+        : 0;
+    return [
+      rect(...spec.arena, frame.instantKillAttemptEnded ? 0.28 : 0.52, 'muted', 0.025),
+      rect(178, 318, 244, 20, 0.64, 'muted', 0.035),
+      rect(182, 322, 236, 12, 0.96, 'safe', 0.18),
+      line(182, 344, 418, 344, frame.instantKillAttemptEnded ? 0.96 : 0.18, 'signal', 6),
+      line(182, 314, 418, 348, frame.instantKillAttemptEnded ? 0.96 : 0, 'signal', 7),
+      circle(
+        center.x,
+        center.y,
+        spec.executionRadius,
+        telegraph ? 0.86 : frame.instantKillAttemptEnded ? 0.28 : 0.12,
+        frame.instantKillConditionLocked || frame.instantKillExecuted ? 'signal' : 'accent',
+        frame.instantKillConditionLocked ? 11 : 6,
+        telegraph ? 0.08 : 0.015,
+        frame.instantKillConditionLocked ? '' : '11 9',
+      ),
+      circle(
+        center.x,
+        center.y,
+        spec.executionRadius * (1 - 0.48 * countdown),
+        telegraph ? 0.7 : 0,
+        'signal',
+        5,
+        0.02,
+      ),
+      ...Array.from({ length: 6 }, (_, index) => {
+        const angle = (Math.PI * 2 * index) / 6 - Math.PI / 2;
+        const x = center.x + Math.cos(angle) * 116;
+        const y = center.y + Math.sin(angle) * 116;
+        return path(
+          `M ${x - 9} ${y} L ${x} ${y - 9} L ${x + 9} ${y} L ${x} ${y + 9} Z`,
+          telegraph && index / 6 <= countdown ? 0.96 : 0.2,
+          telegraph && index / 6 <= countdown ? 'signal' : 'muted',
+          4,
+          telegraph && index / 6 <= countdown ? 0.15 : 0.02,
+        );
+      }),
+      circle(center.x, center.y, 30 + resolvePulse * 78, resolvePulse, 'signal', 12, 0.07),
+      circle(
+        spec.safePoint[0],
+        spec.safePoint[1] - 34,
+        34,
+        frame.instantKillFirstAvoided ? 0.86 : 0,
+        'safe',
+        6,
+        0.04,
+        '8 7',
+      ),
+      path(
+        `M ${spec.safePoint[0] - 14} ${spec.safePoint[1] - 35} L ${spec.safePoint[0] - 3} ${spec.safePoint[1] - 24} L ${spec.safePoint[0] + 18} ${spec.safePoint[1] - 49}`,
+        frame.instantKillFirstAvoided ? 0.98 : 0,
+        'safe',
+        6,
+      ),
+      line(
+        frame.player.x - 42,
+        frame.player.y - 108,
+        frame.player.x + 42,
+        frame.player.y - 24,
+        frame.instantKillAttemptEnded ? 0.98 : 0,
+        'signal',
+        10,
+      ),
+      line(
+        frame.player.x + 42,
+        frame.player.y - 108,
+        frame.player.x - 42,
+        frame.player.y - 24,
+        frame.instantKillAttemptEnded ? 0.98 : 0,
+        'signal',
+        10,
+      ),
+    ];
+  }
   if (mode === 'encounter-specific-tool') {
     const pedestal = point(spec.pedestal);
     const spearBase = { x: frame.player.x - 8, y: frame.player.y - 22 };
@@ -6907,6 +7045,12 @@ function pointClearsThreat(spec, frame, value, radius = BLUEPRINT_PLAYER_RADIUS)
       !frame.dangerActive ||
       Math.hypot(value.x - frame.boss.x, value.y - frame.boss.y) > spec.auraRadius + radius
     );
+  if (mode === 'instant-kill')
+    return (
+      !frame.dangerActive ||
+      Math.hypot(value.x - spec.executionCenter[0], value.y - spec.executionCenter[1]) >
+        spec.executionRadius + radius
+    );
   if (mode === 'projectile-rally')
     return (
       !frame.dangerActive ||
@@ -7289,6 +7433,7 @@ export function blueprintFrame(id, time) {
   else if (spec.mode === 'pacifist-resolution') responseProgress = 0;
   else if (spec.mode === 'persistent-progress') responseProgress = 0;
   else if (spec.mode === 'status-buildup') responseProgress = 0;
+  else if (spec.mode === 'instant-kill') responseProgress = 0;
   else if (spec.mode === 'knockback')
     responseProgress = phase === 0 ? 0 : phase === 1 ? smooth(action) : 1;
   else if (spec.mode === 'target-lock')
@@ -8142,6 +8287,23 @@ export function blueprintFrame(id, time) {
       };
     } else player = startPlayer;
   }
+  if (spec.mode === 'instant-kill') {
+    const safe = point(spec.safePoint);
+    if (t < spec.firstEscape[0]) player = startPlayer;
+    else if (t < spec.firstEscape[1]) {
+      const escape = smooth(
+        (t - spec.firstEscape[0]) / (spec.firstEscape[1] - spec.firstEscape[0]),
+      );
+      player = { x: mix(startPlayer.x, safe.x, escape), y: mix(startPlayer.y, safe.y, escape) };
+    } else if (t < spec.return[0]) player = safe;
+    else if (t < spec.return[1]) {
+      const returning = smooth((t - spec.return[0]) / (spec.return[1] - spec.return[0]));
+      player = {
+        x: mix(safe.x, startPlayer.x, returning),
+        y: mix(safe.y, startPlayer.y, returning),
+      };
+    } else player = startPlayer;
+  }
   if (spec.mode === 'rotating' && phase === 0) {
     const initialPosition = polar(boss, 255, Math.PI / 3);
     player = {
@@ -8555,6 +8717,11 @@ export function blueprintFrame(id, time) {
       pulse(smooth((t - spec.reenter[0]) / (spec.reenter[1] - spec.reenter[0]))),
       pulse(smooth((t - spec.immunityEndsAt) / (spec.resetAt - spec.immunityEndsAt))),
     );
+  if (spec.mode === 'instant-kill')
+    stride = Math.max(
+      pulse(smooth((t - spec.firstEscape[0]) / (spec.firstEscape[1] - spec.firstEscape[0]))),
+      pulse(smooth((t - spec.return[0]) / (spec.return[1] - spec.return[0]))),
+    );
   const bossVisible =
     spec.mode === 'secondary-cues-invisibility'
       ? t < spec.vanishAt
@@ -8819,7 +8986,8 @@ export function blueprintFrame(id, time) {
             spec.mode === 'posture-stagger-gauge' ||
             spec.mode === 'pacifist-resolution' ||
             spec.mode === 'persistent-progress' ||
-            spec.mode === 'status-buildup'
+            spec.mode === 'status-buildup' ||
+            spec.mode === 'instant-kill'
           ? (Math.atan2(boss.y - player.y, boss.x - player.x) * 180) / Math.PI
           : spec.mode === 'active-phase'
             ? (Math.atan2(boss.y - player.y, boss.x - player.x) * 180) / Math.PI
@@ -9812,6 +9980,29 @@ export function blueprintFrame(id, time) {
       strikePulse(t, spec.immuneProbeAt, 0.36),
     );
   }
+  if (spec.mode === 'instant-kill') {
+    frame.instantKillState = instantKillState(t);
+    frame.instantKillFirstAvoided = t >= spec.firstResolveAt && t < spec.secondTelegraph[0];
+    frame.instantKillConditionLocked = t >= spec.conditionLockedAt && t < spec.resetAt;
+    frame.instantKillExecuted = t >= spec.executeAt && t < spec.resetAt;
+    frame.instantKillAttemptEnded = t >= spec.resultVisibleAt && t < spec.restore[1];
+    frame.instantKillTargetAlive = !frame.instantKillAttemptEnded;
+    frame.instantKillHealthBefore = 100;
+    frame.instantKillDamageApplied = 0;
+    frame.instantKillResultCount = frame.instantKillExecuted ? 1 : 0;
+    frame.instantKillResultId = frame.instantKillExecuted ? 'instant-kill-1' : 'none';
+    frame.instantKillCondition = frame.instantKillConditionLocked
+      ? 'inside-execution-seal'
+      : 'open';
+    frame.dangerActive = t >= spec.executionWindow[0] && t < spec.executionWindow[1];
+    frame.playerMotion.attack = 0;
+    frame.playerMotion.dodge = strikePulse(t, spec.firstResolveAt, 0.44);
+    frame.playerMotion.impact = strikePulse(t, spec.executeAt, 0.42);
+    frame.bossMotion.attack = Math.max(
+      strikePulse(t, spec.firstResolveAt, 0.36),
+      strikePulse(t, spec.executeAt, 0.42),
+    );
+  }
   if (spec.mode === 'sound-detection') {
     frame.soundDetectionState = soundDetectionState(t);
     frame.soundDetectionHeard = t >= spec.heardAt && t < spec.resetAt;
@@ -10095,7 +10286,8 @@ export function blueprintFrame(id, time) {
       spec.mode === 'posture-stagger-gauge' ||
       spec.mode === 'pacifist-resolution' ||
       spec.mode === 'persistent-progress' ||
-      spec.mode === 'status-buildup'
+      spec.mode === 'status-buildup' ||
+      spec.mode === 'instant-kill'
         ? 92
         : -62),
   };

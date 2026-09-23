@@ -1,0 +1,142 @@
+{
+  "title": "Condición de muerte instantánea",
+  "subtitle": "Termina el intento por una condición explícita, no por daño normal",
+  "variant": "Avisar · responder · fijar · resolver",
+  "summary": "Una condición bien señalizada evita el daño normal y termina el intento con un único resultado autoritativo.",
+  "overview": "Una condición de muerte instantánea termina el intento cuando una regla explícita se vuelve verdadera, sin restar daño normal. Como salud, defensa y curación no reducen el resultado, necesita aviso temprano y redundante, una respuesta alcanzable, un instante preciso de fijación y una sola resolución autoritativa.",
+  "learning": "Define la condición letal, objetivos válidos, tiempos de aviso y fijación, geometría de cuerpo completo, respuestas, excepciones de inmunidad y resurrección, autoridad del resultado, cámara, controles, red y pruebas que la separen de un daño simplemente enorme.",
+  "category": "Estados, recursos y escalado",
+  "readTime": "9 min",
+  "demo": {
+    "title": "Sal del primer sello de Kern y observa la misma condición sin resolver",
+    "timeline": "Cronología de muerte instantánea",
+    "step": "Estados de ejecución",
+    "phaseNames": [
+      "Señala la condición y demuestra su respuesta",
+      "Fija la condición fallida y termina una vez",
+      "Mantén el resultado, restaura y reinicia"
+    ],
+    "phaseDescriptions": [
+      "Kern marca un sello fijo a 0,30 s. Todo el cuerpo de Tavi sale del radio de 92 antes de 0,98 s, así que la condición es falsa y no cambian salud, resultado ni recompensa.",
+      "El sello reaparece a 1,82 s con seis runas de cuenta atrás y se fija a 2,58 s. Tavi sigue dentro al resolver a 2,86 s: se reserva instant-kill-1 una vez, se aplica cero daño normal y el intento termina aunque la salud era 100.",
+      "El resultado permanece visible hasta restaurar a 4,18 s. Control y colisión vuelven tras la ventana segura de 4,72 s, y la autoridad se limpia al reiniciar después de 5,20 s."
+    ],
+    "boss": "Jefe",
+    "player": "Jugador",
+    "danger": "Solo la condición en el instante de resolución es letal; el aviso es inofensivo, la salida completa evita el primer sello y un fallo reserva un solo resultado terminal",
+    "locked": "Identificador, objetivo, geometría, aviso, fijación, instante de resolución, respuestas, inmunidad, resultado, resurrección y recompensa pertenecen al encuentro",
+    "safe": "Usa límite fijo, cuenta atrás, pulso de fijación, marca terminal, sonido y texto; no ocultes la ejecución tras feedback de daño normal",
+    "reducedMotion": "Con movimiento reducido no hay reproducción automática. Recorre 0,30, 0,48, 0,88, 0,98, 1,82, 2,58, 2,86, 3,02, 4,18, 4,72 y 5,20 s.",
+    "diagramDescription": "Kern está sobre un sello circular fijo con seis runas. Primero Tavi sale por completo y una marca verde confirma la evasión. Después permanece dentro: el borde se fija, el pulso resuelve, la barra de salud llena se tacha y una marca terminal conserva la causa antes del reinicio."
+  },
+  "steps": [
+    {
+      "title": "¿Qué hecho exacto termina el intento?",
+      "body": "Exprésalo como un predicado comprobable: dentro del sello, aplastado, Doom sin limpiar o golpeado en un estado especial. Captura sus entradas al fijar y no lo conviertas en un número de daño que salud, armadura o dificultad puedan sobrevivir."
+    },
+    {
+      "title": "¿Qué respuesta alcanzable promete el aviso?",
+      "body": "Presupuesta reconocimiento, movimiento, latencia, cámara y todo el volumen de colisión. Declara si hay que salir, mirar a otro lado, limpiar, interrumpir o cubrirse. Prueba la configuración legal más lenta sin exigir una mejora opcional."
+    },
+    {
+      "title": "¿Cómo se vuelve justo y determinista un resultado terminal?",
+      "body": "Resuelve una vez en la autoridad, reserva un id estable y cancela daño o recompensas duplicados. Define invulnerabilidad, resurrección, rescate cooperativo, reversión, victoria simultánea, transición y entrada tardía."
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "La versión letal reutiliza un ataque normal sin mejor aviso",
+      "body": "Si una forma a veces quita salud y a veces termina el intento, el color no basta. Añade estado previo, silueta, límite, cadencia, sonido, texto y una señal persistente antes de la respuesta."
+    },
+    {
+      "title": "La ejecución se implementa como daño extremo",
+      "body": "Un número grande interactúa mal con escudos, reducción, salud temporal y dificultad. Resuelve la condición directamente y emite un resultado con causa y cero daño normal."
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "Separa aviso, fijación, resolución y consecuencia",
+      "body": "El aviso puede seguir sin dañar; la fijación congela datos; la resolución evalúa una vez; la consecuencia detiene combate y conserva la causa. Guárdalos como estados distintos."
+    },
+    {
+      "title": "Prueba geometría completa y la peor respuesta",
+      "body": "La salida usa todo el volumen, no el centro. Recorre puntos de aparición, cámara, ralentizaciones, latencia, bloqueos y obstáculos, dejando margen medido."
+    },
+    {
+      "title": "Relaciona severidad, frecuencia y coste de reintento",
+      "body": "Mide tiempo de aviso, fallos tras reconocer, tiempo perdido, distancia al punto de control y solapes de carga visual o de entrada."
+    },
+    {
+      "title": "Define excepciones antes de multiplicar contenido",
+      "body": "Decide si invulnerabilidad, esquiva, escudo, resurrección, compañeros o ayudas responden. Expón permisos y rechazos de forma consistente."
+    }
+  ],
+  "story": {
+    "title": "El sello juzga posición, no resistencia",
+    "body": "Las seis runas cierran un círculo. Tavi escapa del primero; en el segundo permanece dentro y la salud llena se tacha en lugar de drenarse, mostrando que la regla causa la derrota."
+  },
+  "adaptation": {
+    "title": "Conserva la regla y amplía percepción y respuesta",
+    "body": "Ofrece límites grandes, aviso largo, menos destellos, audio único, texto, vibración y vista previa. Las opciones pueden ampliar la respuesta, reducir demandas, dar un salvamento o sustituir el resultado por daño severo, siempre anunciado antes."
+  },
+  "distinction": {
+    "title": "Un predicado terminal, no solo un ataque de un golpe",
+    "body": "El daño alto aún pasa por salud y mitigación. La muerte instantánea elige directamente un resultado terminal. La acumulación puede alimentar ese predicado, pero acumulación y consecuencia siguen siendo reglas separadas."
+  },
+  "lensNotes": [
+    {
+      "id": "telegraphing",
+      "body": "El aviso comunica la regla letal y su respuesta antes de fijar, no solo decora el golpe."
+    },
+    {
+      "id": "counterplay",
+      "body": "Una respuesta prometida debe volver falso el predicado para todo el cuerpo en condiciones legales."
+    },
+    {
+      "id": "risk-reward",
+      "body": "Seguir atacando puede consumir el margen, pero la recompensa no depende de información posterior a la fijación."
+    },
+    {
+      "id": "rule-exception",
+      "body": "Invulnerabilidad, resurrección, limpieza, escudos y controles alternativos requieren inclusión o exclusión explícita."
+    },
+    {
+      "id": "progress-clarity",
+      "body": "La interfaz distingue aviso, condición fijada, resultado terminal y control restaurado con un id estable."
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "Terraria",
+      "boss": "Empress of Light",
+      "screenshot": "https://i.ytimg.com/vi/Hsrv-7U4ACU/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=Hsrv-7U4ACU&t=1s",
+      "body": "De día, el jefe enfurecido vuelve amarillos sus proyectiles y sus ataques suelen matar de un golpe, ignorando efectos de esquiva. Es un caso límite basado aún en daño enorme, por lo que debe señalarse el contexto letal de todo el encuentro.",
+      "video": "https://www.youtube.com/watch?v=Hsrv-7U4ACU&t=1s",
+      "videoDurationSeconds": 39
+    },
+    {
+      "dimension": "2D",
+      "game": "Spelunky",
+      "boss": "Olmec",
+      "screenshot": "https://i.ytimg.com/vi/YkMckXuFYQw/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=YkMckXuFYQw&t=4s",
+      "body": "Olmec se detiene arriba antes de caer, y aplastar mata al instante en vez de quitar corazones. Pausa, anchura, suelo y paredes hacen de la condición un predicado espacial para toda la colisión.",
+      "video": "https://www.youtube.com/watch?v=YkMckXuFYQw&t=4s",
+      "videoDurationSeconds": 80
+    },
+    {
+      "dimension": "3D",
+      "game": "Final Fantasy XIV",
+      "boss": "Angra Mainyu",
+      "screenshot": "https://i.ytimg.com/vi/dPZjUaQr1ZA/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=dPZjUaQr1ZA&t=35s",
+      "body": "Mortal Gaze aplica Doom al fallar la mirada y un glifo iluminado puede limpiarlo antes del final. La interfaz debe enlazar fallo, cuenta atrás, limpieza y KO como una sola cadena causal.",
+      "video": "https://www.youtube.com/watch?v=dPZjUaQr1ZA&t=35s",
+      "videoDurationSeconds": 225
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

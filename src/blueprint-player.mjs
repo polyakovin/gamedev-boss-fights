@@ -440,6 +440,19 @@ export function initializeBlueprint(widget) {
       widget.dataset.blueprintStatusIgnoredContacts = String(frame.statusBuildupIgnoredContacts);
       widget.dataset.blueprintStatusEffectId = frame.statusBuildupEffectId;
     }
+    if (mechanicId === 'instant-kill') {
+      widget.dataset.blueprintInstantKill = frame.instantKillState;
+      widget.dataset.blueprintInstantKillFirstAvoided = String(frame.instantKillFirstAvoided);
+      widget.dataset.blueprintInstantKillConditionLocked = String(frame.instantKillConditionLocked);
+      widget.dataset.blueprintInstantKillExecuted = String(frame.instantKillExecuted);
+      widget.dataset.blueprintInstantKillAttemptEnded = String(frame.instantKillAttemptEnded);
+      widget.dataset.blueprintInstantKillTargetAlive = String(frame.instantKillTargetAlive);
+      widget.dataset.blueprintInstantKillHealthBefore = String(frame.instantKillHealthBefore);
+      widget.dataset.blueprintInstantKillDamage = String(frame.instantKillDamageApplied);
+      widget.dataset.blueprintInstantKillResultCount = String(frame.instantKillResultCount);
+      widget.dataset.blueprintInstantKillResultId = frame.instantKillResultId;
+      widget.dataset.blueprintInstantKillCondition = frame.instantKillCondition;
+    }
     boss.setAttribute(
       'transform',
       `translate(${frame.boss.x} ${frame.boss.y}) scale(${frame.bossScale})`,

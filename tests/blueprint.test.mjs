@@ -39,6 +39,8 @@ import {
   persistentProgressRestore,
   statusBuildupState,
   statusBuildupApply,
+  instantKillState,
+  instantKillResolve,
   counterStanceOutcome,
   counterStanceState,
   blueprintFrame,
@@ -66,8 +68,8 @@ import {
   renderBlueprintThumbnail,
 } from '../lib/blueprint-view.mjs';
 
-test('all 85 promoted lesson animations have distinct rule modes and complete moving frames', () => {
-  assert.equal(BLUEPRINT_MECHANIC_IDS.length, 85);
+test('all 86 promoted lesson animations have distinct rule modes and complete moving frames', () => {
+  assert.equal(BLUEPRINT_MECHANIC_IDS.length, 86);
   const modes = new Set();
   for (const id of BLUEPRINT_MECHANIC_IDS) {
     for (let time = 0; time <= BLUEPRINT_DURATION; time += 0.1) {
@@ -88,7 +90,7 @@ test('all 85 promoted lesson animations have distinct rule modes and complete mo
           assert.ok(Number.isFinite(value), `${id} has an invalid ${primitive.type}`);
     }
   }
-  assert.equal(modes.size, 85);
+  assert.equal(modes.size, 86);
 });
 
 test('every blueprint exposes signal, committed action, and recovery without player teleports', () => {
@@ -123,7 +125,8 @@ test('every blueprint exposes signal, committed action, and recovery without pla
       id !== 'posture-stagger-gauge' &&
       id !== 'pacifist-resolution' &&
       id !== 'persistent-progress' &&
-      id !== 'status-buildup'
+      id !== 'status-buildup' &&
+      id !== 'instant-kill'
     )
       assert.equal(blueprintFrame(id, 3).dangerActive, true, id);
     assert.equal(blueprintFrame(id, 3).playerSafe, true, id);
@@ -208,6 +211,7 @@ test('every damaging promoted animation derives safety from its own active geome
       id !== 'pacifist-resolution' &&
       id !== 'persistent-progress' &&
       id !== 'status-buildup' &&
+      id !== 'instant-kill' &&
       id !== 'part-break' &&
       id !== 'counter-stance' &&
       id !== 'absorption-power-up' &&
@@ -3050,5 +3054,53 @@ test('status buildup decays partial exposure and emits one effect at the thresho
   assert.match(
     renderBlueprintThumbnail(id, 'test-status-buildup'),
     /data-blueprint-preview="status-buildup"/,
+  );
+});
+
+test('instant kill resolves one terminal predicate without ordinary damage', () => {
+  const id = 'instant-kill';
+  assert.deepEqual([0, 0.5, 1, 1.4, 2, 2.65, 2.9, 3.2, 4.4, 4.8, 5.3].map(instantKillState), [
+    'ready',
+    'first-telegraph',
+    'first-avoided',
+    'repositioning',
+    'second-telegraph',
+    'condition-locked',
+    'executing',
+    'attempt-ended',
+    'restoring',
+    'ready',
+    'reset',
+  ]);
+  assert.deepEqual(instantKillResolve({ conditionMet: false }), {
+    outcome: 'avoided',
+    resultCount: 0,
+    damage: 0,
+  });
+  assert.deepEqual(instantKillResolve({ conditionMet: true }), {
+    outcome: 'executed',
+    resultCount: 1,
+    damage: 0,
+  });
+  assert.equal(instantKillResolve({ conditionMet: true, resultReserved: true }).outcome, 'locked');
+
+  const avoided = blueprintFrame(id, 1);
+  assert.equal(avoided.instantKillFirstAvoided, true);
+  assert.equal(avoided.instantKillResultCount, 0);
+  assert.equal(avoided.instantKillHealthBefore, 100);
+  const execution = blueprintFrame(id, 2.9);
+  assert.equal(execution.dangerActive, true);
+  assert.equal(execution.playerSafe, false);
+  assert.equal(blueprintPointSafe(id, 2.9, { x: 455, y: 720 }), true);
+  assert.equal(execution.instantKillExecuted, true);
+  assert.equal(execution.instantKillDamageApplied, 0);
+  assert.equal(execution.instantKillResultCount, 1);
+  assert.equal(execution.instantKillResultId, 'instant-kill-1');
+  assert.equal(execution.instantKillFirstAvoided, false);
+  assert.equal(blueprintFrame(id, 3.2).instantKillAttemptEnded, true);
+  assert.deepEqual(blueprintFrame(id, 0).player, blueprintFrame(id, 6).player);
+  assert.match(
+    renderBlueprintThumbnail(id, 'test-instant-kill'),
+    /data-blueprint-preview="instant-kill"/,
   );
 });

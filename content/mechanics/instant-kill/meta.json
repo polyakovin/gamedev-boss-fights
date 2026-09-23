@@ -1,0 +1,32 @@
+{
+  "id": "instant-kill",
+  "number": 92,
+  "published": true,
+  "sourceLocale": "en",
+  "contentVersion": 1,
+  "animation": "instant-kill",
+  "lenses": ["telegraphing", "counterplay", "risk-reward", "rule-exception", "progress-clarity"],
+  "related": ["marked-area-strike", "status-buildup", "situational-immunity", "recovery"],
+  "sources": [
+    {
+      "title": "Boss Up: Boss Battle Design",
+      "url": "https://media.gdcvault.com/gdc2018/presentations/Keren_Itay_BossUp.pdf"
+    },
+    {
+      "title": "Empress of Light enraged instant-kill attacks — Official Terraria Wiki",
+      "url": "https://terraria.wiki.gg/wiki/Empress_of_Light"
+    },
+    {
+      "title": "Olmec crushing damage — Spelunky Wiki",
+      "url": "https://spelunky.fandom.com/wiki/Olmec_(HD)"
+    },
+    {
+      "title": "Angra Mainyu Mortal Gaze and Doom — Final Fantasy XIV Guide",
+      "url": "https://www.thonky.com/final-fantasy-xiv/duties/the-world-of-darkness-duty"
+    },
+    {
+      "title": "Doom cleansing rules in Final Fantasy XIV",
+      "url": "https://ffxiv.consolegameswiki.com/wiki/Doom_(Status_Effect)"
+    }
+  ]
+}

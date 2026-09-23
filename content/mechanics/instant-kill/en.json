@@ -1,0 +1,142 @@
+{
+  "title": "Instant-kill condition",
+  "subtitle": "End the attempt from one explicit condition instead of ordinary damage",
+  "variant": "Warn · answer · lock · resolve",
+  "summary": "A clearly signaled condition bypasses ordinary damage and ends the current attempt through one authoritative result.",
+  "overview": "An instant-kill condition ends the current attempt when one explicit rule becomes true instead of subtracting ordinary damage. Because health, defense, and healing cannot soften that result, the condition needs early redundant warning, a reachable answer, a precise commitment moment, and exactly one authoritative resolution.",
+  "learning": "Define the lethal condition, eligible targets, telegraph and lock times, complete-body danger geometry, valid answers, immunity and revival exceptions, result ownership, camera and input behavior, multiplayer authority, and tests that distinguish a deliberate execution from merely very high damage.",
+  "category": "States, resources, and scaling",
+  "readTime": "9 min",
+  "demo": {
+    "title": "Clear Kern's first execution seal, then inspect the same unresolved condition",
+    "timeline": "Instant-kill condition timeline",
+    "step": "Execution states",
+    "phaseNames": [
+      "Signal one lethal condition and prove its ordinary answer",
+      "Lock the unresolved condition and end the attempt once",
+      "Hold the result, restore safely, and reset authority"
+    ],
+    "phaseDescriptions": [
+      "Kern marks a fixed execution seal at 0.30 s. Tavi's full body clears its 92-unit radius before the first resolution at 0.98 s, so the condition evaluates false and no health, result, or reward changes. The safe check remains visible before Tavi returns.",
+      "The same seal appears again at 1.82 s, with six countdown runes and a distinct lock at 2.58 s. Tavi remains inside when it resolves at 2.86 s. The encounter reserves result instant-kill-1 once, applies zero ordinary damage, and ends the attempt even though health was 100 immediately beforehand.",
+      "The ended state remains visible until restoration begins at 4.18 s, so the cause cannot be confused with damage or disconnection. Control and collision return only after the safe restore window at 4.72 s; result authority clears when the complete demonstration resets after 5.20 s."
+    ],
+    "boss": "Boss",
+    "player": "Player",
+    "danger": "Only the authored condition at the exact resolution instant is lethal; the telegraph is harmless, full-body clearance makes the first cast safe, and one failed condition may reserve only one terminal result",
+    "locked": "Condition id, target snapshot, geometry, telegraph, lock time, resolution tick, valid answers, immunity policy, result id, revival policy, and reward authority are encounter-owned",
+    "safe": "Use a fixed boundary, countdown segments, lock pulse, distinct terminal mark, sound and caption; never hide an instant-kill behind ordinary hit feedback or a visually identical nonlethal attack",
+    "reducedMotion": "Autoplay is disabled by reduced motion. Scrub across 0.30, 0.48, 0.88, 0.98, 1.82, 2.58, 2.86, 3.02, 4.18, 4.72, and 5.20 seconds to inspect warning, escape, lock, execution, result, restore, and reset.",
+    "diagramDescription": "Kern stands above a fixed circular seal around Tavi. Six outer runes count down. During the first cast Tavi moves completely beyond the boundary and a green check confirms the avoided condition. During the second cast Tavi remains inside; the boundary locks, a pulse resolves, the still-full health bar is crossed out, and one large terminal mark identifies the ended attempt before a safe reset."
+  },
+  "steps": [
+    {
+      "title": "What exact fact ends the attempt?",
+      "body": "Express the rule as one testable predicate: inside the seal at resolve, crushed between two solid bodies, uncleansed when Doom expires, or hit while a special encounter state is active. Snapshot every input at the lock moment. Do not implement the result as an arbitrary damage number that future health, armor, shields, or difficulty scaling may accidentally survive."
+    },
+    {
+      "title": "What reachable answer does the warning promise?",
+      "body": "Budget signal recognition, movement, network latency, camera recovery, and the whole collision body before commitment. State whether the answer is leaving geometry, facing away, cleansing, interrupting, taking cover, or satisfying an earlier objective. Test the slowest legal build and every control mode without silently requiring an optional dodge upgrade."
+    },
+    {
+      "title": "How is one terminal result made fair and deterministic?",
+      "body": "Resolve the condition once on the encounter authority, reserve a stable result id, cancel duplicate hit and reward paths, and preserve the cause through defeat and replay. Specify invulnerability, revival, co-op rescue, rollback, simultaneous victory, phase transition, and late-join behavior. A result that bypasses health must not also emit misleading damage events."
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "A lethal version reuses a normal attack without a stronger signal",
+      "body": "If the same shape sometimes removes health and sometimes ends the attempt, color alone is not enough. Add a pre-attack state, unique silhouette, boundary treatment, cadence, sound, caption, and persistent rule cue before the response window begins."
+    },
+    {
+      "title": "Execution is implemented as extreme damage",
+      "body": "A large damage value interacts unpredictably with shields, percentage reduction, temporary health, cheats, difficulty modifiers, and future balance changes. Resolve the explicit terminal condition directly, then emit one cause-specific result with zero ordinary damage."
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "Separate warning, commitment, resolution, and aftermath",
+      "body": "The telegraph may be harmless and track a target; the lock freezes its inputs; resolution evaluates once; aftermath disables further combat and keeps the cause readable. Store these as distinct states so late frames, rollback, and accessibility announcements cannot disagree."
+    },
+    {
+      "title": "Test complete geometry and worst-case response time",
+      "body": "Clearance uses the player's full collision volume, not its center or feet. Sweep spawn points, camera angles, movement penalties, controller dead zones, latency, animation locks, and arena obstruction. If ordinary movement is promised, leave a measured margin rather than a frame-perfect edge."
+    },
+    {
+      "title": "Price severity with frequency and recovery cost",
+      "body": "One lethal check can create useful focus; frequent or overlapping checks can erase experimentation and make retries dominate playtime. Measure warning-to-resolution time, failure rate after recognition, time lost per failure, checkpoint distance, and whether the mechanic appears during visual or input overload."
+    },
+    {
+      "title": "Define exceptions before content multiplies",
+      "body": "Decide whether invulnerability, dodge procs, shields, revival, companions, scripted phase protection, or accessibility assists may answer the condition. Expose every permitted exception and reject every forbidden one consistently instead of relying on whichever damage hook runs first."
+    }
+  ],
+  "story": {
+    "title": "The seal judges position, not endurance",
+    "body": "Kern's six runes close around one fixed circle. The first time, Tavi crosses its edge and the pattern breaks harmlessly. The second time, the last rune locks while Tavi remains inside; the full health mark is crossed rather than drained, making the encounter rule itself the cause of defeat."
+  },
+  "adaptation": {
+    "title": "Preserve the rule while widening perception and response",
+    "body": "Offer larger boundaries, longer warning, reduced flashes, unique audio, captions, haptics, and a preview option. Difficulty and accessibility settings may lengthen the response, reduce simultaneous demands, allow one recovery token, or replace the result with severe damage, but the selected policy must be stated before the check and remain consistent."
+  },
+  "distinction": {
+    "title": "A terminal predicate, not merely a one-hit attack",
+    "body": "High damage still travels through the ordinary health and mitigation model, even when it usually removes all remaining health. An instant-kill condition directly chooses a terminal result when its predicate is true. Status buildup may feed such a predicate, but accumulation and its final consequence remain separate mechanics with separate timing and feedback."
+  },
+  "lensNotes": [
+    {
+      "id": "telegraphing",
+      "body": "The warning must communicate both the lethal rule and its answer before the condition locks, not merely decorate the resolving hit."
+    },
+    {
+      "id": "counterplay",
+      "body": "At least one promised response must reliably make the predicate false for the whole player body under legal encounter conditions."
+    },
+    {
+      "id": "risk-reward",
+      "body": "Staying for more offense may consume the clearance margin, but the reward cannot depend on information revealed only after commitment."
+    },
+    {
+      "id": "rule-exception",
+      "body": "Invulnerability, revival, cleanse, shields, and alternate control modes need explicit inclusion or exclusion because ordinary damage rules no longer decide the result."
+    },
+    {
+      "id": "progress-clarity",
+      "body": "The interface must distinguish harmless warning, locked condition, terminal resolution, and restored control with one stable result id."
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "Terraria",
+      "boss": "Empress of Light",
+      "screenshot": "https://i.ytimg.com/vi/Hsrv-7U4ACU/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=Hsrv-7U4ACU&t=1s",
+      "body": "During daytime the enraged boss changes its projectiles to bright yellow and its attacks normally kill in one hit while bypassing configured dodge effects. This is a useful edge case: the implementation still uses enormous attack damage, so its presentation must communicate the encounter-wide lethal context rather than pretend every projectile gained a new geometry rule.",
+      "video": "https://www.youtube.com/watch?v=Hsrv-7U4ACU&t=1s",
+      "videoDurationSeconds": 39
+    },
+    {
+      "dimension": "2D",
+      "game": "Spelunky",
+      "boss": "Olmec",
+      "screenshot": "https://i.ytimg.com/vi/YkMckXuFYQw/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=YkMckXuFYQw&t=4s",
+      "body": "Olmec pauses above the player before pounding down, and crushing is an instant-kill interaction rather than a fixed number of hearts lost. The short airborne hold, full body width, destructible floor, and walls make the lethal condition a spatial predicate that must be tested against the complete collision shape.",
+      "video": "https://www.youtube.com/watch?v=YkMckXuFYQw&t=4s",
+      "videoDurationSeconds": 80
+    },
+    {
+      "dimension": "3D",
+      "game": "Final Fantasy XIV",
+      "boss": "Angra Mainyu",
+      "screenshot": "https://i.ytimg.com/vi/dPZjUaQr1ZA/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=dPZjUaQr1ZA&t=35s",
+      "body": "Mortal Gaze applies Doom when its facing condition is failed, then a separate lit glyph can cleanse the debuff before its timer expires. The lethal result is therefore preceded by two authored answers at different times, and the interface must keep the gaze failure, countdown, cleanse state, and final KO causally linked.",
+      "video": "https://www.youtube.com/watch?v=dPZjUaQr1ZA&t=35s",
+      "videoDurationSeconds": 225
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}
