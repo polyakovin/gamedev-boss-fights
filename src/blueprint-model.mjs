@@ -1325,13 +1325,13 @@ const SPECS = {
   },
   'resource-steal': {
     mode: 'resource-steal',
-    boss: [300, 375],
-    player: [300, 635],
-    target: [455, 720],
-    arena: [55, 310, 450, 570],
-    stealCenter: [300, 635],
-    safePoint: [455, 720],
-    reclaimPoint: [235, 720],
+    boss: [280, 245],
+    player: [280, 660],
+    target: [450, 750],
+    arena: [40, 145, 480, 715],
+    stealCenter: [280, 660],
+    safePoint: [450, 750],
+    reclaimPoint: [125, 720],
     stealRadius: 96,
     firstTelegraph: [0.3, 0.94],
     firstEscape: [0.48, 0.86],
@@ -1349,9 +1349,9 @@ const SPECS = {
     initialResource: 6,
     dropCount: 3,
     tokenTargets: [
-      [235, 676],
-      [300, 706],
-      [365, 676],
+      [125, 750],
+      [280, 790],
+      [425, 770],
     ],
   },
   'wide-swing': { mode: 'arc', boss: [280, 310], player: [410, 470], target: [470, 650] },
@@ -6052,6 +6052,24 @@ function primitivesFor(spec, frame) {
   }
   if (mode === 'resource-steal') {
     const center = point(spec.stealCenter);
+    const runeStone = (x, y, opacity, glyphTone = 'accent', scale = 1) => {
+      const size = (value) => value * scale;
+      return [
+        path(
+          `M ${x - size(12)} ${y - size(13)} L ${x + size(7)} ${y - size(16)} L ${x + size(14)} ${y - size(6)} L ${x + size(11)} ${y + size(12)} L ${x + size(2)} ${y + size(16)} L ${x - size(13)} ${y + size(12)} L ${x - size(15)} ${y - size(3)} Z`,
+          opacity,
+          'muted',
+          0,
+          0.88,
+        ),
+        path(
+          `M ${x - size(6)} ${y - size(5)} L ${x} ${y + size(2)} L ${x + size(7)} ${y - size(7)} M ${x} ${y + size(2)} L ${x} ${y + size(10)}`,
+          opacity,
+          glyphTone,
+          size(3),
+        ),
+      ];
+    };
     const firstTelegraph = frame.time >= spec.firstTelegraph[0] && frame.time < spec.firstResolveAt;
     const secondTelegraph = frame.time >= spec.secondTelegraph[0] && frame.time < spec.hitAt;
     const telegraph = firstTelegraph || secondTelegraph;
@@ -6062,9 +6080,6 @@ function primitivesFor(spec, frame) {
       : 0;
     const hitPulse = strikePulse(frame.time, spec.hitAt, 0.48);
     const spillProgress = smooth((frame.time - spec.spill[0]) / (spec.spill[1] - spec.spill[0]));
-    const reclaimProgress = smooth(
-      (frame.time - spec.reclaim[0]) / (spec.reclaim[1] - spec.reclaim[0]),
-    );
     const captureProgress = smooth(
       (frame.time - spec.capture[0]) / (spec.capture[1] - spec.capture[0]),
     );
@@ -6073,11 +6088,6 @@ function primitivesFor(spec, frame) {
         x: mix(center.x, targetX, spillProgress),
         y: mix(center.y - 34, targetY, spillProgress),
       };
-      if (index === 0 && frame.time >= spec.reclaim[0])
-        token = {
-          x: mix(targetX, frame.player.x, reclaimProgress),
-          y: mix(targetY, frame.player.y - 46, reclaimProgress),
-        };
       if (index > 0 && frame.time >= spec.capture[0])
         token = {
           x: mix(targetX, frame.boss.x, captureProgress),
@@ -6087,88 +6097,64 @@ function primitivesFor(spec, frame) {
     });
     const tokenVisible = frame.time >= spec.hitAt && frame.time < spec.capture[1];
     const ownedCount = frame.resourceStealPlayerResource;
+    const siphonOpacity = telegraph ? 0.16 + 0.24 * telegraphProgress : hitPulse * 0.62;
+    const shieldVisible = frame.resourceStealBenefitApplied ? 0.94 : 0;
+    const shieldX = frame.boss.x + 78;
+    const shieldY = frame.boss.y - 8;
     return [
-      rect(...spec.arena, 0.52, 'muted', 0.025),
-      rect(164, 314, 272, 38, 0.72, 'muted', 0.04),
-      ...Array.from({ length: spec.initialResource }, (_, index) => {
-        const x = 190 + index * 44;
-        const owned = index < ownedCount;
-        return path(
-          `M ${x} 333 L ${x + 10} 321 L ${x + 20} 333 L ${x + 10} 345 Z`,
-          owned ? 0.96 : 0.22,
-          owned ? 'accent' : 'muted',
-          4,
-          owned ? 0.18 : 0.02,
-        );
-      }),
+      ...Array.from({ length: spec.initialResource }, (_, index) =>
+        runeStone(135 + index * 58, 77, index < ownedCount ? 0.94 : 0),
+      ).flat(),
+      path(
+        `M ${frame.boss.x - 36} ${frame.boss.y + 23} C ${frame.boss.x - 150} ${frame.boss.y + 150}, ${center.x - 155} ${center.y - 150}, ${center.x - 72} ${center.y - 22} L ${center.x - 39} ${center.y - 39} C ${frame.boss.x - 100} ${center.y - 172}, ${frame.boss.x - 72} ${frame.boss.y + 154}, ${frame.boss.x - 16} ${frame.boss.y + 27} Z`,
+        siphonOpacity,
+        'signal',
+        0,
+        0.68,
+      ),
+      path(
+        `M ${frame.boss.x + 32} ${frame.boss.y + 21} C ${frame.boss.x + 142} ${frame.boss.y + 146}, ${center.x + 148} ${center.y - 143}, ${center.x + 73} ${center.y - 20} L ${center.x + 37} ${center.y - 39} C ${frame.boss.x + 96} ${center.y - 167}, ${frame.boss.x + 65} ${frame.boss.y + 153}, ${frame.boss.x + 14} ${frame.boss.y + 27} Z`,
+        siphonOpacity,
+        'signal',
+        0,
+        0.68,
+      ),
       circle(
         center.x,
         center.y,
         spec.stealRadius,
-        telegraph ? 0.84 : hitPulse * 0.94,
+        telegraph ? 0.45 + 0.22 * telegraphProgress : hitPulse * 0.86,
         'signal',
-        telegraph ? 7 : 11,
-        telegraph ? 0.05 : 0.1,
-        telegraph ? '12 9' : '',
-      ),
-      circle(
-        center.x,
-        center.y,
-        spec.stealRadius * (1 - 0.46 * telegraphProgress),
-        telegraph ? 0.72 : 0,
-        'accent',
-        5,
-        0.02,
-      ),
-      circle(
-        spec.safePoint[0],
-        spec.safePoint[1] - 34,
-        34,
-        frame.resourceStealFirstAvoided ? 0.86 : 0,
-        'safe',
-        6,
-        0.04,
-        '8 7',
-      ),
-      path(
-        `M ${spec.safePoint[0] - 14} ${spec.safePoint[1] - 35} L ${spec.safePoint[0] - 3} ${spec.safePoint[1] - 24} L ${spec.safePoint[0] + 18} ${spec.safePoint[1] - 49}`,
-        frame.resourceStealFirstAvoided ? 0.98 : 0,
-        'safe',
-        6,
-      ),
-      ...tokenPositions.map((token, index) =>
-        path(
-          `M ${token.x - 12} ${token.y} L ${token.x} ${token.y - 14} L ${token.x + 12} ${token.y} L ${token.x} ${token.y + 14} Z`,
-          tokenVisible && (index === 0 ? frame.time < spec.reclaim[1] : true) ? 0.98 : 0,
-          index === 0 ? 'safe' : 'signal',
-          6,
-          0.22,
-        ),
+        0,
+        telegraph ? 0.13 : 0.28,
       ),
       ...tokenPositions
-        .slice(1)
-        .map((token) =>
-          line(
+        .map((token, index) =>
+          runeStone(
             token.x,
             token.y,
-            frame.boss.x,
-            frame.boss.y - 24,
-            frame.resourceStealCapturing ? 0.72 : 0,
-            'signal',
-            4,
-            '8 7',
+            tokenVisible && (index === 0 ? frame.time < spec.reclaim[1] : true) ? 1 : 0,
+            index === 0 ? 'safe' : 'signal',
+            1.25,
           ),
-        ),
-      circle(
-        frame.boss.x,
-        frame.boss.y - 26,
-        62 + pulse(frame.time * 2.3) * 8,
-        frame.resourceStealBenefitApplied ? 0.82 : 0,
+        )
+        .flat(),
+      path(
+        `M ${shieldX - 43} ${shieldY - 37} Q ${shieldX} ${shieldY - 59} ${shieldX + 43} ${shieldY - 37} L ${shieldX + 39} ${shieldY + 16} Q ${shieldX + 23} ${shieldY + 52} ${shieldX} ${shieldY + 62} Q ${shieldX - 23} ${shieldY + 52} ${shieldX - 39} ${shieldY + 16} Z`,
+        shieldVisible,
         'signal',
-        8,
-        0.05,
-        '10 7',
+        0,
+        0.72,
       ),
+      path(
+        `M ${shieldX - 30} ${shieldY - 27} Q ${shieldX} ${shieldY - 42} ${shieldX + 30} ${shieldY - 27} L ${shieldX + 27} ${shieldY + 12} Q ${shieldX + 15} ${shieldY + 37} ${shieldX} ${shieldY + 45} Q ${shieldX - 15} ${shieldY + 37} ${shieldX - 27} ${shieldY + 12} Z`,
+        shieldVisible,
+        'muted',
+        0,
+        0.45,
+      ),
+      ...runeStone(shieldX - 13, shieldY - 3, shieldVisible, 'signal', 0.58),
+      ...runeStone(shieldX + 13, shieldY - 3, shieldVisible, 'signal', 0.58),
     ];
   }
   if (mode === 'encounter-specific-tool') {
@@ -11078,49 +11064,50 @@ export function blueprintFrame(id, time) {
     x: player.x,
     y:
       player.y +
-      (spec.mode === 'directional-shield' ||
-      spec.mode === 'damage-type-resistance' ||
-      spec.mode === 'situational-immunity' ||
-      spec.mode === 'part-break' ||
-      spec.mode === 'attack-reflection' ||
-      spec.mode === 'counter-stance' ||
-      spec.mode === 'absorption-power-up' ||
-      spec.mode === 'interruptible-wind-up' ||
-      spec.mode === 'loadout-adaptation' ||
-      spec.mode === 'wind-up' ||
-      spec.mode === 'attack-lock' ||
-      spec.mode === 'active-phase' ||
-      spec.mode === 'recovery' ||
-      spec.mode === 'survival-phase' ||
-      spec.mode === 'teleport' ||
-      spec.mode === 'boundary-attack' ||
-      spec.mode === 'forced-scrolling' ||
-      spec.mode === 'chase-herding' ||
-      spec.mode === 'escape-phase' ||
-      spec.mode === 'boss-as-terrain' ||
-      spec.mode === 'cover-line-of-sight' ||
-      spec.mode === 'forced-inertia' ||
-      spec.mode === 'wraparound-projectile' ||
-      spec.mode === 'beat-synced-attack' ||
-      spec.mode === 'secondary-cues-invisibility' ||
-      spec.mode === 'sound-detection' ||
-      spec.mode === 'objective-linked-invulnerability' ||
-      spec.mode === 'wave-clear-objective' ||
-      spec.mode === 'environmental-weapon' ||
-      spec.mode === 'encounter-specific-tool' ||
-      spec.mode === 'player-controlled-boss' ||
-      spec.mode === 'projectile-rally' ||
-      spec.mode === 'baited-self-hit' ||
-      spec.mode === 'posture-stagger-gauge' ||
-      spec.mode === 'pacifist-resolution' ||
-      spec.mode === 'persistent-progress' ||
-      spec.mode === 'status-buildup' ||
-      spec.mode === 'instant-kill' ||
-      spec.mode === 'maximum-health-reduction' ||
-      spec.mode === 'ability-lock' ||
-      spec.mode === 'resource-steal'
-        ? 92
-        : -62),
+      (spec.mode === 'resource-steal'
+        ? 55
+        : spec.mode === 'directional-shield' ||
+            spec.mode === 'damage-type-resistance' ||
+            spec.mode === 'situational-immunity' ||
+            spec.mode === 'part-break' ||
+            spec.mode === 'attack-reflection' ||
+            spec.mode === 'counter-stance' ||
+            spec.mode === 'absorption-power-up' ||
+            spec.mode === 'interruptible-wind-up' ||
+            spec.mode === 'loadout-adaptation' ||
+            spec.mode === 'wind-up' ||
+            spec.mode === 'attack-lock' ||
+            spec.mode === 'active-phase' ||
+            spec.mode === 'recovery' ||
+            spec.mode === 'survival-phase' ||
+            spec.mode === 'teleport' ||
+            spec.mode === 'boundary-attack' ||
+            spec.mode === 'forced-scrolling' ||
+            spec.mode === 'chase-herding' ||
+            spec.mode === 'escape-phase' ||
+            spec.mode === 'boss-as-terrain' ||
+            spec.mode === 'cover-line-of-sight' ||
+            spec.mode === 'forced-inertia' ||
+            spec.mode === 'wraparound-projectile' ||
+            spec.mode === 'beat-synced-attack' ||
+            spec.mode === 'secondary-cues-invisibility' ||
+            spec.mode === 'sound-detection' ||
+            spec.mode === 'objective-linked-invulnerability' ||
+            spec.mode === 'wave-clear-objective' ||
+            spec.mode === 'environmental-weapon' ||
+            spec.mode === 'encounter-specific-tool' ||
+            spec.mode === 'player-controlled-boss' ||
+            spec.mode === 'projectile-rally' ||
+            spec.mode === 'baited-self-hit' ||
+            spec.mode === 'posture-stagger-gauge' ||
+            spec.mode === 'pacifist-resolution' ||
+            spec.mode === 'persistent-progress' ||
+            spec.mode === 'status-buildup' ||
+            spec.mode === 'instant-kill' ||
+            spec.mode === 'maximum-health-reduction' ||
+            spec.mode === 'ability-lock'
+          ? 92
+          : -62),
   };
   return Object.freeze(frame);
 }

@@ -27,7 +27,7 @@
     "locked": "Resource type, protected minimum, drop request, applied loss, token ids, owner revisions, despawn, reclaim, boss capture, benefit grant, persistence, and authority belong to encounter logic",
     "safe": "Show the affected inventory before contact, connect each lost unit to a pickup, distinguish player and boss collection by shape as well as color, and reconcile the final total",
     "reducedMotion": "Autoplay is disabled by reduced motion. Scrub across 0.30, 0.86, 0.98, 1.82, 2.64, 3.08, 3.48, 3.90, 4.42, and 5.34 seconds to inspect avoidance, the bounded drop, reclaim, capture, benefit, and reset.",
-    "diagramDescription": "A six-rune track sits above the arena. Kern projects a dashed siphon circle around Tavi. The first misses. The second hit ejects three diamond tokens; Tavi reclaims the green-marked left token while two orange-marked tokens travel to Kern and light one shield ring."
+    "diagramDescription": "Six carved rune stones sit above the arena. Kern sends two siphon streams toward Tavi. The first misses after Tavi moves away; the second scatters three stones across the floor. Tavi reclaims the left stone, while the other two fly to Kern and form a rune-marked shield."
   },
   "steps": [
     {

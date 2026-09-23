@@ -3570,6 +3570,10 @@ test('resource steal preserves the ledger through drop, reclaim, and boss captur
     'data-blueprint-resource-steal-token-owners',
     'player,boss,boss',
   );
+  expect((await widget.boundingBox()).height).toBeGreaterThan(850);
   await page.setViewportSize({ width: 375, height: 812 });
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+  const playerLabel = await widget.locator('[data-blueprint-player-label]').boundingBox();
+  const phaseLabel = await widget.locator('[data-blueprint-current-phase]').boundingBox();
+  expect(playerLabel.y + playerLabel.height).toBeLessThan(phaseLabel.y - 12);
 });

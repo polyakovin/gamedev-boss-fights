@@ -39,6 +39,21 @@
 .blueprint-demo__svg text {
   font-family: inherit;
 }
+@media (min-width: 961px) {
+  .lesson-overview-grid:has([data-blueprint-id='resource-steal']) {
+    grid-template-columns: minmax(440px, 1fr) minmax(340px, 560px);
+  }
+  .simulation-section:has([data-blueprint-id='resource-steal']) {
+    width: min(100%, calc(58.333svh - 74.667px));
+    max-width: 560px;
+    justify-self: center;
+  }
+  .simulation-section [data-blueprint-id='resource-steal'],
+  .simulation-section [data-blueprint-id='resource-steal'] .blueprint-demo__canvas,
+  .simulation-section [data-blueprint-id='resource-steal'] .blueprint-demo__svg {
+    height: 100%;
+  }
+}
 .blueprint-demo__scene-timeline {
   position: absolute;
   z-index: 2;

@@ -27,7 +27,7 @@
     "locked": "Tipo, mínimo, pérdida solicitada y aplicada, IDs, revisiones, caducidad, recuperación, captura, ventaja, persistencia y autoridad pertenecen a la lógica",
     "safe": "Muestra el inventario, conecta cada pérdida con un objeto, distingue las capturas con forma y color y reconcilia el total",
     "reducedMotion": "Con movimiento reducido no hay reproducción automática. Recorre 0,30, 0,86, 0,98, 1,82, 2,64, 3,08, 3,48, 3,90, 4,42 y 5,34 s.",
-    "diagramDescription": "Una barra de seis runas corona la arena. El primer círculo de Kern falla; el segundo expulsa tres diamantes. Tavi recupera uno y dos viajan a Kern para encender un escudo."
+    "diagramDescription": "Seis piedras rúnicas talladas aparecen sobre la arena. Kern dirige dos corrientes de absorción hacia Tavi. Tavi esquiva la primera; la segunda dispersa tres piedras por el suelo. Tavi recupera la de la izquierda y las otras dos vuelan hacia Kern para formar un escudo con runas."
   },
   "steps": [
     {

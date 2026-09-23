@@ -3297,7 +3297,7 @@ test('resource steal conserves ownership through drop, reclaim, and boss capture
   const hit = blueprintFrame(id, 2.64);
   assert.equal(hit.dangerActive, true);
   assert.equal(hit.playerSafe, false);
-  assert.equal(blueprintPointSafe(id, 2.64, { x: 455, y: 720 }), true);
+  assert.equal(blueprintPointSafe(id, 2.64, { x: 450, y: 750 }), true);
   assert.equal(hit.resourceStealDropped, 3);
   assert.equal(hit.resourceStealDropEventCount, 1);
   const reclaimed = blueprintFrame(id, 3.48);
