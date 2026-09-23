@@ -28,6 +28,7 @@ import {
   waveClearObjectiveProgress,
   waveClearObjectiveState,
   environmentalWeaponState,
+  encounterSpecificToolState,
   counterStanceOutcome,
   counterStanceState,
   blueprintFrame,
@@ -55,8 +56,8 @@ import {
   renderBlueprintThumbnail,
 } from '../lib/blueprint-view.mjs';
 
-test('all 77 promoted lesson animations have distinct rule modes and complete moving frames', () => {
-  assert.equal(BLUEPRINT_MECHANIC_IDS.length, 77);
+test('all 78 promoted lesson animations have distinct rule modes and complete moving frames', () => {
+  assert.equal(BLUEPRINT_MECHANIC_IDS.length, 78);
   const modes = new Set();
   for (const id of BLUEPRINT_MECHANIC_IDS) {
     for (let time = 0; time <= BLUEPRINT_DURATION; time += 0.1) {
@@ -77,7 +78,7 @@ test('all 77 promoted lesson animations have distinct rule modes and complete mo
           assert.ok(Number.isFinite(value), `${id} has an invalid ${primitive.type}`);
     }
   }
-  assert.equal(modes.size, 77);
+  assert.equal(modes.size, 78);
 });
 
 test('every blueprint exposes signal, committed action, and recovery without player teleports', () => {
@@ -184,6 +185,7 @@ test('every damaging promoted animation derives safety from its own active geome
       id !== 'objective-linked-invulnerability' &&
       id !== 'wave-clear-objective' &&
       id !== 'environmental-weapon' &&
+      id !== 'encounter-specific-tool' &&
       id !== 'part-break' &&
       id !== 'counter-stance' &&
       id !== 'absorption-power-up' &&
@@ -2513,5 +2515,71 @@ test('environmental weapon attributes boss progress to a prepared fixed device',
   assert.match(
     renderBlueprintThumbnail(id, 'test-environmental-weapon'),
     /data-blueprint-preview="environmental-weapon"/,
+  );
+});
+
+test('encounter-specific tool moves with its owner and temporarily replaces the action package', () => {
+  const id = 'encounter-specific-tool';
+  assert.deepEqual(
+    [0, 1, 1.35, 1.6, 2, 2.5, 3, 3.25, 3.6, 4.3, 4.8, 5.3].map(encounterSpecificToolState),
+    [
+      'tool-briefing',
+      'reach-tool',
+      'pickup',
+      'tool-equipped',
+      'carry-tool',
+      'charge-tool',
+      'tool-ready',
+      'tool-fired',
+      'tool-hit',
+      'recovery',
+      'tool-expired',
+      'reset',
+    ],
+  );
+
+  const pickup = blueprintFrame(id, 1.35);
+  assert.equal(pickup.encounterToolReached, true);
+  assert.equal(pickup.encounterToolActionPackage, 'sword');
+  assert.ok(pickup.primitives[3].opacity > 0.9, 'the tool remains on its pedestal before equip');
+
+  const equipped = blueprintFrame(id, 1.6);
+  assert.equal(equipped.encounterToolEquipped, true);
+  assert.equal(equipped.encounterToolActionPackage, 'rune-spear');
+  assert.ok(equipped.primitives[6].opacity > 0.9, 'the spear follows its owner after equip');
+  assert.ok(equipped.primitives[15].opacity > 0.7, 'the ordinary sword package is disabled');
+
+  const charging = blueprintFrame(id, 2.5);
+  assert.equal(charging.encounterToolCharging, true);
+  assert.equal(charging.encounterToolCombatReached, true);
+  assert.ok(charging.primitives[8].opacity > 0.3, 'the carried tool exposes charge progress');
+
+  const ready = blueprintFrame(id, 3);
+  assert.equal(ready.encounterToolReady, true);
+  assert.ok(ready.primitives[9].opacity > 0.8, 'the tool previews its eligible target');
+
+  const fired = blueprintFrame(id, 3.25);
+  assert.equal(fired.encounterToolFired, true);
+  assert.equal(fired.encounterToolBossDamaged, false);
+  assert.equal(fired.playerMotion.attack, 0, 'the ordinary sword never owns the tool release');
+  assert.ok(fired.primitives[11].opacity > 0.9, 'the rune wave originates at the carried spear');
+
+  const hit = blueprintFrame(id, 3.6);
+  assert.equal(hit.encounterToolBossDamaged, true);
+  assert.equal(hit.encounterToolDamageSource, 'encounter-tool');
+  assert.equal(hit.primitives[14].rectWidth, 70);
+  assert.ok(hit.primitives[12].opacity > 0.7, 'impact and health loss resolve together');
+
+  const expired = blueprintFrame(id, 4.8);
+  assert.equal(expired.encounterToolExpired, true);
+  assert.equal(expired.encounterToolActionPackage, 'sword');
+  assert.ok(expired.primitives[17].opacity > 0.5, 'expiry is visible before reset');
+
+  assert.equal(blueprintPointSafe(id, 3.25, fired.player), true);
+  assert.deepEqual(blueprintFrame(id, 0).player, blueprintFrame(id, 6).player);
+  assert.deepEqual(blueprintFrame(id, 0).boss, blueprintFrame(id, 6).boss);
+  assert.match(
+    renderBlueprintThumbnail(id, 'test-encounter-specific-tool'),
+    /data-blueprint-preview="encounter-specific-tool"/,
   );
 });

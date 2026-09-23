@@ -1337,12 +1337,12 @@
         "en": {
           "title": "Encounter-specific tool",
           "category": "Encounter goals and vulnerability",
-          "summary": "Draft outline for the encounter-specific tool mechanic. Rules, tuning guidance, and examples are still in progress."
+          "summary": "The encounter grants or activates a portable tool whose rule-specific action is unusually effective against this boss."
         },
         "ru": {
           "title": "Особый инструмент боя",
           "category": "Цель боя и открытие уязвимости",
-          "summary": "Встреча выдаёт или активирует средство, чьё специальное свойство работает прежде всего против этого босса."
+          "summary": "Бой выдаёт или активирует переносимый инструмент, чьё особое действие необычно эффективно против этого босса."
         }
       }
     },

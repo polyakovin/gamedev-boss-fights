@@ -1,0 +1,142 @@
+{
+  "title": "Herramienta específica del encuentro",
+  "subtitle": "Da temporalmente una acción creada para la regla de este jefe",
+  "variant": "Obtener · portar · cargar · resolver",
+  "summary": "El encuentro concede o activa una herramienta portátil cuya acción especial resulta inusualmente eficaz contra este jefe.",
+  "overview": "Una herramienta específica cambia temporalmente las acciones del jugador con una capacidad portátil creada para este jefe. Si adquisición, control alterado, carga o coste, objetivo válido, atribución del daño y retirada son legibles, la herramienta crea una decisión concreta sin invalidar la configuración del jugador sin explicación.",
+  "learning": "Define adquisición y alternativas, propiedad de inventario, controles sustituidos o añadidos, carga y recursos, movimiento permitido, respuesta del objetivo, atribución del daño, viabilidad de armas normales, interrupción, caída y caducidad, puntos de control, autoridad multijugador, accesibilidad y pruebas que restauren las acciones originales una sola vez.",
+  "category": "Objetivos del encuentro y vulnerabilidad",
+  "readTime": "9 min",
+  "demo": {
+    "title": "Muestra cómo la herramienta cambia de dueño, acciones y daño",
+    "timeline": "Cronología de la herramienta específica",
+    "step": "Estados de la herramienta específica",
+    "phaseNames": [
+      "Presenta la herramienta portátil y completa la adquisición",
+      "Llévala a posición y enseña su carga especial",
+      "Resuelve daño, recuperación, caducidad y retorno del equipo"
+    ],
+    "phaseDescriptions": [
+      "La lanza rúnica y su pedestal se ven desde el inicio. Tavi llega entre 0,55 y 1,25 s y la equipa a 1,48 s; la lanza abandona el pedestal, sigue a Tavi y la marca de espada tachada confirma que cambió el paquete de acciones.",
+      "Tavi lleva la lanza entre 1,75 y 2,35 s, demostrando que no es maquinaria fija. La carga de 2,42 a 2,95 s usa un anillo creciente y una línea previa; después mantiene una disponibilidad clara hasta el disparo a 3,15 s.",
+      "La onda sale de la lanza y golpea a Kern a 3,52 s, eliminando un segmento de salud atribuido a la herramienta. La recuperación comienza a 4,15 s, la herramienta caduca a 4,60 s, vuelve la espada y posición e inventario se reinician a 5,20 s."
+    ],
+    "boss": "Jefe",
+    "player": "Jugador",
+    "danger": "Kern presiona el transporte y la carga mientras la lanza rúnica sigue siendo la fuente mostrada de daño significativo",
+    "locked": "Se diseñan aparición, adquisición, dueño, acciones temporales, ruta, carga, disponibilidad, disparo, proyectil, atribución, recuperación, caducidad, alternativa y reinicio",
+    "safe": "Mantén la adquisición alcanzable, enseña el control antes del pico de presión, permite movimiento y cancelación prometidos durante la carga y comunica disponibilidad y caducidad sin depender solo del color",
+    "reducedMotion": "Con movimiento reducido se desactiva la reproducción automática. Recorre 0,55, 1,25, 1,48, 1,75, 2,35, 2,42, 2,95, 3,15, 3,52, 4,15, 4,60 y 5,20 segundos para revisar adquisición, transporte, carga, disponibilidad, disparo, impacto, recuperación, caducidad y reinicio.",
+    "diagramDescription": "Kern está arriba y Tavi se acerca a una lanza rúnica sobre un pedestal bajo. Tras recogerla, la lanza se mueve con Tavi y la espada normal aparece tachada. Un anillo carga en la punta, una línea discontinua fija el objetivo, una onda brillante alcanza a Kern, la salud baja al impacto y la lanza se disuelve antes del regreso."
+  },
+  "steps": [
+    {
+      "title": "¿Cómo entra y sale la herramienta del conjunto de acciones?",
+      "body": "Decide si se concede, recoge, invoca, equipa o activa sobre un objeto existente. Define una alternativa si se omite, cae, se destruye, ya se posee o queda inaccesible tras morir. Muestra el cambio en personaje, HUD, avisos y controles, y restaura el equipo previo mediante una sola transición autoritativa."
+    },
+    {
+      "title": "¿Qué decisión nueva crea su acción?",
+      "body": "Dale un verbo compacto: alcanzar un objetivo gigante, perforar una defensa, provocar una respuesta o convertir un momento narrativo en agencia. Especifica carga, apuntado, movimiento, cancelación, coste, geometría, recuperación y filtro. Conserva decisiones de tiempo o posición; un multiplicador enorme por sí solo la vuelve una llave obligatoria."
+    },
+    {
+      "title": "¿Cómo atribuyes el resultado y conservas las configuraciones?",
+      "body": "Etiqueta cada disparo e impacto con el ID temporal, aplica la respuesta solo a objetivos válidos y muestra reacción y progreso juntos. Decide si los equipos normales siguen viables, apoyan la herramienta o se suspenden brevemente. Prueba mejoras, dos manos, límites, muerte, escenas, fases, disputa cooperativa, latencia y concesiones duplicadas."
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "La herramienta necesaria parece opcional o se pierde con facilidad",
+      "body": "Si los ataques normales apenas sirven pero el objeto parece botín genérico, el encuentro culpa falsamente a la configuración. Enmarca la herramienta antes del compromiso, reserva silueta y marcador, garantiza recuperación y usa la primera acción correcta para demostrar su propósito."
+    },
+    {
+      "title": "Cambia controles sin enseñanza ni limpieza",
+      "body": "Sustituir ataque, apuntado o movimiento bajo presión causa entradas accidentales, sobre todo si el HUD muestra el paquete anterior. Da un momento de enseñanza seguro, conserva cancelaciones, anuncia disponibilidad por varios canales y restaura controles, animación, inventario, cámara y red al caducar."
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "Garantiza adquisición y recuperación",
+      "body": "Mide la peor ruta desde cada entrada y punto de control, considera cámara y colisión e impide que la herramienta caiga fuera o se consuma para siempre. Si recoger compite con la presión, señala una apertura o conserva progreso; una concesión única perdida no debe bloquear la pelea."
+    },
+    {
+      "title": "Escribe explícitamente el contrato de acciones",
+      "body": "Documenta qué controles se sustituyen, añaden o bloquean y si permite correr, esquivar, saltar, defender, curar, fijar y usar objetos. Ajusta bloqueos de animación a colisión y cancelación. Una herramienta portátil debe seguir al dueño y conservar un origen visible."
+    },
+    {
+      "title": "Ajusta el jefe alrededor del uso, no de la posesión",
+      "body": "Presupuesta adquisición, posición, carga, viaje, impacto y recuperación frente al patrón del jefe. Abre ventanas para la versión compatible más lenta y luego varía puntería, distancia, momento o recursos. No anules todo el progreso salvo que ese reinicio sea el propósito dramático explícito."
+    },
+    {
+      "title": "Haz inspeccionables ciclo y autoridad",
+      "body": "Expón ID del dueño, paquete, carga, disponibilidad, disparo, objetivo, impacto, enfriamiento, caducidad y equipo restaurado. Prueba que la herramienta sigue al dueño, el ataque normal no suplanta su impacto, un disparo resuelve una vez y toda salida restaura el estado."
+    }
+  ],
+  "story": {
+    "title": "Tavi alza la lanza rúnica olvidada de la cantera",
+    "body": "Una lanza hecha para partir piedra viva espera en un altar. Tavi la levanta y la punta se vuelve un rayo solo ante el núcleo antiguo de Kern. El arma transportada responde a la runa, abre una grieta y después pierde su luz prestada, dejando de nuevo la espada familiar."
+  },
+  "adaptation": {
+    "title": "Conserva el movimiento familiar y enseña un verbo temporal",
+    "body": "Tavi mantiene el movimiento normal y lleva la lanza a una posición clara. El encuentro sustituye solo el ataque mostrado, usa un radio amplio, ofrece ajuste de puntería, subtitula carga y disponibilidad y devuelve la espada automáticamente sin cambiar la regla de atribución."
+  },
+  "distinction": {
+    "title": "Un paquete portátil, no maquinaria fija ni prueba del equipo normal",
+    "body": "Un arma ambiental permanece anclada y se opera allí; la herramienta específica se mueve con su dueño y cambia acciones. La adaptación de equipo evalúa lo que se trajo al combate. Aquí se concede una capacidad creada principalmente para este encuentro, aunque el equipo normal conserve apoyo."
+  },
+  "lensNotes": [
+    {
+      "id": "encounter-purpose",
+      "body": "Una herramienta temporal prueba un verbo dramático —alcance, perforación o carga— sin rediseñar el juego completo."
+    },
+    {
+      "id": "player-expression",
+      "body": "La expresión persiste al elegir cuándo adquirir, posición, puntería, ventana de carga, cancelación y apoyo del equipo existente."
+    },
+    {
+      "id": "counterplay",
+      "body": "La respuesta no es poseerla: hay que crear espacio, transportarla, gestionar carga, seguir un objetivo y asumir recuperación."
+    },
+    {
+      "id": "progress-clarity",
+      "body": "Recogida, paquete, carga, disponibilidad, proyectil, reacción, salud, caducidad y retorno explican la cadena causal."
+    },
+    {
+      "id": "risk-reward",
+      "body": "La adquisición y carga vulnerable compran alcance o daño excepcionales; se comparan recompensa, interrupción y coste de recuperar."
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "Super Metroid",
+      "boss": "Mother Brain",
+      "screenshot": "https://i.ytimg.com/vi/0lb4p-Qnjiw/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=0lb4p-Qnjiw&t=200s",
+      "body": "Al final, el Metroid infantil transfiere energía a Samus y concede Hyper Beam. El rayo sustituye temporalmente el fuego previo, interrumpe a Mother Brain y existe para resolver este final. Adquisición, nuevo ritmo, reacción y transición inmediata a la huida hacen legible la acción prestada.",
+      "video": "https://www.youtube.com/watch?v=0lb4p-Qnjiw&t=200s",
+      "videoDurationSeconds": 243
+    },
+    {
+      "dimension": "3D",
+      "game": "Elden Ring",
+      "boss": "Rykard, Lord of Blasphemy",
+      "screenshot": "https://i.ytimg.com/vi/B9EorRzSavI/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=B9EorRzSavI&t=45s",
+      "body": "Serpent-Hunter espera dentro de la arena sin requisitos. Contra la serpiente y Rykard, sus ataques generan largas hojas de viento que resuelven escala y magma mientras el jugador porta y apunta el arma. La extensión específica, no una instalación fija, define el paquete alterado.",
+      "video": "https://www.youtube.com/watch?v=B9EorRzSavI&t=45s",
+      "videoDurationSeconds": 345
+    },
+    {
+      "dimension": "3D",
+      "game": "Dark Souls III",
+      "boss": "Yhorm the Giant",
+      "screenshot": "https://i.ytimg.com/vi/BQS8P60aYOc/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=BQS8P60aYOc&t=18s",
+      "body": "Storm Ruler está junto al trono de Yhorm. Su habilidad exige mantener la postura hasta cargar la tormenta y soltar un ataque a distancia de enorme daño y aturdimiento. Recogida, equipamiento, disponibilidad, disparo y recuperación forman un problema portátil de tiempo, no un multiplicador pasivo.",
+      "video": "https://www.youtube.com/watch?v=BQS8P60aYOc&t=18s",
+      "videoDurationSeconds": 162
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

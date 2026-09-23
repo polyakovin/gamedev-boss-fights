@@ -260,6 +260,19 @@ const PROFILE_OVERRIDES = {
     dimensions: ['2d', '3d'],
     lenses: ['encounter-purpose', 'access-paths', 'counterplay', 'progress-clarity', 'risk-reward'],
   },
+  'encounter-specific-tool': {
+    geometry: ['entity', 'line', 'arena'],
+    signal: ['environment', 'state', 'trajectory'],
+    response: ['interact', 'reposition', 'attack', 'manage'],
+    dimensions: ['2d', '3d'],
+    lenses: [
+      'encounter-purpose',
+      'player-expression',
+      'counterplay',
+      'progress-clarity',
+      'risk-reward',
+    ],
+  },
   'projectile-rally': {
     geometry: ['line'],
     signal: ['trajectory', 'rhythm'],

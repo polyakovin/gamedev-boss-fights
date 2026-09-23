@@ -405,9 +405,9 @@ test('volley releases three parallel bolts on one beat and clears its outside ro
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
 });
 
-test('catalog and builder reuse the 77 promoted rule-specific previews', async ({ page }) => {
+test('catalog and builder reuse the 78 promoted rule-specific previews', async ({ page }) => {
   await page.goto('en/');
-  await expect(page.locator('[data-blueprint-preview]')).toHaveCount(77);
+  await expect(page.locator('[data-blueprint-preview]')).toHaveCount(78);
   const catalogLayouts = await page.locator('[data-blueprint-preview]').evaluateAll((previews) =>
     previews.map((preview) => {
       const boss = preview.querySelector('[data-character-art-preview="kern"]');
@@ -431,7 +431,7 @@ test('catalog and builder reuse the 77 promoted rule-specific previews', async (
   expect(new Set(catalogLayouts.map(({ layout }) => layout)).size).toBeGreaterThanOrEqual(18);
 
   await page.goto('en/builder/');
-  await expect(page.locator('[data-blueprint-preview]')).toHaveCount(77);
+  await expect(page.locator('[data-blueprint-preview]')).toHaveCount(78);
   const builderLayouts = await page.locator('[data-blueprint-preview]').evaluateAll((previews) =>
     previews.map((preview) => {
       const boss = preview.querySelector('[data-character-art-preview="kern"]');
@@ -2977,6 +2977,74 @@ test('environmental weapon powers, aims, fires, and attributes damage to the fix
     'opacity',
     '0',
   );
+
+  await page.setViewportSize({ width: 375, height: 812 });
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+});
+
+test('encounter-specific tool is acquired, carried, charged, fired, and restored', async ({
+  page,
+}) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.goto('en/mechanics/encounter-specific-tool/');
+  const widget = page.locator('[data-blueprint-demo]');
+  const timeline = widget.locator('[data-blueprint-timeline]');
+  const seek = (milliseconds) =>
+    timeline.evaluate((element, value) => {
+      element.value = String(value);
+      element.dispatchEvent(new Event('input', { bubbles: true }));
+    }, milliseconds);
+
+  await expect(page.locator('.lesson-title-line h1')).toHaveText('Encounter-specific tool');
+  await expect(page.locator('.wip-badge, .draft-profile')).toHaveCount(0);
+  await expect(page.locator('.game-example')).toHaveCount(3);
+
+  await seek(1350);
+  await expect(widget).toHaveAttribute('data-blueprint-encounter-tool-reached', 'true');
+  await expect(widget).toHaveAttribute('data-blueprint-encounter-tool-package', 'sword');
+
+  await seek(1600);
+  await expect(widget).toHaveAttribute('data-blueprint-encounter-tool-equipped', 'true');
+  await expect(widget).toHaveAttribute('data-blueprint-encounter-tool-package', 'rune-spear');
+  await expect(widget.locator('[data-blueprint-primitive="6"] line')).not.toHaveAttribute(
+    'opacity',
+    '0',
+  );
+
+  await seek(2500);
+  await expect(widget).toHaveAttribute('data-blueprint-encounter-tool-charging', 'true');
+  await expect(widget).toHaveAttribute('data-blueprint-encounter-tool-combat-reached', 'true');
+  await expect(widget.locator('[data-blueprint-primitive="8"] circle')).not.toHaveAttribute(
+    'opacity',
+    '0',
+  );
+
+  await seek(3000);
+  await expect(widget).toHaveAttribute('data-blueprint-encounter-tool-ready', 'true');
+  await expect(widget).toHaveAttribute('data-blueprint-encounter-tool', 'tool-ready');
+
+  await seek(3250);
+  await expect(widget).toHaveAttribute('data-blueprint-encounter-tool-fired', 'true');
+  await expect(widget).toHaveAttribute('data-blueprint-encounter-tool-boss-damaged', 'false');
+  await expect(widget.locator('[data-blueprint-primitive="11"] circle')).not.toHaveAttribute(
+    'opacity',
+    '0',
+  );
+
+  await seek(3600);
+  await expect(widget).toHaveAttribute('data-blueprint-encounter-tool-boss-damaged', 'true');
+  await expect(widget).toHaveAttribute(
+    'data-blueprint-encounter-tool-damage-source',
+    'encounter-tool',
+  );
+  await expect(widget.locator('[data-blueprint-primitive="14"] rect')).toHaveAttribute(
+    'width',
+    '70',
+  );
+
+  await seek(4800);
+  await expect(widget).toHaveAttribute('data-blueprint-encounter-tool-expired', 'true');
+  await expect(widget).toHaveAttribute('data-blueprint-encounter-tool-package', 'sword');
 
   await page.setViewportSize({ width: 375, height: 812 });
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);

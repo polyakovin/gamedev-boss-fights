@@ -323,6 +323,19 @@ export function initializeBlueprint(widget) {
       widget.dataset.blueprintEnvironmentalSpent = String(frame.environmentalDeviceSpent);
       widget.dataset.blueprintEnvironmentalDamageSource = frame.environmentalDamageSource;
     }
+    if (mechanicId === 'encounter-specific-tool') {
+      widget.dataset.blueprintEncounterTool = frame.encounterSpecificToolState;
+      widget.dataset.blueprintEncounterToolReached = String(frame.encounterToolReached);
+      widget.dataset.blueprintEncounterToolEquipped = String(frame.encounterToolEquipped);
+      widget.dataset.blueprintEncounterToolCombatReached = String(frame.encounterToolCombatReached);
+      widget.dataset.blueprintEncounterToolCharging = String(frame.encounterToolCharging);
+      widget.dataset.blueprintEncounterToolReady = String(frame.encounterToolReady);
+      widget.dataset.blueprintEncounterToolFired = String(frame.encounterToolFired);
+      widget.dataset.blueprintEncounterToolBossDamaged = String(frame.encounterToolBossDamaged);
+      widget.dataset.blueprintEncounterToolExpired = String(frame.encounterToolExpired);
+      widget.dataset.blueprintEncounterToolPackage = frame.encounterToolActionPackage;
+      widget.dataset.blueprintEncounterToolDamageSource = frame.encounterToolDamageSource;
+    }
     boss.setAttribute(
       'transform',
       `translate(${frame.boss.x} ${frame.boss.y}) scale(${frame.bossScale})`,

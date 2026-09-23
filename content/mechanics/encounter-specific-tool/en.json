@@ -1,0 +1,142 @@
+{
+  "title": "Encounter-specific tool",
+  "subtitle": "Temporarily give the player an action built for this boss rule",
+  "variant": "Grant · carry · charge · resolve",
+  "summary": "The encounter grants or activates a portable tool whose rule-specific action is unusually effective against this boss.",
+  "overview": "An encounter-specific tool temporarily changes the player's actions with a portable capability authored for this boss. When acquisition, altered input, charge or cost, effective target, damage attribution, and removal are readable, the tool creates a focused decision instead of invalidating the player's build without explanation.",
+  "learning": "Define acquisition and fallback paths, inventory and loadout ownership, replaced or added inputs, charge and resource costs, movement permissions, special target response, damage attribution, normal-weapon viability, interruption, drop and expiry rules, checkpoints, multiplayer authority, accessibility alternatives, and tests that restore the original action set exactly once.",
+  "category": "Encounter goals and vulnerability",
+  "readTime": "9 min",
+  "demo": {
+    "title": "Show the tool changing hands, actions, and damage ownership",
+    "timeline": "Encounter-specific tool timeline",
+    "step": "Encounter-specific tool states",
+    "phaseNames": [
+      "Reveal the portable tool and complete acquisition",
+      "Carry it into position and teach its special charge",
+      "Resolve tool damage, recovery, expiry, and loadout return"
+    ],
+    "phaseDescriptions": [
+      "The rune spear and its pedestal are visible from the start. Tavi reaches it from 0.55 to 1.25 s and equips it at 1.48 s; the spear leaves the pedestal, follows Tavi, and the crossed ordinary-sword mark confirms that the encounter action package has changed.",
+      "Tavi carries the spear from 1.75 to 2.35 s, proving that this is not fixed arena machinery. The spear charges from 2.42 to 2.95 s with an expanding ring and preview line, then holds a clear ready state until the committed release at 3.15 s.",
+      "The rune wave travels from the carried spear and hits Kern at 3.52 s, removing one authored health segment with the tool as its damage source. Recovery begins at 4.15 s, the temporary tool expires at 4.60 s, the sword package returns, and position plus inventory reset by 5.20 s."
+    ],
+    "boss": "Boss",
+    "player": "Player",
+    "danger": "Kern pressures the carry and charge windows while the rune spear's encounter action remains the demonstrated source of meaningful boss damage",
+    "locked": "Tool spawn, acquisition, ownership, temporary action package, carry route, charge duration, ready signal, release, projectile, damage attribution, recovery, expiry, fallback, and reset are authored",
+    "safe": "Keep acquisition reachable, teach the altered input before pressure peaks, allow movement and cancellation during charge where promised, and expose the same ready and expiry states without relying on color alone",
+    "reducedMotion": "Autoplay is disabled by reduced motion. Scrub across 0.55, 1.25, 1.48, 1.75, 2.35, 2.42, 2.95, 3.15, 3.52, 4.15, 4.60, and 5.20 seconds to inspect acquisition, carry, charge, readiness, release, impact, recovery, expiry, and reset.",
+    "diagramDescription": "Kern stands above a compact arena while Tavi approaches a rune spear on a low pedestal. After pickup, the spear moves with Tavi and the ordinary-sword mark is crossed out. A growing ring charges at the spear tip, a dashed line fixes the target, a bright rune wave reaches Kern, the health bar drops on impact, and the spear dissolves before Tavi returns."
+  },
+  "steps": [
+    {
+      "title": "How does the tool enter and leave the action set?",
+      "body": "Choose whether the tool is granted automatically, picked up, summoned, equipped from inventory, or activated on an existing item. Define a fallback if it is missed, dropped, destroyed, already owned, or inaccessible after death. Show the swap on the character, HUD, prompts, and input legend, and restore the prior loadout through one authoritative transition rather than several competing cleanup scripts."
+    },
+    {
+      "title": "What new decision does its action create?",
+      "body": "Give the tool a compact verb with a purpose: reach a giant target, pierce a named defense, expose a weak response, or convert a story beat into agency. Specify charge time, aim, movement, cancel, resource cost, hit geometry, recovery, and target filtering. Preserve meaningful timing or positioning; a giant damage multiplier alone turns acquisition into a mandatory key rather than a mechanic."
+    },
+    {
+      "title": "How do you attribute the result and preserve builds?",
+      "body": "Tag every release and hit with the temporary tool ID, apply its boss-specific response only to eligible targets, and display the reaction with progress change. Decide whether ordinary builds remain viable, support utility around the tool, or are intentionally suspended for a short phase. Test upgrades, dual wielding, inventory limits, death, cutscenes, phase transitions, co-op pickup contention, latency, and duplicate grants."
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "The required tool looks optional or is easy to miss",
+      "body": "If ordinary attacks barely work but the special tool resembles generic loot, the encounter falsely diagnoses the player's build. Frame the tool before commitment, reserve a readable silhouette and marker, guarantee a recovery path, and make the first successful action demonstrate why the tool exists."
+    },
+    {
+      "title": "The tool changes controls without teaching or cleanup",
+      "body": "Replacing attacks, aim, or movement during active pressure can cause accidental inputs, especially when the HUD still describes the old package. Provide a low-risk teaching beat, preserve cancel rules, announce readiness through several channels, and verify that expiry returns bindings, animation, inventory, camera, and networking state together."
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "Guarantee acquisition and reacquisition",
+      "body": "Measure the worst route from every entrance and checkpoint, account for camera and collision, and prevent the tool from falling outside the arena or being consumed permanently. If pickup competes with boss pressure, signal a safe opening or let partial progress persist; a missed one-time grant must never soft-lock the fight."
+    },
+    {
+      "title": "Write the temporary action contract explicitly",
+      "body": "Document which inputs are replaced, added, or blocked and whether the tool permits sprint, dodge, jump, guard, healing, lock-on, and item use. Match animation locks to collision and cancel frames. A portable tool should visibly follow its owner, keep its origin consistent, and never behave like an invisible fixed turret."
+    },
+    {
+      "title": "Tune the boss around use, not mere possession",
+      "body": "Budget acquisition, positioning, charge, projectile travel, impact, and recovery against the boss pattern. Expose openings large enough for the slowest supported version, then vary aim, spacing, target timing, or resource management. Avoid making all player progression irrelevant for the full encounter unless that reset is the explicit dramatic purpose."
+    },
+    {
+      "title": "Make lifecycle and authority inspectable",
+      "body": "Expose owner ID, equipped package, charge, ready, release, eligible target, hit, cooldown, expiry, and restored loadout in tools and telemetry. Automated tests should prove that the tool moves with its owner, ordinary attacks cannot masquerade as its hit, one release resolves once, and every exit path restores state."
+    }
+  ],
+  "story": {
+    "title": "Tavi lifts the quarry's forgotten rune spear",
+    "body": "A spear made for splitting living stone waits on a low altar. Tavi lifts it, and its head stretches into a beam only while facing Kern's ancient core. The carried weapon answers the elemental's rune, releases one long fracture through its armor, then sheds its borrowed light and leaves Tavi's familiar sword in hand."
+  },
+  "adaptation": {
+    "title": "Keep movement familiar while teaching one temporary verb",
+    "body": "Tavi retains ordinary movement and can carry the spear to a readable firing position. The encounter replaces only the demonstrated attack package, uses a generous pickup radius, allows an optional aim snap, captions charge and readiness, and returns the sword automatically after expiry so accessibility support does not change the ownership rule."
+  },
+  "distinction": {
+    "title": "A portable action package, not fixed machinery or a normal loadout check",
+    "body": "An environmental weapon stays anchored to the arena while the player operates it in place; an encounter-specific tool moves with its owner and changes available actions. Loadout adaptation evaluates or encourages the build brought into the fight. This mechanic grants or activates a capability authored primarily for this encounter, even if ordinary builds retain supporting value."
+  },
+  "lensNotes": [
+    {
+      "id": "encounter-purpose",
+      "body": "A temporary tool can make the fight test one dramatic verb—giant reach, defense piercing, or charged commitment—without redesigning the whole game."
+    },
+    {
+      "id": "player-expression",
+      "body": "Expression survives when players still choose acquisition timing, position, aim, charge window, cancellation, and how their existing kit supports the temporary action."
+    },
+    {
+      "id": "counterplay",
+      "body": "The usable response is not possession alone: players create space, carry the tool, manage charge, track an eligible target, and commit through recovery."
+    },
+    {
+      "id": "progress-clarity",
+      "body": "Pickup, equipped package, charge, ready signal, projectile, boss reaction, health change, expiry, and loadout return explain the full causal chain."
+    },
+    {
+      "id": "risk-reward",
+      "body": "Acquisition and a vulnerable charge buy exceptional reach or damage; tuning compares that commitment with the payoff, interruption cost, and reacquisition burden."
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "Super Metroid",
+      "boss": "Mother Brain",
+      "screenshot": "https://i.ytimg.com/vi/0lb4p-Qnjiw/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=0lb4p-Qnjiw&t=200s",
+      "body": "Late in the final battle, the infant Metroid transfers energy to Samus and grants the Hyper Beam. The new beam temporarily replaces the previous weapon output, interrupts Mother Brain repeatedly, and exists primarily to resolve this staged endpoint. Acquisition, altered beam color and cadence, boss reaction, and the immediate escape transition make the borrowed action legible.",
+      "video": "https://www.youtube.com/watch?v=0lb4p-Qnjiw&t=200s",
+      "videoDurationSeconds": 243
+    },
+    {
+      "dimension": "3D",
+      "game": "Elden Ring",
+      "boss": "Rykard, Lord of Blasphemy",
+      "screenshot": "https://i.ytimg.com/vi/B9EorRzSavI/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=B9EorRzSavI&t=45s",
+      "body": "Serpent-Hunter waits inside the arena with no attribute requirements. Against the God-Devouring Serpent and Rykard, its attacks gain long blades of wind that solve the boss's scale and surrounding magma while the weapon remains carried and aimed by the player. The encounter-specific extension, not a fixed emplacement, defines the altered action package.",
+      "video": "https://www.youtube.com/watch?v=B9EorRzSavI&t=45s",
+      "videoDurationSeconds": 345
+    },
+    {
+      "dimension": "3D",
+      "game": "Dark Souls III",
+      "boss": "Yhorm the Giant",
+      "screenshot": "https://i.ytimg.com/vi/BQS8P60aYOc/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=BQS8P60aYOc&t=18s",
+      "body": "Storm Ruler is found by Yhorm's throne. Its weapon skill asks the player to hold a stance until the storm is fully charged, then release a ranged blast that deals exceptional damage and staggers the giant. Pickup, equipping, charge readiness, release, and recovery create a portable timing problem rather than a passive weakness multiplier.",
+      "video": "https://www.youtube.com/watch?v=BQS8P60aYOc&t=18s",
+      "videoDurationSeconds": 162
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

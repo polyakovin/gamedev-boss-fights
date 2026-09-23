@@ -1,0 +1,39 @@
+{
+  "id": "encounter-specific-tool",
+  "number": 84,
+  "published": true,
+  "sourceLocale": "en",
+  "contentVersion": 1,
+  "animation": "encounter-specific-tool",
+  "lenses": [
+    "encounter-purpose",
+    "player-expression",
+    "counterplay",
+    "progress-clarity",
+    "risk-reward"
+  ],
+  "related": [
+    "environmental-weapon",
+    "loadout-adaptation",
+    "damage-type-resistance",
+    "interruptible-wind-up"
+  ],
+  "sources": [
+    {
+      "title": "Boss Up: Boss Battle Design",
+      "url": "https://media.gdcvault.com/gdc2018/presentations/Keren_Itay_BossUp.pdf"
+    },
+    {
+      "title": "Hyper Beam (Mother Brain) — Metroid Wiki",
+      "url": "https://www.metroidwiki.org/wiki/Hyper_Beam_%28Mother_Brain%29"
+    },
+    {
+      "title": "Serpent-Hunter — Eldenpedia",
+      "url": "https://eldenring.wiki.gg/wiki/Serpent-Hunter"
+    },
+    {
+      "title": "Storm Ruler — Dark Souls III Wiki",
+      "url": "https://darksouls3.wikidot.com/equipmentgroup%3Astorm-ruler"
+    }
+  ]
+}
