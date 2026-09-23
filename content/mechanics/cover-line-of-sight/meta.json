@@ -1,0 +1,32 @@
+{
+  "id": "cover-line-of-sight",
+  "number": 75,
+  "published": true,
+  "sourceLocale": "en",
+  "contentVersion": 1,
+  "animation": "cover-line-of-sight",
+  "lenses": ["threat-geometry", "telegraphing", "access-paths", "counterplay"],
+  "related": ["straight-beam", "scanning-beam", "platform-destruction"],
+  "sources": [
+    {
+      "title": "GDC · Itay Keren — Boss Battle Design Fundamentals and Retrospective",
+      "url": "https://www.gdcvault.com/play/1024921/Boss-Up-Boss-Battle-Design"
+    },
+    {
+      "title": "Bloodborne Wiki — Living Failures",
+      "url": "https://www.bloodborne-wiki.com/2015/11/living-failures.html"
+    },
+    {
+      "title": "Final Fantasy XIV Online Wiki — The Labyrinth of the Ancients",
+      "url": "https://ffxiv.consolegameswiki.com/wiki/The_Labyrinth_of_the_Ancients"
+    },
+    {
+      "title": "Huntdown manual",
+      "url": "https://huntdown.com/manual/Manual-Huntdown.pdf"
+    },
+    {
+      "title": "Neoseeker — Grandmaster Yuudai walkthrough",
+      "url": "https://www.neoseeker.com/huntdown/4-3_-_Grandmaster_Yuudai"
+    }
+  ]
+}

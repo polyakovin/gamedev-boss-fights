@@ -405,9 +405,9 @@ test('volley releases three parallel bolts on one beat and clears its outside ro
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
 });
 
-test('catalog and builder reuse the 68 promoted rule-specific previews', async ({ page }) => {
+test('catalog and builder reuse the 69 promoted rule-specific previews', async ({ page }) => {
   await page.goto('en/');
-  await expect(page.locator('[data-blueprint-preview]')).toHaveCount(68);
+  await expect(page.locator('[data-blueprint-preview]')).toHaveCount(69);
   const catalogLayouts = await page.locator('[data-blueprint-preview]').evaluateAll((previews) =>
     previews.map((preview) => {
       const boss = preview.querySelector('[data-character-art-preview="kern"]');
@@ -431,7 +431,7 @@ test('catalog and builder reuse the 68 promoted rule-specific previews', async (
   expect(new Set(catalogLayouts.map(({ layout }) => layout)).size).toBeGreaterThanOrEqual(18);
 
   await page.goto('en/builder/');
-  await expect(page.locator('[data-blueprint-preview]')).toHaveCount(68);
+  await expect(page.locator('[data-blueprint-preview]')).toHaveCount(69);
   const builderLayouts = await page.locator('[data-blueprint-preview]').evaluateAll((previews) =>
     previews.map((preview) => {
       const boss = preview.querySelector('[data-character-art-preview="kern"]');
@@ -2316,6 +2316,71 @@ test('boss as terrain keeps the climb, hold, weak point, and dismount explicit',
     '0',
   );
   await expect(widget.locator('[data-blueprint-primitive="11"] circle')).not.toHaveAttribute(
+    'opacity',
+    '0',
+  );
+
+  await page.setViewportSize({ width: 375, height: 812 });
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+});
+
+test('cover and line of sight visibly stops the beam on the pillar before the counter', async ({
+  page,
+}) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.goto('en/mechanics/cover-line-of-sight/');
+  const widget = page.locator('[data-blueprint-demo]');
+  const timeline = widget.locator('[data-blueprint-timeline]');
+  const seek = (milliseconds) =>
+    timeline.evaluate((element, value) => {
+      element.value = String(value);
+      element.dispatchEvent(new Event('input', { bubbles: true }));
+    }, milliseconds);
+
+  await expect(page.locator('.lesson-title-line h1')).toHaveText('Cover and line of sight');
+  await expect(page.locator('.wip-badge, .draft-profile')).toHaveCount(0);
+  await expect(page.locator('.game-example')).toHaveCount(3);
+  await expect(widget).toHaveAttribute('data-blueprint-playing', 'false');
+
+  await seek(1100);
+  await expect(widget).toHaveAttribute('data-blueprint-cover-line-of-sight', 'moving-to-cover');
+  await expect(widget).toHaveAttribute('data-blueprint-cover-source-locked', 'true');
+  await expect(widget).toHaveAttribute('data-blueprint-cover-shadow', 'true');
+  await expect(widget).toHaveAttribute('data-blueprint-cover-occupied', 'false');
+  await expect(widget.locator('[data-blueprint-primitive="1"] path')).not.toHaveAttribute(
+    'opacity',
+    '0',
+  );
+
+  await seek(1800);
+  await expect(widget).toHaveAttribute('data-blueprint-cover-line-of-sight', 'fully-covered');
+  await expect(widget).toHaveAttribute('data-blueprint-cover-occupied', 'true');
+  await expect(widget).toHaveAttribute('data-blueprint-cover-beam', 'false');
+
+  await seek(2600);
+  await expect(widget).toHaveAttribute('data-blueprint-cover-line-of-sight', 'beam-blocked');
+  await expect(widget).toHaveAttribute('data-blueprint-cover-beam', 'true');
+  await expect(widget).toHaveAttribute('data-blueprint-cover-blocked', 'true');
+  await expect(widget).toHaveAttribute('data-blueprint-outcome', 'safe');
+  await expect(widget.locator('[data-blueprint-primitive="8"] line')).toHaveAttribute('x2', '285');
+  await expect(widget.locator('[data-blueprint-primitive="10"] circle')).not.toHaveAttribute(
+    'opacity',
+    '0',
+  );
+
+  await seek(3500);
+  await expect(widget).toHaveAttribute('data-blueprint-cover-line-of-sight', 'safe-exit');
+  await expect(widget).toHaveAttribute('data-blueprint-cover-beam', 'false');
+  await expect(widget).toHaveAttribute('data-blueprint-cover-exit', 'true');
+  await expect(widget.locator('[data-blueprint-primitive="14"] path')).not.toHaveAttribute(
+    'opacity',
+    '0',
+  );
+
+  await seek(3920);
+  await expect(widget).toHaveAttribute('data-blueprint-cover-line-of-sight', 'counter-window');
+  await expect(widget).toHaveAttribute('data-blueprint-punish-strike', 'true');
+  await expect(widget.locator('[data-blueprint-primitive="12"] line')).not.toHaveAttribute(
     'opacity',
     '0',
   );

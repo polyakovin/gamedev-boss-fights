@@ -1,0 +1,138 @@
+{
+  "title": "Cover and line of sight",
+  "subtitle": "Make a solid obstacle interrupt a directional threat, turning position relative to the source into the response.",
+  "variant": "Kern locks a rune beam through Tavi, a stone pillar casts an explicit safe shadow, and the beam stops at the pillar before Tavi peeks out to strike",
+  "summary": "A physical object creates safety by blocking the line between a directional threat and the player.",
+  "overview": "Cover and line of sight makes an obstacle part of the attack rule. The player identifies the source, reads the protected side, enters the occluded region fully, and knows when to leave. It works only when rendering, collision, damage, camera, and multiplayer authority agree about the same blocker.",
+  "learning": "Implement source locking, blocker eligibility, line-segment occlusion, readable shadow geometry, full-body clearance, attack termination, edge tolerance, cover persistence, and a reliable post-attack exit as one contract.",
+  "category": "Space, movement, and perception",
+  "readTime": "8 min",
+  "demo": {
+    "title": "Let one pillar visibly break the attack line",
+    "timeline": "Cover timeline",
+    "step": "Cover and line-of-sight states",
+    "phaseNames": [
+      "Lock the source and reveal the shadow",
+      "Reach cover and block the beam",
+      "Leave cover and answer"
+    ],
+    "phaseDescriptions": [
+      "At 0.42 s Kern's head rune locks a fixed line through Tavi. At 0.78 s the pillar projects a clear safe shadow away from the source, so the required side is visible before movement begins.",
+      "Tavi moves fully behind the pillar by 1.62 s. The beam activates at 2.12 s, ends on the near face of the stone, and remains dangerous everywhere outside the shadow until 3.18 s.",
+      "The beam shuts down before the shadow cue fades. Tavi clears the pillar edge, reaches sword range, strikes at 3.92 s, and both actors and the cover reset visibly after 5.08 s."
+    ],
+    "boss": "Boss",
+    "player": "Player",
+    "danger": "The fixed beam is dangerous only where Kern has an unobstructed segment; its collision never continues through the stone",
+    "locked": "Source, target snapshot, eligible blocker, occluded shadow, beam endpoint, edge margin, release time, and reset are authored",
+    "safe": "Identify Kern as the source, cross the complete body behind the pillar, wait for the beam to end, then leave the shadow for the response window",
+    "reducedMotion": "Autoplay is disabled by reduced motion. Scrub across 0.42, 0.78, 1.62, 2.12, 3.18, 3.92, and 5.08 seconds to inspect targeting, occlusion, and exit.",
+    "diagramDescription": "Kern aims a straight rune beam toward Tavi. A stone pillar between them casts a marked shadow away from Kern; Tavi moves fully into it, the active beam terminates on the pillar, then Tavi leaves after the beam ends and lands one sword strike."
+  },
+  "steps": [
+    {
+      "title": "What exactly can block this attack?",
+      "body": "Tag eligible cover explicitly and define whether the query uses a point, capsule, several body samples, or a swept volume. Decide how height, thickness, destruction state, moving platforms, gaps, slopes, and one-way geometry affect the result. Use the same authoritative blocker data for warning, damage, AI, replay, and networking instead of trusting whatever happens to be visible on screen."
+    },
+    {
+      "title": "Can the player read the safe side before committing?",
+      "body": "Reveal the source, the attack direction, and the blocker early enough to form one spatial problem. A shadow wedge, rim light, projected ray, or floor mask can show the protected region, but it must match the actual damage test. Include the player's full body and movement stopping distance; touching the pillar is not enough if the head or trailing collision still crosses the attack line."
+    },
+    {
+      "title": "How does the cover state end?",
+      "body": "Separate beam shutdown from the moment the player may safely leave. Signal both, preserve a short tolerance at the edge, and define whether the obstacle survives, moves, breaks, or becomes invalid for the next attack. Provide a useful post-cover choice—reposition, attack, restore resources, or protect another target—so waiting behind geometry leads back into play."
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "The picture says blocked while the damage query says exposed",
+      "body": "A camera angle can hide the source even when a center-point ray slips past the blocker, or a visible beam can continue through cover while damage is suppressed. These contradictions teach distrust. Draw the actual query in debug builds, sample the player's relevant volume, stop effects at the hit surface, and test every camera and latency condition."
+    },
+    {
+      "title": "Cover becomes passive downtime",
+      "body": "A long attack with one permanent safe spot asks the player to arrive once and then wait. Add a preparation decision, a moving source, vulnerable cover, competing positions, or a meaningful exit timing—but keep the core occlusion rule stable. Pressure should come from reaching or preserving cover, not from secretly invalidating it."
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "Compute occlusion from the threat source",
+      "body": "Capture the source position used by the attack and test segments from that point to defined player samples. If the source moves during the cast, either update the shadow continuously and visibly or lock it at a named beat. Distinguish visual camera occlusion from gameplay line of sight: the camera may see around a pillar while the attack remains physically blocked."
+    },
+    {
+      "title": "Give edges an authored margin",
+      "body": "Exact tangency is noisy across animation, frame rates, and network correction. Expand the blocker or contract the safe region by a small visible margin, then validate with the player's widest supported collision pose. Avoid a hidden rule where feet are safe but weapons, companions, or an upper-body sample remain exposed."
+    },
+    {
+      "title": "Treat destructible cover as a resource",
+      "body": "If attacks can damage the blocker, show durability and ensure at least one reachable alternative before it fails. Decide whether the lethal hit is absorbed, penetrates, or destroys the obstacle first. In multiplayer, prevent one player's unrelated splash damage from removing the only answer after teammates have committed to it without a replacement signal."
+    },
+    {
+      "title": "Test source, cover, and player as a triangle",
+      "body": "Sweep the source around every blocker and sample player positions just inside and outside both shadow edges. Test tall and short avatars, knockback, dashes, crouches, camera cuts, moving cover, simultaneous hazards, late joins, rollback, and low frame rates. Log false-safe and false-hit cases separately; both damage trust even when aggregate difficulty looks acceptable."
+    }
+  ],
+  "story": {
+    "title": "The quarry pillar still catches Kern's rune fire",
+    "body": "The old stone was cut from the same warded seam as Kern's shell. When the elemental focuses its head rune, the pillar absorbs the beam and leaves a cool turquoise shadow, making the safety rule feel like a property of the setting rather than a floating interface exception."
+  },
+  "adaptation": {
+    "title": "Use Tavi's ordinary run and sword",
+    "body": "The pillar is close enough for Tavi's normal acceleration and wide enough for the complete body silhouette. No dodge invulnerability is required. The beam ends before Tavi leaves cover, and the short response route fits one normal sword strike before Kern resets."
+  },
+  "distinction": {
+    "title": "Occlusion, not distance or generic avoidance",
+    "body": "A straight beam may be escaped by moving outside its lane, and a shield may block through an owned defensive state. Cover and line of sight specifically makes another world object interrupt the segment from source to player; safety depends on their relative geometry."
+  },
+  "lensNotes": [
+    {
+      "id": "threat-geometry",
+      "body": "Source, blocker, and player define an occlusion triangle; moving any corner changes the safe region."
+    },
+    {
+      "id": "telegraphing",
+      "body": "The tell must identify both the incoming direction and the side of the obstacle that will remain protected."
+    },
+    {
+      "id": "access-paths",
+      "body": "A readable route into and out of the shadow is part of the mechanic, especially when other hazards constrain approach."
+    },
+    {
+      "id": "counterplay",
+      "body": "The blocker converts a lethal directional attack into a positioning response followed by a deliberate re-entry window."
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "Huntdown",
+      "boss": "Grandmaster Yuudai",
+      "screenshot": "https://i.ytimg.com/vi/4RfGConwg3o/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=4RfGConwg3o&t=2430s",
+      "body": "The side-view arena includes background door recesses that remove the hunter from direct gunfire while Yuudai's automatic shotgun controls the open lanes. Cover does not solve his close attacks or spawned dragons, so entering and leaving it remains a timing and target-priority decision rather than permanent immunity.",
+      "video": "https://www.youtube.com/watch?v=4RfGConwg3o&t=2430s",
+      "videoDurationSeconds": 3812
+    },
+    {
+      "dimension": "3D",
+      "game": "Bloodborne: The Old Hunters",
+      "boss": "Living Failures",
+      "screenshot": "https://i.ytimg.com/vi/upUUkqS6_8g/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=upUUkqS6_8g&t=150s",
+      "body": "The Meteor Swarm approaches from a consistent side of the arena, and the giant central lumenflower blocks it. The fixed source direction turns one landmark into readable cover, while the remaining Failures can still occupy the protected side and prevent the safe position from becoming empty downtime.",
+      "video": "https://www.youtube.com/watch?v=upUUkqS6_8g&t=150s",
+      "videoDurationSeconds": 307
+    },
+    {
+      "dimension": "3D",
+      "game": "Final Fantasy XIV",
+      "boss": "King Behemoth",
+      "screenshot": "https://i.ytimg.com/vi/P1mgTFDkQ-Q/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=P1mgTFDkQ-Q&t=295s",
+      "body": "Marked players place comets outside the boss's targeting ring, the alliance preserves them from Iron Giants, and everyone must put a surviving comet between themselves and King Behemoth for Ecliptic Meteor. Cover placement, durability, source direction, and full-raid access are therefore one connected rule.",
+      "video": "https://www.youtube.com/watch?v=P1mgTFDkQ-Q&t=295s",
+      "videoDurationSeconds": 491
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

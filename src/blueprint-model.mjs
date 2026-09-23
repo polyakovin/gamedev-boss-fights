@@ -662,6 +662,44 @@ const SPECS = {
       [438, 770],
     ],
   },
+  'cover-line-of-sight': {
+    mode: 'cover-line-of-sight',
+    boss: [110, 590],
+    player: [470, 850],
+    target: [205, 470],
+    source: [150, 590],
+    coverPoint: [470, 610],
+    strikePoint: [205, 470],
+    pillar: [285, 500, 70, 180],
+    edgeMargin: 7,
+    lockAt: 0.42,
+    shadowAt: 0.78,
+    coveredAt: 1.62,
+    beam: [2.12, 3.18],
+    punishAt: 3.92,
+    resetAt: 5.08,
+    exitRoute: [
+      [470, 610],
+      [440, 520],
+      [410, 430],
+      [350, 415],
+      [300, 405],
+      [250, 435],
+      [205, 470],
+    ],
+    resetRoute: [
+      [205, 470],
+      [250, 435],
+      [300, 405],
+      [350, 415],
+      [410, 430],
+      [420, 500],
+      [435, 585],
+      [450, 670],
+      [460, 760],
+      [470, 850],
+    ],
+  },
   'wide-swing': { mode: 'arc', boss: [280, 310], player: [410, 470], target: [470, 650] },
   lunge: { mode: 'lunge', boss: [170, 290], player: [390, 590], target: [470, 660] },
   grab: { mode: 'grab', boss: [280, 300], player: [390, 485], target: [470, 610] },
@@ -1225,6 +1263,67 @@ export function bossAsTerrainState(time) {
   if (t < spec.drop[0]) return 'weak-point-opening';
   if (t < spec.resetAt) return 'safe-drop';
   return 'reset';
+}
+
+export function coverLineOfSightState(time) {
+  const spec = SPECS['cover-line-of-sight'];
+  const t = localTime(time);
+  if (t < spec.lockAt) return 'open-arena';
+  if (t < spec.shadowAt) return 'source-locked';
+  if (t < spec.coveredAt) return 'moving-to-cover';
+  if (t < spec.beam[0]) return 'fully-covered';
+  if (t < spec.beam[1]) return 'beam-blocked';
+  if (t < spec.punishAt) return 'safe-exit';
+  if (t < spec.resetAt) return 'counter-window';
+  return 'reset';
+}
+
+const segmentIntersectsRect = (start, end, bounds) => {
+  const delta = { x: end.x - start.x, y: end.y - start.y };
+  let near = 0;
+  let far = 1;
+  const tests = [
+    [-delta.x, start.x - bounds.left],
+    [delta.x, bounds.right - start.x],
+    [-delta.y, start.y - bounds.top],
+    [delta.y, bounds.bottom - start.y],
+  ];
+  for (const [direction, distance] of tests) {
+    if (Math.abs(direction) < 1e-9) {
+      if (distance < 0) return false;
+      continue;
+    }
+    const amount = distance / direction;
+    if (direction < 0) {
+      if (amount > far) return false;
+      near = Math.max(near, amount);
+    } else {
+      if (amount < near) return false;
+      far = Math.min(far, amount);
+    }
+  }
+  return near <= far;
+};
+
+export function coverLineOfSightBlocked(time, value, radius = BLUEPRINT_PLAYER_RADIUS) {
+  const spec = SPECS['cover-line-of-sight'];
+  if (localTime(time) < spec.shadowAt) return false;
+  const [x, y, width, height] = spec.pillar;
+  const bounds = {
+    left: x + spec.edgeMargin,
+    right: x + width - spec.edgeMargin,
+    top: y + spec.edgeMargin,
+    bottom: y + height - spec.edgeMargin,
+  };
+  const source = point(spec.source);
+  const samples = [
+    value,
+    { x: value.x, y: value.y - radius * 0.62 },
+    { x: value.x, y: value.y + radius * 0.62 },
+    { x: value.x - radius * 0.28, y: value.y },
+    { x: value.x + radius * 0.28, y: value.y },
+  ];
+  return samples.every((sample) => segmentIntersectsRect(source, sample, bounds));
 }
 
 const pointInPolygon = (value, points) => {
@@ -2764,6 +2863,69 @@ function primitivesFor(spec, frame) {
       line(266, 484, 338, 484, state === 'weak-point-opening' ? 0.72 : 0.16, 'accent', 5, '7 7'),
     ];
   }
+  if (mode === 'cover-line-of-sight') {
+    const shadowVisible = frame.coverShadowVisible;
+    const beamActive = frame.coverBeamActive;
+    const targetVisible = frame.time >= spec.lockAt && frame.time < spec.beam[0];
+    const exitOpen = frame.coverExitOpen;
+    const strike = strikePulse(frame.time, spec.punishAt, 0.38);
+    const source = point(spec.source);
+    const beamHit = { x: spec.pillar[0], y: 598 };
+    return [
+      rect(56, 350, 448, 540, 0.54, 'muted', 0.025),
+      path(
+        'M 355 500 L 535 333 L 535 847 L 355 680 Z',
+        shadowVisible ? (beamActive ? 0.82 : 0.58) : 0,
+        'safe',
+        beamActive ? 7 : 5,
+        beamActive ? 0.12 : 0.07,
+        beamActive ? '' : '11 9',
+      ),
+      line(
+        source.x,
+        source.y,
+        frame.player.x,
+        frame.player.y,
+        targetVisible ? 0.72 : 0,
+        'accent',
+        5,
+        '10 9',
+      ),
+      line(355, 500, 535, 333, shadowVisible ? 0.54 : 0, 'safe', 4, '9 8'),
+      line(355, 680, 535, 847, shadowVisible ? 0.54 : 0, 'safe', 4, '9 8'),
+      rect(
+        spec.pillar[0],
+        spec.pillar[1],
+        spec.pillar[2],
+        spec.pillar[3],
+        0.96,
+        beamActive ? 'safe' : 'muted',
+        0.34,
+      ),
+      path('M 304 520 L 326 548 L 310 578 L 338 610 L 318 644', 0.72, 'accent', 5),
+      circle(
+        source.x,
+        source.y,
+        beamActive ? 22 : 15,
+        frame.time >= spec.lockAt ? 0.92 : 0.28,
+        beamActive ? 'signal' : 'accent',
+        beamActive ? 9 : 5,
+        beamActive ? 0.24 : 0.08,
+      ),
+      line(source.x, source.y, beamHit.x, beamHit.y, beamActive ? 0.92 : 0, 'signal', 18),
+      line(source.x, source.y, beamHit.x, beamHit.y, beamActive ? 1 : 0, 'safe', 5),
+      circle(beamHit.x, beamHit.y, beamActive ? 22 : 12, beamActive ? 0.96 : 0, 'signal', 8, 0.18),
+      path(
+        `M ${beamHit.x - 8} ${beamHit.y - 34} L ${beamHit.x} ${beamHit.y - 18} L ${beamHit.x + 12} ${beamHit.y - 31} M ${beamHit.x - 10} ${beamHit.y + 34} L ${beamHit.x} ${beamHit.y + 18} L ${beamHit.x + 13} ${beamHit.y + 30}`,
+        beamActive ? 0.9 : 0,
+        'signal',
+        5,
+      ),
+      line(frame.player.x, frame.player.y, frame.boss.x, frame.boss.y, strike, 'safe', 10),
+      circle(frame.boss.x + 26, frame.boss.y - 18, 12 + strike * 24, strike, 'safe', 7, 0.14),
+      path('M 390 430 Q 326 370 260 420', exitOpen ? 0.58 : 0.12, 'accent', 5, 0, '9 9'),
+    ];
+  }
   if (mode === 'landing') {
     const landing = point(spec.landing);
     const contact = phase === 1 ? clamp(1 - Math.abs(action - 0.52) / 0.2) : 0;
@@ -4066,6 +4228,8 @@ function pointClearsThreat(spec, frame, value, radius = BLUEPRINT_PLAYER_RADIUS)
   if (mode === 'control-mode-shift')
     return !frame.dangerActive || value.y + radius < spec.waveStart[1] - 18;
   if (mode === 'boss-as-terrain') return !frame.dangerActive || frame.bossAsTerrainHolding;
+  if (mode === 'cover-line-of-sight')
+    return !frame.dangerActive || coverLineOfSightBlocked(frame.time, value, radius);
   if (mode === 'spiral')
     return (
       distanceFromBoss > 52 + radius &&
@@ -4372,6 +4536,7 @@ export function blueprintFrame(id, time) {
   else if (spec.mode === 'relocated-arena') responseProgress = 0;
   else if (spec.mode === 'control-mode-shift') responseProgress = 0;
   else if (spec.mode === 'boss-as-terrain') responseProgress = 0;
+  else if (spec.mode === 'cover-line-of-sight') responseProgress = 0;
   else if (spec.mode === 'knockback')
     responseProgress = phase === 0 ? 0 : phase === 1 ? smooth(action) : 1;
   else if (spec.mode === 'target-lock')
@@ -4771,6 +4936,26 @@ export function blueprintFrame(id, time) {
       };
     }
   }
+  if (spec.mode === 'cover-line-of-sight') {
+    const cover = point(spec.coverPoint);
+    const strike = point(spec.strikePoint);
+    if (t < spec.shadowAt) player = startPlayer;
+    else if (t < spec.coveredAt) {
+      const enter = smooth((t - spec.shadowAt) / (spec.coveredAt - spec.shadowAt));
+      player = {
+        x: mix(startPlayer.x, cover.x, enter),
+        y: mix(startPlayer.y, cover.y, enter),
+      };
+    } else if (t < spec.beam[1]) player = cover;
+    else if (t < spec.punishAt) {
+      const exit = clamp((t - spec.beam[1]) / (spec.punishAt - spec.beam[1]));
+      player = pointAlongPolyline(spec.exitRoute.map(point), exit);
+    } else if (t < spec.resetAt) player = strike;
+    else {
+      const reset = clamp((t - spec.resetAt) / (BLUEPRINT_DURATION - spec.resetAt));
+      player = pointAlongPolyline(spec.resetRoute.map(point), reset);
+    }
+  }
   if (spec.mode === 'rotating' && phase === 0) {
     const initialPosition = polar(boss, 255, Math.PI / 3);
     player = {
@@ -5064,7 +5249,11 @@ export function blueprintFrame(id, time) {
                                                                         'boss-as-terrain'
                                                                       ? t >= spec.shake[0] &&
                                                                         t < spec.shake[1]
-                                                                      : phase === 1;
+                                                                      : spec.mode ===
+                                                                          'cover-line-of-sight'
+                                                                        ? t >= spec.beam[0] &&
+                                                                          t < spec.beam[1]
+                                                                        : phase === 1;
   const frame = {
     id,
     mode: spec.mode,
@@ -5144,21 +5333,23 @@ export function blueprintFrame(id, time) {
                         ? (Math.atan2(boss.y - player.y, boss.x - player.x) * 180) / Math.PI
                         : spec.mode === 'relocated-arena'
                           ? (Math.atan2(boss.y - player.y, boss.x - player.x) * 180) / Math.PI
-                          : spec.mode === 'boss-as-terrain'
+                          : spec.mode === 'cover-line-of-sight'
                             ? (Math.atan2(boss.y - player.y, boss.x - player.x) * 180) / Math.PI
-                            : spec.mode === 'control-mode-shift'
+                            : spec.mode === 'boss-as-terrain'
                               ? (Math.atan2(boss.y - player.y, boss.x - player.x) * 180) / Math.PI
-                              : spec.mode === 'damage-type-resistance' ||
-                                  spec.mode === 'situational-immunity' ||
-                                  spec.mode === 'part-break' ||
-                                  spec.mode === 'attack-reflection' ||
-                                  spec.mode === 'counter-stance' ||
-                                  spec.mode === 'absorption-power-up' ||
-                                  spec.mode === 'interruptible-wind-up' ||
-                                  spec.mode === 'loadout-adaptation' ||
-                                  spec.mode === 'wind-up'
-                                ? -180
-                                : -90,
+                              : spec.mode === 'control-mode-shift'
+                                ? (Math.atan2(boss.y - player.y, boss.x - player.x) * 180) / Math.PI
+                                : spec.mode === 'damage-type-resistance' ||
+                                    spec.mode === 'situational-immunity' ||
+                                    spec.mode === 'part-break' ||
+                                    spec.mode === 'attack-reflection' ||
+                                    spec.mode === 'counter-stance' ||
+                                    spec.mode === 'absorption-power-up' ||
+                                    spec.mode === 'interruptible-wind-up' ||
+                                    spec.mode === 'loadout-adaptation' ||
+                                    spec.mode === 'wind-up'
+                                  ? -180
+                                  : -90,
     bossMotion: motion({
       gait:
         spec.mode === 'chase-herding' ||
@@ -5352,9 +5543,17 @@ export function blueprintFrame(id, time) {
                                                     strikePulse(t, spec.handoff[0], 0.72),
                                                     strikePulse(t, spec.wave[0], 0.68),
                                                   )
-                                                : phase === 1
-                                                  ? 0.75
-                                                  : prepare * 0.35,
+                                                : spec.mode === 'cover-line-of-sight'
+                                                  ? dangerActive
+                                                    ? 1
+                                                    : 0.25 *
+                                                      smooth(
+                                                        (t - spec.lockAt) /
+                                                          (spec.beam[0] - spec.lockAt),
+                                                      )
+                                                  : phase === 1
+                                                    ? 0.75
+                                                    : prepare * 0.35,
       impact:
         spec.mode === 'landing'
           ? pulse(clamp((action - 0.42) / 0.22))
@@ -5431,12 +5630,14 @@ export function blueprintFrame(id, time) {
                                                 ? 0.72 * strikePulse(t, spec.transfer[1], 0.32)
                                                 : spec.mode === 'control-mode-shift'
                                                   ? 0.85 * strikePulse(t, spec.punishAt, 0.3)
-                                                  : spec.mode === 'shockwave' ||
-                                                      spec.mode === 'knockback'
-                                                    ? pulse(action * 3)
-                                                    : spec.mode === 'chain-explosions'
-                                                      ? pulse((action * 5) % 1)
-                                                      : 0,
+                                                  : spec.mode === 'cover-line-of-sight'
+                                                    ? 0.85 * strikePulse(t, spec.punishAt, 0.3)
+                                                    : spec.mode === 'shockwave' ||
+                                                        spec.mode === 'knockback'
+                                                      ? pulse(action * 3)
+                                                      : spec.mode === 'chain-explosions'
+                                                        ? pulse((action * 5) % 1)
+                                                        : 0,
     }),
     playerMotion: motion({
       gait:
@@ -5462,7 +5663,9 @@ export function blueprintFrame(id, time) {
                             ? t * 7 * stride
                             : spec.mode === 'boss-as-terrain'
                               ? t * 7 * stride
-                              : (route * responseProgress + route * returnProgress) / 20,
+                              : spec.mode === 'cover-line-of-sight'
+                                ? t * 7 * stride
+                                : (route * responseProgress + route * returnProgress) / 20,
       stride,
       lean: stride * 0.45,
       crouch:
@@ -5473,7 +5676,11 @@ export function blueprintFrame(id, time) {
             ? t >= spec.shake[0] && t < spec.shake[1]
               ? 0.28
               : 0.08 * stride
-            : stride * 0.16,
+            : spec.mode === 'cover-line-of-sight'
+              ? t >= spec.coveredAt && t < spec.beam[1]
+                ? 0.2
+                : stride * 0.16
+              : stride * 0.16,
       lift:
         spec.mode === 'control-mode-shift' && t >= spec.handoff[1] && t < spec.wave[1]
           ? Math.sin(clamp((t - spec.handoff[1]) / (spec.wave[1] - spec.handoff[1])) * Math.PI)
@@ -5541,11 +5748,13 @@ export function blueprintFrame(id, time) {
                                               ? strikePulse(t, spec.punishAt, 0.38)
                                               : spec.mode === 'boss-as-terrain'
                                                 ? strikePulse(t, spec.punishAt, 0.38)
-                                                : spec.mode === 'decoy' && phase === 1
-                                                  ? pulse(clamp((action - 0.52) / 0.3))
-                                                  : spec.mode === 'weak-point' && phase === 1
-                                                    ? pulse(action * 1.5)
-                                                    : 0,
+                                                : spec.mode === 'cover-line-of-sight'
+                                                  ? strikePulse(t, spec.punishAt, 0.38)
+                                                  : spec.mode === 'decoy' && phase === 1
+                                                    ? pulse(clamp((action - 0.52) / 0.3))
+                                                    : spec.mode === 'weak-point' && phase === 1
+                                                      ? pulse(action * 1.5)
+                                                      : 0,
     }),
   };
   if (spec.mode === 'directional-shield') {
@@ -5665,6 +5874,16 @@ export function blueprintFrame(id, time) {
     frame.bossAsTerrainSafeDrop = t >= spec.drop[0] && t < spec.resetAt;
     frame.punishStrike = strikePulse(t, spec.punishAt, 0.38) > 0.5;
   }
+  if (spec.mode === 'cover-line-of-sight') {
+    frame.coverLineOfSightState = coverLineOfSightState(t);
+    frame.coverSourceLocked = t >= spec.lockAt && t < spec.resetAt;
+    frame.coverShadowVisible = t >= spec.shadowAt && t < spec.resetAt;
+    frame.coverOccupied = coverLineOfSightBlocked(t, player);
+    frame.coverBeamActive = dangerActive;
+    frame.coverBeamBlocked = dangerActive && frame.coverOccupied;
+    frame.coverExitOpen = t >= spec.beam[1] && t < spec.resetAt;
+    frame.punishStrike = strikePulse(t, spec.punishAt, 0.38) > 0.5;
+  }
   if (spec.mode === 'relocated-arena') {
     frame.relocatedArenaState = relocatedArenaState(t);
     frame.relocatedDestinationRevealed = t >= spec.previewAt;
@@ -5768,7 +5987,8 @@ export function blueprintFrame(id, time) {
       spec.mode === 'forced-scrolling' ||
       spec.mode === 'chase-herding' ||
       spec.mode === 'escape-phase' ||
-      spec.mode === 'boss-as-terrain'
+      spec.mode === 'boss-as-terrain' ||
+      spec.mode === 'cover-line-of-sight'
         ? 92
         : -62),
   };

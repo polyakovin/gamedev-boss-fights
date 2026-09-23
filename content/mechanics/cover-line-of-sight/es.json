@@ -1,0 +1,138 @@
+{
+  "title": "Cobertura y línea de visión",
+  "subtitle": "Haz que un obstáculo sólido interrumpa una amenaza direccional y convierta la posición respecto al origen en la respuesta.",
+  "variant": "Kern fija un rayo rúnico a través de Tavi, una columna proyecta una sombra segura explícita y el rayo termina en la piedra antes de que Tavi salga a golpear",
+  "summary": "Un objeto físico crea seguridad al bloquear la línea entre una amenaza direccional y el jugador.",
+  "overview": "La cobertura y línea de visión convierte el obstáculo en parte de la regla del ataque. El jugador debe identificar el origen, leer qué lado está protegido, meter todo el cuerpo en la región ocluida y saber cuándo salir. La mecánica solo es fiable si renderizado, colisión, daño, cámara y autoridad multijugador coinciden en el mismo bloqueador.",
+  "learning": "Implementa como un único contrato el bloqueo del origen, los obstáculos válidos, la oclusión del segmento, una sombra legible, el margen de cuerpo completo, el final del ataque, la tolerancia de borde, la permanencia de la cobertura y una salida segura.",
+  "category": "Espacio, movimiento y percepción",
+  "readTime": "8 min",
+  "demo": {
+    "title": "Haz que una columna corte visiblemente la línea de ataque",
+    "timeline": "Línea temporal de cobertura",
+    "step": "Estados de cobertura y línea de visión",
+    "phaseNames": [
+      "Fijar el origen y revelar la sombra",
+      "Llegar a cobertura y bloquear el rayo",
+      "Salir de cobertura y responder"
+    ],
+    "phaseDescriptions": [
+      "A los 0,42 s la runa de Kern fija una línea que atraviesa a Tavi. A los 0,78 s la columna proyecta una sombra segura alejándose del origen, así que el lado correcto se lee antes de moverse.",
+      "Tavi queda por completo tras la columna a los 1,62 s. El rayo se activa a los 2,12 s, termina en la cara cercana de la piedra y mantiene peligroso todo el exterior de la sombra hasta los 3,18 s.",
+      "El rayo termina antes de que desaparezca la guía de sombra. Tavi rebasa el borde, entra a distancia de espada, golpea a los 3,92 s y todo vuelve de forma visible al inicio después de los 5,08 s."
+    ],
+    "boss": "Jefe",
+    "player": "Jugador",
+    "danger": "El rayo fijado solo hace daño donde existe un segmento despejado desde Kern; su colisión nunca continúa a través de la piedra",
+    "locked": "Origen, captura del objetivo, bloqueador válido, sombra ocluida, final del rayo, margen del borde, cierre y reinicio están definidos",
+    "safe": "Identifica a Kern como origen, cruza con todo el cuerpo detrás de la columna, espera a que termine el rayo y abandona la sombra durante la respuesta",
+    "reducedMotion": "Con movimiento reducido se desactiva la reproducción. Revisa 0,42, 0,78, 1,62, 2,12, 3,18, 3,92 y 5,08 s para inspeccionar fijación, oclusión y salida.",
+    "diagramDescription": "Kern apunta un rayo recto hacia Tavi. Una columna entre ambos proyecta una sombra marcada en dirección opuesta a Kern; Tavi entra por completo, el rayo activo termina en la piedra y, cuando cesa, Tavi sale y asesta un golpe de espada."
+  },
+  "steps": [
+    {
+      "title": "¿Qué puede bloquear exactamente este ataque?",
+      "body": "Etiqueta de forma explícita la cobertura válida y decide si la consulta usa un punto, una cápsula, varias muestras del cuerpo o un volumen barrido. Define cómo afectan altura, grosor, destrucción, plataformas móviles, huecos, pendientes y geometría unidireccional. Advertencia, daño, IA, repetición y red deben compartir datos autoritativos, no confiar en lo que parezca visible."
+    },
+    {
+      "title": "¿Puede el jugador leer el lado seguro antes de comprometerse?",
+      "body": "Revela origen, dirección y obstáculo con tiempo para formar un único problema espacial. Una cuña de sombra, un borde iluminado, una línea proyectada o una máscara de suelo pueden mostrar la protección, pero deben coincidir con la prueba de daño. Incluye todo el cuerpo y la distancia de frenado: tocar la columna no basta si otra muestra sigue expuesta."
+    },
+    {
+      "title": "¿Cómo termina el estado de cobertura?",
+      "body": "Separa el apagado del rayo del momento en que se puede salir y comunica ambos. Conserva una tolerancia breve en el borde y define si el objeto persiste, se mueve, se rompe o deja de servir. Tras la cobertura ofrece una elección útil: reposicionarse, atacar, recuperar recursos o proteger otro objetivo."
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "La imagen dice bloqueado, pero el daño dice expuesto",
+      "body": "La cámara puede ocultar el origen mientras un rayo central pasa rozando el obstáculo, o el efecto visible puede atravesar cobertura con el daño desactivado. Estas contradicciones destruyen confianza. Dibuja la consulta real al depurar, usa el volumen relevante, corta el efecto en la superficie y prueba cámaras y latencia."
+    },
+    {
+      "title": "La cobertura se convierte en espera pasiva",
+      "body": "Un ataque largo con un único punto seguro permanente solo pide llegar y esperar. Añade una decisión previa, un origen móvil, cobertura vulnerable, posiciones que compitan o un momento de salida significativo, pero mantén estable la regla de oclusión. La presión debe venir de alcanzar o conservar la cobertura."
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "Calcula la oclusión desde el origen de la amenaza",
+      "body": "Captura la posición que usa el ataque y prueba segmentos desde allí hasta muestras definidas del jugador. Si el origen se mueve durante la carga, actualiza la sombra de forma continua y visible o bloquéala en un instante nombrado. La oclusión de cámara no es la línea de visión del juego: la cámara puede mirar alrededor de la columna mientras el ataque sigue bloqueado."
+    },
+    {
+      "title": "Da un margen diseñado a los bordes",
+      "body": "La tangencia exacta es inestable con animación, frecuencia de cuadros y corrección de red. Expande un poco el bloqueador o contrae la zona segura, haz visible ese margen y valida la postura más ancha. Evita que los pies estén seguros mientras el arma, compañero o torso siguen expuestos por una regla oculta."
+    },
+    {
+      "title": "Trata la cobertura destructible como un recurso",
+      "body": "Si puede recibir daño, muestra su resistencia y garantiza una alternativa alcanzable antes de que falle. Decide si el impacto letal se absorbe, atraviesa o destruye primero. En multijugador, el daño colateral de otra persona no debe eliminar la única respuesta cuando sus aliados ya se comprometieron sin señalar reemplazo."
+    },
+    {
+      "title": "Prueba el triángulo entre origen, cobertura y jugador",
+      "body": "Mueve el origen alrededor de cada obstáculo y toma posiciones justo dentro y fuera de ambos bordes de la sombra. Prueba tamaños, empujones, carreras, agacharse, cortes de cámara, cobertura móvil, peligros simultáneos, entradas tardías, rollback y pocos cuadros. Registra por separado falsos seguros y falsos impactos."
+    }
+  ],
+  "story": {
+    "title": "La columna de la cantera aún detiene el fuego rúnico de Kern",
+    "body": "La piedra antigua procede de la misma veta protegida que la coraza de Kern. Cuando el elemental concentra su runa, la columna absorbe el rayo y deja una sombra turquesa fría, de modo que la seguridad parece una propiedad del mundo y no una excepción de interfaz."
+  },
+  "adaptation": {
+    "title": "Usa la carrera y la espada normales de Tavi",
+    "body": "La columna está a distancia de la aceleración habitual de Tavi y es lo bastante ancha para todo el cuerpo. No hace falta invulnerabilidad de carrera. El rayo termina antes de salir y la ruta de respuesta permite un golpe normal antes de que Kern reinicie."
+  },
+  "distinction": {
+    "title": "Oclusión, no distancia ni evasión genérica",
+    "body": "Un rayo recto puede evitarse abandonando su carril y un escudo puede bloquear mediante un estado defensivo propio. Aquí otro objeto del mundo interrumpe el segmento entre origen y jugador; la seguridad depende de su geometría relativa."
+  },
+  "lensNotes": [
+    {
+      "id": "threat-geometry",
+      "body": "Origen, obstáculo y jugador forman un triángulo de oclusión; mover cualquier vértice cambia la zona segura."
+    },
+    {
+      "id": "telegraphing",
+      "body": "La señal debe indicar tanto la dirección entrante como el lado del obstáculo que seguirá protegido."
+    },
+    {
+      "id": "access-paths",
+      "body": "Una ruta legible hacia y desde la sombra forma parte de la mecánica, sobre todo con otros peligros en el acceso."
+    },
+    {
+      "id": "counterplay",
+      "body": "El obstáculo convierte un ataque direccional letal en una respuesta de posición seguida por una vuelta deliberada al combate."
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "Huntdown",
+      "boss": "Grandmaster Yuudai",
+      "screenshot": "https://i.ytimg.com/vi/4RfGConwg3o/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=4RfGConwg3o&t=2430s",
+      "body": "Las puertas hundidas del escenario lateral sacan al cazador del fuego directo mientras la escopeta automática de Yuudai controla los carriles abiertos. La cobertura no resuelve sus ataques cercanos ni los dragones, por lo que entrar y salir sigue siendo una decisión de tiempo y prioridad, no inmunidad permanente.",
+      "video": "https://www.youtube.com/watch?v=4RfGConwg3o&t=2430s",
+      "videoDurationSeconds": 3812
+    },
+    {
+      "dimension": "3D",
+      "game": "Bloodborne: The Old Hunters",
+      "boss": "Living Failures",
+      "screenshot": "https://i.ytimg.com/vi/upUUkqS6_8g/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=upUUkqS6_8g&t=150s",
+      "body": "Meteor Swarm llega desde un lado constante y el gran lumenflower central lo bloquea. La dirección fija convierte un hito en cobertura legible, mientras los demás Living Failures aún pueden ocupar el lado protegido e impedir que la espera quede vacía.",
+      "video": "https://www.youtube.com/watch?v=upUUkqS6_8g&t=150s",
+      "videoDurationSeconds": 307
+    },
+    {
+      "dimension": "3D",
+      "game": "Final Fantasy XIV",
+      "boss": "King Behemoth",
+      "screenshot": "https://i.ytimg.com/vi/P1mgTFDkQ-Q/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=P1mgTFDkQ-Q&t=295s",
+      "body": "Los jugadores marcados colocan cometas fuera del círculo del jefe, la alianza los protege de Iron Giants y todos deben poner uno entre sí y King Behemoth para Ecliptic Meteor. Colocación, resistencia, dirección del origen y acceso del grupo forman una sola regla.",
+      "video": "https://www.youtube.com/watch?v=P1mgTFDkQ-Q&t=295s",
+      "videoDurationSeconds": 491
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

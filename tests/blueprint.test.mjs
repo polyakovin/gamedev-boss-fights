@@ -10,6 +10,8 @@ import {
   attackReflectionState,
   boundaryAttackState,
   bossAsTerrainState,
+  coverLineOfSightBlocked,
+  coverLineOfSightState,
   chaseHerdingState,
   controlModeShiftState,
   escapePhaseState,
@@ -43,8 +45,8 @@ import {
   renderBlueprintThumbnail,
 } from '../lib/blueprint-view.mjs';
 
-test('all 68 promoted lesson animations have distinct rule modes and complete moving frames', () => {
-  assert.equal(BLUEPRINT_MECHANIC_IDS.length, 68);
+test('all 69 promoted lesson animations have distinct rule modes and complete moving frames', () => {
+  assert.equal(BLUEPRINT_MECHANIC_IDS.length, 69);
   const modes = new Set();
   for (const id of BLUEPRINT_MECHANIC_IDS) {
     for (let time = 0; time <= BLUEPRINT_DURATION; time += 0.1) {
@@ -65,7 +67,7 @@ test('all 68 promoted lesson animations have distinct rule modes and complete mo
           assert.ok(Number.isFinite(value), `${id} has an invalid ${primitive.type}`);
     }
   }
-  assert.equal(modes.size, 68);
+  assert.equal(modes.size, 69);
 });
 
 test('every blueprint exposes signal, committed action, and recovery without player teleports', () => {
@@ -132,6 +134,7 @@ test('every damaging promoted animation derives safety from its own active geome
     'attack-reflection': null,
     'forced-scrolling': { x: 350, y: 750 },
     'control-mode-shift': { x: 120, y: 724 },
+    'cover-line-of-sight': { x: 470, y: 850 },
     'wide-swing': { x: 280, y: 515 },
     lunge: { x: 300, y: 440 },
     grab: { x: 390, y: 485 },
@@ -1953,5 +1956,55 @@ test('boss as terrain exposes a stable route, holds through motion, and validate
   assert.match(
     renderBlueprintThumbnail(id, 'test-boss-as-terrain'),
     /data-blueprint-preview="boss-as-terrain"/,
+  );
+});
+
+test('cover and line of sight derives safety from the blocker and ends the beam on its surface', () => {
+  const id = 'cover-line-of-sight';
+  assert.deepEqual([0, 0.6, 1.1, 1.8, 2.6, 3.5, 4.2, 5.5].map(coverLineOfSightState), [
+    'open-arena',
+    'source-locked',
+    'moving-to-cover',
+    'fully-covered',
+    'beam-blocked',
+    'safe-exit',
+    'counter-window',
+    'reset',
+  ]);
+
+  const preview = blueprintFrame(id, 1.1);
+  assert.equal(preview.coverSourceLocked, true);
+  assert.equal(preview.coverShadowVisible, true);
+  assert.equal(preview.coverOccupied, false);
+  assert.ok(preview.primitives[1].opacity > 0.5, 'the safe shadow appears before commitment');
+  assert.ok(preview.primitives[2].opacity > 0.6, 'the source-to-player line remains visible');
+
+  const blocked = blueprintFrame(id, 2.6);
+  assert.equal(blocked.coverLineOfSightState, 'beam-blocked');
+  assert.equal(blocked.coverOccupied, true);
+  assert.equal(blocked.coverBeamActive, true);
+  assert.equal(blocked.coverBeamBlocked, true);
+  assert.equal(blocked.playerSafe, true);
+  assert.equal(coverLineOfSightBlocked(2.6, { x: 470, y: 610 }), true);
+  assert.equal(coverLineOfSightBlocked(2.6, { x: 470, y: 850 }), false);
+  assert.equal(blueprintPointSafe(id, 2.6, { x: 470, y: 850 }), false);
+  assert.ok(blocked.primitives[8].opacity > 0.9, 'the live beam is visible');
+  assert.equal(blocked.primitives[8].x2, 285, 'the beam ends on the pillar face');
+  assert.ok(blocked.primitives[10].opacity > 0.9, 'the blocked impact is explicit');
+
+  const exit = blueprintFrame(id, 3.5);
+  assert.equal(exit.coverExitOpen, true);
+  assert.equal(exit.dangerActive, false);
+  assert.ok(exit.primitives[14].opacity > 0.5, 'the route out of cover is visible');
+
+  const punish = blueprintFrame(id, 3.92);
+  assert.equal(punish.punishStrike, true);
+  assert.ok(punish.primitives[12].opacity > 0.9, 'the sword response lands after the beam ends');
+
+  assert.deepEqual(blueprintFrame(id, 0).player, blueprintFrame(id, 6).player);
+  assert.deepEqual(blueprintFrame(id, 0).boss, blueprintFrame(id, 6).boss);
+  assert.match(
+    renderBlueprintThumbnail(id, 'test-cover-line-of-sight'),
+    /data-blueprint-preview="cover-line-of-sight"/,
   );
 });

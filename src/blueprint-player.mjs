@@ -229,6 +229,16 @@ export function initializeBlueprint(widget) {
       widget.dataset.blueprintTerrainSafeDrop = String(frame.bossAsTerrainSafeDrop);
       widget.dataset.blueprintPunishStrike = String(frame.punishStrike);
     }
+    if (mechanicId === 'cover-line-of-sight') {
+      widget.dataset.blueprintCoverLineOfSight = frame.coverLineOfSightState;
+      widget.dataset.blueprintCoverSourceLocked = String(frame.coverSourceLocked);
+      widget.dataset.blueprintCoverShadow = String(frame.coverShadowVisible);
+      widget.dataset.blueprintCoverOccupied = String(frame.coverOccupied);
+      widget.dataset.blueprintCoverBeam = String(frame.coverBeamActive);
+      widget.dataset.blueprintCoverBlocked = String(frame.coverBeamBlocked);
+      widget.dataset.blueprintCoverExit = String(frame.coverExitOpen);
+      widget.dataset.blueprintPunishStrike = String(frame.punishStrike);
+    }
     boss.setAttribute(
       'transform',
       `translate(${frame.boss.x} ${frame.boss.y}) scale(${frame.bossScale})`,

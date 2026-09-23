@@ -203,8 +203,9 @@ const PROFILE_OVERRIDES = {
   },
   'cover-line-of-sight': {
     geometry: ['line', 'arena'],
-    dimensions: ['3d'],
-    response: ['reposition', 'interact'],
+    dimensions: ['2d', '3d'],
+    signal: ['marker', 'environment', 'state'],
+    response: ['reposition', 'interact', 'attack'],
   },
   'wraparound-projectile': { geometry: ['line', 'arena'], dimensions: ['2d'] },
   'beat-synced-attack': { geometry: ['arena'], signal: ['rhythm'], response: ['dodge', 'manage'] },
