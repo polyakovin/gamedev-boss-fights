@@ -2583,47 +2583,46 @@ test('encounter-specific tool moves with its owner and temporarily replaces the 
   const pickup = blueprintFrame(id, 1.35);
   assert.equal(pickup.encounterToolReached, true);
   assert.equal(pickup.encounterToolActionPackage, 'sword');
-  assert.ok(pickup.primitives[3].opacity > 0.9, 'the tool remains on its pedestal before equip');
+  assert.ok(pickup.primitives[4].opacity > 0.9, 'the spear remains on its pedestal before equip');
 
   const equipped = blueprintFrame(id, 1.6);
   assert.equal(equipped.encounterToolEquipped, true);
   assert.equal(equipped.encounterToolActionPackage, 'rune-spear');
   assert.ok(equipped.primitives[6].opacity > 0.9, 'the spear follows its owner after equip');
-  assert.ok(equipped.primitives[15].opacity > 0.7, 'the ordinary sword package is disabled');
+  assert.equal(equipped.primitives[4].opacity, 0, 'the pedestal spear is removed on pickup');
 
   const charging = blueprintFrame(id, 2.5);
   assert.equal(charging.encounterToolCharging, true);
   assert.equal(charging.encounterToolCombatReached, true);
-  assert.ok(charging.primitives[8].opacity > 0.3, 'the carried tool exposes charge progress');
+  assert.ok(charging.primitives[8].opacity > 0.3, 'the spear blade exposes charge progress');
 
   const ready = blueprintFrame(id, 3);
   assert.equal(ready.encounterToolReady, true);
-  assert.ok(ready.primitives[9].opacity > 0.8, 'the tool previews its eligible target');
+  assert.ok(ready.primitives[9].opacity > 0.4, 'the spear previews its eligible target');
 
   const fired = blueprintFrame(id, 3.25);
   assert.equal(fired.encounterToolFired, true);
   assert.equal(fired.encounterToolBossDamaged, false);
   assert.equal(fired.playerMotion.attack, 0, 'the ordinary sword never owns the tool release');
-  assert.ok(fired.primitives[11].opacity > 0.9, 'the rune wave originates at the carried spear');
+  assert.ok(fired.primitives[11].opacity > 0.9, 'the rune bolt originates at the carried spear');
 
   const hit = blueprintFrame(id, 3.6);
   assert.equal(hit.encounterToolBossDamaged, true);
   assert.equal(hit.encounterToolDamageSource, 'encounter-tool');
-  assert.equal(hit.primitives[14].rectWidth, 70);
+  assert.equal(hit.primitives[1].rectWidth, 110);
   assert.ok(hit.primitives[12].opacity > 0.7, 'impact and health loss resolve together');
 
   const expired = blueprintFrame(id, 4.8);
   assert.equal(expired.encounterToolExpired, true);
   assert.equal(expired.encounterToolActionPackage, 'sword');
-  assert.ok(expired.primitives[17].opacity > 0.5, 'expiry is visible before reset');
+  assert.ok(expired.primitives[13].opacity > 0.5, 'expiry is visible before reset');
 
   assert.equal(blueprintPointSafe(id, 3.25, fired.player), true);
   assert.deepEqual(blueprintFrame(id, 0).player, blueprintFrame(id, 6).player);
   assert.deepEqual(blueprintFrame(id, 0).boss, blueprintFrame(id, 6).boss);
-  assert.match(
-    renderBlueprintThumbnail(id, 'test-encounter-specific-tool'),
-    /data-blueprint-preview="encounter-specific-tool"/,
-  );
+  const preview = renderBlueprintThumbnail(id, 'test-encounter-specific-tool');
+  assert.match(preview, /data-blueprint-preview="encounter-specific-tool"/);
+  assert.match(preview, /data-rig-part="weapon" opacity="0"/);
 });
 
 test('player-controlled boss preserves authored attacks through human and AI ownership', () => {

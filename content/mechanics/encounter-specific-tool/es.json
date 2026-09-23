@@ -17,8 +17,8 @@
       "Resuelve daño, recuperación, caducidad y retorno del equipo"
     ],
     "phaseDescriptions": [
-      "La lanza rúnica y su pedestal se ven desde el inicio. Tavi llega entre 0,55 y 1,25 s y la equipa a 1,48 s; la lanza abandona el pedestal, sigue a Tavi y la marca de espada tachada confirma que cambió el paquete de acciones.",
-      "Tavi lleva la lanza entre 1,75 y 2,35 s, demostrando que no es maquinaria fija. La carga de 2,42 a 2,95 s usa un anillo creciente y una línea previa; después mantiene una disponibilidad clara hasta el disparo a 3,15 s.",
+      "La lanza rúnica y su pedestal se ven desde el inicio. Tavi llega entre 0,55 y 1,25 s y la equipa a 1,48 s; la lanza abandona el pedestal y permanece en la mano de Tavi mientras la espada normal se guarda.",
+      "Tavi lleva la lanza entre 1,75 y 2,35 s, demostrando que no es maquinaria fija. La hoja brilla cada vez más entre 2,42 y 2,95 s; al estar lista, una línea continua apunta a Kern. El proyectil rúnico sale a 3,15 s.",
       "La onda sale de la lanza y golpea a Kern a 3,52 s, eliminando un segmento de salud atribuido a la herramienta. La recuperación comienza a 4,15 s, la herramienta caduca a 4,60 s, vuelve la espada y posición e inventario se reinician a 5,20 s."
     ],
     "boss": "Jefe",
@@ -27,7 +27,7 @@
     "locked": "Se diseñan aparición, adquisición, dueño, acciones temporales, ruta, carga, disponibilidad, disparo, proyectil, atribución, recuperación, caducidad, alternativa y reinicio",
     "safe": "Mantén la adquisición alcanzable, enseña el control antes del pico de presión, permite movimiento y cancelación prometidos durante la carga y comunica disponibilidad y caducidad sin depender solo del color",
     "reducedMotion": "Con movimiento reducido se desactiva la reproducción automática. Recorre 0,55, 1,25, 1,48, 1,75, 2,35, 2,42, 2,95, 3,15, 3,52, 4,15, 4,60 y 5,20 segundos para revisar adquisición, transporte, carga, disponibilidad, disparo, impacto, recuperación, caducidad y reinicio.",
-    "diagramDescription": "Kern está arriba y Tavi se acerca a una lanza rúnica sobre un pedestal bajo. Tras recogerla, la lanza se mueve con Tavi y la espada normal aparece tachada. Un anillo carga en la punta, una línea discontinua fija el objetivo, una onda brillante alcanza a Kern, la salud baja al impacto y la lanza se disuelve antes del regreso."
+    "diagramDescription": "En una arena alta de piedra, Tavi se acerca a una lanza rúnica sobre un pedestal bajo, debajo de Kern. Tavi recoge la lanza física y la lleva mientras guarda la espada normal. La hoja brilla al cargarse, una línea continua señala a Kern y un proyectil rúnico sale de la lanza. El impacto quita un segmento de vida a Kern; después la lanza temporal se rompe en fragmentos."
   },
   "steps": [
     {

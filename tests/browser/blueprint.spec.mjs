@@ -2998,6 +2998,8 @@ test('encounter-specific tool is acquired, carried, charged, fired, and restored
   await expect(page.locator('.lesson-title-line h1')).toHaveText('Encounter-specific tool');
   await expect(page.locator('.wip-badge, .draft-profile')).toHaveCount(0);
   await expect(page.locator('.game-example')).toHaveCount(3);
+  await expect(widget).toHaveAttribute('data-blueprint-full-height', 'true');
+  expect((await widget.boundingBox()).height).toBeGreaterThan(800);
 
   await seek(1350);
   await expect(widget).toHaveAttribute('data-blueprint-encounter-tool-reached', 'true');
@@ -3010,11 +3012,15 @@ test('encounter-specific tool is acquired, carried, charged, fired, and restored
     'opacity',
     '0',
   );
+  await expect(widget.locator('[data-blueprint-player] [data-rig-part="weapon"]')).toHaveAttribute(
+    'opacity',
+    '0',
+  );
 
   await seek(2500);
   await expect(widget).toHaveAttribute('data-blueprint-encounter-tool-charging', 'true');
   await expect(widget).toHaveAttribute('data-blueprint-encounter-tool-combat-reached', 'true');
-  await expect(widget.locator('[data-blueprint-primitive="8"] circle')).not.toHaveAttribute(
+  await expect(widget.locator('[data-blueprint-primitive="8"] path')).not.toHaveAttribute(
     'opacity',
     '0',
   );
@@ -3026,7 +3032,7 @@ test('encounter-specific tool is acquired, carried, charged, fired, and restored
   await seek(3250);
   await expect(widget).toHaveAttribute('data-blueprint-encounter-tool-fired', 'true');
   await expect(widget).toHaveAttribute('data-blueprint-encounter-tool-boss-damaged', 'false');
-  await expect(widget.locator('[data-blueprint-primitive="11"] circle')).not.toHaveAttribute(
+  await expect(widget.locator('[data-blueprint-primitive="11"] path')).not.toHaveAttribute(
     'opacity',
     '0',
   );
@@ -3037,14 +3043,18 @@ test('encounter-specific tool is acquired, carried, charged, fired, and restored
     'data-blueprint-encounter-tool-damage-source',
     'encounter-tool',
   );
-  await expect(widget.locator('[data-blueprint-primitive="14"] rect')).toHaveAttribute(
+  await expect(widget.locator('[data-blueprint-primitive="1"] rect')).toHaveAttribute(
     'width',
-    '70',
+    '110',
   );
 
   await seek(4800);
   await expect(widget).toHaveAttribute('data-blueprint-encounter-tool-expired', 'true');
   await expect(widget).toHaveAttribute('data-blueprint-encounter-tool-package', 'sword');
+  await expect(widget.locator('[data-blueprint-player] [data-rig-part="weapon"]')).toHaveAttribute(
+    'opacity',
+    '1',
+  );
 
   await page.setViewportSize({ width: 375, height: 812 });
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);

@@ -552,6 +552,8 @@ export function initializeBlueprint(widget) {
     animatePlayer(frame.playerMotion, frame.playerFacing);
     if (mechanicId === 'pacifist-resolution')
       playerWeapon?.setAttribute('opacity', frame.pacifistWeaponSheathed ? '0' : '1');
+    if (mechanicId === 'encounter-specific-tool')
+      playerWeapon?.setAttribute('opacity', frame.encounterToolEquipped ? '0' : '1');
     animateEffects(time, frame);
     bossLabel.setAttribute('x', frame.bossLabel.x);
     bossLabel.setAttribute('y', frame.bossLabel.y);

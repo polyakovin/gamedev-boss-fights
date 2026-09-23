@@ -17,8 +17,8 @@
       "Resolve tool damage, recovery, expiry, and loadout return"
     ],
     "phaseDescriptions": [
-      "The rune spear and its pedestal are visible from the start. Tavi reaches it from 0.55 to 1.25 s and equips it at 1.48 s; the spear leaves the pedestal, follows Tavi, and the crossed ordinary-sword mark confirms that the encounter action package has changed.",
-      "Tavi carries the spear from 1.75 to 2.35 s, proving that this is not fixed arena machinery. The spear charges from 2.42 to 2.95 s with an expanding ring and preview line, then holds a clear ready state until the committed release at 3.15 s.",
+      "The rune spear and its pedestal are visible from the start. Tavi reaches it from 0.55 to 1.25 s and equips it at 1.48 s; the spear leaves the pedestal and stays in Tavi’s hand while the ordinary sword is put away.",
+      "Tavi carries the spear from 1.75 to 2.35 s, proving that this is not fixed arena machinery. From 2.42 to 2.95 s its blade brightens; a solid cue points to Kern when the spear is ready. The committed bolt launches at 3.15 s.",
       "The rune wave travels from the carried spear and hits Kern at 3.52 s, removing one authored health segment with the tool as its damage source. Recovery begins at 4.15 s, the temporary tool expires at 4.60 s, the sword package returns, and position plus inventory reset by 5.20 s."
     ],
     "boss": "Boss",
@@ -27,7 +27,7 @@
     "locked": "Tool spawn, acquisition, ownership, temporary action package, carry route, charge duration, ready signal, release, projectile, damage attribution, recovery, expiry, fallback, and reset are authored",
     "safe": "Keep acquisition reachable, teach the altered input before pressure peaks, allow movement and cancellation during charge where promised, and expose the same ready and expiry states without relying on color alone",
     "reducedMotion": "Autoplay is disabled by reduced motion. Scrub across 0.55, 1.25, 1.48, 1.75, 2.35, 2.42, 2.95, 3.15, 3.52, 4.15, 4.60, and 5.20 seconds to inspect acquisition, carry, charge, readiness, release, impact, recovery, expiry, and reset.",
-    "diagramDescription": "Kern stands above a compact arena while Tavi approaches a rune spear on a low pedestal. After pickup, the spear moves with Tavi and the ordinary-sword mark is crossed out. A growing ring charges at the spear tip, a dashed line fixes the target, a bright rune wave reaches Kern, the health bar drops on impact, and the spear dissolves before Tavi returns."
+    "diagramDescription": "In a tall stone arena, Tavi approaches a rune spear standing on a low pedestal below Kern. Tavi takes the physical spear and carries it while the ordinary sword disappears. The blade brightens during charging, a solid aim cue points to Kern, and a rune bolt leaves the spear. Kern loses one health segment on impact; the temporary spear then breaks into fragments."
   },
   "steps": [
     {
