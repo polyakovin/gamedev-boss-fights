@@ -1,0 +1,134 @@
+{
+  "title": "লোডআউট মিরর",
+  "subtitle": "খেলোয়াড়ের বেছে নেওয়া বিল্ডকে বসের নিয়ন্ত্রিত প্যাকেজে রূপ দিন",
+  "variant": "সংকেত · স্ন্যাপশট · স্বাভাবিকীকরণ · ব্যবহার",
+  "summary": "ঘোষিত মুহূর্তে বস খেলোয়াড়ের বিল্ডের নির্বাচিত অংশের স্ন্যাপশট নিয়ে স্থির এনকাউন্টার প্যাকেজ বানায়।",
+  "overview": "লোডআউট মিরর নির্দিষ্ট মুহূর্তে অস্ত্র, জাদু, আইটেম, পরিসংখ্যান বা ডেক এন্ট্রি পড়ে এবং সেখান থেকে নির্ধারিত বস প্যাকেজ বানায়। এতে ইচ্ছামতো ইনভেন্টরি ডেটা সরাসরি না চালিয়েও খেলোয়াড়ের পছন্দ প্রতিফলিত হয়।",
+  "learning": "স্ন্যাপশট ট্রিগার, বৈধ স্লট ও canonical id, কপি মান, স্বাভাবিকীকরণ, fallback, multiplayer owner, পরের পরিবর্তন, phase lifetime, save ও rollback, সংকেত, counterplay এবং telemetry নির্ধারণ করুন।",
+  "category": "অবস্থা, রিসোর্স ও স্কেলিং",
+  "readTime": "১০ মিনিট",
+  "demo": {
+    "title": "টাভির তিন স্লট ধরুন এবং বদলের পরও কার্নের স্ন্যাপশট স্থির দেখান",
+    "timeline": "লোডআউট মিরর টাইমলাইন",
+    "step": "স্ক্যান, লক, বদল ও কপি আক্রমণ",
+    "phaseNames": ["স্ন্যাপশট ঘোষণা", "canonical প্যাকেজ লক", "স্থির কপি ব্যবহার"],
+    "phaseDescriptions": [
+      "০.৩২ থেকে ১.১৪ সেকেন্ডে তিন রেখা টাভির তলোয়ার, ward ও ember স্লটকে কার্নের সঙ্গে যুক্ত করে। ১.১৪ সেকেন্ডে স্থির id-সহ একবারই capture হয়।",
+      "কার্ন তিনটি কপি স্লট দেখায় এবং টাভি ২.৬২ সেকেন্ডে bow, dash ও frost নেয়। বস আর স্ক্যান করে না।",
+      "৩.৪২ সেকেন্ডে কার্ন কপি করা sword প্যাকেজ ব্যবহার করে। মূল চিহ্ন বসের পাশে থাকে, তাই আক্রমণ বর্তমান ইনভেন্টরি নয়, স্ন্যাপশট পড়ে।"
+    ],
+    "boss": "বস",
+    "player": "খেলোয়াড়",
+    "danger": "মিরর শক্তিশালী বা অস্বাভাবিক বিল্ড খেলোয়াড়ের বিরুদ্ধে ফেরাতে পারে, তবে শুধু encounter contract অনুমোদিত ডেটাই সীমা পার হবে",
+    "locked": "সময়, স্লট যোগ্যতা, স্বাভাবিকীকরণ, fallback, মালিকানা, persistence ও idempotence এনকাউন্টার লজিকের অংশ",
+    "safe": "কোন স্লট স্ক্যান হয়েছে, কখন লক হয়েছে, বস কী পেয়েছে এবং পরের পরিবর্তন কার্যকর কি না দেখান",
+    "reducedMotion": "কম গতিতে autoplay বন্ধ। ০.৩২, ১.১৪, ২.১৮, ২.৬২, ৩.৪২, ৪.১২, ৫.২৮ ও ৫.৪২ সেকেন্ডে স্ন্যাপশট দেখুন।",
+    "diagramDescription": "স্ক্যানে তিনটি সরঞ্জাম স্লট টাভি থেকে কার্নে যায়। টাভি তিনটিই বদলায়, কিন্তু কার্ন মূল প্যাকেজ রেখে সেটি দিয়ে আক্রমণ করে।"
+  },
+  "steps": [
+    {
+      "title": "স্ন্যাপশটে ঠিক কী যাবে?",
+      "body": "বৈধ স্লট ও canonical id লিখুন: weapon family, upgrade tier, spell tags, charges, passives, stats বা deck entries। শুধু উপস্থাপনার ডেটা বাদ দিন এবং খালি বা unsupported মানে নিরাপদ fallback দিন।"
+    },
+    {
+      "title": "কপি শক্তি কীভাবে বসের আচরণ হবে?",
+      "body": "ইচ্ছামতো player content চালানোর বদলে স্ন্যাপশটকে সীমিত প্যাকেজে map করুন। damage, range, cooldown, status strength, resources ও animation requirements স্বাভাবিক করুন।"
+    },
+    {
+      "title": "স্ন্যাপশট কখন বদলাতে পারে?",
+      "body": "একটি capture event ও lifetime বাছুন: প্রবেশ, transformation, summon বা phase start। deep copy করুন, duplicate callback উপেক্ষা করুন এবং loadout change, মৃত্যু, multiplayer handoff, reload ও rollback-এর নিয়ম বলুন।"
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "সেরা উপায় হয় খালি গায়ে ঘরে ঢোকা",
+      "body": "বস একবার raw power কপি করলে এবং খেলোয়াড় সঙ্গে সঙ্গে re-equip করতে পারলে প্রস্তুতি inventory trick হয়ে যায়। বদল সাময়িক lock করুন, copy স্বাভাবিক করুন, package আগে দেখান বা প্রতিটি build-এ counterplay দিন।"
+    },
+    {
+      "title": "বস পরিবর্তনশীল ইনভেন্টরি live পড়ে",
+      "body": "আক্রমণের সময় polling race, animation gap, network disagreement ও save bug তৈরি করে। immutable snapshot থেকে resolve করুন এবং resnapshot-কে নতুন, স্পষ্ট সংকেতিত event করুন।"
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "খেলোয়াড় ডেটা ও বসের verb আলাদা রাখুন",
+      "body": "heavy, ranged, guard, fire বা healing-এর মতো canonical tag-কে পরীক্ষিত boss action-এ অনুবাদ করুন। player animation, projectile, item script বা resource model সরাসরি নিরাপদ ভাববেন না।"
+    },
+    {
+      "title": "কপিকে পড়ার মতো করুন",
+      "body": "capture-এর আগে স্লট দেখান, আলাদা সংকেতে lock নিশ্চিত করুন এবং সম্ভব হলে copied icon দৃশ্যমান রাখুন। পরের boss action-এর সঙ্গে উৎস build choice-এর যোগ বোঝা উচিত।"
+    },
+    {
+      "title": "state boundary পরীক্ষা করুন",
+      "body": "snapshotId, ownerId, input/output ids, capture count, rejected values, fallback, resnapshot count, phase ও copied action id নথিবদ্ধ করুন। empty, duplicate, modded, disabled, networked ও restored inventory পরীক্ষা করুন।"
+    }
+  ],
+  "story": {
+    "title": "কার্ন টাভির সরঞ্জামের rune মনে রাখে",
+    "body": "ফ্যাকাশে scan টাভির তলোয়ার, ward ও ember charm ছুঁয়ে যায়। কার্ন তিন চিহ্ন পাথরে কাটে; টাভি kit বদলালেও elemental শেখা pattern-এ আঘাত করে।"
+  },
+  "adaptation": {
+    "title": "অনুমানযোগ্য বা স্বাভাবিকীকৃত মিরর দিন",
+    "body": "লড়াইয়ের আগে বৈধ স্লটের সারাংশ, captured package icon এবং রঙ-স্বাধীন shape দিন। একটি option build-কে কয়েকটি fixed package-এ map করতে পারে। চাপের মধ্যে দ্রুত inventory বদল চাবেন না।"
+  },
+  "distinction": {
+    "title": "এটি স্ন্যাপশট, adaptive counter-pick বা পূর্ণ control নয়",
+    "body": "Loadout adaptation শ্রেণিবিন্যাসের পর counter package বেছে নেয়; mirror খেলোয়াড়ের build-এর নির্বাচিত input রাখে। Player-controlled boss agency দেয়, এখানে সীমিত data যায়।"
+  },
+  "lensNotes": [
+    {
+      "id": "player-expression",
+      "body": "এনকাউন্টার build choice-কে দৃশ্যমান boss behavior হিসেবে ফেরায়; eligibility ও normalization ঠিক করে কোন expression থাকবে।"
+    },
+    {
+      "id": "risk-reward",
+      "body": "শক্তিশালী build শক্তিশালী mirror বানাতে পারে, তবে খেলোয়াড় তার শক্তি জানে এবং অর্থপূর্ণ জবাব প্রস্তুত করতে পারে।"
+    },
+    {
+      "id": "rule-exception",
+      "body": "খালি স্লট, consumable, upgrade, duplicate id, forbidden content, multiplayer owner, reload ও phase change-এ স্পষ্ট fallback চাই।"
+    },
+    {
+      "id": "progress-clarity",
+      "body": "scan, lock confirmation, স্থায়ী icon ও action feedback জানাবে কী capture হয়েছে এবং তা বদলাতে পারে কি না।"
+    },
+    {
+      "id": "counterplay",
+      "body": "counterplay mirrored package বোঝা থেকে আসুক, লুকানো inventory timing race থেকে নয়।"
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "3D",
+      "game": "Elden Ring",
+      "boss": "Mimic Tear",
+      "screenshot": "https://i.ytimg.com/vi/42alQxG2XRE/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=42alQxG2XRE&t=13s",
+      "video": "https://www.youtube.com/watch?v=42alQxG2XRE&t=13s",
+      "videoDurationSeconds": 92,
+      "body": "০:১৩ থেকে silver tear খেলোয়াড়ের রূপ নিয়ে captured equipment ও ability ব্যবহার করে। ব্যক্তিগত copy হলেও entry-time gear এবং পরের বদলের নিয়ম সংজ্ঞায়িত করতে হয়।"
+    },
+    {
+      "dimension": "2D",
+      "game": "Castlevania: Portrait of Ruin",
+      "boss": "Doppelganger",
+      "screenshot": "https://i.ytimg.com/vi/M3KtcwsqhA4/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=M3KtcwsqhA4&t=2206s",
+      "video": "https://www.youtube.com/watch?v=M3KtcwsqhA4&t=2206s",
+      "videoDurationSeconds": 2645,
+      "body": "৩৬:৪৬-এ Doppelganger copied character package-সহ আসে। room-entry snapshot আগে gear খুলে পরে পরে নিয়ে exploit করা যায়—capture timing-এর ঝুঁকির স্পষ্ট উদাহরণ।"
+    },
+    {
+      "dimension": "2D",
+      "game": "Library of Ruina",
+      "boss": "Pinocchio the Copycat",
+      "screenshot": "https://i.ytimg.com/vi/EngMNNJFjBE/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=EngMNNJFjBE&t=130s",
+      "video": "https://www.youtube.com/watch?v=EngMNNJFjBE&t=130s",
+      "videoDurationSeconds": 578,
+      "body": "২:১০ থেকে Pinocchio-র copied combat page দেখা যায়। Librarian-এর bookshelf কপি দেখায় payload শুধু অস্ত্র বা stats নয়, authored action-এর set-ও হতে পারে।"
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

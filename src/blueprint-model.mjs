@@ -1436,6 +1436,24 @@ const SPECS = {
     threshold: 18,
     minimumMultiplier: 0.25,
   },
+  'loadout-mirror': {
+    mode: 'loadout-mirror',
+    boss: [300, 375],
+    player: [300, 660],
+    target: [300, 660],
+    arena: [55, 310, 450, 590],
+    scan: [0.32, 1.14],
+    captureAt: 1.14,
+    copyReveal: [1.14, 2.18],
+    playerSwapAt: 2.62,
+    bossUseAt: 3.42,
+    bossUseEndsAt: 4.12,
+    stableUntil: 5.28,
+    resetAt: 5.42,
+    snapshotId: 'loadout-snapshot-1',
+    initialLoadout: ['sword', 'ward', 'ember'],
+    changedLoadout: ['bow', 'dash', 'frost'],
+  },
   'wide-swing': { mode: 'arc', boss: [280, 310], player: [410, 470], target: [470, 650] },
   lunge: { mode: 'lunge', boss: [170, 290], player: [390, 590], target: [470, 660] },
   grab: { mode: 'grab', boss: [280, 300], player: [390, 485], target: [470, 610] },
@@ -2762,6 +2780,42 @@ export function damageRateCapResolve({
     preventedDamage: alreadyResolved ? 0 : raw - applied,
     eventCount: alreadyResolved || raw <= 0 ? 0 : 1,
     hitId: alreadyResolved || raw <= 0 ? 'none' : String(hitId),
+  });
+}
+
+export function loadoutMirrorState(time) {
+  const spec = SPECS['loadout-mirror'];
+  const t = localTime(time);
+  if (t < spec.scan[0]) return 'ready';
+  if (t < spec.captureAt) return 'scanning';
+  if (t < spec.copyReveal[1]) return 'snapshot-captured';
+  if (t < spec.playerSwapAt) return 'copy-locked';
+  if (t < spec.bossUseAt) return 'player-loadout-changed';
+  if (t < spec.bossUseEndsAt) return 'copied-package-active';
+  if (t < spec.stableUntil) return 'snapshot-stable';
+  if (t < spec.resetAt) return 'recovery';
+  return 'reset';
+}
+
+export function loadoutMirrorSnapshot({
+  equippedIds = ['sword', 'ward', 'ember'],
+  existingCopiedIds = [],
+  snapshotId = 'loadout-snapshot-1',
+  alreadyCaptured = false,
+} = {}) {
+  const normalize = (values) => [
+    ...new Set(Array.isArray(values) ? values.map(String).filter(Boolean) : []),
+  ];
+  const equipped = normalize(equippedIds);
+  const existing = normalize(existingCopiedIds);
+  const captured = !alreadyCaptured && equipped.length > 0;
+  const copied = captured ? [...equipped] : existing;
+  return Object.freeze({
+    snapshotId: copied.length > 0 ? String(snapshotId) : 'none',
+    equippedIds: Object.freeze(equipped),
+    copiedIds: Object.freeze(copied),
+    captured,
+    eventCount: captured ? 1 : 0,
   });
 }
 
@@ -6686,6 +6740,82 @@ function primitivesFor(spec, frame) {
       ),
     ];
   }
+  if (mode === 'loadout-mirror') {
+    const scanProgress = clamp((frame.time - spec.scan[0]) / (spec.scan[1] - spec.scan[0]));
+    const revealProgress = clamp(
+      (frame.time - spec.copyReveal[0]) / (spec.copyReveal[1] - spec.copyReveal[0]),
+    );
+    const swapPulse = strikePulse(frame.time, spec.playerSwapAt, 0.54);
+    const usePulse = strikePulse(frame.time, spec.bossUseAt, 0.72);
+    const resetProgress = clamp((frame.time - spec.resetAt) / (BLUEPRINT_DURATION - spec.resetAt));
+    const copiedOpacity = frame.loadoutMirrorSnapshotCaptured
+      ? 0.96 * (1 - resetProgress)
+      : revealProgress * 0.96;
+    const playerTones = frame.loadoutMirrorPlayerChanged
+      ? ['safe', 'accent', 'signal']
+      : ['accent', 'safe', 'signal'];
+    const bossTones = ['accent', 'safe', 'signal'];
+    const playerSlots = [110, 180, 250];
+    const bossSlots = [310, 380, 450];
+    return [
+      rect(...spec.arena, 0.52, 'muted', 0.025),
+      rect(72, 792, 216, 78, 0.72, frame.loadoutMirrorPlayerChanged ? 'safe' : 'muted', 0.025),
+      rect(272, 478, 216, 78, copiedOpacity, 'accent', 0.025),
+      ...playerSlots.flatMap((x, index) => [
+        circle(x, 830, 24, 0.94, playerTones[index], 6, 0.12),
+        line(
+          x - 11,
+          frame.loadoutMirrorPlayerChanged ? 840 - index * 7 : 841,
+          x + 11,
+          frame.loadoutMirrorPlayerChanged ? 818 + index * 7 : 819,
+          0.96,
+          playerTones[index],
+          6,
+        ),
+      ]),
+      ...bossSlots.flatMap((x, index) => [
+        circle(x, 516, 24, copiedOpacity, bossTones[index], 6, 0.12),
+        line(x - 11, 527, x + 11, 505, copiedOpacity, bossTones[index], 6),
+      ]),
+      ...playerSlots.map((x, index) =>
+        line(
+          x,
+          792,
+          bossSlots[index],
+          556,
+          frame.time >= spec.scan[0] && frame.time < spec.captureAt
+            ? 0.26 + pulse(scanProgress) * 0.7
+            : 0,
+          'safe',
+          4,
+          '8 8',
+        ),
+      ),
+      line(
+        80,
+        781,
+        280,
+        781,
+        frame.time >= spec.captureAt && frame.time < spec.resetAt ? 0.9 : 0,
+        'signal',
+        5,
+      ),
+      circle(frame.player.x, frame.player.y - 24, 62 + swapPulse * 36, swapPulse, 'safe', 8, 0.02),
+      circle(frame.boss.x, frame.boss.y - 24, 66 + usePulse * 42, usePulse, 'accent', 9, 0.025),
+      path(
+        `M ${frame.boss.x - 84} ${frame.boss.y - 122} Q ${frame.boss.x} ${frame.boss.y - 192} ${frame.boss.x + 92} ${frame.boss.y - 108}`,
+        usePulse,
+        'accent',
+        12,
+      ),
+      path(
+        'M 294 508 L 304 520 L 326 494',
+        frame.loadoutMirrorCopyMatchesSnapshot ? copiedOpacity : 0,
+        'safe',
+        6,
+      ),
+    ];
+  }
   if (mode === 'encounter-specific-tool') {
     const pedestal = point(spec.pedestal);
     const spearBase = { x: frame.player.x + 20, y: frame.player.y - 10 };
@@ -8171,6 +8301,7 @@ function pointClearsThreat(spec, frame, value, radius = BLUEPRINT_PLAYER_RADIUS)
   if (mode === 'self-heal-cast') return true;
   if (mode === 'external-healing-source') return true;
   if (mode === 'damage-rate-cap') return true;
+  if (mode === 'loadout-mirror') return true;
   if (mode === 'projectile-rally')
     return (
       !frame.dangerActive ||
@@ -8561,6 +8692,7 @@ export function blueprintFrame(id, time) {
   else if (spec.mode === 'self-heal-cast') responseProgress = 0;
   else if (spec.mode === 'external-healing-source') responseProgress = 0;
   else if (spec.mode === 'damage-rate-cap') responseProgress = 0;
+  else if (spec.mode === 'loadout-mirror') responseProgress = 0;
   else if (spec.mode === 'knockback')
     responseProgress = phase === 0 ? 0 : phase === 1 ? smooth(action) : 1;
   else if (spec.mode === 'target-lock')
@@ -10256,7 +10388,8 @@ export function blueprintFrame(id, time) {
             spec.mode === 'on-hit-healing' ||
             spec.mode === 'self-heal-cast' ||
             spec.mode === 'external-healing-source' ||
-            spec.mode === 'damage-rate-cap'
+            spec.mode === 'damage-rate-cap' ||
+            spec.mode === 'loadout-mirror'
           ? (Math.atan2(boss.y - player.y, boss.x - player.x) * 180) / Math.PI
           : spec.mode === 'active-phase'
             ? (Math.atan2(boss.y - player.y, boss.x - player.x) * 180) / Math.PI
@@ -11529,6 +11662,29 @@ export function blueprintFrame(id, time) {
     frame.playerMotion.impact = 0;
     frame.bossMotion.attack = Math.max(...hits.map(({ at }) => strikePulse(t, at, 0.3)));
   }
+  if (spec.mode === 'loadout-mirror') {
+    const snapshotActive = t >= spec.captureAt && t < spec.resetAt;
+    const playerChanged = t >= spec.playerSwapAt && t < spec.resetAt;
+    const bossUsedCopiedAttack = t >= spec.bossUseAt && t < spec.resetAt;
+    frame.loadoutMirrorState = loadoutMirrorState(t);
+    frame.loadoutMirrorSnapshotCaptured = snapshotActive;
+    frame.loadoutMirrorSnapshotId = snapshotActive ? spec.snapshotId : 'none';
+    frame.loadoutMirrorSnapshotEventCount = snapshotActive ? 1 : 0;
+    frame.loadoutMirrorPlayerLoadoutIds = playerChanged
+      ? [...spec.changedLoadout]
+      : [...spec.initialLoadout];
+    frame.loadoutMirrorCopiedLoadoutIds = snapshotActive ? [...spec.initialLoadout] : [];
+    frame.loadoutMirrorCopyMatchesSnapshot = snapshotActive;
+    frame.loadoutMirrorPlayerChanged = playerChanged;
+    frame.loadoutMirrorLiveResnapshotCount = 0;
+    frame.loadoutMirrorBossPackage = snapshotActive ? spec.initialLoadout.join('+') : 'none';
+    frame.loadoutMirrorBossUsedCopiedAttack = bossUsedCopiedAttack;
+    frame.dangerActive = false;
+    frame.playerMotion.attack = strikePulse(t, spec.playerSwapAt, 0.46) * 0.25;
+    frame.playerMotion.dodge = 0;
+    frame.playerMotion.impact = 0;
+    frame.bossMotion.attack = strikePulse(t, spec.bossUseAt, 0.72);
+  }
   if (spec.mode === 'ability-lock') {
     frame.abilityLockState = abilityLockState(t);
     frame.abilityLockFirstAvoided = t >= spec.firstResolveAt && t < spec.secondTelegraph[0];
@@ -11865,7 +12021,8 @@ export function blueprintFrame(id, time) {
             spec.mode === 'on-hit-healing' ||
             spec.mode === 'self-heal-cast' ||
             spec.mode === 'external-healing-source' ||
-            spec.mode === 'damage-rate-cap'
+            spec.mode === 'damage-rate-cap' ||
+            spec.mode === 'loadout-mirror'
           ? 92
           : -62),
   };

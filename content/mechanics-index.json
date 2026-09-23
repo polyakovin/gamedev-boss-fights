@@ -1593,12 +1593,12 @@
         "en": {
           "title": "Loadout mirror",
           "category": "States, resources, and scaling",
-          "summary": "Draft outline for the loadout mirror mechanic. Rules, tuning guidance, and examples are still in progress."
+          "summary": "The boss snapshots selected parts of the player’s build and converts them into a stable encounter package."
         },
         "ru": {
-          "title": "Зеркало экипировки игрока",
+          "title": "Зеркало экипировки",
           "category": "Состояния, ресурсы и масштабирование",
-          "summary": "Босс копирует текущие характеристики, оружие, заклинания или предметы игрока."
+          "summary": "Босс фиксирует выбранные части билда игрока и превращает их в стабильный набор встречи."
         }
       }
     },

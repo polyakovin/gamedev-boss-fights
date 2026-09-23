@@ -1,0 +1,138 @@
+{
+  "title": "Espejo de equipamiento",
+  "subtitle": "Convierte la configuración elegida por el jugador en un paquete diseñado para el jefe",
+  "variant": "Señal · instantánea · normalización · uso",
+  "summary": "En un momento declarado, el jefe captura partes elegidas de la configuración del jugador y las convierte en un paquete estable.",
+  "overview": "El espejo lee armas, hechizos, objetos, atributos o cartas en un instante explícito y crea un paquete determinista para el jefe. Refleja la expresión del jugador sin ejecutar directamente datos arbitrarios del inventario.",
+  "learning": "Define el disparador, las ranuras y los identificadores admitidos, los valores copiados, la normalización, los reemplazos, el dueño multijugador, los cambios posteriores, la duración, guardado, rollback, señal, contrajuego y telemetría.",
+  "category": "Estados, recursos y escalado",
+  "readTime": "10 min",
+  "demo": {
+    "title": "Captura las tres ranuras de Tavi y demuestra que Kern conserva la instantánea tras el cambio",
+    "timeline": "Línea temporal del espejo",
+    "step": "Escaneo, bloqueo, cambio y ataque copiado",
+    "phaseNames": [
+      "Anunciar la instantánea",
+      "Bloquear un paquete canónico",
+      "Usar la copia estable"
+    ],
+    "phaseDescriptions": [
+      "De 0,32 a 1,14 segundos, tres líneas conectan la espada, el amuleto y la brasa de Tavi con Kern. La captura ocurre una sola vez con un id estable.",
+      "Kern muestra las tres ranuras copiadas mientras Tavi cambia a arco, impulso y hielo en 2,62 segundos. El jefe no vuelve a escanear.",
+      "En 3,42 segundos Kern usa el paquete de espada copiado. Los iconos originales siguen junto al jefe: la acción lee la instantánea, no el inventario actual."
+    ],
+    "boss": "Jefe",
+    "player": "Jugador",
+    "danger": "El espejo puede volver una configuración potente o extraña contra el jugador, pero solo cruzan el límite los datos admitidos por el contrato",
+    "locked": "Momento, ranuras, normalización, reemplazos, dueño, persistencia e idempotencia pertenecen a la lógica del encuentro",
+    "safe": "Muestra qué ranuras se escanearon, cuándo se bloquearon, qué recibió el jefe y si importan los cambios posteriores",
+    "reducedMotion": "Con movimiento reducido, la reproducción automática está desactivada. Recorre 0,32, 1,14, 2,18, 2,62, 3,42, 4,12, 5,28 y 5,42 segundos.",
+    "diagramDescription": "Tres ranuras pasan de Tavi a Kern. Tavi cambia las tres, mientras Kern conserva el paquete original y ataca con él."
+  },
+  "steps": [
+    {
+      "title": "¿Qué entra exactamente en la instantánea?",
+      "body": "Enumera ranuras e ids canónicos: familia de arma, mejora, etiquetas de hechizo, cargas, pasivas, atributos o cartas. Excluye datos visuales y define un reemplazo seguro para todo valor vacío o no admitido."
+    },
+    {
+      "title": "¿Cómo se convierte el poder copiado en conducta del jefe?",
+      "body": "Mapea la instantánea a un paquete acotado en vez de ejecutar contenido del jugador. Normaliza daño, alcance, recargas, estados, recursos y requisitos de animación."
+    },
+    {
+      "title": "¿Cuándo puede cambiar la instantánea?",
+      "body": "Elige un evento y una duración: entrada, transformación, invocación o fase. Copia los valores en profundidad, ignora duplicados y decide cómo afectan el cambio de equipo, la muerte, el relevo multijugador, la carga y el rollback."
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "La mejor respuesta es entrar sin equipo",
+      "body": "Si el jefe copia la potencia una vez y el jugador se reequipa al instante, la preparación se reduce a un truco de inventario. Bloquea brevemente el cambio, normaliza, anticipa el paquete o da contrajuego a cada configuración."
+    },
+    {
+      "title": "El jefe lee un inventario mutable en vivo",
+      "body": "Consultar el equipo durante los ataques crea carreras, huecos de animación y desacuerdos de red. Resuelve desde una instantánea inmutable y trata cada nueva captura como un evento señalado."
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "Separa los datos del jugador de los verbos del jefe",
+      "body": "Traduce etiquetas como pesado, distancia, guardia, fuego o curación a acciones probadas. No reutilices sin control animaciones, proyectiles, scripts de objetos ni recursos del jugador."
+    },
+    {
+      "title": "Haz legible la copia",
+      "body": "Muestra las ranuras antes de capturar, confirma el bloqueo con una señal distinta y conserva los iconos copiados cuando sea posible. El ataque posterior debe relacionarse con la elección que lo produjo."
+    },
+    {
+      "title": "Prueba el límite de estado",
+      "body": "Registra snapshotId, ownerId, ids de entrada y salida, capturas, rechazos, reemplazos, recapturas, fase y acciones copiadas. Prueba inventarios vacíos, duplicados, modificados, desactivados, en red y restaurados."
+    }
+  ],
+  "story": {
+    "title": "Kern recuerda las runas del equipo de Tavi",
+    "body": "Un escaneo pálido cruza la espada, el amuleto y la brasa de Tavi. Kern talla los tres signos en piedra y, aunque Tavi cambie de equipo, ataca con el patrón aprendido."
+  },
+  "adaptation": {
+    "title": "Ofrece un espejo predecible o normalizado",
+    "body": "Resume las ranuras válidas antes del combate, muestra un icono del paquete y usa formas independientes del color. Una opción puede reducir las configuraciones a pocos paquetes fijos. Evita exigir cambios rápidos de inventario."
+  },
+  "distinction": {
+    "title": "Una instantánea, no contraselección ni control total",
+    "body": "La adaptación elige una respuesta tras clasificar al jugador; el espejo conserva entradas de su configuración. Un jefe controlado por el jugador transfiere agencia; aquí se transfieren datos acotados."
+  },
+  "lensNotes": [
+    {
+      "id": "player-expression",
+      "body": "El encuentro refleja las elecciones de configuración como conducta visible; elegibilidad y normalización deciden qué expresión se conserva."
+    },
+    {
+      "id": "risk-reward",
+      "body": "Una configuración fuerte puede crear una copia fuerte, pero el jugador conoce sus ventajas y puede preparar respuestas útiles."
+    },
+    {
+      "id": "rule-exception",
+      "body": "Ranuras vacías, consumibles, mejoras, duplicados, prohibiciones, dueños de red, cargas y fases necesitan reglas explícitas."
+    },
+    {
+      "id": "progress-clarity",
+      "body": "Escaneo, confirmación, iconos persistentes y respuesta de la acción explican qué se capturó y si puede cambiar."
+    },
+    {
+      "id": "counterplay",
+      "body": "El contrajuego debe nacer de comprender el paquete, no de explotar una carrera silenciosa con el inventario."
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "3D",
+      "game": "Elden Ring",
+      "boss": "Mimic Tear",
+      "screenshot": "https://i.ytimg.com/vi/42alQxG2XRE/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=42alQxG2XRE&t=13s",
+      "video": "https://www.youtube.com/watch?v=42alQxG2XRE&t=13s",
+      "videoDurationSeconds": 92,
+      "body": "Desde 0:13, la lágrima plateada adopta la forma del jugador y pelea con el equipo y las habilidades capturados. El ejemplo obliga a definir cómo se tratan el equipo de entrada y los cambios posteriores."
+    },
+    {
+      "dimension": "2D",
+      "game": "Castlevania: Portrait of Ruin",
+      "boss": "Doppelganger",
+      "screenshot": "https://i.ytimg.com/vi/M3KtcwsqhA4/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=M3KtcwsqhA4&t=2206s",
+      "video": "https://www.youtube.com/watch?v=M3KtcwsqhA4&t=2206s",
+      "videoDurationSeconds": 2645,
+      "body": "En 36:46, Doppelganger aparece con el paquete copiado. La instantánea documentada al entrar puede manipularse quitando el equipo y poniéndolo después: una advertencia clara sobre el momento de captura."
+    },
+    {
+      "dimension": "2D",
+      "game": "Library of Ruina",
+      "boss": "Pinocchio the Copycat",
+      "screenshot": "https://i.ytimg.com/vi/EngMNNJFjBE/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=EngMNNJFjBE&t=130s",
+      "video": "https://www.youtube.com/watch?v=EngMNNJFjBE&t=130s",
+      "videoDurationSeconds": 578,
+      "body": "Desde 2:10 se ven las páginas de combate copiadas de Pinocchio. Copiar la estantería de un bibliotecario muestra que la carga puede ser un conjunto de acciones diseñadas, no solo armas o atributos."
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}
