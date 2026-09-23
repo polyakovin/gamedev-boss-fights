@@ -3234,7 +3234,16 @@ test('ability lock rejects healing only while preserving movement and attack', (
   const hit = blueprintFrame(id, 2.66);
   assert.equal(hit.dangerActive, true);
   assert.equal(hit.playerSafe, false);
-  assert.equal(blueprintPointSafe(id, 2.66, { x: 455, y: 720 }), true);
+  assert.equal(blueprintPointSafe(id, 2.66, { x: 450, y: 750 }), true);
+  assert.ok(
+    hit.primitives.some(
+      (primitive) =>
+        primitive.type === 'circle' &&
+        primitive.radius === 96 &&
+        primitive.width === 0 &&
+        primitive.opacity > 0,
+    ),
+  );
   const rejected = blueprintFrame(id, 3.2);
   assert.equal(rejected.abilityLockHealLocked, true);
   assert.equal(rejected.abilityLockCurrentHealth, 55);

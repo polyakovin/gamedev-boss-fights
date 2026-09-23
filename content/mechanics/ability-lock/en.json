@@ -27,7 +27,7 @@
     "locked": "Source id, target verb, status id, start and end ticks, refresh or stack rule, cost policy, input buffer, cleanse, immunity, persistence, and authority belong to encounter logic",
     "safe": "Name and depict the affected verb, retain a visible countdown, explain why an input was rejected, and confirm still-available actions with more than color alone",
     "reducedMotion": "Autoplay is disabled by reduced motion. Scrub across 0.30, 0.86, 0.98, 1.06, 1.38, 1.90, 2.66, 3.02, 3.42, 3.75, 4.28, 4.42, 4.86, and 5.36 seconds to inspect avoidance, application, rejection, available attack, expiry, restored healing, and reset.",
-    "diagramDescription": "Kern projects a hexagonal orange seal around Tavi's initial position. The first seal misses and a green healing pulse fills the health track. The second seal hits; a slashed healing badge and six countdown runes remain beside Tavi. A sword swing still works, the runes expire, and the unslashed healing badge succeeds again."
+    "diagramDescription": "Kern projects an orange seal across the arena. Tavi escapes the first seal, then a green potion restores the health track. The second seal hits: the potion bottle is crossed out while six carved runes count down beside Tavi. Tavi can still swing a sword; when the runes expire, the potion works again."
   },
   "steps": [
     {

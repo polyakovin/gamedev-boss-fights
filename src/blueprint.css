@@ -40,17 +40,17 @@
   font-family: inherit;
 }
 @media (min-width: 961px) {
-  .lesson-overview-grid:has([data-blueprint-id='resource-steal']) {
+  .lesson-overview-grid:has([data-blueprint-full-height='true']) {
     grid-template-columns: minmax(440px, 1fr) minmax(340px, 560px);
   }
-  .simulation-section:has([data-blueprint-id='resource-steal']) {
+  .simulation-section:has([data-blueprint-full-height='true']) {
     width: min(100%, calc(58.333svh - 74.667px));
     max-width: 560px;
     justify-self: center;
   }
-  .simulation-section [data-blueprint-id='resource-steal'],
-  .simulation-section [data-blueprint-id='resource-steal'] .blueprint-demo__canvas,
-  .simulation-section [data-blueprint-id='resource-steal'] .blueprint-demo__svg {
+  .simulation-section [data-blueprint-full-height='true'],
+  .simulation-section [data-blueprint-full-height='true'] .blueprint-demo__canvas,
+  .simulation-section [data-blueprint-full-height='true'] .blueprint-demo__svg {
     height: 100%;
   }
 }

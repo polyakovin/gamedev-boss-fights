@@ -27,7 +27,7 @@
     "locked": "Fuente, verbo, id, ticks, renovación, coste, búfer, limpieza, inmunidad, persistencia y autoridad pertenecen a la lógica",
     "safe": "Nombra el verbo, conserva la cuenta atrás, explica el rechazo y confirma las acciones disponibles sin depender solo del color",
     "reducedMotion": "Con movimiento reducido se desactiva la reproducción. Revisa 0,30; 0,98; 1,38; 2,66; 3,02; 3,75; 4,28; 4,86 y 5,36 s.",
-    "diagramDescription": "Kern proyecta un sello naranja. El primero falla y la curación verde funciona. El segundo impacta: el icono queda tachado y seis runas cuentan el tiempo, pero la espada sigue funcionando."
+    "diagramDescription": "Kern proyecta un sello naranja por la arena. Tavi esquiva el primero y una poción verde recupera salud. El segundo impacta: el frasco queda tachado mientras seis runas talladas cuentan el tiempo. Tavi aún puede atacar con la espada y la poción vuelve a funcionar al terminar el bloqueo."
   },
   "steps": [
     {

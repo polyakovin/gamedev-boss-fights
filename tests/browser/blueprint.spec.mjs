@@ -3529,8 +3529,13 @@ test('ability lock rejects one verb, keeps attack available, and restores healin
   await expect(widget).toHaveAttribute('data-blueprint-ability-lock-current-health', '75');
   await expect(widget).toHaveAttribute('data-blueprint-ability-lock-heal-success-count', '2');
   await expect(widget).toHaveAttribute('data-blueprint-ability-lock-status-id', 'none');
+  expect((await widget.boundingBox()).height).toBeGreaterThan(850);
   await page.setViewportSize({ width: 375, height: 812 });
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+  await seek(900);
+  const playerLabel = await widget.locator('[data-blueprint-player-label]').boundingBox();
+  const phaseLabel = await widget.locator('[data-blueprint-current-phase]').boundingBox();
+  expect(playerLabel.y + playerLabel.height).toBeLessThan(phaseLabel.y - 12);
 });
 
 test('resource steal preserves the ledger through drop, reclaim, and boss capture', async ({

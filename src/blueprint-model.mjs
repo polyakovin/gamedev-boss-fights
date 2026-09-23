@@ -6024,99 +6024,106 @@ function primitivesFor(spec, frame) {
       smooth((frame.time - spec.rejectedHeal[0]) / (spec.rejectedHeal[1] - spec.rejectedHeal[0])),
     );
     const healPulse = Math.max(firstHealPulse, restoredHealPulse);
-    const healthWidth = 236 * (frame.abilityLockCurrentHealth / 100);
-    const badgeX = frame.player.x - 68;
-    const badgeY = frame.player.y - 132;
+    const healthWidth = 300 * (frame.abilityLockCurrentHealth / 100);
+    const bottleX = frame.player.x - 82;
+    const bottleY = frame.player.y - 143;
+    const sealOpacity = telegraph ? 0.4 + 0.22 * telegraphProgress : hitPulse * 0.82;
+    const lockOpacity = frame.abilityLockHealLocked ? 0.98 : 0;
     return [
-      rect(...spec.arena, 0.52, 'muted', 0.025),
-      rect(178, 318, 244, 24, 0.74, 'muted', 0.035),
-      rect(182, 322, healthWidth, 16, 0.96, 'safe', 0.2),
-      line(182 + healthWidth, 314, 182 + healthWidth, 346, 0.78, 'safe', 4),
+      path('M 130 70 H 430 V 90 H 130 Z', 0.62, 'muted', 0, 0.48),
+      path(`M 130 70 H ${130 + healthWidth} V 90 H 130 Z`, 0.94, 'safe', 0, 0.9),
+      path(
+        `M ${frame.boss.x - 27} ${frame.boss.y + 25} C ${frame.boss.x - 94} ${frame.boss.y + 160}, ${center.x - 77} ${center.y - 180}, ${center.x - 49} ${center.y - 59} L ${center.x + 49} ${center.y - 59} C ${frame.boss.x + 77} ${center.y - 180}, ${frame.boss.x + 94} ${frame.boss.y + 160}, ${frame.boss.x + 27} ${frame.boss.y + 25} Z`,
+        telegraph ? 0.28 + 0.18 * telegraphProgress : hitPulse * 0.58,
+        'signal',
+        0,
+        0.58,
+      ),
       circle(
         center.x,
         center.y,
         spec.sealRadius,
-        telegraph ? 0.82 : hitPulse * 0.94,
+        telegraph ? 0.42 : hitPulse * 0.76,
         'signal',
-        telegraph ? 7 : 11,
-        telegraph ? 0.05 : 0.1,
-        telegraph ? '12 9' : '',
-      ),
-      circle(
-        center.x,
-        center.y,
-        spec.sealRadius * (1 - 0.46 * telegraphProgress),
-        telegraph ? 0.72 : 0,
-        'accent',
-        5,
-        0.02,
-      ),
-      ...Array.from({ length: 6 }, (_, index) => {
-        const angle = (Math.PI * 2 * index) / 6 - Math.PI / 2;
-        const x = center.x + Math.cos(angle) * 116;
-        const y = center.y + Math.sin(angle) * 116;
-        return path(
-          `M ${x - 9} ${y} L ${x} ${y - 9} L ${x + 9} ${y} L ${x} ${y + 9} Z`,
-          telegraph && index / 6 <= telegraphProgress ? 0.96 : 0.2,
-          telegraph && index / 6 <= telegraphProgress ? 'signal' : 'muted',
-          4,
-          0.12,
-        );
-      }),
-      circle(
-        spec.safePoint[0],
-        spec.safePoint[1] - 34,
-        34,
-        frame.abilityLockFirstAvoided ? 0.86 : 0,
-        'safe',
-        6,
-        0.04,
-        '8 7',
+        0,
+        telegraph ? 0.12 : 0.22,
       ),
       path(
-        `M ${spec.safePoint[0] - 14} ${spec.safePoint[1] - 35} L ${spec.safePoint[0] - 3} ${spec.safePoint[1] - 24} L ${spec.safePoint[0] + 18} ${spec.safePoint[1] - 49}`,
-        frame.abilityLockFirstAvoided ? 0.98 : 0,
-        'safe',
-        6,
-      ),
-      circle(frame.player.x, frame.player.y - 34, 34 + healPulse * 56, healPulse, 'safe', 7, 0.04),
-      circle(badgeX, badgeY, 30, frame.abilityLockHealLocked ? 0.96 : 0.72, 'muted', 5, 0.08),
-      line(badgeX - 13, badgeY, badgeX + 13, badgeY, 0.96, 'safe', 7),
-      line(badgeX, badgeY - 13, badgeX, badgeY + 13, 0.96, 'safe', 7),
-      circle(badgeX, badgeY, 37, frame.abilityLockHealLocked ? 0.96 : 0, 'signal', 7, 0.03, '8 6'),
-      line(
-        badgeX - 24,
-        badgeY - 24,
-        badgeX + 24,
-        badgeY + 24,
-        frame.abilityLockHealLocked ? 0.98 : 0,
+        `M ${center.x} ${center.y - 96} L ${center.x + 84} ${center.y - 48} L ${center.x + 84} ${center.y + 48} L ${center.x} ${center.y + 96} L ${center.x - 84} ${center.y + 48} L ${center.x - 84} ${center.y - 48} Z`,
+        sealOpacity,
         'signal',
-        8,
+        0,
+        telegraph ? 0.16 : 0.32,
       ),
-      line(badgeX + 24, badgeY - 24, badgeX - 24, badgeY + 24, rejectPulse, 'signal', 8),
+      path(
+        `M ${bottleX - 8} ${bottleY - 30} H ${bottleX + 8} V ${bottleY - 15} L ${bottleX + 21} ${bottleY - 3} V ${bottleY + 21} Q ${bottleX} ${bottleY + 38} ${bottleX - 21} ${bottleY + 21} V ${bottleY - 3} L ${bottleX - 8} ${bottleY - 15} Z`,
+        0.96,
+        'muted',
+        0,
+        0.88,
+      ),
+      path(
+        `M ${bottleX - 15} ${bottleY + 6} H ${bottleX + 15} V ${bottleY + 18} Q ${bottleX} ${bottleY + 29} ${bottleX - 15} ${bottleY + 18} Z`,
+        0.92,
+        'safe',
+        0,
+        0.82,
+      ),
+      path(
+        `M ${bottleX - 12} ${bottleY - 39} H ${bottleX + 12} V ${bottleY - 29} H ${bottleX - 12} Z`,
+        0.96,
+        'muted',
+        0,
+        0.9,
+      ),
+      path(
+        `M ${bottleX - 5} ${bottleY - 4} H ${bottleX + 5} M ${bottleX} ${bottleY - 9} V ${bottleY + 1}`,
+        0.98,
+        'safe',
+        3,
+      ),
+      path(
+        `M ${bottleX + 12} ${bottleY + 19} Q ${frame.player.x - 35} ${frame.player.y - 97} ${frame.player.x - 9} ${frame.player.y - 47} L ${frame.player.x + 1} ${frame.player.y - 49} Q ${frame.player.x - 33} ${frame.player.y - 110} ${bottleX + 18} ${bottleY + 16} Z`,
+        healPulse * 0.84,
+        'safe',
+        0,
+        0.78,
+      ),
+      path(
+        `M ${bottleX - 28} ${bottleY - 30} L ${bottleX - 20} ${bottleY - 37} L ${bottleX + 28} ${bottleY + 26} L ${bottleX + 20} ${bottleY + 33} Z`,
+        lockOpacity,
+        'signal',
+        0,
+        0.96,
+      ),
+      path(
+        `M ${bottleX + 24} ${bottleY - 28} L ${bottleX + 29} ${bottleY - 22} L ${bottleX - 25} ${bottleY + 31} L ${bottleX - 30} ${bottleY + 25} Z`,
+        rejectPulse * 0.96,
+        'signal',
+        0,
+        0.94,
+      ),
       ...Array.from({ length: 6 }, (_, index) => {
-        const angle = (Math.PI * 2 * index) / 6 - Math.PI / 2;
         const remainingSegments = Math.ceil(frame.abilityLockSecondsRemaining * 3.7);
-        return circle(
-          frame.player.x + Math.cos(angle) * 72,
-          frame.player.y - 34 + Math.sin(angle) * 56,
-          7,
-          frame.abilityLockHealLocked && index < remainingSegments ? 0.9 : 0.16,
-          frame.abilityLockHealLocked && index < remainingSegments ? 'signal' : 'muted',
-          3,
-          0.08,
-        );
-      }),
-      path(
-        `M ${frame.player.x + 42} ${frame.player.y - 88} L ${frame.player.x + 92} ${frame.player.y - 138} M ${frame.player.x + 76} ${frame.player.y - 130} L ${frame.player.x + 100} ${frame.player.y - 106}`,
-        frame.abilityLockAttackAvailable &&
-          frame.time >= spec.swordProof[0] &&
-          frame.time < spec.swordProof[1]
-          ? 0.96
-          : 0,
-        'accent',
-        8,
-      ),
+        const runeX = frame.player.x + 98;
+        const runeY = frame.player.y - 275 + index * 33;
+        const visible = frame.abilityLockHealLocked && index < remainingSegments ? 0.94 : 0;
+        return [
+          path(
+            `M ${runeX - 10} ${runeY - 10} L ${runeX + 7} ${runeY - 12} L ${runeX + 11} ${runeY - 3} L ${runeX + 8} ${runeY + 12} L ${runeX - 8} ${runeY + 11} L ${runeX - 11} ${runeY - 2} Z`,
+            visible,
+            'muted',
+            0,
+            0.82,
+          ),
+          path(
+            `M ${runeX - 4} ${runeY - 4} L ${runeX} ${runeY + 4} L ${runeX + 5} ${runeY - 5}`,
+            visible,
+            'signal',
+            2.5,
+          ),
+        ];
+      }).flat(),
     ];
   }
   if (mode === 'resource-steal') {
@@ -11307,7 +11314,7 @@ export function blueprintFrame(id, time) {
     x: player.x,
     y:
       player.y +
-      (spec.mode === 'resource-steal'
+      (spec.mode === 'resource-steal' || spec.mode === 'ability-lock'
         ? 55
         : spec.mode === 'directional-shield' ||
             spec.mode === 'damage-type-resistance' ||
@@ -11348,7 +11355,6 @@ export function blueprintFrame(id, time) {
             spec.mode === 'status-buildup' ||
             spec.mode === 'instant-kill' ||
             spec.mode === 'maximum-health-reduction' ||
-            spec.mode === 'ability-lock' ||
             spec.mode === 'on-hit-healing'
           ? 92
           : -62),
