@@ -27,7 +27,7 @@
     "locked": "Eligibility, assignment, authority, allowed move set, telegraph minimum, health, cooldowns, heartbeat, freeze, AI takeover, rewards, and reset are encounter-owned",
     "safe": "Show who controls the boss, preserve the same response cues under human and AI control, freeze safely on disconnect, and never require voice or color alone to identify ownership",
     "reducedMotion": "Autoplay is disabled by reduced motion. Scrub across 0.70, 1.20, 1.55, 2.05, 2.18, 2.68, 3.08, 3.55, 3.95, 4.45, and 5.20 seconds to inspect matching, assignment, input, telegraph, attack, recovery, disconnect, AI takeover, continuation, and reset.",
-    "diagramDescription": "Tavi faces Kern inside a bounded arena. A remote-player token travels from a matchmaking panel to a crown above Kern. Three permitted move icons feed one selected lane attack, whose dashed preview becomes a solid danger lane while Tavi moves aside. The connection then breaks, inputs freeze, an AI token takes the crown, and Kern continues from the same health state."
+    "diagramDescription": "Kern stands above Tavi in a stone arena. A glowing crystal rises from a game controller to the crown above Kern, marking human control. Kern attacks down a broad lane as Tavi dodges sideways. When the controller disconnects, it dims, the crown changes to an AI mark, and the unchanged health bar shows that the fight continues."
   },
   "steps": [
     {

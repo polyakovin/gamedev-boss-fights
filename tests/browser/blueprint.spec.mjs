@@ -3066,6 +3066,8 @@ test('player-controlled boss hands a bounded action from a human controller to A
   await expect(page.locator('.lesson-title-line h1')).toHaveText('Player-controlled boss');
   await expect(page.locator('.wip-badge, .draft-profile')).toHaveCount(0);
   await expect(page.locator('.game-example')).toHaveCount(3);
+  await expect(widget).toHaveAttribute('data-blueprint-full-height', 'true');
+  expect((await widget.boundingBox()).height).toBeGreaterThan(800);
 
   await seek(1600);
   await expect(widget).toHaveAttribute('data-blueprint-player-boss-assigned', 'true');
@@ -3076,10 +3078,9 @@ test('player-controlled boss hands a bounded action from a human controller to A
   await expect(widget).toHaveAttribute('data-blueprint-player-boss-command', 'true');
   await expect(widget).toHaveAttribute('data-blueprint-player-boss-telegraph', 'true');
   await expect(widget).toHaveAttribute('data-blueprint-player-controlled-boss', 'attack-telegraph');
-  await expect(widget.locator('[data-blueprint-primitive="17"] path')).not.toHaveAttribute(
-    'opacity',
-    '0',
-  );
+  await expect(
+    widget.locator('path[d="M 266 287 L 334 313 L 129 848 L 61 822 Z"]'),
+  ).not.toHaveAttribute('opacity', '0');
 
   await seek(2800);
   await expect(widget).toHaveAttribute('data-blueprint-player-boss-attack', 'true');

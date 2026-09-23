@@ -2655,7 +2655,13 @@ test('player-controlled boss preserves authored attacks through human and AI own
   assert.equal(telegraph.playerBossCommandAccepted, true);
   assert.equal(telegraph.playerBossTelegraphVisible, true);
   assert.equal(telegraph.dangerActive, false);
-  assert.ok(telegraph.primitives[17].opacity > 0.7, 'the authored lane is announced');
+  assert.ok(
+    telegraph.primitives.some(
+      (primitive) =>
+        primitive.data === 'M 266 287 L 334 313 L 129 848 L 61 822 Z' && primitive.opacity > 0.5,
+    ),
+    'the authored lane is announced as a filled area',
+  );
 
   const active = blueprintFrame(id, 2.8);
   assert.equal(active.playerBossAttackActive, true);

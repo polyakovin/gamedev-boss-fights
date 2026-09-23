@@ -27,7 +27,7 @@
     "locked": "La elegibilidad, asignación, autoridad, repertorio, anticipación mínima, vida, recargas, heartbeat, congelación, relevo de IA, recompensas y reinicio pertenecen al encuentro",
     "safe": "Muestra quién controla, conserva las mismas señales con humano e IA, congela con seguridad al desconectar y no dependas solo del color o la voz",
     "reducedMotion": "Con movimiento reducido se desactiva la reproducción. Recorre 0,70, 1,20, 1,55, 2,05, 2,18, 2,68, 3,08, 3,55, 3,95, 4,45 y 5,20 segundos para revisar búsqueda, asignación, entrada, señal, ataque, recuperación, desconexión, relevo, continuación y reinicio.",
-    "diagramDescription": "Tavi mira a Kern dentro de una arena cerrada. Una ficha remota viaja desde el panel de emparejamiento hasta una corona sobre Kern. Tres movimientos permitidos alimentan un ataque de carril; la vista previa discontinua se vuelve peligro sólido mientras Tavi se aparta. La conexión se rompe, la entrada se congela, la IA toma la corona y Kern conserva su vida."
+    "diagramDescription": "Kern está sobre Tavi en una arena de piedra. Un cristal luminoso sube del mando de juego a la corona de Kern para indicar el control humano. Kern ataca por una franja ancha y Tavi esquiva hacia un lado. Al perderse la conexión, el mando se atenúa, la corona muestra la marca de la IA y la barra de vida intacta indica que el combate continúa."
   },
   "steps": [
     {
