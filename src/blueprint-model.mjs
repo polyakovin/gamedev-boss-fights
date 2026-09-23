@@ -1381,6 +1381,28 @@ const SPECS = {
     bossHealthBefore: 48,
     healAmount: 16,
   },
+  'self-heal-cast': {
+    mode: 'self-heal-cast',
+    boss: [300, 375],
+    player: [300, 660],
+    target: [300, 490],
+    arena: [55, 310, 450, 590],
+    interruptPoint: [300, 500],
+    firstTelegraph: [0.3, 0.78],
+    firstChannel: [0.78, 1.46],
+    approach: [0.62, 1.28],
+    interruptAt: 1.46,
+    firstRecovery: [1.46, 1.82],
+    return: [1.68, 2.22],
+    secondTelegraph: [2.54, 3.02],
+    secondChannel: [3.02, 4.18],
+    healing: [4.18, 4.62],
+    secondRecovery: [4.62, 5.1],
+    resetAt: 5.36,
+    bossHealthBefore: 38,
+    healAmount: 24,
+    channelRadius: 82,
+  },
   'wide-swing': { mode: 'arc', boss: [280, 310], player: [410, 470], target: [470, 650] },
   lunge: { mode: 'lunge', boss: [170, 290], player: [390, 590], target: [470, 660] },
   grab: { mode: 'grab', boss: [280, 300], player: [390, 485], target: [470, 610] },
@@ -2581,6 +2603,47 @@ export function onHitHealingResolve({
     contactQualified: Boolean(qualifyingContact),
     eventCount: applied > 0 ? 1 : 0,
     resultId: applied > 0 ? 'on-hit-heal-1' : 'none',
+  });
+}
+
+export function selfHealCastState(time) {
+  const spec = SPECS['self-heal-cast'];
+  const t = localTime(time);
+  if (t < spec.firstTelegraph[0]) return 'ready';
+  if (t < spec.firstChannel[0]) return 'first-telegraph';
+  if (t < spec.interruptAt) return 'first-channel';
+  if (t < spec.firstRecovery[1]) return 'interrupted';
+  if (t < spec.secondTelegraph[0]) return 'repositioning';
+  if (t < spec.secondChannel[0]) return 'second-telegraph';
+  if (t < spec.secondChannel[1]) return 'second-channel';
+  if (t < spec.healing[1]) return 'healing';
+  if (t < spec.secondRecovery[1]) return 'healed';
+  if (t < spec.resetAt) return 'recovery';
+  return 'reset';
+}
+
+export function selfHealCastResolve({
+  currentHealth = 38,
+  maximumHealth = 100,
+  healAmount = 24,
+  castCompleted = false,
+  interrupted = false,
+  alreadyResolved = false,
+} = {}) {
+  const maximum = Math.max(1, Number(maximumHealth) || 100);
+  const before = Math.min(maximum, Math.max(0, Number(currentHealth) || 0));
+  const qualifies = Boolean(castCompleted) && !interrupted && !alreadyResolved;
+  const requested = qualifies ? Math.max(0, Number(healAmount) || 0) : 0;
+  const applied = Math.min(maximum - before, requested);
+  return Object.freeze({
+    healthBefore: before,
+    healthAfter: before + applied,
+    requested,
+    applied,
+    castCompleted: Boolean(castCompleted),
+    interrupted: Boolean(interrupted),
+    eventCount: applied > 0 ? 1 : 0,
+    resultId: applied > 0 ? 'self-heal-cast-1' : 'none',
   });
 }
 
@@ -6321,6 +6384,109 @@ function primitivesFor(spec, frame) {
       ),
     ];
   }
+  if (mode === 'self-heal-cast') {
+    const channeling = frame.selfHealCastChannelActive;
+    const channelProgress = frame.selfHealCastChannelProgress;
+    const telegraphing =
+      (frame.time >= spec.firstTelegraph[0] && frame.time < spec.firstChannel[0]) ||
+      (frame.time >= spec.secondTelegraph[0] && frame.time < spec.secondChannel[0]);
+    const telegraphProgress =
+      frame.time < spec.firstChannel[0]
+        ? clamp(
+            (frame.time - spec.firstTelegraph[0]) / (spec.firstChannel[0] - spec.firstTelegraph[0]),
+          )
+        : clamp(
+            (frame.time - spec.secondTelegraph[0]) /
+              (spec.secondChannel[0] - spec.secondTelegraph[0]),
+          );
+    const interruptPulse = strikePulse(frame.time, spec.interruptAt, 0.5);
+    const healPulse = pulse(
+      smooth((frame.time - spec.healing[0]) / (spec.healing[1] - spec.healing[0])),
+    );
+    const ringOpacity = channeling ? 0.62 + pulse(channelProgress) * 0.28 : telegraphing ? 0.48 : 0;
+    const healthWidth = 236 * (frame.selfHealCastBossHealth / 100);
+    const meterWidth = 196 * channelProgress;
+    const moteOpacity = channeling ? 0.94 : 0;
+    return [
+      rect(...spec.arena, 0.52, 'muted', 0.025),
+      rect(178, 318, 244, 24, 0.74, 'muted', 0.035),
+      rect(182, 322, healthWidth, 16, 0.96, 'safe', 0.18),
+      line(182 + healthWidth, 314, 182 + healthWidth, 346, 0.82, 'safe', 4),
+      rect(200, 480, 200, 18, channeling || telegraphing ? 0.78 : 0, 'muted', 0.04),
+      rect(202, 482, meterWidth, 14, channeling ? 0.96 : 0, 'signal', 0.2),
+      circle(
+        frame.boss.x,
+        frame.boss.y - 22,
+        spec.channelRadius + 18 * (1 - channelProgress),
+        ringOpacity,
+        'signal',
+        7,
+        0.03,
+        '12 8',
+      ),
+      circle(
+        frame.boss.x,
+        frame.boss.y - 22,
+        45 + 30 * channelProgress,
+        ringOpacity,
+        'accent',
+        5,
+        0.025,
+      ),
+      ...Array.from({ length: 6 }, (_, index) => {
+        const angle = (Math.PI * 2 * index) / 6 + frame.time * 1.8;
+        const radius = mix(138, 54, channelProgress);
+        return circle(
+          frame.boss.x + Math.cos(angle) * radius,
+          frame.boss.y - 22 + Math.sin(angle) * radius * 0.62,
+          7 + 2 * pulse(channelProgress + index / 6),
+          moteOpacity,
+          index % 2 ? 'signal' : 'safe',
+          4,
+          0.18,
+        );
+      }),
+      line(
+        frame.boss.x - 72,
+        frame.boss.y - 106,
+        frame.boss.x + 68,
+        frame.boss.y + 36,
+        interruptPulse,
+        'accent',
+        13,
+      ),
+      line(
+        frame.boss.x - 38,
+        frame.boss.y - 118,
+        frame.boss.x + 78,
+        frame.boss.y - 2,
+        interruptPulse,
+        'safe',
+        5,
+      ),
+      circle(
+        frame.boss.x,
+        frame.boss.y - 22,
+        62 + healPulse * 58,
+        frame.selfHealCastHealing ? Math.max(0.32, healPulse) : 0,
+        'safe',
+        10,
+        0.06,
+      ),
+      path(
+        `M ${frame.boss.x - 22} ${frame.boss.y - 20} L ${frame.boss.x - 5} ${frame.boss.y - 3} L ${frame.boss.x + 30} ${frame.boss.y - 46}`,
+        frame.selfHealCastCompleted ? 0.96 : 0,
+        'safe',
+        8,
+      ),
+      path(
+        `M ${frame.player.x + 30} ${frame.player.y - 70} L ${frame.player.x + 94} ${frame.player.y - 134}`,
+        interruptPulse,
+        'accent',
+        10,
+      ),
+    ];
+  }
   if (mode === 'encounter-specific-tool') {
     const pedestal = point(spec.pedestal);
     const spearBase = { x: frame.player.x - 8, y: frame.player.y - 22 };
@@ -7840,6 +8006,7 @@ function pointClearsThreat(spec, frame, value, radius = BLUEPRINT_PLAYER_RADIUS)
       Math.hypot(value.x - spec.strikeCenter[0], value.y - spec.strikeCenter[1]) >
         spec.strikeRadius + radius
     );
+  if (mode === 'self-heal-cast') return true;
   if (mode === 'projectile-rally')
     return (
       !frame.dangerActive ||
@@ -8227,6 +8394,7 @@ export function blueprintFrame(id, time) {
   else if (spec.mode === 'ability-lock') responseProgress = 0;
   else if (spec.mode === 'resource-steal') responseProgress = 0;
   else if (spec.mode === 'on-hit-healing') responseProgress = 0;
+  else if (spec.mode === 'self-heal-cast') responseProgress = 0;
   else if (spec.mode === 'knockback')
     responseProgress = phase === 0 ? 0 : phase === 1 ? smooth(action) : 1;
   else if (spec.mode === 'target-lock')
@@ -9185,6 +9353,24 @@ export function blueprintFrame(id, time) {
       player = { x: mix(safe.x, startPlayer.x, move), y: mix(safe.y, startPlayer.y, move) };
     } else player = startPlayer;
   }
+  if (spec.mode === 'self-heal-cast') {
+    const interruptPoint = point(spec.interruptPoint);
+    if (t < spec.approach[0]) player = startPlayer;
+    else if (t < spec.approach[1]) {
+      const move = smooth((t - spec.approach[0]) / (spec.approach[1] - spec.approach[0]));
+      player = {
+        x: mix(startPlayer.x, interruptPoint.x, move),
+        y: mix(startPlayer.y, interruptPoint.y, move),
+      };
+    } else if (t < spec.return[0]) player = interruptPoint;
+    else if (t < spec.return[1]) {
+      const move = smooth((t - spec.return[0]) / (spec.return[1] - spec.return[0]));
+      player = {
+        x: mix(interruptPoint.x, startPlayer.x, move),
+        y: mix(interruptPoint.y, startPlayer.y, move),
+      };
+    } else player = startPlayer;
+  }
   if (spec.mode === 'rotating' && phase === 0) {
     const initialPosition = polar(boss, 255, Math.PI / 3);
     player = {
@@ -9627,6 +9813,11 @@ export function blueprintFrame(id, time) {
       pulse(smooth((t - spec.thirdEscape[0]) / (spec.thirdEscape[1] - spec.thirdEscape[0]))),
       pulse(smooth((t - spec.counterReturn[0]) / (spec.counterReturn[1] - spec.counterReturn[0]))),
     );
+  if (spec.mode === 'self-heal-cast')
+    stride = Math.max(
+      pulse(smooth((t - spec.approach[0]) / (spec.approach[1] - spec.approach[0]))),
+      pulse(smooth((t - spec.return[0]) / (spec.return[1] - spec.return[0]))),
+    );
   const bossVisible =
     spec.mode === 'secondary-cues-invisibility'
       ? t < spec.vanishAt
@@ -9896,7 +10087,8 @@ export function blueprintFrame(id, time) {
             spec.mode === 'maximum-health-reduction' ||
             spec.mode === 'ability-lock' ||
             spec.mode === 'resource-steal' ||
-            spec.mode === 'on-hit-healing'
+            spec.mode === 'on-hit-healing' ||
+            spec.mode === 'self-heal-cast'
           ? (Math.atan2(boss.y - player.y, boss.x - player.x) * 180) / Math.PI
           : spec.mode === 'active-phase'
             ? (Math.atan2(boss.y - player.y, boss.x - player.x) * 180) / Math.PI
@@ -11025,6 +11217,48 @@ export function blueprintFrame(id, time) {
       strikePulse(t, spec.thirdResolveAt, 0.4),
     );
   }
+  if (spec.mode === 'self-heal-cast') {
+    const firstChannelActive = t >= spec.firstChannel[0] && t < spec.interruptAt;
+    const secondChannelActive = t >= spec.secondChannel[0] && t < spec.secondChannel[1];
+    const completed = t >= spec.secondChannel[1] && t < spec.resetAt;
+    const healingProgress = smooth((t - spec.healing[0]) / (spec.healing[1] - spec.healing[0]));
+    frame.selfHealCastState = selfHealCastState(t);
+    frame.selfHealCastFirstInterrupted = t >= spec.interruptAt && t < spec.secondTelegraph[0];
+    frame.selfHealCastChannelActive = firstChannelActive || secondChannelActive;
+    frame.selfHealCastChannelProgress = firstChannelActive
+      ? clamp((t - spec.firstChannel[0]) / (spec.interruptAt - spec.firstChannel[0]))
+      : secondChannelActive
+        ? clamp((t - spec.secondChannel[0]) / (spec.secondChannel[1] - spec.secondChannel[0]))
+        : 0;
+    frame.selfHealCastCompleted = completed;
+    frame.selfHealCastHealing = t >= spec.healing[0] && t < spec.healing[1];
+    frame.selfHealCastBossHealth =
+      t < spec.healing[0]
+        ? spec.bossHealthBefore
+        : t < spec.healing[1]
+          ? mix(spec.bossHealthBefore, spec.bossHealthBefore + spec.healAmount, healingProgress)
+          : t < spec.resetAt
+            ? spec.bossHealthBefore + spec.healAmount
+            : mix(
+                spec.bossHealthBefore + spec.healAmount,
+                spec.bossHealthBefore,
+                smooth((t - spec.resetAt) / (BLUEPRINT_DURATION - spec.resetAt)),
+              );
+    frame.selfHealCastRequested = completed ? spec.healAmount : 0;
+    frame.selfHealCastApplied = completed ? spec.healAmount : 0;
+    frame.selfHealCastEventCount = completed ? 1 : 0;
+    frame.selfHealCastInterruptCount = t >= spec.interruptAt && t < spec.resetAt ? 1 : 0;
+    frame.selfHealCastResultId = completed ? 'self-heal-cast-1' : 'none';
+    frame.dangerActive = false;
+    frame.playerMotion.attack = strikePulse(t, spec.interruptAt, 0.46);
+    frame.playerMotion.dodge = 0;
+    frame.playerMotion.impact = 0;
+    frame.bossMotion.attack = Math.max(
+      firstChannelActive ? pulse(frame.selfHealCastChannelProgress) * 0.45 : 0,
+      secondChannelActive ? pulse(frame.selfHealCastChannelProgress) * 0.45 : 0,
+      strikePulse(t, spec.interruptAt, 0.42),
+    );
+  }
   if (spec.mode === 'ability-lock') {
     frame.abilityLockState = abilityLockState(t);
     frame.abilityLockFirstAvoided = t >= spec.firstResolveAt && t < spec.secondTelegraph[0];
@@ -11349,7 +11583,8 @@ export function blueprintFrame(id, time) {
             spec.mode === 'instant-kill' ||
             spec.mode === 'maximum-health-reduction' ||
             spec.mode === 'ability-lock' ||
-            spec.mode === 'on-hit-healing'
+            spec.mode === 'on-hit-healing' ||
+            spec.mode === 'self-heal-cast'
           ? 92
           : -62),
   };

@@ -536,6 +536,26 @@ export function initializeBlueprint(widget) {
       widget.dataset.blueprintOnHitHealingBlockedCounts = String(frame.onHitHealingBlockedCounts);
       widget.dataset.blueprintOnHitHealingMissCounts = String(frame.onHitHealingMissCounts);
     }
+    if (mechanicId === 'self-heal-cast') {
+      widget.dataset.blueprintSelfHealCast = frame.selfHealCastState;
+      widget.dataset.blueprintSelfHealCastFirstInterrupted = String(
+        frame.selfHealCastFirstInterrupted,
+      );
+      widget.dataset.blueprintSelfHealCastChannelActive = String(frame.selfHealCastChannelActive);
+      widget.dataset.blueprintSelfHealCastChannelProgress = String(
+        Math.round(frame.selfHealCastChannelProgress * 100) / 100,
+      );
+      widget.dataset.blueprintSelfHealCastCompleted = String(frame.selfHealCastCompleted);
+      widget.dataset.blueprintSelfHealCastHealing = String(frame.selfHealCastHealing);
+      widget.dataset.blueprintSelfHealCastBossHealth = String(
+        Math.round(frame.selfHealCastBossHealth),
+      );
+      widget.dataset.blueprintSelfHealCastRequested = String(frame.selfHealCastRequested);
+      widget.dataset.blueprintSelfHealCastApplied = String(frame.selfHealCastApplied);
+      widget.dataset.blueprintSelfHealCastEventCount = String(frame.selfHealCastEventCount);
+      widget.dataset.blueprintSelfHealCastInterruptCount = String(frame.selfHealCastInterruptCount);
+      widget.dataset.blueprintSelfHealCastResultId = frame.selfHealCastResultId;
+    }
     boss.setAttribute(
       'transform',
       `translate(${frame.boss.x} ${frame.boss.y}) scale(${frame.bossScale})`,

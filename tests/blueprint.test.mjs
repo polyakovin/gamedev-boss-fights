@@ -49,6 +49,8 @@ import {
   resourceStealResolve,
   onHitHealingState,
   onHitHealingResolve,
+  selfHealCastState,
+  selfHealCastResolve,
   counterStanceOutcome,
   counterStanceState,
   blueprintFrame,
@@ -76,8 +78,8 @@ import {
   renderBlueprintThumbnail,
 } from '../lib/blueprint-view.mjs';
 
-test('all 90 promoted lesson animations have distinct rule modes and complete moving frames', () => {
-  assert.equal(BLUEPRINT_MECHANIC_IDS.length, 90);
+test('all 91 promoted lesson animations have distinct rule modes and complete moving frames', () => {
+  assert.equal(BLUEPRINT_MECHANIC_IDS.length, 91);
   const modes = new Set();
   for (const id of BLUEPRINT_MECHANIC_IDS) {
     for (let time = 0; time <= BLUEPRINT_DURATION; time += 0.1) {
@@ -98,7 +100,7 @@ test('all 90 promoted lesson animations have distinct rule modes and complete mo
           assert.ok(Number.isFinite(value), `${id} has an invalid ${primitive.type}`);
     }
   }
-  assert.equal(modes.size, 90);
+  assert.equal(modes.size, 91);
 });
 
 test('every blueprint exposes signal, committed action, and recovery without player teleports', () => {
@@ -138,7 +140,8 @@ test('every blueprint exposes signal, committed action, and recovery without pla
       id !== 'maximum-health-reduction' &&
       id !== 'ability-lock' &&
       id !== 'resource-steal' &&
-      id !== 'on-hit-healing'
+      id !== 'on-hit-healing' &&
+      id !== 'self-heal-cast'
     )
       assert.equal(blueprintFrame(id, 3).dangerActive, true, id);
     assert.equal(blueprintFrame(id, 3).playerSafe, true, id);
@@ -228,6 +231,7 @@ test('every damaging promoted animation derives safety from its own active geome
       id !== 'ability-lock' &&
       id !== 'resource-steal' &&
       id !== 'on-hit-healing' &&
+      id !== 'self-heal-cast' &&
       id !== 'part-break' &&
       id !== 'counter-stance' &&
       id !== 'absorption-power-up' &&
@@ -3379,5 +3383,60 @@ test('on-hit healing resolves from qualified contact even when damage is blocked
   assert.match(
     renderBlueprintThumbnail(id, 'test-on-hit-healing'),
     /data-blueprint-preview="on-hit-healing"/,
+  );
+});
+
+test('self-heal cast distinguishes an interruption from one completed heal', () => {
+  const id = 'self-heal-cast';
+  assert.deepEqual([0, 0.5, 0.9, 1.5, 2.1, 2.7, 3.4, 4.25, 4.8, 5.2, 5.5].map(selfHealCastState), [
+    'ready',
+    'first-telegraph',
+    'first-channel',
+    'interrupted',
+    'repositioning',
+    'second-telegraph',
+    'second-channel',
+    'healing',
+    'healed',
+    'recovery',
+    'reset',
+  ]);
+  assert.deepEqual(selfHealCastResolve({ castCompleted: true }), {
+    healthBefore: 38,
+    healthAfter: 62,
+    requested: 24,
+    applied: 24,
+    castCompleted: true,
+    interrupted: false,
+    eventCount: 1,
+    resultId: 'self-heal-cast-1',
+  });
+  assert.equal(selfHealCastResolve({ castCompleted: true, interrupted: true }).eventCount, 0);
+  assert.equal(selfHealCastResolve({ castCompleted: false }).applied, 0);
+  assert.equal(
+    selfHealCastResolve({ currentHealth: 94, castCompleted: true, healAmount: 24 }).applied,
+    6,
+  );
+  assert.equal(selfHealCastResolve({ castCompleted: true, alreadyResolved: true }).eventCount, 0);
+
+  const interrupted = blueprintFrame(id, 1.55);
+  assert.equal(interrupted.selfHealCastFirstInterrupted, true);
+  assert.equal(interrupted.selfHealCastBossHealth, 38);
+  assert.equal(interrupted.selfHealCastEventCount, 0);
+  assert.equal(interrupted.selfHealCastInterruptCount, 1);
+  const channeling = blueprintFrame(id, 3.5);
+  assert.equal(channeling.selfHealCastChannelActive, true);
+  assert.ok(channeling.selfHealCastChannelProgress > 0);
+  const healing = blueprintFrame(id, 4.35);
+  assert.equal(healing.selfHealCastCompleted, true);
+  assert.equal(healing.selfHealCastEventCount, 1);
+  assert.ok(healing.selfHealCastBossHealth > 38);
+  const healed = blueprintFrame(id, 4.7);
+  assert.equal(healed.selfHealCastBossHealth, 62);
+  assert.equal(healed.selfHealCastResultId, 'self-heal-cast-1');
+  assert.deepEqual(blueprintFrame(id, 0).player, blueprintFrame(id, 6).player);
+  assert.match(
+    renderBlueprintThumbnail(id, 'test-self-heal-cast'),
+    /data-blueprint-preview="self-heal-cast"/,
   );
 });

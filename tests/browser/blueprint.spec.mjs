@@ -405,9 +405,9 @@ test('volley releases three parallel bolts on one beat and clears its outside ro
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
 });
 
-test('catalog and builder reuse the 90 promoted rule-specific previews', async ({ page }) => {
+test('catalog and builder reuse the 91 promoted rule-specific previews', async ({ page }) => {
   await page.goto('en/');
-  await expect(page.locator('[data-blueprint-preview]')).toHaveCount(90);
+  await expect(page.locator('[data-blueprint-preview]')).toHaveCount(91);
   const catalogLayouts = await page.locator('[data-blueprint-preview]').evaluateAll((previews) =>
     previews.map((preview) => {
       const boss = preview.querySelector('[data-character-art-preview="kern"]');
@@ -431,7 +431,7 @@ test('catalog and builder reuse the 90 promoted rule-specific previews', async (
   expect(new Set(catalogLayouts.map(({ layout }) => layout)).size).toBeGreaterThanOrEqual(18);
 
   await page.goto('en/builder/');
-  await expect(page.locator('[data-blueprint-preview]')).toHaveCount(90);
+  await expect(page.locator('[data-blueprint-preview]')).toHaveCount(91);
   const builderLayouts = await page.locator('[data-blueprint-preview]').evaluateAll((previews) =>
     previews.map((preview) => {
       const boss = preview.querySelector('[data-character-art-preview="kern"]');
@@ -3614,6 +3614,47 @@ test('on-hit healing separates a blocked contact from applied damage and ignores
   await expect(widget).toHaveAttribute('data-blueprint-on-hit-healing-miss-counts', 'false');
   await expect(widget).toHaveAttribute('data-blueprint-on-hit-healing-event-count', '1');
   await expect(widget).toHaveAttribute('data-blueprint-on-hit-healing-boss-health', '64');
+  await page.setViewportSize({ width: 375, height: 812 });
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+});
+
+test('self-heal cast cancels the first channel and resolves the second exactly once', async ({
+  page,
+}) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.goto('en/mechanics/self-heal-cast/');
+  const widget = page.locator('[data-blueprint-demo]');
+  const timeline = widget.locator('[data-blueprint-timeline]');
+  const seek = (milliseconds) =>
+    timeline.evaluate((element, value) => {
+      element.value = String(value);
+      element.dispatchEvent(new Event('input', { bubbles: true }));
+    }, milliseconds);
+
+  await expect(page.locator('.lesson-title-line h1')).toHaveText('Interruptible self-heal');
+  await expect(page.locator('.wip-badge, .draft-profile')).toHaveCount(0);
+  await expect(page.locator('.game-example')).toHaveCount(3);
+  await seek(1550);
+  await expect(widget).toHaveAttribute('data-blueprint-self-heal-cast-first-interrupted', 'true');
+  await expect(widget).toHaveAttribute('data-blueprint-self-heal-cast-boss-health', '38');
+  await expect(widget).toHaveAttribute('data-blueprint-self-heal-cast-event-count', '0');
+  await expect(widget).toHaveAttribute('data-blueprint-self-heal-cast-interrupt-count', '1');
+  await seek(3500);
+  await expect(widget).toHaveAttribute('data-blueprint-self-heal-cast-channel-active', 'true');
+  await expect(widget).toHaveAttribute('data-blueprint-self-heal-cast-completed', 'false');
+  await seek(4350);
+  await expect(widget).toHaveAttribute('data-blueprint-self-heal-cast-completed', 'true');
+  await expect(widget).toHaveAttribute('data-blueprint-self-heal-cast-healing', 'true');
+  await expect(widget).toHaveAttribute('data-blueprint-self-heal-cast-event-count', '1');
+  await seek(4700);
+  await expect(widget).toHaveAttribute('data-blueprint-self-heal-cast-boss-health', '62');
+  await expect(widget).toHaveAttribute('data-blueprint-self-heal-cast-requested', '24');
+  await expect(widget).toHaveAttribute('data-blueprint-self-heal-cast-applied', '24');
+  await expect(widget).toHaveAttribute(
+    'data-blueprint-self-heal-cast-result-id',
+    'self-heal-cast-1',
+  );
+  await expect(widget).toHaveAttribute('data-blueprint-self-heal-cast-event-count', '1');
   await page.setViewportSize({ width: 375, height: 812 });
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
 });

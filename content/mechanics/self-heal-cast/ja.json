@@ -1,0 +1,134 @@
+{
+  "title": "中断できる自己回復",
+  "subtitle": "回復を読みやすく上限付きで本当に止められる行動にする",
+  "variant": "予告 · 中断 · 再詠唱 · 1回の回復",
+  "summary": "ボスは接触なしで見える回復行動を始める。有効な中断なら取り消され、完了した詠唱だけが上限付き回復を1回適用する。",
+  "overview": "中断可能な自己回復は、進行を守るために位置やダメージを賭けるかを問う。回復はボス行動から始まり、締切を示し、完了後に1度だけ解決する。合図、中断条件、量、再使用時間、後隙を明確にする。",
+  "learning": "開始条件、詠唱時間、有効な中断、スーパーアーマー、完了フレーム、要求量と適用量、過剰回復、重複防止、再使用時間、フェーズ継承、ロールバック、cast idと結果を結ぶ計測を定義する。",
+  "category": "状態・リソース・スケーリング",
+  "readTime": "9分",
+  "demo": {
+    "title": "タヴィの剣でカーンの最初の詠唱を止め、2回目は完了させる",
+    "timeline": "中断可能な回復タイムライン",
+    "step": "予告、取消、再詠唱、回復状態",
+    "phaseNames": ["回復の確約を読む", "締切前に中断する", "上限付き回復を1度解決する"],
+    "phaseDescriptions": [
+      "0.30秒でカーンはルーン環を開き、0.68秒の詠唱を始める。内向きの粒子とゲージが、体力変化前に締切を示す。",
+      "タヴィは接近し1.46秒で斬る。環が砕け、中断が1回記録され、カーンの体力は38のまま。",
+      "3.02秒で2回目を開始。4.18秒までに有効打がなければ1度だけ完了し、24回復して38から62になる。"
+    ],
+    "boss": "ボス",
+    "player": "プレイヤー",
+    "danger": "完了した詠唱だけが回復する。中断は0で、同じcast idの重複コールバックは追加回復を作らない",
+    "locked": "開始条件、締切、中断タグ、装甲、要求・適用回復、上限、再使用時間、cast id、フェーズ、ロールバック、永続化は遭遇ロジックに置く",
+    "safe": "固有ポーズ、内向き動作、進捗、中断時の破砕、ボス体力変化、両結果の後隙を見せる",
+    "reducedMotion": "視差軽減時は自動再生しない。0.30、0.78、1.28、1.46、2.54、3.02、4.18、4.40、4.62、5.36秒で2回の試行とリセットを確認する。",
+    "diagramDescription": "カーンが同心ルーン内で詠唱し、粒子が内側へ進みゲージが満ちる。タヴィは最初を剣で砕く。2回目は完了し体力が1度だけ38から62へ上がる。"
+  },
+  "steps": [
+    {
+      "title": "何が回復を始め、何回使えるか？",
+      "body": "体力閾値、フェーズ、タイマー、戦術条件を明示する。再使用時間や回数を設け、即再詠唱で進行を消させない。"
+    },
+    {
+      "title": "何を有効な中断とするか？",
+      "body": "ダメージ閾値、よろめきタグ、状態、専用道具、方向、スーパーアーマーを定義する。権威ある戦闘イベントで判定し、保留回復を取消し、安定したcast idを記録する。"
+    },
+    {
+      "title": "完了と取消の後は？",
+      "body": "完了フレームで1度だけ回復し最大体力で丸め、明確な後隙へ入る。取消は0回復だが成功の確認を示す。"
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "見た目の完了前に体力が増える",
+      "body": "詠唱中にゲージが動くと中断成功が読めない。保留と適用を分け、完了イベントだけで体力を変える。"
+    },
+    {
+      "title": "進行を消すまで再詠唱する",
+      "body": "無制限の条件は判断を反復にする。頻度と量を制限し、1回の攻撃機会の期待ダメージと比較する。"
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "詠唱をトランザクションとして扱う",
+      "body": "castId、startedAt、completesAt、interruptedAt、healRequested、healApplied、resultを保存し重複完了を防ぐ。"
+    },
+    {
+      "title": "中断ルートの代価を測る",
+      "body": "接近時間、必要ダメージ、消費資源、他攻撃への露出を測る。"
+    },
+    {
+      "title": "両方の結果を計測する",
+      "body": "開始、中断率と時刻、完了回復、過剰回復、毎分回復、再使用間隔、交換ダメージ、死亡、フェーズ時間を記録する。"
+    }
+  ],
+  "story": {
+    "title": "タヴィがカーンの集束ルーンを断つ",
+    "body": "床石の光がカーンの胸の亀裂へ進む。タヴィは円を横切って中央印を斬り、破片は封じる前に消える。"
+  },
+  "adaptation": {
+    "title": "締切を色だけで示さない",
+    "body": "ポーズ、音の周期、内向き粒子、進捗、完了パルスを組み合わせる。長い猶予、低い閾値、弱い回復、少ない回数、専用表示を提供できる。"
+  },
+  "distinction": {
+    "title": "接触回復ではなく予定された回復",
+    "body": "自己回復はボス判断や遭遇条件から始まる。命中回復には対象との接触が必要で、外部回復源は別に攻撃できる存在である。"
+  },
+  "lensNotes": [
+    {
+      "id": "progress-clarity",
+      "body": "詠唱ゲージ、ボス体力、result idが保留回復から適用への瞬間を示す。"
+    },
+    {
+      "id": "counterplay",
+      "body": "到達可能な締切と明示条件により回復を防げる。"
+    },
+    {
+      "id": "risk-reward",
+      "body": "中断には安全や資源を使う場合があり、受け入れれば位置を保てる。"
+    },
+    {
+      "id": "rule-exception",
+      "body": "スーパーアーマー、免疫、フェーズ移行、重複打、過剰回復、ロールバックを明示する。"
+    },
+    {
+      "id": "telegraphing",
+      "body": "接近を決める前に回復意図を攻撃と区別できるようにする。"
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "3D",
+      "game": "Bloodborne",
+      "boss": "Vicar Amelia",
+      "screenshot": "https://i.ytimg.com/vi/RQxOU8lqnBQ/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=RQxOU8lqnBQ&t=137s",
+      "video": "https://www.youtube.com/watch?v=RQxOU8lqnBQ&t=137s",
+      "videoDurationSeconds": 173,
+      "body": "2:17、Vicar Ameliaは後退して祈り、狩人はNumbing Mistを選ぶ。長いポーズが対応時間を作り、ダメージで中断、道具で後続回復を一時阻止できる。"
+    },
+    {
+      "dimension": "2D",
+      "game": "Dead Cells",
+      "boss": "The Collector",
+      "screenshot": "https://i.ytimg.com/vi/tyFky1GGlkY/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=tyFky1GGlkY&t=17s",
+      "video": "https://www.youtube.com/watch?v=tyFky1GGlkY&t=17s",
+      "videoDurationSeconds": 114,
+      "body": "0:17、Collectorは防護場の中でPanaceaを飲み回復する。最初の保護された使用が規則を教え、最後の無防備な使用が中断目標になる。"
+    },
+    {
+      "dimension": "2D",
+      "game": "Pokémon Red and Blue",
+      "boss": "Gym Leader Sabrina",
+      "screenshot": "https://i.ytimg.com/vi/6_NjyFECZBw/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=6_NjyFECZBw&t=113s",
+      "video": "https://www.youtube.com/watch?v=6_NjyFECZBw&t=113s",
+      "videoDurationSeconds": 298,
+      "body": "1:53、SabrinaのAlakazamはターン制でRecoverを使う。技名とHPゲージが全信号と結果を担い、制限が無限の進行巻き戻しを防ぐ。"
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

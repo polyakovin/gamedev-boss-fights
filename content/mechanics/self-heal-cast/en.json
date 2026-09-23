@@ -1,0 +1,138 @@
+{
+  "title": "Interruptible self-heal",
+  "subtitle": "Make recovery a readable, bounded action with a real stop window",
+  "variant": "Signal · interrupt · recast · one heal",
+  "summary": "The boss starts a visible recovery action without player contact; a qualified interruption cancels it, while a completed cast applies one capped heal.",
+  "overview": "An interruptible self-heal asks whether the player can trade position or damage for preserving progress. The heal begins from a boss action, exposes a deadline, and resolves once only after completion. The signal, interruption rule, amount, cooldown, and post-cast opening must remain readable.",
+  "learning": "Define the start condition, channel duration, qualifying interrupt, super-armor policy, completion frame, requested and applied healing, overheal, de-duplication, cooldown, phase carryover, rollback, and telemetry that links one cast id to one result.",
+  "category": "States, resources, and scaling",
+  "readTime": "9 min",
+  "demo": {
+    "title": "Interrupt Kern’s first channel with Tavi’s sword, then let the second channel finish",
+    "timeline": "Interruptible recovery timeline",
+    "step": "Signal, cancel, recast, and healing states",
+    "phaseNames": [
+      "Read the healing commitment",
+      "Interrupt before the deadline",
+      "Resolve one bounded recovery"
+    ],
+    "phaseDescriptions": [
+      "At 0.30 s, Kern opens a runic ring and commits to a 0.68-second channel. The inward motes and filling cast bar expose the deadline before any health changes.",
+      "Tavi reaches Kern and lands a sword strike at 1.46 s. The ring breaks, the first cast records one interruption, and Kern remains at 38 health.",
+      "Kern begins a second channel at 3.02 s. With no qualified hit before 4.18 s, the cast completes once and restores 24 health, raising Kern from 38 to 62 before recovery."
+    ],
+    "boss": "Boss",
+    "player": "Player",
+    "danger": "Only a completed cast may heal; an interrupted attempt applies zero, and repeated callbacks for the same cast id cannot create extra healing",
+    "locked": "Start condition, channel deadline, interrupt tags, armor, requested and applied healing, cap, cooldown, cast id, phase transition, rollback, and persistence belong to encounter logic",
+    "safe": "Show a distinct pose, inward motion, cast progress, interruption break, boss-health change, and a recovery window after either outcome",
+    "reducedMotion": "Autoplay is disabled by reduced motion. Scrub across 0.30, 0.78, 1.28, 1.46, 2.54, 3.02, 4.18, 4.40, 4.62, and 5.36 seconds to inspect both attempts and the reset.",
+    "diagramDescription": "Kern channels inside concentric runic circles while motes travel inward and a cast bar fills. Tavi breaks the first ring with a sword slash; the second ring completes and the boss health bar rises once from 38 to 62."
+  },
+  "steps": [
+    {
+      "title": "What starts the heal and how often may it occur?",
+      "body": "Choose health, phase, timer, or tactical conditions explicitly. Gate the action with a cooldown or limited charges so the boss cannot immediately recast until the encounter becomes a progress reset."
+    },
+    {
+      "title": "What qualifies as an interruption?",
+      "body": "Define damage threshold, stagger tag, status, tool, hit direction, and super-armor. Resolve the answer on the authoritative combat event, cancel the pending heal, and record one stable cast id with its rejection reason."
+    },
+    {
+      "title": "What happens on completion or cancellation?",
+      "body": "Apply healing once on the completion frame, clamp it at maximum health, then enter a clear recovery. A cancelled cast should heal zero and still give readable confirmation and a deliberately tuned punish window."
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "Health rises before the channel visibly completes",
+      "body": "If the bar moves during wind-up, the player cannot know whether an interruption worked. Keep pending and applied healing separate, and commit the health change on one explicit completion event."
+    },
+    {
+      "title": "The boss recasts until progress is erased",
+      "body": "An unbounded trigger turns healing into repetition instead of a decision. Limit frequency and amount, preserve a response window, and compare restored health with expected player damage per opening."
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "Model the cast as a transaction",
+      "body": "Store castId, startedAt, completesAt, interruptedAt, healRequested, healApplied, and result. This prevents duplicated completion callbacks and makes rollback and save-state restoration deterministic."
+    },
+    {
+      "title": "Price the interrupt route",
+      "body": "Measure travel time, required damage, consumed resources, and exposure to other attacks. The player should decide whether preserving progress is worth leaving safety or spending a scarce answer."
+    },
+    {
+      "title": "Instrument both outcomes",
+      "body": "Track cast starts, interruption rate and timing, completed heals, overheal, health restored per minute, recast intervals, damage traded for interrupts, deaths after completion, and phase duration."
+    }
+  ],
+  "story": {
+    "title": "Tavi splits Kern’s gathering rune",
+    "body": "Light begins to crawl from the arena stones toward the cracks in Kern’s chest. Tavi crosses the circle and cuts through its central glyph; the fragments dim before they can seal the elemental."
+  },
+  "adaptation": {
+    "title": "Expose the deadline through more than color",
+    "body": "Combine pose, sound cadence, inward particles, cast progress, and a completion pulse. Offer a longer window, lower interrupt threshold, reduced heal, fewer casts, or a dedicated counter prompt without changing the underlying rule."
+  },
+  "distinction": {
+    "title": "Scheduled recovery, not healing from contact",
+    "body": "Self-healing begins from a boss decision or encounter condition and can expose a channel. On-hit healing requires eligible contact with a target, while an external healing source belongs to another entity that may be attacked separately."
+  },
+  "lensNotes": [
+    {
+      "id": "progress-clarity",
+      "body": "The cast bar, boss health, and result id show exactly when pending recovery becomes applied recovery."
+    },
+    {
+      "id": "counterplay",
+      "body": "A reachable deadline and explicit interrupt predicate let the player prevent the heal instead of merely enduring it."
+    },
+    {
+      "id": "risk-reward",
+      "body": "Interrupting may require leaving safety or spending damage and resources, while accepting the heal preserves position."
+    },
+    {
+      "id": "rule-exception",
+      "body": "Super-armor, status immunity, phase changes, duplicate hits, overheal, and rollback need explicit outcomes."
+    },
+    {
+      "id": "telegraphing",
+      "body": "The healing intent must be distinguishable from an attack before the player commits to approaching."
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "3D",
+      "game": "Bloodborne",
+      "boss": "Vicar Amelia",
+      "screenshot": "https://i.ytimg.com/vi/RQxOU8lqnBQ/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=RQxOU8lqnBQ&t=137s",
+      "video": "https://www.youtube.com/watch?v=RQxOU8lqnBQ&t=137s",
+      "videoDurationSeconds": 173,
+      "body": "At 2:17, Vicar Amelia withdraws and begins her prayer while the hunter selects Numbing Mist. The long pose and golden recovery state create a response window; damage can interrupt it, while the item temporarily blocks further healing."
+    },
+    {
+      "dimension": "2D",
+      "game": "Dead Cells",
+      "boss": "The Collector",
+      "screenshot": "https://i.ytimg.com/vi/tyFky1GGlkY/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=tyFky1GGlkY&t=17s",
+      "video": "https://www.youtube.com/watch?v=tyFky1GGlkY&t=17s",
+      "videoDurationSeconds": 114,
+      "body": "At 0:17, the Collector drinks the Panacea behind a protective field and restores health. Early protected drinks teach the rule safely; the final unshielded drink changes the same readable action into an interruption objective."
+    },
+    {
+      "dimension": "2D",
+      "game": "Pokémon Red and Blue",
+      "boss": "Gym Leader Sabrina",
+      "screenshot": "https://i.ytimg.com/vi/6_NjyFECZBw/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=6_NjyFECZBw&t=113s",
+      "video": "https://www.youtube.com/watch?v=6_NjyFECZBw&t=113s",
+      "videoDurationSeconds": 298,
+      "body": "At 1:53, Sabrina’s Alakazam uses Recover in a turn-based exchange. The move has no spatial channel, so the command text and HP bar carry the entire signal and result contract; the encounter still needs limits that prevent endless progress reversal."
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

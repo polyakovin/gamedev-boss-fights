@@ -1,0 +1,138 @@
+{
+  "title": "বাধা দেওয়া যায় এমন স্ব-চিকিৎসা",
+  "subtitle": "পুনরুদ্ধারকে পাঠযোগ্য, সীমিত ও সত্যিই থামানো যায় এমন ক্রিয়া করুন",
+  "variant": "সংকেত · বাধা · পুনরায় কাস্ট · একবার চিকিৎসা",
+  "summary": "বস খেলোয়াড়ের সংস্পর্শ ছাড়াই দৃশ্যমান পুনরুদ্ধার শুরু করে; যোগ্য বাধা তা বাতিল করে, আর সম্পূর্ণ কাস্ট একবার সীমিত চিকিৎসা দেয়।",
+  "overview": "এই মেকানিক খেলোয়াড়কে ঠিক করতে বলে—অগ্রগতি বাঁচাতে অবস্থান বা ক্ষতি ঝুঁকিতে দেবে কি না। চিকিৎসা বসের ক্রিয়া থেকে শুরু হয়, সময়সীমা দেখায় এবং শেষ হলে একবার প্রয়োগ হয়। সংকেত, বাধার নিয়ম, পরিমাণ, কুলডাউন ও পরের সুযোগ স্পষ্ট রাখুন।",
+  "learning": "শুরুর শর্ত, চ্যানেল সময়, বৈধ বাধা, সুপার আর্মার, সমাপ্তির ফ্রেম, চাওয়া ও প্রয়োগ চিকিৎসা, ওভারহিল, ডুপ্লিকেট রোধ, কুলডাউন, ফেজ, রোলব্যাক এবং cast id-এর ফল নির্ধারণ করুন।",
+  "category": "অবস্থা, সম্পদ ও স্কেলিং",
+  "readTime": "৯ মিনিট",
+  "demo": {
+    "title": "টাভির তলোয়ার দিয়ে কার্নের প্রথম চ্যানেল থামান, দ্বিতীয়টি শেষ হতে দিন",
+    "timeline": "বাধাযোগ্য পুনরুদ্ধারের সময়রেখা",
+    "step": "সংকেত, বাতিল, পুনরায় কাস্ট ও চিকিৎসা অবস্থা",
+    "phaseNames": [
+      "চিকিৎসার অঙ্গীকার পড়ুন",
+      "সময়সীমার আগে বাধা দিন",
+      "একবার সীমিত পুনরুদ্ধার মেটান"
+    ],
+    "phaseDescriptions": [
+      "০.৩০ সেকেন্ডে কার্ন রুনের বৃত্ত খুলে ০.৬৮ সেকেন্ড চ্যানেল করে। ভেতরের কণা ও ভরতে থাকা বার স্বাস্থ্য বদলের আগেই সময়সীমা দেখায়।",
+      "টাভি ১.৪৬ সেকেন্ডে তলোয়ার চালায়। বৃত্ত ভাঙে, একটি বাধা নথিভুক্ত হয় এবং কার্নের স্বাস্থ্য ৩৮ থাকে।",
+      "৩.০২ সেকেন্ডে দ্বিতীয় চ্যানেল শুরু হয়। ৪.১৮-এর আগে বৈধ আঘাত না এলে এটি একবার শেষ হয়ে ২৪ স্বাস্থ্য দেয়: ৩৮ থেকে ৬২।"
+    ],
+    "boss": "বস",
+    "player": "খেলোয়াড়",
+    "danger": "শুধু সম্পূর্ণ কাস্ট চিকিৎসা করবে; বাধাপ্রাপ্ত চেষ্টা শূন্য, একই cast id-এর পুনরাবৃত্ত callback অতিরিক্ত চিকিৎসা নয়",
+    "locked": "শুরুর শর্ত, সময়সীমা, বাধা ট্যাগ, আর্মার, চাওয়া ও প্রয়োগ চিকিৎসা, সীমা, কুলডাউন, cast id, ফেজ, রোলব্যাক ও স্থায়িত্ব encounter logic-এর অংশ",
+    "safe": "আলাদা ভঙ্গি, ভেতরের গতি, কাস্ট অগ্রগতি, ভাঙার প্রতিক্রিয়া, বসের স্বাস্থ্য পরিবর্তন এবং দুই ফলের পর সুযোগ দেখান",
+    "reducedMotion": "কম গতিতে অটোপ্লে বন্ধ। দুই চেষ্টা ও রিসেট দেখতে ০.৩০, ০.৭৮, ১.২৮, ১.৪৬, ২.৫৪, ৩.০২, ৪.১৮, ৪.৪০, ৪.৬২ ও ৫.৩৬ সেকেন্ড দেখুন।",
+    "diagramDescription": "কার্ন সমকেন্দ্রিক রুনে চ্যানেল করে, কণা ভেতরে আসে ও বার ভরে। টাভি প্রথম বৃত্ত তলোয়ার দিয়ে ভাঙে; দ্বিতীয়টি শেষ হয়ে স্বাস্থ্য একবার ৩৮ থেকে ৬২ হয়।"
+  },
+  "steps": [
+    {
+      "title": "চিকিৎসা কীভাবে শুরু হয় ও কতবার?",
+      "body": "স্বাস্থ্যসীমা, ফেজ, টাইমার বা কৌশলগত শর্ত স্পষ্ট করুন। কুলডাউন বা সীমিত চার্জ দিন, যাতে পুনরাবৃত্ত কাস্ট অগ্রগতি মুছে না দেয়।"
+    },
+    {
+      "title": "যোগ্য বাধা কোনটি?",
+      "body": "ক্ষতির সীমা, stagger tag, status, tool, দিক ও super-armor ঠিক করুন। authoritative combat event-এ ফল মেটান, pending heal বাতিল করুন এবং স্থির cast id রাখুন।"
+    },
+    {
+      "title": "শেষ বা বাতিল হলে কী হয়?",
+      "body": "সমাপ্তির ফ্রেমে একবার চিকিৎসা দিন, সর্বোচ্চ স্বাস্থ্যে সীমাবদ্ধ করুন এবং পরিষ্কার recovery দিন। বাতিল কাস্ট শূন্য চিকিৎসা দেবে কিন্তু স্পষ্ট নিশ্চিতকরণ রাখবে।"
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "চ্যানেল শেষ দেখানোর আগেই স্বাস্থ্য বাড়ে",
+      "body": "প্রস্তুতির সময় বার নড়লে বাধা কাজ করেছে কি না বোঝা যায় না। pending ও applied heal আলাদা রাখুন।"
+    },
+    {
+      "title": "বস অগ্রগতি মুছে যাওয়া পর্যন্ত পুনরায় কাস্ট করে",
+      "body": "সীমাহীন trigger সিদ্ধান্তকে পুনরাবৃত্তিতে বদলে দেয়। ফ্রিকোয়েন্সি ও পরিমাণ সীমিত করে player damage per opening-এর সঙ্গে তুলনা করুন।"
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "কাস্টকে লেনদেন হিসেবে মডেল করুন",
+      "body": "castId, startedAt, completesAt, interruptedAt, healRequested, healApplied ও result রাখুন, যাতে duplicate completion না হয়।"
+    },
+    {
+      "title": "বাধার পথের মূল্য ঠিক করুন",
+      "body": "পৌঁছানোর সময়, প্রয়োজনীয় ক্ষতি, খরচ ও অন্য আক্রমণের ঝুঁকি মাপুন।"
+    },
+    {
+      "title": "দুই ফলই মাপুন",
+      "body": "starts, interruption rate ও timing, completed heals, overheal, heal per minute, recast interval, traded damage, মৃত্যু ও phase duration নথিভুক্ত করুন।"
+    }
+  ],
+  "story": {
+    "title": "টাভি কার্নের জমতে থাকা রুন চিরে দেয়",
+    "body": "অঙ্গনের পাথর থেকে আলো কার্নের বুকের ফাটলে যায়। টাভি বৃত্ত পেরিয়ে মাঝের চিহ্ন কাটে; টুকরো নিভে যায়।"
+  },
+  "adaptation": {
+    "title": "সময়সীমা শুধু রঙে দেখাবেন না",
+    "body": "ভঙ্গি, শব্দের ছন্দ, ভেতরের কণা, কাস্ট অগ্রগতি ও completion pulse মিলিয়ে দিন। দীর্ঘ window, কম threshold, কম heal বা আলাদা prompt দিন।"
+  },
+  "distinction": {
+    "title": "নির্ধারিত পুনরুদ্ধার, সংস্পর্শের চিকিৎসা নয়",
+    "body": "স্ব-চিকিৎসা বসের সিদ্ধান্ত বা encounter condition থেকে শুরু হয়। on-hit healing-এর target contact লাগে; external source আলাদা attackable entity।"
+  },
+  "lensNotes": [
+    {
+      "id": "progress-clarity",
+      "body": "কাস্ট বার, বসের স্বাস্থ্য ও result id pending recovery কবে applied হয় দেখায়।"
+    },
+    {
+      "id": "counterplay",
+      "body": "পৌঁছানো যায় এমন deadline ও স্পষ্ট predicate চিকিৎসা ঠেকাতে দেয়।"
+    },
+    {
+      "id": "risk-reward",
+      "body": "বাধার জন্য নিরাপত্তা বা সম্পদ ছাড়তে হতে পারে; চিকিৎসা মেনে নিলে অবস্থান থাকে।"
+    },
+    {
+      "id": "rule-exception",
+      "body": "super-armor, immunity, phase change, duplicate hit, overheal ও rollback স্পষ্ট করুন।"
+    },
+    {
+      "id": "telegraphing",
+      "body": "কাছে যাওয়ার সিদ্ধান্তের আগে চিকিৎসার সংকেত আক্রমণ থেকে আলাদা হোক।"
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "3D",
+      "game": "Bloodborne",
+      "boss": "Vicar Amelia",
+      "screenshot": "https://i.ytimg.com/vi/RQxOU8lqnBQ/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=RQxOU8lqnBQ&t=137s",
+      "video": "https://www.youtube.com/watch?v=RQxOU8lqnBQ&t=137s",
+      "videoDurationSeconds": 173,
+      "body": "২:১৭-তে Vicar Amelia পিছিয়ে প্রার্থনা শুরু করে, আর hunter Numbing Mist বেছে নেয়। দীর্ঘ ভঙ্গি উত্তর দেওয়ার সময় দেয়; damage বাধা দিতে পারে এবং item পরের heal আটকায়।"
+    },
+    {
+      "dimension": "2D",
+      "game": "Dead Cells",
+      "boss": "The Collector",
+      "screenshot": "https://i.ytimg.com/vi/tyFky1GGlkY/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=tyFky1GGlkY&t=17s",
+      "video": "https://www.youtube.com/watch?v=tyFky1GGlkY&t=17s",
+      "videoDurationSeconds": 114,
+      "body": "০:১৭-তে Collector shield-এর ভেতর Panacea পান করে স্বাস্থ্য ফেরায়। প্রথম protected drinks নিয়ম শেখায়; শেষ unshielded drink interrupt objective হয়।"
+    },
+    {
+      "dimension": "2D",
+      "game": "Pokémon Red and Blue",
+      "boss": "Gym Leader Sabrina",
+      "screenshot": "https://i.ytimg.com/vi/6_NjyFECZBw/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=6_NjyFECZBw&t=113s",
+      "video": "https://www.youtube.com/watch?v=6_NjyFECZBw&t=113s",
+      "videoDurationSeconds": 298,
+      "body": "১:৫৩-তে Sabrina-র Alakazam turn-based লড়াইয়ে Recover ব্যবহার করে। command text ও HP bar পুরো signal/result বহন করে; সীমা অসীম progress reversal ঠেকায়।"
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

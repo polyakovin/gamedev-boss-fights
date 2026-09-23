@@ -1,0 +1,28 @@
+{
+  "id": "self-heal-cast",
+  "number": 97,
+  "published": true,
+  "sourceLocale": "en",
+  "contentVersion": 1,
+  "animation": "self-heal-cast",
+  "lenses": ["progress-clarity", "counterplay", "risk-reward", "rule-exception", "telegraphing"],
+  "related": ["interruptible-wind-up", "ability-lock", "on-hit-healing", "recovery"],
+  "sources": [
+    {
+      "title": "Boss Up: Boss Battle Design",
+      "url": "https://media.gdcvault.com/gdc2018/presentations/Keren_Itay_BossUp.pdf"
+    },
+    {
+      "title": "Vicar Amelia — Bloodborne Wiki",
+      "url": "https://www.bloodborne-wiki.com/2015/03/vicar-amelia.html"
+    },
+    {
+      "title": "The Collector / 5 BSC — Official Dead Cells Wiki",
+      "url": "https://deadcells.wiki.gg/wiki/The_Collector/5_BSC"
+    },
+    {
+      "title": "Sabrina — Bulbapedia",
+      "url": "https://bulbapedia.bulbagarden.net/wiki/Sabrina"
+    }
+  ]
+}
