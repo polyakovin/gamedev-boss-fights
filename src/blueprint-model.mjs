@@ -664,13 +664,13 @@ const SPECS = {
   },
   'cover-line-of-sight': {
     mode: 'cover-line-of-sight',
-    boss: [110, 590],
+    boss: [110, 540],
     player: [470, 850],
     target: [205, 470],
-    source: [150, 590],
+    source: [150, 495],
     coverPoint: [470, 610],
     strikePoint: [205, 470],
-    pillar: [285, 500, 70, 180],
+    pillar: [285, 500, 70, 160],
     edgeMargin: 7,
     lockAt: 0.42,
     shadowAt: 0.78,
@@ -4177,63 +4177,58 @@ function primitivesFor(spec, frame) {
     const shadowVisible = frame.coverShadowVisible;
     const beamActive = frame.coverBeamActive;
     const targetVisible = frame.time >= spec.lockAt && frame.time < spec.beam[0];
-    const exitOpen = frame.coverExitOpen;
     const strike = strikePulse(frame.time, spec.punishAt, 0.38);
     const source = point(spec.source);
-    const beamHit = { x: spec.pillar[0], y: 598 };
+    const beamHit = {
+      x: spec.pillar[0],
+      y:
+        source.y +
+        ((spec.player[1] - source.y) * (spec.pillar[0] - source.x)) / (spec.player[0] - source.x),
+    };
     return [
-      rect(56, 350, 448, 540, 0.54, 'muted', 0.025),
+      path('M 48 92 L 512 92 L 520 880 L 42 880 Z', 0.52, 'muted', 0, 0.28),
+      path('M 53 107 L 271 101 L 278 456 L 45 478 Z', 0.32, 'muted', 0, 0.42),
+      path('M 283 101 L 506 106 L 516 480 L 283 458 Z', 0.35, 'muted', 0, 0.5),
+      path('M 48 489 L 274 468 L 281 867 L 43 874 Z', 0.28, 'muted', 0, 0.45),
+      path('M 283 469 L 513 490 L 518 871 L 287 868 Z', 0.33, 'muted', 0, 0.54),
       path(
-        'M 355 500 L 535 333 L 535 847 L 355 680 Z',
-        shadowVisible ? (beamActive ? 0.82 : 0.58) : 0,
+        'M 355 500 L 535 505 L 535 805 L 355 660 Z',
+        shadowVisible ? (beamActive ? 0.56 : 0.42) : 0,
         'safe',
-        beamActive ? 7 : 5,
-        beamActive ? 0.12 : 0.07,
-        beamActive ? '' : '11 9',
+        0,
+        beamActive ? 0.3 : 0.22,
       ),
       line(
         source.x,
         source.y,
-        frame.player.x,
-        frame.player.y,
+        spec.player[0],
+        spec.player[1],
         targetVisible ? 0.72 : 0,
         'accent',
-        5,
-        '10 9',
+        4,
       ),
-      line(355, 500, 535, 333, shadowVisible ? 0.54 : 0, 'safe', 4, '9 8'),
-      line(355, 680, 535, 847, shadowVisible ? 0.54 : 0, 'safe', 4, '9 8'),
-      rect(
-        spec.pillar[0],
-        spec.pillar[1],
-        spec.pillar[2],
-        spec.pillar[3],
-        0.96,
-        beamActive ? 'safe' : 'muted',
-        0.34,
-      ),
-      path('M 304 520 L 326 548 L 310 578 L 338 610 L 318 644', 0.72, 'accent', 5),
-      circle(
-        source.x,
-        source.y,
-        beamActive ? 22 : 15,
+      path('M 272 653 L 366 653 L 380 675 L 260 675 Z', 0.72, 'muted', 0, 0.74),
+      path('M 285 520 L 355 520 L 355 659 L 285 659 Z', 0.98, 'muted', 0, 0.92),
+      path('M 278 502 L 343 490 L 361 514 L 355 531 L 285 531 Z', 0.92, 'muted', 0, 0.78),
+      path('M 310 535 L 327 556 L 313 586 L 338 609 L 321 643', 0.58, 'accent', 5),
+      path(
+        `M ${source.x - 11} ${source.y - 17} L ${source.x + 12} ${source.y} L ${source.x - 11} ${source.y + 17} Z`,
         frame.time >= spec.lockAt ? 0.92 : 0.28,
         beamActive ? 'signal' : 'accent',
-        beamActive ? 9 : 5,
-        beamActive ? 0.24 : 0.08,
+        0,
+        0.76,
       ),
       line(source.x, source.y, beamHit.x, beamHit.y, beamActive ? 0.92 : 0, 'signal', 18),
       line(source.x, source.y, beamHit.x, beamHit.y, beamActive ? 1 : 0, 'safe', 5),
-      circle(beamHit.x, beamHit.y, beamActive ? 22 : 12, beamActive ? 0.96 : 0, 'signal', 8, 0.18),
       path(
-        `M ${beamHit.x - 8} ${beamHit.y - 34} L ${beamHit.x} ${beamHit.y - 18} L ${beamHit.x + 12} ${beamHit.y - 31} M ${beamHit.x - 10} ${beamHit.y + 34} L ${beamHit.x} ${beamHit.y + 18} L ${beamHit.x + 13} ${beamHit.y + 30}`,
-        beamActive ? 0.9 : 0,
+        `M ${beamHit.x - 20} ${beamHit.y - 17} L ${beamHit.x - 2} ${beamHit.y - 28} L ${beamHit.x + 6} ${beamHit.y - 9} Z M ${beamHit.x - 17} ${beamHit.y + 18} L ${beamHit.x + 3} ${beamHit.y + 10} L ${beamHit.x + 10} ${beamHit.y + 27} Z`,
+        beamActive ? 0.96 : 0,
         'signal',
-        5,
+        0,
+        0.8,
       ),
       line(frame.player.x, frame.player.y, frame.boss.x, frame.boss.y, strike, 'safe', 10),
       circle(frame.boss.x + 26, frame.boss.y - 18, 12 + strike * 24, strike, 'safe', 7, 0.14),
-      path('M 390 430 Q 326 370 260 420', exitOpen ? 0.58 : 0.12, 'accent', 5, 0, '9 9'),
     ];
   }
   if (mode === 'forced-inertia') {

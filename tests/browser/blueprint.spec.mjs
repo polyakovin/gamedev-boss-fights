@@ -2341,13 +2341,14 @@ test('cover and line of sight visibly stops the beam on the pillar before the co
   await expect(page.locator('.wip-badge, .draft-profile')).toHaveCount(0);
   await expect(page.locator('.game-example')).toHaveCount(3);
   await expect(widget).toHaveAttribute('data-blueprint-playing', 'false');
+  await expect(widget).toHaveAttribute('data-blueprint-full-height', 'true');
+  expect((await widget.boundingBox()).height).toBeGreaterThan(800);
 
   await seek(1100);
   await expect(widget).toHaveAttribute('data-blueprint-cover-line-of-sight', 'moving-to-cover');
   await expect(widget).toHaveAttribute('data-blueprint-cover-source-locked', 'true');
   await expect(widget).toHaveAttribute('data-blueprint-cover-shadow', 'true');
-  await expect(widget).toHaveAttribute('data-blueprint-cover-occupied', 'false');
-  await expect(widget.locator('[data-blueprint-primitive="1"] path')).not.toHaveAttribute(
+  await expect(widget.locator('[data-blueprint-primitive="5"] path')).not.toHaveAttribute(
     'opacity',
     '0',
   );
@@ -2362,8 +2363,8 @@ test('cover and line of sight visibly stops the beam on the pillar before the co
   await expect(widget).toHaveAttribute('data-blueprint-cover-beam', 'true');
   await expect(widget).toHaveAttribute('data-blueprint-cover-blocked', 'true');
   await expect(widget).toHaveAttribute('data-blueprint-outcome', 'safe');
-  await expect(widget.locator('[data-blueprint-primitive="8"] line')).toHaveAttribute('x2', '285');
-  await expect(widget.locator('[data-blueprint-primitive="10"] circle')).not.toHaveAttribute(
+  await expect(widget.locator('[data-blueprint-primitive="12"] line')).toHaveAttribute('x2', '285');
+  await expect(widget.locator('[data-blueprint-primitive="14"] path')).not.toHaveAttribute(
     'opacity',
     '0',
   );
@@ -2372,15 +2373,14 @@ test('cover and line of sight visibly stops the beam on the pillar before the co
   await expect(widget).toHaveAttribute('data-blueprint-cover-line-of-sight', 'safe-exit');
   await expect(widget).toHaveAttribute('data-blueprint-cover-beam', 'false');
   await expect(widget).toHaveAttribute('data-blueprint-cover-exit', 'true');
-  await expect(widget.locator('[data-blueprint-primitive="14"] path')).not.toHaveAttribute(
-    'opacity',
-    '0',
+  expect(await widget.locator('[data-blueprint-player]').getAttribute('transform')).not.toBe(
+    'translate(470 610)',
   );
 
   await seek(3920);
   await expect(widget).toHaveAttribute('data-blueprint-cover-line-of-sight', 'counter-window');
   await expect(widget).toHaveAttribute('data-blueprint-punish-strike', 'true');
-  await expect(widget.locator('[data-blueprint-primitive="12"] line')).not.toHaveAttribute(
+  await expect(widget.locator('[data-blueprint-primitive="15"] line')).not.toHaveAttribute(
     'opacity',
     '0',
   );

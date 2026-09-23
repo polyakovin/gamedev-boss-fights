@@ -2040,9 +2040,11 @@ test('cover and line of sight derives safety from the blocker and ends the beam 
   const preview = blueprintFrame(id, 1.1);
   assert.equal(preview.coverSourceLocked, true);
   assert.equal(preview.coverShadowVisible, true);
-  assert.equal(preview.coverOccupied, false);
-  assert.ok(preview.primitives[1].opacity > 0.5, 'the safe shadow appears before commitment');
-  assert.ok(preview.primitives[2].opacity > 0.6, 'the source-to-player line remains visible');
+  assert.ok(preview.player.y > 610, 'the player is still moving toward the cover position');
+  assert.ok(preview.primitives[5].opacity > 0.4, 'the safe shadow appears before commitment');
+  assert.ok(preview.primitives[6].opacity > 0.6, 'the fixed source-to-target line remains visible');
+  assert.equal(preview.primitives[6].x2, 470, 'the preview keeps the original target');
+  assert.equal(preview.primitives[6].y2, 850, 'the preview does not follow the player');
 
   const blocked = blueprintFrame(id, 2.6);
   assert.equal(blocked.coverLineOfSightState, 'beam-blocked');
@@ -2053,18 +2055,27 @@ test('cover and line of sight derives safety from the blocker and ends the beam 
   assert.equal(coverLineOfSightBlocked(2.6, { x: 470, y: 610 }), true);
   assert.equal(coverLineOfSightBlocked(2.6, { x: 470, y: 850 }), false);
   assert.equal(blueprintPointSafe(id, 2.6, { x: 470, y: 850 }), false);
-  assert.ok(blocked.primitives[8].opacity > 0.9, 'the live beam is visible');
-  assert.equal(blocked.primitives[8].x2, 285, 'the beam ends on the pillar face');
-  assert.ok(blocked.primitives[10].opacity > 0.9, 'the blocked impact is explicit');
+  assert.ok(blocked.primitives[12].opacity > 0.9, 'the live beam is visible');
+  assert.equal(blocked.primitives[12].x2, 285, 'the beam ends on the pillar face');
+  assert.ok(
+    Math.abs(
+      (blocked.primitives[12].y2 - blocked.primitives[12].y1) /
+        (blocked.primitives[12].x2 - blocked.primitives[12].x1) -
+        (preview.primitives[6].y2 - preview.primitives[6].y1) /
+          (preview.primitives[6].x2 - preview.primitives[6].x1),
+    ) < 1e-9,
+    'the beam follows the committed preview line',
+  );
+  assert.ok(blocked.primitives[14].opacity > 0.9, 'the blocked impact is explicit');
 
   const exit = blueprintFrame(id, 3.5);
   assert.equal(exit.coverExitOpen, true);
   assert.equal(exit.dangerActive, false);
-  assert.ok(exit.primitives[14].opacity > 0.5, 'the route out of cover is visible');
+  assert.ok(exit.player.x < 470 && exit.player.y < 610, 'the player leaves cover after the beam');
 
   const punish = blueprintFrame(id, 3.92);
   assert.equal(punish.punishStrike, true);
-  assert.ok(punish.primitives[12].opacity > 0.9, 'the sword response lands after the beam ends');
+  assert.ok(punish.primitives[15].opacity > 0.9, 'the sword response lands after the beam ends');
 
   assert.deepEqual(blueprintFrame(id, 0).player, blueprintFrame(id, 6).player);
   assert.deepEqual(blueprintFrame(id, 0).boss, blueprintFrame(id, 6).boss);
