@@ -2261,28 +2261,28 @@ test('invisibility preserves a continuous hidden body through bounded secondary 
   assert.equal(tracking.invisibilityHidden, true);
   assert.equal(tracking.invisibilityCueCount, 3);
   assert.equal(tracking.bossVisible, 0);
-  assert.ok(tracking.primitives[4].opacity > 0.8, 'the newest footprint is strongly visible');
+  assert.ok(tracking.primitives[13].opacity > 0.8, 'the newest footprint is strongly visible');
 
   const locked = blueprintFrame(id, 2.4);
   assert.equal(locked.invisibilitySourceLocked, true);
   assert.equal(locked.dangerActive, false);
-  assert.ok(locked.primitives[9].opacity > 0.7, 'the source previews its committed corridor');
+  assert.ok(locked.primitives[18].opacity > 0.4, 'the floor previews its committed corridor');
 
   const active = blueprintFrame(id, 2.9);
   assert.equal(active.invisibilityAttackActive, true);
   assert.equal(active.playerSafe, true);
   assert.equal(blueprintPointSafe(id, 2.9, { x: 300, y: 625 }), false);
   assert.equal(blueprintPointSafe(id, 2.9, { x: 470, y: 710 }), true);
-  assert.ok(active.primitives[10].opacity > 0.9, 'the hidden strike activates only its lane');
+  assert.ok(active.primitives[19].opacity > 0.8, 'the hidden strike activates only its lane');
 
   const reveal = blueprintFrame(id, 3.25);
   assert.equal(reveal.invisibilityRevealVisible, true);
   assert.ok(reveal.bossVisible > 0 && reveal.bossVisible < 1);
-  assert.ok(reveal.primitives[12].opacity > 0.8, 'the exact body returns with a reveal pulse');
+  assert.ok(reveal.primitives[20].opacity > 0.8, 'stone fragments announce the reveal');
 
   const punish = blueprintFrame(id, 4.18);
   assert.equal(punish.punishStrike, true);
-  assert.ok(punish.primitives[13].opacity > 0.9, 'the sword response follows the reveal');
+  assert.ok(punish.primitives[21].opacity > 0.9, 'the sword response follows the reveal');
 
   assert.deepEqual(blueprintFrame(id, 0).player, blueprintFrame(id, 6).player);
   assert.deepEqual(blueprintFrame(id, 0).boss, blueprintFrame(id, 6).boss);

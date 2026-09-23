@@ -802,10 +802,10 @@ const SPECS = {
   },
   'secondary-cues-invisibility': {
     mode: 'secondary-cues-invisibility',
-    boss: [160, 400],
+    boss: [160, 230],
     player: [330, 690],
     target: [390, 540],
-    arena: [56, 350, 448, 540],
+    arena: [43, 88, 477, 793],
     vanishAt: 0.62,
     hiddenAt: 0.88,
     lockAt: 2.32,
@@ -819,16 +819,16 @@ const SPECS = {
     safePoint: [470, 710],
     strikePoint: [390, 540],
     hiddenRoute: [
-      [160, 400],
-      [210, 440],
-      [270, 465],
+      [160, 230],
+      [210, 290],
+      [270, 350],
       [330, 430],
       [390, 520],
     ],
     clues: [
-      { point: [190, 425], at: 0.96 },
-      { point: [240, 455], at: 1.22 },
-      { point: [300, 448], at: 1.52 },
+      { point: [190, 265], at: 0.96 },
+      { point: [240, 325], at: 1.22 },
+      { point: [300, 388], at: 1.52 },
       { point: [350, 470], at: 1.82 },
       { point: [390, 520], at: 2.12 },
     ],
@@ -4515,80 +4515,64 @@ function primitivesFor(spec, frame) {
   }
   if (mode === 'secondary-cues-invisibility') {
     const hidden = frame.invisibilityHidden;
-    const routeVisible = frame.time >= spec.vanishAt && frame.time < spec.revealAt;
     const source = point(spec.hiddenRoute.at(-1));
     const laneEnd = point(spec.laneEnd);
-    const safe = point(spec.safePoint);
     const strike = strikePulse(frame.time, spec.punishAt, 0.38);
     const cuePoint = frame.invisibilityCuePoint;
+    const laneLength = Math.hypot(laneEnd.x - source.x, laneEnd.y - source.y);
+    const sideX = ((laneEnd.y - source.y) / laneLength) * spec.laneHalfWidth;
+    const sideY = ((source.x - laneEnd.x) / laneLength) * spec.laneHalfWidth;
+    const lane = `M ${source.x + sideX} ${source.y + sideY} L ${laneEnd.x + sideX} ${laneEnd.y + sideY} L ${laneEnd.x - sideX} ${laneEnd.y - sideY} L ${source.x - sideX} ${source.y - sideY} Z`;
     return [
-      rect(...spec.arena, 0.52, 'muted', 0.025),
+      path('M 48 105 L 281 88 L 516 110 L 520 853 L 274 881 L 43 848 Z', 0.5, 'muted', 0, 0.32),
+      path('M 50 119 L 272 103 L 281 336 L 49 344 Z', 0.42, 'muted', 0, 0.54),
+      path('M 280 104 L 510 119 L 515 342 L 288 335 Z', 0.38, 'muted', 0, 0.61),
+      path('M 50 360 L 185 350 L 196 502 L 48 524 Z', 0.46, 'muted', 0, 0.62),
+      path('M 196 350 L 361 340 L 359 507 L 200 502 Z', 0.38, 'muted', 0, 0.54),
+      path('M 368 348 L 511 362 L 515 526 L 362 508 Z', 0.44, 'muted', 0, 0.64),
+      path('M 51 533 L 266 515 L 281 690 L 48 708 Z', 0.34, 'muted', 0, 0.5),
+      path('M 273 518 L 516 535 L 514 715 L 283 691 Z', 0.43, 'muted', 0, 0.58),
+      path('M 51 715 L 278 701 L 271 870 L 43 844 Z', 0.41, 'muted', 0, 0.6),
+      path('M 285 703 L 516 724 L 519 846 L 279 873 Z', 0.35, 'muted', 0, 0.48),
       path(
-        `M ${spec.hiddenRoute.map(([x, y]) => `${x} ${y}`).join(' L ')}`,
-        routeVisible ? 0.24 : 0,
+        'M 99 182 L 118 174 L 138 184 M 407 220 L 428 211 L 448 222 M 93 376 L 110 369 L 126 378 M 412 387 L 431 379 L 448 389 M 91 777 L 111 769 L 129 779',
+        0.3,
         'accent',
-        5,
-        0,
-        '9 11',
+        4,
       ),
       ...spec.clues.map(({ point: [x, y] }, index) =>
         path(
-          `M ${x - 13} ${y - 8} Q ${x - 3} ${y - 18} ${x + 7} ${y - 8} M ${x - 8} ${y + 12} Q ${x + 2} ${y + 2} ${x + 12} ${y + 12}`,
+          `M ${x - 14} ${y - 11} Q ${x - 7} ${y - 20} ${x} ${y - 12} L ${x + 2} ${y - 2} Q ${x - 4} ${y + 2} ${x - 12} ${y - 3} Z M ${x + 3} ${y + 7} Q ${x + 10} ${y - 2} ${x + 17} ${y + 5} L ${x + 18} ${y + 15} Q ${x + 10} ${y + 19} ${x + 4} ${y + 14} Z`,
           frame.invisibilityCueOpacities[index],
           'accent',
-          6,
+          0,
+          0.88,
         ),
       ),
-      circle(
-        cuePoint.x,
-        cuePoint.y,
-        28 + 18 * pulse(frame.invisibilityCuePulse),
-        hidden ? 0.68 : 0,
+      path(
+        arcPath(cuePoint, 20 + 27 * frame.invisibilityCuePulse, 0.1, 2.8),
+        hidden ? 0.65 * (1 - frame.invisibilityCuePulse) : 0,
         'accent',
-        5,
-        0.04,
-        '8 9',
+        4,
       ),
-      circle(frame.boss.x, frame.boss.y, 46, hidden ? 0.22 : 0, 'muted', 4, 0.03, '6 12'),
-      line(
-        source.x,
-        source.y,
-        laneEnd.x,
-        laneEnd.y,
-        frame.invisibilitySourceLocked ? 0.72 : 0,
+      path(
+        `M ${cuePoint.x - 24} ${cuePoint.y + 14} L ${cuePoint.x - 10} ${cuePoint.y + 5} L ${cuePoint.x - 4} ${cuePoint.y + 17} Z M ${cuePoint.x + 12} ${cuePoint.y - 18} L ${cuePoint.x + 23} ${cuePoint.y - 6} L ${cuePoint.x + 8} ${cuePoint.y - 5} Z`,
+        hidden ? 0.6 * (1 - frame.invisibilityCuePulse) : 0,
         'accent',
-        6,
-        '11 9',
+        0,
+        0.76,
       ),
-      line(
-        source.x,
-        source.y,
-        laneEnd.x,
-        laneEnd.y,
-        frame.invisibilityAttackActive ? 0.98 : 0,
-        'signal',
-        spec.laneHalfWidth * 2,
-      ),
-      circle(safe.x, safe.y, 40, routeVisible ? 0.7 : 0.14, 'safe', 6, 0.08, '8 7'),
-      circle(
-        source.x,
-        source.y,
-        48 + 30 * pulse(frame.invisibilityRevealProgress),
+      path(lane, frame.invisibilitySourceLocked ? 0.42 : 0, 'accent', 0, 0.38),
+      path(lane, frame.invisibilityAttackActive ? 0.9 : 0, 'signal', 0, 0.68),
+      path(
+        `M ${source.x - 38} ${source.y - 12} L ${source.x - 16} ${source.y - 30} L ${source.x - 12} ${source.y - 6} Z M ${source.x + 13} ${source.y + 3} L ${source.x + 42} ${source.y - 9} L ${source.x + 23} ${source.y + 19} Z`,
         frame.invisibilityRevealVisible ? 0.86 : 0,
         'safe',
-        7,
-        0.08,
+        0,
+        0.82,
       ),
       line(frame.player.x, frame.player.y, frame.boss.x, frame.boss.y, strike, 'safe', 10),
       circle(frame.boss.x + 26, frame.boss.y - 16, 12 + strike * 24, strike, 'safe', 7, 0.14),
-      path(
-        'M 100 388 Q 132 370 164 388 M 420 390 Q 452 372 484 390 M 92 824 Q 124 806 156 824',
-        routeVisible ? 0.26 : 0.08,
-        'muted',
-        4,
-        0,
-        '8 12',
-      ),
     ];
   }
   if (mode === 'sound-detection') {
