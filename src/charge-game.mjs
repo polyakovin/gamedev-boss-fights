@@ -87,7 +87,6 @@ export function chargeGameFrame(game) {
 export function advanceChargeGame(game, input, elapsed) {
   if (game.result) return game;
   let remaining = clamp(Number.isFinite(elapsed) ? elapsed : 0, 0, 0.1);
-  let attack = Boolean(input.attack);
   while (remaining > 0) {
     const dt = Math.min(remaining, 1 / 120);
     remaining -= dt;
@@ -121,11 +120,6 @@ export function advanceChargeGame(game, input, elapsed) {
       game.plan = planFor(originFor(game.round), game.player);
     }
     const frame = chargeGameFrame(game);
-    if (attack) {
-      game.attackFlash = 0.18;
-      game.facing =
-        (Math.atan2(frame.boss.y - game.player.y, frame.boss.x - game.player.x) * 180) / Math.PI;
-    }
     if (
       frame.chargeActive &&
       !game.hitThisRound &&
@@ -137,7 +131,6 @@ export function advanceChargeGame(game, input, elapsed) {
       if (game.playerHealth === 0) game.result = 'lost';
     }
     if (
-      attack &&
       frame.recovering &&
       !game.struckThisRound &&
       Math.hypot(game.player.x - frame.boss.x, game.player.y - frame.boss.y) < ATTACK_RANGE
@@ -145,9 +138,10 @@ export function advanceChargeGame(game, input, elapsed) {
       game.bossHealth--;
       game.struckThisRound = true;
       game.attackFlash = 0.23;
+      game.facing =
+        (Math.atan2(frame.boss.y - game.player.y, frame.boss.x - game.player.x) * 180) / Math.PI;
       if (game.bossHealth === 0) game.result = 'won';
     }
-    attack = false;
     if (game.result) break;
     if (game.time >= ATTACK_DURATION) {
       game.time -= ATTACK_DURATION;

@@ -68,6 +68,18 @@
 .charge-demo__entity-label--player {
   fill: var(--diagram-player-label);
 }
+.charge-demo__heart {
+  fill: none;
+  stroke: var(--ink);
+  stroke-width: 2.5;
+  stroke-linejoin: round;
+}
+.charge-demo__hearts--boss .charge-demo__heart[data-full='true'] {
+  fill: var(--signal);
+}
+.charge-demo__hearts--player .charge-demo__heart[data-full='true'] {
+  fill: var(--accent);
+}
 .charge-demo input {
   font: inherit;
 }
@@ -194,28 +206,6 @@
   font-size: 0.7rem;
   line-height: 1.45;
 }
-.charge-demo__game-bar {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 0.25rem 0.8rem;
-  padding: 0.55rem 0.8rem 0.7rem;
-  border-top: 1px solid var(--line);
-  flex: none;
-  font-size: 0.72rem;
-  line-height: 1.45;
-}
-.charge-demo__game-bar p {
-  margin: 0;
-}
-.charge-demo__game-bar [data-charge-game-controls] {
-  color: var(--muted);
-}
-.charge-demo__touch-copy,
-.charge-demo [data-charge-touch-toggle],
-.charge-demo__touch-attack {
-  display: none;
-}
 .charge-demo__joystick {
   position: absolute;
   z-index: 3;
@@ -250,80 +240,19 @@
     calc(-50% + var(--charge-stick-y, 0px))
   );
 }
-.charge-demo__touch-attack {
-  position: absolute;
-  z-index: 4;
-  inset: auto 0.9rem 1rem auto;
-  align-items: center;
-  justify-content: center;
-  width: 84px;
-  height: 84px;
-  padding: 0.25rem;
-  border: 2px solid var(--ink);
-  border-radius: 50%;
-  background: var(--accent);
-  color: var(--paper);
-  box-shadow: 0 4px 16px var(--shadow);
-  font: inherit;
-  font-size: 0.78rem;
-  font-weight: 700;
-  line-height: 1.1;
-  text-align: center;
-  touch-action: none;
-}
-.charge-demo__game-score {
-  display: flex;
-  gap: 0.9rem;
-  width: 100%;
-  color: var(--ink);
-}
-.charge-demo__game-score strong {
-  font-variant-numeric: tabular-nums;
-}
-.charge-demo__game-bar button {
-  padding: 0.3rem 0.7rem;
-  color: var(--ink);
-  background: var(--accent-soft);
-  border: 1px solid var(--accent);
-  border-radius: 5px;
-  cursor: pointer;
-  font: inherit;
-}
-.charge-demo:focus-visible,
-.charge-demo__touch-attack:focus-visible,
-.charge-demo__game-bar button:focus-visible {
+.charge-demo:focus-visible {
   outline: 3px solid var(--accent);
   outline-offset: 2px;
 }
-.charge-demo[data-charge-mode='game'] .charge-demo__scene-timeline,
-.charge-demo[data-charge-mode='won'] .charge-demo__scene-timeline,
-.charge-demo[data-charge-mode='lost'] .charge-demo__scene-timeline {
+.charge-demo[data-charge-mode='game'] .charge-demo__scene-timeline {
   display: none;
 }
-.charge-demo[data-charge-mode='game'] [data-charge-dodge],
-.charge-demo[data-charge-mode='won'] [data-charge-dodge],
-.charge-demo[data-charge-mode='lost'] [data-charge-dodge] {
-  display: none;
-}
-.charge-demo__game-score[hidden],
-.charge-demo__game-bar button[hidden] {
+.charge-demo[data-charge-mode='game'] [data-charge-dodge] {
   display: none;
 }
 @media (pointer: coarse) {
-  .charge-demo__keyboard-copy {
-    display: none;
-  }
-  .charge-demo__touch-copy {
-    display: inline;
-  }
-  .charge-demo [data-charge-touch-toggle] {
-    display: inline-flex;
-  }
-  .charge-demo[data-charge-mode='game'] .charge-demo__canvas {
+  .charge-demo__canvas {
     touch-action: none;
-  }
-  .charge-demo[data-charge-mode='game'] .charge-demo__touch-attack {
-    display: flex;
   }
 }
 @media (max-width: 650px) {

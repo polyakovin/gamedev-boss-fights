@@ -33,7 +33,7 @@ test('idle player is hit once per charge and the round can end in defeat', () =>
   assert.equal(game.playerHealth, 0);
 });
 
-test('sideways movement clears the lane and recovery permits one strike per round', () => {
+test('sideways movement clears the lane and proximity triggers one strike during recovery', () => {
   const game = createChargeGame();
   advance(game, {}, 1);
   advance(game, { right: true }, 0.5);
@@ -42,18 +42,22 @@ test('sideways movement clears the lane and recovery permits one strike per roun
   assert.equal(game.playerHealth, 3);
   assert.equal(chargeGameFrame(game).recovering, true);
 
-  // Approach the planted boss during its recovery.
+  // Approaching the planted boss is the only attack input.
   game.player = { ...chargeGameFrame(game).boss };
-  advanceChargeGame(game, { attack: true }, 1 / 60);
+  advanceChargeGame(game, {}, 1 / 60);
   assert.equal(game.bossHealth, 2);
-  advanceChargeGame(game, { attack: true }, 1 / 60);
+  assert.ok(game.attackFlash > 0);
+  advanceChargeGame(game, {}, 1 / 60);
   assert.equal(game.bossHealth, 2);
-  for (let health = 1; health >= 0; health--) {
-    game.struckThisRound = false;
-    advanceChargeGame(game, { attack: true }, 1 / 60);
-    assert.equal(game.bossHealth, health);
-  }
-  assert.equal(game.result, 'won');
+});
+
+test('proximity outside recovery cannot damage the boss', () => {
+  const game = createChargeGame();
+  const boss = chargeGameFrame(game).boss;
+  game.player = { x: boss.x + 80, y: boss.y };
+  advanceChargeGame(game, {}, 1 / 60);
+  assert.equal(game.bossHealth, 3);
+  assert.equal(game.attackFlash, 0);
 });
 
 test('ordinary movement can dodge and win three rounds without taking damage', () => {
@@ -81,9 +85,6 @@ test('ordinary movement can dodge and win three rounds without taking damage', (
         right: dx > 4,
         up: dy < -4,
         down: dy > 4,
-        attack:
-          frame.recovering &&
-          Math.hypot(game.player.x - frame.boss.x, game.player.y - frame.boss.y) < 130,
       },
       1 / 60,
     );

@@ -12,52 +12,61 @@ test('movement keys switch the charge demo into a playable battle', async ({ pag
   await demo.focus();
   await page.keyboard.down('KeyD');
   await expect(demo).toHaveAttribute('data-charge-mode', 'game');
-  await expect(page.locator('[data-charge-game-score]')).toBeVisible();
+  await expect(page.locator('.charge-demo__game-bar')).toHaveCount(0);
+  await expect(page.locator('[data-charge-boss-label]')).toHaveAttribute('opacity', '0');
+  await expect(page.locator('[data-charge-player-label]')).toHaveAttribute('opacity', '0');
+  await expect(page.locator('[data-charge-boss-hearts]')).toHaveAttribute('opacity', '1');
+  await expect(page.locator('[data-charge-player-hearts]')).toHaveAttribute('opacity', '1');
+  await expect(page.locator('[data-charge-heart][data-full="true"]')).toHaveCount(6);
   await expect(page.locator('[data-charge-timeline]')).toBeHidden();
   await expect(page.locator('[data-charge-player]')).not.toHaveAttribute(
     'transform',
     'translate(280 480)',
   );
   await page.keyboard.up('KeyD');
-  await page.keyboard.press('Space');
-  await expect(page.locator('[data-charge-strike]')).not.toHaveAttribute('opacity', '0');
 
   await page.keyboard.press('Escape');
   await expect(demo).toHaveAttribute('data-charge-mode', 'demo');
   await expect(page.locator('[data-charge-timeline]')).toBeVisible();
-  await expect(page.locator('[data-charge-game-score]')).toBeHidden();
+  await expect(page.locator('[data-charge-boss-label]')).toHaveAttribute('opacity', '1');
+  await expect(page.locator('[data-charge-boss-hearts]')).toHaveAttribute('opacity', '0');
 });
 
-test('an idle player loses after three charges and can restart', async ({ page }) => {
+test('an idle player loses after three charges and the demo resumes', async ({ page }) => {
   await page.goto('en/mechanics/charge/');
   const demo = page.locator('[data-charge-demo]');
   await demo.scrollIntoViewIfNeeded();
   await demo.focus();
   await page.keyboard.press('ArrowUp');
   await expect(demo).toHaveAttribute('data-charge-mode', 'game');
-  await expect(demo).toHaveAttribute('data-charge-mode', 'lost', { timeout: 15000 });
-  await expect(page.locator('[data-charge-player-health]')).toHaveText('0');
-  await page.locator('[data-charge-restart]').click();
-  await expect(demo).toHaveAttribute('data-charge-mode', 'game');
-  await expect(page.locator('[data-charge-player-health]')).toHaveText('3');
+  await expect
+    .poll(() => page.locator('[data-charge-player-hearts] [data-full="false"]').count())
+    .toBeGreaterThan(0);
+  await expect(demo).toHaveAttribute('data-charge-mode', 'demo', { timeout: 15000 });
+  await expect(page.locator('[data-charge-status]')).toContainText('boss won');
+  await expect(page.locator('[data-charge-timeline]')).toBeVisible();
+  await demo.evaluate((element) => {
+    element.dispatchEvent(
+      new KeyboardEvent('keydown', { code: 'ArrowUp', repeat: true, bubbles: true }),
+    );
+  });
+  await expect(demo).toHaveAttribute('data-charge-mode', 'demo');
 });
 
 test.describe('phone controls', () => {
   test.use({ hasTouch: true, isMobile: true, viewport: { width: 390, height: 844 } });
 
-  test('floating joystick moves continuously and a second finger can attack', async ({ page }) => {
+  test('first arena touch starts the game and a second finger does not steal the joystick', async ({
+    page,
+  }) => {
     await page.goto('en/mechanics/charge/');
     const demo = page.locator('[data-charge-demo]');
     const canvas = page.locator('.charge-demo__canvas');
     const stick = page.locator('[data-charge-joystick]');
-    const toggle = page.locator('[data-charge-touch-toggle]');
-    await expect(toggle).toBeVisible();
-    await expect(page.locator('[data-charge-game-message]')).toContainText('Tap');
-    await expect(canvas).toHaveCSS('touch-action', 'auto');
-    await toggle.tap();
-    await expect(demo).toHaveAttribute('data-charge-mode', 'game');
+    await expect(page.locator('[data-charge-touch-attack]')).toHaveCount(0);
     await expect(canvas).toHaveCSS('touch-action', 'none');
-    await expect(page.locator('[data-charge-touch-attack]')).toBeVisible();
+    await page.locator('[data-charge-timeline]').tap();
+    await expect(demo).toHaveAttribute('data-charge-mode', 'demo');
     await canvas.evaluate((element) => {
       const top = element.getBoundingClientRect().top + window.scrollY - 80;
       window.scrollTo(0, top);
@@ -71,6 +80,7 @@ test.describe('phone controls', () => {
       type: 'touchStart',
       touchPoints: [touch(1, center.x, center.y)],
     });
+    await expect(demo).toHaveAttribute('data-charge-mode', 'game');
     await expect(stick).toBeVisible();
     const player = page.locator('[data-charge-player]');
     const initial = await player.getAttribute('transform');
@@ -97,21 +107,14 @@ test.describe('phone controls', () => {
         ),
       )
       .toBeGreaterThan(70);
-    const attack = await page.locator('[data-charge-touch-attack]').boundingBox();
-    const attackPoint = { x: attack.x + attack.width / 2, y: attack.y + attack.height / 2 };
+    const secondPoint = { x: box.x + box.width - 64, y: center.y };
     await session.send('Input.dispatchTouchEvent', {
       type: 'touchStart',
-      touchPoints: [touch(1, center.x + 160, center.y), touch(2, attackPoint.x, attackPoint.y)],
+      touchPoints: [touch(1, center.x + 160, center.y), touch(2, secondPoint.x, secondPoint.y)],
     });
-    await expect
-      .poll(() => page.locator('[data-charge-strike]').getAttribute('opacity'), {
-        intervals: [10, 20, 50],
-        timeout: 1000,
-      })
-      .not.toBe('0');
     await session.send('Input.dispatchTouchEvent', {
       type: 'touchEnd',
-      touchPoints: [touch(2, attackPoint.x, attackPoint.y)],
+      touchPoints: [touch(2, secondPoint.x, secondPoint.y)],
     });
     await expect(stick).toBeVisible();
     const beforeSecondFinger = await player.getAttribute('transform');
@@ -125,7 +128,5 @@ test.describe('phone controls', () => {
     const stopped = await player.getAttribute('transform');
     await page.waitForTimeout(120);
     await expect(player).toHaveAttribute('transform', stopped);
-    await toggle.tap();
-    await expect(demo).toHaveAttribute('data-charge-mode', 'demo');
   });
 });

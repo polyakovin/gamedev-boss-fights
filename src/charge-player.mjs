@@ -45,15 +45,13 @@ export function initializeCharge(widget) {
   const status = find('[data-charge-status]');
   const bossLabel = find('[data-charge-boss-label]');
   const playerLabel = find('[data-charge-player-label]');
-  const message = find('[data-charge-game-message]');
-  const score = find('[data-charge-game-score]');
-  const restart = find('[data-charge-restart]');
-  const touchToggle = find('[data-charge-touch-toggle]');
-  const touchAttack = find('[data-charge-touch-attack]');
+  const bossHearts = find('[data-charge-boss-hearts]');
+  const playerHearts = find('[data-charge-player-hearts]');
+  const bossHeartIcons = [...bossHearts.querySelectorAll('[data-charge-heart]')];
+  const playerHeartIcons = [...playerHearts.querySelectorAll('[data-charge-heart]')];
   const joystick = find('[data-charge-joystick]');
   const motionNote = find('[data-charge-motion-note]');
   const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
-  const coarsePointer = window.matchMedia('(pointer: coarse)');
   const number = new Intl.NumberFormat(document.documentElement.lang || undefined, {
     minimumFractionDigits: 1,
     maximumFractionDigits: 1,
@@ -67,8 +65,6 @@ export function initializeCharge(widget) {
   let announcedState = '';
   let scrubbing = false;
   let phaseHovered = false;
-  let attackQueued = false;
-  let lastTouchAttackAt = -Infinity;
   let touchPointerId = null;
   let stick = null;
   const pressed = new Set();
@@ -92,13 +88,13 @@ export function initializeCharge(widget) {
 
   function onTouchStart(event) {
     if (
-      mode !== 'game' ||
       (event.pointerType !== 'touch' && event.pointerType !== 'pen') ||
       touchPointerId !== null ||
-      event.target.closest('[data-charge-touch-attack]')
+      event.target.closest('.charge-demo__scene-timeline')
     )
       return;
     event.preventDefault();
+    if (mode === 'demo') startGame();
     const bounds = canvas.getBoundingClientRect();
     const center = { x: event.clientX - bounds.left, y: event.clientY - bounds.top };
     stick = moveFloatingJoystick(center, center);
@@ -120,6 +116,10 @@ export function initializeCharge(widget) {
 
   function onTouchEnd(event) {
     if (event.pointerId === touchPointerId) clearTouch();
+  }
+
+  function healthAnnouncement() {
+    return `${text.gamePlayerHealth}: ${game.playerHealth}. ${text.gameBossHealth}: ${game.bossHealth}.`;
   }
 
   function render() {
@@ -186,6 +186,18 @@ export function initializeCharge(widget) {
     bossLabel.setAttribute('y', frame.bossLabel.y);
     playerLabel.setAttribute('x', frame.player.x);
     playerLabel.setAttribute('y', frame.player.y - 62);
+    bossLabel.setAttribute('opacity', mode === 'demo' ? '1' : '0');
+    playerLabel.setAttribute('opacity', mode === 'demo' ? '1' : '0');
+    bossHearts.setAttribute('opacity', mode === 'game' ? '1' : '0');
+    playerHearts.setAttribute('opacity', mode === 'game' ? '1' : '0');
+    bossHearts.setAttribute('transform', `translate(${frame.bossLabel.x} ${frame.bossLabel.y})`);
+    playerHearts.setAttribute('transform', `translate(${frame.player.x} ${frame.player.y - 62})`);
+    if (mode === 'game') {
+      for (const [index, heart] of bossHeartIcons.entries())
+        heart.dataset.full = String(index < game.bossHealth);
+      for (const [index, heart] of playerHeartIcons.entries())
+        heart.dataset.full = String(index < game.playerHealth);
+    }
     currentPhase.dataset.chargePhase = String(frame.phase);
     phaseName.textContent = text.phaseNames[frame.phase];
     phaseTooltip.textContent = text.phaseDescriptions[frame.phase];
@@ -202,24 +214,8 @@ export function initializeCharge(widget) {
         'aria-valuetext',
         `${text.phaseNames[frame.phase]} · ${number.format(time)} / ${number.format(DURATION)}`,
       );
-    } else {
-      find('[data-charge-player-health]').textContent = String(game.playerHealth);
-      find('[data-charge-boss-health]').textContent = String(game.bossHealth);
     }
-    score.hidden = mode === 'demo';
-    restart.hidden = mode === 'demo' || mode === 'game';
     motionNote.hidden = !reducedMotion.matches || mode !== 'demo';
-    touchToggle.textContent = mode === 'demo' ? text.gameTouchStart : text.gameTouchExit;
-    message.textContent =
-      mode === 'demo'
-        ? coarsePointer.matches
-          ? text.gameTouchPrompt
-          : text.gamePrompt
-        : mode === 'won'
-          ? text.gameWon
-          : mode === 'lost'
-            ? text.gameLost
-            : text.gamePlaying;
   }
 
   function setRunning(next) {
@@ -244,26 +240,25 @@ export function initializeCharge(widget) {
           down: pressed.has('ArrowDown') || pressed.has('KeyS'),
           moveX: stick?.direction.x,
           moveY: stick?.direction.y,
-          attack: attackQueued,
         };
         const oldPlayerHealth = game.playerHealth;
         const oldBossHealth = game.bossHealth;
         advanceChargeGame(game, input, elapsed);
-        attackQueued = false;
-        if (game.playerHealth !== oldPlayerHealth) status.textContent = text.gameHit;
-        if (game.bossHealth !== oldBossHealth) status.textContent = text.gameStrike;
+        if (game.playerHealth !== oldPlayerHealth)
+          status.textContent = `${text.gameHit} ${healthAnnouncement()}`;
+        if (game.bossHealth !== oldBossHealth)
+          status.textContent = `${text.gameStrike} ${healthAnnouncement()}`;
         if (game.result) {
-          mode = game.result;
-          status.textContent = mode === 'won' ? text.gameWon : text.gameLost;
-          pressed.clear();
-          clearTouch();
+          const outcome = game.result === 'won' ? text.gameWon : text.gameLost;
+          leaveGame();
+          status.textContent = outcome;
+          return;
         }
       }
     }
     lastTimestamp = timestamp;
     render();
-    if (mode === 'won' || mode === 'lost') setRunning(false);
-    else animationId = requestAnimationFrame(tick);
+    animationId = requestAnimationFrame(tick);
   }
 
   function updatePlayback() {
@@ -282,9 +277,8 @@ export function initializeCharge(widget) {
     clearTouch();
     game = createChargeGame();
     mode = 'game';
-    attackQueued = false;
     announcedState = '';
-    status.textContent = text.gamePlaying;
+    status.textContent = `${text.gamePlaying} ${healthAnnouncement()}`;
     widget.focus({ preventScroll: true });
     render();
     updatePlayback();
@@ -295,7 +289,6 @@ export function initializeCharge(widget) {
     mode = 'demo';
     game = undefined;
     pressed.clear();
-    attackQueued = false;
     time = 0;
     announcedState = '';
     render();
@@ -316,17 +309,11 @@ export function initializeCharge(widget) {
       leaveGame();
       return;
     }
-    if (event.code === 'Space' && mode === 'game') {
-      event.preventDefault();
-      if (!event.repeat) attackQueued = true;
-      return;
-    }
     if (!directions[event.code]) return;
     if (mode === 'demo') {
+      if (event.repeat) return;
       const bounds = widget.getBoundingClientRect();
       if (bounds.bottom <= 0 || bounds.top >= window.innerHeight) return;
-      startGame();
-    } else if (mode === 'won' || mode === 'lost') {
       startGame();
     }
     event.preventDefault();
@@ -360,22 +347,6 @@ export function initializeCharge(widget) {
     phaseHovered = false;
     updatePlayback();
   });
-  restart.addEventListener('click', startGame);
-  touchToggle.addEventListener('click', () => {
-    if (mode === 'demo') startGame();
-    else leaveGame();
-  });
-  touchAttack.addEventListener('pointerdown', (event) => {
-    if (mode !== 'game' || (event.pointerType !== 'touch' && event.pointerType !== 'pen')) return;
-    event.preventDefault();
-    lastTouchAttackAt = performance.now();
-    attackQueued = true;
-  });
-  touchAttack.addEventListener('click', (event) => {
-    if (mode !== 'game') return;
-    if (event.detail > 0 && performance.now() - lastTouchAttackAt < 500) return;
-    attackQueued = true;
-  });
   canvas.addEventListener('pointerdown', onTouchStart);
   canvas.addEventListener('pointermove', onTouchMove);
   canvas.addEventListener('pointerup', onTouchEnd);
@@ -391,7 +362,6 @@ export function initializeCharge(widget) {
     render();
     updatePlayback();
   });
-  coarsePointer.addEventListener('change', render);
   document.addEventListener('visibilitychange', () => {
     if (document.hidden) {
       pressed.clear();

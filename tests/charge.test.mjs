@@ -178,10 +178,11 @@ test('the diagram reuses shared art and exposes one current phase above the slid
   assert.match(CHARACTER_ART.tavi, /data-character-art="tavi"/);
   assert.match(thumbnail, /data-charge-preview-boss/);
   assert.match(thumbnail, /data-charge-preview-player/);
-  assert.match(markup, /data-charge-restart hidden/);
+  assert.match(markup, /data-charge-boss-hearts/);
+  assert.match(markup, /data-charge-player-hearts/);
+  assert.equal(markup.match(/data-charge-heart data-full="true"/g)?.length, 6);
   assert.match(markup, /data-charge-joystick/);
-  assert.match(markup, /data-charge-touch-attack/);
-  assert.match(markup, /data-charge-touch-toggle/);
+  assert.doesNotMatch(markup, /charge-demo__game-bar|data-charge-touch-attack/);
   assert.doesNotMatch(markup, /data-charge-play(?:\s|=|>)/);
   assert.doesNotMatch(markup, /<output(?:\s|>)|data-charge-time(?:\s|=|>)/);
   assert.equal(markup.match(/data-charge-current-phase/g)?.length, 1);
