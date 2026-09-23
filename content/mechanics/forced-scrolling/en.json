@@ -1,0 +1,134 @@
+{
+  "title": "Forced scrolling",
+  "subtitle": "Make forward pace an explicit encounter rule instead of a camera surprise.",
+  "variant": "An upward camera current fixes a dangerous lower edge until Tavi reaches the stop rune",
+  "summary": "Forced scrolling moves the camera or playable route independently of the player, so maintaining progress becomes a required part of the encounter.",
+  "overview": "Forced scrolling replaces waiting with a visible pace contract. At 0.5 seconds, Kern lights the lower edge and route rune. From 1.25–4.25 seconds, landmarks move down at a fixed rate while the lower edge is dangerous. Tavi climbs ahead, reaches the stop rune, and earns a bounded sword opening only after clearing the route.",
+  "learning": "Implement scroll velocity, camera bounds, trailing danger, player-relative clearance, authored route gates, failure handling, and the stop condition as one deterministic system.",
+  "category": "Space, movement, and perception",
+  "readTime": "6 min",
+  "demo": {
+    "title": "Signal the pace before the frame starts moving",
+    "timeline": "Forced scrolling timeline",
+    "step": "Forced scrolling states",
+    "phaseNames": ["Announce the moving frame", "Maintain route pace", "Stop and counter"],
+    "phaseDescriptions": [
+      "At 0.5 s the lower boundary pulses, upward arrows appear, and the stop rune remains visible near the top. The warning identifies direction, deadline, failure edge, and destination before the world begins to move.",
+      "From 1.25–4.25 s the four route platforms drift downward at one authored speed while the danger strip stays fixed to the lower frame. Tavi follows a continuous climb and keeps the whole body above the line; Kern cannot accelerate the scroll in response to player mistakes.",
+      "Reaching the stop rune ends the dangerous scroll at 4.25 s. Kern rises out of the lower current, Tavi approaches for a sword strike at 5.05 s, and both characters visibly return while the route resets for the loop."
+    ],
+    "boss": "Boss",
+    "player": "Player",
+    "danger": "Only the solid lower screen strip is dangerous during the active scroll",
+    "locked": "Direction, scroll speed, route landmarks, and stop condition are fixed before movement begins",
+    "safe": "Keep the whole player body above the trailing edge and reach the stop rune on schedule",
+    "reducedMotion": "Autoplay is disabled by reduced motion. Scrub across 0.5, 1.25, 2.75, 4.25, 4.72, 5.05, and 5.35 seconds to inspect the pace contract.",
+    "diagramDescription": "A fixed rectangular camera frame contains a dangerous lower strip, downward-moving stone platforms, an upward route, Kern within the lower current, and sword-bearing Tavi climbing toward a stop rune before countering."
+  },
+  "steps": [
+    {
+      "title": "What moves without player permission?",
+      "body": "Choose whether the camera, arena, vehicle, flood, wall, or route moves, and store its velocity independently from player input. Derive scenery motion and the trailing failure edge from that same value. The example scrolls 310 diagram units over three seconds; no catch-up system silently changes speed."
+    },
+    {
+      "title": "How much pace margin exists?",
+      "body": "Measure the slowest valid route from the last safe start, including acceleration, jumps, recovery, required interactions, and a full collision body. Compare that duration with the moving edge, then reserve readable slack for correction. Test low-mobility builds and accessibility options rather than tuning only against an expert shortcut."
+    },
+    {
+      "title": "How does the scroll stop?",
+      "body": "Tie the end to an observable world event: crossing a gate, activating an anchor, completing a lap, or reaching a stable arena. Freeze or hand off the camera before opening the boss to damage. In the example, the top rune turns safe at 4.25 seconds and the sword window begins only after Kern emerges."
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "The camera starts before the rule is readable",
+      "body": "Unexpected motion can hide the route and make failure feel like camera control loss. Show direction, speed class, trailing edge, and next destination first; delay collision until the player can perform one meaningful movement response."
+    },
+    {
+      "title": "The player can be crushed by two unrelated deadlines",
+      "body": "A fixed scroll combined with an unannounced blocker, stun, cutscene, or closed gate can remove all valid pace margin. Audit every authored interruption against the trailing edge and either pause the scroll, provide a protected pocket, or guarantee clearance."
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "Keep camera coordinates and world coordinates separate",
+      "body": "Scroll motion changes presentation, not necessarily simulation. Store threats, platforms, and gates in world space, then project them through the camera. Screen-bound hazards such as the lower strip need an explicit conversion so their collision does not drift when zoom, shake, or split-screen changes."
+    },
+    {
+      "title": "Author recovery pockets",
+      "body": "Long forced routes need places where attention and movement can briefly settle without breaking the pace. Widen a platform, simplify one jump, reduce boss pressure, or momentarily match the route to player speed. These pockets are rhythm controls, not hidden checkpoints."
+    },
+    {
+      "title": "Define multiplayer and death behavior",
+      "body": "Decide whether the frame follows the leader, group center, slowest player, or a fixed rail. Specify rescue, tether, off-screen indicators, respawn placement, and whether one death pauses the route. A shared camera must not let one player unknowingly erase another player's safe space."
+    },
+    {
+      "title": "Test the complete presentation stack",
+      "body": "Verify narrow and ultrawide aspect ratios, camera shake, zoom, subtitles, HUD safe areas, motion reduction, slow motion, pause, checkpoints, streaming stalls, and reverse entry. Inspect the first warning frame, last recoverable frame, stop transition, and loop seam."
+    }
+  ],
+  "story": {
+    "title": "Kern drives a rune current through the tower",
+    "body": "Kern awakens a current that drags every stone landmark downward while a sealing rune waits above. Reaching that seal arrests the flow and pulls the elemental into the arena, explaining the fixed direction, the dangerous lower edge, and the final opening."
+  },
+  "adaptation": {
+    "title": "Let Tavi read route speed rather than fight camera input",
+    "body": "Tavi keeps ordinary movement and uses the same sword as elsewhere. The challenge is to choose and execute a route faster than the authored scroll, while the sword becomes useful only after the stop condition converts forward progress into a counter window."
+  },
+  "distinction": {
+    "title": "A frame rule, not simply a chase",
+    "body": "Chase herding uses an actor or threat to steer movement and may react to distance. Forced scrolling advances the frame or playable route on its own schedule even when the player hesitates. A boundary attack enters from an edge for a bounded strike; forced scrolling makes continued relation to that edge the rule."
+  },
+  "lensNotes": [
+    {
+      "id": "dramatic-framing",
+      "body": "The fixed lower edge and visible stop rune turn camera composition into a legible start, pressure line, and destination."
+    },
+    {
+      "id": "difficulty-rhythm",
+      "body": "One authored scroll speed defines the sustained tempo, while wider platforms can create deliberate recovery beats without stopping progress."
+    },
+    {
+      "id": "progress-clarity",
+      "body": "Downward-moving landmarks, a stable danger line, and the persistent stop rune show both local pace and remaining route progress."
+    },
+    {
+      "id": "counterplay",
+      "body": "Tavi can stay ahead with ordinary movement, and completing the route produces a clear sword opening instead of only ending the hazard."
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "Ori and the Blind Forest",
+      "boss": "Ginso Tree escape",
+      "screenshot": "https://i.ytimg.com/vi/yhdU9vuaqZQ/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=yhdU9vuaqZQ&t=653s",
+      "body": "After the Water Element is restored, water rises below Ori while the route and camera climb through the tree. The sequence gives Bash targets and vertical landmarks ahead of the flood, so maintaining upward pace becomes the boss-like victory condition.",
+      "video": "https://www.youtube.com/watch?v=yhdU9vuaqZQ&t=653s",
+      "videoDurationSeconds": 1833
+    },
+    {
+      "dimension": "2D",
+      "game": "New Super Mario Bros. Wii",
+      "boss": "Super Bowser",
+      "screenshot": "https://i.ytimg.com/vi/Ihei0ngHHdU/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=Ihei0ngHHdU&t=105s",
+      "body": "The second phase turns the final battle into a rightward escape. Super Bowser breaks obstacles and fires from behind while the camera reveals a fixed sequence of platforms, lifts, and gates, making forward route execution the durable response.",
+      "video": "https://www.youtube.com/watch?v=Ihei0ngHHdU&t=105s",
+      "videoDurationSeconds": 363
+    },
+    {
+      "dimension": "3D",
+      "game": "Super Mario 3D World",
+      "boss": "Meowser",
+      "screenshot": "https://i.ytimg.com/vi/d3GWKwcUbCA/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=d3GWKwcUbCA&t=970s",
+      "body": "The camera climbs the Great Tower while Mario follows moving platforms and Meowser attacks through walls and from outside the current view. Vertical framing limits how long lower footing remains useful and directs attention toward the next reachable height.",
+      "video": "https://www.youtube.com/watch?v=d3GWKwcUbCA&t=970s",
+      "videoDurationSeconds": 1546
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

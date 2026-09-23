@@ -9,6 +9,8 @@ import {
   attackLockState,
   attackReflectionState,
   boundaryAttackState,
+  forcedScrollingOffset,
+  forcedScrollingState,
   counterStanceOutcome,
   counterStanceState,
   blueprintFrame,
@@ -36,8 +38,8 @@ import {
   renderBlueprintThumbnail,
 } from '../lib/blueprint-view.mjs';
 
-test('all 62 promoted lesson animations have distinct rule modes and complete moving frames', () => {
-  assert.equal(BLUEPRINT_MECHANIC_IDS.length, 62);
+test('all 63 promoted lesson animations have distinct rule modes and complete moving frames', () => {
+  assert.equal(BLUEPRINT_MECHANIC_IDS.length, 63);
   const modes = new Set();
   for (const id of BLUEPRINT_MECHANIC_IDS) {
     for (let time = 0; time <= BLUEPRINT_DURATION; time += 0.1) {
@@ -58,7 +60,7 @@ test('all 62 promoted lesson animations have distinct rule modes and complete mo
           assert.ok(Number.isFinite(value), `${id} has an invalid ${primitive.type}`);
     }
   }
-  assert.equal(modes.size, 62);
+  assert.equal(modes.size, 63);
 });
 
 test('every blueprint exposes signal, committed action, and recovery without player teleports', () => {
@@ -119,6 +121,7 @@ test('every damaging promoted animation derives safety from its own active geome
     'speed-change': null,
     'limited-spread': null,
     'attack-reflection': null,
+    'forced-scrolling': { x: 350, y: 750 },
     'wide-swing': { x: 280, y: 515 },
     lunge: { x: 300, y: 440 },
     grab: { x: 390, y: 485 },
@@ -1662,5 +1665,48 @@ test('boundary attack names one edge, crosses its fixed lane, and returns outsid
   assert.match(
     renderBlueprintThumbnail(id, 'test-boundary-attack'),
     /data-blueprint-preview="boundary-attack"/,
+  );
+});
+
+test('forced scrolling keeps one authored pace, a fixed failure edge, and a visible stop', () => {
+  const id = 'forced-scrolling';
+  assert.deepEqual([0, 0.8, 2.5, 4.4, 5.05, 5.6].map(forcedScrollingState), [
+    'idle',
+    'scroll-signal',
+    'forced-scroll',
+    'route-cleared',
+    'opening',
+    'reset',
+  ]);
+  assert.equal(forcedScrollingOffset(1.24), 0);
+  assert.ok(forcedScrollingOffset(2.75) > 100);
+  assert.ok(forcedScrollingOffset(4.24) > forcedScrollingOffset(2.75));
+
+  const signal = blueprintFrame(id, 0.9);
+  assert.equal(signal.forcedScrollingActive, false);
+  assert.ok(signal.primitives[2].opacity > 0, 'the lower failure edge warns before scrolling');
+  assert.equal(signal.primitives[3].opacity, 0, 'the warning has no active collision');
+
+  const active = blueprintFrame(id, 2.75);
+  assert.equal(active.forcedScrollingActive, true);
+  assert.equal(active.playerSafe, true);
+  assert.ok(active.forcedScrollingOffset > 100);
+  assert.ok(active.primitives[3].opacity > 0.9, 'the fixed lower edge becomes solid');
+  assert.equal(blueprintPointSafe(id, 2.75, { x: 350, y: 750 }), false);
+  assert.equal(blueprintPointSafe(id, 2.75, { x: 350, y: 620 }), true);
+
+  const cleared = blueprintFrame(id, 4.4);
+  assert.equal(cleared.forcedScrollingRouteCleared, true);
+  assert.equal(cleared.dangerActive, false);
+  assert.equal(cleared.primitives[3].opacity, 0, 'the danger edge ends at the stop rune');
+
+  const punish = blueprintFrame(id, 5.05);
+  assert.equal(punish.punishStrike, true);
+  assert.ok(punish.primitives[11].opacity > 0, 'the sword response follows route completion');
+  assert.deepEqual(blueprintFrame(id, 0).player, blueprintFrame(id, 6).player);
+  assert.deepEqual(blueprintFrame(id, 0).boss, blueprintFrame(id, 6).boss);
+  assert.match(
+    renderBlueprintThumbnail(id, 'test-forced-scrolling'),
+    /data-blueprint-preview="forced-scrolling"/,
   );
 });

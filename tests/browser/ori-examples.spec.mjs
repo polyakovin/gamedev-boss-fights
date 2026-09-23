@@ -19,10 +19,11 @@ test('Ori examples remain usable on the published boundary lesson and mobile', a
   );
 });
 
-test('the Ginso Tree reference identifies the escape as a boss-like sequence', async ({ page }) => {
+test('the published forced-scrolling lesson retains the Ginso Tree reference', async ({ page }) => {
   await page.goto('en/mechanics/forced-scrolling/');
 
-  await expect(page.locator('.wip-example-card')).toHaveCount(1);
-  await expect(page.locator('.wip-example-card h3')).toHaveText('Ginso Tree escape');
-  await expect(page.locator('.wip-example-card .eyebrow')).toHaveText('Boss-like escape sequence');
+  await expect(page.locator('.wip-badge, .draft-profile')).toHaveCount(0);
+  await expect(page.locator('.game-example')).toHaveCount(3);
+  await expect(page.locator('.game-example').first()).toContainText('Ginso Tree escape');
+  await expect(page.locator('.game-example').first()).toContainText('Ori and the Blind Forest');
 });

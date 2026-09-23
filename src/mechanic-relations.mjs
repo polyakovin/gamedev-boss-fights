@@ -167,8 +167,9 @@ const PROFILE_OVERRIDES = {
   teleport: { geometry: ['target', 'arena'], signal: ['marker', 'environment'] },
   'forced-scrolling': {
     geometry: ['arena'],
-    dimensions: ['2d'],
+    dimensions: ['2d', '3d'],
     signal: ['environment', 'rhythm'],
+    response: ['reposition', 'manage'],
   },
   'relocated-arena': { geometry: ['arena'], signal: ['environment', 'state'] },
   'boss-as-terrain': { geometry: ['entity', 'arena'], dimensions: ['2d', '3d'] },

@@ -491,6 +491,34 @@ const SPECS = {
     rightBoundary: 502,
     impactPosition: [460, 610],
   },
+  'forced-scrolling': {
+    mode: 'forced-scrolling',
+    boss: [150, 724],
+    player: [350, 650],
+    target: [382, 632],
+    safePosition: [420, 435],
+    signal: [0.5, 1.25],
+    active: [1.25, 4.25],
+    bossAdvanceEnd: 4.72,
+    punishAt: 5.05,
+    resetAt: 5.35,
+    hazardTop: 730,
+    scrollDistance: 310,
+    stopRune: [420, 405],
+    bossOpening: [280, 665],
+    route: [
+      [350, 650],
+      [420, 585],
+      [300, 510],
+      [420, 435],
+    ],
+    platforms: [
+      [305, 690, 130],
+      [380, 555, 120],
+      [245, 425, 125],
+      [405, 295, 115],
+    ],
+  },
   'wide-swing': { mode: 'arc', boss: [280, 310], player: [410, 470], target: [470, 650] },
   lunge: { mode: 'lunge', boss: [170, 290], player: [390, 590], target: [470, 660] },
   grab: { mode: 'grab', boss: [280, 300], player: [390, 485], target: [470, 610] },
@@ -974,6 +1002,29 @@ export function boundaryAttackState(time) {
   if (t < spec.punishAt) return 'boundary-stagger';
   if (t < spec.openingEnd) return 'opening';
   return 'outer-reset';
+}
+
+export function forcedScrollingState(time) {
+  const spec = SPECS['forced-scrolling'];
+  const t = localTime(time);
+  if (t < spec.signal[0]) return 'idle';
+  if (t < spec.active[0]) return 'scroll-signal';
+  if (t < spec.active[1]) return 'forced-scroll';
+  if (t < spec.bossAdvanceEnd) return 'route-cleared';
+  if (t < spec.resetAt) return 'opening';
+  return 'reset';
+}
+
+export function forcedScrollingOffset(time) {
+  const spec = SPECS['forced-scrolling'];
+  const t = localTime(time);
+  if (t < spec.active[0]) return 0;
+  if (t < spec.active[1])
+    return spec.scrollDistance * smooth((t - spec.active[0]) / (spec.active[1] - spec.active[0]));
+  if (t < spec.resetAt) return spec.scrollDistance;
+  return (
+    spec.scrollDistance * (1 - smooth((t - spec.resetAt) / (BLUEPRINT_DURATION - spec.resetAt)))
+  );
 }
 
 const pointInPolygon = (value, points) => {
@@ -2011,6 +2062,70 @@ function primitivesFor(spec, frame) {
       ),
       line(frame.player.x, frame.player.y, boss.x, boss.y, strike, 'safe', 9),
       circle(boss.x - 34, boss.y - 4, 12 + strike * 24, strike, 'safe', 7, 0.12),
+    ];
+  }
+  if (mode === 'forced-scrolling') {
+    const signalProgress = clamp((frame.time - spec.signal[0]) / (spec.active[0] - spec.signal[0]));
+    const signalVisible = frame.time >= spec.signal[0] && frame.time < spec.active[0];
+    const scrolling = frame.time >= spec.active[0] && frame.time < spec.active[1];
+    const offset = forcedScrollingOffset(frame.time);
+    const resetProgress = smooth((frame.time - spec.resetAt) / (BLUEPRINT_DURATION - spec.resetAt));
+    const strike = strikePulse(frame.time, spec.punishAt, 0.38);
+    const platformY = (baseY) => {
+      const wrapped = (((baseY - 380 + offset) % 520) + 520) % 520;
+      return 380 + wrapped;
+    };
+    return [
+      rect(58, 380, 444, 400, 0.45, 'muted', 0.02),
+      circle(
+        spec.stopRune[0],
+        spec.stopRune[1],
+        34 + 15 * Math.sin(frame.time * 3) ** 2,
+        frame.time < spec.resetAt ? 0.78 : 0.78 * (1 - resetProgress),
+        frame.time >= spec.active[1] ? 'safe' : 'accent',
+        6,
+        0.06,
+        '9 8',
+      ),
+      rect(
+        58,
+        spec.hazardTop,
+        444,
+        50,
+        signalVisible ? 0.54 + signalProgress * 0.24 : 0,
+        'accent',
+        0.08,
+      ),
+      rect(58, spec.hazardTop, 444, 50, scrolling ? 0.94 : 0, 'signal', 0.32),
+      path(
+        'M 92 690 L 92 640 M 74 658 L 92 640 L 110 658 M 468 690 L 468 640 M 450 658 L 468 640 L 486 658',
+        signalVisible ? 0.45 + 0.45 * signalProgress : scrolling ? 0.9 : 0,
+        scrolling ? 'signal' : 'accent',
+        8,
+      ),
+      path(
+        `M ${spec.route.map(([x, y]) => `${x} ${y}`).join(' L ')}`,
+        frame.time < spec.active[1] ? 0.52 : 0.2,
+        'accent',
+        5,
+        0,
+        '11 10',
+      ),
+      ...spec.platforms.map(([x, y, width]) =>
+        rect(x - width / 2, platformY(y), width, 18, scrolling ? 0.78 : 0.48, 'safe', 0.14),
+      ),
+      line(
+        58,
+        spec.hazardTop - 42,
+        502,
+        spec.hazardTop - 42,
+        scrolling ? 0.52 : 0,
+        'signal',
+        4,
+        '10 10',
+      ),
+      line(frame.player.x, frame.player.y, boss.x, boss.y, strike, 'safe', 9),
+      circle(boss.x + 34, boss.y - 4, 12 + strike * 24, strike, 'safe', 7, 0.12),
     ];
   }
   if (mode === 'landing') {
@@ -3308,6 +3423,7 @@ function pointClearsThreat(spec, frame, value, radius = BLUEPRINT_PLAYER_RADIUS)
       distanceToSegment(value, point(spec.laneStart), point(spec.laneEnd)) >
         spec.laneHalfWidth + radius
     );
+  if (mode === 'forced-scrolling') return !frame.dangerActive || value.y + radius < spec.hazardTop;
   if (mode === 'spiral')
     return (
       distanceFromBoss > 52 + radius &&
@@ -3476,6 +3592,17 @@ export function blueprintFrame(id, time) {
       const descend = smooth((t - 5.35) / (spec.outerRoute[1] - 5.35));
       boss = { x: mix(-80, startBoss.x, descend), y: mix(270, startBoss.y, descend) };
     }
+  } else if (spec.mode === 'forced-scrolling') {
+    const opening = point(spec.bossOpening);
+    if (t < spec.active[1]) boss = startBoss;
+    else if (t < spec.bossAdvanceEnd) {
+      const advance = smooth((t - spec.active[1]) / (spec.bossAdvanceEnd - spec.active[1]));
+      boss = { x: mix(startBoss.x, opening.x, advance), y: mix(startBoss.y, opening.y, advance) };
+    } else if (t < spec.resetAt) boss = opening;
+    else {
+      const reset = smooth((t - spec.resetAt) / (BLUEPRINT_DURATION - spec.resetAt));
+      boss = { x: mix(opening.x, startBoss.x, reset), y: mix(opening.y, startBoss.y, reset) };
+    }
   } else if (spec.mode === 'lunge') {
     const travel = phase === 0 ? 0 : phase === 1 ? smooth(action / 0.62) : 1 - recover;
     boss = { x: mix(170, 430, travel), y: mix(290, 590, travel) };
@@ -3544,6 +3671,7 @@ export function blueprintFrame(id, time) {
   else if (spec.mode === 'survival-phase') responseProgress = 0;
   else if (spec.mode === 'teleport') responseProgress = 0;
   else if (spec.mode === 'boundary-attack') responseProgress = 0;
+  else if (spec.mode === 'forced-scrolling') responseProgress = 0;
   else if (spec.mode === 'knockback')
     responseProgress = phase === 0 ? 0 : phase === 1 ? smooth(action) : 1;
   else if (spec.mode === 'target-lock')
@@ -3820,6 +3948,20 @@ export function blueprintFrame(id, time) {
       y: mix(withdrew.y, startPlayer.y, reset),
     };
   }
+  if (spec.mode === 'forced-scrolling') {
+    const climb = smooth((t - 0.72) / (spec.active[1] - 0.72));
+    const climbed = pointAlongPolyline(spec.route.map(point), climb);
+    const approach = smooth((t - spec.active[1]) / 0.62);
+    const punish = {
+      x: mix(climbed.x, targetPlayer.x, approach),
+      y: mix(climbed.y, targetPlayer.y, approach),
+    };
+    const reset = smooth((t - spec.resetAt) / (BLUEPRINT_DURATION - spec.resetAt));
+    player = {
+      x: mix(punish.x, startPlayer.x, reset),
+      y: mix(punish.y, startPlayer.y, reset),
+    };
+  }
   if (spec.mode === 'rotating' && phase === 0) {
     const initialPosition = polar(boss, 255, Math.PI / 3);
     player = {
@@ -3917,7 +4059,13 @@ export function blueprintFrame(id, time) {
                   pulse(smooth((t - (spec.punishAt + 0.2)) / 0.46)),
                   pulse(smooth((t - 4.72) / 0.86)) * 0.8,
                 )
-              : pulse(responseProgress) + pulse(returnProgress) * 0.8;
+              : spec.mode === 'forced-scrolling'
+                ? Math.max(
+                    pulse(smooth((t - 0.72) / (spec.active[1] - 0.72))),
+                    pulse(smooth((t - spec.active[1]) / 0.62)),
+                    pulse(smooth((t - spec.resetAt) / (BLUEPRINT_DURATION - spec.resetAt))) * 0.8,
+                  )
+                : pulse(responseProgress) + pulse(returnProgress) * 0.8;
   const bossVisible =
     spec.mode === 'burrow' && phase === 1 && action < 0.68
       ? 0
@@ -4044,7 +4192,10 @@ export function blueprintFrame(id, time) {
                                                         : spec.mode === 'boundary-attack'
                                                           ? t >= spec.active[0] &&
                                                             t < spec.active[1]
-                                                          : phase === 1;
+                                                          : spec.mode === 'forced-scrolling'
+                                                            ? t >= spec.active[0] &&
+                                                              t < spec.active[1]
+                                                            : phase === 1;
   const frame = {
     id,
     mode: spec.mode,
@@ -4082,7 +4233,9 @@ export function blueprintFrame(id, time) {
               : t < 5.35
                 ? 180
                 : 90
-          : 90,
+          : spec.mode === 'forced-scrolling'
+            ? -90
+            : 90,
     playerFacing:
       spec.mode === 'directional-shield'
         ? mix(-90, -180, smooth((t - 2.7) / 0.68)) * (1 - returnProgress) - 90 * returnProgress
@@ -4096,17 +4249,19 @@ export function blueprintFrame(id, time) {
                 ? (Math.atan2(boss.y - player.y, boss.x - player.x) * 180) / Math.PI
                 : spec.mode === 'boundary-attack'
                   ? (Math.atan2(boss.y - player.y, boss.x - player.x) * 180) / Math.PI
-                  : spec.mode === 'damage-type-resistance' ||
-                      spec.mode === 'situational-immunity' ||
-                      spec.mode === 'part-break' ||
-                      spec.mode === 'attack-reflection' ||
-                      spec.mode === 'counter-stance' ||
-                      spec.mode === 'absorption-power-up' ||
-                      spec.mode === 'interruptible-wind-up' ||
-                      spec.mode === 'loadout-adaptation' ||
-                      spec.mode === 'wind-up'
-                    ? -180
-                    : -90,
+                  : spec.mode === 'forced-scrolling'
+                    ? (Math.atan2(boss.y - player.y, boss.x - player.x) * 180) / Math.PI
+                    : spec.mode === 'damage-type-resistance' ||
+                        spec.mode === 'situational-immunity' ||
+                        spec.mode === 'part-break' ||
+                        spec.mode === 'attack-reflection' ||
+                        spec.mode === 'counter-stance' ||
+                        spec.mode === 'absorption-power-up' ||
+                        spec.mode === 'interruptible-wind-up' ||
+                        spec.mode === 'loadout-adaptation' ||
+                        spec.mode === 'wind-up'
+                      ? -180
+                      : -90,
     bossMotion: motion({
       lean:
         spec.mode === 'landing'
@@ -4139,9 +4294,12 @@ export function blueprintFrame(id, time) {
                     : spec.mode === 'boundary-attack'
                       ? 0.38 * strikePulse(t, spec.active[0], 0.7) +
                         0.28 * strikePulse(t, spec.impactAt, 0.52)
-                      : phase === 0
-                        ? -0.22 * prepare
-                        : 0.24 * pulse(action),
+                      : spec.mode === 'forced-scrolling'
+                        ? -0.18 * smooth((t - spec.signal[0]) / 0.5) +
+                          0.35 * strikePulse(t, spec.active[1], 0.62)
+                        : phase === 0
+                          ? -0.22 * prepare
+                          : 0.24 * pulse(action),
       crouch:
         spec.mode === 'landing'
           ? phase === 0
@@ -4160,7 +4318,11 @@ export function blueprintFrame(id, time) {
                   ? 0.28 * strikePulse(t, spec.active[0], 0.66)
                   : spec.mode === 'boundary-attack'
                     ? 0.3 * strikePulse(t, spec.impactAt, 0.55)
-                    : 0.2 * prepare,
+                    : spec.mode === 'forced-scrolling'
+                      ? 0.24 *
+                        smooth((t - spec.signal[0]) / 0.5) *
+                        (1 - smooth((t - spec.active[1]) / 0.45))
+                      : 0.2 * prepare,
       lift: spec.mode === 'landing' && phase === 1 ? pulse(clamp(action / 0.52)) : 0,
       attack:
         spec.mode === 'speed-change'
@@ -4232,9 +4394,15 @@ export function blueprintFrame(id, time) {
                                         ? strikePulse(t, spec.active[0], 0.68)
                                         : spec.mode === 'boundary-attack'
                                           ? strikePulse(t, spec.active[0], 0.72)
-                                          : phase === 1
-                                            ? 0.75
-                                            : prepare * 0.35,
+                                          : spec.mode === 'forced-scrolling'
+                                            ? smooth(
+                                                (t - spec.signal[0]) /
+                                                  (spec.active[0] - spec.signal[0]),
+                                              ) *
+                                              (1 - smooth((t - spec.active[1]) / 0.4))
+                                            : phase === 1
+                                              ? 0.75
+                                              : prepare * 0.35,
       impact:
         spec.mode === 'landing'
           ? pulse(clamp((action - 0.42) / 0.22))
@@ -4292,11 +4460,16 @@ export function blueprintFrame(id, time) {
                                             0.7 * strikePulse(t, spec.impactAt, 0.3),
                                             0.85 * strikePulse(t, spec.punishAt, 0.3),
                                           )
-                                        : spec.mode === 'shockwave' || spec.mode === 'knockback'
-                                          ? pulse(action * 3)
-                                          : spec.mode === 'chain-explosions'
-                                            ? pulse((action * 5) % 1)
-                                            : 0,
+                                        : spec.mode === 'forced-scrolling'
+                                          ? Math.max(
+                                              0.55 * strikePulse(t, spec.active[1], 0.32),
+                                              0.85 * strikePulse(t, spec.punishAt, 0.3),
+                                            )
+                                          : spec.mode === 'shockwave' || spec.mode === 'knockback'
+                                            ? pulse(action * 3)
+                                            : spec.mode === 'chain-explosions'
+                                              ? pulse((action * 5) % 1)
+                                              : 0,
     }),
     playerMotion: motion({
       gait:
@@ -4310,7 +4483,9 @@ export function blueprintFrame(id, time) {
                 ? t * 7 * stride
                 : spec.mode === 'boundary-attack'
                   ? t * 7 * stride
-                  : (route * responseProgress + route * returnProgress) / 20,
+                  : spec.mode === 'forced-scrolling'
+                    ? t * 7 * stride
+                    : (route * responseProgress + route * returnProgress) / 20,
       stride,
       lean: stride * 0.45,
       crouch: stride * 0.16,
@@ -4361,11 +4536,13 @@ export function blueprintFrame(id, time) {
                                   ? strikePulse(t, spec.punishAt, 0.38)
                                   : spec.mode === 'boundary-attack'
                                     ? strikePulse(t, spec.punishAt, 0.38)
-                                    : spec.mode === 'decoy' && phase === 1
-                                      ? pulse(clamp((action - 0.52) / 0.3))
-                                      : spec.mode === 'weak-point' && phase === 1
-                                        ? pulse(action * 1.5)
-                                        : 0,
+                                    : spec.mode === 'forced-scrolling'
+                                      ? strikePulse(t, spec.punishAt, 0.38)
+                                      : spec.mode === 'decoy' && phase === 1
+                                        ? pulse(clamp((action - 0.52) / 0.3))
+                                        : spec.mode === 'weak-point' && phase === 1
+                                          ? pulse(action * 1.5)
+                                          : 0,
     }),
   };
   if (spec.mode === 'directional-shield') {
@@ -4462,6 +4639,13 @@ export function blueprintFrame(id, time) {
     frame.followThroughVisible = t >= spec.active[1] && t < spec.followThroughEnd;
     frame.punishStrike = strikePulse(t, spec.punishAt, 0.38) > 0.5;
   }
+  if (spec.mode === 'forced-scrolling') {
+    frame.forcedScrollingState = forcedScrollingState(t);
+    frame.forcedScrollingActive = dangerActive;
+    frame.forcedScrollingOffset = forcedScrollingOffset(t);
+    frame.forcedScrollingRouteCleared = t >= spec.active[1] && t < spec.resetAt;
+    frame.punishStrike = strikePulse(t, spec.punishAt, 0.38) > 0.5;
+  }
   if (spec.mode === 'boundary-attack') {
     frame.boundaryAttackState = boundaryAttackState(t);
     frame.boundarySignalActive = t >= spec.signal[0] && t < spec.active[0];
@@ -4525,7 +4709,8 @@ export function blueprintFrame(id, time) {
       spec.mode === 'recovery' ||
       spec.mode === 'survival-phase' ||
       spec.mode === 'teleport' ||
-      spec.mode === 'boundary-attack'
+      spec.mode === 'boundary-attack' ||
+      spec.mode === 'forced-scrolling'
         ? 92
         : -62),
   };

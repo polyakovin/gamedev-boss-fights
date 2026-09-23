@@ -177,6 +177,13 @@ export function initializeBlueprint(widget) {
       widget.dataset.blueprintBoundarySourceOutside = String(frame.boundarySourceOutside);
       widget.dataset.blueprintPunishStrike = String(frame.punishStrike);
     }
+    if (mechanicId === 'forced-scrolling') {
+      widget.dataset.blueprintForcedScrolling = frame.forcedScrollingState;
+      widget.dataset.blueprintForcedScrollingActive = String(frame.forcedScrollingActive);
+      widget.dataset.blueprintForcedScrollingOffset = frame.forcedScrollingOffset.toFixed(1);
+      widget.dataset.blueprintForcedScrollingCleared = String(frame.forcedScrollingRouteCleared);
+      widget.dataset.blueprintPunishStrike = String(frame.punishStrike);
+    }
     boss.setAttribute(
       'transform',
       `translate(${frame.boss.x} ${frame.boss.y}) scale(${frame.bossScale})`,

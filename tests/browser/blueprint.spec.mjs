@@ -405,9 +405,9 @@ test('volley releases three parallel bolts on one beat and clears its outside ro
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
 });
 
-test('catalog and builder reuse the 62 promoted rule-specific previews', async ({ page }) => {
+test('catalog and builder reuse the 63 promoted rule-specific previews', async ({ page }) => {
   await page.goto('en/');
-  await expect(page.locator('[data-blueprint-preview]')).toHaveCount(62);
+  await expect(page.locator('[data-blueprint-preview]')).toHaveCount(63);
   const catalogLayouts = await page.locator('[data-blueprint-preview]').evaluateAll((previews) =>
     previews.map((preview) => {
       const boss = preview.querySelector('[data-character-art-preview="kern"]');
@@ -431,7 +431,7 @@ test('catalog and builder reuse the 62 promoted rule-specific previews', async (
   expect(new Set(catalogLayouts.map(({ layout }) => layout)).size).toBeGreaterThanOrEqual(18);
 
   await page.goto('en/builder/');
-  await expect(page.locator('[data-blueprint-preview]')).toHaveCount(62);
+  await expect(page.locator('[data-blueprint-preview]')).toHaveCount(63);
   const builderLayouts = await page.locator('[data-blueprint-preview]').evaluateAll((previews) =>
     previews.map((preview) => {
       const boss = preview.querySelector('[data-character-art-preview="kern"]');
@@ -1957,6 +1957,68 @@ test('boundary attack signals one edge before its fixed crossing and visible out
   await expect(widget).toHaveAttribute('data-blueprint-boundary-attack', 'outer-reset');
   await expect(widget).toHaveAttribute('data-blueprint-boundary-source-outside', 'true');
   await expect(widget.locator('[data-blueprint-primitive="6"] path')).not.toHaveAttribute(
+    'opacity',
+    '0',
+  );
+
+  await page.setViewportSize({ width: 375, height: 812 });
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+});
+
+test('forced scrolling exposes its fixed pace, lower failure edge, and route-complete opening', async ({
+  page,
+}) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.goto('en/mechanics/forced-scrolling/');
+  const widget = page.locator('[data-blueprint-demo]');
+  const timeline = widget.locator('[data-blueprint-timeline]');
+  const seek = (milliseconds) =>
+    timeline.evaluate((element, value) => {
+      element.value = String(value);
+      element.dispatchEvent(new Event('input', { bubbles: true }));
+    }, milliseconds);
+
+  await expect(page.locator('.lesson-title-line h1')).toHaveText('Forced scrolling');
+  await expect(page.locator('.wip-badge, .draft-profile')).toHaveCount(0);
+  await expect(page.locator('.game-example')).toHaveCount(3);
+  await expect(widget).toHaveAttribute('data-blueprint-playing', 'false');
+
+  await seek(900);
+  await expect(widget).toHaveAttribute('data-blueprint-forced-scrolling', 'scroll-signal');
+  await expect(widget).toHaveAttribute('data-blueprint-forced-scrolling-active', 'false');
+  await expect(widget.locator('[data-blueprint-primitive="2"] rect')).not.toHaveAttribute(
+    'opacity',
+    '0',
+  );
+  await expect(widget.locator('[data-blueprint-primitive="3"] rect')).toHaveAttribute(
+    'opacity',
+    '0',
+  );
+
+  await seek(2750);
+  await expect(widget).toHaveAttribute('data-blueprint-forced-scrolling', 'forced-scroll');
+  await expect(widget).toHaveAttribute('data-blueprint-forced-scrolling-active', 'true');
+  await expect(widget).toHaveAttribute('data-blueprint-outcome', 'safe');
+  expect(
+    Number(await widget.getAttribute('data-blueprint-forced-scrolling-offset')),
+  ).toBeGreaterThan(100);
+  await expect(widget.locator('[data-blueprint-primitive="3"] rect')).not.toHaveAttribute(
+    'opacity',
+    '0',
+  );
+
+  await seek(4400);
+  await expect(widget).toHaveAttribute('data-blueprint-forced-scrolling', 'route-cleared');
+  await expect(widget).toHaveAttribute('data-blueprint-forced-scrolling-cleared', 'true');
+  await expect(widget.locator('[data-blueprint-primitive="3"] rect')).toHaveAttribute(
+    'opacity',
+    '0',
+  );
+
+  await seek(5050);
+  await expect(widget).toHaveAttribute('data-blueprint-forced-scrolling', 'opening');
+  await expect(widget).toHaveAttribute('data-blueprint-punish-strike', 'true');
+  await expect(widget.locator('[data-blueprint-primitive="11"] line')).not.toHaveAttribute(
     'opacity',
     '0',
   );

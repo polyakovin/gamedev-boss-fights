@@ -1,0 +1,28 @@
+{
+  "id": "forced-scrolling",
+  "number": 69,
+  "published": true,
+  "sourceLocale": "en",
+  "contentVersion": 1,
+  "animation": "forced-scrolling",
+  "lenses": ["dramatic-framing", "difficulty-rhythm", "progress-clarity", "counterplay"],
+  "related": ["survival-phase", "boundary-attack", "fight-phase"],
+  "sources": [
+    {
+      "title": "GDC · Itay Keren — Boss Battle Design Fundamentals and Retrospective",
+      "url": "https://www.gdcvault.com/play/1024921/Boss-Up-Boss-Battle-Design"
+    },
+    {
+      "title": "Xbox Wire — Going Vertical in Ori and the Blind Forest",
+      "url": "https://news.xbox.com/en-us/2014/08/14/gamescom-ori-preview/"
+    },
+    {
+      "title": "Super Mario Wiki — World 8-Bowser's Castle",
+      "url": "https://www.mariowiki.com/World_8-Bowser%27s_Castle_(New_Super_Mario_Bros._Wii)"
+    },
+    {
+      "title": "Super Mario Wiki — The Great Tower of Bowser Land",
+      "url": "https://www.mariowiki.com/The_Great_Tower_of_Bowser_Land"
+    }
+  ]
+}

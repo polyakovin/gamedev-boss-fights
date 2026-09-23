@@ -1,0 +1,138 @@
+{
+  "title": "Desplazamiento forzado",
+  "subtitle": "Convierte el ritmo de avance en una regla explícita del encuentro, no en una sorpresa de cámara.",
+  "variant": "Una corriente ascendente de cámara fija un borde inferior peligroso hasta que Tavi alcanza la runa de parada",
+  "summary": "El desplazamiento forzado mueve la cámara o la ruta jugable con independencia del jugador, de modo que mantener el avance pasa a ser obligatorio.",
+  "overview": "La mecánica sustituye esperar por un contrato de ritmo visible. A los 0,5 segundos, Kern enciende el borde inferior y la runa. Entre 1,25 y 4,25 segundos, los hitos bajan a velocidad fija y el borde es peligroso. Tavi asciende por delante, llega a la runa de parada y solo entonces obtiene una ventana para la espada.",
+  "learning": "Implementa la velocidad de desplazamiento, los límites de cámara, el peligro perseguidor, la holgura respecto al jugador, las puertas de ruta, el fallo y la condición de parada como un único sistema determinista.",
+  "category": "Espacio, movimiento y percepción",
+  "readTime": "6 min",
+  "demo": {
+    "title": "Anuncia el ritmo antes de mover el encuadre",
+    "timeline": "Cronología del desplazamiento forzado",
+    "step": "Estados del desplazamiento forzado",
+    "phaseNames": [
+      "Anunciar el encuadre móvil",
+      "Mantener el ritmo de ruta",
+      "Parar y contraatacar"
+    ],
+    "phaseDescriptions": [
+      "A los 0,5 s pulsa el límite inferior, aparecen flechas ascendentes y la runa de parada sigue visible arriba. La advertencia comunica dirección, plazo, borde de fallo y destino antes del movimiento.",
+      "Entre 1,25 y 4,25 s, cuatro plataformas descienden a una misma velocidad definida y la franja peligrosa permanece fija en la parte baja. Tavi asciende de forma continua y mantiene todo el cuerpo por encima; Kern no acelera por los errores del jugador.",
+      "Alcanzar la runa detiene el desplazamiento peligroso a los 4,25 s. Kern emerge de la corriente inferior, Tavi se acerca y golpea con la espada a los 5,05 s, y luego personajes y ruta se reinician de forma visible."
+    ],
+    "boss": "Jefe",
+    "player": "Jugador",
+    "danger": "Solo la franja sólida inferior es peligrosa durante el desplazamiento activo",
+    "locked": "Dirección, velocidad, hitos y condición de parada quedan fijados antes del movimiento",
+    "safe": "Mantén todo el cuerpo por encima del borde perseguidor y llega a tiempo a la runa de parada",
+    "reducedMotion": "La reproducción automática está desactivada por la reducción de movimiento. Recorre 0,5, 1,25, 2,75, 4,25, 4,72, 5,05 y 5,35 segundos para estudiar el contrato de ritmo.",
+    "diagramDescription": "Un encuadre rectangular fijo contiene una franja inferior peligrosa, plataformas de piedra que bajan, una ruta ascendente, a Kern dentro de la corriente inferior y a Tavi con espada subiendo hacia una runa de parada."
+  },
+  "steps": [
+    {
+      "title": "¿Qué se mueve sin permiso del jugador?",
+      "body": "Elige si se mueve la cámara, la arena, un vehículo, una inundación, un muro o la ruta, y guarda su velocidad aparte de la entrada del jugador. Deriva del mismo valor el movimiento del entorno y el borde de fallo. El ejemplo recorre 310 unidades del diagrama en tres segundos, sin aceleración oculta."
+    },
+    {
+      "title": "¿Cuánto margen de ritmo existe?",
+      "body": "Mide la ruta válida más lenta desde el último inicio seguro, incluyendo aceleración, saltos, recuperación, interacciones y el volumen de colisión completo. Compara su duración con el borde móvil y reserva margen legible para corregir. Prueba configuraciones de baja movilidad y opciones de accesibilidad, no solo atajos expertos."
+    },
+    {
+      "title": "¿Cómo se detiene el desplazamiento?",
+      "body": "Vincula el final a un evento observable: cruzar una puerta, activar un ancla, completar una vuelta o alcanzar una arena estable. Detén o transfiere la cámara antes de abrir al jefe al daño. En el ejemplo, la runa superior se vuelve segura a los 4,25 s y la ventana de espada empieza cuando Kern emerge."
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "La cámara se mueve antes de leer la regla",
+      "body": "Un movimiento inesperado puede ocultar la ruta y hacer que el fallo parezca una pérdida de control. Muestra primero la dirección, la clase de velocidad, el borde perseguidor y el siguiente destino; retrasa la colisión hasta permitir una respuesta significativa."
+    },
+    {
+      "title": "Dos plazos inconexos aplastan al jugador",
+      "body": "Un desplazamiento fijo junto a un bloqueo, aturdimiento, cinemática o puerta cerrada sin anunciar puede eliminar todo el margen. Audita cada interrupción contra el borde: pausa el movimiento, ofrece un refugio o garantiza espacio libre."
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "Separa coordenadas de cámara y mundo",
+      "body": "El desplazamiento cambia la presentación, no necesariamente la simulación. Guarda amenazas, plataformas y puertas en el mundo y proyéctalas mediante la cámara. Los peligros ligados a pantalla necesitan una conversión explícita para que su colisión no derive con zoom, temblor o pantalla dividida."
+    },
+    {
+      "title": "Diseña bolsas de recuperación",
+      "body": "Las rutas largas necesitan lugares donde atención y movimiento se estabilicen brevemente sin romper el ritmo. Ensancha una plataforma, simplifica un salto, reduce la presión del jefe o iguala por un instante la velocidad. Son controles de ritmo, no puntos de control ocultos."
+    },
+    {
+      "title": "Define multijugador y muerte",
+      "body": "Decide si el encuadre sigue al líder, al centro del grupo, al más lento o a un carril fijo. Especifica rescate, unión, indicadores fuera de pantalla, reaparición y si una muerte pausa la ruta. Una cámara compartida no debe permitir que alguien borre sin saberlo el espacio seguro de otro."
+    },
+    {
+      "title": "Prueba toda la presentación",
+      "body": "Verifica formatos estrechos y ultrapanorámicos, temblor, zoom, subtítulos, zonas seguras del HUD, movimiento reducido, cámara lenta, pausa, puntos de control, tirones de carga y entrada inversa. Inspecciona la primera advertencia, el último instante corregible, la parada y la unión del bucle."
+    }
+  ],
+  "story": {
+    "title": "Kern impulsa una corriente rúnica por la torre",
+    "body": "Kern despierta una corriente que arrastra hacia abajo cada hito de piedra mientras una runa de sellado espera arriba. Alcanzarla detiene el flujo y lleva al elemental a la arena, explicando la dirección fija, el borde inferior y la apertura final."
+  },
+  "adaptation": {
+    "title": "Haz que Tavi lea la velocidad de la ruta, no que luche con la cámara",
+    "body": "Tavi conserva el movimiento normal y la misma espada. El reto consiste en elegir y ejecutar una ruta más rápida que el desplazamiento; la espada solo sirve cuando la condición de parada convierte el progreso en una ventana de respuesta."
+  },
+  "distinction": {
+    "title": "Una regla de encuadre, no solo una persecución",
+    "body": "El arreo de persecución usa un actor o amenaza para dirigir el movimiento y puede reaccionar a la distancia. El desplazamiento forzado avanza el encuadre o la ruta según su propio horario aunque el jugador dude. Un ataque desde el límite entra para un golpe acotado; aquí la relación continua con ese límite es la regla."
+  },
+  "lensNotes": [
+    {
+      "id": "dramatic-framing",
+      "body": "El borde inferior fijo y la runa visible convierten la composición en un inicio, una línea de presión y un destino legibles."
+    },
+    {
+      "id": "difficulty-rhythm",
+      "body": "Una velocidad definida marca el tempo sostenido, mientras plataformas amplias crean descansos deliberados sin detener el avance."
+    },
+    {
+      "id": "progress-clarity",
+      "body": "Los hitos descendentes, la línea estable de peligro y la runa persistente muestran el ritmo local y la ruta restante."
+    },
+    {
+      "id": "counterplay",
+      "body": "Tavi puede mantenerse por delante con movimiento normal y completar la ruta produce una ventana clara para la espada."
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "Ori and the Blind Forest",
+      "boss": "Ginso Tree escape",
+      "screenshot": "https://i.ytimg.com/vi/yhdU9vuaqZQ/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=yhdU9vuaqZQ&t=653s",
+      "body": "Tras restaurar el Elemento del Agua, el agua sube bajo Ori mientras ruta y cámara ascienden por el árbol. Los objetivos de Bash y los hitos verticales aparecen antes que la inundación, de modo que mantener el ritmo ascendente funciona como condición de victoria similar a un jefe.",
+      "video": "https://www.youtube.com/watch?v=yhdU9vuaqZQ&t=653s",
+      "videoDurationSeconds": 1833
+    },
+    {
+      "dimension": "2D",
+      "game": "New Super Mario Bros. Wii",
+      "boss": "Super Bowser",
+      "screenshot": "https://i.ytimg.com/vi/Ihei0ngHHdU/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=Ihei0ngHHdU&t=105s",
+      "body": "La segunda fase convierte el combate final en una huida hacia la derecha. Super Bowser rompe obstáculos y dispara desde atrás mientras la cámara revela una secuencia fija de plataformas, ascensores y puertas; ejecutar la ruta hacia delante es la respuesta duradera.",
+      "video": "https://www.youtube.com/watch?v=Ihei0ngHHdU&t=105s",
+      "videoDurationSeconds": 363
+    },
+    {
+      "dimension": "3D",
+      "game": "Super Mario 3D World",
+      "boss": "Meowser",
+      "screenshot": "https://i.ytimg.com/vi/d3GWKwcUbCA/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=d3GWKwcUbCA&t=970s",
+      "body": "La cámara asciende por la Gran Torre mientras Mario sigue plataformas móviles y Meowser ataca a través de muros y desde fuera de la vista. El encuadre vertical limita cuánto sirven los apoyos inferiores y dirige la atención a la siguiente altura alcanzable.",
+      "video": "https://www.youtube.com/watch?v=d3GWKwcUbCA&t=970s",
+      "videoDurationSeconds": 1546
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}
