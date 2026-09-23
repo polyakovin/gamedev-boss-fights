@@ -496,6 +496,27 @@ export function initializeBlueprint(widget) {
       );
       widget.dataset.blueprintAbilityLockStatusId = frame.abilityLockStatusId;
     }
+    if (mechanicId === 'resource-steal') {
+      widget.dataset.blueprintResourceSteal = frame.resourceStealState;
+      widget.dataset.blueprintResourceStealFirstAvoided = String(frame.resourceStealFirstAvoided);
+      widget.dataset.blueprintResourceStealDropped = String(frame.resourceStealDropped);
+      widget.dataset.blueprintResourceStealReclaimed = String(frame.resourceStealReclaimed);
+      widget.dataset.blueprintResourceStealCaptured = String(frame.resourceStealCaptured);
+      widget.dataset.blueprintResourceStealWorld = String(frame.resourceStealWorldResource);
+      widget.dataset.blueprintResourceStealPlayer = String(frame.resourceStealPlayerResource);
+      widget.dataset.blueprintResourceStealTotal = String(frame.resourceStealTotalResource);
+      widget.dataset.blueprintResourceStealConserved = String(frame.resourceStealConserved);
+      widget.dataset.blueprintResourceStealDropEvents = String(frame.resourceStealDropEventCount);
+      widget.dataset.blueprintResourceStealBenefitEvents = String(
+        frame.resourceStealBenefitEventCount,
+      );
+      widget.dataset.blueprintResourceStealCapturing = String(frame.resourceStealCapturing);
+      widget.dataset.blueprintResourceStealBenefitApplied = String(
+        frame.resourceStealBenefitApplied,
+      );
+      widget.dataset.blueprintResourceStealTokenIds = frame.resourceStealTokenIds.join(',');
+      widget.dataset.blueprintResourceStealTokenOwners = frame.resourceStealTokenOwners.join(',');
+    }
     boss.setAttribute(
       'transform',
       `translate(${frame.boss.x} ${frame.boss.y}) scale(${frame.bossScale})`,

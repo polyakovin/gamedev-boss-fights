@@ -1,0 +1,28 @@
+{
+  "id": "resource-steal",
+  "number": 95,
+  "published": true,
+  "sourceLocale": "en",
+  "contentVersion": 1,
+  "animation": "resource-steal",
+  "lenses": ["progress-clarity", "counterplay", "risk-reward", "rule-exception", "telegraphing"],
+  "related": ["status-buildup", "persistent-progress", "ability-lock", "maximum-health-reduction"],
+  "sources": [
+    {
+      "title": "Boss Up: Boss Battle Design",
+      "url": "https://media.gdcvault.com/gdc2018/presentations/Keren_Itay_BossUp.pdf"
+    },
+    {
+      "title": "Ultra Greedier — Binding of Isaac: Rebirth Wiki",
+      "url": "https://bindingofisaacrebirth.wiki.gg/wiki/Ultra_Greedier"
+    },
+    {
+      "title": "Sonic Rush FAQ and walkthrough — GameFAQs",
+      "url": "https://gamefaqs.gamespot.com/ds/920803-sonic-rush/faqs/40174"
+    },
+    {
+      "title": "Mark of Kaz'rogal — Wowhead",
+      "url": "https://www.wowhead.com/spell%3D31447/mark-of-kazrogal"
+    }
+  ]
+}

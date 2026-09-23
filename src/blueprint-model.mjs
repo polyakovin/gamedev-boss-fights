@@ -1323,6 +1323,37 @@ const SPECS = {
     healAmount: 20,
     hitDamage: 20,
   },
+  'resource-steal': {
+    mode: 'resource-steal',
+    boss: [300, 375],
+    player: [300, 635],
+    target: [455, 720],
+    arena: [55, 310, 450, 570],
+    stealCenter: [300, 635],
+    safePoint: [455, 720],
+    reclaimPoint: [235, 720],
+    stealRadius: 96,
+    firstTelegraph: [0.3, 0.94],
+    firstEscape: [0.48, 0.86],
+    firstResolveAt: 0.98,
+    return: [1.18, 1.58],
+    secondTelegraph: [1.82, 2.54],
+    hitAt: 2.64,
+    hitWindow: [2.54, 2.78],
+    spill: [2.64, 3.08],
+    reclaim: [3.08, 3.48],
+    capture: [3.48, 3.9],
+    benefitAt: 3.9,
+    retreat: [4.42, 5.08],
+    resetAt: 5.34,
+    initialResource: 6,
+    dropCount: 3,
+    tokenTargets: [
+      [235, 676],
+      [300, 706],
+      [365, 676],
+    ],
+  },
   'wide-swing': { mode: 'arc', boss: [280, 310], player: [410, 470], target: [470, 650] },
   lunge: { mode: 'lunge', boss: [170, 290], player: [390, 590], target: [470, 660] },
   grab: { mode: 'grab', boss: [280, 300], player: [390, 485], target: [470, 610] },
@@ -2447,6 +2478,42 @@ const abilityLockHealthAt = (spec, time) => {
     smooth((time - spec.settleAt) / (spec.resetAt - spec.settleAt)),
   );
 };
+
+export function resourceStealState(time) {
+  const spec = SPECS['resource-steal'];
+  const t = localTime(time);
+  if (t < spec.firstTelegraph[0]) return 'ready';
+  if (t < spec.firstResolveAt) return 'first-telegraph';
+  if (t < spec.return[0]) return 'first-avoided';
+  if (t < spec.secondTelegraph[0]) return 'repositioning';
+  if (t < spec.hitAt) return 'second-telegraph';
+  if (t < spec.spill[1]) return 'resource-spilling';
+  if (t < spec.reclaim[1]) return 'player-reclaiming';
+  if (t < spec.capture[1]) return 'boss-capturing';
+  if (t < spec.retreat[0]) return 'benefit-applied';
+  if (t < spec.resetAt) return 'settled';
+  return 'reset';
+}
+
+export function resourceStealResolve({ current = 6, drop = 3, reclaim = 1, bossCapture = 2 } = {}) {
+  const currentBefore = Math.max(0, Math.floor(Number(current) || 0));
+  const dropped = Math.min(currentBefore, Math.max(0, Math.floor(Number(drop) || 0)));
+  const reclaimed = Math.min(dropped, Math.max(0, Math.floor(Number(reclaim) || 0)));
+  const captured = Math.min(dropped - reclaimed, Math.max(0, Math.floor(Number(bossCapture) || 0)));
+  const world = dropped - reclaimed - captured;
+  const player = currentBefore - dropped + reclaimed;
+  return Object.freeze({
+    currentBefore,
+    dropped,
+    reclaimed,
+    captured,
+    world,
+    player,
+    conserved: player + captured + world === currentBefore,
+    dropEventCount: dropped > 0 ? 1 : 0,
+    benefitEventCount: captured > 0 ? 1 : 0,
+  });
+}
 
 const projectileRallyLegAt = (spec, time) => {
   const index = spec.legs.findIndex(({ start, end }) => time >= start && time < end);
@@ -5983,6 +6050,127 @@ function primitivesFor(spec, frame) {
       ),
     ];
   }
+  if (mode === 'resource-steal') {
+    const center = point(spec.stealCenter);
+    const firstTelegraph = frame.time >= spec.firstTelegraph[0] && frame.time < spec.firstResolveAt;
+    const secondTelegraph = frame.time >= spec.secondTelegraph[0] && frame.time < spec.hitAt;
+    const telegraph = firstTelegraph || secondTelegraph;
+    const telegraphStart = firstTelegraph ? spec.firstTelegraph[0] : spec.secondTelegraph[0];
+    const telegraphEnd = firstTelegraph ? spec.firstResolveAt : spec.hitAt;
+    const telegraphProgress = telegraph
+      ? clamp((frame.time - telegraphStart) / (telegraphEnd - telegraphStart))
+      : 0;
+    const hitPulse = strikePulse(frame.time, spec.hitAt, 0.48);
+    const spillProgress = smooth((frame.time - spec.spill[0]) / (spec.spill[1] - spec.spill[0]));
+    const reclaimProgress = smooth(
+      (frame.time - spec.reclaim[0]) / (spec.reclaim[1] - spec.reclaim[0]),
+    );
+    const captureProgress = smooth(
+      (frame.time - spec.capture[0]) / (spec.capture[1] - spec.capture[0]),
+    );
+    const tokenPositions = spec.tokenTargets.map(([targetX, targetY], index) => {
+      let token = {
+        x: mix(center.x, targetX, spillProgress),
+        y: mix(center.y - 34, targetY, spillProgress),
+      };
+      if (index === 0 && frame.time >= spec.reclaim[0])
+        token = {
+          x: mix(targetX, frame.player.x, reclaimProgress),
+          y: mix(targetY, frame.player.y - 46, reclaimProgress),
+        };
+      if (index > 0 && frame.time >= spec.capture[0])
+        token = {
+          x: mix(targetX, frame.boss.x, captureProgress),
+          y: mix(targetY, frame.boss.y - 20, captureProgress),
+        };
+      return token;
+    });
+    const tokenVisible = frame.time >= spec.hitAt && frame.time < spec.capture[1];
+    const ownedCount = frame.resourceStealPlayerResource;
+    return [
+      rect(...spec.arena, 0.52, 'muted', 0.025),
+      rect(164, 314, 272, 38, 0.72, 'muted', 0.04),
+      ...Array.from({ length: spec.initialResource }, (_, index) => {
+        const x = 190 + index * 44;
+        const owned = index < ownedCount;
+        return path(
+          `M ${x} 333 L ${x + 10} 321 L ${x + 20} 333 L ${x + 10} 345 Z`,
+          owned ? 0.96 : 0.22,
+          owned ? 'accent' : 'muted',
+          4,
+          owned ? 0.18 : 0.02,
+        );
+      }),
+      circle(
+        center.x,
+        center.y,
+        spec.stealRadius,
+        telegraph ? 0.84 : hitPulse * 0.94,
+        'signal',
+        telegraph ? 7 : 11,
+        telegraph ? 0.05 : 0.1,
+        telegraph ? '12 9' : '',
+      ),
+      circle(
+        center.x,
+        center.y,
+        spec.stealRadius * (1 - 0.46 * telegraphProgress),
+        telegraph ? 0.72 : 0,
+        'accent',
+        5,
+        0.02,
+      ),
+      circle(
+        spec.safePoint[0],
+        spec.safePoint[1] - 34,
+        34,
+        frame.resourceStealFirstAvoided ? 0.86 : 0,
+        'safe',
+        6,
+        0.04,
+        '8 7',
+      ),
+      path(
+        `M ${spec.safePoint[0] - 14} ${spec.safePoint[1] - 35} L ${spec.safePoint[0] - 3} ${spec.safePoint[1] - 24} L ${spec.safePoint[0] + 18} ${spec.safePoint[1] - 49}`,
+        frame.resourceStealFirstAvoided ? 0.98 : 0,
+        'safe',
+        6,
+      ),
+      ...tokenPositions.map((token, index) =>
+        path(
+          `M ${token.x - 12} ${token.y} L ${token.x} ${token.y - 14} L ${token.x + 12} ${token.y} L ${token.x} ${token.y + 14} Z`,
+          tokenVisible && (index === 0 ? frame.time < spec.reclaim[1] : true) ? 0.98 : 0,
+          index === 0 ? 'safe' : 'signal',
+          6,
+          0.22,
+        ),
+      ),
+      ...tokenPositions
+        .slice(1)
+        .map((token) =>
+          line(
+            token.x,
+            token.y,
+            frame.boss.x,
+            frame.boss.y - 24,
+            frame.resourceStealCapturing ? 0.72 : 0,
+            'signal',
+            4,
+            '8 7',
+          ),
+        ),
+      circle(
+        frame.boss.x,
+        frame.boss.y - 26,
+        62 + pulse(frame.time * 2.3) * 8,
+        frame.resourceStealBenefitApplied ? 0.82 : 0,
+        'signal',
+        8,
+        0.05,
+        '10 7',
+      ),
+    ];
+  }
   if (mode === 'encounter-specific-tool') {
     const pedestal = point(spec.pedestal);
     const spearBase = { x: frame.player.x - 8, y: frame.player.y - 22 };
@@ -7490,6 +7678,12 @@ function pointClearsThreat(spec, frame, value, radius = BLUEPRINT_PLAYER_RADIUS)
       Math.hypot(value.x - spec.sealCenter[0], value.y - spec.sealCenter[1]) >
         spec.sealRadius + radius
     );
+  if (mode === 'resource-steal')
+    return (
+      !frame.dangerActive ||
+      Math.hypot(value.x - spec.stealCenter[0], value.y - spec.stealCenter[1]) >
+        spec.stealRadius + radius
+    );
   if (mode === 'projectile-rally')
     return (
       !frame.dangerActive ||
@@ -7875,6 +8069,7 @@ export function blueprintFrame(id, time) {
   else if (spec.mode === 'instant-kill') responseProgress = 0;
   else if (spec.mode === 'maximum-health-reduction') responseProgress = 0;
   else if (spec.mode === 'ability-lock') responseProgress = 0;
+  else if (spec.mode === 'resource-steal') responseProgress = 0;
   else if (spec.mode === 'knockback')
     responseProgress = phase === 0 ? 0 : phase === 1 ? smooth(action) : 1;
   else if (spec.mode === 'target-lock')
@@ -8779,6 +8974,38 @@ export function blueprintFrame(id, time) {
       };
     } else player = startPlayer;
   }
+  if (spec.mode === 'resource-steal') {
+    const safe = point(spec.safePoint);
+    const reclaim = point(spec.reclaimPoint);
+    if (t < spec.firstEscape[0]) player = startPlayer;
+    else if (t < spec.firstEscape[1]) {
+      const escape = smooth(
+        (t - spec.firstEscape[0]) / (spec.firstEscape[1] - spec.firstEscape[0]),
+      );
+      player = { x: mix(startPlayer.x, safe.x, escape), y: mix(startPlayer.y, safe.y, escape) };
+    } else if (t < spec.return[0]) player = safe;
+    else if (t < spec.return[1]) {
+      const returning = smooth((t - spec.return[0]) / (spec.return[1] - spec.return[0]));
+      player = {
+        x: mix(safe.x, startPlayer.x, returning),
+        y: mix(safe.y, startPlayer.y, returning),
+      };
+    } else if (t < spec.reclaim[0]) player = startPlayer;
+    else if (t < spec.reclaim[1]) {
+      const collecting = smooth((t - spec.reclaim[0]) / (spec.reclaim[1] - spec.reclaim[0]));
+      player = {
+        x: mix(startPlayer.x, reclaim.x, collecting),
+        y: mix(startPlayer.y, reclaim.y, collecting),
+      };
+    } else if (t < spec.retreat[0]) player = reclaim;
+    else if (t < spec.retreat[1]) {
+      const retreat = smooth((t - spec.retreat[0]) / (spec.retreat[1] - spec.retreat[0]));
+      player = {
+        x: mix(reclaim.x, startPlayer.x, retreat),
+        y: mix(reclaim.y, startPlayer.y, retreat),
+      };
+    } else player = startPlayer;
+  }
   if (spec.mode === 'rotating' && phase === 0) {
     const initialPosition = polar(boss, 255, Math.PI / 3);
     player = {
@@ -9207,6 +9434,13 @@ export function blueprintFrame(id, time) {
       pulse(smooth((t - spec.firstEscape[0]) / (spec.firstEscape[1] - spec.firstEscape[0]))),
       pulse(smooth((t - spec.return[0]) / (spec.return[1] - spec.return[0]))),
     );
+  if (spec.mode === 'resource-steal')
+    stride = Math.max(
+      pulse(smooth((t - spec.firstEscape[0]) / (spec.firstEscape[1] - spec.firstEscape[0]))),
+      pulse(smooth((t - spec.return[0]) / (spec.return[1] - spec.return[0]))),
+      pulse(smooth((t - spec.reclaim[0]) / (spec.reclaim[1] - spec.reclaim[0]))),
+      pulse(smooth((t - spec.retreat[0]) / (spec.retreat[1] - spec.retreat[0]))),
+    );
   const bossVisible =
     spec.mode === 'secondary-cues-invisibility'
       ? t < spec.vanishAt
@@ -9474,7 +9708,8 @@ export function blueprintFrame(id, time) {
             spec.mode === 'status-buildup' ||
             spec.mode === 'instant-kill' ||
             spec.mode === 'maximum-health-reduction' ||
-            spec.mode === 'ability-lock'
+            spec.mode === 'ability-lock' ||
+            spec.mode === 'resource-steal'
           ? (Math.atan2(boss.y - player.y, boss.x - player.x) * 180) / Math.PI
           : spec.mode === 'active-phase'
             ? (Math.atan2(boss.y - player.y, boss.x - player.x) * 180) / Math.PI
@@ -10524,6 +10759,43 @@ export function blueprintFrame(id, time) {
       strikePulse(t, spec.hitAt, 0.42),
     );
   }
+  if (spec.mode === 'resource-steal') {
+    const activeAttempt = t >= spec.hitAt && t < spec.resetAt;
+    const reclaimed = t >= spec.reclaim[1] && t < spec.resetAt ? 1 : 0;
+    const captured = t >= spec.capture[1] && t < spec.resetAt ? 2 : 0;
+    const dropped = activeAttempt ? spec.dropCount : 0;
+    const world = Math.max(0, dropped - reclaimed - captured);
+    frame.resourceStealState = resourceStealState(t);
+    frame.resourceStealFirstAvoided = t >= spec.firstResolveAt && t < spec.secondTelegraph[0];
+    frame.resourceStealDropped = dropped;
+    frame.resourceStealReclaimed = reclaimed;
+    frame.resourceStealCaptured = captured;
+    frame.resourceStealWorldResource = world;
+    frame.resourceStealPlayerResource = spec.initialResource - dropped + reclaimed;
+    frame.resourceStealTotalResource = frame.resourceStealPlayerResource + world + captured;
+    frame.resourceStealConserved = frame.resourceStealTotalResource === spec.initialResource;
+    frame.resourceStealDropEventCount = activeAttempt ? 1 : 0;
+    frame.resourceStealBenefitEventCount = captured > 0 ? 1 : 0;
+    frame.resourceStealCapturing = t >= spec.capture[0] && t < spec.capture[1];
+    frame.resourceStealBenefitApplied = captured > 0;
+    frame.resourceStealTokenIds = ['resource-token-1', 'resource-token-2', 'resource-token-3'];
+    frame.resourceStealTokenOwners = !activeAttempt
+      ? ['player', 'player', 'player']
+      : reclaimed === 0
+        ? ['world', 'world', 'world']
+        : captured === 0
+          ? ['player', 'world', 'world']
+          : ['player', 'boss', 'boss'];
+    frame.dangerActive = t >= spec.hitWindow[0] && t < spec.hitWindow[1];
+    frame.playerMotion.attack = 0;
+    frame.playerMotion.dodge = strikePulse(t, spec.firstResolveAt, 0.42);
+    frame.playerMotion.impact = strikePulse(t, spec.hitAt, 0.44);
+    frame.bossMotion.attack = Math.max(
+      strikePulse(t, spec.firstResolveAt, 0.36),
+      strikePulse(t, spec.hitAt, 0.42),
+      strikePulse(t, spec.capture[1], 0.42),
+    );
+  }
   if (spec.mode === 'ability-lock') {
     frame.abilityLockState = abilityLockState(t);
     frame.abilityLockFirstAvoided = t >= spec.firstResolveAt && t < spec.secondTelegraph[0];
@@ -10845,7 +11117,8 @@ export function blueprintFrame(id, time) {
       spec.mode === 'status-buildup' ||
       spec.mode === 'instant-kill' ||
       spec.mode === 'maximum-health-reduction' ||
-      spec.mode === 'ability-lock'
+      spec.mode === 'ability-lock' ||
+      spec.mode === 'resource-steal'
         ? 92
         : -62),
   };

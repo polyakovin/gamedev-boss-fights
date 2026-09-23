@@ -1,0 +1,138 @@
+{
+  "title": "资源窃取或掉落",
+  "subtitle": "把一次确认命中变成对可见资源的有限争夺",
+  "variant": "标记 · 命中 · 掉落 · 回收或夺取",
+  "summary": "首领的有效命中会移除有限资源，并可将其变成玩家能回收、首领能夺取的掉落物。",
+  "overview": "资源窃取把普通伤害变成所有权转移。公平实现会明确资源、限制损失、只创建一次每个掉落物，保持其可见可追踪，并在首领把夺取物转化为已声明收益前提供可达的回收选择。",
+  "learning": "定义可损失资源、公式与上限、保护下限、物品 ID、生成位置、所有权转换、拾取半径、过期、首领收益、暂停与检查点、联机权威，以及同时拾取时的守恒测试。",
+  "category": "状态、资源与成长",
+  "readTime": "9 分钟",
+  "demo": {
+    "title": "躲开柯恩第一次虹吸，再观察三枚符文掉落：塔维收回一枚，柯恩夺取两枚",
+    "timeline": "资源所有权时间线",
+    "step": "掉落、回收与夺取状态",
+    "phaseNames": [
+      "标明资源并证明躲避有效",
+      "把一次损失解析为稳定掉落物",
+      "争夺所有权并只结算一次首领收益"
+    ],
+    "phaseDescriptions": [
+      "0.30 秒时，柯恩标记固定 96 单位虹吸区。塔维在 0.98 秒结算前完全离开，所以六枚符文仍在账本中，且没有生成掉落物。",
+      "1.82 秒标记再次出现，并在 2.64 秒命中。三枚有稳定 ID 的代币从六枚库存中移出且只生成一次；伤害、掉落与所有权变化是不同事件。",
+      "塔维在 3.48 秒收回左侧代币。柯恩在 3.90 秒夺取其余两枚并获得一个可见护盾。最终塔维四枚、柯恩两枚、世界零枚，总数仍为六。"
+    ],
+    "boss": "首领",
+    "player": "玩家",
+    "danger": "只有确认虹吸命中才能请求有限掉落；躲避不生成物品，拾取只改变一次所有者",
+    "locked": "资源类型、保护下限、请求与实际损失、代币 ID、所有权版本、过期、回收、夺取、收益、持久化与权威属于战斗逻辑",
+    "safe": "命中前显示库存，把每份损失连到掉落物，以形状和颜色区分双方拾取，并核对最终总量",
+    "reducedMotion": "启用减少动态效果时关闭自动播放。拖动至 0.30、0.86、0.98、1.82、2.64、3.08、3.48、3.90、4.42 与 5.34 秒检查各状态。",
+    "diagramDescription": "竞技场上方显示六枚符文。柯恩的第一个虚线虹吸圈落空；第二次命中弹出三枚菱形代币。塔维收回左侧一枚，另外两枚飞向柯恩并点亮护盾环。"
+  },
+  "steps": [
+    {
+      "title": "哪些资源可损失，损失如何受限？",
+      "body": "选择一种资源，分别计算请求损失和实际损失。按当前数量与保护下限夹取，规定例外，并只在权威命中后产生一次事件。"
+    },
+    {
+      "title": "每个单位如何转移所有权？",
+      "body": "给每个掉落物稳定 ID 和唯一状态：玩家、世界、首领或过期。定义生成间距、吸附、半径、同时请求、网络校正与寿命。"
+    },
+    {
+      "title": "夺取怎样改变战局而不形成失控惩罚？",
+      "body": "在争夺前声明首领收益并限制层数或时长。测试守恒式、检查点、阶段、死亡、掉线及同一帧拾取。"
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "界面数字下降，却没有物理原因",
+      "body": "不可解释的扣除像故障。把标记命中连接到可见掉落，保留 ID，并说明资源可回收、已销毁还是归首领。"
+    },
+    {
+      "title": "首领夺取叠加过重惩罚",
+      "body": "稀缺资源损失、错过回收和无限强化会形成失败螺旋。限制每层、提供保护下限，并按普通移动调校争夺。"
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "保持守恒账本",
+      "body": "记录请求、实际损失、世界物品、回收、夺取、过期与收益版本，以发现重复拾取和读档错误。"
+    },
+    {
+      "title": "把掉落当作场地几何",
+      "body": "角度、距离、障碍、危险、吸附和寿命决定选择。普通路线应能拿回一部分，全部回收则承担清晰风险。"
+    },
+    {
+      "title": "统计所有权争夺",
+      "body": "记录躲避率、损失、首次回收时间、双方份额、过期价值、收益时长与同一代币的重复请求。"
+    }
+  ],
+  "story": {
+    "title": "柯恩从塔维腰带上扯下三枚符文",
+    "body": "符文以独立石块落地。塔维抓住最近一枚，另外两枚响应柯恩的牵引，短暂组成护盾。"
+  },
+  "adaptation": {
+    "title": "用多种方式表达数量、所有者和去向",
+    "body": "结合库存格、形状、轨迹、音效、文字和震动。可提供更小损失、保护下限、更长寿命、更强玩家吸附、更慢夺取、自动部分回收或禁用窃取。"
+  },
+  "distinction": {
+    "title": "这是所有权转移，不是普通消费或命中回血",
+    "body": "消费由玩家动作开始，资源吸取可能直接删除数值。本机制由外部事件改变所有者，并把价值放回可争夺空间；首领收益是第二条明确规则。"
+  },
+  "lensNotes": [
+    {
+      "id": "progress-clarity",
+      "body": "库存、世界代币、首领总量和最终核对展示每个单位的去向。"
+    },
+    {
+      "id": "counterplay",
+      "body": "玩家可躲开标记、选择可达回收路线，并在规则允许时打断或抢先夺取。"
+    },
+    {
+      "id": "risk-reward",
+      "body": "回收更多价值需要留在命中点附近并承受持续威胁。"
+    },
+    {
+      "id": "rule-exception",
+      "body": "零资源、保护下限、满库存、同时拾取、过期、死亡、检查点与共享资源都要明确结果。"
+    },
+    {
+      "id": "telegraphing",
+      "body": "资源专属标记把窃取命中与只造成生命伤害的相似攻击区分开。"
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "The Binding of Isaac: Afterbirth",
+      "boss": "Ultra Greed",
+      "screenshot": "https://i.ytimg.com/vi/XQlXp2yua64/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=XQlXp2yua64&t=105s",
+      "body": "Ultra Greed 会让 Isaac 掉落硬币，并拾取相同场地物品来治疗。共享拾取几何把损失变成所有权竞赛。",
+      "video": "https://www.youtube.com/watch?v=XQlXp2yua64&t=105s",
+      "videoDurationSeconds": 246
+    },
+    {
+      "dimension": "2D",
+      "game": "Sonic Rush",
+      "boss": "Exception",
+      "screenshot": "https://i.ytimg.com/vi/MmwhGbaEiZE/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=MmwhGbaEiZE&t=905s",
+      "body": "Exception 的攻击会移除圆环，同时共享圆环计时器持续下降；反馈必须区分单次命中与全局倒计时。",
+      "video": "https://www.youtube.com/watch?v=MmwhGbaEiZE&t=905s",
+      "videoDurationSeconds": 1183
+    },
+    {
+      "dimension": "3D",
+      "game": "World of Warcraft: The Burning Crusade",
+      "boss": "Kaz'rogal",
+      "screenshot": "https://i.ytimg.com/vi/JbiA2yrU5rs/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=JbiA2yrU5rs&t=94s",
+      "body": "Mark of Kaz'rogal 按节拍吸取法力，并引爆无法支付的目标。节拍顺序和资源不足必须由权威账本处理。",
+      "video": "https://www.youtube.com/watch?v=JbiA2yrU5rs&t=94s",
+      "videoDurationSeconds": 382
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

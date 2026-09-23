@@ -1,0 +1,138 @@
+{
+  "title": "Robo o expulsión de recursos",
+  "subtitle": "Convierte un impacto confirmado en una disputa limitada por recursos visibles",
+  "variant": "Marca · golpe · caída · recuperación o captura",
+  "summary": "Un impacto válido del jefe retira una cantidad limitada y puede soltarla como objetos que el jugador recupera o el jefe captura.",
+  "overview": "El robo de recursos convierte el impacto en un cambio de propiedad. Una versión justa identifica el recurso, limita la pérdida, crea cada objeto una sola vez y ofrece una ruta alcanzable antes de que el jefe transforme lo capturado en una ventaja anunciada.",
+  "learning": "Define el recurso, la fórmula y el límite, el mínimo protegido, los identificadores, la aparición, los cambios de propietario, los radios, la caducidad, la ventaja del jefe, los puntos de control, la autoridad y las pruebas de conservación.",
+  "category": "Estados, recursos y escalado",
+  "readTime": "9 min",
+  "demo": {
+    "title": "Esquiva el primer sifón de Kern; después observa tres runas, una recuperada por Tavi y dos capturadas por Kern",
+    "timeline": "Cronología de propiedad",
+    "step": "Estados de caída, recuperación y captura",
+    "phaseNames": [
+      "Señala el recurso y demuestra la evasión",
+      "Resuelve una caída limitada con objetos estables",
+      "Disputa la propiedad y aplica una sola ventaja"
+    ],
+    "phaseDescriptions": [
+      "Kern marca un sifón fijo de 96 unidades a los 0,30 s. Tavi sale por completo antes de 0,98 s: las seis runas permanecen y no aparece ningún objeto.",
+      "La marca vuelve a 1,82 s e impacta a 2,64 s. Tres fichas identificadas salen del inventario de seis y aparecen una sola vez; daño, caída y propiedad son eventos distintos.",
+      "Tavi recupera la ficha izquierda a 3,48 s. Kern captura las otras dos a 3,90 s y obtiene un escudo visible. Quedan cuatro runas con Tavi, dos con Kern y cero libres: el total sigue siendo seis."
+    ],
+    "boss": "Jefe",
+    "player": "Jugador",
+    "danger": "Solo un contacto confirmado solicita la caída limitada; esquivar no crea objetos y recoger cambia la propiedad una sola vez",
+    "locked": "Tipo, mínimo, pérdida solicitada y aplicada, IDs, revisiones, caducidad, recuperación, captura, ventaja, persistencia y autoridad pertenecen a la lógica",
+    "safe": "Muestra el inventario, conecta cada pérdida con un objeto, distingue las capturas con forma y color y reconcilia el total",
+    "reducedMotion": "Con movimiento reducido no hay reproducción automática. Recorre 0,30, 0,86, 0,98, 1,82, 2,64, 3,08, 3,48, 3,90, 4,42 y 5,34 s.",
+    "diagramDescription": "Una barra de seis runas corona la arena. El primer círculo de Kern falla; el segundo expulsa tres diamantes. Tavi recupera uno y dos viajan a Kern para encender un escudo."
+  },
+  "steps": [
+    {
+      "title": "¿Qué puede perderse y cuál es el límite?",
+      "body": "Elige un recurso y separa pérdida solicitada y aplicada. Limita por cantidad y mínimo protegido, define excepciones y emite un evento tras el contacto autoritativo."
+    },
+    {
+      "title": "¿Cómo cambia de dueño cada unidad?",
+      "body": "Da a cada objeto un ID estable y un dueño: jugador, mundo, jefe o caducado. Define aparición, imán, radio, reclamos simultáneos, red y caducidad."
+    },
+    {
+      "title": "¿Qué cambia la captura sin crear una espiral?",
+      "body": "Anuncia la ventaja, limita acumulaciones o duración y conserva una respuesta útil. Prueba suma final, puntos de control, fases, muerte y recolección simultánea."
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "El HUD baja sin causa física",
+      "body": "Una deducción invisible parece un error. Une el golpe con la expulsión y muestra si el valor se recupera, se destruye o ya pertenece al jefe."
+    },
+    {
+      "title": "La captura multiplica una sanción severa",
+      "body": "Pérdida escasa, recuperación fallida y mejora ilimitada crean una espiral. Limita cada capa y ajusta la carrera al movimiento normal."
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "Conserva un libro mayor",
+      "body": "Registra solicitud, pérdida, objetos, recuperación, captura, caducidad y revisión de ventaja para detectar duplicados y errores de carga."
+    },
+    {
+      "title": "Diseña la caída como geometría",
+      "body": "Ángulos, distancia, obstáculos, imán y vida determinan la decisión. Una ruta normal debe recuperar algo y recoger todo debe implicar riesgo."
+    },
+    {
+      "title": "Mide la carrera de propiedad",
+      "body": "Mide evasión, pérdida, tiempo hasta recuperar, cuotas de recuperación y captura, valor caducado, ventaja y reclamos duplicados."
+    }
+  ],
+  "story": {
+    "title": "Kern arranca tres runas del cinturón de Tavi",
+    "body": "Las runas caen como piedras separadas. Tavi toma una; otras dos responden a Kern y forman un escudo breve."
+  },
+  "adaptation": {
+    "title": "Redunda cantidad, dueño y destino",
+    "body": "Combina ranuras, formas, estelas, sonido, texto y vibración. Ofrece menor pérdida, mínimo, más vida, imán fuerte, captura lenta, recuperación parcial o modo sin robo."
+  },
+  "distinction": {
+    "title": "Transferencia de propiedad, no gasto ni curación al golpear",
+    "body": "Gastar empieza con una acción del jugador; drenar puede borrar valor. Aquí un evento externo cambia el dueño y devuelve valor al espacio. La ventaja del jefe es una regla aparte."
+  },
+  "lensNotes": [
+    {
+      "id": "progress-clarity",
+      "body": "Inventario, objetos, total del jefe y conciliación muestran cada unidad."
+    },
+    {
+      "id": "counterplay",
+      "body": "El jugador evita la marca, elige una ruta y puede interrumpir o ganar la captura si existe esa regla."
+    },
+    {
+      "id": "risk-reward",
+      "body": "Recuperar más exige permanecer cerca del impacto bajo otras amenazas."
+    },
+    {
+      "id": "rule-exception",
+      "body": "Cero, mínimos, inventario lleno, reclamos simultáneos, caducidad, muerte y recursos compartidos requieren resultados explícitos."
+    },
+    {
+      "id": "telegraphing",
+      "body": "Una marca específica distingue el robo de un impacto parecido que solo daña salud."
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "The Binding of Isaac: Afterbirth",
+      "boss": "Ultra Greed",
+      "screenshot": "https://i.ytimg.com/vi/XQlXp2yua64/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=XQlXp2yua64&t=105s",
+      "body": "Ultra Greed hace caer monedas y recoge esos mismos objetos para curarse. La geometría compartida convierte la pérdida en una carrera por la propiedad.",
+      "video": "https://www.youtube.com/watch?v=XQlXp2yua64&t=105s",
+      "videoDurationSeconds": 246
+    },
+    {
+      "dimension": "2D",
+      "game": "Sonic Rush",
+      "boss": "Exception",
+      "screenshot": "https://i.ytimg.com/vi/MmwhGbaEiZE/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=MmwhGbaEiZE&t=905s",
+      "body": "Exception tiene ataques que quitan anillos mientras el temporizador compartido también baja; la señal separa el golpe discreto de la cuenta continua.",
+      "video": "https://www.youtube.com/watch?v=MmwhGbaEiZE&t=905s",
+      "videoDurationSeconds": 1183
+    },
+    {
+      "dimension": "3D",
+      "game": "World of Warcraft: The Burning Crusade",
+      "boss": "Kaz'rogal",
+      "screenshot": "https://i.ytimg.com/vi/JbiA2yrU5rs/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=JbiA2yrU5rs&t=94s",
+      "body": "Mark of Kaz'rogal drena maná por pulsos y detona a quien no puede pagar. El orden y la insuficiencia dependen de un libro mayor autoritativo.",
+      "video": "https://www.youtube.com/watch?v=JbiA2yrU5rs&t=94s",
+      "videoDurationSeconds": 382
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

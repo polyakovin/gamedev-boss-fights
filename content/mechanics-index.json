@@ -1511,9 +1511,9 @@
       "number": 95,
       "translations": {
         "en": {
-          "title": "Resource steal",
+          "title": "Resource steal or drop",
           "category": "States, resources, and scaling",
-          "summary": "Draft outline for the resource steal mechanic. Rules, tuning guidance, and examples are still in progress."
+          "summary": "A qualified hit removes a bounded resource and can spill stable pickups that the player reclaims or the boss captures."
         },
         "ru": {
           "title": "Кража или выбивание ресурса",

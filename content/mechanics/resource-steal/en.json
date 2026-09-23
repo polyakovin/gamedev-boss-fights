@@ -1,0 +1,138 @@
+{
+  "title": "Resource steal or drop",
+  "subtitle": "Turn one confirmed hit into a bounded contest over visible resources",
+  "variant": "Mark · hit · spill · reclaim or capture",
+  "summary": "A qualified boss hit removes a bounded resource and may spill it into pickups that the player can reclaim or the boss can capture.",
+  "overview": "Resource steal changes a hit from simple damage into an ownership transition. A fair implementation names the affected resource, caps the loss, creates each dropped unit once, keeps every pickup visible and attributable, and gives the player a reachable reclaim decision before the boss converts captured units into a declared benefit.",
+  "learning": "Define the eligible resource, loss formula and cap, protected minimum, pickup identities, spawn geometry, ownership transitions, reclaim and capture radii, expiry, boss benefit, pause and checkpoint behavior, co-op authority, and tests that conserve the ledger across simultaneous collection.",
+  "category": "States, resources, and scaling",
+  "readTime": "9 min",
+  "demo": {
+    "title": "Dodge Kern's first siphon, then watch three runes spill, one return to Tavi, and two empower Kern",
+    "timeline": "Resource-ownership timeline",
+    "step": "Drop, reclaim, and capture states",
+    "phaseNames": [
+      "Signal the affected resource and prove avoidance",
+      "Resolve one bounded drop into stable pickups",
+      "Race for ownership and apply one boss benefit"
+    ],
+    "phaseDescriptions": [
+      "Kern marks a fixed 96-unit siphon at 0.30 s. Tavi clears the full radius before the 0.98 s resolve, so all six runes remain in the ledger and no pickup is created.",
+      "The mark returns at 1.82 s and connects at 2.64 s. Exactly three named tokens leave Tavi's six-rune inventory and appear in the arena once; damage, drop, and ownership change remain separate events.",
+      "Tavi reaches the left token by 3.48 s and restores one rune. Kern captures the other two by 3.90 s and receives one visible shield benefit. The settled ledger is four runes for Tavi, two for Kern, and zero unowned, still totaling six."
+    ],
+    "boss": "Boss",
+    "player": "Player",
+    "danger": "Only a confirmed siphon contact may request the bounded drop; avoidance creates no tokens, and collection changes one token's owner exactly once",
+    "locked": "Resource type, protected minimum, drop request, applied loss, token ids, owner revisions, despawn, reclaim, boss capture, benefit grant, persistence, and authority belong to encounter logic",
+    "safe": "Show the affected inventory before contact, connect each lost unit to a pickup, distinguish player and boss collection by shape as well as color, and reconcile the final total",
+    "reducedMotion": "Autoplay is disabled by reduced motion. Scrub across 0.30, 0.86, 0.98, 1.82, 2.64, 3.08, 3.48, 3.90, 4.42, and 5.34 seconds to inspect avoidance, the bounded drop, reclaim, capture, benefit, and reset.",
+    "diagramDescription": "A six-rune track sits above the arena. Kern projects a dashed siphon circle around Tavi. The first misses. The second hit ejects three diamond tokens; Tavi reclaims the green-marked left token while two orange-marked tokens travel to Kern and light one shield ring."
+  },
+  "steps": [
+    {
+      "title": "What can be lost, and how is the loss bounded?",
+      "body": "Choose one named resource and calculate requested loss separately from applied loss. Clamp against the current amount and any protected minimum, decide whether temporary, premium, quest, or accessibility resources are eligible, and emit one drop event only after authoritative contact."
+    },
+    {
+      "title": "How does every unit move between owners?",
+      "body": "Give each pickup a stable id and one owner state: player, world, boss, or expired. Define spawn clearance, magnetism, collection radius, simultaneous claims, latency reconciliation, and expiry so retries and duplicate collision callbacks cannot clone or erase value."
+    },
+    {
+      "title": "What does capture change without causing runaway loss?",
+      "body": "Declare the boss benefit before the race begins, cap its stacks or duration, and preserve a useful response when recovery is impossible. Test the final conservation equation, checkpoint restoration, phase transitions, death, disconnection, and collection on the same simulation tick."
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "The HUD decreases but no physical cause remains",
+      "body": "An unexplained deduction reads as a bug or hidden tax. Trace the marked hit into a visible burst, preserve token identities, and show whether the value is reclaimable, destroyed, or already owned by the boss."
+    },
+    {
+      "title": "Boss capture multiplies an already severe penalty",
+      "body": "Losing a scarce resource, missing its reclaim window, and granting uncapped healing or damage can create a one-hit downward spiral. Bound each layer, provide a protected floor, and tune the race against ordinary movement rather than a mandatory mobility upgrade."
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "Keep a conserved ledger",
+      "body": "Record requested loss, applied loss, world pickups, reclaimed units, captured units, expired units, and the boss benefit revision. A simple conservation assertion catches duplicate pickups, late callbacks, save-load errors, and host migration disagreements."
+    },
+    {
+      "title": "Design the spill as arena geometry",
+      "body": "Angles, distance, obstacles, hazards, magnet speed, and lifetime determine whether reclaim is a real choice. Place pickups so one ordinary route can recover something while collecting everything carries visible positional risk."
+    },
+    {
+      "title": "Instrument the ownership race",
+      "body": "Track avoid rate, requested and applied loss, time to first reclaim, reclaim share, boss capture share, expired value, benefit uptime, deaths after loss, protected-floor activation, and repeated same-token claims."
+    }
+  ],
+  "story": {
+    "title": "Kern tears loose three runes from Tavi's belt",
+    "body": "The runes land as separate stones instead of vanishing into a number. Tavi grabs the nearest one, while two answer Kern's pull and orbit the elemental as a brief shield, turning ownership into a readable physical event."
+  },
+  "adaptation": {
+    "title": "Make amount, ownership, and destination redundant",
+    "body": "Combine inventory slots, token shapes, trails, collection sounds, text, and controller feedback. Offer a smaller loss, protected minimum, longer lifetime, stronger player magnet, slower boss capture, automatic partial recovery, or a no-steal mode, and state those assists before combat."
+  },
+  "distinction": {
+    "title": "Ownership transfer, not ordinary spending or on-hit healing",
+    "body": "Spending begins with the player's chosen action, while a resource drain may simply delete value. Resource steal creates an externally caused ownership event and may place value back into contestable space. If the boss benefits, that capture is a second explicit rule rather than an assumed consequence of damage."
+  },
+  "lensNotes": [
+    {
+      "id": "progress-clarity",
+      "body": "The inventory, world tokens, boss-owned total, and final reconciliation expose where every unit went."
+    },
+    {
+      "id": "counterplay",
+      "body": "The player can avoid the marked contact, choose which pickup route is reachable, and interrupt or outrun capture where the encounter permits."
+    },
+    {
+      "id": "risk-reward",
+      "body": "Recovering more value requires staying near the impact while the boss and the rest of the arena continue to threaten space."
+    },
+    {
+      "id": "rule-exception",
+      "body": "Zero resource, protected floors, full inventories, simultaneous collectors, expiry, death, checkpoints, and shared resources need explicit outcomes."
+    },
+    {
+      "id": "telegraphing",
+      "body": "A resource-specific mark distinguishes a stealing contact from a visually similar hit that only deals health damage."
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "The Binding of Isaac: Afterbirth",
+      "boss": "Ultra Greed",
+      "screenshot": "https://i.ytimg.com/vi/XQlXp2yua64/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=XQlXp2yua64&t=105s",
+      "body": "Ultra Greed can make Isaac drop coins, then collect those same arena objects to heal. The shared pickup geometry turns one loss into a race: a coin remains legible as value while its eventual owner changes the encounter state.",
+      "video": "https://www.youtube.com/watch?v=XQlXp2yua64&t=105s",
+      "videoDurationSeconds": 246
+    },
+    {
+      "dimension": "2D",
+      "game": "Sonic Rush",
+      "boss": "Exception",
+      "screenshot": "https://i.ytimg.com/vi/MmwhGbaEiZE/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=MmwhGbaEiZE&t=905s",
+      "body": "Exception includes attacks that remove rings while the encounter also drains the shared ring timer. Because rings are both protection and time, the loss signal must distinguish a discrete boss hit from the steady global countdown.",
+      "video": "https://www.youtube.com/watch?v=MmwhGbaEiZE&t=905s",
+      "videoDurationSeconds": 1183
+    },
+    {
+      "dimension": "3D",
+      "game": "World of Warcraft: The Burning Crusade",
+      "boss": "Kaz'rogal",
+      "screenshot": "https://i.ytimg.com/vi/JbiA2yrU5rs/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=JbiA2yrU5rs&t=94s",
+      "body": "Mark of Kaz'rogal drains mana on repeated ticks and detonates a target that cannot pay. The consequence depends on the authoritative resource ledger, so tick order, insufficient-resource handling, and party readability matter as much as the amount removed.",
+      "video": "https://www.youtube.com/watch?v=JbiA2yrU5rs&t=94s",
+      "videoDurationSeconds": 382
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

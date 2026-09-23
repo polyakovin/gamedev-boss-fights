@@ -45,6 +45,8 @@ import {
   maximumHealthReductionResolve,
   abilityLockState,
   abilityLockResolve,
+  resourceStealState,
+  resourceStealResolve,
   counterStanceOutcome,
   counterStanceState,
   blueprintFrame,
@@ -72,8 +74,8 @@ import {
   renderBlueprintThumbnail,
 } from '../lib/blueprint-view.mjs';
 
-test('all 88 promoted lesson animations have distinct rule modes and complete moving frames', () => {
-  assert.equal(BLUEPRINT_MECHANIC_IDS.length, 88);
+test('all 89 promoted lesson animations have distinct rule modes and complete moving frames', () => {
+  assert.equal(BLUEPRINT_MECHANIC_IDS.length, 89);
   const modes = new Set();
   for (const id of BLUEPRINT_MECHANIC_IDS) {
     for (let time = 0; time <= BLUEPRINT_DURATION; time += 0.1) {
@@ -94,7 +96,7 @@ test('all 88 promoted lesson animations have distinct rule modes and complete mo
           assert.ok(Number.isFinite(value), `${id} has an invalid ${primitive.type}`);
     }
   }
-  assert.equal(modes.size, 88);
+  assert.equal(modes.size, 89);
 });
 
 test('every blueprint exposes signal, committed action, and recovery without player teleports', () => {
@@ -132,7 +134,8 @@ test('every blueprint exposes signal, committed action, and recovery without pla
       id !== 'status-buildup' &&
       id !== 'instant-kill' &&
       id !== 'maximum-health-reduction' &&
-      id !== 'ability-lock'
+      id !== 'ability-lock' &&
+      id !== 'resource-steal'
     )
       assert.equal(blueprintFrame(id, 3).dangerActive, true, id);
     assert.equal(blueprintFrame(id, 3).playerSafe, true, id);
@@ -220,6 +223,7 @@ test('every damaging promoted animation derives safety from its own active geome
       id !== 'instant-kill' &&
       id !== 'maximum-health-reduction' &&
       id !== 'ability-lock' &&
+      id !== 'resource-steal' &&
       id !== 'part-break' &&
       id !== 'counter-stance' &&
       id !== 'absorption-power-up' &&
@@ -3246,5 +3250,69 @@ test('ability lock rejects healing only while preserving movement and attack', (
   assert.match(
     renderBlueprintThumbnail(id, 'test-ability-lock'),
     /data-blueprint-preview="ability-lock"/,
+  );
+});
+
+test('resource steal conserves ownership through drop, reclaim, and boss capture', () => {
+  const id = 'resource-steal';
+  assert.deepEqual([0, 0.5, 1, 1.4, 2.1, 2.7, 3.2, 3.6, 4.1, 4.7, 5.5].map(resourceStealState), [
+    'ready',
+    'first-telegraph',
+    'first-avoided',
+    'repositioning',
+    'second-telegraph',
+    'resource-spilling',
+    'player-reclaiming',
+    'boss-capturing',
+    'benefit-applied',
+    'settled',
+    'reset',
+  ]);
+  assert.deepEqual(resourceStealResolve(), {
+    currentBefore: 6,
+    dropped: 3,
+    reclaimed: 1,
+    captured: 2,
+    world: 0,
+    player: 4,
+    conserved: true,
+    dropEventCount: 1,
+    benefitEventCount: 1,
+  });
+  assert.deepEqual(resourceStealResolve({ current: 2, drop: 9, reclaim: 9, bossCapture: 9 }), {
+    currentBefore: 2,
+    dropped: 2,
+    reclaimed: 2,
+    captured: 0,
+    world: 0,
+    player: 2,
+    conserved: true,
+    dropEventCount: 1,
+    benefitEventCount: 0,
+  });
+
+  const avoided = blueprintFrame(id, 1.1);
+  assert.equal(avoided.resourceStealFirstAvoided, true);
+  assert.equal(avoided.resourceStealPlayerResource, 6);
+  const hit = blueprintFrame(id, 2.64);
+  assert.equal(hit.dangerActive, true);
+  assert.equal(hit.playerSafe, false);
+  assert.equal(blueprintPointSafe(id, 2.64, { x: 455, y: 720 }), true);
+  assert.equal(hit.resourceStealDropped, 3);
+  assert.equal(hit.resourceStealDropEventCount, 1);
+  const reclaimed = blueprintFrame(id, 3.48);
+  assert.equal(reclaimed.resourceStealPlayerResource, 4);
+  assert.equal(reclaimed.resourceStealReclaimed, 1);
+  assert.equal(reclaimed.resourceStealWorldResource, 2);
+  const captured = blueprintFrame(id, 3.9);
+  assert.equal(captured.resourceStealCaptured, 2);
+  assert.equal(captured.resourceStealWorldResource, 0);
+  assert.equal(captured.resourceStealBenefitEventCount, 1);
+  assert.equal(captured.resourceStealConserved, true);
+  assert.deepEqual(captured.resourceStealTokenOwners, ['player', 'boss', 'boss']);
+  assert.deepEqual(blueprintFrame(id, 0).player, blueprintFrame(id, 6).player);
+  assert.match(
+    renderBlueprintThumbnail(id, 'test-resource-steal'),
+    /data-blueprint-preview="resource-steal"/,
   );
 });

@@ -405,9 +405,9 @@ test('volley releases three parallel bolts on one beat and clears its outside ro
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
 });
 
-test('catalog and builder reuse the 88 promoted rule-specific previews', async ({ page }) => {
+test('catalog and builder reuse the 89 promoted rule-specific previews', async ({ page }) => {
   await page.goto('en/');
-  await expect(page.locator('[data-blueprint-preview]')).toHaveCount(88);
+  await expect(page.locator('[data-blueprint-preview]')).toHaveCount(89);
   const catalogLayouts = await page.locator('[data-blueprint-preview]').evaluateAll((previews) =>
     previews.map((preview) => {
       const boss = preview.querySelector('[data-character-art-preview="kern"]');
@@ -431,7 +431,7 @@ test('catalog and builder reuse the 88 promoted rule-specific previews', async (
   expect(new Set(catalogLayouts.map(({ layout }) => layout)).size).toBeGreaterThanOrEqual(18);
 
   await page.goto('en/builder/');
-  await expect(page.locator('[data-blueprint-preview]')).toHaveCount(88);
+  await expect(page.locator('[data-blueprint-preview]')).toHaveCount(89);
   const builderLayouts = await page.locator('[data-blueprint-preview]').evaluateAll((previews) =>
     previews.map((preview) => {
       const boss = preview.querySelector('[data-character-art-preview="kern"]');
@@ -3529,6 +3529,47 @@ test('ability lock rejects one verb, keeps attack available, and restores healin
   await expect(widget).toHaveAttribute('data-blueprint-ability-lock-current-health', '75');
   await expect(widget).toHaveAttribute('data-blueprint-ability-lock-heal-success-count', '2');
   await expect(widget).toHaveAttribute('data-blueprint-ability-lock-status-id', 'none');
+  await page.setViewportSize({ width: 375, height: 812 });
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+});
+
+test('resource steal preserves the ledger through drop, reclaim, and boss capture', async ({
+  page,
+}) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.goto('en/mechanics/resource-steal/');
+  const widget = page.locator('[data-blueprint-demo]');
+  const timeline = widget.locator('[data-blueprint-timeline]');
+  const seek = (milliseconds) =>
+    timeline.evaluate((element, value) => {
+      element.value = String(value);
+      element.dispatchEvent(new Event('input', { bubbles: true }));
+    }, milliseconds);
+
+  await expect(page.locator('.lesson-title-line h1')).toHaveText('Resource steal or drop');
+  await expect(page.locator('.wip-badge, .draft-profile')).toHaveCount(0);
+  await expect(page.locator('.game-example')).toHaveCount(3);
+  await seek(1100);
+  await expect(widget).toHaveAttribute('data-blueprint-resource-steal-first-avoided', 'true');
+  await expect(widget).toHaveAttribute('data-blueprint-resource-steal-player', '6');
+  await seek(2640);
+  await expect(widget).toHaveAttribute('data-blueprint-resource-steal-dropped', '3');
+  await expect(widget).toHaveAttribute('data-blueprint-resource-steal-world', '3');
+  await expect(widget).toHaveAttribute('data-blueprint-resource-steal-drop-events', '1');
+  await seek(3480);
+  await expect(widget).toHaveAttribute('data-blueprint-resource-steal-player', '4');
+  await expect(widget).toHaveAttribute('data-blueprint-resource-steal-reclaimed', '1');
+  await expect(widget).toHaveAttribute('data-blueprint-resource-steal-world', '2');
+  await seek(3900);
+  await expect(widget).toHaveAttribute('data-blueprint-resource-steal-captured', '2');
+  await expect(widget).toHaveAttribute('data-blueprint-resource-steal-world', '0');
+  await expect(widget).toHaveAttribute('data-blueprint-resource-steal-total', '6');
+  await expect(widget).toHaveAttribute('data-blueprint-resource-steal-conserved', 'true');
+  await expect(widget).toHaveAttribute('data-blueprint-resource-steal-benefit-events', '1');
+  await expect(widget).toHaveAttribute(
+    'data-blueprint-resource-steal-token-owners',
+    'player,boss,boss',
+  );
   await page.setViewportSize({ width: 375, height: 812 });
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
 });
