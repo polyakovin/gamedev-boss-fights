@@ -27,7 +27,7 @@
     "locked": "Trap identity, armed state, boss target, lock time, path, collision, qualifying contact, self-hit damage, stagger, opening, consumption और reset encounter-owned हैं",
     "safe": "Trap eligibility, lock, commitment, escape, collision, damage owner और opening को अलग shape, motion, sound, captions और non-color state changes से दिखाएँ",
     "reducedMotion": "Reduced motion में autoplay बंद है। Arming, aim, lock, charge, clearance, contact, self-hit, punish, close और reset देखने के लिए 0.82, 1.05, 1.38, 1.55, 2.12, 2.45, 2.58, 3.25, 4.25 और 5.20 s पर scrub करें।",
-    "diagramDescription": "Tavi Kern और marked target के बीच unstable rune arm करता है। Fixed lane Kern को mark से जोड़ती है; lock के बाद Tavi पूरी तरह बाहर जाता और charge rune पर रुकता है। Explosion Kern को घेरता, ledger self-hit source दिखाता और sword follow-up के लिए अलग vulnerability ring रहती है।"
+    "diagramDescription": "तावी कर्न और निशाना बने पदचिह्नों के बीच नक्काशीदार पत्थर की बारूदी सुरंग सक्रिय करता है। भरी हुई दौड़पट्टी बॉस से सुरंग होते हुए पदचिह्नों तक जाती है। कर्न दिशा तय कर लेने पर तावी पूरी तरह बगल हटता है; बॉस खिलाड़ी का पीछा करने के बजाय सुरंग से टकराता है। सुरंग पत्थर के टुकड़ों में फटती है, स्वयं टकराने से कर्न की छाती का केंद्र चटकता है और फिर तावी अलग तलवार वार करता है।"
   },
   "steps": [
     {

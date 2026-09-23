@@ -2781,6 +2781,11 @@ test('baited self-hit requires an armed trap, a fixed boss path, and one owned r
   const charging = blueprintFrame(id, 1.8);
   assert.equal(charging.baitChargeActive, true);
   assert.equal(charging.dangerActive, true);
+  const corridor = charging.primitives.find(
+    (primitive) => primitive.type === 'path' && primitive.data === 'M 260 295 H 340 V 790 H 260 Z',
+  );
+  assert.ok(corridor, 'the filled charge path matches the committed lane width');
+  assert.equal(corridor.width, 0);
   assert.equal(blueprintPointSafe(id, 1.8, { x: 300, y: 760 }), false);
 
   const cleared = blueprintFrame(id, 2.2);

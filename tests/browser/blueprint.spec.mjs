@@ -3172,6 +3172,8 @@ test('baited self-hit locks the charge, consumes one rune, and separates the swo
     }, milliseconds);
 
   await expect(page.locator('.lesson-title-line h1')).toHaveText('Baited self-hit');
+  await expect(widget).toHaveAttribute('data-blueprint-full-height', 'true');
+  expect((await widget.boundingBox()).height).toBeGreaterThan(800);
   await expect(page.locator('.wip-badge, .draft-profile')).toHaveCount(0);
   await expect(page.locator('.game-example')).toHaveCount(3);
 

@@ -1114,10 +1114,10 @@ const SPECS = {
   },
   'baited-self-hit': {
     mode: 'baited-self-hit',
-    boss: [300, 350],
+    boss: [300, 240],
     player: [300, 760],
     target: [300, 760],
-    arena: [55, 310, 450, 570],
+    arena: [40, 145, 480, 715],
     trap: [300, 610],
     armPoint: [360, 650],
     safePoint: [430, 730],
@@ -5256,135 +5256,117 @@ function primitivesFor(spec, frame) {
     const trap = point(spec.trap);
     const target = point(spec.target);
     const startBoss = point(spec.boss);
-    const safe = point(spec.safePoint);
-    const arm = point(spec.armPoint);
-    const armedOpacity = frame.baitTrapArmed ? 0.96 : frame.baitTrapConsumed ? 0.12 : 0.34;
-    const targetOpacity = frame.baitTargetAcquired ? 0.86 : 0.18;
-    const laneOpacity = frame.baitTargetAcquired ? (frame.baitTargetLocked ? 0.88 : 0.52) : 0.14;
-    const contactPulse = strikePulse(frame.time, spec.impactAt, 0.34);
     const blastPulse = strikePulse(frame.time, spec.selfHitAt, 0.58);
     const punishPulse = strikePulse(frame.time, spec.punishAt, 0.36);
-    const debrisOpacity = frame.baitSelfHitResolved
-      ? Math.max(0, 0.9 - (frame.time - spec.selfHitAt) / 1.2)
-      : 0;
     const bossHealth = frame.baitPunished ? 108 : frame.baitSelfHitResolved ? 138 : 172;
+    const armed = frame.baitTrapArmed && !frame.baitTrapConsumed;
+    const targetOpacity = frame.baitTargetAcquired && !frame.baitSelfHitResolved ? 0.86 : 0;
+    const corridorOpacity = frame.baitChargeActive
+      ? 0.72
+      : frame.baitTargetAcquired && !frame.baitSelfHitResolved
+        ? 0.34
+        : 0;
     return [
-      rect(...spec.arena, 0.52, 'muted', 0.025),
-      line(
-        startBoss.x,
-        startBoss.y + 55,
-        target.x,
-        target.y,
-        laneOpacity,
-        frame.baitTargetLocked ? 'signal' : 'accent',
-        frame.baitTargetLocked ? 8 : 5,
-        frame.baitTargetLocked ? '' : '14 11',
-      ),
-      circle(target.x, target.y, 34, targetOpacity, 'accent', 5, 0.025, '8 7'),
+      path('M 120 80 H 440 V 102 H 120 Z', 0.66, 'muted', 0, 0.62),
       path(
-        `M ${target.x} ${target.y - 18} L ${target.x + 18} ${target.y} L ${target.x} ${target.y + 18} L ${target.x - 18} ${target.y} Z`,
+        `M 120 80 H ${120 + (320 * bossHealth) / 172} V 102 H 120 Z`,
+        0.96,
+        frame.baitSelfHitResolved ? 'signal' : 'accent',
+        0,
+        0.88,
+      ),
+      path(
+        `M ${startBoss.x - spec.laneHalfWidth} ${startBoss.y + 55} H ${startBoss.x + spec.laneHalfWidth} V ${spec.laneEnd[1]} H ${startBoss.x - spec.laneHalfWidth} Z`,
+        corridorOpacity,
+        frame.baitTargetLocked ? 'signal' : 'accent',
+        0,
+        frame.baitChargeActive ? 0.52 : 0.32,
+      ),
+      path(
+        `M ${target.x - 27} ${target.y - 25} L ${target.x - 10} ${target.y - 30} L ${target.x - 7} ${target.y + 3} L ${target.x - 25} ${target.y + 9} Z`,
         targetOpacity,
-        frame.baitTargetLocked ? 'signal' : 'accent',
-        5,
-        frame.baitTargetLocked ? 0.16 : 0.03,
-      ),
-      circle(
-        trap.x,
-        trap.y,
-        spec.trapRadius + pulse(frame.time * 2.2) * 4,
-        armedOpacity,
-        frame.baitTrapArmed ? 'safe' : 'muted',
-        6,
-        frame.baitTrapArmed ? 0.12 : 0.025,
-        '8 7',
+        'signal',
+        0,
+        0.68,
       ),
       path(
-        `M ${trap.x} ${trap.y - 19} L ${trap.x + 17} ${trap.y} L ${trap.x} ${trap.y + 19} L ${trap.x - 17} ${trap.y} Z M ${trap.x - 12} ${trap.y} L ${trap.x + 12} ${trap.y} M ${trap.x} ${trap.y - 12} L ${trap.x} ${trap.y + 12}`,
-        armedOpacity,
-        frame.baitTrapArmed ? 'safe' : 'accent',
-        5,
+        `M ${target.x + 10} ${target.y - 30} L ${target.x + 27} ${target.y - 25} L ${target.x + 25} ${target.y + 9} L ${target.x + 7} ${target.y + 3} Z`,
+        targetOpacity,
+        'signal',
+        0,
+        0.68,
       ),
       circle(
         trap.x,
         trap.y,
-        42 + pulse(frame.time * 3) * 5,
-        frame.baitTrapArmed ? 0.68 : 0.12,
+        spec.trapRadius,
+        armed ? 0.98 : frame.baitTrapConsumed ? 0 : 0.66,
+        'muted',
+        0,
+        0.88,
+      ),
+      path(
+        `M ${trap.x - 10} ${trap.y - 15} L ${trap.x} ${trap.y - 4} L ${trap.x + 10} ${trap.y - 15} M ${trap.x} ${trap.y - 4} V ${trap.y + 16}`,
+        armed ? 0.98 : 0,
         'safe',
         4,
+      ),
+      path(
+        `M ${trap.x - 36} ${trap.y - 9} L ${trap.x - 23} ${trap.y - 26} L ${trap.x - 19} ${trap.y + 1} Z`,
+        armed ? 0.96 : 0,
+        'accent',
         0,
-        '5 8',
-      ),
-      line(
-        startBoss.x,
-        startBoss.y + 54,
-        target.x,
-        target.y,
-        frame.baitChargeActive ? 0.36 : 0,
-        'signal',
-        spec.laneHalfWidth * 2,
+        0.84,
       ),
       path(
-        `M ${target.x} ${target.y} Q ${safe.x - 55} ${safe.y - 40} ${safe.x} ${safe.y}`,
-        frame.baitTargetLocked && !frame.baitSelfHitResolved ? 0.72 : 0.16,
-        'safe',
-        6,
+        `M ${trap.x + 36} ${trap.y - 9} L ${trap.x + 23} ${trap.y - 26} L ${trap.x + 19} ${trap.y + 1} Z`,
+        armed ? 0.96 : 0,
+        'accent',
         0,
-        '10 9',
+        0.84,
       ),
-      circle(
-        trap.x,
-        trap.y,
-        spec.blastRadius + blastPulse * 34,
-        frame.baitSelfHitResolved ? Math.max(0.16, blastPulse) : 0,
-        'signal',
-        10,
-        0.08,
-      ),
+      circle(trap.x, trap.y, spec.blastRadius, blastPulse * 0.9, 'signal', 0, 0.62),
       path(
-        `M ${trap.x - 44} ${trap.y - 44} L ${trap.x + 44} ${trap.y + 44} M ${trap.x + 44} ${trap.y - 44} L ${trap.x - 44} ${trap.y + 44}`,
-        Math.max(contactPulse, blastPulse),
-        'signal',
-        9,
-      ),
-      circle(
-        frame.boss.x,
-        frame.boss.y,
-        82 + pulse(frame.time * 1.8) * 9,
-        frame.baitVulnerable ? 0.88 : 0,
-        'safe',
-        7,
-        0.025,
-        '10 8',
-      ),
-      rect(377, 390, 104, 82, frame.baitTargetAcquired ? 0.72 : 0.24, 'muted', 0.045),
-      circle(403, 416, 11, frame.baitSelfHitResolved ? 0.96 : 0.28, 'signal', 5, 0.22),
-      path(
-        'M 422 416 L 456 416 M 447 407 L 456 416 L 447 425',
-        frame.baitSelfHitResolved ? 0.92 : 0.24,
-        'signal',
-        6,
-      ),
-      rect(214, 330, 172, 14, 0.54, 'muted', 0.03),
-      rect(214, 330, bossHealth, 14, 0.92, frame.baitSelfHitResolved ? 'signal' : 'accent', 0.16),
-      path(
-        `M ${trap.x - 22} ${trap.y - 22} L ${trap.x + 22} ${trap.y + 22} M ${trap.x + 22} ${trap.y - 22} L ${trap.x - 22} ${trap.y + 22}`,
-        frame.baitTrapConsumed ? 0.86 : 0,
+        `M ${trap.x - 42} ${trap.y - 30} L ${trap.x - 9} ${trap.y - 11} L ${trap.x - 30} ${trap.y + 18} Z`,
+        frame.baitTrapConsumed ? 0.88 : 0,
         'muted',
-        7,
-      ),
-      line(trap.x, trap.y, trap.x - 64, trap.y - 42, debrisOpacity, 'signal', 6),
-      line(trap.x, trap.y, trap.x + 68, trap.y - 38, debrisOpacity, 'signal', 6),
-      line(trap.x, trap.y, trap.x - 72, trap.y + 35, debrisOpacity, 'accent', 5),
-      line(trap.x, trap.y, trap.x + 76, trap.y + 40, debrisOpacity, 'accent', 5),
-      path(
-        `M ${arm.x - 18} ${arm.y + 24} Q ${trap.x + 18} ${trap.y + 18} ${trap.x} ${trap.y}`,
-        frame.time >= spec.approachAt && frame.time < spec.armedAt ? 0.76 : 0.12,
-        'safe',
-        5,
         0,
-        '7 7',
+        0.86,
       ),
-      circle(frame.boss.x, frame.boss.y, 62 + punishPulse * 34, punishPulse, 'accent', 8, 0.04),
+      path(
+        `M ${trap.x + 42} ${trap.y - 30} L ${trap.x + 9} ${trap.y - 11} L ${trap.x + 30} ${trap.y + 18} Z`,
+        frame.baitTrapConsumed ? 0.88 : 0,
+        'muted',
+        0,
+        0.86,
+      ),
+      path(
+        `M ${trap.x - 12} ${trap.y + 7} L ${trap.x + 15} ${trap.y + 19} L ${trap.x - 4} ${trap.y + 35} Z`,
+        frame.baitTrapConsumed ? 0.86 : 0,
+        'accent',
+        0,
+        0.84,
+      ),
+      path(
+        `M ${frame.boss.x - 18} ${frame.boss.y + 5} L ${frame.boss.x} ${frame.boss.y - 3} L ${frame.boss.x + 18} ${frame.boss.y + 5} L ${frame.boss.x + 13} ${frame.boss.y + 27} L ${frame.boss.x} ${frame.boss.y + 35} L ${frame.boss.x - 13} ${frame.boss.y + 27} Z`,
+        frame.baitVulnerable ? 0.96 : 0.18,
+        'signal',
+        0,
+        0.86,
+      ),
+      path(
+        `M ${frame.boss.x - 7} ${frame.boss.y + 4} L ${frame.boss.x + 4} ${frame.boss.y + 15} L ${frame.boss.x - 2} ${frame.boss.y + 25} L ${frame.boss.x + 10} ${frame.boss.y + 33}`,
+        frame.baitVulnerable ? 0.98 : 0,
+        'muted',
+        4,
+      ),
+      path(
+        `M ${frame.player.x - 12} ${frame.player.y - 49} L ${frame.boss.x - 8} ${frame.boss.y + 27} L ${frame.boss.x + 15} ${frame.boss.y + 14} L ${frame.player.x + 5} ${frame.player.y - 41} Z`,
+        punishPulse * 0.82,
+        'accent',
+        0,
+        0.76,
+      ),
     ];
   }
   if (mode === 'posture-stagger-gauge') {
@@ -11312,7 +11294,8 @@ export function blueprintFrame(id, time) {
       spec.mode === 'status-buildup' ||
       spec.mode === 'persistent-progress' ||
       spec.mode === 'pacifist-resolution' ||
-      spec.mode === 'posture-stagger-gauge'
+      spec.mode === 'posture-stagger-gauge' ||
+      spec.mode === 'baited-self-hit'
         ? 55
         : spec.mode === 'directional-shield' ||
             spec.mode === 'damage-type-resistance' ||

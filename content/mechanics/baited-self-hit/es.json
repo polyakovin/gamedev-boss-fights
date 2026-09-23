@@ -27,7 +27,7 @@
     "locked": "Identidad y armado de la trampa, objetivo, bloqueo, ruta, volumen, contacto, autodaño, aturdimiento, apertura, consumo y reinicio pertenecen al encuentro",
     "safe": "Muestra elegibilidad, bloqueo, compromiso, escape, colisión, autor del daño y apertura con formas, movimiento, sonido, subtítulos y cambios no basados solo en color",
     "reducedMotion": "Con movimiento reducido no hay reproducción automática. Recorre 0,82, 1,05, 1,38, 1,55, 2,12, 2,45, 2,58, 3,25, 4,25 y 5,20 s para inspeccionar armado, puntería, bloqueo, carga, salida, contacto, autogol, castigo, cierre y reinicio.",
-    "diagramDescription": "Tavi arma una runa entre Kern y el punto objetivo. Un carril fijo conecta al jefe con la marca; Tavi sale por completo tras el bloqueo y la carga termina en la runa. La explosión rodea a Kern, un registro identifica el autogol y un anillo vulnerable separado permite el golpe de espada."
+    "diagramDescription": "Tavi activa una mina de piedra tallada entre Kern y las huellas marcadas como objetivo. Una franja sólida de carga pasa por la mina hasta las huellas. Cuando Kern se compromete con esa dirección, Tavi se aparta por completo; el jefe golpea la mina en vez de seguirlo. La mina estalla en fragmentos de piedra, se agrieta el núcleo del pecho de Kern por el impacto propio y después Tavi aprovecha la apertura con un golpe de espada distinto."
   },
   "steps": [
     {

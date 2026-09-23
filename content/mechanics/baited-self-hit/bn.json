@@ -27,7 +27,7 @@
     "locked": "Trap identity, armed state, boss target, lock time, path, collision, qualifying contact, self-hit damage, stagger, opening, consumption ও reset encounter-owned",
     "safe": "Eligibility, lock, commitment, escape, collision, damage owner ও opening আলাদা shape, motion, sound, caption ও non-color state change দিয়ে দেখান",
     "reducedMotion": "Reduced motion-এ autoplay বন্ধ। Arming, aim, lock, charge, clearance, contact, self-hit, punish, close ও reset দেখতে ০.৮২, ১.০৫, ১.৩৮, ১.৫৫, ২.১২, ২.৪৫, ২.৫৮, ৩.২৫, ৪.২৫ ও ৫.২০ সেকেন্ডে scrub করুন।",
-    "diagramDescription": "Tavi Kern ও marked point-এর মাঝে unstable rune arm করে। Fixed lane Kern-কে mark-এর সঙ্গে যুক্ত করে; lock-এর পর Tavi পুরোপুরি বের হয় এবং charge rune-এ থামে। Explosion Kern-কে ঘিরে, ledger self-hit source দেখায় এবং sword follow-up-এর জন্য আলাদা vulnerability ring থাকে।"
+    "diagramDescription": "তাভি কার্ন ও চিহ্নিত পায়ের ছাপের মাঝখানে খোদাই করা পাথরের মাইন সক্রিয় করে। ভরাট ধাবনপথ বস থেকে মাইন পেরিয়ে ছাপ পর্যন্ত যায়। কার্ন দিক স্থির করার পর তাভি পুরো পাশে সরে যায়; বস খেলোয়াড়কে অনুসরণ না করে মাইনে ধাক্কা খায়। মাইন পাথরের টুকরোয় ফেটে যায়, নিজের আঘাতে কার্নের বুকের কেন্দ্র ফাটে, পরে তাভি আলাদা তলোয়ারের আঘাত করে।"
   },
   "steps": [
     {

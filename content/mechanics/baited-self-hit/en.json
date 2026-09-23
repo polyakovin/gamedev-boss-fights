@@ -27,7 +27,7 @@
     "locked": "Trap identity, armed state, boss target, lock time, path, collision volume, qualifying contact, self-hit damage, stagger, opening, consumption, and reset are encounter-owned",
     "safe": "Show trap eligibility, target lock, commitment, escape timing, collision, damage owner, and opening with distinct shape, motion, sound, captions, and non-color state changes",
     "reducedMotion": "Autoplay is disabled by reduced motion. Scrub across 0.82, 1.05, 1.38, 1.55, 2.12, 2.45, 2.58, 3.25, 4.25, and 5.20 seconds to inspect arming, aim, lock, charge, clearance, collision, self-hit, punish, close, and reset.",
-    "diagramDescription": "Tavi arms one unstable rune between Kern and the marked target point. A fixed lane connects Kern to the mark, Tavi steps completely outside it after lock, and Kern's charge ends on the rune. The consumed rune bursts around Kern, a self-hit ledger records the damage source, and a separate vulnerability ring remains for Tavi's sword follow-up."
+    "diagramDescription": "Tavi arms a carved stone mine between Kern and the marked target footprints. A solid charge lane runs from the boss through the mine to the footprints. Once Kern commits to the lane, Tavi steps fully aside; the boss strikes the mine rather than following the player. The mine bursts into stone fragments, Kern’s chest core cracks from the self-hit, and Tavi later uses the opening for a separate sword strike."
   },
   "steps": [
     {
