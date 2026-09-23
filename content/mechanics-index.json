@@ -1481,7 +1481,7 @@
         "en": {
           "title": "Maximum-health reduction",
           "category": "States, resources, and scaling",
-          "summary": "Draft outline for the maximum-health reduction mechanic. Rules, tuning guidance, and examples are still in progress."
+          "summary": "A marked hit lowers the health ceiling separately from current health, limiting later recovery until an explicit restoration rule succeeds."
         },
         "ru": {
           "title": "Снижение максимального здоровья",

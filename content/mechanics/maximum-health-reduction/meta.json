@@ -1,0 +1,37 @@
+{
+  "id": "maximum-health-reduction",
+  "number": 93,
+  "published": true,
+  "sourceLocale": "en",
+  "contentVersion": 1,
+  "animation": "maximum-health-reduction",
+  "lenses": ["progress-clarity", "risk-reward", "counterplay", "rule-exception", "telegraphing"],
+  "related": [
+    "status-buildup",
+    "damage-type-resistance",
+    "persistent-progress",
+    "situational-immunity"
+  ],
+  "sources": [
+    {
+      "title": "Boss Up: Boss Battle Design",
+      "url": "https://media.gdcvault.com/gdc2018/presentations/Keren_Itay_BossUp.pdf"
+    },
+    {
+      "title": "Salt and Sanctuary stat explanations — Wounding",
+      "url": "https://sites.google.com/view/saltandsanctuarywiki/character-info/stat-explanations"
+    },
+    {
+      "title": "The Tree of Men encounter guide — Neoseeker",
+      "url": "https://www.neoseeker.com/salt-and-sanctuary/walkthrough/Red_Hall_of_Cages_%28Part_2%29"
+    },
+    {
+      "title": "Destined Death status effect — Elden Ring Wiki",
+      "url": "https://eldenring.wiki.gg/wiki/Destined_Death_%28Status_Effect%29"
+    },
+    {
+      "title": "Gloom and destroyed heart containers — Zelda Dungeon",
+      "url": "https://zeldadungeon.net/wiki/Gloom"
+    }
+  ]
+}

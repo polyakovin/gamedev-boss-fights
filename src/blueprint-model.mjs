@@ -1269,6 +1269,33 @@ const SPECS = {
     restore: [4.18, 4.72],
     resetAt: 5.2,
   },
+  'maximum-health-reduction': {
+    mode: 'maximum-health-reduction',
+    boss: [300, 375],
+    player: [300, 635],
+    target: [455, 720],
+    arena: [55, 310, 450, 570],
+    attackEnd: [300, 830],
+    safePoint: [455, 720],
+    laneHalfWidth: 68,
+    firstTelegraph: [0.3, 0.96],
+    firstEscape: [0.5, 0.88],
+    firstResolveAt: 1,
+    return: [1.16, 1.58],
+    secondTelegraph: [1.82, 2.54],
+    hitAt: 2.68,
+    hitWindow: [2.58, 2.82],
+    capReduction: [2.68, 3.08],
+    healAttempt: [3.28, 3.72],
+    cleanse: [4.08, 4.48],
+    fullHeal: [4.48, 4.96],
+    resetAt: 5.4,
+    maxHealthBefore: 100,
+    maxHealthAfter: 65,
+    currentHealthBefore: 80,
+    damageApplied: 20,
+    currentHealthAfter: 60,
+  },
   'wide-swing': { mode: 'arc', boss: [280, 310], player: [410, 470], target: [470, 650] },
   lunge: { mode: 'lunge', boss: [170, 290], player: [390, 590], target: [470, 660] },
   grab: { mode: 'grab', boss: [280, 300], player: [390, 485], target: [470, 610] },
@@ -2247,6 +2274,92 @@ export function instantKillResolve({
   if (!conditionMet) return Object.freeze({ outcome: 'avoided', resultCount: 0, damage: 0 });
   return Object.freeze({ outcome: 'executed', resultCount: 1, damage: 0 });
 }
+
+export function maximumHealthReductionState(time) {
+  const spec = SPECS['maximum-health-reduction'];
+  const t = localTime(time);
+  if (t < spec.firstTelegraph[0]) return 'ready';
+  if (t < spec.firstResolveAt) return 'first-telegraph';
+  if (t < spec.return[0]) return 'first-avoided';
+  if (t < spec.secondTelegraph[0]) return 'repositioning';
+  if (t < spec.hitAt) return 'second-telegraph';
+  if (t < spec.healAttempt[0]) return 'cap-reduced';
+  if (t < spec.healAttempt[1]) return 'healing-to-cap';
+  if (t < spec.cleanse[0]) return 'healing-blocked';
+  if (t < spec.cleanse[1]) return 'cleansing';
+  if (t < spec.fullHeal[1]) return 'capacity-restored';
+  if (t < spec.resetAt) return 'recovered';
+  return 'reset';
+}
+
+export function maximumHealthReductionResolve({
+  currentHealth = 80,
+  maximumHealth = 100,
+  damage = 20,
+  capLoss = 35,
+} = {}) {
+  const safeMaximum = Math.max(1, Number(maximumHealth) || 100);
+  const safeCurrent = Math.min(safeMaximum, Math.max(0, Number(currentHealth) || 0));
+  const maximumAfter = Math.max(1, safeMaximum - Math.max(0, Number(capLoss) || 0));
+  const currentAfter = Math.min(
+    maximumAfter,
+    Math.max(0, safeCurrent - Math.max(0, Number(damage) || 0)),
+  );
+  return Object.freeze({
+    currentBefore: safeCurrent,
+    maximumBefore: safeMaximum,
+    damage: Math.max(0, Number(damage) || 0),
+    capLoss: safeMaximum - maximumAfter,
+    currentAfter,
+    maximumAfter,
+  });
+}
+
+const maximumHealthValuesAt = (spec, time) => {
+  if (time < spec.hitAt)
+    return { current: spec.currentHealthBefore, maximum: spec.maxHealthBefore };
+  if (time < spec.capReduction[1]) {
+    const progress = smooth(
+      (time - spec.capReduction[0]) / (spec.capReduction[1] - spec.capReduction[0]),
+    );
+    return {
+      current: mix(spec.currentHealthBefore, spec.currentHealthAfter, progress),
+      maximum: mix(spec.maxHealthBefore, spec.maxHealthAfter, progress),
+    };
+  }
+  if (time < spec.healAttempt[0])
+    return { current: spec.currentHealthAfter, maximum: spec.maxHealthAfter };
+  if (time < spec.healAttempt[1]) {
+    const progress = smooth(
+      (time - spec.healAttempt[0]) / (spec.healAttempt[1] - spec.healAttempt[0]),
+    );
+    return {
+      current: mix(spec.currentHealthAfter, spec.maxHealthAfter, progress),
+      maximum: spec.maxHealthAfter,
+    };
+  }
+  if (time < spec.cleanse[0]) return { current: spec.maxHealthAfter, maximum: spec.maxHealthAfter };
+  if (time < spec.cleanse[1]) {
+    const progress = smooth((time - spec.cleanse[0]) / (spec.cleanse[1] - spec.cleanse[0]));
+    return {
+      current: spec.maxHealthAfter,
+      maximum: mix(spec.maxHealthAfter, spec.maxHealthBefore, progress),
+    };
+  }
+  if (time < spec.fullHeal[1]) {
+    const progress = smooth((time - spec.fullHeal[0]) / (spec.fullHeal[1] - spec.fullHeal[0]));
+    return {
+      current: mix(spec.maxHealthAfter, spec.maxHealthBefore, progress),
+      maximum: spec.maxHealthBefore,
+    };
+  }
+  if (time < spec.resetAt) return { current: spec.maxHealthBefore, maximum: spec.maxHealthBefore };
+  const reset = smooth((time - spec.resetAt) / (BLUEPRINT_DURATION - spec.resetAt));
+  return {
+    current: mix(spec.maxHealthBefore, spec.currentHealthBefore, reset),
+    maximum: spec.maxHealthBefore,
+  };
+};
 
 const projectileRallyLegAt = (spec, time) => {
   const index = spec.legs.findIndex(({ start, end }) => time >= start && time < end);
@@ -5556,6 +5669,117 @@ function primitivesFor(spec, frame) {
       ),
     ];
   }
+  if (mode === 'maximum-health-reduction') {
+    const firstTelegraph = frame.time >= spec.firstTelegraph[0] && frame.time < spec.firstResolveAt;
+    const secondTelegraph = frame.time >= spec.secondTelegraph[0] && frame.time < spec.hitAt;
+    const telegraph = firstTelegraph || secondTelegraph;
+    const hitPulse = strikePulse(frame.time, spec.hitAt, 0.48);
+    const healPulse = pulse(
+      smooth((frame.time - spec.healAttempt[0]) / (spec.healAttempt[1] - spec.healAttempt[0])),
+    );
+    const cleansePulse = pulse(
+      smooth((frame.time - spec.cleanse[0]) / (spec.cleanse[1] - spec.cleanse[0])),
+    );
+    const currentWidth = 236 * (frame.maximumHealthCurrent / spec.maxHealthBefore);
+    const maximumWidth = 236 * (frame.maximumHealthMaximum / spec.maxHealthBefore);
+    const capX = 182 + maximumWidth;
+    const lostWidth = Math.max(0, 236 - maximumWidth);
+    const laneOpacity = telegraph ? 0.72 : hitPulse * 0.94;
+    return [
+      rect(...spec.arena, 0.52, 'muted', 0.025),
+      rect(178, 318, 244, 24, 0.74, 'muted', 0.035),
+      rect(182, 322, currentWidth, 16, 0.96, 'safe', 0.2),
+      rect(capX, 322, lostWidth, 16, frame.maximumHealthReduced ? 0.58 : 0, 'signal', 0.16),
+      line(capX, 314, capX, 346, frame.maximumHealthReduced ? 0.98 : 0.22, 'signal', 6),
+      line(182, 350, 418, 350, 0.5, 'muted', 3, '8 8'),
+      line(
+        spec.boss[0] - spec.laneHalfWidth,
+        spec.boss[1] + 48,
+        spec.attackEnd[0] - spec.laneHalfWidth,
+        spec.attackEnd[1],
+        laneOpacity,
+        'signal',
+        6,
+        telegraph ? '13 10' : '',
+      ),
+      line(
+        spec.boss[0] + spec.laneHalfWidth,
+        spec.boss[1] + 48,
+        spec.attackEnd[0] + spec.laneHalfWidth,
+        spec.attackEnd[1],
+        laneOpacity,
+        'signal',
+        6,
+        telegraph ? '13 10' : '',
+      ),
+      ...Array.from({ length: 4 }, (_, index) => {
+        const progress = (index + 1) / 5;
+        const y = mix(spec.boss[1] + 76, frame.player.y - 40, progress);
+        const width = mix(16, spec.laneHalfWidth - 8, progress);
+        return path(
+          `M ${spec.attackEnd[0] - width} ${y - 10} L ${spec.attackEnd[0]} ${y + 7} L ${spec.attackEnd[0] + width} ${y - 10}`,
+          laneOpacity,
+          'signal',
+          5,
+        );
+      }),
+      circle(frame.player.x, frame.player.y - 34, 28 + hitPulse * 78, hitPulse, 'signal', 11, 0.06),
+      circle(
+        frame.player.x,
+        frame.player.y - 34,
+        47 + pulse(frame.time * 2.2) * 6,
+        frame.maximumHealthReduced ? 0.64 : 0,
+        'signal',
+        7,
+        0.04,
+        '9 8',
+      ),
+      circle(
+        spec.safePoint[0],
+        spec.safePoint[1] - 34,
+        34,
+        frame.maximumHealthFirstAvoided ? 0.86 : 0,
+        'safe',
+        6,
+        0.04,
+        '8 7',
+      ),
+      path(
+        `M ${spec.safePoint[0] - 14} ${spec.safePoint[1] - 35} L ${spec.safePoint[0] - 3} ${spec.safePoint[1] - 24} L ${spec.safePoint[0] + 18} ${spec.safePoint[1] - 49}`,
+        frame.maximumHealthFirstAvoided ? 0.98 : 0,
+        'safe',
+        6,
+      ),
+      circle(frame.player.x, frame.player.y - 34, 36 + healPulse * 52, healPulse, 'safe', 7, 0.04),
+      path(
+        `M ${capX - 12} 304 L ${capX} 292 L ${capX + 12} 304 M ${capX} 292 L ${capX} 318`,
+        frame.maximumHealthHealingBlocked ? 0.98 : 0,
+        'signal',
+        5,
+      ),
+      circle(
+        frame.player.x,
+        frame.player.y - 34,
+        44 + cleansePulse * 82,
+        cleansePulse,
+        'safe',
+        10,
+        0.06,
+      ),
+      ...Array.from({ length: 3 }, (_, index) =>
+        circle(
+          frame.player.x,
+          frame.player.y - 34,
+          62 + index * 24,
+          cleansePulse * (0.92 - index * 0.2),
+          'safe',
+          5,
+          0.02,
+          '7 9',
+        ),
+      ),
+    ];
+  }
   if (mode === 'encounter-specific-tool') {
     const pedestal = point(spec.pedestal);
     const spearBase = { x: frame.player.x - 8, y: frame.player.y - 22 };
@@ -7051,6 +7275,12 @@ function pointClearsThreat(spec, frame, value, radius = BLUEPRINT_PLAYER_RADIUS)
       Math.hypot(value.x - spec.executionCenter[0], value.y - spec.executionCenter[1]) >
         spec.executionRadius + radius
     );
+  if (mode === 'maximum-health-reduction')
+    return (
+      !frame.dangerActive ||
+      distanceToSegment(value, point(spec.boss), point(spec.attackEnd)) >
+        spec.laneHalfWidth + radius
+    );
   if (mode === 'projectile-rally')
     return (
       !frame.dangerActive ||
@@ -7434,6 +7664,7 @@ export function blueprintFrame(id, time) {
   else if (spec.mode === 'persistent-progress') responseProgress = 0;
   else if (spec.mode === 'status-buildup') responseProgress = 0;
   else if (spec.mode === 'instant-kill') responseProgress = 0;
+  else if (spec.mode === 'maximum-health-reduction') responseProgress = 0;
   else if (spec.mode === 'knockback')
     responseProgress = phase === 0 ? 0 : phase === 1 ? smooth(action) : 1;
   else if (spec.mode === 'target-lock')
@@ -8304,6 +8535,23 @@ export function blueprintFrame(id, time) {
       };
     } else player = startPlayer;
   }
+  if (spec.mode === 'maximum-health-reduction') {
+    const safe = point(spec.safePoint);
+    if (t < spec.firstEscape[0]) player = startPlayer;
+    else if (t < spec.firstEscape[1]) {
+      const escape = smooth(
+        (t - spec.firstEscape[0]) / (spec.firstEscape[1] - spec.firstEscape[0]),
+      );
+      player = { x: mix(startPlayer.x, safe.x, escape), y: mix(startPlayer.y, safe.y, escape) };
+    } else if (t < spec.return[0]) player = safe;
+    else if (t < spec.return[1]) {
+      const returning = smooth((t - spec.return[0]) / (spec.return[1] - spec.return[0]));
+      player = {
+        x: mix(safe.x, startPlayer.x, returning),
+        y: mix(safe.y, startPlayer.y, returning),
+      };
+    } else player = startPlayer;
+  }
   if (spec.mode === 'rotating' && phase === 0) {
     const initialPosition = polar(boss, 255, Math.PI / 3);
     player = {
@@ -8722,6 +8970,11 @@ export function blueprintFrame(id, time) {
       pulse(smooth((t - spec.firstEscape[0]) / (spec.firstEscape[1] - spec.firstEscape[0]))),
       pulse(smooth((t - spec.return[0]) / (spec.return[1] - spec.return[0]))),
     );
+  if (spec.mode === 'maximum-health-reduction')
+    stride = Math.max(
+      pulse(smooth((t - spec.firstEscape[0]) / (spec.firstEscape[1] - spec.firstEscape[0]))),
+      pulse(smooth((t - spec.return[0]) / (spec.return[1] - spec.return[0]))),
+    );
   const bossVisible =
     spec.mode === 'secondary-cues-invisibility'
       ? t < spec.vanishAt
@@ -8987,7 +9240,8 @@ export function blueprintFrame(id, time) {
             spec.mode === 'pacifist-resolution' ||
             spec.mode === 'persistent-progress' ||
             spec.mode === 'status-buildup' ||
-            spec.mode === 'instant-kill'
+            spec.mode === 'instant-kill' ||
+            spec.mode === 'maximum-health-reduction'
           ? (Math.atan2(boss.y - player.y, boss.x - player.x) * 180) / Math.PI
           : spec.mode === 'active-phase'
             ? (Math.atan2(boss.y - player.y, boss.x - player.x) * 180) / Math.PI
@@ -10003,6 +10257,40 @@ export function blueprintFrame(id, time) {
       strikePulse(t, spec.executeAt, 0.42),
     );
   }
+  if (spec.mode === 'maximum-health-reduction') {
+    const values = maximumHealthValuesAt(spec, t);
+    frame.maximumHealthState = maximumHealthReductionState(t);
+    frame.maximumHealthFirstAvoided = t >= spec.firstResolveAt && t < spec.secondTelegraph[0];
+    frame.maximumHealthCurrent = values.current;
+    frame.maximumHealthMaximum = values.maximum;
+    frame.maximumHealthBefore = spec.maxHealthBefore;
+    frame.maximumHealthAfter = spec.maxHealthAfter;
+    frame.maximumHealthLoss = spec.maxHealthBefore - values.maximum;
+    frame.maximumHealthReduced = values.maximum < spec.maxHealthBefore - 0.01;
+    frame.maximumHealthHit = t >= spec.hitAt && t < spec.resetAt;
+    frame.maximumHealthDamageApplied = frame.maximumHealthHit ? spec.damageApplied : 0;
+    frame.maximumHealthCapEventCount = frame.maximumHealthHit ? 1 : 0;
+    frame.maximumHealthHealRequested = t >= spec.healAttempt[0] && t < spec.cleanse[0] ? 40 : 0;
+    frame.maximumHealthHealApplied =
+      t >= spec.healAttempt[0] && t < spec.cleanse[0]
+        ? Math.max(0, values.current - spec.currentHealthAfter)
+        : 0;
+    frame.maximumHealthHealBlocked = Math.max(
+      0,
+      frame.maximumHealthHealRequested - frame.maximumHealthHealApplied,
+    );
+    frame.maximumHealthHealingBlocked = t >= spec.healAttempt[1] && t < spec.cleanse[0];
+    frame.maximumHealthCleansing = t >= spec.cleanse[0] && t < spec.cleanse[1];
+    frame.maximumHealthRestored = t >= spec.cleanse[1] && t < spec.resetAt;
+    frame.dangerActive = t >= spec.hitWindow[0] && t < spec.hitWindow[1];
+    frame.playerMotion.attack = 0;
+    frame.playerMotion.dodge = strikePulse(t, spec.firstResolveAt, 0.44);
+    frame.playerMotion.impact = strikePulse(t, spec.hitAt, 0.44);
+    frame.bossMotion.attack = Math.max(
+      strikePulse(t, spec.firstResolveAt, 0.36),
+      strikePulse(t, spec.hitAt, 0.42),
+    );
+  }
   if (spec.mode === 'sound-detection') {
     frame.soundDetectionState = soundDetectionState(t);
     frame.soundDetectionHeard = t >= spec.heardAt && t < spec.resetAt;
@@ -10287,7 +10575,8 @@ export function blueprintFrame(id, time) {
       spec.mode === 'pacifist-resolution' ||
       spec.mode === 'persistent-progress' ||
       spec.mode === 'status-buildup' ||
-      spec.mode === 'instant-kill'
+      spec.mode === 'instant-kill' ||
+      spec.mode === 'maximum-health-reduction'
         ? 92
         : -62),
   };

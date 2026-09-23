@@ -1,0 +1,142 @@
+{
+  "title": "Maximum-health reduction",
+  "subtitle": "Shrink healing capacity without disguising the loss as ordinary damage",
+  "variant": "Signal · sever · cap · restore",
+  "summary": "A marked hit lowers the health ceiling separately from current health, limiting later recovery until an explicit restoration rule succeeds.",
+  "overview": "Maximum-health reduction changes how much health a player can hold rather than merely subtracting from the current value. A fair version exposes the original cap, missing capacity, current health, restoration condition, and duration separately, so a heal that stops early reads as a known consequence rather than broken input.",
+  "learning": "Define which contacts reduce current health, maximum health, or both; the cap floor and stacking policy; clamp order; duration; cleansing and rest behavior; healing interaction; persistence through phases, death, and checkpoints; multiplayer authority; UI and accessibility signals; and tests for simultaneous damage, healing, restoration, and repeated applications.",
+  "category": "States, resources, and scaling",
+  "readTime": "9 min",
+  "demo": {
+    "title": "Dodge Kern's first severing lane, take the second, then test healing and restoration",
+    "timeline": "Maximum-health reduction timeline",
+    "step": "Health-cap states",
+    "phaseNames": [
+      "Telegraph a distinct severing hit and prove the escape",
+      "Apply damage and cap loss once, then expose blocked healing",
+      "Restore capacity separately, refill it, and reset"
+    ],
+    "phaseDescriptions": [
+      "Kern opens a fixed vertical lane at 0.30 s. Tavi moves fully outside its 68-unit half-width before the 1.00 s resolve, so current health remains 80 and maximum health remains 100. The avoided cast establishes both the geometry and the fact that the orange chevrons mean a cap-changing hit.",
+      "The same lane returns at 1.82 s. Tavi remains inside when it resolves at 2.68 s: ordinary damage lowers current health from 80 to 60 while a separate sever event lowers the maximum from 100 to 65. At 3.28 s a 40-point heal can apply only 5; the remaining 35 is visibly blocked by the reduced cap.",
+      "A cleanse begins at 4.08 s and restores the maximum from 65 to 100 without inventing damage or free healing. The following refill raises current health from 65 to 100 by 4.96 s. Both values then return to their initial 80 of 100 state before the 5.40 s loop reset."
+    ],
+    "boss": "Boss",
+    "player": "Player",
+    "danger": "Only contact with the resolved severing lane changes the cap; its ordinary damage, lost capacity, blocked healing, and later restoration are four separate values",
+    "locked": "Source id, hit id, damage, cap-loss amount or ratio, minimum cap, stacking, clamp order, duration, cleanse, persistence, and authority belong to encounter logic",
+    "safe": "Keep current health, maximum health, lost capacity, and the cap marker visible with redundant shapes and labels; never communicate permanent-looking loss with color alone",
+    "reducedMotion": "Autoplay is disabled by reduced motion. Scrub across 0.30, 0.88, 1.00, 1.82, 2.68, 3.08, 3.28, 3.72, 4.08, 4.48, 4.96, and 5.40 seconds to inspect escape, hit, cap loss, blocked healing, restoration, refill, and reset.",
+    "diagramDescription": "Kern projects a narrow rune lane through Tavi. Above the arena, a framed health track separates green current health from an orange tail of unusable capacity and a moving maximum marker. The first lane misses. The second removes ordinary health and shrinks the frame's usable cap; a heal stops at that marker until cleansing rings restore the missing segment and a later heal fills it."
+  },
+  "steps": [
+    {
+      "title": "Which event changes health, and which changes its ceiling?",
+      "body": "Resolve damage and cap reduction as named outputs of one authoritative contact, not as one oversized damage number. Choose additive points or a percentage of base maximum, define the minimum legal cap, decide whether repeats refresh, stack, replace, or ignore, and clamp current health only after the new cap is known."
+    },
+    {
+      "title": "How can the player predict and manage lost capacity?",
+      "body": "Give cap-changing attacks a stable pre-hit language that differs from ordinary damage. Keep the original maximum and lost segment readable, explain whether time, cleansing, a phase objective, rest, or death restores it, and test every healing source against the reduced ceiling so the same request produces the same applied and blocked amounts."
+    },
+    {
+      "title": "What persists, restores, and replicates at boundaries?",
+      "body": "Specify behavior at phase changes, checkpoints, revives, character swaps, cutscenes, co-op joins, difficulty changes, and save reloads. Restore capacity and current health in an explicit order, identify each application and cleanse, and test simultaneous hits, healing on the sever tick, repeated messages, rollback, and a cap floor already reached."
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "The bar merely becomes shorter with no retained reference",
+      "body": "If the original frame disappears, players cannot distinguish injury, a temporary debuff, a permanent upgrade loss, or UI scaling. Preserve a reference track, a maximum marker, and a patterned lost-cap segment, then announce both the amount and the restoration rule."
+    },
+    {
+      "title": "Damage, cap loss, and healing clamp happen in an accidental order",
+      "body": "Different update orders can kill, heal, or duplicate loss at the same timestamp. Resolve the contact once, derive the new cap, clamp current health, process later healing against that cap, and record separate reason codes for damage, capacity change, blocked healing, and restoration."
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "Model current health and capacity as separate resources",
+      "body": "Store base maximum, effective maximum, current health, active reduction instances, and restoration state independently. The effective cap constrains health but is not health itself; changing one should never silently manufacture a transaction in the other."
+    },
+    {
+      "title": "Balance severity through recovery opportunity",
+      "body": "Measure cap lost per avoidable contact, attack frequency, time spent below each survivability breakpoint, access to cleansing, and the damage of later patterns. A small reduction before a demanding sequence may matter more than a large reduction immediately before a guaranteed reset."
+    },
+    {
+      "title": "Keep repeated applications bounded and legible",
+      "body": "Set a floor, maximum stacks, source ownership, and replacement priority. Show each accepted stack and reject applications at the floor with a different response. Avoid shrinking the bar until labels, markers, and remaining current health become unreadable."
+    },
+    {
+      "title": "Instrument the whole healing contract",
+      "body": "Telemetry should retain requested healing, applied healing, blocked-by-cap healing, cap lost, time to restore, cleanse use, and deaths while reduced. This reveals whether the mechanic creates an understood planning constraint or merely invalidates healing without teaching why."
+    }
+  ],
+  "story": {
+    "title": "Kern severs the outer runes of Tavi's life ward",
+    "body": "The first orange lane passes after Tavi clears it, leaving the green ward inside its full stone frame. The second cuts away the frame's outer runes. A healing spark reaches the new marker and breaks; only cleansing rings rebuild the frame before the missing green segment can be filled."
+  },
+  "adaptation": {
+    "title": "Preserve the rule while making capacity loss unmistakable",
+    "body": "Combine length, a fixed reference frame, hatching, a maximum marker, text, sound, and controller feedback. Offer larger resource UI, restrained flashes, narrated value changes, longer telegraphs, smaller reductions, a higher floor, automatic cleansing, or conversion to recoverable temporary damage while showing the selected rule before combat."
+  },
+  "distinction": {
+    "title": "A reduced ceiling, not ordinary damage or temporary health",
+    "body": "Ordinary damage lowers current health while leaving the amount that healing may recover unchanged. Temporary health adds a disposable layer above or beside health. Maximum-health reduction lowers the legal ceiling itself; current health may also be damaged or clamped, but later healing remains limited until capacity is explicitly restored."
+  },
+  "lensNotes": [
+    {
+      "id": "progress-clarity",
+      "body": "The original cap, effective cap, current health, lost capacity, and restoration progress remain distinguishable throughout the effect."
+    },
+    {
+      "id": "risk-reward",
+      "body": "Staying for damage during the severing telegraph risks losing future healing capacity, not merely paying a known current-health cost."
+    },
+    {
+      "id": "counterplay",
+      "body": "Dodging the marked source prevents the reduction, while cleansing or completing a stated objective restores a measurable amount of capacity."
+    },
+    {
+      "id": "rule-exception",
+      "body": "Cap floors, stack limits, boss phases, revives, percentage healing, shields, and cleansing need explicit behavior because ordinary health assumptions no longer suffice."
+    },
+    {
+      "id": "telegraphing",
+      "body": "A stable symbol and timing distinguish cap-severing contact from visually similar attacks that only deal ordinary damage."
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "Salt and Sanctuary",
+      "boss": "The Tree of Men",
+      "screenshot": "https://i.ytimg.com/vi/numcc8iRRC8/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=numcc8iRRC8&t=1188s",
+      "body": "Wounding reduces recoverable maximum health whenever the player is hit, so the Tree of Men's repeated fire, platform pressure, and hanging enemies erode the value of later healing as well as current health. The health bar retains the wounded portion, making accumulated capacity loss readable across the long multi-level fight.",
+      "video": "https://www.youtube.com/watch?v=numcc8iRRC8&t=1188s",
+      "videoDurationSeconds": 2865
+    },
+    {
+      "dimension": "3D",
+      "game": "Elden Ring",
+      "boss": "Maliketh, the Black Blade",
+      "screenshot": "https://i.ytimg.com/vi/8kqD2yA7Fls/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=8kqD2yA7Fls&t=180s",
+      "body": "Maliketh's Destined Death attacks temporarily reduce maximum HP while also applying damage over time. The effect therefore needs to communicate three concurrent facts—ongoing loss, a smaller ceiling, and eventual restoration—without making a healing input appear to fail arbitrarily.",
+      "video": "https://www.youtube.com/watch?v=8kqD2yA7Fls&t=180s",
+      "videoDurationSeconds": 394
+    },
+    {
+      "dimension": "3D",
+      "game": "The Legend of Zelda: Tears of the Kingdom",
+      "boss": "Demon King Ganondorf",
+      "screenshot": "https://i.ytimg.com/vi/XVVs-obGCKI/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=XVVs-obGCKI&t=480s",
+      "body": "During the final battle, Gloom first marks hearts as unavailable and later Ganondorf's attacks can destroy heart containers for the encounter. Breaking the familiar row itself turns reduced capacity into dramatic escalation, but it also demands a clear distinction between temporarily gloom-locked hearts and containers removed until the fight ends.",
+      "video": "https://www.youtube.com/watch?v=XVVs-obGCKI&t=480s",
+      "videoDurationSeconds": 1299
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

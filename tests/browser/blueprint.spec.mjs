@@ -405,9 +405,9 @@ test('volley releases three parallel bolts on one beat and clears its outside ro
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
 });
 
-test('catalog and builder reuse the 86 promoted rule-specific previews', async ({ page }) => {
+test('catalog and builder reuse the 87 promoted rule-specific previews', async ({ page }) => {
   await page.goto('en/');
-  await expect(page.locator('[data-blueprint-preview]')).toHaveCount(86);
+  await expect(page.locator('[data-blueprint-preview]')).toHaveCount(87);
   const catalogLayouts = await page.locator('[data-blueprint-preview]').evaluateAll((previews) =>
     previews.map((preview) => {
       const boss = preview.querySelector('[data-character-art-preview="kern"]');
@@ -431,7 +431,7 @@ test('catalog and builder reuse the 86 promoted rule-specific previews', async (
   expect(new Set(catalogLayouts.map(({ layout }) => layout)).size).toBeGreaterThanOrEqual(18);
 
   await page.goto('en/builder/');
-  await expect(page.locator('[data-blueprint-preview]')).toHaveCount(86);
+  await expect(page.locator('[data-blueprint-preview]')).toHaveCount(87);
   const builderLayouts = await page.locator('[data-blueprint-preview]').evaluateAll((previews) =>
     previews.map((preview) => {
       const boss = preview.querySelector('[data-character-art-preview="kern"]');
@@ -3449,6 +3449,47 @@ test('instant kill avoids one seal then resolves one terminal result without dam
   await seek(3200);
   await expect(widget).toHaveAttribute('data-blueprint-instant-kill-attempt-ended', 'true');
   await expect(widget).toHaveAttribute('data-blueprint-instant-kill-target-alive', 'false');
+  await page.setViewportSize({ width: 375, height: 812 });
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+});
+
+test('maximum health reduction shows an avoided cut, a smaller cap, blocked healing, and cleanse', async ({
+  page,
+}) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.goto('en/mechanics/maximum-health-reduction/');
+  const widget = page.locator('[data-blueprint-demo]');
+  const timeline = widget.locator('[data-blueprint-timeline]');
+  const seek = (milliseconds) =>
+    timeline.evaluate((element, value) => {
+      element.value = String(value);
+      element.dispatchEvent(new Event('input', { bubbles: true }));
+    }, milliseconds);
+
+  await expect(page.locator('.lesson-title-line h1')).toHaveText('Maximum-health reduction');
+  await expect(page.locator('.wip-badge, .draft-profile')).toHaveCount(0);
+  await expect(page.locator('.game-example')).toHaveCount(3);
+  await seek(1050);
+  await expect(widget).toHaveAttribute('data-blueprint-maximum-health-first-avoided', 'true');
+  await expect(widget).toHaveAttribute('data-blueprint-maximum-health-maximum', '100');
+  await expect(widget).toHaveAttribute('data-blueprint-maximum-health-cap-events', '0');
+  await seek(2700);
+  await expect(widget).toHaveAttribute('data-blueprint-maximum-health-damage', '20');
+  await expect(widget).toHaveAttribute('data-blueprint-maximum-health-cap-events', '1');
+  await seek(3100);
+  await expect(widget).toHaveAttribute('data-blueprint-maximum-health-current', '60');
+  await expect(widget).toHaveAttribute('data-blueprint-maximum-health-maximum', '65');
+  await expect(widget).toHaveAttribute('data-blueprint-maximum-health-reduced', 'true');
+  await seek(3720);
+  await expect(widget).toHaveAttribute('data-blueprint-maximum-health-current', '65');
+  await expect(widget).toHaveAttribute('data-blueprint-maximum-health-maximum', '65');
+  await expect(widget).toHaveAttribute('data-blueprint-maximum-health-heal-requested', '40');
+  await expect(widget).toHaveAttribute('data-blueprint-maximum-health-heal-applied', '5');
+  await expect(widget).toHaveAttribute('data-blueprint-maximum-health-heal-blocked', '35');
+  await seek(4960);
+  await expect(widget).toHaveAttribute('data-blueprint-maximum-health-current', '100');
+  await expect(widget).toHaveAttribute('data-blueprint-maximum-health-maximum', '100');
+  await expect(widget).toHaveAttribute('data-blueprint-maximum-health-restored', 'true');
   await page.setViewportSize({ width: 375, height: 812 });
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
 });

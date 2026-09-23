@@ -1,0 +1,142 @@
+{
+  "title": "Reducción de salud máxima",
+  "subtitle": "Reduce la capacidad de curación sin disfrazar la pérdida de daño normal",
+  "variant": "Señal · corte · límite · restauración",
+  "summary": "Un impacto marcado reduce el límite de salud por separado de la salud actual y restringe la curación hasta una restauración explícita.",
+  "overview": "La reducción de salud máxima cambia cuánta salud puede contener el personaje, no solo su valor actual. Una versión justa separa el máximo original, la capacidad perdida, la salud actual, la condición de restauración y la duración. Así, una curación que se detiene antes es resultado de una regla conocida y no de una entrada rota.",
+  "learning": "Define qué contactos reducen salud actual, máxima o ambas; el mínimo y la política de acumulación; el orden de limitación; la duración; la limpieza y el descanso; la interacción con curación; la persistencia entre fases, muertes y puntos de control; la autoridad multijugador; las señales de interfaz y accesibilidad; y las pruebas de daño, curación, restauración y aplicaciones simultáneas.",
+  "category": "Estados, recursos y escalado",
+  "readTime": "9 min",
+  "demo": {
+    "title": "Esquiva la primera línea de corte de Kern, recibe la segunda y prueba la curación y restauración",
+    "timeline": "Cronología de reducción de salud máxima",
+    "step": "Estados del límite de salud",
+    "phaseNames": [
+      "Anuncia un golpe de corte distinto y demuestra la salida",
+      "Aplica daño y pérdida de límite una vez y muestra la curación bloqueada",
+      "Restaura la capacidad por separado, rellénala y reinicia"
+    ],
+    "phaseDescriptions": [
+      "Kern abre una línea vertical fija a los 0,30 s. Tavi saca todo el cuerpo de sus 68 unidades de semiancho antes de la resolución a 1,00 s, así que la salud actual queda en 80 y la máxima en 100. La evasión establece la geometría y el significado de los chevrones naranjas como golpe que cambia el límite.",
+      "La misma línea vuelve a 1,82 s. Tavi sigue dentro al resolverse a 2,68 s: el daño normal baja la salud actual de 80 a 60 y un evento de corte separado baja la máxima de 100 a 65. A 3,28 s una curación de 40 solo aplica 5; los 35 restantes quedan bloqueados visiblemente por el nuevo límite.",
+      "La limpieza empieza a 4,08 s y devuelve el máximo de 65 a 100 sin inventar daño ni curación gratuita. El relleno posterior sube la salud actual de 65 a 100 antes de 4,96 s. Ambos valores vuelven luego al estado inicial de 80/100 antes del reinicio a 5,40 s."
+    ],
+    "boss": "Jefe",
+    "player": "Jugador",
+    "danger": "Solo el contacto con la línea de corte al resolverse cambia el límite; su daño normal, capacidad perdida, curación bloqueada y restauración posterior son cuatro valores distintos",
+    "locked": "Los identificadores de fuente e impacto, daño, cantidad o proporción perdida, mínimo, acumulación, orden de límite, duración, limpieza, persistencia y autoridad pertenecen a la lógica del encuentro",
+    "safe": "Mantén visibles la salud actual, la máxima, la capacidad perdida y el marcador de límite con formas y etiquetas redundantes; nunca comuniques una pérdida de aspecto permanente solo con color",
+    "reducedMotion": "Con movimiento reducido no hay reproducción automática. Recorre 0,30, 0,88, 1,00, 1,82, 2,68, 3,08, 3,28, 3,72, 4,08, 4,48, 4,96 y 5,40 s para revisar escape, impacto, pérdida, curación bloqueada, restauración, relleno y reinicio.",
+    "diagramDescription": "Kern proyecta una línea rúnica estrecha a través de Tavi. Sobre la arena, un marco de salud separa la salud actual verde de una cola naranja de capacidad inutilizable y un marcador móvil de máximo. La primera línea falla. La segunda quita salud y encoge el límite; la curación se detiene en el marcador hasta que los anillos de limpieza recuperan el segmento perdido."
+  },
+  "steps": [
+    {
+      "title": "¿Qué evento cambia la salud y cuál cambia su límite?",
+      "body": "Resuelve daño y reducción como resultados con nombre de un único contacto autorizado, no como una cifra enorme de daño. Elige puntos aditivos o porcentaje del máximo base, define el mínimo legal y si las repeticiones renuevan, acumulan, sustituyen o se ignoran; limita la salud actual solo después de conocer el nuevo máximo."
+    },
+    {
+      "title": "¿Cómo puede el jugador anticipar y gestionar la capacidad perdida?",
+      "body": "Da a los ataques que cambian el límite un lenguaje previo estable y distinto al daño normal. Conserva visibles el máximo original y el segmento perdido, explica si lo restaura el tiempo, una limpieza, un objetivo, el descanso o la muerte, y prueba toda fuente de curación contra el límite reducido."
+    },
+    {
+      "title": "¿Qué persiste, se restaura y se replica en los límites de estado?",
+      "body": "Especifica cambios de fase, puntos de control, reanimación, cambio de personaje, cinemáticas, entradas cooperativas, dificultad y cargas. Restaura capacidad y salud actual en un orden explícito, identifica cada aplicación y limpieza y prueba impactos simultáneos, curación en el mismo tic, mensajes repetidos, rollback y un mínimo ya alcanzado."
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "La barra solo se acorta sin conservar una referencia",
+      "body": "Si desaparece el marco original no se distingue una herida, un perjuicio temporal, la pérdida de una mejora o el escalado de interfaz. Conserva una pista de referencia, un marcador de máximo y un tramo perdido con patrón, y comunica cantidad y regla de restauración."
+    },
+    {
+      "title": "Daño, pérdida de límite y curación se resuelven en un orden accidental",
+      "body": "Distintos órdenes de actualización pueden matar, curar o duplicar la pérdida en el mismo instante. Resuelve el contacto una vez, deriva el nuevo máximo, limita la salud actual y procesa la curación posterior contra él; registra motivos separados para cada resultado."
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "Modela salud actual y capacidad como recursos separados",
+      "body": "Guarda máximo base, máximo efectivo, salud actual, reducciones activas y restauración por separado. El límite efectivo restringe la salud pero no es salud; cambiar uno no debe fabricar silenciosamente una transacción en el otro."
+    },
+    {
+      "title": "Equilibra la gravedad mediante oportunidades de recuperación",
+      "body": "Mide pérdida por contacto evitable, frecuencia, tiempo bajo cada umbral de supervivencia, acceso a limpieza y daño de patrones posteriores. Una reducción pequeña antes de una secuencia exigente puede importar más que una grande justo antes de un reinicio seguro."
+    },
+    {
+      "title": "Mantén acotadas y legibles las aplicaciones repetidas",
+      "body": "Fija mínimo, acumulaciones máximas, propiedad de fuente y prioridad de sustitución. Muestra cada acumulación aceptada y rechaza las que llegan al mínimo con otra respuesta; no encojas la barra hasta volver ilegibles etiquetas y salud restante."
+    },
+    {
+      "title": "Instrumenta todo el contrato de curación",
+      "body": "La telemetría debe conservar curación solicitada, aplicada y bloqueada, capacidad perdida, tiempo de restauración, limpiezas y muertes durante la reducción. Así sabrás si crea una restricción comprensible o invalida curaciones sin explicar por qué."
+    }
+  ],
+  "story": {
+    "title": "Kern corta las runas exteriores del resguardo vital de Tavi",
+    "body": "La primera línea naranja pasa cuando Tavi sale y deja el resguardo verde dentro de su marco de piedra completo. La segunda corta las runas exteriores. Una chispa de curación se rompe al llegar al nuevo marcador; solo los anillos de limpieza reconstruyen el marco antes de rellenar el tramo verde perdido."
+  },
+  "adaptation": {
+    "title": "Conserva la regla y vuelve inequívoca la pérdida de capacidad",
+    "body": "Combina longitud, marco de referencia fijo, tramado, marcador, texto, sonido y respuesta del mando. Ofrece interfaz mayor, destellos suaves, lectura de valores, señales más largas, reducción menor, mínimo más alto, limpieza automática o conversión a daño temporal recuperable, mostrando la regla elegida antes del combate."
+  },
+  "distinction": {
+    "title": "Un límite reducido, no daño normal ni salud temporal",
+    "body": "El daño normal baja la salud actual sin cambiar cuánto puede recuperar una curación. La salud temporal añade una capa consumible. La reducción de salud máxima baja el límite legal; la salud actual también puede dañarse o limitarse, pero la curación seguirá restringida hasta restaurar la capacidad explícitamente."
+  },
+  "lensNotes": [
+    {
+      "id": "progress-clarity",
+      "body": "El máximo original, el efectivo, la salud actual, la capacidad perdida y el progreso de restauración permanecen diferenciables durante todo el efecto."
+    },
+    {
+      "id": "risk-reward",
+      "body": "Seguir atacando durante la señal arriesga capacidad de curación futura, no solo un coste conocido de salud actual."
+    },
+    {
+      "id": "counterplay",
+      "body": "Esquivar la fuente marcada evita la reducción, mientras limpiar o completar un objetivo declarado restaura una cantidad medible."
+    },
+    {
+      "id": "rule-exception",
+      "body": "Mínimos, límites de acumulación, fases, reanimación, curación porcentual, escudos y limpieza requieren reglas explícitas porque las suposiciones normales ya no bastan."
+    },
+    {
+      "id": "telegraphing",
+      "body": "Un símbolo y ritmo estables distinguen el contacto que corta el límite de ataques parecidos que solo causan daño normal."
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "Salt and Sanctuary",
+      "boss": "The Tree of Men",
+      "screenshot": "https://i.ytimg.com/vi/numcc8iRRC8/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=numcc8iRRC8&t=1188s",
+      "body": "Wounding reduce la salud máxima recuperable al recibir golpes, así que el fuego repetido, las plataformas y los enemigos colgantes de The Tree of Men erosionan tanto la salud actual como el valor de futuras curaciones. La barra conserva la zona herida durante el largo combate vertical.",
+      "video": "https://www.youtube.com/watch?v=numcc8iRRC8&t=1188s",
+      "videoDurationSeconds": 2865
+    },
+    {
+      "dimension": "3D",
+      "game": "Elden Ring",
+      "boss": "Maliketh, the Black Blade",
+      "screenshot": "https://i.ytimg.com/vi/8kqD2yA7Fls/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=8kqD2yA7Fls&t=180s",
+      "body": "Los ataques Destined Death de Maliketh reducen temporalmente los PV máximos y causan daño con el tiempo. El efecto debe comunicar a la vez pérdida continua, un límite menor y su futura restauración para que curarse no parezca fallar arbitrariamente.",
+      "video": "https://www.youtube.com/watch?v=8kqD2yA7Fls&t=180s",
+      "videoDurationSeconds": 394
+    },
+    {
+      "dimension": "3D",
+      "game": "The Legend of Zelda: Tears of the Kingdom",
+      "boss": "Demon King Ganondorf",
+      "screenshot": "https://i.ytimg.com/vi/XVVs-obGCKI/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=XVVs-obGCKI&t=480s",
+      "body": "En el combate final, Gloom primero inutiliza corazones y después los ataques de Ganondorf pueden destruir contenedores durante el encuentro. Romper la fila conocida eleva el drama, pero exige distinguir corazones bloqueados temporalmente de capacidad eliminada hasta terminar la lucha.",
+      "video": "https://www.youtube.com/watch?v=XVVs-obGCKI&t=480s",
+      "videoDurationSeconds": 1299
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

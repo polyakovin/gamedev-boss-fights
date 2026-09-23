@@ -41,6 +41,8 @@ import {
   statusBuildupApply,
   instantKillState,
   instantKillResolve,
+  maximumHealthReductionState,
+  maximumHealthReductionResolve,
   counterStanceOutcome,
   counterStanceState,
   blueprintFrame,
@@ -68,8 +70,8 @@ import {
   renderBlueprintThumbnail,
 } from '../lib/blueprint-view.mjs';
 
-test('all 86 promoted lesson animations have distinct rule modes and complete moving frames', () => {
-  assert.equal(BLUEPRINT_MECHANIC_IDS.length, 86);
+test('all 87 promoted lesson animations have distinct rule modes and complete moving frames', () => {
+  assert.equal(BLUEPRINT_MECHANIC_IDS.length, 87);
   const modes = new Set();
   for (const id of BLUEPRINT_MECHANIC_IDS) {
     for (let time = 0; time <= BLUEPRINT_DURATION; time += 0.1) {
@@ -90,7 +92,7 @@ test('all 86 promoted lesson animations have distinct rule modes and complete mo
           assert.ok(Number.isFinite(value), `${id} has an invalid ${primitive.type}`);
     }
   }
-  assert.equal(modes.size, 86);
+  assert.equal(modes.size, 87);
 });
 
 test('every blueprint exposes signal, committed action, and recovery without player teleports', () => {
@@ -126,7 +128,8 @@ test('every blueprint exposes signal, committed action, and recovery without pla
       id !== 'pacifist-resolution' &&
       id !== 'persistent-progress' &&
       id !== 'status-buildup' &&
-      id !== 'instant-kill'
+      id !== 'instant-kill' &&
+      id !== 'maximum-health-reduction'
     )
       assert.equal(blueprintFrame(id, 3).dangerActive, true, id);
     assert.equal(blueprintFrame(id, 3).playerSafe, true, id);
@@ -212,6 +215,7 @@ test('every damaging promoted animation derives safety from its own active geome
       id !== 'persistent-progress' &&
       id !== 'status-buildup' &&
       id !== 'instant-kill' &&
+      id !== 'maximum-health-reduction' &&
       id !== 'part-break' &&
       id !== 'counter-stance' &&
       id !== 'absorption-power-up' &&
@@ -3102,5 +3106,80 @@ test('instant kill resolves one terminal predicate without ordinary damage', () 
   assert.match(
     renderBlueprintThumbnail(id, 'test-instant-kill'),
     /data-blueprint-preview="instant-kill"/,
+  );
+});
+
+test('maximum health reduction separates damage, the reduced cap, blocked healing, and cleanse', () => {
+  const id = 'maximum-health-reduction';
+  assert.deepEqual(
+    [0, 0.5, 1.05, 1.4, 2, 2.8, 3.5, 3.9, 4.25, 4.6, 5.1, 5.5].map(maximumHealthReductionState),
+    [
+      'ready',
+      'first-telegraph',
+      'first-avoided',
+      'repositioning',
+      'second-telegraph',
+      'cap-reduced',
+      'healing-to-cap',
+      'healing-blocked',
+      'cleansing',
+      'capacity-restored',
+      'recovered',
+      'reset',
+    ],
+  );
+  assert.deepEqual(maximumHealthReductionResolve(), {
+    currentBefore: 80,
+    maximumBefore: 100,
+    damage: 20,
+    capLoss: 35,
+    currentAfter: 60,
+    maximumAfter: 65,
+  });
+  assert.deepEqual(
+    maximumHealthReductionResolve({
+      currentHealth: 20,
+      maximumHealth: 30,
+      damage: 5,
+      capLoss: 40,
+    }),
+    {
+      currentBefore: 20,
+      maximumBefore: 30,
+      damage: 5,
+      capLoss: 29,
+      currentAfter: 1,
+      maximumAfter: 1,
+    },
+  );
+
+  const avoided = blueprintFrame(id, 1.05);
+  assert.equal(avoided.maximumHealthFirstAvoided, true);
+  assert.equal(avoided.maximumHealthMaximum, 100);
+  assert.equal(avoided.maximumHealthCapEventCount, 0);
+  const hit = blueprintFrame(id, 2.68);
+  assert.equal(hit.dangerActive, true);
+  assert.equal(hit.playerSafe, false);
+  assert.equal(blueprintPointSafe(id, 2.68, { x: 455, y: 720 }), true);
+  const reduced = blueprintFrame(id, 3.1);
+  assert.equal(reduced.maximumHealthCurrent, 60);
+  assert.equal(reduced.maximumHealthMaximum, 65);
+  assert.equal(reduced.maximumHealthDamageApplied, 20);
+  assert.equal(reduced.maximumHealthCapEventCount, 1);
+  const blocked = blueprintFrame(id, 3.72);
+  assert.equal(blocked.maximumHealthCurrent, 65);
+  assert.equal(blocked.maximumHealthMaximum, 65);
+  assert.equal(blocked.maximumHealthHealRequested, 40);
+  assert.equal(blocked.maximumHealthHealApplied, 5);
+  assert.equal(blocked.maximumHealthHealBlocked, 35);
+  assert.equal(blocked.maximumHealthHealingBlocked, true);
+  const restored = blueprintFrame(id, 4.96);
+  assert.equal(restored.maximumHealthCurrent, 100);
+  assert.equal(restored.maximumHealthMaximum, 100);
+  assert.equal(restored.maximumHealthRestored, true);
+  assert.deepEqual(blueprintFrame(id, 0).player, blueprintFrame(id, 6).player);
+  assert.match(
+    renderBlueprintThumbnail(id, 'test-maximum-health-reduction'),
+    /data-blueprint-preview="maximum-health-reduction"/,
   );
 });

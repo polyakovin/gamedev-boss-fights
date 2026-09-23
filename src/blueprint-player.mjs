@@ -453,6 +453,26 @@ export function initializeBlueprint(widget) {
       widget.dataset.blueprintInstantKillResultId = frame.instantKillResultId;
       widget.dataset.blueprintInstantKillCondition = frame.instantKillCondition;
     }
+    if (mechanicId === 'maximum-health-reduction') {
+      widget.dataset.blueprintMaximumHealth = frame.maximumHealthState;
+      widget.dataset.blueprintMaximumHealthFirstAvoided = String(frame.maximumHealthFirstAvoided);
+      widget.dataset.blueprintMaximumHealthCurrent = String(Math.round(frame.maximumHealthCurrent));
+      widget.dataset.blueprintMaximumHealthMaximum = String(Math.round(frame.maximumHealthMaximum));
+      widget.dataset.blueprintMaximumHealthBefore = String(frame.maximumHealthBefore);
+      widget.dataset.blueprintMaximumHealthAfter = String(frame.maximumHealthAfter);
+      widget.dataset.blueprintMaximumHealthLoss = String(Math.round(frame.maximumHealthLoss));
+      widget.dataset.blueprintMaximumHealthReduced = String(frame.maximumHealthReduced);
+      widget.dataset.blueprintMaximumHealthDamage = String(frame.maximumHealthDamageApplied);
+      widget.dataset.blueprintMaximumHealthCapEvents = String(frame.maximumHealthCapEventCount);
+      widget.dataset.blueprintMaximumHealthHealRequested = String(frame.maximumHealthHealRequested);
+      widget.dataset.blueprintMaximumHealthHealApplied = String(
+        Math.round(frame.maximumHealthHealApplied),
+      );
+      widget.dataset.blueprintMaximumHealthHealBlocked = String(
+        Math.round(frame.maximumHealthHealBlocked),
+      );
+      widget.dataset.blueprintMaximumHealthRestored = String(frame.maximumHealthRestored);
+    }
     boss.setAttribute(
       'transform',
       `translate(${frame.boss.x} ${frame.boss.y}) scale(${frame.bossScale})`,
