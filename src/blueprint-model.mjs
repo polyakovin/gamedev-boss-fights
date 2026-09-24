@@ -1348,12 +1348,12 @@ const SPECS = {
   },
   'on-hit-healing': {
     mode: 'on-hit-healing',
-    boss: [300, 375],
-    player: [300, 635],
-    target: [455, 720],
-    arena: [55, 310, 450, 570],
-    strikeCenter: [300, 635],
-    safePoint: [455, 720],
+    boss: [300, 300],
+    player: [300, 755],
+    target: [455, 820],
+    arena: [55, 145, 450, 735],
+    strikeCenter: [300, 755],
+    safePoint: [455, 820],
     strikeRadius: 96,
     firstTelegraph: [0.3, 0.94],
     firstEscape: [0.48, 0.86],
@@ -7375,72 +7375,64 @@ function primitivesFor(spec, frame) {
     const beamOpacity =
       frame.time >= spec.healing[0] && frame.time < spec.healing[1] ? Math.max(0.34, healPulse) : 0;
     return [
-      rect(...spec.arena, 0.52, 'muted', 0.025),
-      rect(178, 318, 244, 24, 0.74, 'muted', 0.035),
-      rect(182, 322, width, 16, 0.96, 'signal', 0.18),
-      line(182 + width, 314, 182 + width, 346, 0.8, 'signal', 4),
-      circle(
-        center.x,
-        center.y,
-        spec.strikeRadius,
-        telegraph ? 0.84 : contactPulse * 0.94,
+      path(
+        'M 70 190 L 280 151 L 490 190 V 218 L 280 180 L 70 218 Z M 72 848 L 280 806 L 488 848 V 874 L 280 832 L 72 874 Z',
+        0.42,
+        'muted',
+        0,
+        0.6,
+      ),
+      path('M 145 102 H 415 V 130 H 145 Z', 0.76, 'muted', 0, 0.7),
+      rect(155, 107, width, 17, 0.98, 'signal', 0.82),
+      path(
+        `M ${center.x - 96} ${center.y - 20} Q ${center.x} ${center.y - 77} ${center.x + 96} ${center.y - 20} L ${center.x + 79} ${center.y + 19} Q ${center.x} ${center.y - 4} ${center.x - 79} ${center.y + 19} Z`,
+        telegraph ? 0.24 + 0.32 * telegraphProgress : contactPulse * 0.78,
         'signal',
-        telegraph ? 7 : 11,
-        telegraph ? 0.05 : 0.1,
-        telegraph ? '12 9' : '',
-      ),
-      circle(
-        center.x,
-        center.y,
-        spec.strikeRadius * (1 - 0.46 * telegraphProgress),
-        telegraph ? 0.72 : 0,
-        'accent',
-        5,
-        0.02,
-      ),
-      circle(
-        spec.safePoint[0],
-        spec.safePoint[1] - 34,
-        34,
-        frame.onHitHealingFirstMissed || frame.onHitHealingThirdMissed ? 0.86 : 0,
-        'safe',
-        6,
-        0.04,
-        '8 7',
+        0,
+        0.58,
       ),
       path(
-        `M ${spec.safePoint[0] - 14} ${spec.safePoint[1] - 35} L ${spec.safePoint[0] - 3} ${spec.safePoint[1] - 24} L ${spec.safePoint[0] + 18} ${spec.safePoint[1] - 49}`,
-        frame.onHitHealingFirstMissed || frame.onHitHealingThirdMissed ? 0.98 : 0,
+        `M ${spec.safePoint[0] - 26} ${spec.safePoint[1] - 8} L ${spec.safePoint[0] - 9} ${spec.safePoint[1] - 25} L ${spec.safePoint[0] + 3} ${spec.safePoint[1] - 13} L ${spec.safePoint[0] + 17} ${spec.safePoint[1] - 30} L ${spec.safePoint[0] + 29} ${spec.safePoint[1] - 14} L ${spec.safePoint[0] + 8} ${spec.safePoint[1] + 9} Z`,
+        frame.onHitHealingFirstMissed || frame.onHitHealingThirdMissed ? 0.66 : 0,
         'safe',
-        6,
+        0,
+        0.5,
       ),
-      circle(
-        frame.player.x,
-        frame.player.y - 34,
-        48,
-        frame.onHitHealingBlockedContact ? 0.96 : 0,
+      path(
+        `M ${frame.player.x - 50} ${frame.player.y - 80} Q ${frame.player.x} ${frame.player.y - 131} ${frame.player.x + 50} ${frame.player.y - 80} L ${frame.player.x + 36} ${frame.player.y - 25} Q ${frame.player.x} ${frame.player.y + 5} ${frame.player.x - 36} ${frame.player.y - 25} Z`,
+        frame.onHitHealingBlockedContact ? 0.88 : 0,
         'safe',
-        7,
-        0.04,
-        '8 6',
+        0,
+        0.32,
       ),
-      line(
-        frame.player.x,
-        frame.player.y - 34,
-        frame.boss.x,
-        frame.boss.y - 24,
-        beamOpacity,
+      path(
+        `M ${frame.player.x - 20} ${frame.player.y - 90} Q ${frame.player.x - 78} ${frame.player.y - 260} ${frame.boss.x - 24} ${frame.boss.y + 22} L ${frame.boss.x + 22} ${frame.boss.y + 22} Q ${frame.player.x + 68} ${frame.player.y - 260} ${frame.player.x + 20} ${frame.player.y - 90} Z`,
+        beamOpacity * 0.58,
         'signal',
-        9,
-        '10 7',
+        0,
+        0.58,
       ),
       ...Array.from({ length: 3 }, (_, index) => {
-        const progress = (index + 1) / 4;
+        const progress =
+          ((index + 1) / 4) *
+          smooth((frame.time - spec.healing[0]) / (spec.healing[1] - spec.healing[0]));
         const x = mix(frame.player.x, frame.boss.x, progress);
-        const y = mix(frame.player.y - 34, frame.boss.y - 24, progress);
-        return circle(x, y, 8 + healPulse * 5, beamOpacity, 'signal', 4, 0.2);
+        const y = mix(frame.player.y - 88, frame.boss.y + 18, progress);
+        return path(
+          `M ${x} ${y - 15} Q ${x + 15} ${y} ${x} ${y + 15} Q ${x - 15} ${y} ${x} ${y - 15} Z`,
+          beamOpacity,
+          'safe',
+          0,
+          0.86,
+        );
       }),
-      circle(frame.boss.x, frame.boss.y - 26, 58 + healPulse * 54, healPulse, 'safe', 9, 0.05),
+      path(
+        `M ${frame.boss.x - 64} ${frame.boss.y + 35} Q ${frame.boss.x} ${frame.boss.y - 90 - healPulse * 45} ${frame.boss.x + 64} ${frame.boss.y + 35} Z`,
+        healPulse * 0.78,
+        'safe',
+        0,
+        0.34,
+      ),
       path(
         `M ${frame.player.x + 38} ${frame.player.y - 82} L ${frame.player.x + 92} ${frame.player.y - 136}`,
         strikePulse(frame.time, spec.counterAt, 0.4),

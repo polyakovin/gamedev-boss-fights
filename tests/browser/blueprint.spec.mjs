@@ -3763,6 +3763,8 @@ test('on-hit healing separates a blocked contact from applied damage and ignores
     }, milliseconds);
 
   await expect(page.locator('.lesson-title-line h1')).toHaveText('On-hit healing or lifesteal');
+  await expect(widget).toHaveAttribute('data-blueprint-full-height', 'true');
+  await expect(widget).toHaveAttribute('data-blueprint-screen-height', 'true');
   await expect(page.locator('.wip-badge, .draft-profile')).toHaveCount(0);
   await expect(page.locator('.game-example')).toHaveCount(3);
   await seek(1100);
@@ -3786,6 +3788,7 @@ test('on-hit healing separates a blocked contact from applied damage and ignores
   await expect(widget).toHaveAttribute('data-blueprint-on-hit-healing-event-count', '1');
   await expect(widget).toHaveAttribute('data-blueprint-on-hit-healing-boss-health', '64');
   await page.setViewportSize({ width: 375, height: 812 });
+  expect((await widget.locator('.blueprint-demo__canvas').boundingBox()).height).toBeGreaterThanOrEqual(812);
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
 });
 
