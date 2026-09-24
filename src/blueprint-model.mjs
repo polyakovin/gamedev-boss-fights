@@ -8923,7 +8923,7 @@ function primitivesFor(spec, frame) {
   if (mode === 'shrink')
     return [
       circle(280, 500, mix(320, 150, action), phase === 2 ? 1 : active, 'signal', 28),
-      circle(280, 500, mix(292, 122, action), phase === 2 ? 1 : active, 'safe', 3, 0.04),
+      circle(280, 500, mix(292, 122, action), phase === 2 ? 1 : active, 'safe', 0, 0.08),
     ];
   if (mode === 'knockback')
     return [

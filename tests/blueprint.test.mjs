@@ -409,6 +409,7 @@ test('rule-specific commitments stay visible through the response and recovery',
   const compressedArena = blueprintFrame('shrinking-safe-area', 5.2).primitives;
   assert.equal(compressedArena[0].radius, 150);
   assert.equal(compressedArena[0].opacity, 1);
+  assert.equal(compressedArena[1].width, 0);
 
   const enragedRecovery = blueprintFrame('enrage', 5.2);
   assert.equal(enragedRecovery.bossScale, 1.1);
