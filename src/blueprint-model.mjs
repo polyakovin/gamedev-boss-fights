@@ -8945,12 +8945,13 @@ function primitivesFor(spec, frame) {
     ];
   if (mode === 'knockback')
     return [
-      line(boss.x, boss.y, player.x, player.y, active, 'signal', 18),
+      line(boss.x + 35, boss.y + 15, player.x, player.y, active * 0.74, 'signal', 12),
       path(
-        `M ${player.x - 45} ${player.y - 45} L ${player.x} ${player.y} L ${player.x - 60} ${player.y - 5}`,
+        `M ${player.x - 43} ${player.y + 31} L ${player.x - 23} ${player.y + 17} L ${player.x - 14} ${player.y + 34} Z M ${player.x - 66} ${player.y + 43} L ${player.x - 45} ${player.y + 26} L ${player.x - 38} ${player.y + 44} Z`,
         active,
         'accent',
-        7,
+        0,
+        0.7,
       ),
     ];
   if (mode === 'target-lock')
