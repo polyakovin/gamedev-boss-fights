@@ -57,6 +57,8 @@ import {
   damageRateCapResolve,
   loadoutMirrorState,
   loadoutMirrorSnapshot,
+  movesetShapeshiftingState,
+  movesetShapeshiftingResolve,
   counterStanceOutcome,
   counterStanceState,
   blueprintFrame,
@@ -84,8 +86,8 @@ import {
   renderBlueprintThumbnail,
 } from '../lib/blueprint-view.mjs';
 
-test('all 94 promoted lesson animations have distinct rule modes and complete moving frames', () => {
-  assert.equal(BLUEPRINT_MECHANIC_IDS.length, 94);
+test('all 95 promoted lesson animations have distinct rule modes and complete moving frames', () => {
+  assert.equal(BLUEPRINT_MECHANIC_IDS.length, 95);
   const modes = new Set();
   for (const id of BLUEPRINT_MECHANIC_IDS) {
     for (let time = 0; time <= BLUEPRINT_DURATION; time += 0.1) {
@@ -106,7 +108,7 @@ test('all 94 promoted lesson animations have distinct rule modes and complete mo
           assert.ok(Number.isFinite(value), `${id} has an invalid ${primitive.type}`);
     }
   }
-  assert.equal(modes.size, 94);
+  assert.equal(modes.size, 95);
 });
 
 test('every blueprint exposes signal, committed action, and recovery without player teleports', () => {
@@ -150,7 +152,8 @@ test('every blueprint exposes signal, committed action, and recovery without pla
       id !== 'self-heal-cast' &&
       id !== 'external-healing-source' &&
       id !== 'damage-rate-cap' &&
-      id !== 'loadout-mirror'
+      id !== 'loadout-mirror' &&
+      id !== 'moveset-shapeshifting'
     )
       assert.equal(blueprintFrame(id, 3).dangerActive, true, id);
     assert.equal(blueprintFrame(id, 3).playerSafe, true, id);
@@ -244,6 +247,7 @@ test('every damaging promoted animation derives safety from its own active geome
       id !== 'external-healing-source' &&
       id !== 'damage-rate-cap' &&
       id !== 'loadout-mirror' &&
+      id !== 'moveset-shapeshifting' &&
       id !== 'part-break' &&
       id !== 'counter-stance' &&
       id !== 'absorption-power-up' &&
@@ -3779,5 +3783,63 @@ test('loadout mirror captures once and keeps the copied package after the player
   assert.match(
     renderBlueprintThumbnail(id, 'test-loadout-mirror'),
     /data-blueprint-preview="loadout-mirror"/,
+  );
+});
+
+test('moveset shapeshifting hands off three complete packages in order', () => {
+  const id = 'moveset-shapeshifting';
+  assert.deepEqual(
+    [0, 0.3, 0.8, 1.5, 1.8, 2.2, 2.6, 3.3, 3.6, 3.9, 4.4, 5.1, 5.35, 5.5].map(
+      movesetShapeshiftingState,
+    ),
+    [
+      'colossus-ready',
+      'colossus-signal',
+      'colossus-active',
+      'colossus-recovery',
+      'change-to-serpent',
+      'serpent-signal',
+      'serpent-active',
+      'serpent-recovery',
+      'change-to-oracle',
+      'oracle-signal',
+      'oracle-active',
+      'oracle-recovery',
+      'sequence-complete',
+      'reset',
+    ],
+  );
+  assert.deepEqual(movesetShapeshiftingResolve(), {
+    currentForm: 'colossus',
+    requestedForm: 'serpent',
+    nextForm: 'serpent',
+    accepted: true,
+    rejected: false,
+    changeId: 'moveset-change-1',
+    eventCount: 1,
+    allowedForms: ['colossus', 'serpent', 'oracle'],
+  });
+  assert.equal(movesetShapeshiftingResolve({ requestedForm: 'unknown' }).rejected, true);
+  assert.equal(movesetShapeshiftingResolve({ alreadyApplied: true }).eventCount, 0);
+
+  const colossus = blueprintFrame(id, 0.8);
+  assert.equal(colossus.movesetShapeshiftingForm, 'colossus');
+  assert.equal(colossus.movesetShapeshiftingPackageId, 'colossus-slam');
+  assert.equal(colossus.movesetShapeshiftingPackageAttackActive, true);
+  const serpent = blueprintFrame(id, 2.6);
+  assert.equal(serpent.movesetShapeshiftingForm, 'serpent');
+  assert.equal(serpent.movesetShapeshiftingPackageId, 'serpent-lane');
+  assert.equal(serpent.movesetShapeshiftingChangeCount, 1);
+  const oracle = blueprintFrame(id, 4.4);
+  assert.equal(oracle.movesetShapeshiftingForm, 'oracle');
+  assert.equal(oracle.movesetShapeshiftingPackageId, 'oracle-fan');
+  assert.equal(oracle.movesetShapeshiftingChangeCount, 2);
+  assert.equal(oracle.movesetShapeshiftingEventCount, 2);
+  assert.equal(oracle.movesetShapeshiftingPackageScope, 3);
+  assert.equal(blueprintPointSafe(id, 4.4, oracle.player), true);
+  assert.deepEqual(blueprintFrame(id, 0).player, blueprintFrame(id, 6).player);
+  assert.match(
+    renderBlueprintThumbnail(id, 'test-moveset-shapeshifting'),
+    /data-blueprint-preview="moveset-shapeshifting"/,
   );
 });

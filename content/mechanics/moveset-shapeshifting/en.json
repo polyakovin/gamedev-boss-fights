@@ -1,0 +1,138 @@
+{
+  "title": "Moveset shapeshifting",
+  "subtitle": "Switch complete authored packages instead of shuffling isolated attacks",
+  "variant": "Signal · exit · transform · enter",
+  "summary": "The boss changes between complete borrowed movesets, each with its own signals, attacks, movement rules, and recovery.",
+  "overview": "Moveset shapeshifting replaces the boss’s whole active package with another authored package: locomotion, targeting, attacks, reactions, and recovery change together. Clear transition rules let one encounter revisit learned opponents without becoming an unreadable bag of moves.",
+  "learning": "Define each form’s package id, entry and exit conditions, transition cue, minimum tenure, attack eligibility, geometry, movement, vulnerabilities, cooldown ownership, shared health and status, deterministic sequence, rollback, and telemetry.",
+  "category": "States, resources, and scaling",
+  "readTime": "10 min",
+  "demo": {
+    "title": "Follow three complete packages through two explicit transformations",
+    "timeline": "Moveset shapeshifting timeline",
+    "step": "Colossus slam, serpent lane, and oracle fan",
+    "phaseNames": [
+      "Commit the colossus package",
+      "Hand off to the serpent package",
+      "Finish with the oracle package"
+    ],
+    "phaseDescriptions": [
+      "The colossus package signals a heavy stance, releases one expanding slam from 0.55 to 1.35 seconds, and completes its own recovery before transformation.",
+      "From 1.72 to 2.05 seconds, the boss exits the first package and enters the serpent package. Its movement and threat become one long lane rather than inheriting the previous radial attack.",
+      "A second explicit handoff at 3.48 seconds selects the oracle package. Three ranged lanes then travel as one authored fan, and the sequence ends only after that package’s recovery."
+    ],
+    "boss": "Boss",
+    "player": "Player",
+    "danger": "Each form changes a complete action vocabulary; mixing attacks before the active package is ready breaks timing, collision, and player learning",
+    "locked": "Form selection, package scope, transition ids, minimum tenure, shared state, cooldown ownership, duplicate events, and rollback belong to encounter logic",
+    "safe": "Show the active form, the full-package handoff, its signature geometry, and a recovery beat before another form can act",
+    "reducedMotion": "Autoplay is disabled by reduced motion. Scrub across 0.20, 0.55, 1.35, 1.72, 2.05, 2.35, 3.20, 3.48, 3.82, 4.12, 5.00, and 5.42 seconds.",
+    "diagramDescription": "Kern completes a radial colossus attack, transforms into a long-lane serpent package, then transforms again into an oracle package that releases a three-way fan."
+  },
+  "steps": [
+    {
+      "title": "What belongs to one moveset package?",
+      "body": "Treat locomotion, target selection, attacks, hit reactions, hurtboxes, vulnerabilities, effects, and recovery as one versioned contract. A form may share health and status with the encounter, but it should not inherit incompatible local timers or animation state."
+    },
+    {
+      "title": "How is a transformation scheduled?",
+      "body": "Choose deterministic conditions such as elapsed tenure, health bands, a fixed sequence, or an authored weighted table. Finish or cancel the outgoing action explicitly, signal the handoff, then enable the next package only after its rig, collision, and cues are ready."
+    },
+    {
+      "title": "What persists across forms?",
+      "body": "Classify every value as encounter-wide or form-local. Preserve health, progression, ownership, and approved status effects; reset or translate cooldowns, targets, spawned entities, weak points, and pending events according to a documented handoff table."
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "The boss shuffles signature attacks without form identity",
+      "body": "A random attack salad removes the learned relationship between pose, movement, geometry, and response. Keep a package active long enough to read and practice, and reserve cross-package combinations for explicitly authored exceptions."
+    },
+    {
+      "title": "A hidden handoff leaks the previous form’s state",
+      "body": "Old hitboxes, projectiles, targets, or cooldown callbacks can fire after the new rig appears. Give every transition an id, cancel or transfer owned events once, and test backward seeking, latency, death, interruption, reload, and rollback at both boundaries."
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "Give every form an entry, active loop, and exit",
+      "body": "A package is more than an attack list. Specify its entry pose, movement model, legal actions, signature pressure, recovery cadence, exit lock, and fallback if an animation or target is unavailable."
+    },
+    {
+      "title": "Keep shared state deliberately small",
+      "body": "One health bar and encounter progress can make the transformations feel like the same boss. Local cooldowns and entities usually belong to their package; translating everything across forms creates invisible dependencies and balance surprises."
+    },
+    {
+      "title": "Measure the sequence as well as each form",
+      "body": "Record formId, packageVersion, transitionId, reason, tenure, entry and exit time, action ids, canceled events, carried statuses, damage taken per form, repeat frequency, and failures to reach a valid recovery before handoff."
+    }
+  ],
+  "story": {
+    "title": "Kern turns one rune body into three remembered foes",
+    "body": "The elemental widens into a colossus for a stone-shaking slam, uncoils into a serpent’s lane, then raises an oracle crown and casts three rays. Each silhouette completes its own rhythm before the next rune takes hold."
+  },
+  "adaptation": {
+    "title": "Reduce the form set without breaking the contract",
+    "body": "Offer a fixed sequence, longer minimum tenure, stronger transition cues, persistent form icons, and an option that removes one package. Announce geometry through shape, sound, text alternatives, and haptics rather than color alone."
+  },
+  "distinction": {
+    "title": "Whole-package replacement, not an ordinary phase or copied loadout",
+    "body": "A phase can change encounter goals while keeping the same action system. Shapeshifting replaces the active moveset contract itself. A loadout mirror derives a package from player data; this mechanic selects complete authored packages, often borrowed from other opponents."
+  },
+  "lensNotes": [
+    {
+      "id": "phase-structure",
+      "body": "Forms can behave like short internal phases, but each needs a complete entry, active loop, recovery, and exit contract."
+    },
+    {
+      "id": "difficulty-rhythm",
+      "body": "Minimum tenure and transition recovery prevent rapid form churn from compressing several incompatible rhythms into noise."
+    },
+    {
+      "id": "mastery-check",
+      "body": "Borrowed packages can test whether players recognize earlier enemies, provided the recreated cues and responses remain faithful."
+    },
+    {
+      "id": "progress-clarity",
+      "body": "A shared health bar, persistent form indicator, and explicit handoff show that progress continues while the action vocabulary changes."
+    },
+    {
+      "id": "rule-exception",
+      "body": "Pending attacks, spawned entities, status effects, weak points, interrupts, deaths, reloads, and network rollback need ownership rules at every handoff."
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "The Binding of Isaac: Repentance",
+      "boss": "Delirium",
+      "screenshot": "https://i.ytimg.com/vi/NQG1CnB4CX4/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=NQG1CnB4CX4&t=15s",
+      "video": "https://www.youtube.com/watch?v=NQG1CnB4CX4&t=15s",
+      "videoDurationSeconds": 311,
+      "body": "From 0:15, Delirium repeatedly becomes bosses from the run and uses their attack patterns. Its documented multipart and timing quirks show why borrowed packages need explicit ownership, cleanup, and bounds rather than raw reuse."
+    },
+    {
+      "dimension": "3D",
+      "game": "The Legend of Zelda: Twilight Princess HD",
+      "boss": "Zant",
+      "screenshot": "https://i.ytimg.com/vi/_I8tFzWEDH8/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=_I8tFzWEDH8&t=52s",
+      "video": "https://www.youtube.com/watch?v=_I8tFzWEDH8&t=52s",
+      "videoDurationSeconds": 829,
+      "body": "From 0:52, Zant begins a sequence of recreated boss arenas and matching response packages. The long, ordered handoffs preserve the identity of each prior lesson instead of interleaving all of their attacks at once."
+    },
+    {
+      "dimension": "2D",
+      "game": "Chrono Trigger",
+      "boss": "Lavos",
+      "screenshot": "https://i.ytimg.com/vi/YZfKqQ3D7NA/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=YZfKqQ3D7NA&t=90s",
+      "video": "https://www.youtube.com/watch?v=YZfKqQ3D7NA&t=90s",
+      "videoDurationSeconds": 2399,
+      "body": "At 1:30, Lavos begins cycling through attack modes based on earlier bosses. The turn-based example makes package boundaries explicit and demonstrates how one shared health target can revisit many learned action sets in a deterministic order."
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

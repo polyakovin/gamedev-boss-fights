@@ -1609,12 +1609,12 @@
         "en": {
           "title": "Moveset shapeshifting",
           "category": "States, resources, and scaling",
-          "summary": "Draft outline for the moveset shapeshifting mechanic. Rules, tuning guidance, and examples are still in progress."
+          "summary": "The boss switches between complete borrowed movesets with distinct signals, attacks, movement, and recovery."
         },
         "ru": {
           "title": "Смена чужих наборов атак",
           "category": "Состояния, ресурсы и масштабирование",
-          "summary": "Босс переключается между полноценными наборами движений других противников."
+          "summary": "Босс переключается между полноценными чужими наборами движений со своими сигналами, атаками и восстановлением."
         }
       }
     },

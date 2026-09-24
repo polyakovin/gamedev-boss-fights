@@ -1,0 +1,138 @@
+{
+  "title": "Cambio de repertorio",
+  "subtitle": "Alterna paquetes completos diseñados, no ataques aislados al azar",
+  "variant": "Señal · salida · transformación · entrada",
+  "summary": "El jefe cambia entre repertorios prestados completos, cada uno con señales, ataques, movimiento y recuperación propios.",
+  "overview": "La transformación sustituye todo el paquete activo del jefe por otro paquete diseñado: locomoción, objetivos, ataques, reacciones y recuperación cambian juntos. Las transiciones claras permiten revisitar enemigos aprendidos sin crear una mezcla ilegible.",
+  "learning": "Define id y versión de cada paquete, entrada, salida, señal, permanencia mínima, ataques válidos, geometría, movimiento, vulnerabilidades, propiedad de recargas, salud y estados compartidos, secuencia determinista, rollback y telemetría.",
+  "category": "Estados, recursos y escalado",
+  "readTime": "10 min",
+  "demo": {
+    "title": "Sigue tres paquetes completos a través de dos transformaciones explícitas",
+    "timeline": "Línea temporal del cambio de repertorio",
+    "step": "Golpe del coloso, carril de serpiente y abanico del oráculo",
+    "phaseNames": [
+      "Completar el paquete del coloso",
+      "Entregar al paquete de serpiente",
+      "Terminar con el paquete del oráculo"
+    ],
+    "phaseDescriptions": [
+      "El coloso señala una postura pesada, libera un golpe expansivo de 0,55 a 1,35 segundos y completa su recuperación antes de transformarse.",
+      "De 1,72 a 2,05 segundos el jefe sale del primer paquete y entra al de serpiente. Movimiento y amenaza pasan a un carril largo sin heredar el ataque radial.",
+      "Una segunda entrega explícita en 3,48 segundos elige al oráculo. Tres carriles viajan como un abanico diseñado y la secuencia termina tras su recuperación."
+    ],
+    "boss": "Jefe",
+    "player": "Jugador",
+    "danger": "Cada forma cambia un vocabulario completo; mezclar ataques antes de preparar el paquete rompe tiempos, colisiones y aprendizaje",
+    "locked": "Selección de forma, alcance del paquete, ids de transición, permanencia, estado compartido, recargas, duplicados y rollback pertenecen a la lógica",
+    "safe": "Muestra la forma activa, la entrega completa, su geometría distintiva y una recuperación antes de otra forma",
+    "reducedMotion": "Con movimiento reducido no hay reproducción automática. Recorre 0,20, 0,55, 1,35, 1,72, 2,05, 2,35, 3,20, 3,48, 3,82, 4,12, 5,00 y 5,42 segundos.",
+    "diagramDescription": "Kern completa un golpe radial de coloso, se convierte en un paquete de serpiente con carril largo y luego en un oráculo con abanico triple."
+  },
+  "steps": [
+    {
+      "title": "¿Qué pertenece a un paquete de movimientos?",
+      "body": "Trata locomoción, objetivos, ataques, reacciones, hurtboxes, vulnerabilidades, efectos y recuperación como un contrato versionado. Puede compartir salud y estados, pero no temporizadores locales incompatibles."
+    },
+    {
+      "title": "¿Cómo se programa una transformación?",
+      "body": "Elige condiciones deterministas: permanencia, bandas de salud, secuencia fija o tabla diseñada. Termina o cancela la acción saliente, señala la entrega y activa el siguiente paquete solo cuando rig, colisión y señales estén listos."
+    },
+    {
+      "title": "¿Qué persiste entre formas?",
+      "body": "Clasifica cada valor como global o local. Conserva salud, progreso, dueño y estados aprobados; reinicia o traduce recargas, objetivos, entidades, puntos débiles y eventos pendientes con una tabla documentada."
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "El jefe baraja ataques distintivos sin identidad",
+      "body": "Una ensalada aleatoria rompe la relación aprendida entre pose, movimiento, geometría y respuesta. Mantén el paquete suficiente tiempo y reserva combinaciones entre paquetes para excepciones diseñadas."
+    },
+    {
+      "title": "Una entrega oculta filtra el estado anterior",
+      "body": "Hitboxes, proyectiles, objetivos o callbacks viejos pueden activarse con el rig nuevo. Da id a cada transición, cancela o transfiere una vez y prueba búsqueda inversa, latencia, muerte, interrupción, carga y rollback."
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "Da entrada, ciclo activo y salida a cada forma",
+      "body": "Un paquete no es solo una lista de ataques. Define pose de entrada, movimiento, acciones legales, presión distintiva, recuperación, bloqueo de salida y fallback si falta objetivo o animación."
+    },
+    {
+      "title": "Mantén pequeño el estado compartido",
+      "body": "Una barra de salud y progreso común unen al jefe. Las recargas y entidades locales suelen pertenecer al paquete; traducirlo todo crea dependencias invisibles y sorpresas de balance."
+    },
+    {
+      "title": "Mide la secuencia y cada forma",
+      "body": "Registra formId, packageVersion, transitionId, razón, permanencia, entrada y salida, action ids, eventos cancelados, estados llevados, daño por forma, repeticiones y fallos al alcanzar una recuperación válida."
+    }
+  ],
+  "story": {
+    "title": "Kern convierte un cuerpo rúnico en tres enemigos recordados",
+    "body": "El elemental se ensancha como coloso, se estira en el carril de una serpiente y alza una corona de oráculo para lanzar tres rayos. Cada silueta completa su ritmo antes de la siguiente runa."
+  },
+  "adaptation": {
+    "title": "Reduce las formas sin romper el contrato",
+    "body": "Ofrece secuencia fija, más permanencia, señales fuertes, iconos persistentes y una opción que quite un paquete. Comunica geometría por forma, sonido, texto y vibración, no solo color."
+  },
+  "distinction": {
+    "title": "Reemplazo completo, no fase normal ni loadout copiado",
+    "body": "Una fase puede cambiar objetivos con el mismo sistema de acciones. Aquí cambia el contrato del repertorio. El espejo deriva un paquete de datos del jugador; esta mecánica elige paquetes completos diseñados de otros oponentes."
+  },
+  "lensNotes": [
+    {
+      "id": "phase-structure",
+      "body": "Las formas parecen fases internas breves, pero cada una necesita contrato completo de entrada, ciclo, recuperación y salida."
+    },
+    {
+      "id": "difficulty-rhythm",
+      "body": "La permanencia mínima y la recuperación impiden que cambios rápidos compriman ritmos incompatibles en ruido."
+    },
+    {
+      "id": "mastery-check",
+      "body": "Los paquetes prestados comprueban si se reconocen enemigos anteriores cuando señales y respuestas se recrean fielmente."
+    },
+    {
+      "id": "progress-clarity",
+      "body": "Salud compartida, indicador persistente y entrega explícita muestran que el progreso continúa aunque cambie el vocabulario."
+    },
+    {
+      "id": "rule-exception",
+      "body": "Ataques pendientes, entidades, estados, puntos débiles, interrupciones, muerte, carga y rollback necesitan reglas de propiedad."
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "The Binding of Isaac: Repentance",
+      "boss": "Delirium",
+      "screenshot": "https://i.ytimg.com/vi/NQG1CnB4CX4/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=NQG1CnB4CX4&t=15s",
+      "video": "https://www.youtube.com/watch?v=NQG1CnB4CX4&t=15s",
+      "videoDurationSeconds": 311,
+      "body": "Desde 0:15, Delirium se convierte repetidamente en jefes de la partida y usa sus patrones. Sus peculiaridades de cuerpos múltiples y tiempos muestran la necesidad de propiedad, limpieza y límites explícitos."
+    },
+    {
+      "dimension": "3D",
+      "game": "The Legend of Zelda: Twilight Princess HD",
+      "boss": "Zant",
+      "screenshot": "https://i.ytimg.com/vi/_I8tFzWEDH8/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=_I8tFzWEDH8&t=52s",
+      "video": "https://www.youtube.com/watch?v=_I8tFzWEDH8&t=52s",
+      "videoDurationSeconds": 829,
+      "body": "Desde 0:52, Zant inicia arenas recreadas y paquetes de respuesta correspondientes. Las entregas largas y ordenadas conservan la identidad de cada lección anterior sin intercalar todos los ataques."
+    },
+    {
+      "dimension": "2D",
+      "game": "Chrono Trigger",
+      "boss": "Lavos",
+      "screenshot": "https://i.ytimg.com/vi/YZfKqQ3D7NA/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=YZfKqQ3D7NA&t=90s",
+      "video": "https://www.youtube.com/watch?v=YZfKqQ3D7NA&t=90s",
+      "videoDurationSeconds": 2399,
+      "body": "En 1:30, Lavos empieza a recorrer modos de ataque de jefes anteriores. El ejemplo por turnos hace visibles los límites y muestra cómo una sola salud puede revisitar repertorios en orden determinista."
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

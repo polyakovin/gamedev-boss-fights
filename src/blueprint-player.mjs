@@ -642,6 +642,30 @@ export function initializeBlueprint(widget) {
         frame.loadoutMirrorBossUsedCopiedAttack,
       );
     }
+    if (mechanicId === 'moveset-shapeshifting') {
+      widget.dataset.blueprintMovesetShapeshifting = frame.movesetShapeshiftingState;
+      widget.dataset.blueprintMovesetShapeshiftingForm = frame.movesetShapeshiftingForm;
+      widget.dataset.blueprintMovesetShapeshiftingPackage = frame.movesetShapeshiftingPackageId;
+      widget.dataset.blueprintMovesetShapeshiftingFormIndex = String(
+        frame.movesetShapeshiftingFormIndex,
+      );
+      widget.dataset.blueprintMovesetShapeshiftingAttackActive = String(
+        frame.movesetShapeshiftingPackageAttackActive,
+      );
+      widget.dataset.blueprintMovesetShapeshiftingTransitionActive = String(
+        frame.movesetShapeshiftingTransitionActive,
+      );
+      widget.dataset.blueprintMovesetShapeshiftingChangeCount = String(
+        frame.movesetShapeshiftingChangeCount,
+      );
+      widget.dataset.blueprintMovesetShapeshiftingPackageScope = String(
+        frame.movesetShapeshiftingPackageScope,
+      );
+      widget.dataset.blueprintMovesetShapeshiftingChangeId = frame.movesetShapeshiftingChangeId;
+      widget.dataset.blueprintMovesetShapeshiftingEventCount = String(
+        frame.movesetShapeshiftingEventCount,
+      );
+    }
     boss.setAttribute(
       'transform',
       `translate(${frame.boss.x} ${frame.boss.y}) scale(${frame.bossScale})`,

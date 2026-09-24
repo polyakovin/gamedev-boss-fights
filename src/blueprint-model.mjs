@@ -1454,6 +1454,27 @@ const SPECS = {
     initialLoadout: ['sword', 'ward', 'ember'],
     changedLoadout: ['bow', 'dash', 'frost'],
   },
+  'moveset-shapeshifting': {
+    mode: 'moveset-shapeshifting',
+    boss: [300, 375],
+    player: [300, 660],
+    target: [300, 660],
+    arena: [55, 310, 450, 590],
+    firstSignal: [0.2, 0.55],
+    firstActive: [0.55, 1.35],
+    firstRecovery: [1.35, 1.72],
+    firstChange: [1.72, 2.05],
+    secondSignal: [2.05, 2.35],
+    secondActive: [2.35, 3.2],
+    secondRecovery: [3.2, 3.48],
+    secondChange: [3.48, 3.82],
+    thirdSignal: [3.82, 4.12],
+    thirdActive: [4.12, 5],
+    thirdRecovery: [5, 5.32],
+    resetAt: 5.42,
+    forms: ['colossus', 'serpent', 'oracle'],
+    packages: ['colossus-slam', 'serpent-lane', 'oracle-fan'],
+  },
   'wide-swing': { mode: 'arc', boss: [280, 310], player: [410, 470], target: [470, 650] },
   lunge: { mode: 'lunge', boss: [170, 290], player: [390, 590], target: [470, 660] },
   grab: { mode: 'grab', boss: [280, 300], player: [390, 485], target: [470, 610] },
@@ -2816,6 +2837,50 @@ export function loadoutMirrorSnapshot({
     copiedIds: Object.freeze(copied),
     captured,
     eventCount: captured ? 1 : 0,
+  });
+}
+
+export function movesetShapeshiftingState(time) {
+  const spec = SPECS['moveset-shapeshifting'];
+  const t = localTime(time);
+  if (t < spec.firstSignal[0]) return 'colossus-ready';
+  if (t < spec.firstActive[0]) return 'colossus-signal';
+  if (t < spec.firstRecovery[0]) return 'colossus-active';
+  if (t < spec.firstChange[0]) return 'colossus-recovery';
+  if (t < spec.firstChange[1]) return 'change-to-serpent';
+  if (t < spec.secondActive[0]) return 'serpent-signal';
+  if (t < spec.secondRecovery[0]) return 'serpent-active';
+  if (t < spec.secondChange[0]) return 'serpent-recovery';
+  if (t < spec.secondChange[1]) return 'change-to-oracle';
+  if (t < spec.thirdActive[0]) return 'oracle-signal';
+  if (t < spec.thirdRecovery[0]) return 'oracle-active';
+  if (t < spec.thirdRecovery[1]) return 'oracle-recovery';
+  if (t < spec.resetAt) return 'sequence-complete';
+  return 'reset';
+}
+
+export function movesetShapeshiftingResolve({
+  currentForm = 'colossus',
+  requestedForm = 'serpent',
+  allowedForms = ['colossus', 'serpent', 'oracle'],
+  changeId = 'moveset-change-1',
+  alreadyApplied = false,
+} = {}) {
+  const allowed = [...new Set(Array.isArray(allowedForms) ? allowedForms.map(String) : [])];
+  const current = allowed.includes(String(currentForm))
+    ? String(currentForm)
+    : (allowed[0] ?? 'none');
+  const requested = String(requestedForm);
+  const accepted = !alreadyApplied && allowed.includes(requested) && requested !== current;
+  return Object.freeze({
+    currentForm: current,
+    requestedForm: requested,
+    nextForm: accepted ? requested : current,
+    accepted,
+    rejected: !allowed.includes(requested),
+    changeId: accepted ? String(changeId) : 'none',
+    eventCount: accepted ? 1 : 0,
+    allowedForms: Object.freeze(allowed),
   });
 }
 
@@ -6863,6 +6928,160 @@ function primitivesFor(spec, frame) {
       ),
     ];
   }
+  if (mode === 'moveset-shapeshifting') {
+    const firstProgress = clamp(
+      (frame.time - spec.firstActive[0]) / (spec.firstActive[1] - spec.firstActive[0]),
+    );
+    const secondProgress = clamp(
+      (frame.time - spec.secondActive[0]) / (spec.secondActive[1] - spec.secondActive[0]),
+    );
+    const thirdProgress = clamp(
+      (frame.time - spec.thirdActive[0]) / (spec.thirdActive[1] - spec.thirdActive[0]),
+    );
+    const formIndex = spec.forms.indexOf(frame.movesetShapeshiftingForm);
+    const transitionPulse = frame.movesetShapeshiftingTransitionActive
+      ? pulse(
+          frame.time < spec.firstChange[1]
+            ? (frame.time - spec.firstChange[0]) / (spec.firstChange[1] - spec.firstChange[0])
+            : (frame.time - spec.secondChange[0]) / (spec.secondChange[1] - spec.secondChange[0]),
+        )
+      : 0;
+    const firstActive = frame.movesetShapeshiftingForm === 'colossus';
+    const secondActive = frame.movesetShapeshiftingForm === 'serpent';
+    const thirdActive = frame.movesetShapeshiftingForm === 'oracle';
+    const fanAngles = [-0.38, 0, 0.38];
+    return [
+      rect(...spec.arena, 0.52, 'muted', 0.025),
+      rect(102, 474, 356, 82, 0.72, 'muted', 0.025),
+      ...[160, 280, 400].flatMap((x, index) => [
+        circle(
+          x,
+          516,
+          28 + (formIndex === index ? 7 : 0),
+          formIndex === index ? 0.98 : 0.34,
+          formIndex === index ? ['accent', 'safe', 'signal'][index] : 'muted',
+          formIndex === index ? 8 : 4,
+          formIndex === index ? 0.14 : 0.04,
+        ),
+        line(
+          x - 13,
+          528 - index * 5,
+          x + 13,
+          504 + index * 5,
+          formIndex === index ? 0.96 : 0.3,
+          ['accent', 'safe', 'signal'][index],
+          6,
+        ),
+      ]),
+      line(
+        188,
+        516,
+        252,
+        516,
+        frame.movesetShapeshiftingChangeCount >= 1 ? 0.9 : 0.22,
+        'safe',
+        5,
+        '8 7',
+      ),
+      line(
+        308,
+        516,
+        372,
+        516,
+        frame.movesetShapeshiftingChangeCount >= 2 ? 0.9 : 0.22,
+        'signal',
+        5,
+        '8 7',
+      ),
+      circle(
+        frame.boss.x,
+        frame.boss.y - 24,
+        64 + transitionPulse * 56,
+        transitionPulse,
+        'safe',
+        9,
+        0.025,
+        '10 8',
+      ),
+      circle(
+        frame.boss.x,
+        frame.boss.y - 24,
+        74 + firstProgress * 112,
+        firstActive && frame.movesetShapeshiftingPackageAttackActive
+          ? 0.9 - firstProgress * 0.35
+          : 0,
+        'accent',
+        12,
+        0.025,
+      ),
+      line(
+        frame.boss.x - 58,
+        frame.boss.y + 18,
+        frame.boss.x + 58,
+        frame.boss.y + 18,
+        firstActive ? 0.82 : 0,
+        'accent',
+        12,
+      ),
+      rect(
+        76,
+        564 - secondProgress * 46,
+        408,
+        86,
+        secondActive && frame.movesetShapeshiftingPackageAttackActive
+          ? 0.88
+          : secondActive
+            ? 0.2
+            : 0,
+        'safe',
+        0.035,
+      ),
+      line(
+        92,
+        607 - secondProgress * 46,
+        468,
+        607 - secondProgress * 46,
+        secondActive ? 0.92 : 0,
+        'safe',
+        8,
+        '16 10',
+      ),
+      ...fanAngles.flatMap((angle, index) => {
+        const distance = 120 + thirdProgress * 300;
+        const end = {
+          x: frame.boss.x + Math.sin(angle) * distance,
+          y: frame.boss.y + Math.cos(angle) * distance,
+        };
+        return [
+          line(
+            frame.boss.x,
+            frame.boss.y,
+            end.x,
+            end.y,
+            thirdActive ? 0.86 : 0,
+            'signal',
+            6,
+            index === 1 ? '' : '10 8',
+          ),
+          circle(
+            end.x,
+            end.y,
+            13,
+            thirdActive && frame.movesetShapeshiftingPackageAttackActive ? 0.96 : 0,
+            'signal',
+            5,
+            0.18,
+          ),
+        ];
+      }),
+      path(
+        `M ${frame.boss.x - 32} ${frame.boss.y - 98} L ${frame.boss.x} ${frame.boss.y - 132} L ${frame.boss.x + 32} ${frame.boss.y - 98}`,
+        thirdActive ? 0.94 : 0,
+        'signal',
+        8,
+      ),
+    ];
+  }
   if (mode === 'encounter-specific-tool') {
     const pedestal = point(spec.pedestal);
     const spearBase = { x: frame.player.x + 20, y: frame.player.y - 10 };
@@ -8349,6 +8568,7 @@ function pointClearsThreat(spec, frame, value, radius = BLUEPRINT_PLAYER_RADIUS)
   if (mode === 'external-healing-source') return true;
   if (mode === 'damage-rate-cap') return true;
   if (mode === 'loadout-mirror') return true;
+  if (mode === 'moveset-shapeshifting') return true;
   if (mode === 'projectile-rally')
     return (
       !frame.dangerActive ||
@@ -8740,6 +8960,7 @@ export function blueprintFrame(id, time) {
   else if (spec.mode === 'external-healing-source') responseProgress = 0;
   else if (spec.mode === 'damage-rate-cap') responseProgress = 0;
   else if (spec.mode === 'loadout-mirror') responseProgress = 0;
+  else if (spec.mode === 'moveset-shapeshifting') responseProgress = 0;
   else if (spec.mode === 'knockback')
     responseProgress = phase === 0 ? 0 : phase === 1 ? smooth(action) : 1;
   else if (spec.mode === 'target-lock')
@@ -10436,7 +10657,8 @@ export function blueprintFrame(id, time) {
             spec.mode === 'self-heal-cast' ||
             spec.mode === 'external-healing-source' ||
             spec.mode === 'damage-rate-cap' ||
-            spec.mode === 'loadout-mirror'
+            spec.mode === 'loadout-mirror' ||
+            spec.mode === 'moveset-shapeshifting'
           ? (Math.atan2(boss.y - player.y, boss.x - player.x) * 180) / Math.PI
           : spec.mode === 'active-phase'
             ? (Math.atan2(boss.y - player.y, boss.x - player.x) * 180) / Math.PI
@@ -11732,6 +11954,46 @@ export function blueprintFrame(id, time) {
     frame.playerMotion.impact = 0;
     frame.bossMotion.attack = strikePulse(t, spec.bossUseAt, 0.72);
   }
+  if (spec.mode === 'moveset-shapeshifting') {
+    const form =
+      t < spec.firstChange[1]
+        ? spec.forms[0]
+        : t < spec.secondChange[1]
+          ? spec.forms[1]
+          : spec.forms[2];
+    const formIndex = spec.forms.indexOf(form);
+    const attackActive =
+      (t >= spec.firstActive[0] && t < spec.firstActive[1]) ||
+      (t >= spec.secondActive[0] && t < spec.secondActive[1]) ||
+      (t >= spec.thirdActive[0] && t < spec.thirdActive[1]);
+    frame.movesetShapeshiftingState = movesetShapeshiftingState(t);
+    frame.movesetShapeshiftingForm = form;
+    frame.movesetShapeshiftingPackageId = spec.packages[formIndex];
+    frame.movesetShapeshiftingFormIndex = formIndex;
+    frame.movesetShapeshiftingPackageAttackActive = attackActive;
+    frame.movesetShapeshiftingTransitionActive =
+      (t >= spec.firstChange[0] && t < spec.firstChange[1]) ||
+      (t >= spec.secondChange[0] && t < spec.secondChange[1]);
+    frame.movesetShapeshiftingChangeCount =
+      (t >= spec.firstChange[1] ? 1 : 0) + (t >= spec.secondChange[1] ? 1 : 0);
+    frame.movesetShapeshiftingPackageScope = spec.packages.length;
+    frame.movesetShapeshiftingChangeId =
+      t >= spec.secondChange[1]
+        ? 'moveset-change-2'
+        : t >= spec.firstChange[1]
+          ? 'moveset-change-1'
+          : 'none';
+    frame.movesetShapeshiftingEventCount = frame.movesetShapeshiftingChangeCount;
+    frame.dangerActive = false;
+    frame.playerMotion.attack = 0;
+    frame.playerMotion.dodge = 0;
+    frame.playerMotion.impact = 0;
+    frame.bossMotion.attack = Math.max(
+      strikePulse(t, spec.firstActive[0], 0.72),
+      strikePulse(t, spec.secondActive[0], 0.72),
+      strikePulse(t, spec.thirdActive[0], 0.72),
+    );
+  }
   if (spec.mode === 'ability-lock') {
     frame.abilityLockState = abilityLockState(t);
     frame.abilityLockFirstAvoided = t >= spec.firstResolveAt && t < spec.secondTelegraph[0];
@@ -12069,7 +12331,8 @@ export function blueprintFrame(id, time) {
             spec.mode === 'self-heal-cast' ||
             spec.mode === 'external-healing-source' ||
             spec.mode === 'damage-rate-cap' ||
-            spec.mode === 'loadout-mirror'
+            spec.mode === 'loadout-mirror' ||
+            spec.mode === 'moveset-shapeshifting'
           ? 92
           : -62),
   };

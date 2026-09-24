@@ -1,0 +1,138 @@
+{
+  "title": "मूवसेट रूपांतरण",
+  "subtitle": "अलग हमलों को मिलाने के बजाय पूरे authored packages बदलें",
+  "variant": "संकेत · निकास · रूपांतरण · प्रवेश",
+  "summary": "बॉस पूर्ण borrowed movesets के बीच बदलता है; हर पैकेज के अपने संकेत, हमले, गति नियम और recovery होते हैं।",
+  "overview": "यह mechanic boss का पूरा active package बदलती है: locomotion, targeting, attacks, reactions और recovery साथ बदलते हैं। साफ transition rules सीखे हुए विरोधियों को दोहराते हैं, बिना unreadable move mix बनाए।",
+  "learning": "हर form का package id और version, entry/exit, transition cue, minimum tenure, legal attacks, geometry, movement, vulnerabilities, cooldown ownership, shared health/status, deterministic sequence, rollback और telemetry तय करें।",
+  "category": "अवस्थाएँ, संसाधन और स्केलिंग",
+  "readTime": "10 मिनट",
+  "demo": {
+    "title": "दो साफ transformations में तीन पूरे packages देखें",
+    "timeline": "मूवसेट रूपांतरण टाइमलाइन",
+    "step": "colossus slam, serpent lane और oracle fan",
+    "phaseNames": [
+      "colossus package पूरा करें",
+      "serpent package को handoff करें",
+      "oracle package से समाप्त करें"
+    ],
+    "phaseDescriptions": [
+      "Colossus भारी stance दिखाता है, 0.55 से 1.35 सेकंड तक फैलता slam छोड़ता है और बदलने से पहले अपनी recovery पूरी करता है।",
+      "1.72 से 2.05 सेकंड तक boss पहला package छोड़कर serpent में जाता है। movement और threat लंबी lane बनते हैं; पुराना radial attack नहीं आता।",
+      "3.48 सेकंड का दूसरा handoff oracle चुनता है। तीन ranged lanes एक authored fan बनती हैं और उसकी recovery के बाद ही sequence समाप्त होती है।"
+    ],
+    "boss": "बॉस",
+    "player": "खिलाड़ी",
+    "danger": "हर form पूरा action vocabulary बदलती है; नए package की readiness से पहले attacks मिलाने पर timing, collision और learning टूटते हैं",
+    "locked": "form selection, package scope, transition ids, minimum tenure, shared state, cooldown ownership, duplicates और rollback encounter logic में हैं",
+    "safe": "active form, full-package handoff, signature geometry और अगली form से पहले recovery beat दिखाएँ",
+    "reducedMotion": "कम गति में autoplay बंद है। 0.20, 0.55, 1.35, 1.72, 2.05, 2.35, 3.20, 3.48, 3.82, 4.12, 5.00 और 5.42 सेकंड देखें।",
+    "diagramDescription": "केर्न colossus का radial slam पूरा करता है, लंबी lane वाले serpent package में बदलता है, फिर तीन-way fan वाले oracle में।"
+  },
+  "steps": [
+    {
+      "title": "एक moveset package में क्या होता है?",
+      "body": "Locomotion, target selection, attacks, hit reactions, hurtboxes, vulnerabilities, effects और recovery को एक versioned contract मानें। Form health/status साझा कर सकती है, incompatible local timer नहीं।"
+    },
+    {
+      "title": "Transformation कैसे schedule होता है?",
+      "body": "Elapsed tenure, health bands, fixed sequence या authored weighted table जैसे deterministic conditions चुनें। outgoing action स्पष्ट रूप से finish/cancel करें, handoff signal दें और rig, collision, cues ready होने पर ही अगला package चालू करें।"
+    },
+    {
+      "title": "Forms के बीच क्या रहता है?",
+      "body": "हर value को encounter-wide या form-local करें। health, progress, ownership और approved status रखें; cooldown, target, spawned entity, weak point और pending event को handoff table से reset या translate करें।"
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "Form identity के बिना signature attacks shuffle होते हैं",
+      "body": "Random attack salad pose, movement, geometry और response की सीखी हुई कड़ी मिटाता है। Package को पढ़ने और अभ्यास के लिए पर्याप्त देर रखें; cross-package combo केवल साफ authored exception हो।"
+    },
+    {
+      "title": "छिपा handoff पुरानी form का state छोड़ता है",
+      "body": "नए rig के बाद old hitbox, projectile, target या callback चल सकते हैं। हर transition को id दें, owned events एक बार cancel/transfer करें और backward seek, latency, death, interrupt, reload व rollback जाँचें।"
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "हर form को entry, active loop और exit दें",
+      "body": "Package केवल attack list नहीं। entry pose, movement model, legal actions, signature pressure, recovery cadence, exit lock और missing animation/target fallback लिखें।"
+    },
+    {
+      "title": "Shared state जानबूझकर छोटा रखें",
+      "body": "एक health bar और progress समान boss का भाव देते हैं। local cooldown और entities package के होते हैं; सब कुछ translate करने से hidden dependency और balance surprises बनते हैं।"
+    },
+    {
+      "title": "Form के साथ sequence भी मापें",
+      "body": "formId, packageVersion, transitionId, reason, tenure, entry/exit, action ids, canceled events, carried status, form damage, repeat frequency और valid recovery fail दर्ज करें।"
+    }
+  ],
+  "story": {
+    "title": "केर्न एक rune body को तीन याद किए foes में बदलता है",
+    "body": "Elemental colossus बनकर पत्थर हिलाता है, serpent lane में फैलता है, फिर oracle crown उठाकर तीन rays छोड़ता है। हर silhouette अपना rhythm पूरा करता है।"
+  },
+  "adaptation": {
+    "title": "Contract बचाकर form set घटाएँ",
+    "body": "fixed sequence, लंबा minimum tenure, मजबूत cues, persistent form icons और एक package हटाने का option दें। geometry को shape, sound, text और haptics से बताएँ, केवल रंग से नहीं।"
+  },
+  "distinction": {
+    "title": "Whole-package replacement, ordinary phase या copied loadout नहीं",
+    "body": "Phase समान action system रखते हुए goals बदल सकती है। Shapeshifting moveset contract बदलता है। Loadout mirror player data से package बनाता है; यहाँ complete authored packages चुने जाते हैं।"
+  },
+  "lensNotes": [
+    {
+      "id": "phase-structure",
+      "body": "Forms छोटी internal phases जैसी हैं, पर हर form को पूरा entry, active loop, recovery और exit contract चाहिए।"
+    },
+    {
+      "id": "difficulty-rhythm",
+      "body": "Minimum tenure और transition recovery तेज बदलावों को incompatible rhythms का noise बनाने से रोकते हैं।"
+    },
+    {
+      "id": "mastery-check",
+      "body": "Faithful cues और responses के साथ borrowed packages पहले enemies की पहचान जाँचते हैं।"
+    },
+    {
+      "id": "progress-clarity",
+      "body": "Shared health, persistent indicator और explicit handoff बताते हैं कि action vocabulary बदली पर progress जारी है।"
+    },
+    {
+      "id": "rule-exception",
+      "body": "Pending attacks, entities, status, weak points, interrupts, death, reload और network rollback को ownership rules चाहिए।"
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "The Binding of Isaac: Repentance",
+      "boss": "Delirium",
+      "screenshot": "https://i.ytimg.com/vi/NQG1CnB4CX4/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=NQG1CnB4CX4&t=15s",
+      "video": "https://www.youtube.com/watch?v=NQG1CnB4CX4&t=15s",
+      "videoDurationSeconds": 311,
+      "body": "0:15 से Delirium run के bosses बनकर उनके attack patterns चलाता है। multipart और timing quirks raw reuse की जगह explicit ownership, cleanup और bounds की जरूरत दिखाते हैं।"
+    },
+    {
+      "dimension": "3D",
+      "game": "The Legend of Zelda: Twilight Princess HD",
+      "boss": "Zant",
+      "screenshot": "https://i.ytimg.com/vi/_I8tFzWEDH8/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=_I8tFzWEDH8&t=52s",
+      "video": "https://www.youtube.com/watch?v=_I8tFzWEDH8&t=52s",
+      "videoDurationSeconds": 829,
+      "body": "0:52 से Zant recreated boss arenas और matching response packages की sequence शुरू करता है। लंबे ordered handoffs हर पुराने lesson की identity बचाते हैं।"
+    },
+    {
+      "dimension": "2D",
+      "game": "Chrono Trigger",
+      "boss": "Lavos",
+      "screenshot": "https://i.ytimg.com/vi/YZfKqQ3D7NA/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=YZfKqQ3D7NA&t=90s",
+      "video": "https://www.youtube.com/watch?v=YZfKqQ3D7NA&t=90s",
+      "videoDurationSeconds": 2399,
+      "body": "1:30 पर Lavos earlier bosses के attack modes cycle करता है। Turn-based example package boundaries और shared health पर deterministic revisit साफ करता है।"
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

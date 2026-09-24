@@ -1,0 +1,138 @@
+{
+  "title": "মুভসেট রূপান্তর",
+  "subtitle": "আলাদা আক্রমণ মেশাবেন না; সম্পূর্ণ designed package বদলান",
+  "variant": "সংকেত · প্রস্থান · রূপান্তর · প্রবেশ",
+  "summary": "বস সম্পূর্ণ borrowed moveset-এর মধ্যে বদলায়; প্রতিটির নিজস্ব সংকেত, আক্রমণ, চলন ও recovery থাকে।",
+  "overview": "এই mechanic বসের পুরো active package বদলে দেয়: চলন, লক্ষ্য, আক্রমণ, প্রতিক্রিয়া ও recovery একসঙ্গে বদলায়। স্পষ্ট transition পরিচিত শত্রুকে ফিরিয়ে আনে, কিন্তু unreadable move mix বানায় না।",
+  "learning": "প্রতিটি form-এর package id ও version, entry/exit, cue, minimum tenure, বৈধ attack, geometry, movement, vulnerability, cooldown ownership, shared health/status, deterministic order, rollback ও telemetry নির্ধারণ করুন।",
+  "category": "অবস্থা, রিসোর্স ও স্কেলিং",
+  "readTime": "১০ মিনিট",
+  "demo": {
+    "title": "দুইটি স্পষ্ট রূপান্তরে তিনটি সম্পূর্ণ package অনুসরণ করুন",
+    "timeline": "মুভসেট রূপান্তর টাইমলাইন",
+    "step": "colossus slam, serpent lane ও oracle fan",
+    "phaseNames": [
+      "colossus package শেষ করুন",
+      "serpent package-এ handoff",
+      "oracle package-এ শেষ"
+    ],
+    "phaseDescriptions": [
+      "Colossus ভারী ভঙ্গি দেখায়, ০.৫৫ থেকে ১.৩৫ সেকেন্ডে expanding slam ছাড়ে এবং রূপান্তরের আগে recovery শেষ করে।",
+      "১.৭২ থেকে ২.০৫ সেকেন্ডে বস প্রথম package ছেড়ে serpent-এ যায়। movement ও threat লম্বা lane হয়; পুরনো radial attack আসে না।",
+      "৩.৪৮ সেকেন্ডের দ্বিতীয় handoff oracle বেছে নেয়। তিন ranged lane একটি authored fan হয় এবং recovery-এর পরে sequence শেষ হয়।"
+    ],
+    "boss": "বস",
+    "player": "খেলোয়াড়",
+    "danger": "প্রতিটি form পুরো action vocabulary বদলায়; নতুন package প্রস্তুত হওয়ার আগে attack মিশলে timing, collision ও learning ভাঙে",
+    "locked": "form selection, package scope, transition id, tenure, shared state, cooldown ownership, duplicate ও rollback encounter logic-এর",
+    "safe": "active form, পুরো package handoff, signature geometry এবং পরের form-এর আগে recovery দেখান",
+    "reducedMotion": "কম গতিতে autoplay বন্ধ। ০.২০, ০.৫৫, ১.৩৫, ১.৭২, ২.০৫, ২.৩৫, ৩.২০, ৩.৪৮, ৩.৮২, ৪.১২, ৫.০০ ও ৫.৪২ সেকেন্ড দেখুন।",
+    "diagramDescription": "কার্ন colossus-এর radial slam শেষ করে, লম্বা serpent lane-এ বদলায়, তারপর তিন-way fan-সহ oracle হয়।"
+  },
+  "steps": [
+    {
+      "title": "একটি moveset package-এ কী থাকে?",
+      "body": "Locomotion, target selection, attacks, hit reactions, hurtboxes, vulnerability, effects ও recovery-কে এক versioned contract ভাবুন। Form health/status ভাগ করতে পারে, incompatible local timer নয়।"
+    },
+    {
+      "title": "রূপান্তর কীভাবে schedule হবে?",
+      "body": "tenure, health band, fixed sequence বা authored weighted table-এর deterministic condition নিন। outgoing action finish/cancel করুন, handoff signal দিন এবং rig, collision, cue ready হলে পরের package চালু করুন।"
+    },
+    {
+      "title": "Forms-এর মধ্যে কী থাকে?",
+      "body": "প্রতি value encounter-wide বা form-local করুন। health, progress, ownership ও approved status রাখুন; cooldown, target, spawned entity, weak point ও pending event handoff table দিয়ে reset/translate করুন।"
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "Form identity ছাড়া signature attack shuffle",
+      "body": "Random attack mix pose, movement, geometry ও response-এর শেখা সম্পর্ক ভাঙে। পড়া ও অনুশীলনের মতো সময় package রাখুন; cross-package combo শুধু explicit authored exception হোক।"
+    },
+    {
+      "title": "Hidden handoff পুরনো state ফাঁস করে",
+      "body": "নতুন rig-এর পর old hitbox, projectile, target বা callback চলতে পারে। transition id দিন, event একবার cancel/transfer করুন এবং backward seek, latency, death, interrupt, reload ও rollback পরীক্ষা করুন।"
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "প্রতি form-এ entry, active loop ও exit দিন",
+      "body": "Package attack list নয়। entry pose, movement, legal action, signature pressure, recovery, exit lock এবং target/animation না থাকলে fallback লিখুন।"
+    },
+    {
+      "title": "Shared state ছোট রাখুন",
+      "body": "এক health bar ও progress একই boss-এর অনুভূতি দেয়। local cooldown ও entity package-এর; সব translate করলে hidden dependency ও balance surprise হয়।"
+    },
+    {
+      "title": "Form-এর সঙ্গে sequence মাপুন",
+      "body": "formId, packageVersion, transitionId, কারণ, tenure, entry/exit, action ids, canceled event, carried status, form damage, repeat ও valid recovery fail নথিবদ্ধ করুন।"
+    }
+  ],
+  "story": {
+    "title": "কার্ন এক rune body-কে তিন স্মৃতির শত্রুতে বদলায়",
+    "body": "Elemental colossus হয়ে পাথর কাঁপায়, serpent lane-এ ছড়ায়, তারপর oracle crown তুলে তিন ray ছাড়ে। প্রতিটি silhouette নিজের rhythm শেষ করে।"
+  },
+  "adaptation": {
+    "title": "Contract না ভেঙে form কমান",
+    "body": "fixed sequence, দীর্ঘ tenure, শক্ত cue, persistent icon এবং একটি package বাদ দেওয়ার option দিন। shape, sound, text ও haptics দিয়ে geometry জানান, শুধু color নয়।"
+  },
+  "distinction": {
+    "title": "Whole-package replacement; সাধারণ phase বা copied loadout নয়",
+    "body": "Phase একই action system রেখে goal বদলাতে পারে। Shapeshifting moveset contract বদলায়। Loadout mirror player data থেকে package বানায়; এখানে complete authored package বাছা হয়।"
+  },
+  "lensNotes": [
+    {
+      "id": "phase-structure",
+      "body": "Forms ছোট internal phase-এর মতো, তবে সম্পূর্ণ entry, active loop, recovery ও exit contract চাই।"
+    },
+    {
+      "id": "difficulty-rhythm",
+      "body": "Minimum tenure ও recovery দ্রুত বদলকে incompatible rhythm-এর noise হতে দেয় না।"
+    },
+    {
+      "id": "mastery-check",
+      "body": "Faithful cue ও response সহ borrowed package আগের enemy চিনতে পারা পরীক্ষা করে।"
+    },
+    {
+      "id": "progress-clarity",
+      "body": "Shared health, persistent form indicator ও explicit handoff দেখায় vocabulary বদলালেও progress চলছে।"
+    },
+    {
+      "id": "rule-exception",
+      "body": "Pending attack, entity, status, weak point, interrupt, death, reload ও network rollback-এর ownership rule চাই।"
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "The Binding of Isaac: Repentance",
+      "boss": "Delirium",
+      "screenshot": "https://i.ytimg.com/vi/NQG1CnB4CX4/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=NQG1CnB4CX4&t=15s",
+      "video": "https://www.youtube.com/watch?v=NQG1CnB4CX4&t=15s",
+      "videoDurationSeconds": 311,
+      "body": "০:১৫ থেকে Delirium run-এর boss হয়ে তাদের pattern ব্যবহার করে। multipart ও timing quirks explicit ownership, cleanup ও bounds-এর দরকার দেখায়।"
+    },
+    {
+      "dimension": "3D",
+      "game": "The Legend of Zelda: Twilight Princess HD",
+      "boss": "Zant",
+      "screenshot": "https://i.ytimg.com/vi/_I8tFzWEDH8/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=_I8tFzWEDH8&t=52s",
+      "video": "https://www.youtube.com/watch?v=_I8tFzWEDH8&t=52s",
+      "videoDurationSeconds": 829,
+      "body": "০:৫২ থেকে Zant recreated arena ও matching response package চালায়। দীর্ঘ ordered handoff সব আগের lesson-এর identity রাখে।"
+    },
+    {
+      "dimension": "2D",
+      "game": "Chrono Trigger",
+      "boss": "Lavos",
+      "screenshot": "https://i.ytimg.com/vi/YZfKqQ3D7NA/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=YZfKqQ3D7NA&t=90s",
+      "video": "https://www.youtube.com/watch?v=YZfKqQ3D7NA&t=90s",
+      "videoDurationSeconds": 2399,
+      "body": "১:৩০-এ Lavos earlier boss attack mode cycle করে। Turn-based উদাহরণ package boundary ও shared health-এ deterministic revisit স্পষ্ট করে।"
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}
