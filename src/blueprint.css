@@ -54,6 +54,20 @@
     height: 100%;
   }
 }
+@media (max-width: 960px) {
+  .blueprint-demo[data-blueprint-id='landing-jump'] .blueprint-demo__canvas {
+    height: 100svh;
+    overflow: hidden;
+  }
+  .blueprint-demo[data-blueprint-id='landing-jump'] .blueprint-demo__svg {
+    height: 100%;
+    width: max(100%, 58.333svh);
+    max-width: none;
+    position: relative;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+}
 .blueprint-demo__scene-timeline {
   position: absolute;
   z-index: 2;

@@ -8,7 +8,7 @@ const SPECS = {
     mode: 'landing',
     boss: [155, 280],
     player: [365, 600],
-    target: [470, 720],
+    target: [430, 735],
     landing: [365, 600],
   },
   'single-shot': {
@@ -8769,23 +8769,28 @@ function primitivesFor(spec, frame) {
     const contact = phase === 1 ? clamp(1 - Math.abs(action - 0.52) / 0.2) : 0;
     return [
       path(
-        `M ${spec.boss[0]} ${spec.boss[1]} Q 260 135 ${landing.x} ${landing.y}`,
-        phase === 0 ? 0.32 + prepare * 0.28 : phase === 1 ? 0.24 * (1 - action) : 0,
+        `M ${landing.x - 67} ${landing.y - 35} L ${landing.x - 42} ${landing.y - 23} L ${landing.x - 30} ${landing.y - 43} L ${landing.x - 9} ${landing.y - 14} L ${landing.x + 16} ${landing.y - 37} L ${landing.x + 36} ${landing.y - 9} L ${landing.x + 63} ${landing.y - 25} M ${landing.x - 62} ${landing.y + 33} L ${landing.x - 35} ${landing.y + 13} L ${landing.x - 14} ${landing.y + 39} L ${landing.x + 10} ${landing.y + 13} L ${landing.x + 34} ${landing.y + 38} L ${landing.x + 61} ${landing.y + 20}`,
+        phase === 0 ? 0.4 + prepare * 0.4 : phase === 1 ? 0.65 * (1 - action) : 0,
         'accent',
-        7,
-        0,
-        '12 12',
+        6,
       ),
       circle(
         landing.x,
         landing.y,
-        mix(46, 88, phase === 0 ? prepare : 1),
-        phase === 0 ? 0.42 + prepare * 0.38 : phase === 1 ? 0.34 : 0,
+        88,
+        phase === 0 ? 0.42 + prepare * 0.38 : phase === 1 ? 0.45 : 0,
         'accent',
-        5,
-        phase === 0 ? 0.06 : 0,
+        0,
+        0.22,
       ),
-      circle(landing.x, landing.y, 88, contact, 'signal', 18, 0.24),
+      circle(landing.x, landing.y, 88, contact, 'signal', 0, 0.42),
+      path(
+        `M ${landing.x - 70} ${landing.y - 10} L ${landing.x - 39} ${landing.y - 17} L ${landing.x - 26} ${landing.y - 56} L ${landing.x - 8} ${landing.y - 22} L ${landing.x + 19} ${landing.y - 58} L ${landing.x + 26} ${landing.y - 15} L ${landing.x + 73} ${landing.y - 6} L ${landing.x + 33} ${landing.y + 10} L ${landing.x + 49} ${landing.y + 53} L ${landing.x + 10} ${landing.y + 24} L ${landing.x - 16} ${landing.y + 59} L ${landing.x - 24} ${landing.y + 22} L ${landing.x - 64} ${landing.y + 40} L ${landing.x - 46} ${landing.y + 5} Z`,
+        contact,
+        'signal',
+        0,
+        0.46,
+      ),
     ];
   }
   if (mode === 'single-shot') {
