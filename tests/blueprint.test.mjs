@@ -675,6 +675,7 @@ test('moving hazard carries its visible radius along a fixed lane while the play
   assert.ok(circles[0].x < circles[1].x && circles[1].x < circles[2].x);
   assert.ok(circles[2].x < circles[3].x && circles[3].x <= circles[4].x);
   assert.ok(circles.every(({ y }) => y === 620));
+  assert.notEqual(early.primitives[2].data, middle.primitives[2].data);
   assert.equal(blueprintPointSafe('moving-hazard', 1.59, { x: 105, y: 620 }), true);
   assert.equal(blueprintPointSafe('moving-hazard', 3, { x: circles[2].x, y: 620 }), false);
   assert.equal(blueprintPointSafe('moving-hazard', 3, { x: circles[2].x, y: 503 }), true);

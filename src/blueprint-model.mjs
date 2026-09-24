@@ -8355,39 +8355,25 @@ function primitivesFor(spec, frame) {
     const center = { x: mix(start.x, end.x, travel), y: mix(start.y, end.y, travel) };
     const opacity = phase === 0 ? 0.42 + prepare * 0.3 : phase === 1 ? 0.93 : 0.68 * (1 - recover);
     const tone = phase === 1 ? 'signal' : phase === 2 ? 'safe' : 'accent';
+    const rotation = ((center.x - start.x) / spec.hazardRadius) * 0.8;
+    const facets = Array.from({ length: 3 }, (_, index) => {
+      const angle = rotation + (index * Math.PI * 2) / 3;
+      const tip = polar(center, 51, angle);
+      const left = polar(center, 27, angle - 0.43);
+      const right = polar(center, 27, angle + 0.43);
+      return path(
+        `M ${left.x} ${left.y} L ${tip.x} ${tip.y} L ${right.x} ${right.y} Z`,
+        opacity,
+        'muted',
+        0,
+        0.84,
+      );
+    });
     return [
-      line(
-        start.x,
-        start.y,
-        end.x,
-        end.y,
-        phase === 2 ? 0.25 * (1 - recover) : 0.48,
-        'accent',
-        7,
-        '13 10',
-      ),
-      circle(
-        center.x,
-        center.y,
-        spec.hazardRadius,
-        opacity,
-        tone,
-        phase === 1 ? 12 : 7,
-        phase === 1 ? 0.25 : 0.06,
-      ),
-      path(
-        `M ${center.x - 42} ${center.y - 22} Q ${center.x - 15} ${center.y - 55} ${center.x + 27} ${center.y - 24}`,
-        opacity,
-        tone,
-        8,
-      ),
-      path(
-        `M ${center.x - 30} ${center.y + 21} Q ${center.x + 4} ${center.y - 12} ${center.x + 44} ${center.y + 17}`,
-        opacity,
-        tone,
-        8,
-      ),
-      line(center.x + 49, center.y - 7, center.x + 64, center.y - 7, opacity, tone, 6),
+      line(start.x, start.y, end.x, end.y, phase === 2 ? 0.25 * (1 - recover) : 0.48, 'muted', 6),
+      circle(center.x, center.y, spec.hazardRadius, opacity, tone, phase === 1 ? 6 : 3, 0.72),
+      ...facets,
+      circle(center.x, center.y, 17, opacity, 'accent', 2, 0.88),
     ];
   }
   if (mode === 'converging-threats') {
