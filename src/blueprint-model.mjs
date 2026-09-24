@@ -3415,12 +3415,27 @@ function primitivesFor(spec, frame) {
     const counterLive = frame.time >= spec.riposte[0] && frame.time < spec.riposte[1];
     const openHit = strikePulse(frame.time, spec.openStrike, 0.3);
     return [
+      path('M 38 94 H 522 V 878 H 38 Z M 57 258 H 503 V 878 H 57 Z', 0.37, 'muted', 0, 0.56),
+      path(
+        'M 57 116 H 132 V 355 H 57 Z M 428 116 H 503 V 355 H 428 Z M 148 120 H 412 V 154 H 148 Z M 64 529 L 280 509 L 496 529 V 565 L 280 541 L 64 565 Z M 64 722 L 280 694 L 496 722 V 767 L 280 735 L 64 767 Z',
+        0.41,
+        'accent',
+        0,
+        0.56,
+      ),
+      path(
+        'M 79 615 H 194 L 177 642 H 96 Z M 366 615 H 481 L 464 642 H 383 Z M 81 825 L 280 797 L 479 825 V 840 L 280 813 L 81 840 Z',
+        0.35,
+        'muted',
+        0,
+        0.74,
+      ),
       path(
         `M 328 375 L 355 388 L 360 425 L 346 454 L 324 443 L 336 420 Z`,
         guardOpacity,
         guarded ? 'accent' : 'muted',
-        7,
-        0.29,
+        0,
+        0.76,
       ),
       circle(344, 416, 14, guardOpacity, 'signal', 5, 0.25),
       line(player.x - 27, player.y - 30, 345, 421, parryFlash, 'accent', 8),

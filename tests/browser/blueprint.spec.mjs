@@ -912,35 +912,36 @@ test('counter stance distinguishes a parried hit, its riposte, withheld guard, a
   await expect(page.locator('.wip-badge, .draft-profile')).toHaveCount(0);
   await expect(page.locator('.game-example')).toHaveCount(3);
   await expect(widget).toHaveAttribute('data-blueprint-playing', 'false');
+  await expect(widget).toHaveAttribute('data-blueprint-full-height', 'true');
   await seek(1400);
   await expect(widget).toHaveAttribute('data-blueprint-counter', 'guarded');
   await seek(1880);
   await expect(widget).toHaveAttribute('data-blueprint-counter', 'parried-hit');
-  await expect(widget.locator('[data-blueprint-primitive="3"] circle')).not.toHaveAttribute(
+  await expect(widget.locator('[data-blueprint-primitive="6"] circle')).not.toHaveAttribute(
     'opacity',
     '0',
   );
   await seek(2200);
-  await expect(widget.locator('[data-blueprint-primitive="4"] line')).not.toHaveAttribute(
+  await expect(widget.locator('[data-blueprint-primitive="7"] line')).not.toHaveAttribute(
     'opacity',
     '0',
   );
   await seek(2620);
   await expect(widget).toHaveAttribute('data-blueprint-counter', 'riposte-danger');
   await expect(widget).toHaveAttribute('data-blueprint-outcome', 'safe');
-  await expect(widget.locator('[data-blueprint-primitive="5"] line')).not.toHaveAttribute(
+  await expect(widget.locator('[data-blueprint-primitive="8"] line')).not.toHaveAttribute(
     'opacity',
     '0',
   );
   await seek(4000);
   await expect(widget).toHaveAttribute('data-blueprint-counter', 'guarded-withheld');
-  await expect(widget.locator('[data-blueprint-primitive="5"] line')).toHaveAttribute(
+  await expect(widget.locator('[data-blueprint-primitive="8"] line')).toHaveAttribute(
     'opacity',
     '0',
   );
   await seek(4960);
   await expect(widget).toHaveAttribute('data-blueprint-counter', 'open-hit');
-  await expect(widget.locator('[data-blueprint-primitive="7"] circle')).not.toHaveAttribute(
+  await expect(widget.locator('[data-blueprint-primitive="10"] circle')).not.toHaveAttribute(
     'opacity',
     '0',
   );
@@ -967,7 +968,7 @@ test('counter stance keeps both actors and the guard visible on dark RTL mobile'
         '[data-blueprint-player]',
         '[data-blueprint-boss-label]',
         '[data-blueprint-player-label]',
-        '[data-blueprint-primitive="0"]',
+        '[data-blueprint-primitive="3"]',
       ].map((selector) => {
         const rect = element.querySelector(selector).getBoundingClientRect();
         return (
