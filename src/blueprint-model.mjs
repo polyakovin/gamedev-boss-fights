@@ -8388,41 +8388,38 @@ function primitivesFor(spec, frame) {
     const parentVisible = phase === 0 ? 0.72 : phase === 1 && action < splitAt ? 1 : 0;
     const fragmentsVisible = phase === 1 && action >= splitAt ? 1 : 0;
     return [
-      line(
-        start.x,
-        start.y,
-        split.x,
-        split.y,
-        phase === 0 ? 0.36 + prepare * 0.34 : phase === 1 ? 0.14 * (1 - parentProgress) : 0,
-        'accent',
-        7,
-        '12 12',
-      ),
-      ...fragmentEnds.map((end) =>
-        line(
-          split.x,
-          split.y,
-          end.x,
-          end.y,
-          phase === 0 ? 0.22 + prepare * 0.34 : phase === 1 ? 0.1 * (1 - fragmentProgress) : 0,
-          'accent',
-          6,
-          '10 12',
+      {
+        ...path(
+          `M ${parent.x - 18} ${parent.y - 9} L ${parent.x - 4} ${parent.y - 21} L ${parent.x + 17} ${parent.y - 12} L ${parent.x + 20} ${parent.y + 8} L ${parent.x + 4} ${parent.y + 21} L ${parent.x - 19} ${parent.y + 11} Z`,
+          parentVisible,
+          'signal',
+          0,
+          0.9,
         ),
-      ),
-      circle(
-        split.x,
-        split.y,
-        mix(26, 42, phase === 0 ? prepare : pulse(clamp((action - 0.3) / 0.24))),
-        phase === 0 ? 0.5 + prepare * 0.34 : phase === 1 ? 0.65 * (1 - fragmentProgress) : 0,
-        'safe',
-        5,
-        0.08,
-      ),
-      circle(parent.x, parent.y, 22, parentVisible, 'signal', 6, 0.48),
-      ...fragments.map((fragment) =>
-        circle(fragment.x, fragment.y, 16, fragmentsVisible, 'signal', 5, 0.42),
-      ),
+        x: parent.x,
+        y: parent.y,
+        radius: 22,
+      },
+      ...fragments.map((fragment, index) => {
+        const end = fragmentEnds[index];
+        const heading = Math.atan2(end.y - split.y, end.x - split.x);
+        const forward = { x: Math.cos(heading), y: Math.sin(heading) };
+        const side = { x: -forward.y, y: forward.x };
+        const tip = (along, across) =>
+          `${fragment.x + forward.x * along + side.x * across} ${fragment.y + forward.y * along + side.y * across}`;
+        return {
+          ...path(
+            `M ${tip(17, 0)} L ${tip(-11, 12)} L ${tip(-6, 0)} L ${tip(-11, -12)} Z`,
+            fragmentsVisible,
+            'signal',
+            0,
+            0.9,
+          ),
+          x: fragment.x,
+          y: fragment.y,
+          radius: 17,
+        };
+      }),
     ];
   }
   if (mode === 'returning-projectile') {
@@ -9434,7 +9431,6 @@ function pointClearsThreat(spec, frame, value, radius = BLUEPRINT_PLAYER_RADIUS)
       );
   if (mode === 'splitting-projectile')
     return frame.primitives
-      .slice(5)
       .filter((projectile) => projectile.opacity > 0.15)
       .every(
         (projectile) =>

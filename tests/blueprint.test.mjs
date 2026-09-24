@@ -303,7 +303,7 @@ test('every damaging promoted animation derives safety from its own active geome
       point = { x: projectile.x, y: projectile.y };
     } else if (!point && id === 'splitting-projectile') {
       const projectile = frame.primitives.find(
-        (primitive, index) => index >= 5 && primitive.type === 'circle' && primitive.opacity > 0.15,
+        (primitive) => primitive.type === 'path' && primitive.opacity > 0.15,
       );
       point = { x: projectile.x, y: projectile.y };
     } else if (!point && id === 'returning-projectile') {
@@ -519,21 +519,19 @@ test('crossfire commits two opposing sources and clears their shared intersectio
 test('splitting projectile commits one parent, one split point, and three fragment routes', () => {
   const signal = blueprintFrame('splitting-projectile', 1.59);
   const parentFlight = blueprintFrame('splitting-projectile', 2.3);
-  const split = blueprintFrame('splitting-projectile', 2.9);
   const fragments = blueprintFrame('splitting-projectile', 3.7);
 
   assert.deepEqual(signal.player, blueprintFrame('splitting-projectile', 0).player);
-  assert.equal(signal.primitives[4].x, split.primitives[4].x);
-  assert.equal(signal.primitives[4].y, split.primitives[4].y);
-  assert.ok(parentFlight.primitives[5].opacity > 0.9);
-  assert.ok(parentFlight.primitives.slice(6).every((projectile) => projectile.opacity === 0));
-  assert.equal(fragments.primitives[5].opacity, 0);
-  assert.ok(fragments.primitives.slice(6).every((projectile) => projectile.opacity > 0.9));
-  assert.equal(new Set(fragments.primitives.slice(6).map((projectile) => projectile.x)).size, 3);
+  assert.equal(signal.primitives[0].type, 'path');
+  assert.ok(parentFlight.primitives[0].opacity > 0.9);
+  assert.ok(parentFlight.primitives.slice(1).every((projectile) => projectile.opacity === 0));
+  assert.equal(fragments.primitives[0].opacity, 0);
+  assert.ok(fragments.primitives.slice(1).every((projectile) => projectile.opacity > 0.9));
+  assert.equal(new Set(fragments.primitives.slice(1).map((projectile) => projectile.x)).size, 3);
   assert.equal(
     blueprintPointSafe('splitting-projectile', 3.7, {
-      x: fragments.primitives[7].x,
-      y: fragments.primitives[7].y,
+      x: fragments.primitives[2].x,
+      y: fragments.primitives[2].y,
     }),
     false,
   );
