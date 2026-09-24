@@ -1,4 +1,4 @@
-import { patternFrame, patternDuration } from './pattern-model.mjs';
+import { patternFrame, patternDuration, slamWavePath } from './pattern-model.mjs';
 import { createCharacterAnimator } from './character-motion.mjs';
 import { createEncounterEffects } from './encounter-effects.mjs';
 import { createSweepWeaponAnimator } from './sweep-weapon-player.mjs';
@@ -28,7 +28,6 @@ export function initializePattern(widget) {
   const sweep = find('[data-pattern-sweep]');
   const slam = find('[data-pattern-slam]');
   const slamRing = find('[data-pattern-slam-ring]');
-  const slamEdge = find('[data-pattern-slam-edge]');
   const summon = find('[data-pattern-summon]');
   const minions = [...widget.querySelectorAll('[data-pattern-minion]')];
   const animateMinions = minions.map((minion) => createCharacterAnimator(minion, 'kern'));
@@ -64,8 +63,7 @@ export function initializePattern(widget) {
     sweep.setAttribute('opacity', String(frame.sweepOpacity));
     sweep.setAttribute('transform', `translate(280 275) rotate(${frame.sweepRotation})`);
     slam.setAttribute('opacity', String(frame.slamOpacity));
-    slamRing.setAttribute('r', frame.slamRadius);
-    slamEdge.setAttribute('r', frame.slamRadius);
+    if (kind === 'ground-slam') slamRing.setAttribute('d', slamWavePath(frame.slamRadius));
     summon.setAttribute('opacity', String(frame.summonOpacity));
     const starts = [
       [135, 465],

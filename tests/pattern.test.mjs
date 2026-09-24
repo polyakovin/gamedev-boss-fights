@@ -42,6 +42,16 @@ test('each pattern exposes only its own threat geometry', () => {
   assert.equal(frames.summon.volleyOpacity, 0);
 });
 
+test('ground slam starts at floor contact and leaves the full player beyond the stone ridge', () => {
+  assert.equal(patternFrame('ground-slam', 1.72).slamOpacity, 0);
+  for (let time = 1.8; time < 4.25; time += 0.05) {
+    const frame = patternFrame('ground-slam', time);
+    const playerDistance = Math.hypot(frame.player.x - 280, frame.player.y - 310);
+    assert.ok(playerDistance - 24 > frame.slamRadius + 19);
+    assert.equal(frame.clear, true);
+  }
+});
+
 test('player and threat return smoothly before the loop repeats', () => {
   for (const kind of kinds) {
     const start = patternFrame(kind, 0);

@@ -47,6 +47,35 @@
 .pattern-demo__svg text {
   font-family: inherit;
 }
+@media (min-width: 961px) {
+  .lesson-overview-grid:has([data-pattern-kind='ground-slam']) {
+    grid-template-columns: minmax(440px, 1fr) minmax(340px, 560px);
+  }
+  .simulation-section:has([data-pattern-kind='ground-slam']) {
+    width: min(100%, calc(58.333svh - 74.667px));
+    max-width: 560px;
+    justify-self: center;
+  }
+  .simulation-section [data-pattern-kind='ground-slam'],
+  .simulation-section [data-pattern-kind='ground-slam'] .pattern-demo__canvas,
+  .simulation-section [data-pattern-kind='ground-slam'] .pattern-demo__svg {
+    height: 100%;
+  }
+}
+@media (max-width: 960px) {
+  .pattern-demo[data-pattern-kind='ground-slam'] .pattern-demo__canvas {
+    height: 100svh;
+    overflow: hidden;
+  }
+  .pattern-demo[data-pattern-kind='ground-slam'] .pattern-demo__svg {
+    height: 100%;
+    width: max(100%, 58.333svh);
+    max-width: none;
+    position: relative;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+}
 .pattern-demo__entity-label {
   fill: var(--diagram-boss-label);
   font-size: 16px;

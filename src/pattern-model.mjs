@@ -30,6 +30,23 @@ const speed = (value) => {
 };
 const angleTo = (from, to) => (Math.atan2(to.y - from.y, to.x - from.x) * 180) / Math.PI;
 const turn = (from, to, amount) => from + (((((to - from) % 360) + 540) % 360) - 180) * amount;
+const SLAM_CENTER = Object.freeze({ x: 280, y: 310 });
+const SLAM_WAVE_HALF_WIDTH = 14;
+const SLAM_PLAYER_RADIUS = 24;
+
+/** A single uneven ridge expands from the boss's ground contact. */
+export function slamWavePath(radius) {
+  const vertices = 32;
+  const pointAt = (index, inner) => {
+    const angle = (index * Math.PI * 2) / vertices;
+    const chip = (index % 5 === 0 ? 5 : index % 3 === 0 ? -3 : 1) * (inner ? 0.5 : 1);
+    const reach = radius + (inner ? -SLAM_WAVE_HALF_WIDTH : SLAM_WAVE_HALF_WIDTH) + chip;
+    return `${(SLAM_CENTER.x + Math.cos(angle) * reach).toFixed(1)} ${(SLAM_CENTER.y + Math.sin(angle) * reach).toFixed(1)}`;
+  };
+  const outer = Array.from({ length: vertices }, (_, index) => pointAt(index, false));
+  const inner = Array.from({ length: vertices }, (_, index) => pointAt(vertices - index - 1, true));
+  return `M ${outer.join(' L ')} Z M ${inner.join(' L ')} Z`;
+}
 const localTime = (time) => {
   const remainder = (Number.isFinite(time) ? time : 0) % PATTERN_DURATION;
   return remainder < 0 ? remainder + PATTERN_DURATION : remainder;
@@ -87,7 +104,7 @@ export function patternFrame(kind, time) {
     (kind === 'sweep'
       ? { x: 440, y: 770 }
       : kind === 'ground-slam'
-        ? { x: 280, y: 785 }
+        ? { x: 440, y: 805 }
         : kind === 'summon'
           ? { x: 170, y: 720 }
           : { x: 280, y: 760 });
@@ -169,6 +186,10 @@ export function patternFrame(kind, time) {
   const sweepWeapon = kind === 'sweep' ? sweepWeaponPose(sweepAngle, bossMotion) : null;
   const sweepClear =
     Math.hypot(player.x - boss.x, player.y - boss.y) - SWEEP_PLAYER_RADIUS > SWEEP_OUTER_RADIUS;
+  const slamRadius = mix(58, 470, clamp((actionTime - 0.16) / 2.49));
+  const slamClear =
+    Math.hypot(player.x - SLAM_CENTER.x, player.y - SLAM_CENTER.y) - SLAM_PLAYER_RADIUS >
+    slamRadius + SLAM_WAVE_HALF_WIDTH + 5;
   // Preserve the label contract; rig lift and compression now own vertical articulation.
   const bossRock = 0;
 
@@ -198,8 +219,8 @@ export function patternFrame(kind, time) {
             ? 1
             : 1 - smooth((t - 4.25) / 0.22)
         : 0,
-    slamRadius: mix(58, 390, clamp((actionTime - 0.16) / 2.49)),
-    slamOpacity: kind === 'ground-slam' ? visibility : 0,
+    slamRadius,
+    slamOpacity: kind === 'ground-slam' && actionTime >= 0.16 ? visibility : 0,
     summonProgress: kind === 'summon' ? action : 0,
     summonOpacity: kind === 'summon' ? visibility : 0,
     volley,
@@ -212,6 +233,8 @@ export function patternFrame(kind, time) {
         ? volleyPlayerIsClear(volley, player)
         : fan
           ? projectileFanPlayerIsClear(fan, player)
-          : kind !== 'sweep' || phase === 2 || sweepClear),
+          : kind === 'ground-slam'
+            ? phase === 2 || slamClear
+            : kind !== 'sweep' || phase === 2 || sweepClear),
   });
 }
