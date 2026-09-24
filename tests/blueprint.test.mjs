@@ -643,7 +643,7 @@ test('mine keeps one fixed radius, arms with collision, and lets the player rout
   const armed = blueprintFrame('mine', 3);
   const recovery = blueprintFrame('mine', 5.2);
   const centers = [signal, armed, recovery].map((frame) => {
-    const trigger = frame.primitives[2];
+    const trigger = frame.primitives[0];
     return [trigger.x, trigger.y, trigger.radius];
   });
 
@@ -660,7 +660,7 @@ test('mine keeps one fixed radius, arms with collision, and lets the player rout
   assert.equal(armed.playerSafe, true);
   assert.equal(recovery.dangerActive, false);
   assert.equal(blueprintPointSafe('mine', 5.2, { x: 320, y: 610 }), true);
-  assert.ok(armed.primitives[1].opacity > 0, 'armed mine should show the safe response route');
+  assert.ok(armed.primitives[1].opacity > 0, 'armed mine should show its casing');
 });
 
 test('moving hazard carries its visible radius along a fixed lane while the player clears it', () => {

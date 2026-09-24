@@ -43,6 +43,7 @@ test('mine arms its visible circle, keeps the player safe, and fits on mobile', 
   await expect(page.locator('.lesson-title-line h1')).toHaveText('Mine');
   await expect(page.locator('.wip-badge, .draft-profile')).toHaveCount(0);
   await expect(widget).toHaveAttribute('data-blueprint-ready', 'true');
+  await expect(widget).toHaveAttribute('data-blueprint-full-height', 'true');
   await expect(page.locator('.game-example')).toHaveCount(3);
 
   await timeline.evaluate((element) => {
@@ -54,7 +55,7 @@ test('mine arms its visible circle, keeps the player safe, and fits on mobile', 
   await expect(widget.locator('[data-blueprint-phase-name]')).toHaveText(
     'Respect the armed radius',
   );
-  await expect(widget.locator('[data-blueprint-primitive="2"] circle')).toBeVisible();
+  await expect(widget.locator('[data-blueprint-primitive="0"] circle')).toBeVisible();
 
   await page.setViewportSize({ width: 390, height: 844 });
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);

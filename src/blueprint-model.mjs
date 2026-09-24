@@ -8577,41 +8577,25 @@ function primitivesFor(spec, frame) {
   }
   if (mode === 'mine') {
     const mine = point(spec.mine);
-    const placementOpacity =
-      phase === 0 ? 0.3 + prepare * 0.48 : phase === 1 ? 0.18 : 0.18 * (1 - recover);
-    const routeOpacity = phase === 1 ? 0.48 : phase === 2 ? 0.28 * (1 - recover) : 0;
     const armedOpacity = phase === 1 ? 0.76 + 0.2 * pulse(action * 2) : 0;
-    const deviceOpacity = phase === 2 ? 0.72 * (1 - recover) : 0.72 + prepare * 0.28;
-    const routePath = spec.safeRoute
-      .map(([x, y], index) => `${index ? 'L' : 'M'} ${x} ${y}`)
-      .join(' ');
+    const deviceOpacity =
+      phase === 2 ? 0.72 * (1 - recover) : phase === 0 ? 0.25 + prepare * 0.75 : 1;
     return [
-      path(
-        `M ${spec.boss[0]} ${spec.boss[1]} Q 235 390 ${mine.x} ${mine.y}`,
-        placementOpacity,
-        'accent',
-        7,
-        0,
-        '12 11',
-      ),
-      path(routePath, routeOpacity, 'safe', 8, 0, '12 12'),
       circle(
         mine.x,
         mine.y,
         spec.triggerRadius,
         phase === 0 ? 0.26 + prepare * 0.38 : phase === 1 ? armedOpacity : 0.32 * (1 - recover),
         phase === 1 ? 'signal' : phase === 2 ? 'safe' : 'accent',
-        phase === 1 ? 9 : 6,
+        phase === 1 ? 5 : 3,
         phase === 1 ? 0.12 : 0.04,
       ),
-      circle(
-        mine.x,
-        mine.y,
-        27,
+      path(
+        `M ${mine.x} ${mine.y - 27} L ${mine.x + 25} ${mine.y - 14} L ${mine.x + 25} ${mine.y + 14} L ${mine.x} ${mine.y + 27} L ${mine.x - 25} ${mine.y + 14} L ${mine.x - 25} ${mine.y - 14} Z`,
         deviceOpacity,
-        phase === 1 ? 'signal' : phase === 2 ? 'safe' : 'accent',
-        phase === 1 ? 8 : 6,
-        phase === 1 ? 0.42 : 0.16,
+        'muted',
+        0,
+        0.88,
       ),
       circle(
         mine.x,
@@ -8619,11 +8603,9 @@ function primitivesFor(spec, frame) {
         12,
         deviceOpacity,
         phase === 1 ? 'signal' : phase === 2 ? 'safe' : 'accent',
-        5,
-        phase === 1 ? 0.64 : 0.26,
+        1,
+        phase === 1 ? 0.85 : 0.65,
       ),
-      line(mine.x - 17, mine.y, mine.x + 17, mine.y, deviceOpacity, 'accent', 5),
-      line(mine.x, mine.y - 17, mine.x, mine.y + 17, deviceOpacity, 'accent', 5),
     ];
   }
   if (mode === 'moving-hazard') {
