@@ -1644,6 +1644,37 @@ const SPECS = {
     alternateRoute: 'channel-b',
     fallbackRoute: 'menu-fallback',
   },
+  'world-state-variant': {
+    mode: 'world-state-variant',
+    boss: [300, 410],
+    player: [405, 720],
+    target: [485, 745],
+    arena: [55, 300, 450, 590],
+    timeToken: [120, 150],
+    regionToken: [280, 150],
+    modeToken: [440, 150],
+    packageNode: [280, 250],
+    rewardToken: [445, 360],
+    variantSeals: [
+      [135, 630],
+      [425, 580],
+    ],
+    snapshotAt: 0.78,
+    materialize: [1.05, 1.6],
+    attackSignal: [1.8, 2.25],
+    attack: [2.25, 2.85],
+    playerMove: [2.08, 2.56],
+    opening: [2.85, 3.55],
+    reward: [3.55, 4.2],
+    outsideChangeAt: 4.55,
+    retry: [4.55, 5.35],
+    resetAt: 5.35,
+    attackRadius: 205,
+    encounterId: 'kern-world-gate-1',
+    entryId: 'world-entry-1',
+    variantId: 'eclipse-ruin',
+    rewardTableId: 'eclipse-relic-table',
+  },
   'wide-swing': { mode: 'arc', boss: [280, 310], player: [410, 470], target: [470, 650] },
   lunge: { mode: 'lunge', boss: [170, 290], player: [390, 590], target: [470, 660] },
   grab: {
@@ -3373,6 +3404,70 @@ export function interfaceInteractionResolve({
     confirmationCount: accepted ? 1 : 0,
     destructiveActionCount: 0,
     privatePayloadStored: false,
+  });
+}
+
+export function worldStateVariantState(time) {
+  const spec = SPECS['world-state-variant'];
+  const t = localTime(time);
+  if (t < spec.snapshotAt) return 'context-visible';
+  if (t < spec.materialize[0]) return 'snapshot-captured';
+  if (t < spec.materialize[1]) return 'package-materializing';
+  if (t < spec.attackSignal[0]) return 'variant-ready';
+  if (t < spec.attack[0]) return 'variant-signaled';
+  if (t < spec.attack[1]) return 'variant-active';
+  if (t < spec.opening[1]) return 'opening-active';
+  if (t < spec.reward[1]) return 'reward-mapped';
+  if (t < spec.retry[0]) return 'encounter-stable';
+  if (t < spec.retry[1]) return 'retry-stable';
+  return 'reset';
+}
+
+export function worldStateVariantResolve({
+  encounterId = 'kern-world-gate-1',
+  entryId = 'world-entry-1',
+  snapshotVersion = 1,
+  timeBand = 'eclipse',
+  regionState = 'ruined',
+  worldMode = 'cursed',
+  alreadyResolved = false,
+} = {}) {
+  const allowed = {
+    timeBand: new Set(['dawn', 'eclipse']),
+    regionState: new Set(['restored', 'ruined']),
+    worldMode: new Set(['standard', 'cursed']),
+  };
+  const raw = {
+    timeBand: String(timeBand),
+    regionState: String(regionState),
+    worldMode: String(worldMode),
+  };
+  const normalized = Object.freeze({
+    timeBand: allowed.timeBand.has(raw.timeBand) ? raw.timeBand : 'dawn',
+    regionState: allowed.regionState.has(raw.regionState) ? raw.regionState : 'restored',
+    worldMode: allowed.worldMode.has(raw.worldMode) ? raw.worldMode : 'standard',
+  });
+  const fallbackUsed = Object.keys(normalized).some((key) => normalized[key] !== raw[key]);
+  const eclipseRuin =
+    normalized.timeBand === 'eclipse' &&
+    normalized.regionState === 'ruined' &&
+    normalized.worldMode === 'cursed';
+  const variantId = eclipseRuin ? 'eclipse-ruin' : 'baseline-world';
+  return Object.freeze({
+    encounterId: String(encounterId),
+    entryId: String(entryId),
+    snapshotVersion: Math.max(1, Math.trunc(Number(snapshotVersion) || 1)),
+    context: normalized,
+    variantId,
+    hazardIds: Object.freeze(eclipseRuin ? ['ruin-seal-west', 'ruin-seal-east'] : []),
+    modifierIds: Object.freeze(eclipseRuin ? ['eclipse-ring', 'cursed-recovery'] : []),
+    rewardTableId: eclipseRuin ? 'eclipse-relic-table' : 'baseline-reward-table',
+    fallbackUsed,
+    accepted: !alreadyResolved,
+    rejectionReason: alreadyResolved ? 'duplicate-entry-resolution' : 'none',
+    snapshotCount: alreadyResolved ? 0 : 1,
+    eventCount: alreadyResolved ? 0 : 1,
+    liveResnapshotCount: 0,
   });
 }
 
@@ -8374,6 +8469,181 @@ function primitivesFor(spec, frame) {
       ),
     ];
   }
+  if (mode === 'world-state-variant') {
+    const materializeProgress = smooth(
+      (frame.time - spec.materialize[0]) / (spec.materialize[1] - spec.materialize[0]),
+    );
+    const signalProgress = clamp(
+      (frame.time - spec.attackSignal[0]) / (spec.attackSignal[1] - spec.attackSignal[0]),
+    );
+    const attackProgress = clamp((frame.time - spec.attack[0]) / (spec.attack[1] - spec.attack[0]));
+    const openingStrike = strikePulse(
+      frame.time,
+      (spec.opening[0] + spec.opening[1]) / 2,
+      spec.opening[1] - spec.opening[0],
+    );
+    const rewardProgress = smooth(
+      (frame.time - spec.reward[0]) / (spec.reward[1] - spec.reward[0]),
+    );
+    const packageVisible = frame.time >= spec.snapshotAt && frame.time < spec.resetAt;
+    const contextVisible = frame.time < spec.resetAt;
+    const outsideChanged = frame.time >= spec.outsideChangeAt && frame.time < spec.resetAt;
+    const packageOpacity = packageVisible ? 0.42 + materializeProgress * 0.54 : 0;
+    return [
+      rect(...spec.arena, 0.52, 'muted', 0.025),
+      path(
+        'M 70 742 L 176 716 L 280 744 L 386 716 L 490 742 V 775 L 386 746 L 280 776 L 176 746 L 70 775 Z M 88 839 L 280 807 L 472 839 V 857 L 280 826 L 88 857 Z',
+        0.54,
+        'muted',
+        0,
+        0.5,
+      ),
+      rect(64, 82, 432, 208, contextVisible ? 0.86 : 0.3, 'muted', 0.16),
+      circle(
+        spec.timeToken[0],
+        spec.timeToken[1],
+        38,
+        contextVisible ? 0.94 : 0.2,
+        outsideChanged ? 'safe' : 'signal',
+        7,
+        0.035,
+      ),
+      path(
+        outsideChanged
+          ? `M ${spec.timeToken[0] - 19} ${spec.timeToken[1]} H ${spec.timeToken[0] + 19} M ${spec.timeToken[0]} ${spec.timeToken[1] - 19} V ${spec.timeToken[1] + 19} M ${spec.timeToken[0] - 14} ${spec.timeToken[1] - 14} L ${spec.timeToken[0] + 14} ${spec.timeToken[1] + 14} M ${spec.timeToken[0] + 14} ${spec.timeToken[1] - 14} L ${spec.timeToken[0] - 14} ${spec.timeToken[1] + 14}`
+          : `M ${spec.timeToken[0] - 14} ${spec.timeToken[1] - 23} A 28 28 0 1 0 ${spec.timeToken[0] + 17} ${spec.timeToken[1] + 20} A 21 21 0 1 1 ${spec.timeToken[0] - 14} ${spec.timeToken[1] - 23}`,
+        contextVisible ? 0.96 : 0,
+        outsideChanged ? 'safe' : 'signal',
+        6,
+      ),
+      circle(
+        spec.regionToken[0],
+        spec.regionToken[1],
+        38,
+        contextVisible ? 0.94 : 0.2,
+        'accent',
+        7,
+        0.035,
+      ),
+      path(
+        `M ${spec.regionToken[0] - 24} ${spec.regionToken[1] + 20} L ${spec.regionToken[0] - 6} ${spec.regionToken[1] - 18} L ${spec.regionToken[0] + 5} ${spec.regionToken[1] + 2} L ${spec.regionToken[0] + 17} ${spec.regionToken[1] - 12} L ${spec.regionToken[0] + 26} ${spec.regionToken[1] + 20} Z`,
+        contextVisible ? 0.96 : 0,
+        'accent',
+        6,
+        0.05,
+      ),
+      circle(
+        spec.modeToken[0],
+        spec.modeToken[1],
+        38,
+        contextVisible ? 0.94 : 0.2,
+        'signal',
+        7,
+        0.035,
+      ),
+      path(
+        `M ${spec.modeToken[0]} ${spec.modeToken[1] - 25} L ${spec.modeToken[0] + 23} ${spec.modeToken[1]} L ${spec.modeToken[0]} ${spec.modeToken[1] + 25} L ${spec.modeToken[0] - 23} ${spec.modeToken[1]} Z M ${spec.modeToken[0] - 10} ${spec.modeToken[1]} H ${spec.modeToken[0] + 10}`,
+        contextVisible ? 0.96 : 0,
+        'signal',
+        6,
+      ),
+      ...[spec.timeToken, spec.regionToken, spec.modeToken].map((token) =>
+        line(
+          token[0],
+          token[1] + 39,
+          spec.packageNode[0],
+          spec.packageNode[1] - 28,
+          packageVisible ? 0.4 + materializeProgress * 0.42 : 0,
+          'muted',
+          5,
+          '10 8',
+        ),
+      ),
+      circle(
+        spec.packageNode[0],
+        spec.packageNode[1],
+        38 + materializeProgress * 8,
+        packageOpacity,
+        'safe',
+        8,
+        0.04,
+      ),
+      path(
+        `M ${spec.packageNode[0]} ${spec.packageNode[1] - 24} L ${spec.packageNode[0] + 22} ${spec.packageNode[1]} L ${spec.packageNode[0]} ${spec.packageNode[1] + 24} L ${spec.packageNode[0] - 22} ${spec.packageNode[1]} Z`,
+        packageOpacity,
+        'safe',
+        7,
+        0.06,
+      ),
+      ...spec.variantSeals.flatMap((seal) => [
+        circle(
+          seal[0],
+          seal[1],
+          42 + materializeProgress * 16,
+          frame.worldStateVariantPackageMaterialized ? 0.82 : materializeProgress * 0.72,
+          'signal',
+          8,
+          0.025,
+          '10 7',
+        ),
+        path(
+          `M ${seal[0] - 19} ${seal[1] - 19} L ${seal[0] + 19} ${seal[1] + 19} M ${seal[0] + 19} ${seal[1] - 19} L ${seal[0] - 19} ${seal[1] + 19}`,
+          frame.worldStateVariantPackageMaterialized ? 0.88 : materializeProgress * 0.72,
+          'signal',
+          6,
+        ),
+      ]),
+      circle(
+        frame.boss.x,
+        frame.boss.y + 12,
+        mix(92, spec.attackRadius, signalProgress),
+        frame.worldStateVariantAttackSignaled ? 0.74 : 0,
+        'accent',
+        8,
+        0.015,
+      ),
+      circle(
+        frame.boss.x,
+        frame.boss.y + 12,
+        spec.attackRadius + attackProgress * 36,
+        frame.worldStateVariantAttackActive ? 0.96 - attackProgress * 0.28 : 0,
+        'signal',
+        12,
+        0.02,
+      ),
+      path(
+        `M ${frame.player.x - 8} ${frame.player.y - 54} L ${frame.boss.x + 12} ${frame.boss.y + 26}`,
+        openingStrike,
+        'safe',
+        13,
+      ),
+      circle(
+        frame.boss.x,
+        frame.boss.y + 10,
+        44 + openingStrike * 58,
+        openingStrike,
+        'safe',
+        9,
+        0.04,
+      ),
+      circle(
+        spec.rewardToken[0],
+        spec.rewardToken[1],
+        28 + rewardProgress * 12,
+        frame.worldStateVariantRewardMapped ? 0.9 : 0,
+        'safe',
+        7,
+        0.06,
+      ),
+      path(
+        `M ${spec.rewardToken[0]} ${spec.rewardToken[1] - 24} L ${spec.rewardToken[0] + 8} ${spec.rewardToken[1] - 7} L ${spec.rewardToken[0] + 27} ${spec.rewardToken[1] - 4} L ${spec.rewardToken[0] + 13} ${spec.rewardToken[1] + 9} L ${spec.rewardToken[0] + 16} ${spec.rewardToken[1] + 28} L ${spec.rewardToken[0]} ${spec.rewardToken[1] + 19} L ${spec.rewardToken[0] - 16} ${spec.rewardToken[1] + 28} L ${spec.rewardToken[0] - 13} ${spec.rewardToken[1] + 9} L ${spec.rewardToken[0] - 27} ${spec.rewardToken[1] - 4} L ${spec.rewardToken[0] - 8} ${spec.rewardToken[1] - 7} Z`,
+        frame.worldStateVariantRewardMapped ? 0.96 : 0,
+        'safe',
+        6,
+        0.08,
+      ),
+    ];
+  }
   if (mode === 'interface-interaction') {
     const switchProgress = smooth(
       (frame.time - spec.switchRoute[0]) / (spec.switchRoute[1] - spec.switchRoute[0]),
@@ -10322,6 +10592,12 @@ function pointClearsThreat(spec, frame, value, radius = BLUEPRINT_PLAYER_RADIUS)
       );
     return true;
   }
+  if (mode === 'world-state-variant')
+    return (
+      !frame.worldStateVariantAttackActive ||
+      Math.abs(Math.hypot(value.x - frame.boss.x, value.y - frame.boss.y) - spec.attackRadius) >
+        12 + radius
+    );
   if (mode === 'interface-interaction')
     return (
       !frame.interfaceInteractionCounterActive ||
@@ -10737,6 +11013,7 @@ export function blueprintFrame(id, time) {
   else if (spec.mode === 'run-history-manifestation') responseProgress = 0;
   else if (spec.mode === 'real-time-progression') responseProgress = 0;
   else if (spec.mode === 'interface-interaction') responseProgress = 0;
+  else if (spec.mode === 'world-state-variant') responseProgress = 0;
   else if (spec.mode === 'knockback')
     responseProgress = phase === 0 ? 0 : phase === 1 ? smooth(action) : 1;
   else if (spec.mode === 'target-lock')
@@ -12265,6 +12542,20 @@ export function blueprintFrame(id, time) {
     };
     stride = Math.max(pulse(move), pulse(reset));
   }
+  if (spec.mode === 'world-state-variant') {
+    const move = smooth((t - spec.playerMove[0]) / (spec.playerMove[1] - spec.playerMove[0]));
+    const reset = smooth((t - spec.resetAt) / (BLUEPRINT_DURATION - spec.resetAt));
+    const safe = point(spec.target);
+    const movedPlayer = {
+      x: mix(startPlayer.x, safe.x, move),
+      y: mix(startPlayer.y, safe.y, move),
+    };
+    player = {
+      x: mix(movedPlayer.x, startPlayer.x, reset),
+      y: mix(movedPlayer.y, startPlayer.y, reset),
+    };
+    stride = Math.max(pulse(move), pulse(reset));
+  }
   const bossVisible =
     spec.mode === 'secondary-cues-invisibility'
       ? t < spec.vanishAt
@@ -12553,7 +12844,8 @@ export function blueprintFrame(id, time) {
             spec.mode === 'action-reactive-punish' ||
             spec.mode === 'run-history-manifestation' ||
             spec.mode === 'real-time-progression' ||
-            spec.mode === 'interface-interaction'
+            spec.mode === 'interface-interaction' ||
+            spec.mode === 'world-state-variant'
           ? (Math.atan2(boss.y - player.y, boss.x - player.x) * 180) / Math.PI
           : spec.mode === 'active-phase'
             ? (Math.atan2(boss.y - player.y, boss.x - player.x) * 180) / Math.PI
@@ -14138,6 +14430,45 @@ export function blueprintFrame(id, time) {
       strikePulse(t, (spec.counter[0] + spec.counter[1]) / 2, 0.5),
     );
   }
+  if (spec.mode === 'world-state-variant') {
+    frame.worldStateVariantState = worldStateVariantState(t);
+    frame.worldStateVariantEncounterId = spec.encounterId;
+    frame.worldStateVariantEntryId = spec.entryId;
+    frame.worldStateVariantSnapshotVersion = 1;
+    frame.worldStateVariantSnapshotCaptured = t >= spec.snapshotAt && t < spec.resetAt;
+    frame.worldStateVariantSnapshotCount = frame.worldStateVariantSnapshotCaptured ? 1 : 0;
+    frame.worldStateVariantSelectedTimeBand = frame.worldStateVariantSnapshotCaptured
+      ? 'eclipse'
+      : 'none';
+    frame.worldStateVariantOutsideTimeBand =
+      t >= spec.outsideChangeAt && t < spec.resetAt ? 'dawn' : 'eclipse';
+    frame.worldStateVariantRegionState = frame.worldStateVariantSnapshotCaptured
+      ? 'ruined'
+      : 'none';
+    frame.worldStateVariantWorldMode = frame.worldStateVariantSnapshotCaptured ? 'cursed' : 'none';
+    frame.worldStateVariantVariantId = frame.worldStateVariantSnapshotCaptured
+      ? spec.variantId
+      : 'none';
+    frame.worldStateVariantPackageMaterialized = t >= spec.materialize[1] && t < spec.resetAt;
+    frame.worldStateVariantHazardCount = frame.worldStateVariantPackageMaterialized ? 2 : 0;
+    frame.worldStateVariantModifierCount = frame.worldStateVariantPackageMaterialized ? 2 : 0;
+    frame.worldStateVariantRewardTableId = frame.worldStateVariantSnapshotCaptured
+      ? spec.rewardTableId
+      : 'none';
+    frame.worldStateVariantRewardMapped = t >= spec.reward[0] && t < spec.resetAt;
+    frame.worldStateVariantAttackSignaled = t >= spec.attackSignal[0] && t < spec.attack[0];
+    frame.worldStateVariantAttackActive = t >= spec.attack[0] && t < spec.attack[1];
+    frame.worldStateVariantOpeningActive = t >= spec.opening[0] && t < spec.opening[1];
+    frame.worldStateVariantRetryStable = t >= spec.retry[0] && t < spec.retry[1];
+    frame.worldStateVariantVariantUnchanged = frame.worldStateVariantRetryStable;
+    frame.worldStateVariantLiveResnapshots = 0;
+    frame.worldStateVariantFallbackUsed = false;
+    frame.dangerActive = frame.worldStateVariantAttackActive;
+    frame.playerMotion.dodge = strikePulse(t, spec.playerMove[0] + 0.28, 0.48);
+    frame.playerMotion.attack = strikePulse(t, (spec.opening[0] + spec.opening[1]) / 2, 0.58);
+    frame.playerMotion.impact = 0;
+    frame.bossMotion.attack = strikePulse(t, (spec.attack[0] + spec.attack[1]) / 2, 0.58);
+  }
   if (spec.mode === 'real-time-progression') {
     frame.realTimeProgressionState = realTimeProgressionState(t);
     frame.realTimeProgressionCheckpointId = spec.checkpointId;
@@ -14509,7 +14840,8 @@ export function blueprintFrame(id, time) {
             spec.mode === 'action-reactive-punish' ||
             spec.mode === 'run-history-manifestation' ||
             spec.mode === 'real-time-progression' ||
-            spec.mode === 'interface-interaction'
+            spec.mode === 'interface-interaction' ||
+            spec.mode === 'world-state-variant'
           ? 92
           : -62),
   };

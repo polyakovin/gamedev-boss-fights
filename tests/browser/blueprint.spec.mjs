@@ -409,9 +409,9 @@ test('volley releases three parallel bolts on one beat and clears its outside ro
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
 });
 
-test('catalog and builder reuse the 101 promoted rule-specific previews', async ({ page }) => {
+test('catalog and builder reuse the 102 promoted rule-specific previews', async ({ page }) => {
   await page.goto('en/');
-  await expect(page.locator('[data-blueprint-preview]')).toHaveCount(101);
+  await expect(page.locator('[data-blueprint-preview]')).toHaveCount(102);
   const catalogLayouts = await page.locator('[data-blueprint-preview]').evaluateAll((previews) =>
     previews.map((preview) => {
       const boss = preview.querySelector('[data-character-art-preview="kern"]');
@@ -435,7 +435,7 @@ test('catalog and builder reuse the 101 promoted rule-specific previews', async 
   expect(new Set(catalogLayouts.map(({ layout }) => layout)).size).toBeGreaterThanOrEqual(18);
 
   await page.goto('en/builder/');
-  await expect(page.locator('[data-blueprint-preview]')).toHaveCount(101);
+  await expect(page.locator('[data-blueprint-preview]')).toHaveCount(102);
   const builderLayouts = await page.locator('[data-blueprint-preview]').evaluateAll((previews) =>
     previews.map((preview) => {
       const boss = preview.querySelector('[data-character-art-preview="kern"]');
@@ -4392,6 +4392,76 @@ test('interface interaction pauses danger and confirms one accessible route befo
     'data-blueprint-interface-interaction-confirmation-count',
     '1',
   );
+  await page.setViewportSize({ width: 375, height: 812 });
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+});
+
+test('world-state variant snapshots one package and keeps it stable when outside context changes', async ({
+  page,
+}) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.goto('en/mechanics/world-state-variant/');
+  const widget = page.locator('[data-blueprint-demo]');
+  const timeline = widget.locator('[data-blueprint-timeline]');
+  const seek = (milliseconds) =>
+    timeline.evaluate((element, value) => {
+      element.value = String(value);
+      element.dispatchEvent(new Event('input', { bubbles: true }));
+    }, milliseconds);
+
+  await expect(page.locator('.lesson-title-line h1')).toHaveText('World-state encounter variant');
+  await expect(page.locator('.wip-badge, .draft-profile')).toHaveCount(0);
+  await expect(page.locator('.game-example')).toHaveCount(3);
+  await expect(page.locator('.lens-chip')).toHaveCount(5);
+  await seek(900);
+  await expect(widget).toHaveAttribute('data-blueprint-world-state-variant', 'snapshot-captured');
+  await expect(widget).toHaveAttribute(
+    'data-blueprint-world-state-variant-snapshot-captured',
+    'true',
+  );
+  await expect(widget).toHaveAttribute('data-blueprint-world-state-variant-snapshot-count', '1');
+  await expect(widget).toHaveAttribute(
+    'data-blueprint-world-state-variant-selected-time-band',
+    'eclipse',
+  );
+  await seek(1700);
+  await expect(widget).toHaveAttribute('data-blueprint-world-state-variant', 'variant-ready');
+  await expect(widget).toHaveAttribute(
+    'data-blueprint-world-state-variant-variant-id',
+    'eclipse-ruin',
+  );
+  await expect(widget).toHaveAttribute(
+    'data-blueprint-world-state-variant-package-materialized',
+    'true',
+  );
+  await expect(widget).toHaveAttribute('data-blueprint-world-state-variant-hazard-count', '2');
+  await expect(widget).toHaveAttribute('data-blueprint-world-state-variant-modifier-count', '2');
+  await seek(2500);
+  await expect(widget).toHaveAttribute('data-blueprint-world-state-variant', 'variant-active');
+  await expect(widget).toHaveAttribute('data-blueprint-world-state-variant-attack-active', 'true');
+  await expect(widget).toHaveAttribute('data-blueprint-outcome', 'safe');
+  await seek(3800);
+  await expect(widget).toHaveAttribute('data-blueprint-world-state-variant', 'reward-mapped');
+  await expect(widget).toHaveAttribute(
+    'data-blueprint-world-state-variant-reward-table-id',
+    'eclipse-relic-table',
+  );
+  await expect(widget).toHaveAttribute('data-blueprint-world-state-variant-reward-mapped', 'true');
+  await seek(4900);
+  await expect(widget).toHaveAttribute('data-blueprint-world-state-variant', 'retry-stable');
+  await expect(widget).toHaveAttribute(
+    'data-blueprint-world-state-variant-outside-time-band',
+    'dawn',
+  );
+  await expect(widget).toHaveAttribute(
+    'data-blueprint-world-state-variant-selected-time-band',
+    'eclipse',
+  );
+  await expect(widget).toHaveAttribute(
+    'data-blueprint-world-state-variant-variant-unchanged',
+    'true',
+  );
+  await expect(widget).toHaveAttribute('data-blueprint-world-state-variant-live-resnapshots', '0');
   await page.setViewportSize({ width: 375, height: 812 });
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
 });

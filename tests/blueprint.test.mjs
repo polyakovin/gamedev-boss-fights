@@ -71,6 +71,8 @@ import {
   realTimeProgressionResolve,
   interfaceInteractionState,
   interfaceInteractionResolve,
+  worldStateVariantState,
+  worldStateVariantResolve,
   counterStanceOutcome,
   counterStanceState,
   blueprintFrame,
@@ -98,8 +100,8 @@ import {
   renderBlueprintThumbnail,
 } from '../lib/blueprint-view.mjs';
 
-test('all 101 promoted lesson animations have distinct rule modes and complete moving frames', () => {
-  assert.equal(BLUEPRINT_MECHANIC_IDS.length, 101);
+test('all 102 promoted lesson animations have distinct rule modes and complete moving frames', () => {
+  assert.equal(BLUEPRINT_MECHANIC_IDS.length, 102);
   const modes = new Set();
   for (const id of BLUEPRINT_MECHANIC_IDS) {
     for (let time = 0; time <= BLUEPRINT_DURATION; time += 0.1) {
@@ -120,7 +122,7 @@ test('all 101 promoted lesson animations have distinct rule modes and complete m
           assert.ok(Number.isFinite(value), `${id} has an invalid ${primitive.type}`);
     }
   }
-  assert.equal(modes.size, 101);
+  assert.equal(modes.size, 102);
 });
 
 test('every blueprint exposes signal, committed action, and recovery without player teleports', () => {
@@ -170,7 +172,8 @@ test('every blueprint exposes signal, committed action, and recovery without pla
       id !== 'action-reactive-punish' &&
       id !== 'run-history-manifestation' &&
       id !== 'real-time-progression' &&
-      id !== 'interface-interaction'
+      id !== 'interface-interaction' &&
+      id !== 'world-state-variant'
     )
       assert.equal(blueprintFrame(id, 3).dangerActive, true, id);
     assert.equal(blueprintFrame(id, 3).playerSafe, true, id);
@@ -270,6 +273,7 @@ test('every damaging promoted animation derives safety from its own active geome
       id !== 'run-history-manifestation' &&
       id !== 'real-time-progression' &&
       id !== 'interface-interaction' &&
+      id !== 'world-state-variant' &&
       id !== 'part-break' &&
       id !== 'counter-stance' &&
       id !== 'absorption-power-up' &&
@@ -4409,5 +4413,82 @@ test('interface interaction pauses danger, confirms one supported route, and res
   assert.match(
     renderBlueprintThumbnail(id, 'test-interface-interaction'),
     /data-blueprint-preview="interface-interaction"/,
+  );
+});
+
+test('world-state variant snapshots one named package and preserves it through retry', () => {
+  const id = 'world-state-variant';
+  assert.deepEqual(
+    [0.4, 0.9, 1.2, 1.7, 2, 2.5, 3.1, 3.8, 4.35, 4.9, 5.5].map(worldStateVariantState),
+    [
+      'context-visible',
+      'snapshot-captured',
+      'package-materializing',
+      'variant-ready',
+      'variant-signaled',
+      'variant-active',
+      'opening-active',
+      'reward-mapped',
+      'encounter-stable',
+      'retry-stable',
+      'reset',
+    ],
+  );
+  assert.deepEqual(worldStateVariantResolve(), {
+    encounterId: 'kern-world-gate-1',
+    entryId: 'world-entry-1',
+    snapshotVersion: 1,
+    context: {
+      timeBand: 'eclipse',
+      regionState: 'ruined',
+      worldMode: 'cursed',
+    },
+    variantId: 'eclipse-ruin',
+    hazardIds: ['ruin-seal-west', 'ruin-seal-east'],
+    modifierIds: ['eclipse-ring', 'cursed-recovery'],
+    rewardTableId: 'eclipse-relic-table',
+    fallbackUsed: false,
+    accepted: true,
+    rejectionReason: 'none',
+    snapshotCount: 1,
+    eventCount: 1,
+    liveResnapshotCount: 0,
+  });
+  const fallback = worldStateVariantResolve({ timeBand: 'unknown' });
+  assert.equal(fallback.variantId, 'baseline-world');
+  assert.equal(fallback.context.timeBand, 'dawn');
+  assert.equal(fallback.fallbackUsed, true);
+  const duplicate = worldStateVariantResolve({ alreadyResolved: true });
+  assert.equal(duplicate.accepted, false);
+  assert.equal(duplicate.rejectionReason, 'duplicate-entry-resolution');
+  assert.equal(duplicate.snapshotCount, 0);
+  assert.equal(duplicate.eventCount, 0);
+
+  const before = blueprintFrame(id, 0.4);
+  assert.equal(before.worldStateVariantSnapshotCaptured, false);
+  const ready = blueprintFrame(id, 1.7);
+  assert.equal(ready.worldStateVariantSnapshotCaptured, true);
+  assert.equal(ready.worldStateVariantVariantId, 'eclipse-ruin');
+  assert.equal(ready.worldStateVariantPackageMaterialized, true);
+  assert.equal(ready.worldStateVariantHazardCount, 2);
+  assert.equal(ready.worldStateVariantModifierCount, 2);
+  const active = blueprintFrame(id, 2.5);
+  assert.equal(active.worldStateVariantAttackActive, true);
+  assert.equal(blueprintPointSafe(id, 2.5, active.player), true);
+  assert.equal(blueprintPointSafe(id, 2.5, { x: active.boss.x + 205, y: active.boss.y }), false);
+  const reward = blueprintFrame(id, 3.8);
+  assert.equal(reward.worldStateVariantRewardMapped, true);
+  assert.equal(reward.worldStateVariantRewardTableId, 'eclipse-relic-table');
+  const retry = blueprintFrame(id, 4.9);
+  assert.equal(retry.worldStateVariantRetryStable, true);
+  assert.equal(retry.worldStateVariantSelectedTimeBand, 'eclipse');
+  assert.equal(retry.worldStateVariantOutsideTimeBand, 'dawn');
+  assert.equal(retry.worldStateVariantVariantUnchanged, true);
+  assert.equal(retry.worldStateVariantLiveResnapshots, 0);
+  assert.equal(retry.worldStateVariantSnapshotCount, 1);
+  assert.deepEqual(blueprintFrame(id, 0).player, blueprintFrame(id, 6).player);
+  assert.match(
+    renderBlueprintThumbnail(id, 'test-world-state-variant'),
+    /data-blueprint-preview="world-state-variant"/,
   );
 });
