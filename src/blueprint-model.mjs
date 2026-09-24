@@ -9094,19 +9094,19 @@ function primitivesFor(spec, frame) {
       circle(boss.x, boss.y + 30, mix(50, 440, action), active, 'signal', 24),
       circle(boss.x, boss.y + 30, mix(35, 425, action), active, 'accent', 3),
     ];
-  if (mode === 'lingering')
+  if (mode === 'lingering') {
+    const radius = mix(26, 105, phase === 0 ? prepare : 1);
+    const opacity = phase === 2 ? 1 - recover : active;
     return [
-      circle(
-        360,
-        620,
-        mix(26, 105, phase === 0 ? prepare : 1),
-        phase === 2 ? 1 - recover : active,
-        'signal',
-        6,
-        0.26,
+      circle(360, 620, radius, opacity, 'signal', 2, 0.7),
+      path(
+        `M ${360 - radius * 0.65} ${620 - radius * 0.13} L ${360 - radius * 0.23} ${620 - radius * 0.31} L ${360 + radius * 0.09} ${620 + radius * 0.08} L ${360 + radius * 0.55} ${620 - radius * 0.2} M ${360 - radius * 0.2} ${620 + radius * 0.51} L ${360 + radius * 0.09} ${620 + radius * 0.08} L ${360 + radius * 0.39} ${620 + radius * 0.52}`,
+        opacity * 0.8,
+        'muted',
+        5,
       ),
-      circle(360, 620, 76 + Math.sin(action * Math.PI * 6) * 8, active, 'accent', 3),
     ];
+  }
   if (mode === 'trail') {
     const trailPoints = [
       [190, 290],
