@@ -1,0 +1,138 @@
+{
+  "title": "Shared group health",
+  "subtitle": "Separate body presence from one authoritative encounter health pool",
+  "variant": "Two bodies · one pool · temporary absence · one completion",
+  "summary": "Hits on either active boss drain the same encounter bar, while each body can leave or return without replenishing that bar.",
+  "overview": "Shared group health gives several active bodies one progress budget. Each body still has its own identity, presence, and attack state, but damage to any valid body reduces a single authoritative pool. A temporary disappearance cannot refill it; the encounter ends when that pool reaches zero, not when one body falls.",
+  "learning": "Define group and body IDs, damage attribution, individual presence, shared-pool maximum and display, duplicate-hit policy, absence and return, zero-health priority, pending attacks, completion once, retry reset, accessibility, and telemetry.",
+  "category": "Multi-boss relationships",
+  "readTime": "10 min",
+  "demo": {
+    "title": "Drain Kern's shared covenant without confusing the two bodies",
+    "timeline": "Shared group health timeline",
+    "step": "Hit either body, read the common bar, survive a return, finish the pool",
+    "phaseNames": [
+      "Show two targets and one shared bar",
+      "Remove a body without restoring progress",
+      "Finish the pool through either body"
+    ],
+    "phaseDescriptions": [
+      "Both stone bodies are present under one covenant bar. Tavi hits the left echo at 0.80 seconds: one accepted event subtracts 28 points from the shared 100 while Kern signals a sweep.",
+      "The echo withdraws at 1.55, leaving the bar at 72. Tavi clears Kern's announced lane; the echo reappears at 3.15 without increasing shared health. A hit on Kern at 3.55 reduces the same pool to 39.",
+      "The pair signals one more lane. Tavi clears it, then strikes the returned echo at 4.85 for the remaining 39 points. Both bodies cease and completion is granted once. At 5.55 an explicit retry restores exactly 100 and the starting pair."
+    ],
+    "boss": "Boss",
+    "player": "Player",
+    "danger": "Separate body bars can imply duplicated progress; duplicate hit callbacks drain the pool twice, a return can refill it, or zero health can leave a stray attacker alive",
+    "locked": "Group identity, one pool, event de-duplication, body presence, zero-health authority, pending attack cancellation, one completion grant, and retry reset belong to encounter logic",
+    "safe": "Show one persistent group bar, acknowledge the struck body, preserve the bar through disappearance and return, warn before each lane, and stop every body when the pool is empty",
+    "reducedMotion": "Reduced motion disables autoplay. Scrub through 0.40, 0.80, 1.10, 1.55, 1.90, 2.35, 2.80, 3.15, 3.55, 4.00, 4.35, 4.85, 5.10, and 5.55 seconds.",
+    "diagramDescription": "Two stone bosses share a labeled health bar. Tavi strikes the left body and the one bar drops. That body withdraws while the right boss makes a telegraphed lane; it returns with the bar unchanged. Tavi hits the right body, clears a second lane, and finishes the common pool through the left body. Both stop together before a visible retry."
+  },
+  "steps": [
+    {
+      "title": "Which state is shared and which stays local?",
+      "body": "Store one encounter pool with a stable group ID. Give each body its own ID, active/absent state, pose, hitbox, and action queue. A valid hit on either active hitbox submits one event to the pool; an absent body cannot be hit unless explicitly authored. A local disappearance is not a new health phase."
+    },
+    {
+      "title": "How does a hit remain readable?",
+      "body": "Flash the struck body and animate the same labeled bar for either source. Preserve that bar while a body leaves and returns. Keep body presence and pool progress separate in the UI, expose invulnerability before it matters, and telegraph the survivor's lane before damage starts."
+    },
+    {
+      "title": "When does the group finish?",
+      "body": "Apply damage once per event ID, clamp at zero, and make zero health outrank simultaneous return or queued attacks. Stop all bodies, cancel pending spawns, and issue one completion grant. On retry create a new attempt ID, reset the full pool and original roster, then replay the same deterministic timeline."
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "Two bars imply two separate budgets",
+      "body": "If each body appears to refill the encounter, target selection becomes misleading. Display a single group bar with a stable label and use local body cues only for presence, stagger, or temporary down states."
+    },
+    {
+      "title": "Repeated hit or return changes the ledger twice",
+      "body": "A multihit animation or duplicate callback can spend the same event twice; a reappearing body may copy its own maximum into the group. De-duplicate by attempt and event ID, and keep return from mutating the shared pool."
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "Tune target choice against pressure",
+      "body": "Compare access to each body, travel time, attack overlap, stagger opportunity, and damage rate. A shared pool permits target switching, but one easy stationary body must not trivialize the two-body pressure test."
+    },
+    {
+      "title": "Keep progress visible through absence",
+      "body": "Hold the group bar in one screen position when a body disappears. Use a silhouette, seal, or text to show temporary absence rather than death; on return, do not play a health-refill cue."
+    },
+    {
+      "title": "Test event ordering and cleanup",
+      "body": "Simulate two hits in one frame, repeated event IDs, a hit as a body leaves, zero health as a return starts, disconnect, and retry. Record group ID, attempt ID, source body, accepted damage, pool before and after, presence, and completion count."
+    }
+  ],
+  "story": {
+    "title": "One stone covenant binds two forms",
+    "body": "Tavi's blade chips the echo, yet the shared rune above both bodies dims. The echo sinks into the floor and rises again while Kern holds the same weakened seal. The last strike extinguishes both figures at once."
+  },
+  "adaptation": {
+    "title": "Make the single budget explicit without sight or sound",
+    "body": "Label the shared bar, announce accepted damage and body departures in text, use shape and pose as well as color, provide a full-body clear lane, and keep the bar stable in reduced motion and narrow layouts."
+  },
+  "distinction": {
+    "title": "One pool is not partner revival",
+    "body": "Partner revival restores a fallen entity's local life under a cast rule. Shared group health keeps encounter progress in one pool even as bodies come and go; returning presence does not itself add group health. A game can combine both systems, but their ledgers and completion authority remain distinct."
+  },
+  "lensNotes": [
+    {
+      "id": "progress-clarity",
+      "body": "One persistent labeled bar and hit acknowledgment make damage to either body feel like the same earned progress."
+    },
+    {
+      "id": "context-and-sequence",
+      "body": "Departure, return, and final group defeat change which target is present without starting a new health budget."
+    },
+    {
+      "id": "risk-reward",
+      "body": "Target choice weighs access and exposure while every accepted hit still advances the common pool."
+    },
+    {
+      "id": "difficulty-rhythm",
+      "body": "Body presence alters pressure across the timeline without hiding or erasing progress."
+    },
+    {
+      "id": "counterplay",
+      "body": "Each active body's lane is warned before damage and the player can clear the full geometry while keeping the shared bar in view."
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "Cuphead",
+      "boss": "Ribby and Croaks",
+      "screenshot": "https://i.ytimg.com/vi/w55yfSl5NUc/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=w55yfSl5NUc&t=1s",
+      "video": "https://www.youtube.com/watch?v=w55yfSl5NUc&t=1s",
+      "videoDurationSeconds": 126,
+      "body": "Both frog brothers occupy the early phases and the encounter progresses into one combined slot-machine form. Cuphead does not display a numeric group bar, so this is a hidden encounter-budget variant rather than a visible shared-bar reference."
+    },
+    {
+      "dimension": "3D",
+      "game": "Elden Ring",
+      "boss": "Godskin Duo",
+      "screenshot": "https://i.ytimg.com/vi/iygrSgc9mhA/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=iygrSgc9mhA&t=30s",
+      "video": "https://www.youtube.com/watch?v=iygrSgc9mhA&t=30s",
+      "videoDurationSeconds": 198,
+      "body": "The Noble and Apostle have local HP yet also drain one Godskin Duo bar. A body can be defeated and return while the group bar remains the encounter's completion measure; local disappearance is not victory."
+    },
+    {
+      "dimension": "3D",
+      "game": "Dark Souls",
+      "boss": "The Four Kings",
+      "screenshot": "https://i.ytimg.com/vi/vkBIV5FjdTI/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=vkBIV5FjdTI&t=40s",
+      "video": "https://www.youtube.com/watch?v=vkBIV5FjdTI&t=40s",
+      "videoDurationSeconds": 233,
+      "body": "Each King has local HP, but hits also reduce one shared boss bar. Additional Kings can appear while the bar remains positive, so the number of visible bodies is not the same as the group's remaining health."
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

@@ -1774,6 +1774,36 @@ const SPECS = {
     leftBossId: 'echo-kern',
     rightBossId: 'kern',
   },
+  'shared-group-health': {
+    mode: 'shared-group-health',
+    boss: [380, 430],
+    partner: [170, 475],
+    player: [285, 720],
+    target: [425, 780],
+    arena: [55, 275, 450, 615],
+    firstApproach: [220, 625],
+    firstSafe: [450, 780],
+    secondApproach: [395, 625],
+    secondSafe: [100, 785],
+    finalApproach: [210, 625],
+    firstHitAt: 0.8,
+    withdrawAt: 1.55,
+    firstSignal: [1.72, 2.1],
+    firstAttack: [2.1, 2.52],
+    returnAt: 3.15,
+    secondHitAt: 3.55,
+    secondSignal: [3.85, 4.22],
+    secondAttack: [4.22, 4.6],
+    finalHitAt: 4.85,
+    completionAt: 5.05,
+    retryAt: 5.55,
+    firstLaneEnd: [100, 810],
+    secondLaneEnd: [500, 820],
+    laneHalfWidth: 23,
+    encounterId: 'kern-shared-covenant-1',
+    leftBossId: 'echo-kern',
+    rightBossId: 'kern',
+  },
   'wide-swing': { mode: 'arc', boss: [225, 340], player: [380, 500], target: [420, 780] },
   lunge: {
     mode: 'lunge',
@@ -3811,6 +3841,70 @@ export function killOrderInheritanceResolve({
     resolution,
     accepted: inherited || resolution === 'pair-defeated',
     duplicateGrantCount: 0,
+  });
+}
+
+export function sharedGroupHealthState(time) {
+  const spec = SPECS['shared-group-health'];
+  const t = localTime(time);
+  if (t < spec.firstHitAt) return 'paired-full';
+  if (t < spec.withdrawAt) return 'first-hit-shared';
+  if (t < spec.firstSignal[0]) return 'left-absent';
+  if (t < spec.firstAttack[0]) return 'first-lane-signaled';
+  if (t < spec.firstAttack[1]) return 'first-lane-active';
+  if (t < spec.returnAt) return 'left-absent-progress-held';
+  if (t < spec.secondHitAt) return 'left-returned-no-refill';
+  if (t < spec.secondSignal[0]) return 'second-hit-shared';
+  if (t < spec.secondAttack[0]) return 'second-lane-signaled';
+  if (t < spec.secondAttack[1]) return 'second-lane-active';
+  if (t < spec.finalHitAt) return 'final-opening';
+  if (t < spec.completionAt) return 'pool-zero';
+  if (t < spec.retryAt) return 'group-complete';
+  return 'explicit-retry';
+}
+
+export function sharedGroupHealthResolve({
+  encounterId = 'kern-shared-covenant-1',
+  attemptId = 'shared-health-attempt-1',
+  maxHealth = 100,
+  bodyIds = ['echo-kern', 'kern'],
+  damageEvents = [],
+  alreadyCompleted = false,
+} = {}) {
+  const maximum = Math.max(1, Math.trunc(Number(maxHealth) || 1));
+  const roster = new Set(bodyIds.map(String));
+  const seen = new Set();
+  let health = maximum;
+  let acceptedDamage = 0;
+  let acceptedEventCount = 0;
+  let duplicateEventCount = 0;
+  for (const event of damageEvents) {
+    const key = String(event.eventId ?? '');
+    if (!key || seen.has(key)) {
+      duplicateEventCount += 1;
+      continue;
+    }
+    seen.add(key);
+    if (!roster.has(String(event.bodyId)) || event.presentAtHit === false || health === 0) continue;
+    const amount = Math.max(0, Math.trunc(Number(event.amount) || 0));
+    if (amount === 0) continue;
+    const applied = Math.min(health, amount);
+    health -= applied;
+    acceptedDamage += applied;
+    acceptedEventCount += 1;
+  }
+  const completed = health === 0;
+  return Object.freeze({
+    encounterId: String(encounterId),
+    attemptId: String(attemptId),
+    maxHealth: maximum,
+    currentHealth: health,
+    acceptedDamage,
+    acceptedEventCount,
+    duplicateEventCount,
+    completionAuthorized: completed,
+    completionCount: completed && !alreadyCompleted ? 1 : 0,
+    pendingBodiesCancelled: completed ? roster.size : 0,
   });
 }
 
@@ -8833,6 +8927,127 @@ function primitivesFor(spec, frame) {
       ),
     ];
   }
+  if (mode === 'shared-group-health') {
+    const t = frame.time;
+    const hitLeft = Math.max(
+      strikePulse(t, spec.firstHitAt, 0.36),
+      strikePulse(t, spec.finalHitAt, 0.4),
+    );
+    const hitRight = strikePulse(t, spec.secondHitAt, 0.38);
+    const completed = frame.sharedGroupHealthCompletionCount === 1;
+    return [
+      rect(...spec.arena, 0.55, 'muted', 0.025),
+      path(
+        'M 67 776 L 177 738 L 280 769 L 385 738 L 493 776 V 800 L 385 768 L 280 803 L 177 768 L 67 800 Z',
+        0.52,
+        'muted',
+        0,
+        0.44,
+      ),
+      rect(77, 88, 406, 100, 0.82, 'muted', 0.13),
+      rect(100, 125, 360, 27, 0.92, 'muted', 0.08),
+      rect(100, 125, (360 * frame.sharedGroupHealthCurrentHealth) / 100, 27, 0.96, 'accent', 0.28),
+      line(123, 187, spec.partner[0], spec.partner[1] - 78, 0.55, 'accent', 4, '12 11'),
+      line(437, 187, spec.boss[0], spec.boss[1] - 78, 0.55, 'accent', 4, '12 11'),
+      circle(
+        spec.partner[0],
+        spec.partner[1],
+        75,
+        frame.sharedGroupHealthLeftPresent ? 0.42 : 0.86,
+        frame.sharedGroupHealthLeftPresent ? 'accent' : 'signal',
+        8,
+        0.025,
+        frame.sharedGroupHealthLeftPresent ? '' : '10 10',
+      ),
+      circle(
+        spec.boss[0],
+        spec.boss[1],
+        75,
+        frame.sharedGroupHealthRightPresent ? 0.42 : 0.86,
+        frame.sharedGroupHealthRightPresent ? 'accent' : 'signal',
+        8,
+        0.025,
+        frame.sharedGroupHealthRightPresent ? '' : '10 10',
+      ),
+      circle(spec.partner[0], spec.partner[1], 92, hitLeft, 'safe', 12, 0.035),
+      circle(spec.boss[0], spec.boss[1], 92, hitRight, 'safe', 12, 0.035),
+      line(
+        frame.player.x - 8,
+        frame.player.y - 48,
+        spec.partner[0] + 18,
+        spec.partner[1] + 15,
+        hitLeft,
+        'safe',
+        12,
+      ),
+      line(
+        frame.player.x - 8,
+        frame.player.y - 48,
+        spec.boss[0] + 18,
+        spec.boss[1] + 15,
+        hitRight,
+        'safe',
+        12,
+      ),
+      line(
+        spec.boss[0],
+        spec.boss[1],
+        spec.firstLaneEnd[0],
+        spec.firstLaneEnd[1],
+        frame.sharedGroupHealthFirstSignal ? 0.85 : 0,
+        'signal',
+        7,
+        '14 10',
+      ),
+      line(
+        spec.boss[0],
+        spec.boss[1],
+        spec.firstLaneEnd[0],
+        spec.firstLaneEnd[1],
+        frame.sharedGroupHealthFirstAttack ? 0.91 : 0,
+        'signal',
+        spec.laneHalfWidth * 2,
+      ),
+      line(
+        spec.partner[0],
+        spec.partner[1],
+        spec.secondLaneEnd[0],
+        spec.secondLaneEnd[1],
+        frame.sharedGroupHealthSecondSignal ? 0.85 : 0,
+        'signal',
+        7,
+        '14 10',
+      ),
+      line(
+        spec.partner[0],
+        spec.partner[1],
+        spec.secondLaneEnd[0],
+        spec.secondLaneEnd[1],
+        frame.sharedGroupHealthSecondAttack ? 0.91 : 0,
+        'signal',
+        spec.laneHalfWidth * 2,
+      ),
+      circle(
+        spec.partner[0],
+        spec.partner[1],
+        100,
+        frame.sharedGroupHealthLeftReturned ? strikePulse(t, spec.returnAt, 0.55) : 0,
+        'accent',
+        11,
+        0.025,
+      ),
+      circle(280, 638, 70, completed ? 0.95 : 0, 'safe', 9, 0.035),
+      path('M 244 636 L 269 660 L 319 612', completed ? 0.96 : 0, 'safe', 11),
+      circle(
+        280,
+        638,
+        88 * smooth((t - spec.retryAt) / (BLUEPRINT_DURATION - spec.retryAt)),
+        frame.sharedGroupHealthRetry ? 0.75 : 0,
+        'accent',
+        7,
+      ),
+    ];
+  }
   if (mode === 'party-size-scaling') {
     const rosterProgress = smooth((frame.time - spec.joinQueuedAt) / 0.38);
     const scaleProgress = smooth((frame.time - spec.scaleApplyAt) / 0.36);
@@ -11031,6 +11246,19 @@ function pointClearsThreat(spec, frame, value, radius = BLUEPRINT_PLAYER_RADIUS)
     return true;
   }
   if (mode === 'partner-revival') return true;
+  if (mode === 'shared-group-health') {
+    if (frame.sharedGroupHealthFirstAttack)
+      return (
+        distanceToSegment(value, point(spec.boss), point(spec.firstLaneEnd)) >
+        spec.laneHalfWidth + radius
+      );
+    if (frame.sharedGroupHealthSecondAttack)
+      return (
+        distanceToSegment(value, point(spec.partner), point(spec.secondLaneEnd)) >
+        spec.laneHalfWidth + radius
+      );
+    return true;
+  }
   if (mode === 'kill-order-inheritance') {
     if (frame.killOrderInheritanceWaveActive) {
       const progress = clamp(
@@ -13122,6 +13350,50 @@ export function blueprintFrame(id, time) {
       pulse(reset),
     );
   }
+  if (spec.mode === 'shared-group-health') {
+    const start = point(spec.player);
+    const first = point(spec.firstApproach);
+    const firstSafe = point(spec.firstSafe);
+    const second = point(spec.secondApproach);
+    const secondSafe = point(spec.secondSafe);
+    const finish = point(spec.finalApproach);
+    const towardFirst = smooth(t / spec.firstHitAt);
+    const dodgeFirst = smooth((t - spec.firstHitAt) / 1.15);
+    const towardSecond = smooth(
+      (t - spec.firstAttack[1]) / (spec.secondHitAt - spec.firstAttack[1]),
+    );
+    const dodgeSecond = smooth((t - spec.secondHitAt) / 0.65);
+    const towardFinish = smooth((t - 4.35) / (spec.finalHitAt - 4.35));
+    const retry = smooth((t - spec.retryAt) / (BLUEPRINT_DURATION - spec.retryAt));
+    const staged =
+      t < spec.firstHitAt
+        ? { x: mix(start.x, first.x, towardFirst), y: mix(start.y, first.y, towardFirst) }
+        : t < spec.firstAttack[1]
+          ? { x: mix(first.x, firstSafe.x, dodgeFirst), y: mix(first.y, firstSafe.y, dodgeFirst) }
+          : t < spec.secondHitAt
+            ? {
+                x: mix(firstSafe.x, second.x, towardSecond),
+                y: mix(firstSafe.y, second.y, towardSecond),
+              }
+            : t < 4.35
+              ? {
+                  x: mix(second.x, secondSafe.x, dodgeSecond),
+                  y: mix(second.y, secondSafe.y, dodgeSecond),
+                }
+              : {
+                  x: mix(secondSafe.x, finish.x, towardFinish),
+                  y: mix(secondSafe.y, finish.y, towardFinish),
+                };
+    player = { x: mix(staged.x, start.x, retry), y: mix(staged.y, start.y, retry) };
+    stride = Math.max(
+      pulse(towardFirst),
+      pulse(dodgeFirst),
+      pulse(towardSecond),
+      pulse(dodgeSecond),
+      pulse(towardFinish),
+      pulse(retry),
+    );
+  }
   const bossVisible =
     spec.mode === 'secondary-cues-invisibility'
       ? t < spec.vanishAt
@@ -13207,7 +13479,18 @@ export function blueprintFrame(id, time) {
                         )
                       : 1,
             }
-          : null;
+          : spec.mode === 'shared-group-health'
+            ? {
+                x: spec.partner[0],
+                y: spec.partner[1],
+                opacity:
+                  t >= spec.finalHitAt && t < spec.retryAt
+                    ? 0.18
+                    : t < spec.withdrawAt || t >= spec.returnAt
+                      ? 1
+                      : 0.16,
+              }
+            : null;
   const predicted =
     spec.mode === 'predictive-aim'
       ? {
@@ -13457,7 +13740,8 @@ export function blueprintFrame(id, time) {
             spec.mode === 'world-state-variant' ||
             spec.mode === 'party-size-scaling' ||
             spec.mode === 'partner-revival' ||
-            spec.mode === 'kill-order-inheritance'
+            spec.mode === 'kill-order-inheritance' ||
+            spec.mode === 'shared-group-health'
           ? (Math.atan2(boss.y - player.y, boss.x - player.x) * 180) / Math.PI
           : spec.mode === 'active-phase'
             ? (Math.atan2(boss.y - player.y, boss.x - player.x) * 180) / Math.PI
@@ -15269,6 +15553,68 @@ export function blueprintFrame(id, time) {
     );
     frame.playerMotion.impact = 0;
   }
+  if (spec.mode === 'shared-group-health') {
+    const retry = t >= spec.retryAt;
+    const events = retry
+      ? []
+      : [
+          ...(t >= spec.firstHitAt
+            ? [{ eventId: 'echo-1', bodyId: spec.leftBossId, amount: 28 }]
+            : []),
+          ...(t >= spec.secondHitAt
+            ? [{ eventId: 'kern-1', bodyId: spec.rightBossId, amount: 33 }]
+            : []),
+          ...(t >= spec.finalHitAt
+            ? [{ eventId: 'echo-2', bodyId: spec.leftBossId, amount: 39 }]
+            : []),
+        ];
+    const ledger = sharedGroupHealthResolve({
+      encounterId: spec.encounterId,
+      attemptId: retry ? 'shared-health-attempt-2' : 'shared-health-attempt-1',
+      bodyIds: [spec.leftBossId, spec.rightBossId],
+      damageEvents: events,
+    });
+    frame.sharedGroupHealthState = sharedGroupHealthState(t);
+    frame.sharedGroupHealthEncounterId = ledger.encounterId;
+    frame.sharedGroupHealthAttemptId = ledger.attemptId;
+    frame.sharedGroupHealthCurrentHealth = ledger.currentHealth;
+    frame.sharedGroupHealthAcceptedEventCount = ledger.acceptedEventCount;
+    frame.sharedGroupHealthDuplicateEventCount = ledger.duplicateEventCount;
+    frame.sharedGroupHealthLeftPresent =
+      retry || ((t < spec.withdrawAt || t >= spec.returnAt) && t < spec.finalHitAt);
+    frame.sharedGroupHealthRightPresent = retry || t < spec.finalHitAt;
+    frame.sharedGroupHealthLeftReturned = t >= spec.returnAt && t < spec.finalHitAt;
+    frame.sharedGroupHealthFirstSignal = t >= spec.firstSignal[0] && t < spec.firstAttack[0];
+    frame.sharedGroupHealthFirstAttack = t >= spec.firstAttack[0] && t < spec.firstAttack[1];
+    frame.sharedGroupHealthSecondSignal = t >= spec.secondSignal[0] && t < spec.secondAttack[0];
+    frame.sharedGroupHealthSecondAttack = t >= spec.secondAttack[0] && t < spec.secondAttack[1];
+    frame.sharedGroupHealthCompletionCount =
+      t >= spec.completionAt && t < spec.retryAt ? ledger.completionCount : 0;
+    frame.sharedGroupHealthRetry = retry;
+    frame.dangerActive = frame.sharedGroupHealthFirstAttack || frame.sharedGroupHealthSecondAttack;
+    frame.bossVisible = frame.sharedGroupHealthRightPresent ? 1 : 0.18;
+    frame.bossMotion.attack = Math.max(
+      strikePulse(t, spec.firstAttack[0], 0.58),
+      strikePulse(t, spec.secondAttack[0], 0.58) * 0.35,
+    );
+    frame.bossMotion.impact = strikePulse(t, spec.secondHitAt, 0.4);
+    frame.partnerMotion = motion({
+      idle: frame.sharedGroupHealthLeftPresent ? 1 : 0.08,
+      attack: strikePulse(t, spec.secondAttack[0], 0.55),
+      impact: Math.max(strikePulse(t, spec.firstHitAt, 0.4), strikePulse(t, spec.finalHitAt, 0.4)),
+    });
+    frame.partnerFacing = 55;
+    frame.playerMotion.attack = Math.max(
+      strikePulse(t, spec.firstHitAt, 0.4),
+      strikePulse(t, spec.secondHitAt, 0.4),
+      strikePulse(t, spec.finalHitAt, 0.4),
+    );
+    frame.playerMotion.dodge = Math.max(
+      strikePulse(t, spec.firstAttack[0], 0.55),
+      strikePulse(t, spec.secondAttack[0], 0.55),
+    );
+    frame.playerMotion.impact = 0;
+  }
   if (spec.mode === 'real-time-progression') {
     frame.realTimeProgressionState = realTimeProgressionState(t);
     frame.realTimeProgressionCheckpointId = spec.checkpointId;
@@ -15655,7 +16001,8 @@ export function blueprintFrame(id, time) {
               spec.mode === 'world-state-variant' ||
               spec.mode === 'party-size-scaling' ||
               spec.mode === 'partner-revival' ||
-              spec.mode === 'kill-order-inheritance'
+              spec.mode === 'kill-order-inheritance' ||
+              spec.mode === 'shared-group-health'
             ? 92
             : -62),
   };

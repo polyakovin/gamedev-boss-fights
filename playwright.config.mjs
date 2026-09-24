@@ -1,4 +1,8 @@
 import { defineConfig } from '@playwright/test';
+const testPort = Number(process.env.ATLAS_TEST_PORT ?? 4173);
+if (!Number.isInteger(testPort) || testPort < 1024 || testPort > 65535)
+  throw new Error('ATLAS_TEST_PORT must be a valid non-privileged TCP port');
+const baseURL = `http://127.0.0.1:${testPort}/gamedev-boss-fights/`;
 export default defineConfig({
   testDir: './tests/browser',
   fullyParallel: true,
@@ -6,7 +10,7 @@ export default defineConfig({
   retries: process.env.CI ? 1 : 0,
   workers: process.env.CI ? 2 : undefined,
   use: {
-    baseURL: 'http://127.0.0.1:4173/gamedev-boss-fights/',
+    baseURL,
     viewport: { width: 1440, height: 1000 },
     reducedMotion: 'reduce',
     launchOptions: process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH
@@ -16,8 +20,8 @@ export default defineConfig({
     trace: 'retain-on-failure',
   },
   webServer: {
-    command: 'node scripts/serve.mjs',
-    url: 'http://127.0.0.1:4173/gamedev-boss-fights/',
+    command: `PORT=${testPort} node scripts/serve.mjs`,
+    url: baseURL,
     reuseExistingServer: !process.env.CI,
   },
 });

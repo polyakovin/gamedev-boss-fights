@@ -1,0 +1,31 @@
+{
+  "id": "shared-group-health",
+  "number": 112,
+  "published": true,
+  "sourceLocale": "en",
+  "contentVersion": 1,
+  "animation": "shared-group-health",
+  "lenses": [
+    "progress-clarity",
+    "context-and-sequence",
+    "risk-reward",
+    "difficulty-rhythm",
+    "counterplay"
+  ],
+  "related": ["partner-revival", "kill-order-inheritance", "damage-rate-cap", "fight-phase"],
+  "sources": [
+    { "title": "Godskin Duo — Eldenpedia", "url": "https://eldenring.wiki.gg/wiki/Godskin_Duo" },
+    {
+      "title": "The Four Kings — Dark Souls Wiki",
+      "url": "https://darksouls.wikidot.com/the-four-kings"
+    },
+    {
+      "title": "Clip Joint Calamity — Cuphead Wiki",
+      "url": "https://cuphead.wiki.gg/wiki/Clip_Joint_Calamity"
+    },
+    {
+      "title": "Boss Up: Boss Battle Design",
+      "url": "https://media.gdcvault.com/gdc2018/presentations/Keren_Itay_BossUp.pdf"
+    }
+  ]
+}

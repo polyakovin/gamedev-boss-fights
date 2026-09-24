@@ -447,9 +447,9 @@ test('volley releases three parallel bolts on one beat and clears its outside ro
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
 });
 
-test('catalog and builder reuse the 105 promoted rule-specific previews', async ({ page }) => {
+test('catalog and builder reuse the 106 promoted rule-specific previews', async ({ page }) => {
   await page.goto('en/');
-  await expect(page.locator('[data-blueprint-preview]')).toHaveCount(105);
+  await expect(page.locator('[data-blueprint-preview]')).toHaveCount(106);
   const catalogLayouts = await page.locator('[data-blueprint-preview]').evaluateAll((previews) =>
     previews.map((preview) => {
       const boss = preview.querySelector('[data-character-art-preview="kern"]');
@@ -473,7 +473,7 @@ test('catalog and builder reuse the 105 promoted rule-specific previews', async 
   expect(new Set(catalogLayouts.map(({ layout }) => layout)).size).toBeGreaterThanOrEqual(18);
 
   await page.goto('en/builder/');
-  await expect(page.locator('[data-blueprint-preview]')).toHaveCount(105);
+  await expect(page.locator('[data-blueprint-preview]')).toHaveCount(106);
   const builderLayouts = await page.locator('[data-blueprint-preview]').evaluateAll((previews) =>
     previews.map((preview) => {
       const boss = preview.querySelector('[data-character-art-preview="kern"]');
@@ -4779,5 +4779,52 @@ test('kill-order inheritance previews two distinct survivor attacks with a clean
   expect(canvas.height).toBeGreaterThanOrEqual(812);
   expect(player.x + player.width).toBeLessThanOrEqual(canvas.x + canvas.width);
   expect(playerLabel.x + playerLabel.width).toBeLessThanOrEqual(canvas.x + canvas.width);
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+});
+
+test('shared group health preserves one bar through absence, return, completion, and retry', async ({
+  page,
+}) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.goto('en/mechanics/shared-group-health/');
+  const widget = page.locator('[data-blueprint-demo]');
+  const timeline = widget.locator('[data-blueprint-timeline]');
+  const seek = (milliseconds) =>
+    timeline.evaluate((element, value) => {
+      element.value = String(value);
+      element.dispatchEvent(new Event('input', { bubbles: true }));
+    }, milliseconds);
+  await expect(page.locator('.lesson-title-line h1')).toHaveText('Shared group health');
+  await expect(page.locator('.wip-badge, .draft-profile')).toHaveCount(0);
+  await expect(page.locator('.game-example')).toHaveCount(3);
+  await expect(page.locator('.lens-chip')).toHaveCount(5);
+  await expect(widget).toHaveAttribute('data-blueprint-full-height', 'true');
+  await expect(widget.locator('[data-blueprint-decoy]')).toHaveCount(1);
+  await expect(widget.locator('[data-blueprint-partner-label]')).toHaveCount(1);
+  await seek(800);
+  await expect(widget).toHaveAttribute('data-blueprint-shared-group-health-current-health', '72');
+  await expect(widget.locator('[data-blueprint-group-health-label]')).toHaveText('72 / 100');
+  await seek(2200);
+  await expect(widget).toHaveAttribute('data-blueprint-shared-group-health-left-present', 'false');
+  await expect(widget).toHaveAttribute('data-blueprint-shared-group-health', 'first-lane-active');
+  await expect(widget).toHaveAttribute('data-blueprint-outcome', 'safe');
+  await seek(3200);
+  await expect(widget).toHaveAttribute('data-blueprint-shared-group-health-left-present', 'true');
+  await expect(widget).toHaveAttribute('data-blueprint-shared-group-health-current-health', '72');
+  await seek(3550);
+  await expect(widget).toHaveAttribute('data-blueprint-shared-group-health-current-health', '39');
+  await seek(4400);
+  await expect(widget).toHaveAttribute('data-blueprint-shared-group-health', 'second-lane-active');
+  await expect(widget).toHaveAttribute('data-blueprint-outcome', 'safe');
+  await seek(5100);
+  await expect(widget).toHaveAttribute('data-blueprint-shared-group-health-current-health', '0');
+  await expect(widget.locator('[data-blueprint-group-health-label]')).toHaveText('0 / 100');
+  await expect(widget).toHaveAttribute('data-blueprint-shared-group-health-completion-count', '1');
+  await seek(5600);
+  await expect(widget).toHaveAttribute('data-blueprint-shared-group-health-current-health', '100');
+  await expect(widget.locator('[data-blueprint-group-health-label]')).toHaveText('100 / 100');
+  await expect(widget).toHaveAttribute('data-blueprint-shared-group-health-completion-count', '0');
+  await expect(widget).toHaveAttribute('data-blueprint-shared-group-health-retry', 'true');
+  await page.setViewportSize({ width: 375, height: 812 });
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
 });

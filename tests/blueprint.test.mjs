@@ -79,6 +79,8 @@ import {
   partnerRevivalResolve,
   killOrderInheritanceState,
   killOrderInheritanceResolve,
+  sharedGroupHealthState,
+  sharedGroupHealthResolve,
   counterStanceOutcome,
   counterStanceState,
   blueprintFrame,
@@ -106,8 +108,8 @@ import {
   renderBlueprintThumbnail,
 } from '../lib/blueprint-view.mjs';
 
-test('all 105 promoted lesson animations have distinct rule modes and complete moving frames', () => {
-  assert.equal(BLUEPRINT_MECHANIC_IDS.length, 105);
+test('all 106 promoted lesson animations have distinct rule modes and complete moving frames', () => {
+  assert.equal(BLUEPRINT_MECHANIC_IDS.length, 106);
   const modes = new Set();
   for (const id of BLUEPRINT_MECHANIC_IDS) {
     for (let time = 0; time <= BLUEPRINT_DURATION; time += 0.1) {
@@ -128,7 +130,7 @@ test('all 105 promoted lesson animations have distinct rule modes and complete m
           assert.ok(Number.isFinite(value), `${id} has an invalid ${primitive.type}`);
     }
   }
-  assert.equal(modes.size, 105);
+  assert.equal(modes.size, 106);
 });
 
 test('every blueprint exposes signal, committed action, and recovery without player teleports', () => {
@@ -182,7 +184,8 @@ test('every blueprint exposes signal, committed action, and recovery without pla
       id !== 'world-state-variant' &&
       id !== 'party-size-scaling' &&
       id !== 'partner-revival' &&
-      id !== 'kill-order-inheritance'
+      id !== 'kill-order-inheritance' &&
+      id !== 'shared-group-health'
     )
       assert.equal(blueprintFrame(id, 3).dangerActive, true, id);
     assert.equal(blueprintFrame(id, 3).playerSafe, true, id);
@@ -286,6 +289,7 @@ test('every damaging promoted animation derives safety from its own active geome
       id !== 'party-size-scaling' &&
       id !== 'partner-revival' &&
       id !== 'kill-order-inheritance' &&
+      id !== 'shared-group-health' &&
       id !== 'part-break' &&
       id !== 'counter-stance' &&
       id !== 'absorption-power-up' &&
@@ -4782,5 +4786,82 @@ test('kill-order inheritance selects one visible package per order and clears it
   assert.match(
     renderBlueprintThumbnail(id, 'test-kill-order-inheritance'),
     /data-blueprint-preview="kill-order-inheritance"/,
+  );
+});
+
+test('shared group health accepts one damage ledger across changing body presence', () => {
+  const id = 'shared-group-health';
+  assert.deepEqual(
+    [0.4, 0.8, 1.6, 1.9, 2.3, 2.8, 3.2, 3.6, 4, 4.4, 4.7, 4.9, 5.1, 5.6].map(
+      sharedGroupHealthState,
+    ),
+    [
+      'paired-full',
+      'first-hit-shared',
+      'left-absent',
+      'first-lane-signaled',
+      'first-lane-active',
+      'left-absent-progress-held',
+      'left-returned-no-refill',
+      'second-hit-shared',
+      'second-lane-signaled',
+      'second-lane-active',
+      'final-opening',
+      'pool-zero',
+      'group-complete',
+      'explicit-retry',
+    ],
+  );
+  const event = { eventId: 'hit-1', bodyId: 'echo-kern', amount: 28 };
+  const duplicate = sharedGroupHealthResolve({ damageEvents: [event, event] });
+  assert.equal(duplicate.currentHealth, 72);
+  assert.equal(duplicate.acceptedEventCount, 1);
+  assert.equal(duplicate.duplicateEventCount, 1);
+  const absent = sharedGroupHealthResolve({
+    damageEvents: [{ eventId: 'hit-2', bodyId: 'echo-kern', amount: 50, presentAtHit: false }],
+  });
+  assert.equal(absent.currentHealth, 100);
+  const completed = sharedGroupHealthResolve({
+    damageEvents: [
+      event,
+      { eventId: 'hit-2', bodyId: 'kern', amount: 33 },
+      { eventId: 'hit-3', bodyId: 'echo-kern', amount: 50 },
+    ],
+  });
+  assert.equal(completed.currentHealth, 0);
+  assert.equal(completed.acceptedDamage, 100);
+  assert.equal(completed.completionCount, 1);
+  assert.equal(completed.pendingBodiesCancelled, 2);
+  assert.equal(
+    sharedGroupHealthResolve({
+      damageEvents: [{ eventId: 'finish', bodyId: 'kern', amount: 100 }],
+      alreadyCompleted: true,
+    }).completionCount,
+    0,
+  );
+  const leftHit = blueprintFrame(id, 0.8);
+  assert.equal(leftHit.sharedGroupHealthCurrentHealth, 72);
+  const absentFrame = blueprintFrame(id, 1.6);
+  assert.equal(absentFrame.sharedGroupHealthLeftPresent, false);
+  assert.equal(absentFrame.sharedGroupHealthCurrentHealth, 72);
+  const returned = blueprintFrame(id, 3.2);
+  assert.equal(returned.sharedGroupHealthLeftPresent, true);
+  assert.equal(returned.sharedGroupHealthCurrentHealth, 72);
+  assert.equal(blueprintFrame(id, 3.55).sharedGroupHealthCurrentHealth, 39);
+  assert.equal(blueprintFrame(id, 4.85).sharedGroupHealthCurrentHealth, 0);
+  assert.equal(blueprintFrame(id, 5.1).sharedGroupHealthCompletionCount, 1);
+  const retry = blueprintFrame(id, 5.6);
+  assert.equal(retry.sharedGroupHealthCurrentHealth, 100);
+  assert.equal(retry.sharedGroupHealthAcceptedEventCount, 0);
+  assert.equal(retry.sharedGroupHealthCompletionCount, 0);
+  assert.equal(retry.sharedGroupHealthLeftPresent, true);
+  for (let t = 2.1; t < 2.52; t += 0.02) assert.equal(blueprintFrame(id, t).playerSafe, true);
+  for (let t = 4.22; t < 4.6; t += 0.02) assert.equal(blueprintFrame(id, t).playerSafe, true);
+  assert.equal(blueprintPointSafe(id, 2.3, { x: 100, y: 810 }), false);
+  assert.equal(blueprintPointSafe(id, 4.4, { x: 500, y: 820 }), false);
+  assert.deepEqual(blueprintFrame(id, 0).player, blueprintFrame(id, 6).player);
+  assert.match(
+    renderBlueprintThumbnail(id, 'test-shared-group-health'),
+    /data-blueprint-preview="shared-group-health"/,
   );
 });

@@ -1,0 +1,138 @@
+{
+  "title": "Salud compartida del grupo",
+  "subtitle": "Separa la presencia de cada cuerpo de una única reserva de salud del encuentro",
+  "variant": "Dos cuerpos · una reserva · ausencia temporal · una finalización",
+  "summary": "Golpear a cualquiera de los jefes activos reduce la misma barra; desaparecer y regresar no la repone.",
+  "overview": "Varios cuerpos pueden gastar una sola reserva de progreso. Cada uno conserva identidad, presencia y ataques propios, pero todo impacto válido reduce la misma salud autoritativa. Una ausencia temporal no reinicia el progreso; el encuentro termina al llegar la reserva a cero, no al caer un cuerpo.",
+  "learning": "Define identificadores del grupo y de los cuerpos, atribución del daño, presencia, máximo y visualización de la reserva, eventos repetidos, salida y regreso, prioridad de salud cero, cancelación de ataques, finalización única, reintento, accesibilidad y telemetría.",
+  "category": "Relaciones entre varios jefes",
+  "readTime": "10 min",
+  "demo": {
+    "title": "Agota el pacto de salud compartida de Kern",
+    "timeline": "Cronología de la salud compartida",
+    "step": "Golpea cualquier cuerpo, lee la barra, sobrevive al regreso y agota la reserva",
+    "phaseNames": [
+      "Dos objetivos bajo una sola barra",
+      "Un cuerpo se retira sin recuperar progreso",
+      "Cualquier cuerpo puede agotar la reserva"
+    ],
+    "phaseDescriptions": [
+      "Los dos cuerpos de piedra aparecen bajo una barra. A los 0,80 s, Tavi golpea al eco izquierdo: un evento aceptado resta 28 de los 100 puntos compartidos mientras Kern anuncia un barrido.",
+      "El eco se retira a los 1,55 s y la barra sigue en 72. Tavi sale del carril anunciado por Kern. El eco regresa a los 3,15 s sin curación; un golpe a Kern a los 3,55 s deja la misma reserva en 39.",
+      "La pareja avisa de un segundo carril. Tavi se aparta y golpea al eco a los 4,85 s por los 39 puntos restantes. Ambos cesan y el encuentro termina una sola vez. Un reintento explícito a los 5,55 s restablece 100 y la pareja inicial."
+    ],
+    "boss": "Jefe",
+    "player": "Jugador",
+    "danger": "Las barras individuales pueden prometer progreso duplicado; un evento repetido descuenta dos veces, un regreso rellena la reserva o queda un atacante tras llegar a cero",
+    "locked": "La identidad del grupo, una sola reserva, la deduplicación, la presencia, la prioridad del cero, la cancelación, la finalización única y el reintento pertenecen a la lógica del encuentro",
+    "safe": "Muestra una barra persistente, acusa el impacto en el cuerpo alcanzado, conserva el progreso durante la ausencia y el regreso, avisa de cada carril y detén a todos al llegar a cero",
+    "reducedMotion": "Con movimiento reducido se desactiva la reproducción automática. Recorre 0,40; 0,80; 1,10; 1,55; 1,90; 2,35; 2,80; 3,15; 3,55; 4,00; 4,35; 4,85; 5,10 y 5,55 s.",
+    "diagramDescription": "Dos jefes de piedra comparten una barra rotulada. Un golpe al izquierdo la reduce; se retira mientras el derecho avisa de un carril y vuelve sin rellenarla. Un golpe al derecho y otro final al izquierdo agotan la reserva. Ambos paran antes de un reintento visible."
+  },
+  "steps": [
+    {
+      "title": "¿Qué se comparte y qué es local?",
+      "body": "Guarda una reserva con un ID de grupo estable. Cada cuerpo necesita ID, presencia, pose, zona de impacto y cola de acciones propios. Un golpe válido sobre uno activo envía un solo evento a la reserva; uno ausente no recibe golpes salvo regla explícita. Su salida no inicia otra barra."
+    },
+    {
+      "title": "¿Cómo se entiende cada impacto?",
+      "body": "Señala el cuerpo alcanzado y modifica la misma barra rotulada sea cual sea el origen. Mantén la barra al salir y regresar un cuerpo. Separa presencia de progreso, anuncia la invulnerabilidad y muestra el carril peligroso antes del daño."
+    },
+    {
+      "title": "¿Cuándo termina el grupo?",
+      "body": "Aplica daño una vez por ID de evento y limita la salud a cero. El cero prevalece sobre regresos y ataques pendientes. Detén todos los cuerpos, cancela apariciones y concede una sola finalización. El reintento crea otro ID y restablece reserva y cuerpos iniciales."
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "Dos barras sugieren dos presupuestos",
+      "body": "Si cada cuerpo parece rellenar el encuentro, elegir objetivo resulta engañoso. Muestra una única barra grupal con rótulo estable y usa señales locales solo para presencia, aturdimiento o caída temporal."
+    },
+    {
+      "title": "Un impacto repetido o regreso altera dos veces el registro",
+      "body": "Una animación de varios golpes o un evento de red duplicado puede cobrar daño dos veces; un cuerpo que vuelve podría copiar su máximo al grupo. Deduplica por intento y evento y evita que el regreso cambie la reserva."
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "Equilibra elección de objetivo y presión",
+      "body": "Compara acceso a cada cuerpo, desplazamiento, ataques simultáneos, aturdimiento y ritmo de daño. La reserva compartida permite cambiar de objetivo, pero un cuerpo inmóvil y fácil no debe trivializar la presión de dos."
+    },
+    {
+      "title": "Conserva el progreso visible durante la ausencia",
+      "body": "Deja la barra del grupo en el mismo lugar. Una silueta, sello o texto debe indicar ausencia temporal, no muerte; el regreso no debe parecer una curación."
+    },
+    {
+      "title": "Prueba orden de eventos y limpieza",
+      "body": "Simula dos impactos en un fotograma, ID repetidos, un golpe al salir, salud cero al iniciar un regreso, desconexión y reintento. Registra grupo, intento, cuerpo, daño, salud antes y después, presencia y finalizaciones."
+    }
+  ],
+  "story": {
+    "title": "Un solo pacto de piedra enlaza dos formas",
+    "body": "La espada de Tavi astilla al eco y se atenúa la runa común sobre ambos. El eco se hunde y emerge mientras Kern mantiene el mismo sello debilitado. El último golpe apaga las dos figuras."
+  },
+  "adaptation": {
+    "title": "Explica la reserva única sin depender de vista u oído",
+    "body": "Rotula la barra, comunica en texto el daño aceptado y las salidas, usa forma y pose además de color, ofrece una ruta segura para todo el cuerpo y conserva la barra en pantallas estrechas."
+  },
+  "distinction": {
+    "title": "Una reserva no es resucitar al compañero",
+    "body": "La resurrección devuelve la vida local de un cuerpo tras un lanzamiento. La salud compartida guarda el progreso en una sola reserva aunque los cuerpos entren y salgan; regresar no añade salud al grupo. Ambas reglas pueden coexistir, pero sus registros y condiciones de finalización son distintos."
+  },
+  "lensNotes": [
+    {
+      "id": "progress-clarity",
+      "body": "Una barra rotulada y la reacción al impacto muestran que golpear cualquiera de los cuerpos conserva el mismo progreso."
+    },
+    {
+      "id": "context-and-sequence",
+      "body": "La retirada, el regreso y la derrota del grupo cambian los objetivos disponibles sin iniciar otra reserva."
+    },
+    {
+      "id": "risk-reward",
+      "body": "Elegir objetivo sopesa acceso y exposición; cada golpe aceptado avanza el encuentro común."
+    },
+    {
+      "id": "difficulty-rhythm",
+      "body": "La presencia modifica la presión a lo largo del tiempo sin borrar el progreso visible."
+    },
+    {
+      "id": "counterplay",
+      "body": "Cada carril se anuncia antes del daño y el jugador puede despejarlo con todo el cuerpo mientras ve la barra."
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "Cuphead",
+      "boss": "Ribby and Croaks",
+      "screenshot": "https://i.ytimg.com/vi/w55yfSl5NUc/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=w55yfSl5NUc&t=1s",
+      "video": "https://www.youtube.com/watch?v=w55yfSl5NUc&t=1s",
+      "videoDurationSeconds": 126,
+      "body": "Los dos hermanos rana participan al principio y el encuentro pasa a una forma conjunta de tragaperras. Cuphead no muestra una barra numérica común: es una variante de presupuesto oculto, no un ejemplo de interfaz visible."
+    },
+    {
+      "dimension": "3D",
+      "game": "Elden Ring",
+      "boss": "Godskin Duo",
+      "screenshot": "https://i.ytimg.com/vi/iygrSgc9mhA/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=iygrSgc9mhA&t=30s",
+      "video": "https://www.youtube.com/watch?v=iygrSgc9mhA&t=30s",
+      "videoDurationSeconds": 198,
+      "body": "El Noble y el Apóstol tienen salud local, pero también reducen una barra única de Godskin Duo. Un cuerpo puede morir y regresar; la barra común determina la finalización, no su ausencia temporal."
+    },
+    {
+      "dimension": "3D",
+      "game": "Dark Souls",
+      "boss": "The Four Kings",
+      "screenshot": "https://i.ytimg.com/vi/vkBIV5FjdTI/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=vkBIV5FjdTI&t=40s",
+      "video": "https://www.youtube.com/watch?v=vkBIV5FjdTI&t=40s",
+      "videoDurationSeconds": 233,
+      "body": "Cada Rey tiene salud local, pero los golpes también reducen la barra común del jefe. Pueden aparecer más Reyes mientras quede salud: el número de cuerpos visibles no equivale al progreso restante."
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

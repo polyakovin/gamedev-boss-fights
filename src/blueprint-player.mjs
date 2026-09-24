@@ -51,6 +51,7 @@ export function initializeBlueprint(widget) {
   const animatePlayer = createCharacterAnimator(player, 'tavi');
   const animateEffects = createEncounterEffects(widget, (time) => blueprintFrame(mechanicId, time));
   const bossLabel = find('[data-blueprint-boss-label]');
+  const groupHealthLabel = find('[data-blueprint-group-health-label]');
   const partnerLabel = find('[data-blueprint-partner-label]');
   const playerLabel = find('[data-blueprint-player-label]');
   const primitives = [...widget.querySelectorAll('[data-blueprint-primitive]')];
@@ -1106,6 +1107,32 @@ export function initializeBlueprint(widget) {
       widget.dataset.blueprintKillOrderInheritanceDuplicateGrantCount = String(
         frame.killOrderInheritanceDuplicateGrantCount,
       );
+    }
+    if (mechanicId === 'shared-group-health') {
+      if (groupHealthLabel)
+        groupHealthLabel.textContent = `${frame.sharedGroupHealthCurrentHealth} / 100`;
+      widget.dataset.blueprintSharedGroupHealth = frame.sharedGroupHealthState;
+      widget.dataset.blueprintSharedGroupHealthEncounterId = frame.sharedGroupHealthEncounterId;
+      widget.dataset.blueprintSharedGroupHealthAttemptId = frame.sharedGroupHealthAttemptId;
+      widget.dataset.blueprintSharedGroupHealthCurrentHealth = String(
+        frame.sharedGroupHealthCurrentHealth,
+      );
+      widget.dataset.blueprintSharedGroupHealthAcceptedEventCount = String(
+        frame.sharedGroupHealthAcceptedEventCount,
+      );
+      widget.dataset.blueprintSharedGroupHealthDuplicateEventCount = String(
+        frame.sharedGroupHealthDuplicateEventCount,
+      );
+      widget.dataset.blueprintSharedGroupHealthLeftPresent = String(
+        frame.sharedGroupHealthLeftPresent,
+      );
+      widget.dataset.blueprintSharedGroupHealthRightPresent = String(
+        frame.sharedGroupHealthRightPresent,
+      );
+      widget.dataset.blueprintSharedGroupHealthCompletionCount = String(
+        frame.sharedGroupHealthCompletionCount,
+      );
+      widget.dataset.blueprintSharedGroupHealthRetry = String(frame.sharedGroupHealthRetry);
     }
     boss.setAttribute(
       'transform',
