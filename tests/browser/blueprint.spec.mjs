@@ -4466,6 +4466,7 @@ test('world-state variant snapshots one package and keeps it stable when outside
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await page.goto('en/mechanics/world-state-variant/');
   const widget = page.locator('[data-blueprint-demo]');
+  await expect(widget).toHaveAttribute('data-blueprint-screen-height', 'true');
   const timeline = widget.locator('[data-blueprint-timeline]');
   const seek = (milliseconds) =>
     timeline.evaluate((element, value) => {
@@ -4527,6 +4528,9 @@ test('world-state variant snapshots one package and keeps it stable when outside
   );
   await expect(widget).toHaveAttribute('data-blueprint-world-state-variant-live-resnapshots', '0');
   await page.setViewportSize({ width: 375, height: 812 });
+  const canvas = await widget.locator('.blueprint-demo__canvas').boundingBox();
+  const playerLabel = await widget.locator('[data-blueprint-player-label]').boundingBox();
+  expect(playerLabel.x + playerLabel.width).toBeLessThanOrEqual(canvas.x + canvas.width);
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
 });
 
