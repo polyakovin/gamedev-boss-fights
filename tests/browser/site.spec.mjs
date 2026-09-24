@@ -635,8 +635,16 @@ test('boss builder persists a local draft and downloads portable JSON', async ({
   await expect(page.locator('.boss-builder-mechanic:not(.boss-builder-mechanic--wip)')).toHaveCount(
     105,
   );
-  await expect(page.locator('.boss-builder-mechanic [data-character-art="kern"]')).toHaveCount(105);
-  await expect(page.locator('.boss-builder-mechanic [data-character-art="tavi"]')).toHaveCount(105);
+  await expect(
+    page.locator(
+      '.boss-builder-mechanic:not(.boss-builder-mechanic--wip):has([data-character-art="kern"])',
+    ),
+  ).toHaveCount(105);
+  await expect(
+    page.locator(
+      '.boss-builder-mechanic:not(.boss-builder-mechanic--wip):has([data-character-art="tavi"])',
+    ),
+  ).toHaveCount(105);
   await expect(page.locator('.boss-builder-mechanic [data-blueprint-preview]')).toHaveCount(99);
   await expect(page.locator('.boss-builder-mechanic [data-pattern-preview]')).toHaveCount(5);
   await expect(page.locator('[data-boss-filter]')).toHaveCount(5);
@@ -1190,12 +1198,12 @@ test('the root defaults to English and localized catalogs point to real pages', 
   await expect(page.locator('.catalog-lesson:not(.catalog-lesson--wip)')).toHaveCount(105);
   await expect(page.locator('.catalog-lesson__number').first()).toHaveText('1.1');
   await expect(page.locator('.catalog-lesson__number').last()).toHaveText('14.11');
-  await expect(page.locator('.catalog-lesson__preview [data-character-art="kern"]')).toHaveCount(
-    105,
-  );
-  await expect(page.locator('.catalog-lesson__preview [data-character-art="tavi"]')).toHaveCount(
-    105,
-  );
+  await expect(
+    page.locator('.catalog-lesson:not(.catalog-lesson--wip):has([data-character-art="kern"])'),
+  ).toHaveCount(105);
+  await expect(
+    page.locator('.catalog-lesson:not(.catalog-lesson--wip):has([data-character-art="tavi"])'),
+  ).toHaveCount(105);
   await expect(page.locator('.catalog-lesson__preview [data-blueprint-preview]')).toHaveCount(99);
   await expect(page.locator('.catalog-lesson__preview [data-pattern-preview]')).toHaveCount(5);
   const publishedPage = await request.get('en/mechanics/environmental-weapon/');
