@@ -1,0 +1,138 @@
+{
+  "title": "Kill-order inheritance",
+  "subtitle": "Let the first defeat determine the survivor's next attack package",
+  "variant": "Two identities · authored order branch · inherited attack · safe retry",
+  "summary": "The first boss to fall selects a distinct survivor phase; the transfer is visible, resolved once, and reset on a new attempt.",
+  "overview": "Kill-order inheritance turns target choice into a phase-design decision. Each boss has an identity and an authored successor package. When one falls, the survivor receives a readable transfer and commits to a different move. The player must be able to infer the branch before its new threat becomes active.",
+  "learning": "Define pair identities, first-defeat authority, both possible packages, inheritance timing, new telegraphs and hit geometry, health policy, simultaneous-defeat tie handling, one-grant limit, victory conditions, retry reset, accessibility, and branch telemetry.",
+  "category": "Multi-boss relationships",
+  "readTime": "10 min",
+  "demo": {
+    "title": "Choose which of Kern's two stone bodies leaves its rune behind",
+    "timeline": "Kill-order inheritance timeline",
+    "step": "Choose, transfer, answer; retry and reverse the order",
+    "phaseNames": [
+      "Defeat the left body and read the wave",
+      "See the wave, then explicitly reset the pair",
+      "Defeat the right body and clear the lance"
+    ],
+    "phaseDescriptions": [
+      "Tavi strikes the left body at 1.05 seconds. Its rune crosses to the surviving right body from 1.25 to 1.58, authorizing a stone wave rather than quietly adding damage. The wave is signaled before release.",
+      "The right body releases a growing ring from 2.00 to 2.55; Tavi clears its full thickness. At 2.75 a visible retry seam restores both bodies and starts a second attempt. The first attempt's inherited move cannot leak into it.",
+      "On the second attempt Tavi drops the right body at 3.65. Its rune crosses to the left survivor, which warns a fixed lance from 4.10 to 4.50 and fires through 5.08. Tavi moves outside the whole lane; the pair returns only at the loop reset."
+    ],
+    "boss": "Boss",
+    "player": "Player",
+    "danger": "An unannounced inherited move makes the chosen order feel arbitrary; an old callback can grant both packages, and a simultaneous defeat can leave the encounter without an authoritative winner",
+    "locked": "Pair identity, first-defeat event, transfer ownership, one package per attempt, collision geometry, health policy, simultaneous-defeat resolution, final completion, and reset belong to encounter logic",
+    "safe": "Keep both identities and health bars visible, trace the transferred rune, telegraph the inherited move before damage, give a full-body response route, and label the retry between branches",
+    "reducedMotion": "Reduced motion disables autoplay. Scrub through 0.40, 1.05, 1.40, 1.80, 2.20, 2.75, 3.15, 3.65, 4.00, 4.30, 4.75, 5.20, and 5.80 seconds.",
+    "diagramDescription": "Two stone bosses stand apart. In the first attempt the left one falls, its rune flows right, and the survivor emits a circular wave while Tavi clears it. A visible reset restores the pair. In the second attempt the right one falls, its rune flows left, and the survivor fires a diagonal lance past Tavi's safe route."
+  },
+  "steps": [
+    {
+      "title": "Which event chooses the branch?",
+      "body": "Give the two bodies stable identities and record the first authoritative defeat, not the first hit or a visual death animation. Map each possible survivor to a named attack package. Resolve same-frame defeats deliberately; if both die, finish the pair rather than inheriting from a nonexistent survivor."
+    },
+    {
+      "title": "How does the survivor announce the new rule?",
+      "body": "Draw a transfer from the fallen source to the living recipient, then give the recipient a distinct anticipation pose and threat preview. Do not make the move active during the transfer. Derive its collision from the shown wave ring or lance lane and include the player's entire body in clearance tests."
+    },
+    {
+      "title": "How do branches survive retries and tuning?",
+      "body": "Grant exactly one package per pair and attempt ID. Clear pending transfers and the selected package on retry; keep completion separate from inheritance. Test both orders with low- and high-damage builds, simultaneous kills, repeated events, reconnects, and a player standing at each proposed safe route."
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "The branch changes damage but not readable behavior",
+      "body": "A hidden multiplier makes target order feel like a trap. Give each survivor a visibly different move shape, signal, response and recovery, and show why the fallen body's rune matters."
+    },
+    {
+      "title": "Two grants race across the same transition",
+      "body": "If both defeat callbacks race, both packages can be applied or victory can be delayed. Use stable boss and attempt IDs, define same-frame priority, make the grant idempotent, and cancel pending transfer when the pair is truly finished."
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "Balance two paths rather than one preferred answer",
+      "body": "Compare total time, damage exposure, arena space, healing opportunity, and learning load on each branch. Different is more useful than simply easy versus hard; both paths should be viable without a required build."
+    },
+    {
+      "title": "Preserve cause and effect in the transition",
+      "body": "Keep the fallen body, recipient, and rune path on screen long enough to read. Start the warning after the transfer; an inherited beam must not hit a player before its lane is visible. Use shape and pose as well as color and sound."
+    },
+    {
+      "title": "Audit the event ledger",
+      "body": "Record source, survivor, package, attempt, grant count, and final outcome. Reproduce either branch by seeking, reset to the same baseline, and test a simultaneous defeat and duplicate network event without carrying an old package forward."
+    }
+  ],
+  "story": {
+    "title": "Each fallen stone leaves a different oath",
+    "body": "When Tavi fells the left echo, its round seal enters Kern and a wave rolls across the floor. The covenant rewinds for a second trial. When Kern falls first, his sharp seal moves to the echo, which draws a straight rune lance instead."
+  },
+  "adaptation": {
+    "title": "Make both choices legible and reachable",
+    "body": "Avoid a branch that demands a particular damage type or travel speed. Give equivalent audio, text and shape cues, a visible safe route for the whole player body, and an explicit retry marker before showing the opposite order."
+  },
+  "distinction": {
+    "title": "Order-selected behavior, not a generic enrage",
+    "body": "Enrage usually scales one actor after a threshold. Kill-order inheritance maps the fallen actor's identity to a specific successor package. A related order-conditioned reaction can change the survivor without literally transferring a power; label that variant clearly."
+  },
+  "lensNotes": [
+    {
+      "id": "context-and-sequence",
+      "body": "The first defeat is context for the survivor phase; reversing the order changes the next move instead of merely repeating the encounter."
+    },
+    {
+      "id": "progress-clarity",
+      "body": "Separate health bars, a persistent fallen body, a traced rune, and a named attack package make the selected branch observable."
+    },
+    {
+      "id": "risk-reward",
+      "body": "Choosing the first target trades the current two-body pressure for a particular future threat and response route."
+    },
+    {
+      "id": "difficulty-rhythm",
+      "body": "The transfer pause separates simultaneous pressure from a single empowered opponent and gives the player time to reorient."
+    },
+    {
+      "id": "counterplay",
+      "body": "Each inherited move has its own warning and complete-body safe route; the player can learn either branch without guessing at invisible multipliers."
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "Mewgenics",
+      "boss": "Chubs 'n' Nubs",
+      "screenshot": "https://i.ytimg.com/vi/zok2oN34jdk/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=zok2oN34jdk&t=1s",
+      "video": "https://www.youtube.com/watch?v=zok2oN34jdk&t=1s",
+      "videoDurationSeconds": 158,
+      "body": "In this 2D turn-based pair, Chubs enrages if Nubs dies first, while Nubs prepares a one-turn Nuke after Chubs dies first. This is an order-conditioned survivor reaction, not literal power absorption; the two outcomes still show why branch signaling matters."
+    },
+    {
+      "dimension": "3D",
+      "game": "Dark Souls",
+      "boss": "Dragon Slayer Ornstein & Executioner Smough",
+      "screenshot": "https://i.ytimg.com/vi/Lo7A65BjKdE/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=Lo7A65BjKdE&t=1s",
+      "video": "https://www.youtube.com/watch?v=Lo7A65BjKdE&t=1s",
+      "videoDurationSeconds": 21,
+      "body": "Defeating either member selects the other for a second phase. Ornstein takes Smough's power and grows if Smough falls first; Smough imbues his hammer with Ornstein's lightning if Ornstein falls first. The transition makes the chosen order explicit."
+    },
+    {
+      "dimension": "3D",
+      "game": "Dark Souls III",
+      "boss": "Demon in Pain & Demon from Below",
+      "screenshot": "https://i.ytimg.com/vi/B0w7gGkklvE/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=B0w7gGkklvE&t=150s",
+      "video": "https://www.youtube.com/watch?v=B0w7gGkklvE&t=150s",
+      "videoDurationSeconds": 361,
+      "body": "After both first-phase demons fall, the one slain last returns as the Demon Prince. Which one fell last determines whether the prince receives a meteor or laser special attack, so the ordered identities select the final move package."
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

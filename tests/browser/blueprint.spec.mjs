@@ -447,9 +447,9 @@ test('volley releases three parallel bolts on one beat and clears its outside ro
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
 });
 
-test('catalog and builder reuse the 103 promoted rule-specific previews', async ({ page }) => {
+test('catalog and builder reuse the 105 promoted rule-specific previews', async ({ page }) => {
   await page.goto('en/');
-  await expect(page.locator('[data-blueprint-preview]')).toHaveCount(103);
+  await expect(page.locator('[data-blueprint-preview]')).toHaveCount(105);
   const catalogLayouts = await page.locator('[data-blueprint-preview]').evaluateAll((previews) =>
     previews.map((preview) => {
       const boss = preview.querySelector('[data-character-art-preview="kern"]');
@@ -473,7 +473,7 @@ test('catalog and builder reuse the 103 promoted rule-specific previews', async 
   expect(new Set(catalogLayouts.map(({ layout }) => layout)).size).toBeGreaterThanOrEqual(18);
 
   await page.goto('en/builder/');
-  await expect(page.locator('[data-blueprint-preview]')).toHaveCount(103);
+  await expect(page.locator('[data-blueprint-preview]')).toHaveCount(105);
   const builderLayouts = await page.locator('[data-blueprint-preview]').evaluateAll((previews) =>
     previews.map((preview) => {
       const boss = preview.querySelector('[data-character-art-preview="kern"]');
@@ -4621,5 +4621,149 @@ test('party-size scaling applies roster changes only at safe boundaries and keep
   ).toBeGreaterThanOrEqual(812);
   expect(player.x + player.width).toBeLessThanOrEqual(canvas.x + canvas.width);
   expect(playerLabel.x + playerLabel.width).toBeLessThanOrEqual(canvas.x + canvas.width);
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+});
+
+test('partner revival shows both bodies, interrupt, pair completion, and clean retry', async ({
+  page,
+}) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.goto('en/mechanics/partner-revival/');
+  const widget = page.locator('[data-blueprint-demo]');
+  const timeline = widget.locator('[data-blueprint-timeline]');
+  const seek = (milliseconds) =>
+    timeline.evaluate((element, value) => {
+      element.value = String(value);
+      element.dispatchEvent(new Event('input', { bubbles: true }));
+    }, milliseconds);
+  await expect(page.locator('.lesson-title-line h1')).toHaveText('Partner revival');
+  await expect(page.locator('.wip-badge, .draft-profile')).toHaveCount(0);
+  await expect(page.locator('.game-example')).toHaveCount(3);
+  await expect(page.locator('.lens-chip')).toHaveCount(5);
+  await expect(widget).toHaveAttribute('data-blueprint-full-height', 'true');
+  await expect(widget.locator('[data-blueprint-decoy]')).toHaveCount(1);
+  await expect(widget.locator('[data-blueprint-partner-label]')).toHaveCount(1);
+  await seek(1200);
+  await expect(widget).toHaveAttribute('data-blueprint-partner-revival', 'revive-channel-one');
+  await expect(widget).toHaveAttribute('data-blueprint-partner-revival-partner-downed', 'true');
+  await seek(1800);
+  await expect(widget).toHaveAttribute('data-blueprint-partner-revival', 'partner-revived');
+  await expect(widget).toHaveAttribute(
+    'data-blueprint-partner-revival-revived-health-fraction',
+    '0.4',
+  );
+  await expect(widget).toHaveAttribute('data-blueprint-partner-revival-revive-grant-count', '1');
+  await seek(3040);
+  await expect(widget).toHaveAttribute('data-blueprint-partner-revival', 'revive-channel-two');
+  await expect(widget).toHaveAttribute(
+    'data-blueprint-partner-revival-attempt-id',
+    'partner-revive-2',
+  );
+  await seek(3300);
+  await expect(widget).toHaveAttribute('data-blueprint-partner-revival', 'revive-interrupted');
+  await expect(widget).toHaveAttribute('data-blueprint-partner-revival-interrupted', 'true');
+  await expect(widget).toHaveAttribute(
+    'data-blueprint-partner-revival-interrupt-lock-active',
+    'true',
+  );
+  await seek(4100);
+  await expect(widget).toHaveAttribute(
+    'data-blueprint-partner-revival-completion-authorized',
+    'true',
+  );
+  await expect(widget).toHaveAttribute('data-blueprint-partner-revival-completion-count', '1');
+  await expect(widget).toHaveAttribute('data-blueprint-partner-revival-duplicate-grant-count', '0');
+  await seek(4700);
+  await expect(widget).toHaveAttribute('data-blueprint-partner-revival', 'retry-stable');
+  await expect(widget).toHaveAttribute('data-blueprint-partner-revival-completion-count', '0');
+  await page.setViewportSize({ width: 375, height: 812 });
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+});
+
+test('kill-order inheritance previews two distinct survivor attacks with a clean retry', async ({
+  page,
+}) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.goto('en/mechanics/kill-order-inheritance/');
+  const widget = page.locator('[data-blueprint-demo]');
+  const timeline = widget.locator('[data-blueprint-timeline]');
+  const seek = (milliseconds) =>
+    timeline.evaluate((element, value) => {
+      element.value = String(value);
+      element.dispatchEvent(new Event('input', { bubbles: true }));
+    }, milliseconds);
+  await expect(page.locator('.lesson-title-line h1')).toHaveText('Kill-order inheritance');
+  await expect(page.locator('.wip-badge, .draft-profile')).toHaveCount(0);
+  await expect(page.locator('.game-example')).toHaveCount(3);
+  await expect(page.locator('.lens-chip')).toHaveCount(5);
+  await expect(widget).toHaveAttribute('data-blueprint-full-height', 'true');
+  await expect(widget.locator('[data-blueprint-decoy]')).toHaveCount(1);
+  await expect(widget.locator('[data-blueprint-partner-label]')).toHaveCount(1);
+  await seek(1400);
+  await expect(widget).toHaveAttribute(
+    'data-blueprint-kill-order-inheritance',
+    'right-inherits-wave',
+  );
+  await expect(widget).toHaveAttribute('data-blueprint-kill-order-inheritance-left-down', 'true');
+  await seek(2200);
+  await expect(widget).toHaveAttribute('data-blueprint-kill-order-inheritance', 'wave-active');
+  await expect(widget).toHaveAttribute(
+    'data-blueprint-kill-order-inheritance-source-boss-id',
+    'echo-kern',
+  );
+  await expect(widget).toHaveAttribute(
+    'data-blueprint-kill-order-inheritance-survivor-boss-id',
+    'kern',
+  );
+  await expect(widget).toHaveAttribute(
+    'data-blueprint-kill-order-inheritance-inherited-package',
+    'rune-wave',
+  );
+  await expect(widget).toHaveAttribute('data-blueprint-kill-order-inheritance-grant-count', '1');
+  await expect(widget).toHaveAttribute('data-blueprint-kill-order-inheritance-wave-active', 'true');
+  await expect(widget).toHaveAttribute('data-blueprint-outcome', 'safe');
+  await seek(2800);
+  await expect(widget).toHaveAttribute('data-blueprint-kill-order-inheritance', 'explicit-retry');
+  await expect(widget).toHaveAttribute(
+    'data-blueprint-kill-order-inheritance-retry-transition',
+    'true',
+  );
+  await expect(widget).toHaveAttribute(
+    'data-blueprint-kill-order-inheritance-inherited-package',
+    'none',
+  );
+  await expect(widget).toHaveAttribute('data-blueprint-kill-order-inheritance-grant-count', '0');
+  await seek(4700);
+  await expect(widget).toHaveAttribute('data-blueprint-kill-order-inheritance', 'lance-active');
+  await expect(widget).toHaveAttribute(
+    'data-blueprint-kill-order-inheritance-attempt-id',
+    'inheritance-attempt-2',
+  );
+  await expect(widget).toHaveAttribute(
+    'data-blueprint-kill-order-inheritance-source-boss-id',
+    'kern',
+  );
+  await expect(widget).toHaveAttribute(
+    'data-blueprint-kill-order-inheritance-survivor-boss-id',
+    'echo-kern',
+  );
+  await expect(widget).toHaveAttribute(
+    'data-blueprint-kill-order-inheritance-inherited-package',
+    'rune-lance',
+  );
+  await expect(widget).toHaveAttribute(
+    'data-blueprint-kill-order-inheritance-lance-active',
+    'true',
+  );
+  await expect(widget).toHaveAttribute('data-blueprint-outcome', 'safe');
+  await expect(widget).toHaveAttribute(
+    'data-blueprint-kill-order-inheritance-completion-count',
+    '0',
+  );
+  await expect(widget).toHaveAttribute(
+    'data-blueprint-kill-order-inheritance-duplicate-grant-count',
+    '0',
+  );
+  await page.setViewportSize({ width: 375, height: 812 });
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
 });

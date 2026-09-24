@@ -1,0 +1,138 @@
+{
+  "title": "Herencia según el orden de derrota",
+  "subtitle": "La primera derrota decide el siguiente repertorio del superviviente",
+  "variant": "Dos identidades · bifurcación por orden · ataque heredado · reintento limpio",
+  "summary": "El primer jefe derrotado determina la fase del superviviente; la transferencia es visible, ocurre una sola vez y se reinicia en el siguiente intento.",
+  "overview": "Esta mecánica convierte la elección del primer objetivo en una decisión sobre la siguiente fase. Cada jefe conserva su identidad y tiene un repertorio sucesor definido. Al caer uno, el superviviente recibe una transferencia legible y ejecuta otro movimiento. El jugador debe reconocer la rama antes de que la nueva amenaza esté activa.",
+  "learning": "Define las identidades de la pareja, la primera derrota autorizada, ambos repertorios, los tiempos de transferencia, señales y geometrías nuevas, política de salud, derrotas simultáneas, límite de una concesión, victoria, reinicio, accesibilidad y métricas por rama.",
+  "category": "Relaciones entre varios jefes",
+  "readTime": "10 min",
+  "demo": {
+    "title": "Elige cuál de los dos cuerpos pétreos de Kern deja su runa",
+    "timeline": "Cronología de la herencia por orden",
+    "step": "Elegir, transferir, responder; reintentar e invertir el orden",
+    "phaseNames": [
+      "Derriba el cuerpo izquierdo y lee la onda",
+      "Esquiva la onda y reinicia la pareja",
+      "Derriba el derecho y sal del rayo"
+    ],
+    "phaseDescriptions": [
+      "Tavi golpea el cuerpo izquierdo a los 1,05 segundos. Su runa pasa al superviviente derecho de 1,25 a 1,58 y autoriza una onda de piedra, no un aumento oculto de daño. La onda se anuncia antes de liberarse.",
+      "El cuerpo derecho emite un anillo creciente de 2,00 a 2,55; Tavi lo evita con todo el cuerpo. A los 2,75, una transición visible de reintento restaura a ambos y comienza un segundo intento. El movimiento heredado del primero no se filtra al siguiente.",
+      "En el segundo intento Tavi derriba al cuerpo derecho a los 3,65. Su runa llega al superviviente izquierdo, que anuncia una lanza fija de 4,10 a 4,50 y dispara hasta 5,08. Tavi sale de todo el carril; la pareja solo vuelve al reiniciar el bucle."
+    ],
+    "boss": "Jefe",
+    "player": "Jugador",
+    "danger": "Un ataque heredado sin aviso hace arbitraria la elección; un evento antiguo puede conceder ambos repertorios y una derrota simultánea puede dejar la victoria sin autoridad",
+    "locked": "Identidad de la pareja, primer evento de derrota, origen y receptor, un repertorio por intento, geometría de impacto, salud, empate, victoria y reinicio pertenecen a la lógica del encuentro",
+    "safe": "Muestra las dos identidades y barras de salud, el recorrido de la runa, la señal del ataque antes del daño, una ruta para el cuerpo completo y una marca de reintento entre ramas",
+    "reducedMotion": "El movimiento reducido desactiva la reproducción automática. Examina 0,40; 1,05; 1,40; 1,80; 2,20; 2,75; 3,15; 3,65; 4,00; 4,30; 4,75; 5,20 y 5,80 segundos.",
+    "diagramDescription": "Dos jefes de piedra están separados. En el primer intento cae el izquierdo, la runa fluye a la derecha y el superviviente emite una onda circular que Tavi evita. Un reinicio visible restaura la pareja. En el segundo cae el derecho, la runa fluye a la izquierda y el superviviente dispara una lanza diagonal lejos de la ruta segura de Tavi."
+  },
+  "steps": [
+    {
+      "title": "¿Qué evento decide la rama?",
+      "body": "Da a ambos cuerpos identidades estables y registra la primera derrota autorizada, no el primer golpe ni la animación de muerte. Asocia cada posible superviviente con un repertorio nombrado. Resuelve las derrotas en el mismo fotograma: si caen los dos, termina la pareja en vez de transferir poder a alguien inexistente."
+    },
+    {
+      "title": "¿Cómo anuncia el superviviente la regla nueva?",
+      "body": "Traza la transferencia desde el caído hasta el receptor vivo; luego muestra una pose de preparación distinta y la huella de la amenaza. No actives daño durante la transferencia. Calcula la colisión a partir del anillo o carril mostrado y comprueba que cabe todo el cuerpo del jugador."
+    },
+    {
+      "title": "¿Cómo conservar las ramas entre intentos?",
+      "body": "Concede un solo repertorio por pareja e identificador de intento. Al reintentar, cancela transferencias pendientes y limpia la selección; separa la victoria de la herencia. Prueba ambos órdenes con configuraciones de daño bajo y alto, muertes simultáneas, eventos duplicados, reconexiones y jugadores en cada ruta segura."
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "Cambia el daño, no la conducta legible",
+      "body": "Un multiplicador oculto convierte la elección en una trampa. Da a cada superviviente un ataque, una señal, una respuesta y una recuperación visiblemente distintos, y muestra por qué importa la runa del caído."
+    },
+    {
+      "title": "Dos concesiones compiten en la transición",
+      "body": "Si compiten los eventos de muerte, pueden aplicarse ambos repertorios o retrasarse la victoria. Usa identidades estables de jefes e intentos, establece prioridad para el mismo fotograma, haz idempotente la concesión y cancela transferencias pendientes al terminar la pareja."
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "Equilibra dos rutas, no una respuesta correcta",
+      "body": "Compara tiempo total, exposición al daño, espacio de la arena, ocasiones de curación y carga de aprendizaje en cada rama. La diferencia importa más que una opción simplemente fácil y otra difícil; ambas deben ser viables sin una configuración obligatoria."
+    },
+    {
+      "title": "Conserva causa y efecto en la transición",
+      "body": "Mantén visibles al caído, al receptor y el trayecto de la runa el tiempo suficiente. La advertencia empieza tras la transferencia; un rayo heredado no debe golpear antes de mostrar su carril. Usa forma y pose además de color y sonido."
+    },
+    {
+      "title": "Audita el registro de eventos",
+      "body": "Registra origen, superviviente, repertorio, intento, número de concesiones y resultado final. Reproduce ambas ramas al mover la línea temporal, reinicia a la misma base y prueba muerte simultánea y eventos de red duplicados sin arrastrar el repertorio anterior."
+    }
+  ],
+  "story": {
+    "title": "Cada piedra caída deja un juramento distinto",
+    "body": "Cuando Tavi derriba al eco izquierdo, su sello redondo entra en Kern y una onda recorre el suelo. El pacto vuelve para una segunda prueba. Si Kern cae primero, su sello agudo pasa al eco, que traza una lanza rúnica recta."
+  },
+  "adaptation": {
+    "title": "Haz legibles y alcanzables ambas elecciones",
+    "body": "Evita una rama que exija un tipo de daño o velocidad concretos. Ofrece señales equivalentes en audio, texto y forma; conserva una ruta segura para el cuerpo entero y marca explícitamente el reintento antes de invertir el orden."
+  },
+  "distinction": {
+    "title": "Conducta seleccionada por orden, no enfurecimiento genérico",
+    "body": "El enfurecimiento suele intensificar a un actor tras un umbral. Aquí la identidad del caído selecciona un repertorio sucesor concreto. Una reacción emparentada puede cambiar al superviviente sin transferir literalmente un poder; señálala como variante."
+  },
+  "lensNotes": [
+    {
+      "id": "context-and-sequence",
+      "body": "La primera derrota da contexto a la fase del superviviente; invertir el orden cambia el siguiente movimiento en lugar de repetir el encuentro."
+    },
+    {
+      "id": "progress-clarity",
+      "body": "Barras separadas, cuerpo caído, runa trazada y repertorio definido hacen observable la rama elegida."
+    },
+    {
+      "id": "risk-reward",
+      "body": "Elegir el primer objetivo intercambia la presión actual de dos cuerpos por una amenaza futura y su ruta de respuesta."
+    },
+    {
+      "id": "difficulty-rhythm",
+      "body": "La pausa de transferencia separa la presión simultánea del rival único fortalecido y deja tiempo para orientarse."
+    },
+    {
+      "id": "counterplay",
+      "body": "Cada ataque heredado tiene su aviso y una ruta segura para todo el cuerpo; se pueden aprender ambas ramas sin adivinar multiplicadores invisibles."
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "Mewgenics",
+      "boss": "Chubs 'n' Nubs",
+      "screenshot": "https://i.ytimg.com/vi/zok2oN34jdk/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=zok2oN34jdk&t=1s",
+      "video": "https://www.youtube.com/watch?v=zok2oN34jdk&t=1s",
+      "videoDurationSeconds": 158,
+      "body": "En esta pareja 2D por turnos, Chubs se enfurece si Nubs muere primero; Nubs prepara una explosión para el turno siguiente si Chubs muere primero. Es una reacción condicionada por el orden, no absorción literal de poder, y muestra la importancia de señalar cada rama."
+    },
+    {
+      "dimension": "3D",
+      "game": "Dark Souls",
+      "boss": "Dragon Slayer Ornstein & Executioner Smough",
+      "screenshot": "https://i.ytimg.com/vi/Lo7A65BjKdE/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=Lo7A65BjKdE&t=1s",
+      "video": "https://www.youtube.com/watch?v=Lo7A65BjKdE&t=1s",
+      "videoDurationSeconds": 21,
+      "body": "Derrotar a cualquiera selecciona al otro para la segunda fase. Ornstein absorbe el poder de Smough y crece si Smough cae primero; Smough carga su martillo con el rayo de Ornstein si Ornstein cae primero. La transición deja claro el orden elegido."
+    },
+    {
+      "dimension": "3D",
+      "game": "Dark Souls III",
+      "boss": "Demon in Pain & Demon from Below",
+      "screenshot": "https://i.ytimg.com/vi/B0w7gGkklvE/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=B0w7gGkklvE&t=150s",
+      "video": "https://www.youtube.com/watch?v=B0w7gGkklvE&t=150s",
+      "videoDurationSeconds": 361,
+      "body": "Después de caer ambos demonios de la primera fase, el último derrotado vuelve como Demon Prince. Su identidad determina el ataque especial de meteoros o láser, de modo que el orden selecciona el repertorio final."
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

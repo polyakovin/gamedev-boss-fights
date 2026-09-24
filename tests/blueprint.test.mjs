@@ -75,6 +75,10 @@ import {
   worldStateVariantResolve,
   partySizeScalingState,
   partySizeScalingResolve,
+  partnerRevivalState,
+  partnerRevivalResolve,
+  killOrderInheritanceState,
+  killOrderInheritanceResolve,
   counterStanceOutcome,
   counterStanceState,
   blueprintFrame,
@@ -102,8 +106,8 @@ import {
   renderBlueprintThumbnail,
 } from '../lib/blueprint-view.mjs';
 
-test('all 103 promoted lesson animations have distinct rule modes and complete moving frames', () => {
-  assert.equal(BLUEPRINT_MECHANIC_IDS.length, 103);
+test('all 105 promoted lesson animations have distinct rule modes and complete moving frames', () => {
+  assert.equal(BLUEPRINT_MECHANIC_IDS.length, 105);
   const modes = new Set();
   for (const id of BLUEPRINT_MECHANIC_IDS) {
     for (let time = 0; time <= BLUEPRINT_DURATION; time += 0.1) {
@@ -124,7 +128,7 @@ test('all 103 promoted lesson animations have distinct rule modes and complete m
           assert.ok(Number.isFinite(value), `${id} has an invalid ${primitive.type}`);
     }
   }
-  assert.equal(modes.size, 103);
+  assert.equal(modes.size, 105);
 });
 
 test('every blueprint exposes signal, committed action, and recovery without player teleports', () => {
@@ -176,7 +180,9 @@ test('every blueprint exposes signal, committed action, and recovery without pla
       id !== 'real-time-progression' &&
       id !== 'interface-interaction' &&
       id !== 'world-state-variant' &&
-      id !== 'party-size-scaling'
+      id !== 'party-size-scaling' &&
+      id !== 'partner-revival' &&
+      id !== 'kill-order-inheritance'
     )
       assert.equal(blueprintFrame(id, 3).dangerActive, true, id);
     assert.equal(blueprintFrame(id, 3).playerSafe, true, id);
@@ -278,6 +284,8 @@ test('every damaging promoted animation derives safety from its own active geome
       id !== 'interface-interaction' &&
       id !== 'world-state-variant' &&
       id !== 'party-size-scaling' &&
+      id !== 'partner-revival' &&
+      id !== 'kill-order-inheritance' &&
       id !== 'part-break' &&
       id !== 'counter-stance' &&
       id !== 'absorption-power-up' &&
@@ -4613,5 +4621,166 @@ test('party-size scaling queues roster changes, preserves progress, and settles 
   assert.match(
     renderBlueprintThumbnail(id, 'test-party-size-scaling'),
     /data-blueprint-preview="party-size-scaling"/,
+  );
+});
+
+test('partner revival has bounded casts, a reachable interrupt, and one pair completion', () => {
+  const id = 'partner-revival';
+  assert.deepEqual(
+    [0.4, 0.55, 1.2, 1.6, 2.35, 3, 3.2, 3.6, 3.75, 4.1, 4.5, 4.7, 5.5].map(partnerRevivalState),
+    [
+      'paired-baseline',
+      'partner-downed',
+      'revive-channel-one',
+      'partner-revived',
+      'partner-downed-again',
+      'revive-channel-two',
+      'revive-interrupted',
+      'synchronized-finish',
+      'survivor-downed',
+      'completion-authorized',
+      'encounter-stable',
+      'retry-stable',
+      'reset',
+    ],
+  );
+  const restored = partnerRevivalResolve();
+  assert.equal(restored.resolution, 'revived');
+  assert.equal(restored.reviveGrantCount, 1);
+  assert.equal(restored.reviveHealthFraction, 0.4);
+  assert.equal(restored.completionAuthorized, false);
+  assert.equal(partnerRevivalResolve({ elapsed: 0.3 }).resolution, 'pending');
+  assert.equal(partnerRevivalResolve({ interrupted: true }).resolution, 'interrupted');
+  assert.equal(partnerRevivalResolve({ reviveGrantCount: 2 }).resolution, 'revive-cap-reached');
+  assert.equal(partnerRevivalResolve({ alreadyResolved: true }).eventCount, 0);
+  assert.equal(partnerRevivalResolve({ downedBossId: 'kern' }).resolution, 'invalid-pair');
+  assert.equal(
+    partnerRevivalResolve({ reviverDefeated: true, partnerDowned: false }).completionAuthorized,
+    false,
+  );
+  const final = partnerRevivalResolve({ reviverDefeated: true });
+  assert.equal(final.resolution, 'pair-defeated');
+  assert.equal(final.completionAuthorized, true);
+  assert.equal(final.revivalAuthorized, false);
+  assert.equal(final.duplicateGrantCount, 0);
+
+  const firstCast = blueprintFrame(id, 1.2);
+  assert.equal(firstCast.partnerRevivalPartnerDowned, true);
+  assert.equal(firstCast.partnerRevivalFirstChannelActive, true);
+  assert.equal(firstCast.partnerRevivalChannelProgress > 0, true);
+  assert.equal(firstCast.partnerRevivalCompletionCount, 0);
+  const returned = blueprintFrame(id, 1.8);
+  assert.equal(returned.partnerRevivalPartnerDowned, false);
+  assert.equal(returned.partnerRevivalRevivedHealthFraction, 0.4);
+  assert.equal(returned.partnerRevivalReviveGrantCount, 1);
+  const secondCast = blueprintFrame(id, 3.04);
+  assert.equal(secondCast.partnerRevivalSecondChannelActive, true);
+  assert.equal(secondCast.partnerRevivalAttemptId, 'partner-revive-2');
+  assert.equal(secondCast.partnerRevivalPartnerDowned, true);
+  const interrupted = blueprintFrame(id, 3.3);
+  assert.equal(interrupted.partnerRevivalInterrupted, true);
+  assert.equal(interrupted.partnerRevivalInterruptLockActive, true);
+  assert.equal(interrupted.partnerRevivalSecondChannelActive, false);
+  const complete = blueprintFrame(id, 4.1);
+  assert.equal(complete.partnerRevivalSurvivorDowned, true);
+  assert.equal(complete.partnerRevivalCompletionAuthorized, true);
+  assert.equal(complete.partnerRevivalCompletionCount, 1);
+  assert.equal(complete.partnerRevivalDuplicateGrantCount, 0);
+  const retry = blueprintFrame(id, 4.7);
+  assert.equal(retry.partnerRevivalRetryStable, true);
+  assert.equal(retry.partnerRevivalPartnerDowned, false);
+  assert.equal(retry.partnerRevivalCompletionCount, 0);
+  assert.deepEqual(blueprintFrame(id, 0).player, blueprintFrame(id, 6).player);
+  assert.match(
+    renderBlueprintThumbnail(id, 'test-partner-revival'),
+    /data-blueprint-preview="partner-revival"/,
+  );
+});
+
+test('kill-order inheritance selects one visible package per order and clears it on retry', () => {
+  const id = 'kill-order-inheritance';
+  assert.deepEqual(
+    [0.4, 1.1, 1.4, 1.8, 2.2, 2.6, 2.8, 3.2, 3.7, 4, 4.3, 4.7, 5.2, 5.8].map(
+      killOrderInheritanceState,
+    ),
+    [
+      'paired-baseline',
+      'left-defeated',
+      'right-inherits-wave',
+      'wave-signaled',
+      'wave-active',
+      'wave-recovery',
+      'explicit-retry',
+      'pair-restored',
+      'right-defeated',
+      'left-inherits-lance',
+      'lance-signaled',
+      'lance-active',
+      'lance-recovery',
+      'reset',
+    ],
+  );
+  const first = killOrderInheritanceResolve();
+  assert.equal(first.resolution, 'inherited');
+  assert.equal(first.sourceBossId, 'echo-kern');
+  assert.equal(first.survivorBossId, 'kern');
+  assert.equal(first.inheritedPackage, 'rune-wave');
+  assert.equal(first.inheritanceGrantCount, 1);
+  const reverse = killOrderInheritanceResolve({
+    firstDefeatedId: 'kern',
+    attemptId: 'inheritance-attempt-2',
+  });
+  assert.equal(reverse.sourceBossId, 'kern');
+  assert.equal(reverse.survivorBossId, 'echo-kern');
+  assert.equal(reverse.inheritedPackage, 'rune-lance');
+  assert.equal(reverse.inheritanceGrantCount, 1);
+  const simultaneous = killOrderInheritanceResolve({ simultaneousDefeat: true });
+  assert.equal(simultaneous.resolution, 'pair-defeated');
+  assert.equal(simultaneous.completionCount, 1);
+  assert.equal(simultaneous.inheritanceGrantCount, 0);
+  assert.equal(
+    killOrderInheritanceResolve({ alreadyResolved: true }).resolution,
+    'duplicate-resolution',
+  );
+  assert.equal(
+    killOrderInheritanceResolve({ firstDefeatedId: 'unknown' }).resolution,
+    'invalid-pair',
+  );
+  assert.equal(
+    killOrderInheritanceResolve({ secondDefeatedId: 'echo-kern' }).resolution,
+    'invalid-order',
+  );
+
+  const leftDown = blueprintFrame(id, 1.1);
+  assert.equal(leftDown.killOrderInheritanceLeftDown, true);
+  assert.equal(leftDown.killOrderInheritanceInheritedPackage, 'none');
+  const wave = blueprintFrame(id, 2.2);
+  assert.equal(wave.killOrderInheritanceSourceBossId, 'echo-kern');
+  assert.equal(wave.killOrderInheritanceSurvivorBossId, 'kern');
+  assert.equal(wave.killOrderInheritanceInheritedPackage, 'rune-wave');
+  assert.equal(wave.killOrderInheritanceGrantCount, 1);
+  assert.equal(wave.killOrderInheritanceWaveActive, true);
+  assert.equal(wave.playerSafe, true);
+  assert.equal(blueprintPointSafe(id, 2.2, { x: 380, y: 573 }), false);
+  const retry = blueprintFrame(id, 2.8);
+  assert.equal(retry.killOrderInheritanceRetryTransition, true);
+  assert.equal(retry.killOrderInheritanceInheritedPackage, 'none');
+  assert.equal(retry.killOrderInheritanceGrantCount, 0);
+  const rightDown = blueprintFrame(id, 3.7);
+  assert.equal(rightDown.killOrderInheritanceRightDown, true);
+  const lance = blueprintFrame(id, 4.7);
+  assert.equal(lance.killOrderInheritanceSourceBossId, 'kern');
+  assert.equal(lance.killOrderInheritanceSurvivorBossId, 'echo-kern');
+  assert.equal(lance.killOrderInheritanceInheritedPackage, 'rune-lance');
+  assert.equal(lance.killOrderInheritanceLanceActive, true);
+  assert.equal(lance.playerSafe, true);
+  assert.equal(blueprintPointSafe(id, 4.7, { x: 350, y: 604 }), false);
+  assert.equal(blueprintPointSafe(id, 4.7, { x: 450, y: 800 }), true);
+  for (let t = 2; t < 2.55; t += 0.02) assert.equal(blueprintFrame(id, t).playerSafe, true);
+  for (let t = 4.5; t < 5.08; t += 0.02) assert.equal(blueprintFrame(id, t).playerSafe, true);
+  assert.deepEqual(blueprintFrame(id, 0).player, blueprintFrame(id, 6).player);
+  assert.match(
+    renderBlueprintThumbnail(id, 'test-kill-order-inheritance'),
+    /data-blueprint-preview="kill-order-inheritance"/,
   );
 });

@@ -1714,6 +1714,66 @@ const SPECS = {
     joinResolutionId: 'party-scale-join-1',
     leaveResolutionId: 'party-scale-leave-1',
   },
+  'partner-revival': {
+    mode: 'partner-revival',
+    boss: [355, 420],
+    partner: [165, 520],
+    player: [445, 760],
+    target: [430, 570],
+    arena: [55, 300, 450, 590],
+    firstApproach: [280, 650],
+    waitPoint: [460, 760],
+    interruptPoint: [445, 575],
+    finishPoint: [405, 535],
+    firstDownAt: 0.55,
+    firstChannel: [0.9, 1.55],
+    firstReviveAt: 1.55,
+    secondDownAt: 2.35,
+    secondChannel: [2.75, 3.18],
+    interruptAt: 3.18,
+    interruptLockEnd: 3.55,
+    survivorDownAt: 3.72,
+    completionAt: 3.95,
+    completionEnd: 4.45,
+    retry: [4.65, 5.35],
+    resetAt: 5.35,
+    reviveHealthFraction: 0.4,
+    survivorHealthFraction: 0.18,
+    encounterId: 'kern-twin-covenant-1',
+    firstAttemptId: 'partner-revive-1',
+    secondAttemptId: 'partner-revive-2',
+    partnerBossId: 'echo-kern',
+    reviverBossId: 'kern',
+  },
+  'kill-order-inheritance': {
+    mode: 'kill-order-inheritance',
+    boss: [380, 420],
+    partner: [170, 500],
+    player: [275, 720],
+    target: [430, 760],
+    arena: [55, 300, 450, 590],
+    firstApproach: [215, 625],
+    firstSafe: [230, 760],
+    secondApproach: [340, 620],
+    secondSafe: [450, 800],
+    firstDefeatAt: 1.05,
+    firstTransfer: [1.25, 1.58],
+    waveSignal: [1.65, 2],
+    waveActive: [2, 2.55],
+    intermission: [2.75, 3.15],
+    secondDefeatAt: 3.65,
+    secondTransfer: [3.82, 4.08],
+    lanceSignal: [4.1, 4.5],
+    lanceActive: [4.5, 5.08],
+    resetAt: 5.5,
+    waveMaxRadius: 250,
+    waveHalfWidth: 15,
+    lanceEnd: [500, 690],
+    lanceHalfWidth: 27,
+    encounterId: 'kern-inheritance-duel-1',
+    leftBossId: 'echo-kern',
+    rightBossId: 'kern',
+  },
   'wide-swing': { mode: 'arc', boss: [225, 340], player: [380, 500], target: [420, 780] },
   lunge: {
     mode: 'lunge',
@@ -3610,6 +3670,147 @@ export function partySizeScalingResolve({
     applicationCount: accepted ? 1 : 0,
     midAttackApplications: 0,
     progressReversed: false,
+  });
+}
+
+export function partnerRevivalState(time) {
+  const spec = SPECS['partner-revival'];
+  const t = localTime(time);
+  if (t < spec.firstDownAt) return 'paired-baseline';
+  if (t < spec.firstChannel[0]) return 'partner-downed';
+  if (t < spec.firstReviveAt) return 'revive-channel-one';
+  if (t < spec.secondDownAt) return 'partner-revived';
+  if (t < spec.secondChannel[0]) return 'partner-downed-again';
+  if (t < spec.interruptAt) return 'revive-channel-two';
+  if (t < spec.interruptLockEnd) return 'revive-interrupted';
+  if (t < spec.survivorDownAt) return 'synchronized-finish';
+  if (t < spec.completionAt) return 'survivor-downed';
+  if (t < spec.completionEnd) return 'completion-authorized';
+  if (t < spec.retry[0]) return 'encounter-stable';
+  if (t < spec.retry[1]) return 'retry-stable';
+  return 'reset';
+}
+
+export function partnerRevivalResolve({
+  encounterId = 'kern-twin-covenant-1',
+  attemptId = 'partner-revive-1',
+  pairVersion = 1,
+  downedBossId = 'echo-kern',
+  reviverBossId = 'kern',
+  castDuration = 0.65,
+  elapsed = 0.65,
+  reviveHealthFraction = 0.4,
+  reviveGrantCount = 0,
+  maxRevives = 2,
+  interrupted = false,
+  partnerDowned = true,
+  reviverDefeated = false,
+  alreadyResolved = false,
+} = {}) {
+  const safeDuration = Math.max(0.05, Number(castDuration) || 0.65);
+  const safeElapsed = Math.max(0, Number(elapsed) || 0);
+  const safeGrantCount = Math.max(0, Math.trunc(Number(reviveGrantCount) || 0));
+  const safeMaxRevives = Math.max(0, Math.trunc(Number(maxRevives) || 0));
+  const distinctPair = String(downedBossId) !== String(reviverBossId);
+  const capped = safeGrantCount >= safeMaxRevives;
+  const progress = clamp(safeElapsed / safeDuration);
+  const resolution = alreadyResolved
+    ? 'duplicate-resolution'
+    : !distinctPair
+      ? 'invalid-pair'
+      : reviverDefeated
+        ? partnerDowned
+          ? 'pair-defeated'
+          : 'partner-alive'
+        : interrupted
+          ? 'interrupted'
+          : capped
+            ? 'revive-cap-reached'
+            : progress < 1
+              ? 'pending'
+              : 'revived';
+  const revived = resolution === 'revived';
+  const completionAuthorized = resolution === 'pair-defeated';
+  return Object.freeze({
+    encounterId: String(encounterId),
+    attemptId: String(attemptId),
+    pairVersion: Math.max(1, Math.trunc(Number(pairVersion) || 1)),
+    downedBossId: String(downedBossId),
+    reviverBossId: String(reviverBossId),
+    castDuration: safeDuration,
+    elapsed: safeElapsed,
+    progress,
+    reviveHealthFraction: clamp(Number(reviveHealthFraction)),
+    reviveGrantCount: safeGrantCount + (revived ? 1 : 0),
+    maxRevives: safeMaxRevives,
+    resolution,
+    accepted: revived || completionAuthorized || resolution === 'interrupted',
+    revivalAuthorized: revived,
+    completionAuthorized,
+    eventCount: ['pending', 'duplicate-resolution', 'invalid-pair'].includes(resolution) ? 0 : 1,
+    duplicateGrantCount: 0,
+  });
+}
+
+export function killOrderInheritanceState(time) {
+  const spec = SPECS['kill-order-inheritance'];
+  const t = localTime(time);
+  if (t < spec.firstDefeatAt) return 'paired-baseline';
+  if (t < spec.firstTransfer[0]) return 'left-defeated';
+  if (t < spec.waveSignal[0]) return 'right-inherits-wave';
+  if (t < spec.waveActive[0]) return 'wave-signaled';
+  if (t < spec.waveActive[1]) return 'wave-active';
+  if (t < spec.intermission[0]) return 'wave-recovery';
+  if (t < spec.intermission[1]) return 'explicit-retry';
+  if (t < spec.secondDefeatAt) return 'pair-restored';
+  if (t < spec.secondTransfer[0]) return 'right-defeated';
+  if (t < spec.lanceSignal[0]) return 'left-inherits-lance';
+  if (t < spec.lanceActive[0]) return 'lance-signaled';
+  if (t < spec.lanceActive[1]) return 'lance-active';
+  if (t < spec.resetAt) return 'lance-recovery';
+  return 'reset';
+}
+
+export function killOrderInheritanceResolve({
+  encounterId = 'kern-inheritance-duel-1',
+  attemptId = 'inheritance-attempt-1',
+  pairVersion = 1,
+  leftBossId = 'echo-kern',
+  rightBossId = 'kern',
+  firstDefeatedId = 'echo-kern',
+  secondDefeatedId = 'none',
+  simultaneousDefeat = false,
+  alreadyResolved = false,
+} = {}) {
+  const distinctPair = String(leftBossId) !== String(rightBossId);
+  const validFirst = [leftBossId, rightBossId].includes(firstDefeatedId);
+  const survivorBossId = firstDefeatedId === leftBossId ? rightBossId : leftBossId;
+  const completionAuthorized =
+    distinctPair && (simultaneousDefeat || (validFirst && secondDefeatedId === survivorBossId));
+  const resolution = alreadyResolved
+    ? 'duplicate-resolution'
+    : !distinctPair || !validFirst
+      ? 'invalid-pair'
+      : completionAuthorized
+        ? 'pair-defeated'
+        : secondDefeatedId !== 'none'
+          ? 'invalid-order'
+          : 'inherited';
+  const inherited = resolution === 'inherited';
+  return Object.freeze({
+    encounterId: String(encounterId),
+    attemptId: String(attemptId),
+    pairVersion: Math.max(1, Math.trunc(Number(pairVersion) || 1)),
+    sourceBossId: inherited ? String(firstDefeatedId) : 'none',
+    survivorBossId: inherited ? String(survivorBossId) : 'none',
+    inheritedPackage:
+      inherited && firstDefeatedId === leftBossId ? 'rune-wave' : inherited ? 'rune-lance' : 'none',
+    inheritanceGrantCount: inherited ? 1 : 0,
+    completionAuthorized: resolution === 'pair-defeated',
+    completionCount: resolution === 'pair-defeated' ? 1 : 0,
+    resolution,
+    accepted: inherited || resolution === 'pair-defeated',
+    duplicateGrantCount: 0,
   });
 }
 
@@ -8359,6 +8560,345 @@ function primitivesFor(spec, frame) {
       ),
     ];
   }
+  if (mode === 'partner-revival') {
+    const firstChannelProgress = clamp(
+      (frame.time - spec.firstChannel[0]) / (spec.firstChannel[1] - spec.firstChannel[0]),
+    );
+    const secondChannelProgress = clamp(
+      (frame.time - spec.secondChannel[0]) / (spec.secondChannel[1] - spec.secondChannel[0]),
+    );
+    const activeChannelProgress = frame.partnerRevivalFirstChannelActive
+      ? firstChannelProgress
+      : frame.partnerRevivalSecondChannelActive
+        ? secondChannelProgress
+        : frame.partnerRevivalReviveSucceeded
+          ? 1
+          : 0;
+    const firstStrike = strikePulse(frame.time, spec.firstDownAt, 0.34);
+    const secondStrike = strikePulse(frame.time, spec.secondDownAt, 0.34);
+    const interruptStrike = strikePulse(frame.time, spec.interruptAt, 0.38);
+    const finishStrike = strikePulse(frame.time, spec.survivorDownAt, 0.4);
+    const partnerDown = frame.partnerRevivalPartnerDowned;
+    const completion = frame.partnerRevivalCompletionAuthorized;
+    const panelVisible = frame.time < spec.resetAt;
+    return [
+      rect(...spec.arena, 0.54, 'muted', 0.025),
+      path(
+        'M 68 760 L 174 733 L 280 760 L 386 733 L 492 760 V 794 L 386 766 L 280 796 L 174 766 L 68 794 Z M 82 855 L 280 822 L 478 855 V 874 L 280 840 L 82 874 Z',
+        0.52,
+        'muted',
+        0,
+        0.48,
+      ),
+      rect(76, 94, 408, 150, panelVisible ? 0.84 : 0.24, 'muted', 0.14),
+      rect(104, 132, 150, 18, panelVisible ? 0.78 : 0, 'muted', 0.08),
+      rect(
+        104,
+        132,
+        150 *
+          (frame.partnerRevivalPartnerDowned ? 0 : frame.partnerRevivalRevivedHealthFraction || 1),
+        18,
+        panelVisible ? 0.9 : 0,
+        'accent',
+        0.28,
+      ),
+      rect(306, 132, 150, 18, panelVisible ? 0.78 : 0, 'muted', 0.08),
+      rect(
+        306,
+        132,
+        150 * (frame.partnerRevivalSurvivorDowned ? 0 : spec.survivorHealthFraction),
+        18,
+        panelVisible ? 0.9 : 0,
+        'signal',
+        0.28,
+      ),
+      line(
+        spec.partner[0],
+        spec.partner[1] - 18,
+        spec.boss[0],
+        spec.boss[1] - 18,
+        panelVisible ? (partnerDown ? 0.38 : 0.72) : 0,
+        partnerDown ? 'signal' : 'safe',
+        6,
+        partnerDown ? '10 9' : '',
+      ),
+      circle(
+        spec.partner[0],
+        spec.partner[1],
+        72,
+        partnerDown ? 0.82 : 0.2,
+        partnerDown ? 'signal' : 'accent',
+        8,
+        0.025,
+        partnerDown ? '11 8' : '',
+      ),
+      path(
+        `M ${spec.partner[0] - 28} ${spec.partner[1] - 28} L ${spec.partner[0] + 28} ${spec.partner[1] + 28} M ${spec.partner[0] + 28} ${spec.partner[1] - 28} L ${spec.partner[0] - 28} ${spec.partner[1] + 28}`,
+        partnerDown ? 0.88 : 0,
+        'signal',
+        8,
+      ),
+      line(
+        spec.boss[0],
+        spec.boss[1],
+        spec.partner[0],
+        spec.partner[1],
+        frame.partnerRevivalChannelActive ? 0.94 : 0,
+        'accent',
+        12,
+        '13 9',
+      ),
+      circle(
+        spec.partner[0],
+        spec.partner[1],
+        30 + activeChannelProgress * 48,
+        frame.partnerRevivalChannelActive ? 0.94 : 0,
+        'accent',
+        10,
+        0.04,
+      ),
+      rect(120, 194, 320, 18, frame.partnerRevivalChannelActive ? 0.82 : 0.24, 'muted', 0.08),
+      rect(
+        120,
+        194,
+        320 * activeChannelProgress,
+        18,
+        frame.partnerRevivalChannelActive ? 0.96 : 0.22,
+        frame.partnerRevivalSecondChannelActive ? 'signal' : 'accent',
+        0.32,
+      ),
+      circle(
+        spec.partner[0],
+        spec.partner[1],
+        86,
+        frame.partnerRevivalReviveSucceeded && !frame.partnerRevivalPartnerDowned ? 0.82 : 0,
+        'safe',
+        9,
+        0.03,
+      ),
+      line(
+        frame.player.x - 8,
+        frame.player.y - 52,
+        spec.partner[0] + 20,
+        spec.partner[1] + 18,
+        Math.max(firstStrike, secondStrike),
+        'safe',
+        12,
+      ),
+      line(
+        frame.player.x - 8,
+        frame.player.y - 52,
+        spec.boss[0] + 20,
+        spec.boss[1] + 24,
+        Math.max(interruptStrike, finishStrike),
+        'safe',
+        13,
+      ),
+      circle(
+        spec.boss[0],
+        spec.boss[1],
+        76,
+        frame.partnerRevivalInterrupted ? 0.9 : 0,
+        'signal',
+        10,
+        0.035,
+      ),
+      path(
+        `M ${spec.boss[0] - 30} ${spec.boss[1] - 30} L ${spec.boss[0] + 30} ${spec.boss[1] + 30} M ${spec.boss[0] + 30} ${spec.boss[1] - 30} L ${spec.boss[0] - 30} ${spec.boss[1] + 30}`,
+        frame.partnerRevivalInterrupted ? 0.92 : 0,
+        'signal',
+        9,
+      ),
+      circle(280, 650, 66, completion ? 0.92 : 0, 'safe', 9, 0.05),
+      path('M 242 650 L 271 679 L 322 621', completion ? 0.98 : 0, 'safe', 11),
+    ];
+  }
+  if (mode === 'kill-order-inheritance') {
+    const t = frame.time;
+    const leftDown = frame.killOrderInheritanceLeftDown;
+    const rightDown = frame.killOrderInheritanceRightDown;
+    const waveProgress = clamp(
+      (t - spec.waveActive[0]) / (spec.waveActive[1] - spec.waveActive[0]),
+    );
+    const transferLeft = clamp(
+      (t - spec.firstTransfer[0]) / (spec.firstTransfer[1] - spec.firstTransfer[0]),
+    );
+    const transferRight = clamp(
+      (t - spec.secondTransfer[0]) / (spec.secondTransfer[1] - spec.secondTransfer[0]),
+    );
+    const waveRadius = 62 + spec.waveMaxRadius * waveProgress;
+    const firstStrike = strikePulse(t, spec.firstDefeatAt, 0.4);
+    const secondStrike = strikePulse(t, spec.secondDefeatAt, 0.4);
+    return [
+      rect(...spec.arena, 0.54, 'muted', 0.025),
+      path(
+        'M 68 760 L 174 733 L 280 760 L 386 733 L 492 760 V 794 L 386 766 L 280 796 L 174 766 L 68 794 Z M 82 855 L 280 822 L 478 855 V 874 L 280 840 L 82 874 Z',
+        0.52,
+        'muted',
+        0,
+        0.48,
+      ),
+      rect(76, 94, 408, 112, 0.82, 'muted', 0.14),
+      rect(104, 132, 150, 18, 0.8, 'muted', 0.08),
+      rect(104, 132, leftDown ? 0 : 150, 18, 0.9, 'accent', 0.28),
+      rect(306, 132, 150, 18, 0.8, 'muted', 0.08),
+      rect(306, 132, rightDown ? 0 : 150, 18, 0.9, 'signal', 0.28),
+      line(
+        spec.partner[0],
+        spec.partner[1] - 15,
+        spec.boss[0],
+        spec.boss[1] - 15,
+        0.55,
+        'muted',
+        5,
+        '12 10',
+      ),
+      circle(
+        spec.partner[0],
+        spec.partner[1],
+        71,
+        leftDown ? 0.84 : 0.35,
+        leftDown ? 'signal' : 'accent',
+        8,
+        0.025,
+        leftDown ? '12 9' : '',
+      ),
+      circle(
+        spec.boss[0],
+        spec.boss[1],
+        71,
+        rightDown ? 0.84 : 0.35,
+        rightDown ? 'signal' : 'accent',
+        8,
+        0.025,
+        rightDown ? '12 9' : '',
+      ),
+      path(
+        `M ${spec.partner[0] - 26} ${spec.partner[1] - 26} L ${spec.partner[0] + 26} ${spec.partner[1] + 26} M ${spec.partner[0] + 26} ${spec.partner[1] - 26} L ${spec.partner[0] - 26} ${spec.partner[1] + 26}`,
+        leftDown ? 0.9 : 0,
+        'signal',
+        8,
+      ),
+      path(
+        `M ${spec.boss[0] - 26} ${spec.boss[1] - 26} L ${spec.boss[0] + 26} ${spec.boss[1] + 26} M ${spec.boss[0] + 26} ${spec.boss[1] - 26} L ${spec.boss[0] - 26} ${spec.boss[1] + 26}`,
+        rightDown ? 0.9 : 0,
+        'signal',
+        8,
+      ),
+      line(
+        frame.player.x - 8,
+        frame.player.y - 52,
+        spec.partner[0] + 20,
+        spec.partner[1] + 18,
+        firstStrike,
+        'safe',
+        12,
+      ),
+      line(
+        frame.player.x - 8,
+        frame.player.y - 52,
+        spec.boss[0] + 20,
+        spec.boss[1] + 18,
+        secondStrike,
+        'safe',
+        12,
+      ),
+      line(
+        spec.partner[0],
+        spec.partner[1],
+        spec.boss[0],
+        spec.boss[1],
+        frame.killOrderInheritanceFirstTransferActive ? 0.92 : 0,
+        'accent',
+        10 + transferLeft * 5,
+        '12 8',
+      ),
+      circle(
+        spec.boss[0],
+        spec.boss[1],
+        68 + transferLeft * 20,
+        frame.killOrderInheritanceFirstTransferActive ? 0.85 : 0,
+        'accent',
+        9,
+        0.04,
+      ),
+      circle(
+        spec.boss[0],
+        spec.boss[1],
+        72,
+        frame.killOrderInheritanceWaveSignaled ? 0.87 : 0,
+        'signal',
+        9,
+        0.03,
+        '13 9',
+      ),
+      circle(
+        spec.boss[0],
+        spec.boss[1],
+        waveRadius,
+        frame.killOrderInheritanceWaveActive ? 0.94 : 0,
+        'signal',
+        17,
+        0.015,
+      ),
+      circle(
+        280,
+        610,
+        115 * smooth((t - spec.intermission[0]) / (spec.intermission[1] - spec.intermission[0])),
+        frame.killOrderInheritanceRetryTransition ? 0.68 : 0,
+        'safe',
+        7,
+        0.025,
+      ),
+      line(
+        spec.boss[0],
+        spec.boss[1],
+        spec.partner[0],
+        spec.partner[1],
+        frame.killOrderInheritanceSecondTransferActive ? 0.92 : 0,
+        'accent',
+        10 + transferRight * 5,
+        '12 8',
+      ),
+      circle(
+        spec.partner[0],
+        spec.partner[1],
+        68 + transferRight * 20,
+        frame.killOrderInheritanceSecondTransferActive ? 0.85 : 0,
+        'accent',
+        9,
+        0.04,
+      ),
+      line(
+        spec.partner[0],
+        spec.partner[1],
+        spec.lanceEnd[0],
+        spec.lanceEnd[1],
+        frame.killOrderInheritanceLanceSignaled ? 0.85 : 0,
+        'signal',
+        7,
+        '15 10',
+      ),
+      line(
+        spec.partner[0],
+        spec.partner[1],
+        spec.lanceEnd[0],
+        spec.lanceEnd[1],
+        frame.killOrderInheritanceLanceActive ? 0.96 : 0,
+        'signal',
+        spec.lanceHalfWidth * 2,
+      ),
+      circle(
+        spec.partner[0],
+        spec.partner[1],
+        79,
+        frame.killOrderInheritanceLanceActive ? 0.9 : 0,
+        'accent',
+        9,
+        0.04,
+      ),
+    ];
+  }
   if (mode === 'party-size-scaling') {
     const rosterProgress = smooth((frame.time - spec.joinQueuedAt) / 0.38);
     const scaleProgress = smooth((frame.time - spec.scaleApplyAt) / 0.36);
@@ -10556,6 +11096,25 @@ function pointClearsThreat(spec, frame, value, radius = BLUEPRINT_PLAYER_RADIUS)
       );
     return true;
   }
+  if (mode === 'partner-revival') return true;
+  if (mode === 'kill-order-inheritance') {
+    if (frame.killOrderInheritanceWaveActive) {
+      const progress = clamp(
+        (frame.time - spec.waveActive[0]) / (spec.waveActive[1] - spec.waveActive[0]),
+      );
+      const ring = 62 + spec.waveMaxRadius * progress;
+      return (
+        Math.abs(Math.hypot(value.x - spec.boss[0], value.y - spec.boss[1]) - ring) >
+        spec.waveHalfWidth + radius
+      );
+    }
+    if (frame.killOrderInheritanceLanceActive)
+      return (
+        distanceToSegment(value, point(spec.partner), point(spec.lanceEnd)) >
+        spec.lanceHalfWidth + radius
+      );
+    return true;
+  }
   if (mode === 'party-size-scaling')
     return (
       !frame.partySizeScalingAttackActive ||
@@ -10990,6 +11549,7 @@ export function blueprintFrame(id, time) {
   else if (spec.mode === 'interface-interaction') responseProgress = 0;
   else if (spec.mode === 'world-state-variant') responseProgress = 0;
   else if (spec.mode === 'party-size-scaling') responseProgress = 0;
+  else if (spec.mode === 'partner-revival') responseProgress = 0;
   else if (spec.mode === 'knockback')
     responseProgress = phase === 0 ? 0 : phase === 1 ? smooth(action) : 1;
   else if (spec.mode === 'target-lock')
@@ -12546,6 +13106,88 @@ export function blueprintFrame(id, time) {
     };
     stride = Math.max(pulse(move), pulse(reset));
   }
+  if (spec.mode === 'partner-revival') {
+    const firstApproach = smooth(t / spec.firstDownAt);
+    const retreat = smooth((t - spec.firstDownAt) / 0.7);
+    const interruptApproach = smooth(
+      (t - spec.secondDownAt) / (spec.interruptAt - spec.secondDownAt),
+    );
+    const finishApproach = smooth(
+      (t - spec.interruptAt) / (spec.survivorDownAt - spec.interruptAt),
+    );
+    const reset = smooth((t - spec.resetAt) / (BLUEPRINT_DURATION - spec.resetAt));
+    const start = point(spec.player);
+    const first = point(spec.firstApproach);
+    const wait = point(spec.waitPoint);
+    const interrupt = point(spec.interruptPoint);
+    const finish = point(spec.finishPoint);
+    const staged =
+      t < spec.firstDownAt
+        ? { x: mix(start.x, first.x, firstApproach), y: mix(start.y, first.y, firstApproach) }
+        : t < spec.secondDownAt
+          ? { x: mix(first.x, wait.x, retreat), y: mix(first.y, wait.y, retreat) }
+          : t < spec.interruptAt
+            ? {
+                x: mix(wait.x, interrupt.x, interruptApproach),
+                y: mix(wait.y, interrupt.y, interruptApproach),
+              }
+            : {
+                x: mix(interrupt.x, finish.x, finishApproach),
+                y: mix(interrupt.y, finish.y, finishApproach),
+              };
+    player = {
+      x: mix(staged.x, start.x, reset),
+      y: mix(staged.y, start.y, reset),
+    };
+    stride = Math.max(
+      pulse(firstApproach),
+      pulse(retreat),
+      pulse(interruptApproach),
+      pulse(finishApproach),
+      pulse(reset),
+    );
+  }
+  if (spec.mode === 'kill-order-inheritance') {
+    const start = point(spec.player);
+    const first = point(spec.firstApproach);
+    const firstSafe = point(spec.firstSafe);
+    const second = point(spec.secondApproach);
+    const secondSafe = point(spec.secondSafe);
+    const moveFirst = smooth(t / spec.firstDefeatAt);
+    const dodgeWave = smooth((t - spec.firstDefeatAt) / 0.85);
+    const returnCenter = smooth((t - spec.waveActive[1]) / 0.6);
+    const moveSecond = smooth(
+      (t - spec.intermission[1]) / (spec.secondDefeatAt - spec.intermission[1]),
+    );
+    const dodgeLance = smooth((t - spec.secondDefeatAt) / 0.8);
+    const reset = smooth((t - spec.resetAt) / (BLUEPRINT_DURATION - spec.resetAt));
+    const between = { x: 290, y: 710 };
+    const staged =
+      t < spec.firstDefeatAt
+        ? { x: mix(start.x, first.x, moveFirst), y: mix(start.y, first.y, moveFirst) }
+        : t < spec.waveActive[1]
+          ? { x: mix(first.x, firstSafe.x, dodgeWave), y: mix(first.y, firstSafe.y, dodgeWave) }
+          : t < spec.intermission[1]
+            ? {
+                x: mix(firstSafe.x, between.x, returnCenter),
+                y: mix(firstSafe.y, between.y, returnCenter),
+              }
+            : t < spec.secondDefeatAt
+              ? { x: mix(between.x, second.x, moveSecond), y: mix(between.y, second.y, moveSecond) }
+              : {
+                  x: mix(second.x, secondSafe.x, dodgeLance),
+                  y: mix(second.y, secondSafe.y, dodgeLance),
+                };
+    player = { x: mix(staged.x, start.x, reset), y: mix(staged.y, start.y, reset) };
+    stride = Math.max(
+      pulse(moveFirst),
+      pulse(dodgeWave),
+      pulse(returnCenter),
+      pulse(moveSecond),
+      pulse(dodgeLance),
+      pulse(reset),
+    );
+  }
   const bossVisible =
     spec.mode === 'secondary-cues-invisibility'
       ? t < spec.vanishAt
@@ -12590,7 +13232,42 @@ export function blueprintFrame(id, time) {
           y: mix(startBoss.y, spec.mirror[1], phase === 0 ? prepare : 1),
           opacity: phase === 0 ? 0.12 + prepare * 0.53 : phase === 1 ? 0.65 : 0.65 * (1 - recover),
         }
-      : null;
+      : spec.mode === 'partner-revival'
+        ? {
+            x: spec.partner[0],
+            y: spec.partner[1],
+            opacity:
+              t < spec.firstDownAt
+                ? 1
+                : t < spec.firstReviveAt
+                  ? 0.24
+                  : t < spec.secondDownAt
+                    ? mix(0.24, 1, smooth((t - spec.firstReviveAt) / 0.3))
+                    : t < spec.retry[0]
+                      ? 0.24
+                      : 1,
+          }
+        : spec.mode === 'kill-order-inheritance'
+          ? {
+              x: spec.partner[0],
+              y: spec.partner[1],
+              opacity:
+                t < spec.firstDefeatAt
+                  ? 1
+                  : t < spec.intermission[0]
+                    ? 0.24
+                    : t < spec.intermission[1]
+                      ? mix(
+                          0.24,
+                          1,
+                          smooth(
+                            (t - spec.intermission[0]) /
+                              (spec.intermission[1] - spec.intermission[0]),
+                          ),
+                        )
+                      : 1,
+            }
+          : null;
   const predicted =
     spec.mode === 'predictive-aim'
       ? {
@@ -12838,7 +13515,9 @@ export function blueprintFrame(id, time) {
             spec.mode === 'real-time-progression' ||
             spec.mode === 'interface-interaction' ||
             spec.mode === 'world-state-variant' ||
-            spec.mode === 'party-size-scaling'
+            spec.mode === 'party-size-scaling' ||
+            spec.mode === 'partner-revival' ||
+            spec.mode === 'kill-order-inheritance'
           ? (Math.atan2(boss.y - player.y, boss.x - player.x) * 180) / Math.PI
           : spec.mode === 'active-phase'
             ? (Math.atan2(boss.y - player.y, boss.x - player.x) * 180) / Math.PI
@@ -14500,6 +15179,155 @@ export function blueprintFrame(id, time) {
     frame.playerMotion.impact = 0;
     frame.bossMotion.attack = strikePulse(t, (spec.attack[0] + spec.attack[1]) / 2, 0.58);
   }
+  if (spec.mode === 'partner-revival') {
+    const retrying = t >= spec.retry[0] && t < spec.retry[1];
+    frame.partnerRevivalState = partnerRevivalState(t);
+    frame.partnerRevivalEncounterId = spec.encounterId;
+    frame.partnerRevivalPairVersion = 1;
+    frame.partnerRevivalPartnerBossId = spec.partnerBossId;
+    frame.partnerRevivalReviverBossId = spec.reviverBossId;
+    frame.partnerRevivalAttemptId =
+      t >= spec.secondChannel[0] && t < spec.resetAt
+        ? spec.secondAttemptId
+        : t >= spec.firstChannel[0]
+          ? spec.firstAttemptId
+          : 'none';
+    frame.partnerRevivalFirstDowned = t >= spec.firstDownAt && t < spec.firstReviveAt;
+    frame.partnerRevivalSecondDowned = t >= spec.secondDownAt && t < spec.retry[0];
+    frame.partnerRevivalPartnerDowned =
+      frame.partnerRevivalFirstDowned || frame.partnerRevivalSecondDowned;
+    frame.partnerRevivalFirstChannelActive = t >= spec.firstChannel[0] && t < spec.firstChannel[1];
+    frame.partnerRevivalSecondChannelActive =
+      t >= spec.secondChannel[0] && t < spec.secondChannel[1];
+    frame.partnerRevivalChannelActive =
+      frame.partnerRevivalFirstChannelActive || frame.partnerRevivalSecondChannelActive;
+    frame.partnerRevivalChannelProgress = frame.partnerRevivalFirstChannelActive
+      ? clamp((t - spec.firstChannel[0]) / (spec.firstChannel[1] - spec.firstChannel[0]))
+      : frame.partnerRevivalSecondChannelActive
+        ? clamp((t - spec.secondChannel[0]) / (spec.secondChannel[1] - spec.secondChannel[0]))
+        : 0;
+    frame.partnerRevivalReviveSucceeded = t >= spec.firstReviveAt && t < spec.resetAt;
+    frame.partnerRevivalRevivedHealthFraction =
+      t < spec.firstDownAt || retrying
+        ? 1
+        : t >= spec.firstReviveAt && t < spec.secondDownAt
+          ? spec.reviveHealthFraction
+          : 0;
+    frame.partnerRevivalReviveGrantCount = frame.partnerRevivalReviveSucceeded ? 1 : 0;
+    frame.partnerRevivalInterrupted = t >= spec.interruptAt && t < spec.resetAt;
+    frame.partnerRevivalInterruptCount = frame.partnerRevivalInterrupted ? 1 : 0;
+    frame.partnerRevivalInterruptLockActive = t >= spec.interruptAt && t < spec.interruptLockEnd;
+    frame.partnerRevivalSynchronizedWindowActive = t >= spec.interruptAt && t < spec.completionAt;
+    frame.partnerRevivalSurvivorHealthFraction =
+      t < spec.survivorDownAt || retrying ? spec.survivorHealthFraction : 0;
+    frame.partnerRevivalSurvivorDowned = t >= spec.survivorDownAt && t < spec.retry[0];
+    frame.partnerRevivalCompletionAuthorized = t >= spec.completionAt && t < spec.retry[0];
+    frame.partnerRevivalCompletionCount = frame.partnerRevivalCompletionAuthorized ? 1 : 0;
+    frame.partnerRevivalDuplicateGrantCount = 0;
+    frame.partnerRevivalRetryStable = retrying;
+    frame.dangerActive = false;
+    frame.bossVisible = frame.partnerRevivalSurvivorDowned ? 0.24 : 1;
+    frame.playerMotion.attack = Math.max(
+      strikePulse(t, spec.firstDownAt, 0.36),
+      strikePulse(t, spec.secondDownAt, 0.36),
+      strikePulse(t, spec.interruptAt, 0.4),
+      strikePulse(t, spec.survivorDownAt, 0.42),
+    );
+    frame.playerMotion.dodge = 0;
+    frame.playerMotion.impact = 0;
+    frame.bossMotion.attack = Math.max(
+      frame.partnerRevivalFirstChannelActive ? frame.partnerRevivalChannelProgress : 0,
+      frame.partnerRevivalSecondChannelActive ? frame.partnerRevivalChannelProgress : 0,
+    );
+    frame.bossMotion.impact = Math.max(
+      strikePulse(t, spec.interruptAt, 0.34),
+      strikePulse(t, spec.survivorDownAt, 0.38),
+    );
+    frame.partnerMotion = motion({
+      idle: frame.partnerRevivalPartnerDowned ? 0.08 : 1,
+      impact: Math.max(
+        strikePulse(t, spec.firstDownAt, 0.36),
+        strikePulse(t, spec.secondDownAt, 0.36),
+      ),
+      attack: 0,
+    });
+    frame.partnerFacing = 90;
+  }
+  if (spec.mode === 'kill-order-inheritance') {
+    const firstAttempt = t >= spec.firstDefeatAt && t < spec.intermission[0];
+    const secondAttempt = t >= spec.intermission[1] && t < spec.resetAt;
+    const reset = smooth((t - spec.resetAt) / (BLUEPRINT_DURATION - spec.resetAt));
+    frame.killOrderInheritanceState = killOrderInheritanceState(t);
+    frame.killOrderInheritanceEncounterId = spec.encounterId;
+    frame.killOrderInheritancePairVersion = 1;
+    frame.killOrderInheritanceAttemptId = firstAttempt
+      ? 'inheritance-attempt-1'
+      : secondAttempt
+        ? 'inheritance-attempt-2'
+        : 'none';
+    frame.killOrderInheritanceLeftDown = t >= spec.firstDefeatAt && t < spec.intermission[1];
+    frame.killOrderInheritanceRightDown = t >= spec.secondDefeatAt && t < spec.resetAt;
+    frame.killOrderInheritanceFirstTransferActive =
+      t >= spec.firstTransfer[0] && t < spec.firstTransfer[1];
+    frame.killOrderInheritanceSecondTransferActive =
+      t >= spec.secondTransfer[0] && t < spec.secondTransfer[1];
+    frame.killOrderInheritanceSourceBossId = firstAttempt
+      ? spec.leftBossId
+      : secondAttempt && frame.killOrderInheritanceRightDown
+        ? spec.rightBossId
+        : 'none';
+    frame.killOrderInheritanceSurvivorBossId = firstAttempt
+      ? spec.rightBossId
+      : secondAttempt && frame.killOrderInheritanceRightDown
+        ? spec.leftBossId
+        : 'none';
+    frame.killOrderInheritanceInheritedPackage =
+      firstAttempt && t >= spec.firstTransfer[1]
+        ? 'rune-wave'
+        : secondAttempt && t >= spec.secondTransfer[1]
+          ? 'rune-lance'
+          : 'none';
+    frame.killOrderInheritanceGrantCount =
+      frame.killOrderInheritanceInheritedPackage === 'none' ? 0 : 1;
+    frame.killOrderInheritanceWaveSignaled = t >= spec.waveSignal[0] && t < spec.waveSignal[1];
+    frame.killOrderInheritanceWaveActive = t >= spec.waveActive[0] && t < spec.waveActive[1];
+    frame.killOrderInheritanceLanceSignaled = t >= spec.lanceSignal[0] && t < spec.lanceSignal[1];
+    frame.killOrderInheritanceLanceActive = t >= spec.lanceActive[0] && t < spec.lanceActive[1];
+    frame.killOrderInheritanceRetryTransition =
+      t >= spec.intermission[0] && t < spec.intermission[1];
+    frame.killOrderInheritanceCompletionCount = 0;
+    frame.killOrderInheritanceDuplicateGrantCount = 0;
+    frame.dangerActive =
+      frame.killOrderInheritanceWaveActive || frame.killOrderInheritanceLanceActive;
+    frame.bossVisible = frame.killOrderInheritanceRightDown
+      ? 0.24
+      : t >= spec.resetAt
+        ? mix(0.24, 1, reset)
+        : 1;
+    frame.bossMotion.attack = Math.max(
+      strikePulse(t, spec.waveActive[0], 0.65),
+      frame.killOrderInheritanceFirstTransferActive ? 0.36 : 0,
+    );
+    frame.bossMotion.impact = strikePulse(t, spec.secondDefeatAt, 0.42);
+    frame.partnerMotion = motion({
+      idle: frame.killOrderInheritanceLeftDown ? 0.08 : 1,
+      attack: Math.max(
+        strikePulse(t, spec.lanceActive[0], 0.68),
+        frame.killOrderInheritanceSecondTransferActive ? 0.36 : 0,
+      ),
+      impact: strikePulse(t, spec.firstDefeatAt, 0.42),
+    });
+    frame.partnerFacing = 45;
+    frame.playerMotion.attack = Math.max(
+      strikePulse(t, spec.firstDefeatAt, 0.42),
+      strikePulse(t, spec.secondDefeatAt, 0.42),
+    );
+    frame.playerMotion.dodge = Math.max(
+      strikePulse(t, spec.waveActive[0], 0.52),
+      strikePulse(t, spec.lanceActive[0], 0.52),
+    );
+    frame.playerMotion.impact = 0;
+  }
   if (spec.mode === 'real-time-progression') {
     frame.realTimeProgressionState = realTimeProgressionState(t);
     frame.realTimeProgressionCheckpointId = spec.checkpointId;
@@ -14884,7 +15712,9 @@ export function blueprintFrame(id, time) {
               spec.mode === 'real-time-progression' ||
               spec.mode === 'interface-interaction' ||
               spec.mode === 'world-state-variant' ||
-              spec.mode === 'party-size-scaling'
+              spec.mode === 'party-size-scaling' ||
+              spec.mode === 'partner-revival' ||
+              spec.mode === 'kill-order-inheritance'
             ? 92
             : -62),
   };
