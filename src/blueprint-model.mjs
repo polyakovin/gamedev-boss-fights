@@ -1804,6 +1804,32 @@ const SPECS = {
     leftBossId: 'echo-kern',
     rightBossId: 'kern',
   },
+  'coordinated-duo-attack': {
+    mode: 'coordinated-duo-attack',
+    boss: [390, 430],
+    partner: [165, 450],
+    leaderAnchor: [220, 500],
+    targetOffset: [85, 250],
+    player: [300, 730],
+    target: [465, 790],
+    arena: [55, 285, 450, 610],
+    safePoint: [465, 790],
+    interruptPoint: [250, 640],
+    retreatPoint: [305, 765],
+    leaderMove: [0.35, 0.95],
+    firstSignal: [1.25, 2.05],
+    leaderAttack: [2.05, 2.48],
+    followerAttack: [2.23, 2.68],
+    secondSignal: [3.15, 3.82],
+    interruptAt: 3.58,
+    plannedFollowerAt: 3.92,
+    resetAt: 5.35,
+    laneHalfWidth: 22,
+    encounterId: 'kern-linked-duo-1',
+    comboId: 'rune-pincer-1',
+    leaderBossId: 'echo-kern',
+    followerBossId: 'kern',
+  },
   'wide-swing': { mode: 'arc', boss: [225, 340], player: [380, 500], target: [420, 780] },
   lunge: {
     mode: 'lunge',
@@ -3905,6 +3931,73 @@ export function sharedGroupHealthResolve({
     completionAuthorized: completed,
     completionCount: completed && !alreadyCompleted ? 1 : 0,
     pendingBodiesCancelled: completed ? roster.size : 0,
+  });
+}
+
+export function coordinatedDuoAttackState(time) {
+  const spec = SPECS['coordinated-duo-attack'];
+  const t = localTime(time);
+  if (t < spec.leaderMove[0]) return 'paired-baseline';
+  if (t < spec.leaderMove[1]) return 'leader-sets-anchor';
+  if (t < spec.firstSignal[0]) return 'link-formed';
+  if (t < spec.leaderAttack[0]) return 'shared-target-signaled';
+  if (t < spec.followerAttack[0]) return 'leader-leg-active';
+  if (t < spec.leaderAttack[1]) return 'overlapping-legs';
+  if (t < spec.followerAttack[1]) return 'follower-leg-active';
+  if (t < spec.secondSignal[0]) return 'paired-recovery';
+  if (t < spec.interruptAt) return 'second-link-signaled';
+  if (t < spec.plannedFollowerAt) return 'leader-interrupted';
+  if (t < spec.resetAt) return 'followup-cancelled';
+  return 'explicit-retry';
+}
+
+export function coordinatedDuoAttackResolve({
+  encounterId = 'kern-linked-duo-1',
+  comboId = 'rune-pincer-1',
+  attemptId = 'duo-attempt-1',
+  leaderBossId = 'echo-kern',
+  followerBossId = 'kern',
+  leaderPosition = { x: 220, y: 500 },
+  targetOffset = { x: 85, y: 250 },
+  leaderReady = true,
+  followerReady = true,
+  leaderInterrupted = false,
+  alreadyResolved = false,
+} = {}) {
+  const pairValid = String(leaderBossId) !== String(followerBossId);
+  const anchorValid = [leaderPosition.x, leaderPosition.y, targetOffset.x, targetOffset.y].every(
+    Number.isFinite,
+  );
+  const sharedTarget = anchorValid
+    ? Object.freeze({
+        x: leaderPosition.x + targetOffset.x,
+        y: leaderPosition.y + targetOffset.y,
+      })
+    : null;
+  const committed = pairValid && anchorValid && leaderReady && followerReady && !alreadyResolved;
+  const followupAuthorized = committed && !leaderInterrupted;
+  const resolution = alreadyResolved
+    ? 'duplicate'
+    : !pairValid || !anchorValid
+      ? 'invalid-pair'
+      : !leaderReady || !followerReady
+        ? 'not-ready'
+        : leaderInterrupted
+          ? 'interrupted'
+          : 'committed';
+  return Object.freeze({
+    encounterId: String(encounterId),
+    comboId: String(comboId),
+    attemptId: String(attemptId),
+    leaderBossId: String(leaderBossId),
+    followerBossId: String(followerBossId),
+    sharedTarget,
+    committed,
+    followupAuthorized,
+    followupCount: followupAuthorized ? 1 : 0,
+    cancellationCount: resolution === 'interrupted' ? 1 : 0,
+    duplicateFollowupCount: 0,
+    resolution,
   });
 }
 
@@ -8927,6 +9020,124 @@ function primitivesFor(spec, frame) {
       ),
     ];
   }
+  if (mode === 'coordinated-duo-attack') {
+    const t = frame.time;
+    const leader = frame.decoy;
+    const target = frame.coordinatedDuoAttackTarget;
+    const firstSignal = frame.coordinatedDuoAttackFirstSignal;
+    const secondSignal = frame.coordinatedDuoAttackSecondSignal;
+    const interrupted = frame.coordinatedDuoAttackInterrupted;
+    const linkVisible = t >= spec.leaderMove[1] && t < spec.resetAt;
+    return [
+      rect(...spec.arena, 0.56, 'muted', 0.025),
+      path(
+        'M 65 773 L 175 735 L 280 772 L 390 735 L 495 773 V 804 L 390 773 L 280 807 L 175 773 L 65 804 Z M 73 855 L 280 814 L 487 855',
+        0.52,
+        'muted',
+        0,
+        0.46,
+      ),
+      rect(76, 96, 408, 100, 0.78, 'muted', 0.12),
+      circle(leader.x, leader.y, 69, 0.44, 'accent', 8, 0.025),
+      circle(spec.boss[0], spec.boss[1], 69, 0.44, 'accent', 8, 0.025),
+      line(
+        leader.x,
+        leader.y - 30,
+        spec.boss[0],
+        spec.boss[1] - 30,
+        linkVisible && !interrupted ? 0.88 : 0.22,
+        interrupted ? 'signal' : 'accent',
+        7,
+        interrupted ? '11 12' : '10 8',
+      ),
+      path(
+        `M ${target.x} ${target.y - 33} L ${target.x + 28} ${target.y} L ${target.x} ${target.y + 33} L ${target.x - 28} ${target.y} Z`,
+        firstSignal || secondSignal ? 0.89 : 0.28,
+        firstSignal || secondSignal ? 'signal' : 'accent',
+        8,
+        0.04,
+      ),
+      line(
+        leader.x,
+        leader.y,
+        target.x,
+        target.y,
+        firstSignal || secondSignal ? 0.82 : 0,
+        'signal',
+        8,
+        '15 10',
+      ),
+      line(
+        spec.boss[0],
+        spec.boss[1],
+        target.x,
+        target.y,
+        firstSignal || (secondSignal && !interrupted) ? 0.82 : 0,
+        'signal',
+        8,
+        '15 10',
+      ),
+      line(
+        leader.x,
+        leader.y,
+        target.x,
+        target.y,
+        frame.coordinatedDuoAttackLeaderActive ? 0.94 : 0,
+        'signal',
+        spec.laneHalfWidth * 2,
+      ),
+      line(
+        spec.boss[0],
+        spec.boss[1],
+        target.x,
+        target.y,
+        frame.coordinatedDuoAttackFollowerActive ? 0.94 : 0,
+        'accent',
+        spec.laneHalfWidth * 2,
+      ),
+      circle(
+        target.x,
+        target.y,
+        52,
+        frame.coordinatedDuoAttackLeaderActive || frame.coordinatedDuoAttackFollowerActive
+          ? 0.87
+          : 0,
+        'signal',
+        11,
+        0.035,
+      ),
+      line(
+        frame.player.x - 10,
+        frame.player.y - 50,
+        leader.x + 18,
+        leader.y + 18,
+        strikePulse(t, spec.interruptAt, 0.46),
+        'safe',
+        13,
+      ),
+      circle(leader.x, leader.y, 88, interrupted ? 0.86 : 0, 'safe', 10, 0.035),
+      path(
+        `M ${leader.x - 24} ${leader.y - 24} L ${leader.x + 24} ${leader.y + 24} M ${leader.x + 24} ${leader.y - 24} L ${leader.x - 24} ${leader.y + 24}`,
+        interrupted ? 0.94 : 0,
+        'safe',
+        9,
+      ),
+      path(
+        `M ${target.x - 30} ${target.y - 30} L ${target.x + 30} ${target.y + 30} M ${target.x + 30} ${target.y - 30} L ${target.x - 30} ${target.y + 30}`,
+        frame.coordinatedDuoAttackFollowupCancelled ? 0.9 : 0,
+        'safe',
+        8,
+      ),
+      circle(
+        280,
+        645,
+        82 * smooth((t - spec.resetAt) / (BLUEPRINT_DURATION - spec.resetAt)),
+        frame.coordinatedDuoAttackRetry ? 0.74 : 0,
+        'accent',
+        7,
+      ),
+    ];
+  }
   if (mode === 'shared-group-health') {
     const t = frame.time;
     const hitLeft = Math.max(
@@ -11246,6 +11457,15 @@ function pointClearsThreat(spec, frame, value, radius = BLUEPRINT_PLAYER_RADIUS)
     return true;
   }
   if (mode === 'partner-revival') return true;
+  if (mode === 'coordinated-duo-attack') {
+    const target = frame.coordinatedDuoAttackTarget;
+    return (
+      (!frame.coordinatedDuoAttackLeaderActive ||
+        distanceToSegment(value, frame.decoy, target) > spec.laneHalfWidth + radius) &&
+      (!frame.coordinatedDuoAttackFollowerActive ||
+        distanceToSegment(value, point(spec.boss), target) > spec.laneHalfWidth + radius)
+    );
+  }
   if (mode === 'shared-group-health') {
     if (frame.sharedGroupHealthFirstAttack)
       return (
@@ -13394,6 +13614,26 @@ export function blueprintFrame(id, time) {
       pulse(retry),
     );
   }
+  if (spec.mode === 'coordinated-duo-attack') {
+    const start = point(spec.player);
+    const safe = point(spec.safePoint);
+    const interrupt = point(spec.interruptPoint);
+    const retreat = point(spec.retreatPoint);
+    const escape = smooth((t - 0.72) / 1.1);
+    const approach = smooth(
+      (t - spec.followerAttack[1]) / (spec.interruptAt - spec.followerAttack[1]),
+    );
+    const withdraw = smooth((t - spec.interruptAt) / 1.02);
+    const retry = smooth((t - spec.resetAt) / (BLUEPRINT_DURATION - spec.resetAt));
+    const staged =
+      t < spec.followerAttack[1]
+        ? { x: mix(start.x, safe.x, escape), y: mix(start.y, safe.y, escape) }
+        : t < spec.interruptAt
+          ? { x: mix(safe.x, interrupt.x, approach), y: mix(safe.y, interrupt.y, approach) }
+          : { x: mix(interrupt.x, retreat.x, withdraw), y: mix(interrupt.y, retreat.y, withdraw) };
+    player = { x: mix(staged.x, start.x, retry), y: mix(staged.y, start.y, retry) };
+    stride = Math.max(pulse(escape), pulse(approach), pulse(withdraw), pulse(retry));
+  }
   const bossVisible =
     spec.mode === 'secondary-cues-invisibility'
       ? t < spec.vanishAt
@@ -13490,7 +13730,29 @@ export function blueprintFrame(id, time) {
                       ? 1
                       : 0.16,
               }
-            : null;
+            : spec.mode === 'coordinated-duo-attack'
+              ? {
+                  x: mix(
+                    mix(
+                      spec.partner[0],
+                      spec.leaderAnchor[0],
+                      smooth((t - spec.leaderMove[0]) / (spec.leaderMove[1] - spec.leaderMove[0])),
+                    ),
+                    spec.partner[0],
+                    smooth((t - spec.resetAt) / (BLUEPRINT_DURATION - spec.resetAt)),
+                  ),
+                  y: mix(
+                    mix(
+                      spec.partner[1],
+                      spec.leaderAnchor[1],
+                      smooth((t - spec.leaderMove[0]) / (spec.leaderMove[1] - spec.leaderMove[0])),
+                    ),
+                    spec.partner[1],
+                    smooth((t - spec.resetAt) / (BLUEPRINT_DURATION - spec.resetAt)),
+                  ),
+                  opacity: 1,
+                }
+              : null;
   const predicted =
     spec.mode === 'predictive-aim'
       ? {
@@ -13741,7 +14003,8 @@ export function blueprintFrame(id, time) {
             spec.mode === 'party-size-scaling' ||
             spec.mode === 'partner-revival' ||
             spec.mode === 'kill-order-inheritance' ||
-            spec.mode === 'shared-group-health'
+            spec.mode === 'shared-group-health' ||
+            spec.mode === 'coordinated-duo-attack'
           ? (Math.atan2(boss.y - player.y, boss.x - player.x) * 180) / Math.PI
           : spec.mode === 'active-phase'
             ? (Math.atan2(boss.y - player.y, boss.x - player.x) * 180) / Math.PI
@@ -15615,6 +15878,47 @@ export function blueprintFrame(id, time) {
     );
     frame.playerMotion.impact = 0;
   }
+  if (spec.mode === 'coordinated-duo-attack') {
+    const secondAttempt = t >= spec.secondSignal[0] && t < spec.resetAt;
+    const interrupted = secondAttempt && t >= spec.interruptAt;
+    const ledger = coordinatedDuoAttackResolve({
+      encounterId: spec.encounterId,
+      comboId: spec.comboId,
+      attemptId: secondAttempt ? 'duo-attempt-2' : 'duo-attempt-1',
+      leaderBossId: spec.leaderBossId,
+      followerBossId: spec.followerBossId,
+      leaderPosition: frame.decoy,
+      targetOffset: point(spec.targetOffset),
+      leaderInterrupted: interrupted,
+    });
+    frame.coordinatedDuoAttackState = coordinatedDuoAttackState(t);
+    frame.coordinatedDuoAttackTarget = ledger.sharedTarget;
+    frame.coordinatedDuoAttackEncounterId = ledger.encounterId;
+    frame.coordinatedDuoAttackAttemptId = ledger.attemptId;
+    frame.coordinatedDuoAttackResolution = ledger.resolution;
+    frame.coordinatedDuoAttackFirstSignal = t >= spec.firstSignal[0] && t < spec.leaderAttack[0];
+    frame.coordinatedDuoAttackSecondSignal = t >= spec.secondSignal[0] && t < spec.interruptAt;
+    frame.coordinatedDuoAttackLeaderActive = t >= spec.leaderAttack[0] && t < spec.leaderAttack[1];
+    frame.coordinatedDuoAttackFollowerActive =
+      t >= spec.followerAttack[0] && t < spec.followerAttack[1];
+    frame.coordinatedDuoAttackInterrupted = interrupted;
+    frame.coordinatedDuoAttackFollowupCancelled = t >= spec.plannedFollowerAt && t < spec.resetAt;
+    frame.coordinatedDuoAttackFollowupCount =
+      secondAttempt || t >= spec.resetAt ? 0 : Number(t >= spec.followerAttack[0]);
+    frame.coordinatedDuoAttackRetry = t >= spec.resetAt;
+    frame.dangerActive =
+      frame.coordinatedDuoAttackLeaderActive || frame.coordinatedDuoAttackFollowerActive;
+    frame.partnerMotion = motion({
+      idle: 1,
+      attack: strikePulse(t, spec.leaderAttack[0], 0.6),
+      impact: strikePulse(t, spec.interruptAt, 0.5),
+    });
+    frame.partnerFacing = 45;
+    frame.bossMotion.attack = strikePulse(t, spec.followerAttack[0], 0.62);
+    frame.playerMotion.attack = strikePulse(t, spec.interruptAt, 0.5);
+    frame.playerMotion.dodge = strikePulse(t, spec.leaderAttack[0], 0.7);
+    frame.playerMotion.impact = 0;
+  }
   if (spec.mode === 'real-time-progression') {
     frame.realTimeProgressionState = realTimeProgressionState(t);
     frame.realTimeProgressionCheckpointId = spec.checkpointId;
@@ -16002,7 +16306,8 @@ export function blueprintFrame(id, time) {
               spec.mode === 'party-size-scaling' ||
               spec.mode === 'partner-revival' ||
               spec.mode === 'kill-order-inheritance' ||
-              spec.mode === 'shared-group-health'
+              spec.mode === 'shared-group-health' ||
+              spec.mode === 'coordinated-duo-attack'
             ? 92
             : -62),
   };

@@ -1,0 +1,138 @@
+{
+  "title": "Ataque coordinado de dos jefes",
+  "subtitle": "Convierte dos ataques en una acción compuesta y legible",
+  "variant": "Un objetivo común · dos golpes solapados · continuación cancelable",
+  "summary": "Dos jefes atacan un objetivo común por turnos; interrumpir al líder cancela el golpe dependiente.",
+  "overview": "Un ataque coordinado es una acción de dos cuerpos. El líder fija una posición, ambos anuncian el mismo objetivo y sus golpes se solapan en orden. El jugador lee un patrón compuesto. Si interrumpe al líder antes de la continuación, el golpe pendiente del compañero se cancela de forma visible y una sola vez.",
+  "learning": "Define IDs de pareja, combo e intento, posición y objetivo compartido, preparación, orden de avisos y golpes, ruta segura, prioridad de interrupción, cancelación, reinicio, accesibilidad y telemetría.",
+  "category": "Relaciones entre varios jefes",
+  "readTime": "10 min",
+  "demo": {
+    "title": "Lee la pinza de Kern e interrumpe el segundo intento",
+    "timeline": "Cronología del ataque coordinado",
+    "step": "Identifica el objetivo, esquiva ambos carriles e interrumpe al líder",
+    "phaseNames": [
+      "Fijar un objetivo común",
+      "Ejecutar golpes solapados",
+      "Cancelar la continuación"
+    ],
+    "phaseDescriptions": [
+      "El eco izquierdo llega a una posición y una runa lo une a Kern. Desde los 1,25 s, ambos carriles previstos convergen en el mismo rombo. Tavi llega a una zona libre para todo su cuerpo.",
+      "El eco empieza a los 2,05 s y Kern lo sigue a los 2,23 s; los golpes se solapan hasta los 2,48 s. Tavi permanece fuera de ambos carriles y la pareja se recupera.",
+      "La pareja anuncia otra vez el objetivo a los 3,15 s. Tavi interrumpe al eco a los 3,58 s, antes del golpe previsto de Kern a los 3,92 s. Se rompe el vínculo, se tacha el golpe cancelado y el reintento comienza a los 5,35 s."
+    ],
+    "boss": "Jefe",
+    "player": "Jugador",
+    "danger": "Si cada jefe sigue a Tavi por su cuenta, el objetivo común promete una salida que no existe. Fija un objetivo y prueba la unión de los dos carriles. Detener la animación del líder no basta si una llamada diferida genera la zona dañina del compañero. Vacía la cola y comprueba que no haya continuaciones en el intento interrumpido.",
+    "locked": "Guarda IDs de encuentro, intento, líder, compañero y combo. Calcula un objetivo a partir de la posición fija del líder. Comprueba que ambos estén listos y programa los golpes en una sola cronología; no permitas que cada jefe reajuste su puntería por separado.",
+    "safe": "Muestra el vínculo, el objetivo y la anchura de ambos carriles antes de activar el daño. El líder actúa primero y el compañero entra después; deja una ruta segura para todo el cuerpo. El aviso y la zona dañina deben coincidir.",
+    "reducedMotion": "Con movimiento reducido se desactiva la reproducción automática. Examina 0,35; 0,95; 1,25; 2,05; 2,23; 2,48; 2,68; 3,15; 3,58; 3,92 y 5,35 s.",
+    "diagramDescription": "El eco izquierdo llega a una posición y una runa lo une a Kern. Desde los 1,25 s, ambos carriles previstos convergen en el mismo rombo. Tavi llega a una zona libre para todo su cuerpo. El eco empieza a los 2,05 s y Kern lo sigue a los 2,23 s; los golpes se solapan hasta los 2,48 s. Tavi permanece fuera de ambos carriles y la pareja se recupera. La pareja anuncia otra vez el objetivo a los 3,15 s. Tavi interrumpe al eco a los 3,58 s, antes del golpe previsto de Kern a los 3,92 s. Se rompe el vínculo, se tacha el golpe cancelado y el reintento comienza a los 5,35 s."
+  },
+  "steps": [
+    {
+      "title": "¿Qué une los dos golpes?",
+      "body": "Guarda IDs de encuentro, intento, líder, compañero y combo. Calcula un objetivo a partir de la posición fija del líder. Comprueba que ambos estén listos y programa los golpes en una sola cronología; no permitas que cada jefe reajuste su puntería por separado."
+    },
+    {
+      "title": "¿Cómo se lee el solapamiento?",
+      "body": "Muestra el vínculo, el objetivo y la anchura de ambos carriles antes de activar el daño. El líder actúa primero y el compañero entra después; deja una ruta segura para todo el cuerpo. El aviso y la zona dañina deben coincidir."
+    },
+    {
+      "title": "¿Qué pasa tras la interrupción?",
+      "body": "La interrupción tiene prioridad sobre la continuación pendiente. Cancela la acción y la zona dañina del compañero usando los IDs del combo e intento. Muestra el vínculo roto y evita repetir el golpe. El reintento debe empezar con una cola limpia."
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "Puntería independiente disfrazada de coordinación",
+      "body": "Si cada jefe sigue a Tavi por su cuenta, el objetivo común promete una salida que no existe. Fija un objetivo y prueba la unión de los dos carriles."
+    },
+    {
+      "title": "El golpe cancelado todavía hace daño",
+      "body": "Detener la animación del líder no basta si una llamada diferida genera la zona dañina del compañero. Vacía la cola y comprueba que no haya continuaciones en el intento interrumpido."
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "Ajusta el solapamiento",
+      "body": "Mide juntos el aviso, el intervalo entre inicios, la duración compartida, la anchura y el trayecto hasta la zona segura."
+    },
+    {
+      "title": "Haz visibles los papeles",
+      "body": "La pose, dirección del vínculo o un símbolo estable deben distinguir al líder del seguidor, sin depender solo del color."
+    },
+    {
+      "title": "Prueba eventos simultáneos",
+      "body": "Prueba la interrupción en el mismo fotograma que la continuación, la ausencia del compañero, llamadas repetidas y el reintento. Registra objetivo, golpes, interrupción y cancelación."
+    }
+  ],
+  "story": {
+    "title": "Una runa une dos golpes de piedra",
+    "body": "El eco de Kern se planta y le pasa una runa brillante. Dos brazos de piedra apuntan a la misma marca. Tavi sale de las líneas convergentes y rompe la runa antes del siguiente ataque doble."
+  },
+  "adaptation": {
+    "title": "Expón el orden sin movimiento",
+    "body": "Nombra al líder, al compañero y al objetivo; distingue los carriles anunciados de los activos con forma y texto. Anuncia la cancelación. El control por teclado y el movimiento reducido deben mostrar los mismos estados."
+  },
+  "distinction": {
+    "title": "Un combo no es una coincidencia de ataques",
+    "body": "Dos enemigos independientes pueden atacar a la vez por casualidad. Aquí comparten objetivo, orden y dependencia: interrumpir al líder cancela la acción siguiente del compañero. La salud compartida es otra regla."
+  },
+  "lensNotes": [
+    {
+      "id": "context-and-sequence",
+      "body": "La posición del líder establece aviso, solapamiento, recuperación e interrupción del segundo intento."
+    },
+    {
+      "id": "counterplay",
+      "body": "Una zona segura para todo el cuerpo y una interrupción temprana ofrecen respuestas distintas."
+    },
+    {
+      "id": "progress-clarity",
+      "body": "El vínculo roto y el golpe tachado confirman el cambio de estado."
+    },
+    {
+      "id": "risk-reward",
+      "body": "Acercarse al líder cambia distancia segura por la cancelación del golpe siguiente."
+    },
+    {
+      "id": "difficulty-rhythm",
+      "body": "El desfase entre golpes crea un ritmo doble con recuperación conjunta."
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "Cuphead",
+      "boss": "Ribby and Croaks",
+      "screenshot": "https://i.ytimg.com/vi/w55yfSl5NUc/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=w55yfSl5NUc&t=1s",
+      "video": "https://www.youtube.com/watch?v=w55yfSl5NUc&t=1s",
+      "videoDurationSeconds": 126,
+      "body": "Los hermanos rana ocupan lados opuestos y combinan presión al inicio. Es una referencia de posición conjunta, no prueba de una cancelación literal al interrumpir a uno."
+    },
+    {
+      "dimension": "2D",
+      "game": "Hollow Knight",
+      "boss": "Mantis Lords",
+      "screenshot": "https://i.ytimg.com/vi/VG3h6uVtWyY/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=VG3h6uVtWyY&t=128s",
+      "video": "https://www.youtube.com/watch?v=VG3h6uVtWyY&t=128s",
+      "videoDurationSeconds": 153,
+      "body": "Más adelante, dos señores mantis atacan desde lados opuestos con un ritmo ordenado. Sus golpes ilustran orden y solapamiento; la interrupción propuesta aquí es una variante de diseño."
+    },
+    {
+      "dimension": "3D",
+      "game": "Lies of P: Overture",
+      "boss": "Markiona, Puppeteer of Death",
+      "screenshot": "https://i.ytimg.com/vi/Z91me1pklmY/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=Z91me1pklmY&t=63s",
+      "video": "https://www.youtube.com/watch?v=Z91me1pklmY&t=63s",
+      "videoDurationSeconds": 205,
+      "body": "Markiona combate junto a una marioneta controlada. El vínculo y la presión alternada muestran papeles de mando y continuación en 3D; el objetivo fijo y la cancelación son decisiones propuestas."
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

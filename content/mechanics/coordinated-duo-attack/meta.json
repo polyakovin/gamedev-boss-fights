@@ -1,0 +1,34 @@
+{
+  "id": "coordinated-duo-attack",
+  "number": 113,
+  "published": true,
+  "sourceLocale": "en",
+  "contentVersion": 1,
+  "animation": "coordinated-duo-attack",
+  "lenses": [
+    "context-and-sequence",
+    "counterplay",
+    "progress-clarity",
+    "risk-reward",
+    "difficulty-rhythm"
+  ],
+  "related": ["shared-group-health", "partner-revival", "attack-combination", "converging-threats"],
+  "sources": [
+    {
+      "title": "Ribby and Croaks — Cuphead Wiki",
+      "url": "https://cuphead.wiki.gg/wiki/Ribby_and_Croaks"
+    },
+    {
+      "title": "Mantis Lords — Hollow Knight Wiki",
+      "url": "https://hollowknight.wiki/w/Mantis_Lords"
+    },
+    {
+      "title": "Markiona, Puppeteer of Death — Neoseeker",
+      "url": "https://www.neoseeker.com/lies-of-p/Bosses/Markonia%2C_Puppeteer_of_Death"
+    },
+    {
+      "title": "Boss Up: Boss Battle Design",
+      "url": "https://media.gdcvault.com/gdc2018/presentations/Keren_Itay_BossUp.pdf"
+    }
+  ]
+}

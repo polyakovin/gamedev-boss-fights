@@ -81,6 +81,8 @@ import {
   killOrderInheritanceResolve,
   sharedGroupHealthState,
   sharedGroupHealthResolve,
+  coordinatedDuoAttackState,
+  coordinatedDuoAttackResolve,
   counterStanceOutcome,
   counterStanceState,
   blueprintFrame,
@@ -108,8 +110,8 @@ import {
   renderBlueprintThumbnail,
 } from '../lib/blueprint-view.mjs';
 
-test('all 106 promoted lesson animations have distinct rule modes and complete moving frames', () => {
-  assert.equal(BLUEPRINT_MECHANIC_IDS.length, 106);
+test('all 107 promoted lesson animations have distinct rule modes and complete moving frames', () => {
+  assert.equal(BLUEPRINT_MECHANIC_IDS.length, 107);
   const modes = new Set();
   for (const id of BLUEPRINT_MECHANIC_IDS) {
     for (let time = 0; time <= BLUEPRINT_DURATION; time += 0.1) {
@@ -130,7 +132,7 @@ test('all 106 promoted lesson animations have distinct rule modes and complete m
           assert.ok(Number.isFinite(value), `${id} has an invalid ${primitive.type}`);
     }
   }
-  assert.equal(modes.size, 106);
+  assert.equal(modes.size, 107);
 });
 
 test('every blueprint exposes signal, committed action, and recovery without player teleports', () => {
@@ -185,7 +187,8 @@ test('every blueprint exposes signal, committed action, and recovery without pla
       id !== 'party-size-scaling' &&
       id !== 'partner-revival' &&
       id !== 'kill-order-inheritance' &&
-      id !== 'shared-group-health'
+      id !== 'shared-group-health' &&
+      id !== 'coordinated-duo-attack'
     )
       assert.equal(blueprintFrame(id, 3).dangerActive, true, id);
     assert.equal(blueprintFrame(id, 3).playerSafe, true, id);
@@ -290,6 +293,7 @@ test('every damaging promoted animation derives safety from its own active geome
       id !== 'partner-revival' &&
       id !== 'kill-order-inheritance' &&
       id !== 'shared-group-health' &&
+      id !== 'coordinated-duo-attack' &&
       id !== 'part-break' &&
       id !== 'counter-stance' &&
       id !== 'absorption-power-up' &&
@@ -4863,5 +4867,50 @@ test('shared group health accepts one damage ledger across changing body presenc
   assert.match(
     renderBlueprintThumbnail(id, 'test-shared-group-health'),
     /data-blueprint-preview="shared-group-health"/,
+  );
+});
+
+test('coordinated duo attack shares an anchor-derived target and cancels a dependent leg', () => {
+  const id = 'coordinated-duo-attack';
+  assert.deepEqual(
+    [0, 0.5, 1, 1.5, 2.1, 2.3, 2.55, 2.9, 3.3, 3.7, 4, 5.4].map(coordinatedDuoAttackState),
+    [
+      'paired-baseline',
+      'leader-sets-anchor',
+      'link-formed',
+      'shared-target-signaled',
+      'leader-leg-active',
+      'overlapping-legs',
+      'follower-leg-active',
+      'paired-recovery',
+      'second-link-signaled',
+      'leader-interrupted',
+      'followup-cancelled',
+      'explicit-retry',
+    ],
+  );
+  const ready = coordinatedDuoAttackResolve();
+  assert.deepEqual(ready.sharedTarget, { x: 305, y: 750 });
+  assert.equal(ready.followupCount, 1);
+  assert.equal(coordinatedDuoAttackResolve({ leaderInterrupted: true }).followupCount, 0);
+  assert.equal(coordinatedDuoAttackResolve({ leaderInterrupted: true }).cancellationCount, 1);
+  assert.equal(coordinatedDuoAttackResolve({ alreadyResolved: true }).resolution, 'duplicate');
+  assert.equal(coordinatedDuoAttackResolve({ followerReady: false }).resolution, 'not-ready');
+  assert.equal(
+    coordinatedDuoAttackResolve({ followerBossId: 'echo-kern' }).resolution,
+    'invalid-pair',
+  );
+  assert.deepEqual(blueprintFrame(id, 2.3).coordinatedDuoAttackTarget, { x: 305, y: 750 });
+  assert.equal(blueprintFrame(id, 2.3).coordinatedDuoAttackFollowupCount, 1);
+  assert.equal(blueprintFrame(id, 3.58).coordinatedDuoAttackResolution, 'interrupted');
+  assert.equal(blueprintFrame(id, 4).coordinatedDuoAttackFollowupCancelled, true);
+  assert.equal(blueprintFrame(id, 4).coordinatedDuoAttackFollowupCount, 0);
+  assert.equal(blueprintFrame(id, 5.5).coordinatedDuoAttackFollowupCount, 0);
+  for (let t = 2.05; t < 2.68; t += 0.02) assert.equal(blueprintFrame(id, t).playerSafe, true);
+  assert.equal(blueprintPointSafe(id, 2.3, { x: 305, y: 750 }), false);
+  assert.deepEqual(blueprintFrame(id, 0).player, blueprintFrame(id, 6).player);
+  assert.match(
+    renderBlueprintThumbnail(id, 'test-coordinated-duo-attack'),
+    /data-blueprint-preview="coordinated-duo-attack"/,
   );
 });

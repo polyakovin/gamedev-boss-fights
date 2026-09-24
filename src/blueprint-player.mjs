@@ -1134,6 +1134,20 @@ export function initializeBlueprint(widget) {
       );
       widget.dataset.blueprintSharedGroupHealthRetry = String(frame.sharedGroupHealthRetry);
     }
+    if (mechanicId === 'coordinated-duo-attack') {
+      widget.dataset.blueprintCoordinatedDuoAttack = frame.coordinatedDuoAttackState;
+      widget.dataset.blueprintCoordinatedDuoAttackEncounterId =
+        frame.coordinatedDuoAttackEncounterId;
+      widget.dataset.blueprintCoordinatedDuoAttackAttemptId = frame.coordinatedDuoAttackAttemptId;
+      widget.dataset.blueprintCoordinatedDuoAttackResolution = frame.coordinatedDuoAttackResolution;
+      widget.dataset.blueprintCoordinatedDuoAttackFollowupCount = String(
+        frame.coordinatedDuoAttackFollowupCount,
+      );
+      widget.dataset.blueprintCoordinatedDuoAttackFollowupCancelled = String(
+        frame.coordinatedDuoAttackFollowupCancelled,
+      );
+      widget.dataset.blueprintCoordinatedDuoAttackRetry = String(frame.coordinatedDuoAttackRetry);
+    }
     boss.setAttribute(
       'transform',
       `translate(${frame.boss.x} ${frame.boss.y})${frame.bossRotation ? ` rotate(${frame.bossRotation})` : ''} scale(${frame.bossScale})`,

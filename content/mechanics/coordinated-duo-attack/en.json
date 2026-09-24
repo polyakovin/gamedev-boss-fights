@@ -1,0 +1,138 @@
+{
+  "title": "Coordinated duo attack",
+  "subtitle": "Make two bosses execute one legible composite action",
+  "variant": "One shared target · overlapping legs · cancellable follow-up",
+  "summary": "Two bosses commit to a shared target and timed attack legs; interrupting the leader cancels the dependent follow-up.",
+  "overview": "A coordinated duo attack is one encounter action owned by two bodies. A leader sets an anchor, both bosses advertise the same target, then their attack legs overlap in order. The player reads one pattern, not unrelated hazards. Interrupting the leader before a follow-up visibly cancels the partner's queued leg exactly once.",
+  "learning": "Specify pair and combo identities, leader anchor, target derivation, readiness, signal order, leg overlap, safe route, interruption priority, follow-up cancellation, reset, accessibility, and event telemetry.",
+  "category": "Multi-boss relationships",
+  "readTime": "10 min",
+  "demo": {
+    "title": "Read Kern's linked pincer and break the second attempt",
+    "timeline": "Coordinated duo attack timeline",
+    "step": "See the shared target, clear two attack legs, interrupt the leader",
+    "phaseNames": [
+      "Establish one shared target",
+      "Execute the overlapping pair",
+      "Cancel the dependent follow-up"
+    ],
+    "phaseDescriptions": [
+      "The left echo moves to an anchor, and a rune connects it to Kern. Both preview lanes converge on the same diamond at 1.25 seconds. Tavi moves to a full-body safe pocket before either lane activates.",
+      "The echo's leg begins at 2.05 seconds; Kern's follows at 2.23, overlapping until 2.48. Tavi stays outside both widths. Only one follow-up is authorized for this attempt, and both bodies recover together.",
+      "The pair signals another shared target at 3.15. Tavi reaches the echo and interrupts the leader at 3.58, before the partner's scheduled 3.92 follow-up. The tether breaks, the queued leg is crossed out, and retry at 5.35 restores the pair."
+    ],
+    "boss": "Boss",
+    "player": "Player",
+    "danger": "Two independently aimed attacks can erase the safe route; an interrupted leader can leave an invisible queued partner hit or duplicate the follow-up",
+    "locked": "Pair ID, attempt ID, anchor-derived target, ready state, ordered leg times, interruption priority, one follow-up authorization, cancellation, and retry reset belong to encounter logic",
+    "safe": "Preview one common target and both lane widths, retain a full-body clear pocket, make the overlap readable, and cancel the partner's dependent leg when the leader is interrupted",
+    "reducedMotion": "Reduced motion disables autoplay. Scrub through 0.35, 0.95, 1.25, 1.70, 2.05, 2.23, 2.48, 2.68, 3.15, 3.58, 3.92, 4.40, and 5.35 seconds.",
+    "diagramDescription": "Two stone bosses link with a rune and preview two lanes to one diamond target. Tavi moves into a clear side pocket. The leader attacks, then Kern's lane overlaps it. On a second warning Tavi interrupts the leader; its tether breaks and a crossed-out target marks the cancelled partner follow-up before a visible reset."
+  },
+  "steps": [
+    {
+      "title": "What makes the pair one action?",
+      "body": "Create a combo record with encounter, attempt, leader, follower, anchor, and target offset. Resolve one target from the leader's committed anchor; do not let each body silently retarget. Check both bodies' readiness before the combo starts, then schedule their legs from one timeline."
+    },
+    {
+      "title": "How does the player read the overlap?",
+      "body": "Show the pair link, target, and both future lane widths before either hitbox becomes active. Let the leader start first and overlap the follower briefly, but keep a full-body clear route. Preview and damage geometry must agree; the partner cannot fire from a different aim point at the last moment."
+    },
+    {
+      "title": "What happens when the leader is stopped?",
+      "body": "Prioritize interruption over the queued follow-up. Cancel the pending partner action by combo and attempt ID, remove its hitbox, and show a distinct broken-link cue. Do not replay or duplicate a cancelled leg. An explicit retry creates a new attempt with both bodies ready and no stale queue."
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "Independent targeting masquerades as coordination",
+      "body": "If each boss tracks Tavi separately, the common target promises a safe route that does not exist. Freeze a shared target and test the union of both active lane volumes against the player's full-body clearance."
+    },
+    {
+      "title": "A cancelled follow-up still deals damage",
+      "body": "Stopping the leader's animation is insufficient if the partner's delayed callback still spawns a hitbox. Key the queue to combo and attempt IDs, invalidate it on interruption, and assert a zero follow-up count for that attempt."
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "Tune overlap, not just isolated attacks",
+      "body": "Measure preview duration, the gap between leg starts, overlap length, lane width, and travel to the safe pocket together. The interesting decision is how to leave the union of both lanes while preserving a later interrupt opportunity."
+    },
+    {
+      "title": "Make roles visible",
+      "body": "Use pose, tether direction, or a stable symbol to identify the anchor-setting leader and following boss. A temporary stagger must not look like an unexplained target change. Keep role cues understandable without relying on color alone."
+    },
+    {
+      "title": "Test simultaneous events",
+      "body": "Simulate interruption on the exact follow-up frame, a removed follower during wind-up, repeated callbacks, retries, and both bodies recovering together. Log encounter, combo, attempt, target, leg start, interruption, cancellation, and accepted follow-up count."
+    }
+  ],
+  "story": {
+    "title": "One rune joins two stone strikes",
+    "body": "Kern's echo plants its feet and passes a bright rune to Kern. Two stone arms point toward one mark on the floor. Tavi slips outside the converging lines, then breaks the echo's rune before the next paired strike can form."
+  },
+  "adaptation": {
+    "title": "Expose sequence and cancellation without motion",
+    "body": "Name the leader and follower in text, label the shared target, distinguish preview from active lanes by shape and text, and announce a cancelled follow-up. Keyboard scrubbing and reduced-motion frames must reveal the same ordered states."
+  },
+  "distinction": {
+    "title": "A linked combo is not simply two bosses attacking",
+    "body": "Two independent enemies may happen to overlap. A coordinated duo attack has a shared target, ordered leg schedule, and explicit dependency: when the leader is interrupted, the follower's queued leg is cancelled. Shared group health is a separate progress rule and is not required."
+  },
+  "lensNotes": [
+    {
+      "id": "context-and-sequence",
+      "body": "The leader's anchor and shared target establish a readable setup, overlap, recovery, and second-attempt interruption sequence."
+    },
+    {
+      "id": "counterplay",
+      "body": "A full-body safe pocket and a pre-follow-up interrupt offer two distinct responses to the same composite threat."
+    },
+    {
+      "id": "progress-clarity",
+      "body": "A visible broken tether and crossed-out follow-up confirm that the interrupt changed encounter state."
+    },
+    {
+      "id": "risk-reward",
+      "body": "Closing in to interrupt the leader trades distance and safety for cancellation of the partner's queued strike."
+    },
+    {
+      "id": "difficulty-rhythm",
+      "body": "The leg offset and overlap create a double beat, while paired recovery prevents continuous pressure."
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "Cuphead",
+      "boss": "Ribby and Croaks",
+      "screenshot": "https://i.ytimg.com/vi/w55yfSl5NUc/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=w55yfSl5NUc&t=1s",
+      "video": "https://www.youtube.com/watch?v=w55yfSl5NUc&t=1s",
+      "videoDurationSeconds": 126,
+      "body": "The brothers occupy opposite sides and combine their early-phase pressure. This is a paired-positioning reference, not evidence that the game literally cancels a partner action when the other frog is interrupted."
+    },
+    {
+      "dimension": "2D",
+      "game": "Hollow Knight",
+      "boss": "Mantis Lords",
+      "screenshot": "https://i.ytimg.com/vi/VG3h6uVtWyY/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=VG3h6uVtWyY&t=128s",
+      "video": "https://www.youtube.com/watch?v=VG3h6uVtWyY&t=128s",
+      "videoDurationSeconds": 153,
+      "body": "In the later phase, two lords attack in an ordered rhythm from opposite sides. Their repeated paired beats illustrate how role order and overlap affect readability, though this lesson's interrupt rule is an original design variant."
+    },
+    {
+      "dimension": "3D",
+      "game": "Lies of P: Overture",
+      "boss": "Markiona, Puppeteer of Death",
+      "screenshot": "https://i.ytimg.com/vi/Z91me1pklmY/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=Z91me1pklmY&t=63s",
+      "video": "https://www.youtube.com/watch?v=Z91me1pklmY&t=63s",
+      "videoDurationSeconds": 205,
+      "body": "Markiona fights alongside a controlled puppet. Their tether and timed pressure provide a 3D reference for communicating command and follow-up roles; the exact anchor-derived target and cancellation rule here are proposed implementation choices."
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}
