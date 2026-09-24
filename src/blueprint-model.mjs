@@ -3504,6 +3504,34 @@ function primitivesFor(spec, frame) {
       strikePulse(frame.time, spec.burstCopiedAt, 0.34),
     );
     return [
+      path('M 36 94 H 524 V 878 H 36 Z M 56 278 H 504 V 878 H 56 Z', 0.36, 'muted', 0, 0.56),
+      path(
+        'M 55 118 H 126 V 366 H 55 Z M 434 118 H 505 V 366 H 434 Z M 141 121 H 419 V 155 H 141 Z M 66 518 L 280 498 L 494 518 V 551 L 280 527 L 66 551 Z M 66 821 L 280 789 L 494 821 V 851 L 280 816 L 66 851 Z',
+        0.39,
+        'accent',
+        0,
+        0.58,
+      ),
+      path(
+        'M 80 682 H 214 L 201 794 H 93 Z M 346 682 H 480 L 467 794 H 359 Z M 80 680 L 147 649 L 214 680 Z M 346 680 L 413 649 L 480 680 Z',
+        0.45,
+        'muted',
+        0,
+        0.78,
+      ),
+      path(
+        'M 108 728 H 183 L 161 711 M 183 728 L 161 745',
+        reachEquipped ? 0.72 : 0.22,
+        reachEquipped ? 'safe' : 'muted',
+        7,
+      ),
+      path(
+        'M 413 705 L 438 727 L 413 749 L 388 727 Z M 413 715 L 426 727 L 413 739 L 400 727 Z',
+        burstEquipped ? 0.72 : 0.22,
+        burstEquipped ? 'safe' : 'muted',
+        0,
+        0.7,
+      ),
       line(
         player.x,
         player.y - 30,

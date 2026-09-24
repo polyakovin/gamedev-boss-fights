@@ -1417,12 +1417,12 @@ test('loadout adaptation snapshots one equipped rune into a deterministic visibl
   const readingReach = blueprintFrame(id, 0.85);
   assert.equal(readingReach.loadout, 'reach-rune');
   assert.equal(readingReach.adaptedPackage, 'reach-thrust');
-  assert.ok(readingReach.primitives[0].opacity > 0, 'the snapshot beam links Tavi to Kern');
-  assert.ok(readingReach.primitives[1].opacity > 0, 'the equipped reach rune remains visible');
+  assert.ok(readingReach.primitives[5].opacity > 0, 'the snapshot beam links Tavi to Kern');
+  assert.ok(readingReach.primitives[6].opacity > 0, 'the equipped reach rune remains visible');
 
   const copiedReach = blueprintFrame(id, 1.3);
-  assert.ok(copiedReach.primitives[2].opacity > 0, 'Kern visibly copies the reach package');
-  assert.ok(copiedReach.primitives[3].opacity > 0, 'the copied thrust lane is announced');
+  assert.ok(copiedReach.primitives[7].opacity > 0, 'Kern visibly copies the reach package');
+  assert.ok(copiedReach.primitives[8].opacity > 0, 'the copied thrust lane is announced');
 
   const reachAttack = blueprintFrame(id, 1.85);
   assert.equal(reachAttack.reachDanger, true);
@@ -1432,11 +1432,11 @@ test('loadout adaptation snapshots one equipped rune into a deterministic visibl
   const readingBurst = blueprintFrame(id, 3.2);
   assert.equal(readingBurst.loadout, 'burst-rune');
   assert.equal(readingBurst.adaptedPackage, 'burst-ring');
-  assert.ok(readingBurst.primitives[5].opacity > 0, 'the swapped burst rune remains visible');
+  assert.ok(readingBurst.primitives[10].opacity > 0, 'the swapped burst rune remains visible');
 
   const copiedBurst = blueprintFrame(id, 3.6);
-  assert.ok(copiedBurst.primitives[6].opacity > 0, 'Kern visibly copies the burst package');
-  assert.ok(copiedBurst.primitives[7].opacity > 0, 'the copied ring is announced');
+  assert.ok(copiedBurst.primitives[11].opacity > 0, 'Kern visibly copies the burst package');
+  assert.ok(copiedBurst.primitives[12].opacity > 0, 'the copied ring is announced');
 
   const burstAttack = blueprintFrame(id, 4.3);
   assert.equal(burstAttack.burstDanger, true);

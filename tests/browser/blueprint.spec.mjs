@@ -1190,23 +1190,24 @@ test('loadout adaptation snapshots two equipped runes into two deterministic bos
   await expect(page.locator('.wip-badge, .draft-profile')).toHaveCount(0);
   await expect(page.locator('.game-example')).toHaveCount(3);
   await expect(widget).toHaveAttribute('data-blueprint-playing', 'false');
+  await expect(widget).toHaveAttribute('data-blueprint-full-height', 'true');
 
   await seek(850);
   await expect(widget).toHaveAttribute('data-blueprint-loadout', 'reach-rune');
   await expect(widget).toHaveAttribute('data-blueprint-adaptation', 'reading-reach');
   await expect(widget).toHaveAttribute('data-blueprint-package', 'reach-thrust');
-  await expect(widget.locator('[data-blueprint-primitive="0"] line')).not.toHaveAttribute(
+  await expect(widget.locator('[data-blueprint-primitive="5"] line')).not.toHaveAttribute(
     'opacity',
     '0',
   );
 
   await seek(1300);
   await expect(widget).toHaveAttribute('data-blueprint-adaptation', 'copied-reach');
-  await expect(widget.locator('[data-blueprint-primitive="2"] path')).not.toHaveAttribute(
+  await expect(widget.locator('[data-blueprint-primitive="7"] path')).not.toHaveAttribute(
     'opacity',
     '0',
   );
-  await expect(widget.locator('[data-blueprint-primitive="3"] line')).not.toHaveAttribute(
+  await expect(widget.locator('[data-blueprint-primitive="8"] line')).not.toHaveAttribute(
     'opacity',
     '0',
   );
@@ -1214,7 +1215,7 @@ test('loadout adaptation snapshots two equipped runes into two deterministic bos
   await seek(1850);
   await expect(widget).toHaveAttribute('data-blueprint-adaptation', 'reach-danger');
   await expect(widget).toHaveAttribute('data-blueprint-outcome', 'safe');
-  await expect(widget.locator('[data-blueprint-primitive="4"] line')).not.toHaveAttribute(
+  await expect(widget.locator('[data-blueprint-primitive="9"] line')).not.toHaveAttribute(
     'opacity',
     '0',
   );
@@ -1226,18 +1227,18 @@ test('loadout adaptation snapshots two equipped runes into two deterministic bos
 
   await seek(3200);
   await expect(widget).toHaveAttribute('data-blueprint-adaptation', 'reading-burst');
-  await expect(widget.locator('[data-blueprint-primitive="5"] circle')).not.toHaveAttribute(
+  await expect(widget.locator('[data-blueprint-primitive="10"] circle')).not.toHaveAttribute(
     'opacity',
     '0',
   );
 
   await seek(3600);
   await expect(widget).toHaveAttribute('data-blueprint-adaptation', 'copied-burst');
-  await expect(widget.locator('[data-blueprint-primitive="6"] circle')).not.toHaveAttribute(
+  await expect(widget.locator('[data-blueprint-primitive="11"] circle')).not.toHaveAttribute(
     'opacity',
     '0',
   );
-  await expect(widget.locator('[data-blueprint-primitive="7"] circle')).not.toHaveAttribute(
+  await expect(widget.locator('[data-blueprint-primitive="12"] circle')).not.toHaveAttribute(
     'opacity',
     '0',
   );
@@ -1245,7 +1246,7 @@ test('loadout adaptation snapshots two equipped runes into two deterministic bos
   await seek(4300);
   await expect(widget).toHaveAttribute('data-blueprint-adaptation', 'burst-danger');
   await expect(widget).toHaveAttribute('data-blueprint-outcome', 'safe');
-  await expect(widget.locator('[data-blueprint-primitive="8"] circle')).not.toHaveAttribute(
+  await expect(widget.locator('[data-blueprint-primitive="13"] circle')).not.toHaveAttribute(
     'opacity',
     '0',
   );
@@ -1275,8 +1276,8 @@ test('loadout adaptation keeps both copied packages and actors inside dark RTL m
         '[data-blueprint-player]',
         '[data-blueprint-boss-label]',
         '[data-blueprint-player-label]',
-        '[data-blueprint-primitive="1"]',
-        '[data-blueprint-primitive="7"]',
+        '[data-blueprint-primitive="6"]',
+        '[data-blueprint-primitive="12"]',
       ].map((selector) => {
         const rect = element.querySelector(selector).getBoundingClientRect();
         return (
