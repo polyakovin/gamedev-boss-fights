@@ -1109,13 +1109,13 @@ export function initializeBlueprint(widget) {
     }
     boss.setAttribute(
       'transform',
-      `translate(${frame.boss.x} ${frame.boss.y}) rotate(${frame.bossRotation ?? 0}) scale(${frame.bossScale})`,
+      `translate(${frame.boss.x} ${frame.boss.y})${frame.bossRotation ? ` rotate(${frame.bossRotation})` : ''} scale(${frame.bossScale})`,
     );
     boss.setAttribute('opacity', String(frame.bossVisible));
     if (decoy && frame.decoy) {
       decoy.setAttribute(
         'transform',
-        `translate(${frame.decoy.x} ${frame.decoy.y}) rotate(${frame.decoy.rotation ?? 0})`,
+        `translate(${frame.decoy.x} ${frame.decoy.y})${frame.decoy.rotation ? ` rotate(${frame.decoy.rotation})` : ''}`,
       );
       decoy.setAttribute('opacity', String(frame.decoy.opacity));
       animateDecoy(
