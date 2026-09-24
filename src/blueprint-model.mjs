@@ -8531,19 +8531,30 @@ function primitivesFor(spec, frame) {
       x: mix(start.x, end.x, action),
       y: mix(start.y, end.y, action),
     };
+    const tail = {
+      x: mix(start.x, end.x, Math.max(0, action - 0.12)),
+      y: mix(start.y, end.y, Math.max(0, action - 0.12)),
+    };
+    const heading = Math.atan2(end.y - start.y, end.x - start.x);
+    const forward = { x: Math.cos(heading), y: Math.sin(heading) };
+    const side = { x: -forward.y, y: forward.x };
+    const tip = (along, across) =>
+      `${head.x + forward.x * along + side.x * across} ${head.y + forward.y * along + side.y * across}`;
     return [
-      line(
-        start.x,
-        start.y,
-        end.x,
-        end.y,
-        phase === 0 ? 0.36 + prepare * 0.34 : phase === 1 ? 0.16 * (1 - action) : 0,
-        'accent',
-        7,
-        '12 12',
-      ),
-      line(start.x, start.y, head.x, head.y, phase === 1 ? 0.42 : 0, 'signal', 8),
-      circle(head.x, head.y, 20, phase === 1 ? 1 : 0, 'signal', 6, 0.48),
+      line(start.x, start.y, end.x, end.y, phase === 0 ? 0.28 + prepare * 0.3 : 0, 'accent', 4),
+      line(tail.x, tail.y, head.x, head.y, phase === 1 ? 0.32 : 0, 'signal', 5),
+      {
+        ...path(
+          `M ${tip(23, 0)} L ${tip(-10, 11)} L ${tip(-17, 0)} L ${tip(-10, -11)} Z`,
+          phase === 1 ? 1 : 0,
+          'signal',
+          0,
+          0.9,
+        ),
+        x: head.x,
+        y: head.y,
+        radius: 20,
+      },
     ];
   }
   if (mode === 'crossfire') {

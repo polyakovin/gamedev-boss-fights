@@ -489,6 +489,9 @@ test('single shot locks one straight trajectory and lets the full player body si
   assert.deepEqual(release.player, signal.player);
   assert.equal(signal.primitives[0].x2, flight.primitives[0].x2);
   assert.equal(signal.primitives[0].y2, flight.primitives[0].y2);
+  assert.equal(signal.primitives[0].dash, '');
+  assert.equal(flight.primitives[2].type, 'path');
+  assert.ok(flight.primitives[1].x1 > signal.boss.x);
   assert.ok(laterFlight.primitives[2].x > flight.primitives[2].x);
   assert.ok(laterFlight.primitives[2].y > flight.primitives[2].y);
   assert.equal(
