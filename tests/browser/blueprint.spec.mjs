@@ -3942,6 +3942,8 @@ test('loadout mirror keeps the captured package after the player changes loadout
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await page.goto('en/mechanics/loadout-mirror/');
   const widget = page.locator('[data-blueprint-demo]');
+  await expect(widget).toHaveAttribute('data-blueprint-full-height', 'true');
+  await expect(widget).toHaveAttribute('data-blueprint-screen-height', 'true');
   const timeline = widget.locator('[data-blueprint-timeline]');
   const seek = (milliseconds) =>
     timeline.evaluate((element, value) => {

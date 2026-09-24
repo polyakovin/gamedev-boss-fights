@@ -1442,10 +1442,10 @@ const SPECS = {
   },
   'loadout-mirror': {
     mode: 'loadout-mirror',
-    boss: [300, 375],
-    player: [300, 660],
-    target: [300, 660],
-    arena: [55, 310, 450, 590],
+    boss: [300, 285],
+    player: [300, 775],
+    target: [300, 775],
+    arena: [55, 145, 450, 735],
     scan: [0.32, 1.14],
     captureAt: 1.14,
     copyReveal: [1.14, 2.18],
@@ -7773,68 +7773,69 @@ function primitivesFor(spec, frame) {
     const copiedOpacity = frame.loadoutMirrorSnapshotCaptured
       ? 0.96 * (1 - resetProgress)
       : revealProgress * 0.96;
-    const playerTones = frame.loadoutMirrorPlayerChanged
-      ? ['safe', 'accent', 'signal']
-      : ['accent', 'safe', 'signal'];
-    const bossTones = ['accent', 'safe', 'signal'];
-    const playerSlots = [110, 180, 250];
-    const bossSlots = [310, 380, 450];
+    const playerKinds = frame.loadoutMirrorPlayerChanged
+      ? spec.changedLoadout
+      : spec.initialLoadout;
+    const equipment = (x, y, kind, opacity, tone) => {
+      const shapes = {
+        sword: `M ${x - 5} ${y + 27} L ${x + 3} ${y - 26} L ${x + 12} ${y - 38} L ${x + 14} ${y - 21} L ${x + 5} ${y + 27} Z M ${x - 21} ${y + 12} L ${x + 19} ${y + 18} L ${x + 17} ${y + 25} L ${x - 23} ${y + 19} Z`,
+        ward: `M ${x} ${y - 36} L ${x + 28} ${y - 22} L ${x + 24} ${y + 12} Q ${x + 18} ${y + 31} ${x} ${y + 38} Q ${x - 18} ${y + 31} ${x - 24} ${y + 12} L ${x - 28} ${y - 22} Z`,
+        ember: `M ${x - 20} ${y + 30} Q ${x - 27} ${y + 5} ${x - 7} ${y - 21} Q ${x - 4} ${y - 1} ${x + 7} ${y - 33} Q ${x + 31} ${y + 3} ${x + 18} ${y + 28} Z`,
+        bow: `M ${x - 18} ${y - 34} Q ${x + 24} ${y} ${x - 18} ${y + 34} L ${x - 9} ${y + 29} Q ${x + 18} ${y} ${x - 9} ${y - 29} Z M ${x - 20} ${y - 34} L ${x - 14} ${y - 34} V ${y + 34} H ${x - 20} Z`,
+        dash: `M ${x - 21} ${y - 25} H ${x + 6} V ${y + 8} L ${x + 26} ${y + 18} V ${y + 33} H ${x - 26} L ${x - 22} ${y + 14} Z`,
+        frost: `M ${x} ${y - 35} L ${x + 10} ${y - 12} L ${x + 31} ${y - 7} L ${x + 14} ${y + 5} L ${x + 20} ${y + 29} L ${x} ${y + 16} L ${x - 20} ${y + 29} L ${x - 14} ${y + 5} L ${x - 31} ${y - 7} L ${x - 10} ${y - 12} Z`,
+      };
+      return path(shapes[kind] ?? shapes.sword, opacity, tone, 0, 0.84);
+    };
     return [
-      rect(...spec.arena, 0.52, 'muted', 0.025),
-      rect(72, 792, 216, 78, 0.72, frame.loadoutMirrorPlayerChanged ? 'safe' : 'muted', 0.025),
-      rect(272, 478, 216, 78, copiedOpacity, 'accent', 0.025),
-      ...playerSlots.flatMap((x, index) => [
-        circle(x, 830, 24, 0.94, playerTones[index], 6, 0.12),
-        line(
-          x - 11,
-          frame.loadoutMirrorPlayerChanged ? 840 - index * 7 : 841,
-          x + 11,
-          frame.loadoutMirrorPlayerChanged ? 818 + index * 7 : 819,
-          0.96,
-          playerTones[index],
-          6,
-        ),
-      ]),
-      ...bossSlots.flatMap((x, index) => [
-        circle(x, 516, 24, copiedOpacity, bossTones[index], 6, 0.12),
-        line(x - 11, 527, x + 11, 505, copiedOpacity, bossTones[index], 6),
-      ]),
-      ...playerSlots.map((x, index) =>
-        line(
-          x,
-          792,
-          bossSlots[index],
-          556,
-          frame.time >= spec.scan[0] && frame.time < spec.captureAt
-            ? 0.26 + pulse(scanProgress) * 0.7
-            : 0,
-          'safe',
-          4,
-          '8 8',
-        ),
+      path(
+        'M 70 187 L 280 148 L 490 187 V 216 L 280 177 L 70 216 Z M 72 846 L 280 804 L 488 846 V 874 L 280 832 L 72 874 Z',
+        0.42,
+        'muted',
+        0,
+        0.6,
       ),
-      line(
-        80,
-        781,
-        280,
-        781,
-        frame.time >= spec.captureAt && frame.time < spec.resetAt ? 0.9 : 0,
-        'signal',
-        5,
+      path(
+        'M 58 535 H 169 V 801 H 58 Z M 67 552 H 160 V 561 H 67 Z M 67 627 H 160 V 636 H 67 Z M 67 702 H 160 V 711 H 67 Z M 398 317 H 505 V 571 H 398 Z M 407 335 H 496 V 344 H 407 Z M 407 410 H 496 V 419 H 407 Z M 407 485 H 496 V 494 H 407 Z',
+        0.46,
+        'muted',
+        0,
+        0.72,
       ),
-      circle(frame.player.x, frame.player.y - 24, 62 + swapPulse * 36, swapPulse, 'safe', 8, 0.02),
-      circle(frame.boss.x, frame.boss.y - 24, 66 + usePulse * 42, usePulse, 'accent', 9, 0.025),
+      ...playerKinds.map((kind, index) =>
+        equipment(114, 589 + index * 75, kind, 0.96, ['accent', 'safe', 'signal'][index]),
+      ),
+      ...spec.initialLoadout.map((kind, index) =>
+        equipment(452, 371 + index * 75, kind, copiedOpacity, ['accent', 'safe', 'signal'][index]),
+      ),
+      path(
+        'M 145 535 Q 220 456 320 475 Q 390 482 435 328 L 451 328 Q 419 501 320 491 Q 218 478 158 548 Z',
+        frame.time >= spec.scan[0] && frame.time < spec.captureAt
+          ? 0.12 + pulse(scanProgress) * 0.27
+          : 0,
+        'safe',
+        0,
+        0.54,
+      ),
+      path(
+        `M ${frame.player.x - 40} ${frame.player.y - 45} Q ${frame.player.x} ${frame.player.y - 130 - 28 * swapPulse} ${frame.player.x + 40} ${frame.player.y - 45} Z`,
+        swapPulse * 0.58,
+        'safe',
+        0,
+        0.42,
+      ),
+      path(
+        `M ${frame.boss.x + 28} ${frame.boss.y - 31} L ${frame.boss.x + 90} ${frame.boss.y - 142} L ${frame.boss.x + 102} ${frame.boss.y - 162} L ${frame.boss.x + 100} ${frame.boss.y - 132} L ${frame.boss.x + 43} ${frame.boss.y - 23} Z`,
+        copiedOpacity,
+        'accent',
+        0,
+        0.84,
+      ),
       path(
         `M ${frame.boss.x - 84} ${frame.boss.y - 122} Q ${frame.boss.x} ${frame.boss.y - 192} ${frame.boss.x + 92} ${frame.boss.y - 108}`,
         usePulse,
         'accent',
         12,
-      ),
-      path(
-        'M 294 508 L 304 520 L 326 494',
-        frame.loadoutMirrorCopyMatchesSnapshot ? copiedOpacity : 0,
-        'safe',
-        6,
       ),
     ];
   }
