@@ -1592,10 +1592,10 @@ const SPECS = {
     mode: 'real-time-progression',
     boss: [300, 400],
     player: [410, 720],
-    target: [470, 720],
-    arena: [55, 300, 450, 600],
-    savedClock: [110, 165],
-    currentClock: [450, 165],
+    target: [430, 720],
+    arena: [55, 145, 450, 735],
+    savedClock: [150, 165],
+    currentClock: [410, 165],
     ledger: [280, 250],
     offlineSeals: [
       [135, 610],
@@ -8893,117 +8893,97 @@ function primitivesFor(spec, frame) {
       (frame.time - spec.attackSignal[0]) / (spec.attackSignal[1] - spec.attackSignal[0]),
     );
     const attackProgress = clamp((frame.time - spec.attack[0]) / (spec.attack[1] - spec.attack[0]));
-    const retryProgress = clamp((frame.time - spec.retry[0]) / (spec.retry[1] - spec.retry[0]));
     const clockVisible = frame.time < spec.retry[1];
     const progressionVisible = frame.realTimeProgressionReconciled && frame.time < spec.retry[1];
-    return [
-      rect(...spec.arena, 0.52, 'muted', 0.025),
+    const clock = (x, y, hand, opacity, tone) => [
       path(
-        'M 70 742 L 176 716 L 280 744 L 386 716 L 490 742 V 775 L 386 746 L 280 776 L 176 746 L 70 775 Z M 88 839 L 280 807 L 472 839 V 857 L 280 826 L 88 857 Z',
-        0.54,
+        `M ${x - 57} ${y - 61} H ${x + 57} L ${x + 48} ${y + 80} H ${x - 48} Z M ${x - 64} ${y + 75} H ${x + 64} V ${y + 91} H ${x - 64} Z`,
+        opacity,
         'muted',
         0,
-        0.5,
+        0.78,
       ),
-      circle(
-        spec.savedClock[0],
-        spec.savedClock[1],
-        48,
-        clockVisible ? 0.88 : 0,
-        'accent',
-        7,
-        0.025,
-      ),
+      circle(x, y, 35, opacity, tone, 0, 0.64),
       path(
-        `M ${spec.savedClock[0]} ${spec.savedClock[1]} V ${spec.savedClock[1] - 30} M ${spec.savedClock[0]} ${spec.savedClock[1]} H ${spec.savedClock[0] + 24}`,
-        clockVisible ? 0.94 : 0,
+        `M ${x} ${y} L ${x + Math.sin(hand) * 23} ${y - Math.cos(hand) * 23} L ${x + 4} ${y + 5} Z`,
+        opacity,
         'accent',
-        7,
+        0,
+        0.85,
       ),
-      circle(
+    ];
+    return [
+      path(
+        'M 70 187 L 280 148 L 490 187 V 216 L 280 177 L 70 216 Z M 72 846 L 280 804 L 488 846 V 874 L 280 832 L 72 874 Z',
+        0.42,
+        'muted',
+        0,
+        0.6,
+      ),
+      ...clock(spec.savedClock[0], spec.savedClock[1], 0.7, clockVisible ? 0.92 : 0, 'accent'),
+      ...clock(
         spec.currentClock[0],
         spec.currentClock[1],
-        48,
-        frame.realTimeProgressionReconciled ? 0.94 : 0.3,
+        2.4,
+        frame.realTimeProgressionReconciled ? 0.96 : 0.32,
         'signal',
-        7,
-        0.025,
       ),
       path(
-        `M ${spec.currentClock[0]} ${spec.currentClock[1]} L ${spec.currentClock[0] - 24} ${spec.currentClock[1] + 18} M ${spec.currentClock[0]} ${spec.currentClock[1]} V ${spec.currentClock[1] - 28}`,
-        frame.realTimeProgressionReconciled ? 0.96 : 0.3,
-        'signal',
-        7,
-      ),
-      line(
-        spec.savedClock[0] + 58,
-        spec.savedClock[1],
-        spec.currentClock[0] - 58,
-        spec.currentClock[1],
-        clockVisible ? 0.55 : 0,
-        'muted',
-        6,
-        '12 10',
+        'M 202 216 L 280 238 L 358 216 V 282 L 280 262 L 202 282 Z M 279 240 H 283 V 263 H 279 Z',
+        frame.realTimeProgressionReconciled ? 0.3 + reconcileProgress * 0.58 : 0.22,
+        'safe',
+        0,
+        0.68,
       ),
       ...Array.from({ length: spec.appliedHours }, (_, index) =>
-        circle(
-          205 + index * 30,
-          spec.savedClock[1],
-          7,
-          frame.realTimeProgressionReconciled ? 0.42 + reconcileProgress * 0.5 : 0.16,
+        path(
+          `M ${212 + index * 25} 250 L ${217 + index * 25} 242 L ${222 + index * 25} 250 L ${217 + index * 25} 258 Z`,
+          frame.realTimeProgressionReconciled ? 0.32 + reconcileProgress * 0.58 : 0.12,
           index === spec.appliedHours - 1 ? 'signal' : 'safe',
-          3,
-          0.1,
+          0,
+          0.8,
         ),
       ),
-      circle(
-        spec.ledger[0],
-        spec.ledger[1],
-        28 + reconcileProgress * 34,
-        frame.realTimeProgressionReconciled ? 0.88 - retryProgress * 0.25 : 0.18,
-        'safe',
-        7,
-        0.03,
-      ),
       path(
-        `M ${spec.ledger[0] - 21} ${spec.ledger[1]} L ${spec.ledger[0] - 5} ${spec.ledger[1] + 17} L ${spec.ledger[0] + 25} ${spec.ledger[1] - 19}`,
-        frame.realTimeProgressionReconciled ? 0.96 : 0,
-        'safe',
-        7,
-      ),
-      rect(60, 318, 440, 545, frame.realTimeProgressionClosed ? 0.88 : 0, 'muted', 0.74),
-      path(
-        'M 92 360 H 468 M 92 445 H 468 M 92 530 H 468 M 92 615 H 468 M 92 700 H 468',
-        frame.realTimeProgressionClosed ? 0.72 : 0,
-        'accent',
-        8,
+        'M 62 302 H 498 V 861 H 62 Z M 82 317 H 172 V 846 H 82 Z M 184 317 H 274 V 846 H 184 Z M 286 317 H 376 V 846 H 286 Z M 388 317 H 478 V 846 H 388 Z',
+        frame.realTimeProgressionClosed ? 0.92 : 0,
+        'muted',
+        0,
+        0.76,
       ),
       ...spec.offlineSeals.flatMap(([x, y], index) => [
-        circle(x, y, 50, progressionVisible ? 0.82 : 0, index ? 'signal' : 'accent', 7, 0.045),
         path(
-          `M ${x - 25} ${y} H ${x + 25} M ${x} ${y - 25} V ${y + 25}`,
-          progressionVisible ? 0.88 : 0,
+          `M ${x - 39} ${y - 16} L ${x} ${y - 47} L ${x + 39} ${y - 16} L ${x + 28} ${y + 43} L ${x} ${y + 56} L ${x - 28} ${y + 43} Z`,
+          progressionVisible ? 0.48 + 0.27 * reconcileProgress : 0,
           index ? 'signal' : 'accent',
-          6,
+          0,
+          0.68,
+        ),
+        path(
+          `M ${x - 16} ${y - 20} H ${x + 16} L ${x} ${y + 5} L ${x + 16} ${y + 29} H ${x - 16} L ${x} ${y + 5} Z`,
+          progressionVisible ? 0.82 : 0,
+          'muted',
+          0,
+          0.76,
         ),
       ]),
-      circle(
-        frame.boss.x,
-        frame.boss.y + 15,
-        74 + signalProgress * 38,
-        progressionVisible ? 0.46 + signalProgress * 0.34 : 0,
+      path(
+        `M ${frame.boss.x - 74} ${frame.boss.y - 99} L ${frame.boss.x - 46} ${frame.boss.y - 139} L ${frame.boss.x - 19} ${frame.boss.y - 88} L ${frame.boss.x + 18} ${frame.boss.y - 88} L ${frame.boss.x + 46} ${frame.boss.y - 139} L ${frame.boss.x + 74} ${frame.boss.y - 99} Z`,
+        progressionVisible ? 0.92 : 0,
         'signal',
-        8,
-        0.02,
+        0,
+        0.72,
       ),
-      circle(
-        frame.boss.x,
-        frame.boss.y + 15,
-        spec.attackRadius + attackProgress * 42,
-        frame.realTimeProgressionAttackActive ? 0.96 - attackProgress * 0.28 : 0,
+      path(
+        `M ${frame.boss.x - 99} ${frame.boss.y + 69 + attackProgress * 43} L ${frame.boss.x - 52} ${frame.boss.y + 22} L ${frame.boss.x - 14} ${frame.boss.y + 64} L ${frame.boss.x + 22} ${frame.boss.y + 18} L ${frame.boss.x + 64} ${frame.boss.y + 65} L ${frame.boss.x + 109} ${frame.boss.y + 92 + attackProgress * 43} L ${frame.boss.x} ${frame.boss.y + 114} Z`,
+        frame.realTimeProgressionAttackActive
+          ? 0.78
+          : progressionVisible
+            ? 0.1 + signalProgress * 0.22
+            : 0,
         'accent',
-        12,
-        0.02,
+        0,
+        0.62,
       ),
     ];
   }

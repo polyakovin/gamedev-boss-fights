@@ -4304,6 +4304,7 @@ test('real-time progression reconciles a bounded interval once before resuming c
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await page.goto('en/mechanics/real-time-progression/');
   const widget = page.locator('[data-blueprint-demo]');
+  await expect(widget).toHaveAttribute('data-blueprint-screen-height', 'true');
   const timeline = widget.locator('[data-blueprint-timeline]');
   const seek = (milliseconds) =>
     timeline.evaluate((element, value) => {
