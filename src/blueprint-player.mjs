@@ -743,6 +743,53 @@ export function initializeBlueprint(widget) {
         frame.actionReactivePunishEventCount,
       );
     }
+    if (mechanicId === 'run-history-manifestation') {
+      widget.dataset.blueprintRunHistoryManifestation = frame.runHistoryManifestationState;
+      widget.dataset.blueprintRunHistoryManifestationEncounterId =
+        frame.runHistoryManifestationEncounterId;
+      widget.dataset.blueprintRunHistoryManifestationEntryId = frame.runHistoryManifestationEntryId;
+      widget.dataset.blueprintRunHistoryManifestationManifestId =
+        frame.runHistoryManifestationManifestId;
+      widget.dataset.blueprintRunHistoryManifestationCaptured = String(
+        frame.runHistoryManifestationCaptured,
+      );
+      widget.dataset.blueprintRunHistoryManifestationHistoryVersion = String(
+        frame.runHistoryManifestationHistoryVersion,
+      );
+      widget.dataset.blueprintRunHistoryManifestationHistoryCount = String(
+        frame.runHistoryManifestationHistoryCount,
+      );
+      widget.dataset.blueprintRunHistoryManifestationEchoCount = String(
+        frame.runHistoryManifestationEchoCount,
+      );
+      widget.dataset.blueprintRunHistoryManifestationSupportCount = String(
+        frame.runHistoryManifestationSupportCount,
+      );
+      widget.dataset.blueprintRunHistoryManifestationModifierCount = String(
+        frame.runHistoryManifestationModifierCount,
+      );
+      widget.dataset.blueprintRunHistoryManifestationCaptureEvents = String(
+        frame.runHistoryManifestationCaptureEvents,
+      );
+      widget.dataset.blueprintRunHistoryManifestationLiveResnapshots = String(
+        frame.runHistoryManifestationLiveResnapshots,
+      );
+      widget.dataset.blueprintRunHistoryManifestationEchoActive = String(
+        frame.runHistoryManifestationEchoActive,
+      );
+      widget.dataset.blueprintRunHistoryManifestationRelicActive = String(
+        frame.runHistoryManifestationRelicActive,
+      );
+      widget.dataset.blueprintRunHistoryManifestationWardProtecting = String(
+        frame.runHistoryManifestationWardProtecting,
+      );
+      widget.dataset.blueprintRunHistoryManifestationRetryStable = String(
+        frame.runHistoryManifestationRetryStable,
+      );
+      widget.dataset.blueprintRunHistoryManifestationManifestUnchanged = String(
+        frame.runHistoryManifestationManifestUnchanged,
+      );
+    }
     boss.setAttribute(
       'transform',
       `translate(${frame.boss.x} ${frame.boss.y}) scale(${frame.bossScale})`,

@@ -65,6 +65,8 @@ import {
   falseDeathResolve,
   actionReactivePunishState,
   actionReactivePunishResolve,
+  runHistoryManifestationState,
+  runHistoryManifestationResolve,
   counterStanceOutcome,
   counterStanceState,
   blueprintFrame,
@@ -92,8 +94,8 @@ import {
   renderBlueprintThumbnail,
 } from '../lib/blueprint-view.mjs';
 
-test('all 98 promoted lesson animations have distinct rule modes and complete moving frames', () => {
-  assert.equal(BLUEPRINT_MECHANIC_IDS.length, 98);
+test('all 99 promoted lesson animations have distinct rule modes and complete moving frames', () => {
+  assert.equal(BLUEPRINT_MECHANIC_IDS.length, 99);
   const modes = new Set();
   for (const id of BLUEPRINT_MECHANIC_IDS) {
     for (let time = 0; time <= BLUEPRINT_DURATION; time += 0.1) {
@@ -114,7 +116,7 @@ test('all 98 promoted lesson animations have distinct rule modes and complete mo
           assert.ok(Number.isFinite(value), `${id} has an invalid ${primitive.type}`);
     }
   }
-  assert.equal(modes.size, 98);
+  assert.equal(modes.size, 99);
 });
 
 test('every blueprint exposes signal, committed action, and recovery without player teleports', () => {
@@ -161,7 +163,8 @@ test('every blueprint exposes signal, committed action, and recovery without pla
       id !== 'loadout-mirror' &&
       id !== 'moveset-shapeshifting' &&
       id !== 'false-death' &&
-      id !== 'action-reactive-punish'
+      id !== 'action-reactive-punish' &&
+      id !== 'run-history-manifestation'
     )
       assert.equal(blueprintFrame(id, 3).dangerActive, true, id);
     assert.equal(blueprintFrame(id, 3).playerSafe, true, id);
@@ -258,6 +261,7 @@ test('every damaging promoted animation derives safety from its own active geome
       id !== 'moveset-shapeshifting' &&
       id !== 'false-death' &&
       id !== 'action-reactive-punish' &&
+      id !== 'run-history-manifestation' &&
       id !== 'part-break' &&
       id !== 'counter-stance' &&
       id !== 'absorption-power-up' &&
@@ -4051,5 +4055,86 @@ test('action-reactive punish observes committed state once and preserves a boss-
   assert.match(
     renderBlueprintThumbnail(id, 'test-action-reactive-punish'),
     /data-blueprint-preview="action-reactive-punish"/,
+  );
+});
+
+test('run-history manifestation freezes one entry journal through the encounter retry', () => {
+  const id = 'run-history-manifestation';
+  assert.deepEqual([0.5, 1.5, 2, 2.55, 3, 3.45, 4.1, 4.9, 5.5].map(runHistoryManifestationState), [
+    'history-visible',
+    'manifest-captured',
+    'echo-signaled',
+    'echo-active',
+    'relic-signaled',
+    'relic-active',
+    'history-opening',
+    'retry-stable',
+    'reset',
+  ]);
+  assert.deepEqual(runHistoryManifestationResolve(), {
+    encounterId: 'kern-memory-vault-1',
+    entryId: 'vault-entry-1',
+    historyVersion: 1,
+    history: {
+      defeatedSentinel: true,
+      rescuedGuide: true,
+      claimedRelic: true,
+    },
+    manifestId: 'run-manifest-echo-ward-relic-1',
+    hostileEchoIds: ['sentinel-echo-1'],
+    supportIds: ['guide-ward-1'],
+    bossModifierIds: ['relic-ring-1'],
+    accepted: true,
+    eventCount: 1,
+  });
+  assert.equal(runHistoryManifestationResolve({ alreadyCaptured: true }).eventCount, 0);
+  assert.deepEqual(
+    runHistoryManifestationResolve({
+      history: { defeatedSentinel: false, rescuedGuide: false, claimedRelic: false },
+    }),
+    {
+      encounterId: 'kern-memory-vault-1',
+      entryId: 'vault-entry-1',
+      historyVersion: 1,
+      history: {
+        defeatedSentinel: false,
+        rescuedGuide: false,
+        claimedRelic: false,
+      },
+      manifestId: 'run-manifest-no-echo-no-ward-no-relic-1',
+      hostileEchoIds: [],
+      supportIds: [],
+      bossModifierIds: [],
+      accepted: true,
+      eventCount: 1,
+    },
+  );
+
+  const captured = blueprintFrame(id, 1.55);
+  assert.equal(captured.runHistoryManifestationCaptured, true);
+  assert.equal(captured.runHistoryManifestationManifestId, 'run-manifest-echo-ward-relic-1');
+  assert.equal(captured.runHistoryManifestationHistoryCount, 3);
+  assert.equal(captured.runHistoryManifestationEchoCount, 1);
+  assert.equal(captured.runHistoryManifestationSupportCount, 1);
+  assert.equal(captured.runHistoryManifestationModifierCount, 1);
+  assert.equal(captured.runHistoryManifestationCaptureEvents, 1);
+  assert.equal(captured.runHistoryManifestationLiveResnapshots, 0);
+  const echo = blueprintFrame(id, 2.55);
+  assert.equal(echo.runHistoryManifestationEchoActive, true);
+  assert.equal(blueprintPointSafe(id, 2.55, echo.player), true);
+  assert.equal(blueprintPointSafe(id, 2.55, echo.runHistoryManifestationProjectile), false);
+  const relic = blueprintFrame(id, 3.45);
+  assert.equal(relic.runHistoryManifestationRelicActive, true);
+  assert.equal(relic.runHistoryManifestationWardProtecting, true);
+  assert.equal(blueprintPointSafe(id, 3.45, relic.player), true);
+  const retry = blueprintFrame(id, 4.95);
+  assert.equal(retry.runHistoryManifestationRetryStable, true);
+  assert.equal(retry.runHistoryManifestationManifestUnchanged, true);
+  assert.equal(retry.runHistoryManifestationManifestId, captured.runHistoryManifestationManifestId);
+  assert.equal(retry.runHistoryManifestationLiveResnapshots, 0);
+  assert.deepEqual(blueprintFrame(id, 0).player, blueprintFrame(id, 6).player);
+  assert.match(
+    renderBlueprintThumbnail(id, 'test-run-history-manifestation'),
+    /data-blueprint-preview="run-history-manifestation"/,
   );
 });
