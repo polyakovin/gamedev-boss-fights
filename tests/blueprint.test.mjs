@@ -1553,23 +1553,23 @@ test('active phase is dangerous only inside its explicit collision window', () =
   const startup = blueprintFrame(id, 0.9);
   assert.equal(startup.dangerActive, false);
   assert.equal(startup.hitboxActive, false);
-  assert.ok(startup.primitives[0].opacity > 0, 'startup previews the complete lane');
-  assert.equal(startup.primitives[1].opacity, 0, 'startup does not expose the live hitbox');
+  assert.ok(startup.primitives[3].opacity > 0, 'startup previews the complete lane');
+  assert.equal(startup.primitives[4].opacity, 0, 'startup does not expose the live hitbox');
 
   const active = blueprintFrame(id, 1.9);
   assert.equal(active.activePhaseState, 'active');
   assert.equal(active.hitboxActive, true);
   assert.equal(active.playerSafe, true);
   assert.equal(blueprintPointSafe(id, 1.9, { x: 400, y: 430 }), false);
-  assert.ok(active.primitives[1].opacity > 0, 'the active collision window is solid');
-  assert.equal(active.primitives[6].opacity, 0, 'the end flash cannot precede the cutoff');
+  assert.ok(active.primitives[4].opacity > 0, 'the active collision window is solid');
+  assert.equal(active.primitives[9].opacity, 0, 'the end flash cannot precede the cutoff');
 
   const followThrough = blueprintFrame(id, 2.5);
   assert.equal(followThrough.activePhaseState, 'follow-through');
   assert.equal(followThrough.hitboxActive, false);
   assert.equal(blueprintPointSafe(id, 2.5, { x: 400, y: 430 }), true);
-  assert.ok(followThrough.primitives[2].opacity > 0, 'harmless motion remains visible');
-  assert.ok(blueprintFrame(id, 2.2).primitives[6].opacity > 0, 'the end flash follows the cutoff');
+  assert.ok(followThrough.primitives[5].opacity > 0, 'harmless motion remains visible');
+  assert.ok(blueprintFrame(id, 2.2).primitives[9].opacity > 0, 'the end flash follows the cutoff');
 
   const punish = blueprintFrame(id, 3.28);
   assert.equal(punish.activePhaseState, 'recovery');

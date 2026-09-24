@@ -3690,6 +3690,21 @@ function primitivesFor(spec, frame) {
       frame.time >= spec.active[1] ? Math.max(0, 1 - (frame.time - spec.active[1]) / 0.34) : 0;
     const laneWidth = spec.laneEnd[0] - spec.laneStart[0];
     return [
+      path('M 36 94 H 524 V 878 H 36 Z M 57 240 H 503 V 878 H 57 Z', 0.36, 'muted', 0, 0.56),
+      path(
+        'M 54 113 H 133 V 313 H 54 Z M 427 113 H 506 V 313 H 427 Z M 147 116 H 413 V 151 H 147 Z M 55 348 H 107 V 512 H 55 Z M 453 348 H 505 V 512 H 453 Z M 70 565 L 280 544 L 490 565 V 609 L 280 585 L 70 609 Z M 70 756 L 280 730 L 490 756 V 802 L 280 775 L 70 802 Z',
+        0.43,
+        'accent',
+        0,
+        0.57,
+      ),
+      path(
+        'M 282 395 H 516 V 465 H 282 Z M 70 652 L 280 631 L 490 652 V 662 L 280 641 L 70 662 Z M 70 838 L 280 812 L 490 838 V 850 L 280 826 L 70 850 Z',
+        0.33,
+        'muted',
+        0,
+        0.76,
+      ),
       path(
         `M ${spec.laneStart[0]} ${spec.laneStart[1] - spec.laneHalfWidth} H ${spec.laneEnd[0]} V ${spec.laneEnd[1] + spec.laneHalfWidth} H ${spec.laneStart[0]} Z`,
         startup ? 0.58 : 0,

@@ -1520,11 +1520,12 @@ test('active phase separates startup, live collision, harmless follow-through, a
   await expect(page.locator('.wip-badge, .draft-profile')).toHaveCount(0);
   await expect(page.locator('.game-example')).toHaveCount(3);
   await expect(widget).toHaveAttribute('data-blueprint-playing', 'false');
+  await expect(widget).toHaveAttribute('data-blueprint-full-height', 'true');
 
   await seek(900);
   await expect(widget).toHaveAttribute('data-blueprint-active-phase', 'startup');
   await expect(widget).toHaveAttribute('data-blueprint-hitbox-active', 'false');
-  await expect(widget.locator('[data-blueprint-primitive="0"] path')).not.toHaveAttribute(
+  await expect(widget.locator('[data-blueprint-primitive="3"] path')).not.toHaveAttribute(
     'opacity',
     '0',
   );
@@ -1533,7 +1534,7 @@ test('active phase separates startup, live collision, harmless follow-through, a
   await expect(widget).toHaveAttribute('data-blueprint-active-phase', 'active');
   await expect(widget).toHaveAttribute('data-blueprint-hitbox-active', 'true');
   await expect(widget).toHaveAttribute('data-blueprint-outcome', 'safe');
-  await expect(widget.locator('[data-blueprint-primitive="1"] rect')).not.toHaveAttribute(
+  await expect(widget.locator('[data-blueprint-primitive="4"] rect')).not.toHaveAttribute(
     'opacity',
     '0',
   );
@@ -1542,7 +1543,7 @@ test('active phase separates startup, live collision, harmless follow-through, a
   await expect(widget).toHaveAttribute('data-blueprint-active-phase', 'follow-through');
   await expect(widget).toHaveAttribute('data-blueprint-hitbox-active', 'false');
   await expect(widget).toHaveAttribute('data-blueprint-follow-through', 'true');
-  await expect(widget.locator('[data-blueprint-primitive="2"] line')).not.toHaveAttribute(
+  await expect(widget.locator('[data-blueprint-primitive="5"] line')).not.toHaveAttribute(
     'opacity',
     '0',
   );
@@ -1577,8 +1578,8 @@ test('active phase keeps lane boundaries and both actors inside dark RTL mobile'
         '[data-blueprint-player]',
         '[data-blueprint-boss-label]',
         '[data-blueprint-player-label]',
-        '[data-blueprint-primitive="0"]',
-        '[data-blueprint-primitive="4"]',
+        '[data-blueprint-primitive="3"]',
+        '[data-blueprint-primitive="7"]',
       ].map((selector) => {
         const rect = element.querySelector(selector).getBoundingClientRect();
         return (
