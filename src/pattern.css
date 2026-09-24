@@ -71,8 +71,9 @@
     height: 100%;
     width: max(100%, 58.333svh);
     max-width: none;
-    position: relative;
+    position: absolute;
     left: 50%;
+    top: 0;
     transform: translateX(-50%);
   }
 }

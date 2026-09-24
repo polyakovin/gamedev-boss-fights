@@ -34,6 +34,44 @@ test('blueprints autoplay only when motion is allowed', async ({ page }) => {
     .toBeGreaterThan(150);
 });
 
+test('wide swing keeps a held blade and both actors inside the full-height phone scene', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 375, height: 812 });
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.goto('ru/mechanics/wide-swing/');
+  const widget = page.locator('[data-blueprint-id="wide-swing"]');
+  const canvas = widget.locator('.blueprint-demo__canvas');
+  const blade = widget.locator('[data-weapon-blade]');
+  const shaft = widget.locator('[data-sweep-shaft]');
+  const timeline = widget.locator('[data-blueprint-timeline]');
+  await expect(widget).toHaveAttribute('data-blueprint-full-height', 'true');
+  await expect(blade).toBeVisible();
+  expect((await canvas.boundingBox()).height).toBeGreaterThanOrEqual(811);
+  const startingPose = await shaft.getAttribute('transform');
+
+  for (const milliseconds of [0, 2800, 4250, 5600]) {
+    await timeline.evaluate((element, value) => {
+      element.value = String(value);
+      element.dispatchEvent(new Event('input', { bubbles: true }));
+    }, milliseconds);
+    const scene = await canvas.boundingBox();
+    for (const part of [
+      blade,
+      widget.locator('[data-blueprint-boss] [data-character-art]'),
+      widget.locator('[data-blueprint-player] [data-character-art]'),
+    ]) {
+      const bounds = await part.boundingBox();
+      expect(bounds.x).toBeGreaterThanOrEqual(scene.x - 1);
+      expect(bounds.x + bounds.width).toBeLessThanOrEqual(scene.x + scene.width + 1);
+      expect(bounds.y).toBeGreaterThanOrEqual(scene.y - 1);
+      expect(bounds.y + bounds.height).toBeLessThanOrEqual(scene.y + scene.height + 1);
+    }
+  }
+  expect(await shaft.getAttribute('transform')).not.toBe(startingPose);
+  await expect(widget).toHaveAttribute('data-blueprint-outcome', 'safe');
+});
+
 test('mine arms its visible circle, keeps the player safe, and fits on mobile', async ({
   page,
 }) => {

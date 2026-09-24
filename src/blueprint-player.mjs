@@ -1,6 +1,7 @@
 import { BLUEPRINT_DURATION, blueprintFrame } from './blueprint-model.mjs';
 import { createCharacterAnimator } from './character-motion.mjs';
 import { createEncounterEffects } from './encounter-effects.mjs';
+import { createSweepWeaponAnimator } from './sweep-weapon-player.mjs';
 
 const set = (node, name, value) => node.setAttribute(name, String(value));
 
@@ -45,6 +46,7 @@ export function initializeBlueprint(widget) {
   const player = find('[data-blueprint-player]');
   const playerWeapon = player.querySelector('[data-rig-part="weapon"]');
   const animateBoss = createCharacterAnimator(boss, 'kern');
+  const animateWideSwingWeapon = createSweepWeaponAnimator(boss);
   const animateDecoy = decoy ? createCharacterAnimator(decoy, 'kern') : null;
   const animatePlayer = createCharacterAnimator(player, 'tavi');
   const animateEffects = createEncounterEffects(widget, (time) => blueprintFrame(mechanicId, time));
@@ -966,6 +968,7 @@ export function initializeBlueprint(widget) {
     }
     player.setAttribute('transform', `translate(${frame.player.x} ${frame.player.y})`);
     animateBoss(frame.bossMotion, frame.bossFacing);
+    animateWideSwingWeapon(frame.wideSwingWeapon);
     animatePlayer(frame.playerMotion, frame.playerFacing);
     if (mechanicId === 'pacifist-resolution')
       playerWeapon?.setAttribute('opacity', frame.pacifistWeaponSheathed ? '0' : '1');

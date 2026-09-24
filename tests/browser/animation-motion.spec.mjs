@@ -206,3 +206,24 @@ for (const theme of ['light', 'dark']) {
     });
   }
 }
+
+test('full-height encounter canvases stay centered in Arabic mobile layout', async ({ page }) => {
+  await page.setViewportSize({ width: 375, height: 812 });
+  for (const [lesson, family] of [
+    ['charge', 'charge'],
+    ['landing-jump', 'blueprint'],
+    ['ground-slam', 'pattern'],
+    ['lunge', 'blueprint'],
+    ['wide-swing', 'blueprint'],
+  ]) {
+    await page.goto(`ar/mechanics/${lesson}/`);
+    await expect(page.locator('html')).toHaveAttribute('dir', 'rtl');
+    const canvas = await page.locator(`.${family}-demo__canvas`).boundingBox();
+    const svg = await page.locator(`.${family}-demo__svg`).boundingBox();
+    expect(canvas.height, `${lesson}: scene uses viewport height`).toBeGreaterThanOrEqual(811);
+    expect(
+      Math.abs(svg.x + svg.width / 2 - canvas.x - canvas.width / 2),
+      `${lesson}: scene stays centered in RTL`,
+    ).toBeLessThan(1);
+  }
+});

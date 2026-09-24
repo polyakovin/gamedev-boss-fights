@@ -1,7 +1,11 @@
+import { sweepWeaponPose, SWEEP_INNER_RADIUS, SWEEP_OUTER_RADIUS } from './sweep-weapon-model.mjs';
+
 export const BLUEPRINT_DURATION = 6;
 export const BLUEPRINT_PHASE_ENDS = Object.freeze([1.6, 4.3, BLUEPRINT_DURATION]);
 export const BLUEPRINT_PLAYER_RADIUS = 24;
 export const BLUEPRINT_BOSS_LABEL_OFFSET_Y = -104;
+const WIDE_SWING_FROM = -0.95;
+const WIDE_SWING_TO = 2.05;
 
 const SPECS = {
   'landing-jump': {
@@ -1675,7 +1679,7 @@ const SPECS = {
     variantId: 'eclipse-ruin',
     rewardTableId: 'eclipse-relic-table',
   },
-  'wide-swing': { mode: 'arc', boss: [280, 310], player: [410, 470], target: [470, 650] },
+  'wide-swing': { mode: 'arc', boss: [225, 340], player: [380, 500], target: [420, 780] },
   lunge: {
     mode: 'lunge',
     boss: [145, 210],
@@ -1933,6 +1937,14 @@ const arcPath = (center, radius, from, to) => {
   const start = polar(center, radius, from);
   const end = polar(center, radius, to);
   return `M ${start.x} ${start.y} A ${radius} ${radius} 0 ${Math.abs(to - from) > Math.PI ? 1 : 0} 1 ${end.x} ${end.y}`;
+};
+const annularSectorPath = (center, innerRadius, outerRadius, from, to) => {
+  const outsideStart = polar(center, outerRadius, from);
+  const outsideEnd = polar(center, outerRadius, to);
+  const insideEnd = polar(center, innerRadius, to);
+  const insideStart = polar(center, innerRadius, from);
+  const largeArc = to - from > Math.PI ? 1 : 0;
+  return `M ${outsideStart.x} ${outsideStart.y} A ${outerRadius} ${outerRadius} 0 ${largeArc} 1 ${outsideEnd.x} ${outsideEnd.y} L ${insideEnd.x} ${insideEnd.y} A ${innerRadius} ${innerRadius} 0 ${largeArc} 0 ${insideStart.x} ${insideStart.y} Z`;
 };
 const lungeScuffPath = (origin, end, halfWidth = 27) => {
   const dx = end.x - origin.x;
@@ -9728,8 +9740,36 @@ function primitivesFor(spec, frame) {
   }
   if (mode === 'arc')
     return [
-      path(arcPath(boss, 205, -1.15, 2.25), preview, 'accent', 20, 0, '12 10'),
-      path(arcPath(boss, 205, -1.15, mix(-1.15, 2.25, action)), active, 'signal', 30),
+      path(
+        annularSectorPath(
+          boss,
+          SWEEP_INNER_RADIUS,
+          SWEEP_OUTER_RADIUS,
+          WIDE_SWING_FROM,
+          WIDE_SWING_TO,
+        ),
+        preview,
+        'accent',
+        0,
+        0.18,
+      ),
+      path(
+        annularSectorPath(
+          boss,
+          SWEEP_INNER_RADIUS,
+          SWEEP_OUTER_RADIUS,
+          WIDE_SWING_FROM,
+          phase === 0
+            ? WIDE_SWING_FROM
+            : phase === 1
+              ? mix(WIDE_SWING_FROM, WIDE_SWING_TO, action)
+              : WIDE_SWING_TO,
+        ),
+        active,
+        'signal',
+        0,
+        0.2,
+      ),
     ];
   if (mode === 'lunge') {
     const origin = point(spec.boss);
@@ -10283,7 +10323,7 @@ function pointClearsThreat(spec, frame, value, radius = BLUEPRINT_PLAYER_RADIUS)
     const projectile = frame.primitives[2];
     return Math.hypot(value.x - projectile.x, value.y - projectile.y) > projectile.radius + radius;
   }
-  if (mode === 'arc') return distanceFromBoss > 205 + radius;
+  if (mode === 'arc') return distanceFromBoss > SWEEP_OUTER_RADIUS + radius;
   if (mode === 'lunge')
     return distanceToSegment(value, point(spec.boss), point(spec.lungeEnd)) > 27 + radius;
   if (mode === 'grab') {
@@ -12829,36 +12869,38 @@ export function blueprintFrame(id, time) {
               : 1.1
             : 1,
     bossFacing:
-      spec.mode === 'landing'
-        ? (Math.atan2(spec.landing[1] - spec.boss[1], spec.landing[0] - spec.boss[0]) * 180) /
-          Math.PI
-        : spec.mode === 'boundary-attack'
-          ? t < spec.openingEnd
-            ? 0
-            : t < 4.55
-              ? -90
-              : t < 5.35
-                ? 180
-                : 90
-          : spec.mode === 'forced-scrolling'
-            ? -90
-            : spec.mode === 'chase-herding'
-              ? 90
-              : spec.mode === 'escape-phase'
-                ? 90
-                : spec.mode === 'boss-as-terrain'
+      spec.mode === 'arc'
+        ? 90
+        : spec.mode === 'landing'
+          ? (Math.atan2(spec.landing[1] - spec.boss[1], spec.landing[0] - spec.boss[0]) * 180) /
+            Math.PI
+          : spec.mode === 'boundary-attack'
+            ? t < spec.openingEnd
+              ? 0
+              : t < 4.55
+                ? -90
+                : t < 5.35
                   ? 180
-                  : spec.mode === 'control-mode-shift'
-                    ? t < spec.handoff[0]
-                      ? 90
-                      : t < spec.resetAt
-                        ? 180
-                        : mix(
-                            180,
-                            90,
-                            smooth((t - spec.resetAt) / (BLUEPRINT_DURATION - spec.resetAt)),
-                          )
-                    : 90,
+                  : 90
+            : spec.mode === 'forced-scrolling'
+              ? -90
+              : spec.mode === 'chase-herding'
+                ? 90
+                : spec.mode === 'escape-phase'
+                  ? 90
+                  : spec.mode === 'boss-as-terrain'
+                    ? 180
+                    : spec.mode === 'control-mode-shift'
+                      ? t < spec.handoff[0]
+                        ? 90
+                        : t < spec.resetAt
+                          ? 180
+                          : mix(
+                              180,
+                              90,
+                              smooth((t - spec.resetAt) / (BLUEPRINT_DURATION - spec.resetAt)),
+                            )
+                      : 90,
     playerFacing:
       spec.mode === 'directional-shield'
         ? mix(-90, -180, smooth((t - 2.7) / 0.68)) * (1 - returnProgress) - 90 * returnProgress
@@ -14806,6 +14848,15 @@ export function blueprintFrame(id, time) {
       1 - (t - spec.survival[0]) / (spec.shieldDropsAt - spec.survival[0]),
     );
     frame.punishStrike = strikePulse(t, spec.punishAt, 0.38) > 0.5;
+  }
+  if (spec.mode === 'arc') {
+    const angle =
+      phase === 0
+        ? mix(WIDE_SWING_FROM + 0.2, WIDE_SWING_FROM, prepare)
+        : phase === 1
+          ? mix(WIDE_SWING_FROM, WIDE_SWING_TO, action)
+          : mix(WIDE_SWING_TO, WIDE_SWING_FROM, recover);
+    frame.wideSwingWeapon = sweepWeaponPose((angle * 180) / Math.PI, frame.bossMotion);
   }
   frame.primitives = primitivesFor(spec, frame);
   frame.playerSafe = pointClearsThreat(spec, frame, player);

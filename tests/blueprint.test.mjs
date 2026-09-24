@@ -216,7 +216,7 @@ test('every damaging promoted animation derives safety from its own active geome
     'forced-scrolling': { x: 350, y: 750 },
     'control-mode-shift': { x: 120, y: 724 },
     'cover-line-of-sight': { x: 470, y: 850 },
-    'wide-swing': { x: 280, y: 515 },
+    'wide-swing': { x: 225, y: 540 },
     lunge: { x: 265, y: 450 },
     grab: { x: 390, y: 555 },
     'burrow-and-emerge': { x: 420, y: 590 },
@@ -1450,13 +1450,26 @@ test('blueprint pages and previews reuse Tavi and Kern with accessible localized
   assert.match(page, /data-blueprint-id="wide-swing"/);
   assert.match(page, /data-character-art="kern"/);
   assert.match(page, /data-character-art="tavi"/);
+  assert.match(page, /data-weapon-art="sweep-glaive"/);
   assert.match(page, /A boss signals a wide arc/);
   assert.match(preview, /data-blueprint-preview="wide-swing"/);
   assert.match(preview, /data-character-art-preview="kern"/);
   assert.match(preview, /data-character-art-preview="tavi"/);
-  assert.match(preview, /stroke="var\(--signal\)"/);
+  assert.match(preview, /data-weapon-art="sweep-glaive"/);
+  assert.doesNotMatch(page, /stroke-dasharray="12 10"/);
   assert.match(preview, /clip-path="[^"]+">\s*<g transform="translate/);
   assert.doesNotMatch(preview, /clip-path="[^"]+"\s+transform=/);
+});
+
+test('wide swing keeps its blade on the modeled arc and the whole player beyond its edge', () => {
+  const windup = blueprintFrame('wide-swing', 1.4);
+  const strike = blueprintFrame('wide-swing', 3);
+  const recovery = blueprintFrame('wide-swing', 5.9);
+  assert.ok(strike.wideSwingWeapon.angle > windup.wideSwingWeapon.angle);
+  assert.ok(recovery.wideSwingWeapon.angle < strike.wideSwingWeapon.angle);
+  assert.equal(strike.primitives[1].width, 0);
+  assert.equal(strike.playerSafe, true);
+  assert.equal(blueprintPointSafe('wide-swing', 3, { x: 225, y: 540 }), false);
 });
 
 test('blueprint previews use mechanic-specific keyframes and modeled actor placement', () => {
