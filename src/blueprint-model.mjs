@@ -9173,19 +9173,38 @@ function primitivesFor(spec, frame) {
       circle(390, 485, mix(30, 58, prepare), preview, 'accent', 4, 0.06),
       line(boss.x, boss.y, 390, 485, active, 'signal', 32),
     ];
-  if (mode === 'burrow')
+  if (mode === 'burrow') {
+    const underground = quadraticPoint(
+      { x: 190, y: 320 },
+      { x: 270, y: 510 },
+      { x: 420, y: 590 },
+      smooth(action / 0.68),
+    );
+    const moundVisible = phase === 1 && action < 0.68 ? 0.76 : 0;
+    const emergenceVisible = phase === 2 ? 1 - recover : phase === 1 ? 1 : preview;
     return [
-      circle(190, 320, 48, phase === 0 ? 1 - prepare : 0, 'muted', 4, 0.08),
       path(
-        'M 190 320 Q 250 430 360 520 T 420 590',
-        phase === 1 ? 0.7 : preview,
-        'accent',
-        12,
-        0,
-        '9 11',
+        'M 158 302 L 187 320 L 173 340 M 187 320 L 210 294 M 187 320 L 221 333',
+        phase === 0 ? prepare * 0.5 : phase === 1 ? 0.45 : 0,
+        'muted',
+        5,
       ),
-      circle(420, 590, mix(34, 78, prepare), phase === 1 ? active : preview, 'signal', 5, 0.12),
+      path(
+        `M ${underground.x - 26} ${underground.y + 9} L ${underground.x - 13} ${underground.y - 13} L ${underground.x + 7} ${underground.y - 19} L ${underground.x + 27} ${underground.y + 7} L ${underground.x + 5} ${underground.y + 17} Z`,
+        moundVisible,
+        'accent',
+        0,
+        0.76,
+      ),
+      circle(420, 590, mix(34, 78, prepare), emergenceVisible, 'signal', 0, 0.22),
+      path(
+        'M 382 568 L 406 585 L 393 606 M 406 585 L 431 567 L 444 584 M 406 585 L 423 612 L 450 619',
+        emergenceVisible * 0.68,
+        'muted',
+        5,
+      ),
     ];
+  }
   if (mode === 'fan') return projectileLines(boss, 7, 0.78, 610 * action, active);
   if (mode === 'ring') {
     const radius = mix(70, 390, action);
@@ -10254,7 +10273,12 @@ export function blueprintFrame(id, time) {
     const travel = phase === 0 ? 0 : phase === 1 ? smooth(action / 0.62) : 1 - recover;
     boss = { x: mix(170, 430, travel), y: mix(290, 590, travel) };
   } else if (spec.mode === 'burrow') {
-    boss = phase === 0 ? startBoss : { x: 420, y: 590 };
+    boss =
+      phase === 0
+        ? startBoss
+        : phase === 1
+          ? { x: 420, y: 590 }
+          : { x: mix(420, startBoss.x, returnProgress), y: mix(590, startBoss.y, returnProgress) };
   } else if (spec.mode === 'trail') {
     const travel = phase === 0 ? 0 : phase === 1 ? smooth(action) : 1 - returnProgress;
     boss = { x: mix(175, 410, travel), y: mix(260, 610, travel) };

@@ -596,6 +596,18 @@ test('ring volley expands its individual stones around a fixed full-body gap', (
   }
 });
 
+test('burrow leaves a moving ground disturbance and walks back after emergence', () => {
+  const early = blueprintFrame('burrow-and-emerge', 2);
+  const late = blueprintFrame('burrow-and-emerge', 3);
+  const recovering = blueprintFrame('burrow-and-emerge', 5.4);
+  const seam = blueprintFrame('burrow-and-emerge', 5.99);
+  assert.notEqual(early.primitives[1].data, late.primitives[1].data);
+  assert.equal(late.primitives[2].radius, 78);
+  assert.ok(recovering.boss.x < 420);
+  assert.ok(Math.hypot(seam.boss.x - 190, seam.boss.y - 300) < 1);
+  assert.equal(late.playerSafe, true);
+});
+
 test('returning projectile announces an outbound leg and a distinct committed return leg', () => {
   const signal = blueprintFrame('returning-projectile', 1.59);
   const outgoing = blueprintFrame('returning-projectile', 2.35);
