@@ -3165,30 +3165,24 @@ function primitivesFor(spec, frame) {
     const moving = frame.time >= BLUEPRINT_PHASE_ENDS[0] && frame.time < spec.finishAt;
     const lane = phase === 0 ? 0.36 + prepare * 0.35 : moving ? 0.28 : 0;
     return [
-      rect(
-        73,
-        spec.laneY - spec.collisionRadius,
-        429,
-        spec.collisionRadius * 2,
-        lane,
-        'accent',
-        0.05,
-      ),
-      line(
-        spec.boss[0],
-        spec.laneY,
-        spec.finishX,
-        spec.laneY,
-        phase === 0 ? 0.7 : moving ? 0.22 : 0,
-        'accent',
-        5,
-        '14 12',
-      ),
+      {
+        ...rect(
+          73,
+          spec.laneY - spec.collisionRadius,
+          429,
+          spec.collisionRadius * 2,
+          lane,
+          'accent',
+          0.16,
+        ),
+        width: 0,
+      },
       path(
-        `M ${spec.switchX - 18} ${spec.laneY - 80} L ${spec.switchX} ${spec.laneY - 98} L ${spec.switchX + 18} ${spec.laneY - 80} M ${spec.switchX - 18} ${spec.laneY + 80} L ${spec.switchX} ${spec.laneY + 98} L ${spec.switchX + 18} ${spec.laneY + 80}`,
+        `M ${spec.switchX} ${spec.laneY - 49} L ${spec.switchX + 26} ${spec.laneY} L ${spec.switchX} ${spec.laneY + 49} L ${spec.switchX - 26} ${spec.laneY} Z M ${spec.switchX} ${spec.laneY - 24} L ${spec.switchX + 12} ${spec.laneY} L ${spec.switchX} ${spec.laneY + 24} L ${spec.switchX - 12} ${spec.laneY} Z`,
         phase === 0 ? 0.45 + prepare * 0.32 : moving ? 0.84 : 0,
         accelerating ? 'signal' : 'accent',
-        6,
+        0,
+        0.72,
       ),
       ...[-25, 0, 25].map((offset, index) =>
         line(

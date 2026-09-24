@@ -1026,10 +1026,10 @@ test('speed change keeps one route, accelerates at its rune, and clears the whol
     assert.equal(blueprintPointSafe(id, time, frame.boss), !frame.dangerActive);
     assert.equal(frame.primitives[0].rectHeight, 114);
   }
-  assert.equal(blueprintFrame(id, 2.79).primitives[2].tone, 'accent');
-  assert.equal(blueprintFrame(id, 2.8).primitives[2].tone, 'signal');
-  assert.ok(blueprintFrame(id, 3.15).primitives[3].opacity > 0.8);
-  assert.equal(blueprintFrame(id, 3.45).primitives[3].opacity, 0);
+  assert.equal(blueprintFrame(id, 2.79).primitives[1].tone, 'accent');
+  assert.equal(blueprintFrame(id, 2.8).primitives[1].tone, 'signal');
+  assert.ok(blueprintFrame(id, 3.15).primitives[2].opacity > 0.8);
+  assert.equal(blueprintFrame(id, 3.45).primitives[2].opacity, 0);
   const bossX = blueprintFrame(id, 3.1).boss.x;
   assert.equal(blueprintPointSafe(id, 3.1, { x: bossX, y: 700 }), false);
   assert.equal(blueprintPointSafe(id, 3.1, { x: bossX, y: 703 }), true);

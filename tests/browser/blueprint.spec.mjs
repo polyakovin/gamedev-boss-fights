@@ -494,7 +494,7 @@ test('speed change keeps its lane while the boss accelerates past a visible rune
   const widget = page.locator('[data-blueprint-demo]');
   const timeline = widget.locator('[data-blueprint-timeline]');
   const boss = widget.locator('[data-blueprint-boss]');
-  const rune = widget.locator('[data-blueprint-primitive="2"] path');
+  const rune = widget.locator('[data-blueprint-primitive="1"] path');
   const seek = (milliseconds) =>
     timeline.evaluate((element, value) => {
       element.value = String(value);
@@ -504,6 +504,7 @@ test('speed change keeps its lane while the boss accelerates past a visible rune
   await expect(page.locator('.game-example')).toHaveCount(3);
   await expect(widget).toHaveAttribute('data-blueprint-ready', 'true');
   await expect(widget).toHaveAttribute('data-blueprint-playing', 'false');
+  await expect(widget).toHaveAttribute('data-blueprint-full-height', 'true');
   await seek(2300);
   await expect(widget).toHaveAttribute('data-blueprint-outcome', 'safe');
   const slowBoss = await boss.getAttribute('transform');
@@ -513,7 +514,7 @@ test('speed change keeps its lane while the boss accelerates past a visible rune
   await expect(boss).not.toHaveAttribute('transform', slowBoss);
   await expect(rune).not.toHaveAttribute('class', quietRune);
   await seek(3450);
-  await expect(widget.locator('[data-blueprint-primitive="3"] line')).toHaveAttribute(
+  await expect(widget.locator('[data-blueprint-primitive="2"] line')).toHaveAttribute(
     'opacity',
     '0',
   );
