@@ -4211,6 +4211,7 @@ test('run-history manifestation keeps one captured journal stable through retry'
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await page.goto('en/mechanics/run-history-manifestation/');
   const widget = page.locator('[data-blueprint-demo]');
+  await expect(widget).toHaveAttribute('data-blueprint-screen-height', 'true');
   const timeline = widget.locator('[data-blueprint-timeline]');
   const seek = (milliseconds) =>
     timeline.evaluate((element, value) => {
@@ -4290,6 +4291,10 @@ test('run-history manifestation keeps one captured journal stable through retry'
     '0',
   );
   await page.setViewportSize({ width: 375, height: 812 });
+  await seek(2550);
+  const canvas = await widget.locator('.blueprint-demo__canvas').boundingBox();
+  const playerLabel = await widget.locator('[data-blueprint-player-label]').boundingBox();
+  expect(playerLabel.x + playerLabel.width).toBeLessThanOrEqual(canvas.x + canvas.width);
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
 });
 
