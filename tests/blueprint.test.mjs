@@ -1155,13 +1155,13 @@ test('situational immunity blocks the whole boss until the linked ward is cut', 
   assert.equal(blocked.blockedStrike, true);
   assert.equal(ward.wardStrike, true);
   assert.equal(exposed.openStrike, true);
-  assert.ok(blocked.primitives[0].opacity > 0.7);
-  assert.ok(blocked.primitives[6].opacity > 0.7);
-  assert.ok(ward.primitives[8].opacity > 0.7);
-  assert.ok(exposed.primitives[0].opacity < 0.1);
-  assert.ok(exposed.primitives[10].opacity > 0.7);
-  assert.ok(restored.primitives[0].opacity > 0.7);
-  assert.equal(exposed.primitives[10].x, spec.boss[0] + 38);
+  assert.ok(blocked.primitives[3].opacity > 0.7);
+  assert.ok(blocked.primitives[9].opacity > 0.7);
+  assert.ok(ward.primitives[11].opacity > 0.7);
+  assert.ok(exposed.primitives[3].opacity < 0.1);
+  assert.ok(exposed.primitives[13].opacity > 0.7);
+  assert.ok(restored.primitives[3].opacity > 0.7);
+  assert.equal(exposed.primitives[13].x, spec.boss[0] + 38);
   assert.deepEqual(blueprintFrame(id, 0).player, blueprintFrame(id, 6).player);
   assert.match(
     renderBlueprintThumbnail(id, 'test-situational-immunity'),

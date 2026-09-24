@@ -3252,8 +3252,29 @@ function primitivesFor(spec, frame) {
     const openFlash = strikePulse(frame.time, spec.openStrike);
     const ward = point(spec.ward);
     return [
-      circle(boss.x, boss.y, 88, protectedBoss ? 0.8 : 0.08, 'accent', 9, 0.1, '9 8'),
-      circle(ward.x, ward.y, 25, protectedBoss ? 0.8 : 0.18, 'accent', 5, 0.15),
+      path('M 37 94 H 523 V 878 H 37 Z M 57 262 H 503 V 878 H 57 Z', 0.36, 'muted', 0, 0.56),
+      path(
+        'M 55 117 H 132 V 350 H 55 Z M 428 117 H 505 V 350 H 428 Z M 147 121 H 413 V 155 H 147 Z M 64 543 L 280 521 L 496 543 V 579 L 280 552 L 64 579 Z M 64 757 L 280 726 L 496 757 V 803 L 280 765 L 64 803 Z',
+        0.41,
+        'accent',
+        0,
+        0.56,
+      ),
+      path(
+        'M 379 235 H 441 V 272 H 379 Z M 393 272 H 427 V 309 H 393 Z M 380 309 H 440 V 343 H 380 Z M 72 839 L 280 809 L 488 839 V 852 L 280 824 L 72 852 Z',
+        0.4,
+        'muted',
+        0,
+        0.76,
+      ),
+      circle(boss.x, boss.y, 88, protectedBoss ? 0.72 : 0.08, 'accent', 5, 0.11),
+      path(
+        `M ${ward.x} ${ward.y - 25} L ${ward.x + 22} ${ward.y} L ${ward.x} ${ward.y + 25} L ${ward.x - 22} ${ward.y} Z`,
+        protectedBoss ? 0.82 : 0.18,
+        'accent',
+        0,
+        0.78,
+      ),
       line(
         ward.x - 9,
         ward.y - 10,

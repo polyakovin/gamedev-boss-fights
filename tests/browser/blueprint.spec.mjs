@@ -672,25 +672,26 @@ test('situational immunity links its blocked hit, broken ward, open hit, and ret
   await expect(page.locator('.wip-badge, .draft-profile')).toHaveCount(0);
   await expect(page.locator('.game-example')).toHaveCount(3);
   await expect(widget).toHaveAttribute('data-blueprint-playing', 'false');
+  await expect(widget).toHaveAttribute('data-blueprint-full-height', 'true');
   await seek(2050);
   await expect(widget).toHaveAttribute('data-blueprint-immunity', 'blocked');
-  await expect(widget.locator('[data-blueprint-primitive="0"] circle')).not.toHaveAttribute(
+  await expect(widget.locator('[data-blueprint-primitive="3"] circle')).not.toHaveAttribute(
     'opacity',
     '0',
   );
-  await expect(widget.locator('[data-blueprint-primitive="6"] circle')).not.toHaveAttribute(
+  await expect(widget.locator('[data-blueprint-primitive="9"] circle')).not.toHaveAttribute(
     'opacity',
     '0',
   );
   await seek(2800);
   await expect(widget).toHaveAttribute('data-blueprint-immunity', 'ward-broken');
-  await expect(widget.locator('[data-blueprint-primitive="8"] circle')).not.toHaveAttribute(
+  await expect(widget.locator('[data-blueprint-primitive="11"] circle')).not.toHaveAttribute(
     'opacity',
     '0',
   );
   await seek(3550);
   await expect(widget).toHaveAttribute('data-blueprint-immunity', 'boss-hit');
-  await expect(widget.locator('[data-blueprint-primitive="10"] circle')).not.toHaveAttribute(
+  await expect(widget.locator('[data-blueprint-primitive="13"] circle')).not.toHaveAttribute(
     'opacity',
     '0',
   );
@@ -709,6 +710,7 @@ test('situational immunity keeps both actors and labels visible on dark RTL mobi
   const widget = page.locator('[data-blueprint-demo]');
   await expect(page.locator('html')).toHaveAttribute('dir', 'rtl');
   await expect(widget).toHaveAttribute('data-blueprint-playing', 'false');
+  await expect(widget).toHaveAttribute('data-blueprint-full-height', 'true');
   const timeline = widget.locator('[data-blueprint-timeline]');
   for (const milliseconds of [0, 2050, 2800, 3550, 4300]) {
     await timeline.evaluate((element, value) => {
