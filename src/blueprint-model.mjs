@@ -3140,22 +3140,27 @@ function primitivesFor(spec, frame) {
         y,
         phase === 0 ? 0.28 + 0.48 * prepare : 0,
         'accent',
-        4,
-        '9 12',
+        3,
       ),
-      circle(x, y, spec.radius, visible, lit ? 'signal' : 'accent', lit ? 13 : 5, lit ? 0.4 : 0.05),
-      circle(x, y, mix(118, spec.radius, countdown), phase === 1 && !lit ? 0.75 : 0, 'accent', 5),
-      circle(x, y, 12, visible, lit ? 'signal' : 'accent', 5, lit ? 0.6 : 0.12),
+      circle(x, y, spec.radius, visible, lit ? 'signal' : 'accent', lit ? 7 : 2, lit ? 0.33 : 0.04),
+      circle(x, y, mix(118, spec.radius, countdown), phase === 1 && !lit ? 0.75 : 0, 'accent', 3),
+      path(
+        `M ${x} ${y - 32} L ${x + 24} ${y} L ${x} ${y + 32} L ${x - 24} ${y} Z M ${x} ${y - 16} L ${x + 12} ${y} L ${x} ${y + 16} L ${x - 12} ${y} Z`,
+        visible,
+        lit ? 'signal' : 'accent',
+        0,
+        lit ? 0.8 : 0.47,
+      ),
       ...Array.from({ length: 8 }, (_, index) => {
         const angle = (index * Math.PI) / 4;
-        return circle(
-          x + Math.cos(angle) * 57,
-          y + Math.sin(angle) * 57,
-          5,
+        const markerX = x + Math.cos(angle) * 57;
+        const markerY = y + Math.sin(angle) * 57;
+        return path(
+          `M ${markerX} ${markerY - 8} L ${markerX + 6} ${markerY} L ${markerX} ${markerY + 8} L ${markerX - 6} ${markerY} Z`,
           visible * (lit ? 1 : 0.36 + countdown * 0.5),
           lit ? 'signal' : 'accent',
-          3,
-          lit ? 0.5 : 0,
+          0,
+          lit ? 0.74 : 0.44,
         );
       }),
     ];

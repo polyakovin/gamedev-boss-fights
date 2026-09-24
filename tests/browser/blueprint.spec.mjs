@@ -471,6 +471,7 @@ test('delayed rune warns harmlessly, ignites on its fixed beat, and extinguishes
   await expect(page.locator('.wip-badge, .draft-profile')).toHaveCount(0);
   await expect(page.locator('.game-example')).toHaveCount(3);
   await expect(widget).toHaveAttribute('data-blueprint-playing', 'false');
+  await expect(widget).toHaveAttribute('data-blueprint-full-height', 'true');
   await seek(2800);
   await expect(ring).toHaveAttribute('cx', '350');
   await expect(ring).toHaveAttribute('cy', '630');
