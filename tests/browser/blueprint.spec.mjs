@@ -581,23 +581,24 @@ test('directional shield visibly blocks the front strike and opens a side hit', 
   await expect(page.locator('.wip-badge, .draft-profile')).toHaveCount(0);
   await expect(page.locator('.game-example')).toHaveCount(3);
   await expect(widget).toHaveAttribute('data-blueprint-playing', 'false');
+  await expect(widget).toHaveAttribute('data-blueprint-full-height', 'true');
   await seek(2050);
   await expect(widget).toHaveAttribute('data-blueprint-guard', 'blocked');
-  await expect(widget.locator('[data-blueprint-primitive="1"] path')).not.toHaveAttribute(
+  await expect(widget.locator('[data-blueprint-primitive="4"] path')).not.toHaveAttribute(
     'opacity',
     '0',
   );
-  const frontHit = widget.locator('[data-blueprint-primitive="4"] circle');
+  const frontHit = widget.locator('[data-blueprint-primitive="7"] circle');
   await expect(frontHit).not.toHaveAttribute('opacity', '0');
   await seek(3550);
   await expect(widget).toHaveAttribute('data-blueprint-guard', 'flank-hit');
-  await expect(widget.locator('[data-blueprint-primitive="6"] circle')).not.toHaveAttribute(
+  await expect(widget.locator('[data-blueprint-primitive="9"] circle')).not.toHaveAttribute(
     'opacity',
     '0',
   );
   await seek(3850);
   await expect(widget).toHaveAttribute('data-blueprint-guard', 'idle');
-  await expect(widget.locator('[data-blueprint-primitive="1"] path')).toHaveAttribute(
+  await expect(widget.locator('[data-blueprint-primitive="4"] path')).toHaveAttribute(
     'opacity',
     '0',
   );

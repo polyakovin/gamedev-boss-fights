@@ -1098,9 +1098,9 @@ test('directional shield blocks its marked front arc but permits a reachable fla
   assert.equal(front.sideStrike, false);
   assert.equal(flank.frontStrike, false);
   assert.equal(flank.sideStrike, true);
-  assert.ok(front.primitives[1].opacity > 0.9);
-  assert.ok(front.primitives[4].opacity > 0);
-  assert.ok(flank.primitives[6].opacity > 0);
+  assert.ok(front.primitives[4].opacity > 0.9);
+  assert.ok(front.primitives[7].opacity > 0);
+  assert.ok(flank.primitives[9].opacity > 0);
   assert.ok(flank.player.x > front.player.x + 90);
   assert.ok(flank.player.y < front.player.y - 90);
   assert.equal(blueprintFrame(id, 3.84).dangerActive, true);

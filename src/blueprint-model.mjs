@@ -3258,13 +3258,27 @@ function primitivesFor(spec, frame) {
     const leftEdge = polar(boss, 160, arcStart);
     const rightEdge = polar(boss, 160, arcEnd);
     return [
+      path('M 38 94 H 522 V 878 H 38 Z M 57 260 H 503 V 878 H 57 Z', 0.37, 'muted', 0, 0.56),
+      path(
+        'M 55 117 H 131 V 353 H 55 Z M 429 117 H 505 V 353 H 429 Z M 146 120 H 414 V 154 H 146 Z M 64 553 L 280 530 L 496 553 V 589 L 280 562 L 64 589 Z M 64 748 L 280 717 L 496 748 V 793 L 280 756 L 64 793 Z',
+        0.41,
+        'accent',
+        0,
+        0.56,
+      ),
+      path(
+        'M 70 643 L 280 617 L 490 643 V 657 L 280 632 L 70 657 Z M 74 836 L 280 806 L 486 836 V 849 L 280 821 L 74 849 Z',
+        0.34,
+        'muted',
+        0,
+        0.75,
+      ),
       path(
         `M ${boss.x} ${boss.y} L ${leftEdge.x} ${leftEdge.y} A 160 160 0 0 1 ${rightEdge.x} ${rightEdge.y} Z`,
         guarded ? 0.34 : phase === 0 ? 0.12 + prepare * 0.16 : 0,
         'accent',
         2,
         0.05,
-        '9 11',
       ),
       path(
         arcPath(boss, 80, arcStart, arcEnd),
@@ -3276,8 +3290,8 @@ function primitivesFor(spec, frame) {
         `M ${boss.x - 37} ${boss.y + 12} Q ${boss.x} ${boss.y - 2} ${boss.x + 37} ${boss.y + 12} L ${boss.x + 31} ${boss.y + 61} Q ${boss.x} ${boss.y + 80} ${boss.x - 31} ${boss.y + 61} Z`,
         phase === 0 ? 0.45 + prepare * 0.42 : phase === 1 ? 0.9 : 0.55,
         'accent',
-        5,
-        0.36,
+        0,
+        0.78,
       ),
       line(player.x, player.y - 35, boss.x, boss.y + 60, frontFlash, 'signal', 6),
       circle(boss.x, boss.y + 60, 18 + frontFlash * 19, frontFlash, 'signal', 7),
