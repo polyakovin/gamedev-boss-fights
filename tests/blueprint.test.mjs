@@ -69,6 +69,8 @@ import {
   runHistoryManifestationResolve,
   realTimeProgressionState,
   realTimeProgressionResolve,
+  interfaceInteractionState,
+  interfaceInteractionResolve,
   counterStanceOutcome,
   counterStanceState,
   blueprintFrame,
@@ -96,8 +98,8 @@ import {
   renderBlueprintThumbnail,
 } from '../lib/blueprint-view.mjs';
 
-test('all 100 promoted lesson animations have distinct rule modes and complete moving frames', () => {
-  assert.equal(BLUEPRINT_MECHANIC_IDS.length, 100);
+test('all 101 promoted lesson animations have distinct rule modes and complete moving frames', () => {
+  assert.equal(BLUEPRINT_MECHANIC_IDS.length, 101);
   const modes = new Set();
   for (const id of BLUEPRINT_MECHANIC_IDS) {
     for (let time = 0; time <= BLUEPRINT_DURATION; time += 0.1) {
@@ -118,7 +120,7 @@ test('all 100 promoted lesson animations have distinct rule modes and complete m
           assert.ok(Number.isFinite(value), `${id} has an invalid ${primitive.type}`);
     }
   }
-  assert.equal(modes.size, 100);
+  assert.equal(modes.size, 101);
 });
 
 test('every blueprint exposes signal, committed action, and recovery without player teleports', () => {
@@ -167,7 +169,8 @@ test('every blueprint exposes signal, committed action, and recovery without pla
       id !== 'false-death' &&
       id !== 'action-reactive-punish' &&
       id !== 'run-history-manifestation' &&
-      id !== 'real-time-progression'
+      id !== 'real-time-progression' &&
+      id !== 'interface-interaction'
     )
       assert.equal(blueprintFrame(id, 3).dangerActive, true, id);
     assert.equal(blueprintFrame(id, 3).playerSafe, true, id);
@@ -266,6 +269,7 @@ test('every damaging promoted animation derives safety from its own active geome
       id !== 'action-reactive-punish' &&
       id !== 'run-history-manifestation' &&
       id !== 'real-time-progression' &&
+      id !== 'interface-interaction' &&
       id !== 'part-break' &&
       id !== 'counter-stance' &&
       id !== 'absorption-power-up' &&
@@ -4310,5 +4314,85 @@ test('real-time progression applies one bounded reconciliation before combat res
   assert.match(
     renderBlueprintThumbnail(id, 'test-real-time-progression'),
     /data-blueprint-preview="real-time-progression"/,
+  );
+});
+
+test('interface interaction pauses danger, confirms one supported route, and resumes safely', () => {
+  const id = 'interface-interaction';
+  assert.deepEqual(
+    [0.4, 0.8, 1.4, 1.8, 2.2, 2.5, 3, 3.55, 3.9, 4.35, 4.9, 5.5].map(interfaceInteractionState),
+    [
+      'ordinary-channel',
+      'normal-action-blocked',
+      'interaction-paused',
+      'route-switching',
+      'route-confirmed',
+      'focus-restored',
+      'opening-active',
+      'counter-signaled',
+      'counter-active',
+      'combat-resumed',
+      'retry-safe',
+      'reset',
+    ],
+  );
+  assert.deepEqual(interfaceInteractionResolve(), {
+    interactionId: 'kern-input-ward-1',
+    confirmationId: 'route-confirmation-1',
+    primaryRoute: 'channel-a',
+    selectedRoute: 'channel-b',
+    alternateAvailable: true,
+    consentGranted: true,
+    fallbackAvailable: true,
+    fallbackUsed: false,
+    accepted: true,
+    rejectionReason: 'none',
+    confirmationCount: 1,
+    destructiveActionCount: 0,
+    privatePayloadStored: false,
+  });
+  const fallback = interfaceInteractionResolve({ alternateAvailable: false });
+  assert.equal(fallback.selectedRoute, 'menu-fallback');
+  assert.equal(fallback.fallbackUsed, true);
+  assert.equal(fallback.accepted, true);
+  const duplicate = interfaceInteractionResolve({ alreadyConfirmed: true });
+  assert.equal(duplicate.accepted, false);
+  assert.equal(duplicate.rejectionReason, 'duplicate-confirmation');
+  assert.equal(duplicate.confirmationCount, 0);
+  const declined = interfaceInteractionResolve({ consentGranted: false });
+  assert.equal(declined.accepted, false);
+  assert.equal(declined.rejectionReason, 'consent-declined');
+
+  const blocked = blueprintFrame(id, 0.8);
+  assert.equal(blocked.interfaceInteractionNormalAttemptBlocked, true);
+  assert.equal(blocked.interfaceInteractionWardReading, true);
+  const paused = blueprintFrame(id, 1.8);
+  assert.equal(paused.interfaceInteractionPaused, true);
+  assert.equal(paused.interfaceInteractionFocusOutside, true);
+  assert.equal(paused.interfaceInteractionRouteSwitching, true);
+  assert.equal(paused.interfaceInteractionHostileTicksWhilePaused, 0);
+  assert.equal(paused.dangerActive, false);
+  const confirmed = blueprintFrame(id, 2.2);
+  assert.equal(confirmed.interfaceInteractionConfirmed, true);
+  assert.equal(confirmed.interfaceInteractionSelectedRoute, 'channel-b');
+  assert.equal(confirmed.interfaceInteractionConfirmationCount, 1);
+  assert.equal(confirmed.interfaceInteractionFallbackAvailable, true);
+  assert.equal(confirmed.interfaceInteractionDestructiveActionCount, 0);
+  assert.equal(confirmed.interfaceInteractionPrivatePayloadStored, false);
+  const opening = blueprintFrame(id, 3);
+  assert.equal(opening.interfaceInteractionOpeningActive, true);
+  assert.equal(opening.interfaceInteractionWardReading, false);
+  const active = blueprintFrame(id, 3.9);
+  assert.equal(active.interfaceInteractionCounterActive, true);
+  assert.equal(blueprintPointSafe(id, 3.9, active.player), true);
+  assert.equal(blueprintPointSafe(id, 3.9, { x: active.boss.x + 205, y: active.boss.y }), false);
+  const retry = blueprintFrame(id, 4.9);
+  assert.equal(retry.interfaceInteractionRetrySafe, true);
+  assert.equal(retry.interfaceInteractionRouteRestored, true);
+  assert.equal(retry.interfaceInteractionConfirmationCount, 1);
+  assert.deepEqual(blueprintFrame(id, 0).player, blueprintFrame(id, 6).player);
+  assert.match(
+    renderBlueprintThumbnail(id, 'test-interface-interaction'),
+    /data-blueprint-preview="interface-interaction"/,
   );
 });

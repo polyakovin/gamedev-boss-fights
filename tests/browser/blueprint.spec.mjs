@@ -409,9 +409,9 @@ test('volley releases three parallel bolts on one beat and clears its outside ro
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
 });
 
-test('catalog and builder reuse the 100 promoted rule-specific previews', async ({ page }) => {
+test('catalog and builder reuse the 101 promoted rule-specific previews', async ({ page }) => {
   await page.goto('en/');
-  await expect(page.locator('[data-blueprint-preview]')).toHaveCount(100);
+  await expect(page.locator('[data-blueprint-preview]')).toHaveCount(101);
   const catalogLayouts = await page.locator('[data-blueprint-preview]').evaluateAll((previews) =>
     previews.map((preview) => {
       const boss = preview.querySelector('[data-character-art-preview="kern"]');
@@ -435,7 +435,7 @@ test('catalog and builder reuse the 100 promoted rule-specific previews', async 
   expect(new Set(catalogLayouts.map(({ layout }) => layout)).size).toBeGreaterThanOrEqual(18);
 
   await page.goto('en/builder/');
-  await expect(page.locator('[data-blueprint-preview]')).toHaveCount(100);
+  await expect(page.locator('[data-blueprint-preview]')).toHaveCount(101);
   const builderLayouts = await page.locator('[data-blueprint-preview]').evaluateAll((previews) =>
     previews.map((preview) => {
       const boss = preview.querySelector('[data-character-art-preview="kern"]');
@@ -4300,6 +4300,98 @@ test('real-time progression reconciles a bounded interval once before resuming c
   );
   await expect(widget).toHaveAttribute('data-blueprint-real-time-progression-event-count', '1');
   await expect(widget).toHaveAttribute('data-blueprint-real-time-progression-live-ticks', '0');
+  await page.setViewportSize({ width: 375, height: 812 });
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+});
+
+test('interface interaction pauses danger and confirms one accessible route before combat resumes', async ({
+  page,
+}) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.goto('en/mechanics/interface-interaction/');
+  const widget = page.locator('[data-blueprint-demo]');
+  const timeline = widget.locator('[data-blueprint-timeline]');
+  const seek = (milliseconds) =>
+    timeline.evaluate((element, value) => {
+      element.value = String(value);
+      element.dispatchEvent(new Event('input', { bubbles: true }));
+    }, milliseconds);
+
+  await expect(page.locator('.lesson-title-line h1')).toHaveText('Interface interaction');
+  await expect(page.locator('.wip-badge, .draft-profile')).toHaveCount(0);
+  await expect(page.locator('.game-example')).toHaveCount(3);
+  await expect(page.locator('.lens-chip')).toHaveCount(5);
+  await seek(800);
+  await expect(widget).toHaveAttribute(
+    'data-blueprint-interface-interaction',
+    'normal-action-blocked',
+  );
+  await expect(widget).toHaveAttribute(
+    'data-blueprint-interface-interaction-normal-attempt-blocked',
+    'true',
+  );
+  await expect(widget).toHaveAttribute('data-blueprint-interface-interaction-ward-reading', 'true');
+  await seek(1800);
+  await expect(widget).toHaveAttribute('data-blueprint-interface-interaction', 'route-switching');
+  await expect(widget).toHaveAttribute('data-blueprint-interface-interaction-paused', 'true');
+  await expect(widget).toHaveAttribute(
+    'data-blueprint-interface-interaction-focus-outside',
+    'true',
+  );
+  await expect(widget).toHaveAttribute(
+    'data-blueprint-interface-interaction-hostile-ticks-while-paused',
+    '0',
+  );
+  await expect(widget).toHaveAttribute(
+    'data-blueprint-interface-interaction-fallback-available',
+    'true',
+  );
+  await expect(widget).toHaveAttribute(
+    'data-blueprint-interface-interaction-destructive-action-count',
+    '0',
+  );
+  await seek(2200);
+  await expect(widget).toHaveAttribute('data-blueprint-interface-interaction', 'route-confirmed');
+  await expect(widget).toHaveAttribute(
+    'data-blueprint-interface-interaction-selected-route',
+    'channel-b',
+  );
+  await expect(widget).toHaveAttribute('data-blueprint-interface-interaction-confirmed', 'true');
+  await expect(widget).toHaveAttribute(
+    'data-blueprint-interface-interaction-confirmation-count',
+    '1',
+  );
+  await expect(widget).toHaveAttribute(
+    'data-blueprint-interface-interaction-private-payload-stored',
+    'false',
+  );
+  await seek(3000);
+  await expect(widget).toHaveAttribute('data-blueprint-interface-interaction', 'opening-active');
+  await expect(widget).toHaveAttribute(
+    'data-blueprint-interface-interaction-opening-active',
+    'true',
+  );
+  await expect(widget).toHaveAttribute(
+    'data-blueprint-interface-interaction-ward-reading',
+    'false',
+  );
+  await seek(3900);
+  await expect(widget).toHaveAttribute('data-blueprint-interface-interaction', 'counter-active');
+  await expect(widget).toHaveAttribute(
+    'data-blueprint-interface-interaction-counter-active',
+    'true',
+  );
+  await expect(widget).toHaveAttribute('data-blueprint-outcome', 'safe');
+  await seek(4900);
+  await expect(widget).toHaveAttribute('data-blueprint-interface-interaction', 'retry-safe');
+  await expect(widget).toHaveAttribute(
+    'data-blueprint-interface-interaction-route-restored',
+    'true',
+  );
+  await expect(widget).toHaveAttribute(
+    'data-blueprint-interface-interaction-confirmation-count',
+    '1',
+  );
   await page.setViewportSize({ width: 375, height: 812 });
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
 });

@@ -1616,6 +1616,34 @@ const SPECS = {
     elapsedHours: 7,
     appliedHours: 6,
   },
+  'interface-interaction': {
+    mode: 'interface-interaction',
+    boss: [300, 400],
+    player: [370, 610],
+    target: [480, 720],
+    arena: [55, 300, 450, 590],
+    primaryPort: [145, 165],
+    alternatePort: [415, 165],
+    routeHub: [280, 260],
+    firstAttack: [0.42, 0.9],
+    blockedAt: 0.72,
+    pause: [1.28, 2.38],
+    switchRoute: [1.55, 2.05],
+    confirm: [2.05, 2.38],
+    opening: [2.72, 3.38],
+    counterSignal: [3.38, 3.72],
+    counter: [3.72, 4.18],
+    playerMove: [3.48, 3.86],
+    resumedAt: 4.18,
+    retry: [4.65, 5.35],
+    resetAt: 5.35,
+    attackRadius: 205,
+    interactionId: 'kern-input-ward-1',
+    confirmationId: 'route-confirmation-1',
+    primaryRoute: 'channel-a',
+    alternateRoute: 'channel-b',
+    fallbackRoute: 'menu-fallback',
+  },
   'wide-swing': { mode: 'arc', boss: [280, 310], player: [410, 470], target: [470, 650] },
   lunge: { mode: 'lunge', boss: [170, 290], player: [390, 590], target: [470, 660] },
   grab: { mode: 'grab', boss: [280, 300], player: [390, 485], target: [470, 610] },
@@ -3285,6 +3313,60 @@ export function realTimeProgressionResolve({
         ? 'clock-rollback'
         : 'none',
     eventCount: accepted ? 1 : 0,
+  });
+}
+
+export function interfaceInteractionState(time) {
+  const spec = SPECS['interface-interaction'];
+  const t = localTime(time);
+  if (t < spec.blockedAt) return 'ordinary-channel';
+  if (t < spec.pause[0]) return 'normal-action-blocked';
+  if (t < spec.switchRoute[0]) return 'interaction-paused';
+  if (t < spec.confirm[0]) return 'route-switching';
+  if (t < spec.pause[1]) return 'route-confirmed';
+  if (t < spec.opening[0]) return 'focus-restored';
+  if (t < spec.opening[1]) return 'opening-active';
+  if (t < spec.counter[0]) return 'counter-signaled';
+  if (t < spec.counter[1]) return 'counter-active';
+  if (t < spec.retry[0]) return 'combat-resumed';
+  if (t < spec.retry[1]) return 'retry-safe';
+  return 'reset';
+}
+
+export function interfaceInteractionResolve({
+  interactionId = 'kern-input-ward-1',
+  confirmationId = 'route-confirmation-1',
+  primaryRoute = 'channel-a',
+  alternateRoute = 'channel-b',
+  fallbackRoute = 'menu-fallback',
+  alternateAvailable = true,
+  consentGranted = true,
+  alreadyConfirmed = false,
+} = {}) {
+  const accepted = Boolean(consentGranted) && !alreadyConfirmed;
+  const fallbackUsed = accepted && !alternateAvailable;
+  return Object.freeze({
+    interactionId: String(interactionId),
+    confirmationId: String(confirmationId),
+    primaryRoute: String(primaryRoute),
+    selectedRoute: accepted
+      ? fallbackUsed
+        ? String(fallbackRoute)
+        : String(alternateRoute)
+      : String(primaryRoute),
+    alternateAvailable: Boolean(alternateAvailable),
+    consentGranted: Boolean(consentGranted),
+    fallbackAvailable: true,
+    fallbackUsed,
+    accepted,
+    rejectionReason: alreadyConfirmed
+      ? 'duplicate-confirmation'
+      : consentGranted
+        ? 'none'
+        : 'consent-declined',
+    confirmationCount: accepted ? 1 : 0,
+    destructiveActionCount: 0,
+    privatePayloadStored: false,
   });
 }
 
@@ -8286,6 +8368,182 @@ function primitivesFor(spec, frame) {
       ),
     ];
   }
+  if (mode === 'interface-interaction') {
+    const switchProgress = smooth(
+      (frame.time - spec.switchRoute[0]) / (spec.switchRoute[1] - spec.switchRoute[0]),
+    );
+    const confirmProgress = smooth(
+      (frame.time - spec.confirm[0]) / (spec.confirm[1] - spec.confirm[0]),
+    );
+    const signalProgress = clamp(
+      (frame.time - spec.counterSignal[0]) / (spec.counterSignal[1] - spec.counterSignal[0]),
+    );
+    const counterProgress = clamp(
+      (frame.time - spec.counter[0]) / (spec.counter[1] - spec.counter[0]),
+    );
+    const firstStrike = strikePulse(
+      frame.time,
+      (spec.firstAttack[0] + spec.firstAttack[1]) / 2,
+      spec.firstAttack[1] - spec.firstAttack[0],
+    );
+    const openingStrike = strikePulse(
+      frame.time,
+      (spec.opening[0] + spec.opening[1]) / 2,
+      spec.opening[1] - spec.opening[0],
+    );
+    const interfaceVisible = frame.time >= spec.pause[0] && frame.time < spec.retry[1];
+    const primaryOpacity = interfaceVisible ? mix(0.96, 0.24, switchProgress) : 0.34;
+    const alternateOpacity = interfaceVisible ? mix(0.24, 0.98, switchProgress) : 0.18;
+    const wardOpacity = frame.interfaceInteractionConfirmed
+      ? Math.max(0, 0.94 - confirmProgress)
+      : 0.94;
+    return [
+      rect(...spec.arena, 0.52, 'muted', 0.025),
+      path(
+        'M 70 742 L 176 716 L 280 744 L 386 716 L 490 742 V 775 L 386 746 L 280 776 L 176 746 L 70 775 Z M 88 839 L 280 807 L 472 839 V 857 L 280 826 L 88 857 Z',
+        0.54,
+        'muted',
+        0,
+        0.5,
+      ),
+      rect(72, 92, 416, 190, interfaceVisible ? 0.9 : 0.36, 'muted', 0.18),
+      circle(
+        spec.primaryPort[0],
+        spec.primaryPort[1],
+        46,
+        primaryOpacity,
+        frame.interfaceInteractionSelectedRoute === spec.primaryRoute ? 'signal' : 'accent',
+        7,
+        0.04,
+      ),
+      path(
+        `M ${spec.primaryPort[0] - 18} ${spec.primaryPort[1] - 17} H ${spec.primaryPort[0] + 18} V ${spec.primaryPort[1] + 17} H ${spec.primaryPort[0] - 18} Z M ${spec.primaryPort[0] - 8} ${spec.primaryPort[1] - 27} V ${spec.primaryPort[1] - 17} M ${spec.primaryPort[0] + 8} ${spec.primaryPort[1] - 27} V ${spec.primaryPort[1] - 17}`,
+        primaryOpacity,
+        'accent',
+        6,
+      ),
+      circle(
+        spec.alternatePort[0],
+        spec.alternatePort[1],
+        46,
+        alternateOpacity,
+        frame.interfaceInteractionConfirmed ? 'safe' : 'accent',
+        7,
+        frame.interfaceInteractionConfirmed ? 0.08 : 0.025,
+      ),
+      path(
+        `M ${spec.alternatePort[0] - 18} ${spec.alternatePort[1] - 17} H ${spec.alternatePort[0] + 18} V ${spec.alternatePort[1] + 17} H ${spec.alternatePort[0] - 18} Z M ${spec.alternatePort[0] - 8} ${spec.alternatePort[1] - 27} V ${spec.alternatePort[1] - 17} M ${spec.alternatePort[0] + 8} ${spec.alternatePort[1] - 27} V ${spec.alternatePort[1] - 17}`,
+        alternateOpacity,
+        frame.interfaceInteractionConfirmed ? 'safe' : 'accent',
+        6,
+      ),
+      line(
+        spec.primaryPort[0],
+        spec.primaryPort[1] + 48,
+        mix(spec.primaryPort[0], spec.alternatePort[0], switchProgress),
+        mix(spec.primaryPort[1] + 48, spec.alternatePort[1] + 48, switchProgress),
+        interfaceVisible ? 0.92 : 0.36,
+        frame.interfaceInteractionConfirmed ? 'safe' : 'signal',
+        9,
+      ),
+      line(
+        mix(spec.primaryPort[0], spec.alternatePort[0], switchProgress),
+        spec.primaryPort[1] + 48,
+        spec.routeHub[0],
+        spec.routeHub[1],
+        interfaceVisible ? 0.82 : 0.28,
+        frame.interfaceInteractionConfirmed ? 'safe' : 'accent',
+        7,
+      ),
+      circle(
+        spec.routeHub[0],
+        spec.routeHub[1],
+        25 + confirmProgress * 12,
+        interfaceVisible ? 0.72 + confirmProgress * 0.24 : 0.28,
+        frame.interfaceInteractionConfirmed ? 'safe' : 'signal',
+        7,
+        0.04,
+      ),
+      path(
+        `M ${spec.routeHub[0] - 19} ${spec.routeHub[1]} L ${spec.routeHub[0] - 5} ${spec.routeHub[1] + 15} L ${spec.routeHub[0] + 23} ${spec.routeHub[1] - 18}`,
+        frame.interfaceInteractionConfirmed ? 0.98 : 0,
+        'safe',
+        7,
+      ),
+      circle(
+        485,
+        250,
+        19,
+        frame.interfaceInteractionFallbackAvailable && interfaceVisible ? 0.78 : 0,
+        'safe',
+        5,
+        0.04,
+      ),
+      path(
+        'M 474 250 H 496 M 485 239 V 261',
+        frame.interfaceInteractionFallbackAvailable && interfaceVisible ? 0.88 : 0,
+        'safe',
+        5,
+      ),
+      line(
+        spec.routeHub[0],
+        spec.routeHub[1] + 26,
+        frame.boss.x,
+        frame.boss.y - 70,
+        frame.interfaceInteractionConfirmed ? 0.2 : 0.72,
+        frame.interfaceInteractionConfirmed ? 'muted' : 'signal',
+        6,
+        '10 8',
+      ),
+      circle(frame.boss.x, frame.boss.y + 8, 92, wardOpacity, 'signal', 10, 0.025),
+      path(
+        `M ${frame.player.x - 8} ${frame.player.y - 54} L ${frame.boss.x + 34} ${frame.boss.y + 54}`,
+        firstStrike * 0.92,
+        'accent',
+        12,
+      ),
+      path(
+        `M ${frame.boss.x + 18} ${frame.boss.y + 34} L ${frame.boss.x + 58} ${frame.boss.y + 74} M ${frame.boss.x + 58} ${frame.boss.y + 34} L ${frame.boss.x + 18} ${frame.boss.y + 74}`,
+        firstStrike,
+        'signal',
+        10,
+      ),
+      path(
+        `M ${frame.player.x - 8} ${frame.player.y - 54} L ${frame.boss.x + 10} ${frame.boss.y + 24}`,
+        openingStrike,
+        'safe',
+        13,
+      ),
+      circle(
+        frame.boss.x,
+        frame.boss.y + 10,
+        46 + openingStrike * 58,
+        openingStrike,
+        'safe',
+        9,
+        0.04,
+      ),
+      circle(
+        frame.boss.x,
+        frame.boss.y + 12,
+        mix(88, spec.attackRadius, signalProgress),
+        frame.interfaceInteractionCounterSignaled ? 0.72 : 0,
+        'accent',
+        8,
+        0.015,
+      ),
+      circle(
+        frame.boss.x,
+        frame.boss.y + 12,
+        spec.attackRadius + counterProgress * 38,
+        frame.interfaceInteractionCounterActive ? 0.96 - counterProgress * 0.3 : 0,
+        'signal',
+        12,
+        0.02,
+      ),
+      rect(55, 300, 450, 590, frame.interfaceInteractionPaused ? 0.34 : 0, 'muted', 0.62),
+    ];
+  }
   if (mode === 'real-time-progression') {
     const reconcileProgress = clamp(
       (frame.time - spec.reconcile[0]) / (spec.reconcile[1] - spec.reconcile[0]),
@@ -10020,6 +10278,12 @@ function pointClearsThreat(spec, frame, value, radius = BLUEPRINT_PLAYER_RADIUS)
       );
     return true;
   }
+  if (mode === 'interface-interaction')
+    return (
+      !frame.interfaceInteractionCounterActive ||
+      Math.abs(Math.hypot(value.x - frame.boss.x, value.y - frame.boss.y) - spec.attackRadius) >
+        12 + radius
+    );
   if (mode === 'real-time-progression')
     return (
       !frame.realTimeProgressionAttackActive ||
@@ -10428,6 +10692,7 @@ export function blueprintFrame(id, time) {
   else if (spec.mode === 'action-reactive-punish') responseProgress = 0;
   else if (spec.mode === 'run-history-manifestation') responseProgress = 0;
   else if (spec.mode === 'real-time-progression') responseProgress = 0;
+  else if (spec.mode === 'interface-interaction') responseProgress = 0;
   else if (spec.mode === 'knockback')
     responseProgress = phase === 0 ? 0 : phase === 1 ? smooth(action) : 1;
   else if (spec.mode === 'target-lock')
@@ -11942,6 +12207,20 @@ export function blueprintFrame(id, time) {
     };
     stride = Math.max(pulse(move), pulse(reset));
   }
+  if (spec.mode === 'interface-interaction') {
+    const move = smooth((t - spec.playerMove[0]) / (spec.playerMove[1] - spec.playerMove[0]));
+    const reset = smooth((t - spec.resetAt) / (BLUEPRINT_DURATION - spec.resetAt));
+    const safe = point(spec.target);
+    const movedPlayer = {
+      x: mix(startPlayer.x, safe.x, move),
+      y: mix(startPlayer.y, safe.y, move),
+    };
+    player = {
+      x: mix(movedPlayer.x, startPlayer.x, reset),
+      y: mix(movedPlayer.y, startPlayer.y, reset),
+    };
+    stride = Math.max(pulse(move), pulse(reset));
+  }
   const bossVisible =
     spec.mode === 'secondary-cues-invisibility'
       ? t < spec.vanishAt
@@ -12229,7 +12508,8 @@ export function blueprintFrame(id, time) {
             spec.mode === 'false-death' ||
             spec.mode === 'action-reactive-punish' ||
             spec.mode === 'run-history-manifestation' ||
-            spec.mode === 'real-time-progression'
+            spec.mode === 'real-time-progression' ||
+            spec.mode === 'interface-interaction'
           ? (Math.atan2(boss.y - player.y, boss.x - player.x) * 180) / Math.PI
           : spec.mode === 'active-phase'
             ? (Math.atan2(boss.y - player.y, boss.x - player.x) * 180) / Math.PI
@@ -13778,6 +14058,42 @@ export function blueprintFrame(id, time) {
       strikePulse(t, (spec.relicActive[0] + spec.relicActive[1]) / 2, 0.58),
     );
   }
+  if (spec.mode === 'interface-interaction') {
+    frame.interfaceInteractionState = interfaceInteractionState(t);
+    frame.interfaceInteractionInteractionId = spec.interactionId;
+    frame.interfaceInteractionConfirmationId = spec.confirmationId;
+    frame.interfaceInteractionPrimaryRoute = spec.primaryRoute;
+    frame.interfaceInteractionSelectedRoute =
+      t >= spec.confirm[0] && t < spec.resetAt ? spec.alternateRoute : spec.primaryRoute;
+    frame.interfaceInteractionPaused = t >= spec.pause[0] && t < spec.pause[1];
+    frame.interfaceInteractionFocusOutside = frame.interfaceInteractionPaused;
+    frame.interfaceInteractionRouteSwitching = t >= spec.switchRoute[0] && t < spec.switchRoute[1];
+    frame.interfaceInteractionConfirmed = t >= spec.confirm[0] && t < spec.resetAt;
+    frame.interfaceInteractionConfirmationCount = frame.interfaceInteractionConfirmed ? 1 : 0;
+    frame.interfaceInteractionNormalAttemptBlocked = t >= spec.blockedAt && t < spec.pause[0];
+    frame.interfaceInteractionWardReading = t < spec.confirm[0] || t >= spec.resetAt;
+    frame.interfaceInteractionOpeningActive = t >= spec.opening[0] && t < spec.opening[1];
+    frame.interfaceInteractionCounterSignaled = t >= spec.counterSignal[0] && t < spec.counter[0];
+    frame.interfaceInteractionCounterActive = t >= spec.counter[0] && t < spec.counter[1];
+    frame.interfaceInteractionFallbackAvailable = true;
+    frame.interfaceInteractionFallbackUsed = false;
+    frame.interfaceInteractionHostileTicksWhilePaused = 0;
+    frame.interfaceInteractionDestructiveActionCount = 0;
+    frame.interfaceInteractionPrivatePayloadStored = false;
+    frame.interfaceInteractionRetrySafe = t >= spec.retry[0] && t < spec.retry[1];
+    frame.interfaceInteractionRouteRestored = frame.interfaceInteractionRetrySafe;
+    frame.dangerActive = frame.interfaceInteractionCounterActive;
+    frame.playerMotion.attack = Math.max(
+      strikePulse(t, (spec.firstAttack[0] + spec.firstAttack[1]) / 2, 0.48),
+      strikePulse(t, (spec.opening[0] + spec.opening[1]) / 2, 0.56),
+    );
+    frame.playerMotion.dodge = strikePulse(t, spec.playerMove[0] + 0.2, 0.46);
+    frame.playerMotion.impact = 0;
+    frame.bossMotion.attack = Math.max(
+      strikePulse(t, spec.blockedAt, 0.36) * 0.32,
+      strikePulse(t, (spec.counter[0] + spec.counter[1]) / 2, 0.5),
+    );
+  }
   if (spec.mode === 'real-time-progression') {
     frame.realTimeProgressionState = realTimeProgressionState(t);
     frame.realTimeProgressionCheckpointId = spec.checkpointId;
@@ -14148,7 +14464,8 @@ export function blueprintFrame(id, time) {
             spec.mode === 'false-death' ||
             spec.mode === 'action-reactive-punish' ||
             spec.mode === 'run-history-manifestation' ||
-            spec.mode === 'real-time-progression'
+            spec.mode === 'real-time-progression' ||
+            spec.mode === 'interface-interaction'
           ? 92
           : -62),
   };

@@ -1,0 +1,39 @@
+{
+  "id": "interface-interaction",
+  "number": 107,
+  "published": true,
+  "sourceLocale": "en",
+  "contentVersion": 1,
+  "animation": "interface-interaction",
+  "lenses": [
+    "rule-exception",
+    "progress-clarity",
+    "player-expression",
+    "context-and-sequence",
+    "access-paths"
+  ],
+  "related": [
+    "control-mode-shift",
+    "ability-lock",
+    "encounter-specific-tool",
+    "real-time-progression"
+  ],
+  "sources": [
+    {
+      "title": "Metal Gear Solid — Psycho Mantis — Metagaming",
+      "url": "https://manifold.umn.edu/projects/metagaming/resource/metal-gear-solid-psycho-mantis"
+    },
+    {
+      "title": "Mario & Luigi: Bowser's Inside Story instruction booklet",
+      "url": "https://superluigibros.com/downloads/manuals/ds/DS_Mario_Luigi_IS_ENG.pdf"
+    },
+    {
+      "title": "How to defeat The Archivist (Act 3) in Inscryption — Gamepur",
+      "url": "https://www.gamepur.com/guides/how-to-defeat-the-archivist-act-3-in-inscryption"
+    },
+    {
+      "title": "Boss Up: Boss Battle Design",
+      "url": "https://media.gdcvault.com/gdc2018/presentations/Keren_Itay_BossUp.pdf"
+    }
+  ]
+}

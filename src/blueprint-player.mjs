@@ -839,6 +839,66 @@ export function initializeBlueprint(widget) {
         frame.realTimeProgressionProgressionUnchanged,
       );
     }
+    if (mechanicId === 'interface-interaction') {
+      widget.dataset.blueprintInterfaceInteraction = frame.interfaceInteractionState;
+      widget.dataset.blueprintInterfaceInteractionInteractionId =
+        frame.interfaceInteractionInteractionId;
+      widget.dataset.blueprintInterfaceInteractionConfirmationId =
+        frame.interfaceInteractionConfirmationId;
+      widget.dataset.blueprintInterfaceInteractionPrimaryRoute =
+        frame.interfaceInteractionPrimaryRoute;
+      widget.dataset.blueprintInterfaceInteractionSelectedRoute =
+        frame.interfaceInteractionSelectedRoute;
+      widget.dataset.blueprintInterfaceInteractionPaused = String(frame.interfaceInteractionPaused);
+      widget.dataset.blueprintInterfaceInteractionFocusOutside = String(
+        frame.interfaceInteractionFocusOutside,
+      );
+      widget.dataset.blueprintInterfaceInteractionRouteSwitching = String(
+        frame.interfaceInteractionRouteSwitching,
+      );
+      widget.dataset.blueprintInterfaceInteractionConfirmed = String(
+        frame.interfaceInteractionConfirmed,
+      );
+      widget.dataset.blueprintInterfaceInteractionConfirmationCount = String(
+        frame.interfaceInteractionConfirmationCount,
+      );
+      widget.dataset.blueprintInterfaceInteractionNormalAttemptBlocked = String(
+        frame.interfaceInteractionNormalAttemptBlocked,
+      );
+      widget.dataset.blueprintInterfaceInteractionWardReading = String(
+        frame.interfaceInteractionWardReading,
+      );
+      widget.dataset.blueprintInterfaceInteractionOpeningActive = String(
+        frame.interfaceInteractionOpeningActive,
+      );
+      widget.dataset.blueprintInterfaceInteractionCounterSignaled = String(
+        frame.interfaceInteractionCounterSignaled,
+      );
+      widget.dataset.blueprintInterfaceInteractionCounterActive = String(
+        frame.interfaceInteractionCounterActive,
+      );
+      widget.dataset.blueprintInterfaceInteractionFallbackAvailable = String(
+        frame.interfaceInteractionFallbackAvailable,
+      );
+      widget.dataset.blueprintInterfaceInteractionFallbackUsed = String(
+        frame.interfaceInteractionFallbackUsed,
+      );
+      widget.dataset.blueprintInterfaceInteractionHostileTicksWhilePaused = String(
+        frame.interfaceInteractionHostileTicksWhilePaused,
+      );
+      widget.dataset.blueprintInterfaceInteractionDestructiveActionCount = String(
+        frame.interfaceInteractionDestructiveActionCount,
+      );
+      widget.dataset.blueprintInterfaceInteractionPrivatePayloadStored = String(
+        frame.interfaceInteractionPrivatePayloadStored,
+      );
+      widget.dataset.blueprintInterfaceInteractionRetrySafe = String(
+        frame.interfaceInteractionRetrySafe,
+      );
+      widget.dataset.blueprintInterfaceInteractionRouteRestored = String(
+        frame.interfaceInteractionRouteRestored,
+      );
+    }
     boss.setAttribute(
       'transform',
       `translate(${frame.boss.x} ${frame.boss.y}) scale(${frame.bossScale})`,

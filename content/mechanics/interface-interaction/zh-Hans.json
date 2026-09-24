@@ -1,0 +1,125 @@
+{
+  "title": "外部界面交互",
+  "subtitle": "让一条战斗规则越过角色的常规操作边界",
+  "variant": "通道受阻 · 安全暂停 · 能力检查 · 已确认后备方案",
+  "summary": "只有使用角色常规动作之外的输入通道或系统界面，才能解除、削弱或回应首领能力。",
+  "overview": "控制器端口、麦克风、第二屏幕、文件选择器、摄像头或平台面板都可以成为战斗回应。设计必须先证明普通动作为何失败，在玩家转移注意力时暂停危险，确认外部操作，并提供效果相同的受支持替代方案。",
+  "learning": "定义受阻动作、外部通道、能力检测、同意边界、安全窗口、确认事件、超时、取消、后备方案、重试状态、平台一致性、隐私、无障碍和遥测。",
+  "category": "状态、资源与成长",
+  "readTime": "10 分钟",
+  "demo": {
+    "title": "让塔维绕过凯恩读取输入的符文",
+    "timeline": "外部界面回应时间线",
+    "step": "证明、暂停切换、确认恢复",
+    "phaseNames": ["证明常规通道会被读取", "切换、确认并复测", "恢复安全重试通道"],
+    "phaseDescriptions": [
+      "0.62 秒时，塔维从 A 通道攻击，凯恩的符文挡住剑。1.28 秒时，战斗在玩家转移注意力前暂停。",
+      "1.65 秒时输入切到 B 通道，2.05 秒确认。2.72 秒符文失效、塔维命中，凯恩会为 3.72 秒的反击给出正常预警。",
+      "4.18 秒时战斗完全恢复。4.65 秒时，重试恢复已知可用通道，不再重复外部确认。"
+    ],
+    "boss": "首领",
+    "player": "玩家",
+    "danger": "未说明的硬件要求、失焦时继续受伤、破坏性系统操作或缺少后备方案，会让战斗无法完成或不安全",
+    "locked": "能力检测、同意、暂停范围、所选通道、确认、超时、后备一致性、重试恢复、隐私和平台适配都属于战斗逻辑",
+    "safe": "先证明例外，再冻结危险，只提供可用通道，确认结果，以新预警恢复，并保留等效常规路径",
+    "reducedMotion": "启用减少动态效果时自动播放关闭。请检查 0.40、0.62、0.88、1.28、1.65、2.05、2.38、2.72、3.05、3.45、3.78、4.18、4.65、5.05 和 5.35 秒。",
+    "diagramDescription": "凯恩读取并挡住塔维的第一条剑路；战斗暂停，输入从 A 端口切换到可用的 B 端口，确认标记移除符文，恢复后的攻击开启安全回应窗口。"
+  },
+  "steps": [
+    {
+      "title": "普通动作为什么失败？",
+      "body": "在要求外部操作前，先展示首领读取、复制、干扰或规避普通通道。第一次失败应安全且可重复，并通过动画、声音、文字和不依赖设备的状态提示解释规则。"
+    },
+    {
+      "title": "何时可以把注意力移出战场？",
+      "body": "进入明确的交互状态：暂停敌对模拟和持续输入，检查能力，说明数据权限，并允许取消或超时。玩家切换设备、屏幕或窗口时不得继续造成伤害。"
+    },
+    {
+      "title": "如何把成功结果带回战斗？",
+      "body": "把外部操作转换为一次确定且幂等的确认，恢复焦点和控制，显示首领状态变化并给出完整预警。为重试保存已知通道，并提供等时等效的菜单、重映射或模拟输入。"
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "新奇设计变成硬件门槛",
+      "body": "麦克风可能损坏、端口可能不存在，摄像头或动作输入也可能不可用。战斗前检测支持情况，不要让表现手法阻断进度。"
+    },
+    {
+      "title": "对外部数据执行破坏性操作",
+      "body": "未经同意不得删除文件、改设置、录制内容或连接服务。使用安全生成数据、最小权限、可逆预览、取消和本地后备方案。"
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "使用小型界面状态机",
+      "body": "区分常规、已证明例外、暂停、已选通道、已确认、已恢复、已取消、超时和后备状态；确认必须幂等。"
+    },
+    {
+      "title": "为每个平台设计适配",
+      "body": "实体端口可变成虚拟插槽，麦克风可变成长按，文件可变成安全样本，第二屏可变成游戏内面板，同时保留信息、时序和结果。"
+    },
+    {
+      "title": "衡量阻力而不是私人内容",
+      "body": "记录能力类型、提示、后备方案、选择、确认延迟、取消、重连、重试和完成；不要记录文件名、音频、图像、联系人或设备标识。"
+    }
+  ],
+  "story": {
+    "title": "凯恩只能读到他监视的道路",
+    "body": "凯恩用连接 A 端口的青色符文截获塔维第一次剑指令。战场停下，塔维改接另一符文插槽，确认印记打破预测。"
+  },
+  "adaptation": {
+    "title": "保留惊喜，移除排斥",
+    "body": "提前说明能力要求，支持键盘、手柄、触控、辅助重映射、静音麦克风模拟、无摄像头模式、安全样本文件和常规菜单。离开战斗界面时暂停计时与攻击。"
+  },
+  "distinction": {
+    "title": "这是界面边界，不是普通控制切换",
+    "body": "控制模式切换只改变实时玩法中的常规动作映射，专用工具仍在游戏世界内。本机制主动进入另一输入或系统表面，再向战斗逻辑返回一个确认结果。"
+  },
+  "lensNotes": [
+    { "id": "rule-exception", "body": "首领让熟悉通道失效，但在要求跨越界面边界前会先证明例外。" },
+    {
+      "id": "progress-clarity",
+      "body": "能力检查、所选通道、确认标记和符文变化把外部操作连接到战斗结果。"
+    },
+    { "id": "player-expression", "body": "等效通道允许玩家选择硬件、菜单、重映射或模拟输入。" },
+    {
+      "id": "context-and-sequence",
+      "body": "失败、暂停、外部交互、确认、恢复焦点和新预警构成一段完整流程。"
+    },
+    { "id": "access-paths", "body": "设备无关的后备方案和已暂停危险避免任何限制阻断通关。" }
+  ],
+  "examples": [
+    {
+      "dimension": "3D",
+      "game": "Metal Gear Solid",
+      "boss": "Psycho Mantis",
+      "screenshot": "https://i.ytimg.com/vi/UGRCf4WZWoE/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=UGRCf4WZWoE&t=1s",
+      "video": "https://www.youtube.com/watch?v=UGRCf4WZWoE&t=1s",
+      "videoDurationSeconds": 174,
+      "body": "初代 PlayStation 中，Psycho Mantis 读取一号玩家输入；把控制器移到二号端口便会失去优势。后续版本需要虚拟化这一发现。"
+    },
+    {
+      "dimension": "2D",
+      "game": "Mario & Luigi: Bowser's Inside Story",
+      "boss": "Fawful Express",
+      "screenshot": "https://i.ytimg.com/vi/oIlxKFpcuCY/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=oIlxKFpcuCY&t=55s",
+      "video": "https://www.youtube.com/watch?v=oIlxKFpcuCY&t=55s",
+      "videoDurationSeconds": 341,
+      "body": "原版 DS 巨型战斗通过麦克风释放库巴火焰，对 Fawful Express 至关重要。重制版替换该输入，体现平台等效方案的重要性。"
+    },
+    {
+      "dimension": "3D",
+      "game": "Inscryption",
+      "boss": "The Archivist",
+      "screenshot": "https://i.ytimg.com/vi/cZtZgHn_Szk/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=cZtZgHn_Szk&t=42s",
+      "video": "https://www.youtube.com/watch?v=cZtZgHn_Szk&t=42s",
+      "videoDurationSeconds": 473,
+      "body": "Archivist 打开文件选择界面，将大小转成伤害权重、将旧文件转成卡牌。它使用真实元数据，但不会真正删除所选文件。"
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

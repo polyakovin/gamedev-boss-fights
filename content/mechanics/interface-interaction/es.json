@@ -1,0 +1,138 @@
+{
+  "title": "Interacción con la interfaz externa",
+  "subtitle": "Lleva una regla del encuentro fuera de los controles habituales",
+  "variant": "Canal bloqueado · pausa segura · comprobación · alternativa confirmada",
+  "summary": "El jefe solo se abre o debilita mediante un canal de entrada o una interfaz del sistema ajenos a las acciones normales del personaje.",
+  "overview": "La frontera del juego pasa a formar parte del encuentro: otro puerto, micrófono, pantalla, selector de archivos o panel de plataforma se convierte en la respuesta. El combate debe demostrar por qué falla la acción normal, detener el peligro mientras cambia el foco, confirmar el resultado y ofrecer una alternativa equivalente.",
+  "learning": "Define la acción bloqueada, el canal externo, la detección de capacidad, el consentimiento, la pausa segura, la confirmación, el tiempo límite, la cancelación, la alternativa, el reintento, la paridad entre plataformas, la privacidad, la accesibilidad y la telemetría.",
+  "category": "Estados, recursos y escalado",
+  "readTime": "10 min",
+  "demo": {
+    "title": "Haz que Tavi eluda el sello de Kern que lee la entrada",
+    "timeline": "Cronología de respuesta mediante interfaz externa",
+    "step": "Demostrar, pausar y cambiar, confirmar y volver",
+    "phaseNames": [
+      "Demostrar que se lee el canal normal",
+      "Cambiar, confirmar y comprobar",
+      "Restaurar un reintento seguro"
+    ],
+    "phaseDescriptions": [
+      "A los 0,62 segundos, Tavi ataca por el canal A y el sello de Kern bloquea la espada. A los 1,28, el combate se pausa antes de cambiar el foco.",
+      "A los 1,65 segundos, la entrada pasa al canal B y se confirma a los 2,05. El sello cae a los 2,72, Tavi golpea y Kern anuncia su contraataque de 3,72.",
+      "A los 4,18 segundos, el combate vuelve por completo. A los 4,65, el reintento restaura una ruta compatible sin repetir la confirmación externa."
+    ],
+    "boss": "Jefe",
+    "player": "Jugador",
+    "danger": "Los requisitos de hardware ocultos, el daño fuera de foco, las acciones destructivas o la falta de alternativa pueden volver el encuentro imposible o inseguro",
+    "locked": "La detección, el consentimiento, la pausa, la ruta, la confirmación, el tiempo límite, la alternativa, el reintento, la privacidad y la adaptación pertenecen a la lógica",
+    "safe": "Demuestra la excepción, congela el peligro, ofrece canales compatibles, confirma, reanuda con una señal nueva y conserva una ruta convencional equivalente",
+    "reducedMotion": "Con movimiento reducido, la reproducción automática se desactiva. Recorre 0,40, 0,62, 0,88, 1,28, 1,65, 2,05, 2,38, 2,72, 3,05, 3,45, 3,78, 4,18, 4,65, 5,05 y 5,35 segundos.",
+    "diagramDescription": "Kern lee y bloquea la primera ruta de espada de Tavi; el combate se pausa, la entrada pasa del puerto A al B, la confirmación elimina el sello y el golpe reanudado abre una respuesta segura."
+  },
+  "steps": [
+    {
+      "title": "¿Por qué falla la acción normal?",
+      "body": "Muestra al jefe leyendo, copiando o bloqueando el canal habitual antes de pedir una acción externa. La primera prueba debe ser segura, repetible y explicada con imagen, sonido, texto y estado independiente del mando."
+    },
+    {
+      "title": "¿Cuándo puede salir la atención de la arena?",
+      "body": "Entra en un estado explícito: pausa la simulación hostil, libera entradas retenidas, detecta capacidades, explica el acceso a datos y permite cancelar o agotar el tiempo. Nunca mantengas el daño mientras se cambia de dispositivo, pantalla o ventana."
+    },
+    {
+      "title": "¿Cómo vuelve el éxito al combate?",
+      "body": "Convierte la acción externa en un único evento determinista, restaura foco y controles, muestra el cambio y ejecuta una señal completa. Guarda una ruta conocida para el reintento y ofrece menú, reasignación o simulación equivalentes."
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "La novedad se vuelve un requisito de hardware",
+      "body": "El micrófono puede fallar, el puerto puede no existir y la cámara o el movimiento pueden ser inaccesibles. Detecta la compatibilidad antes del combate y nunca bloquees el progreso."
+    },
+    {
+      "title": "La experiencia toca datos de forma destructiva",
+      "body": "No borres archivos, cambies ajustes, grabes contenido ni contactes servicios sin consentimiento. Usa datos seguros, permisos mínimos, vistas reversibles, cancelación y una alternativa local."
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "Usa una máquina de estados pequeña",
+      "body": "Modela normal, excepción demostrada, pausa, ruta elegida, confirmada, reanudada, cancelada, agotada y alternativa. La confirmación debe ser idempotente."
+    },
+    {
+      "title": "Diseña cada adaptación de plataforma",
+      "body": "Un puerto puede ser una ranura virtual, el micrófono una pulsación mantenida, el archivo un archivo de muestra y la segunda pantalla un panel interno. Conserva información, tiempo y consecuencia."
+    },
+    {
+      "title": "Mide fricción, no contenido privado",
+      "body": "Registra capacidad, aviso, alternativa, selección, latencia, cancelación, reconexión, reintento y finalización. No registres nombres, audio, imágenes, contactos ni identificadores innecesarios."
+    }
+  ],
+  "story": {
+    "title": "Kern solo lee el camino que vigila",
+    "body": "Kern captura la primera orden de espada de Tavi con un sello unido al puerto A. La arena se detiene, Tavi cambia a otra runa y la confirmación rompe la predicción."
+  },
+  "adaptation": {
+    "title": "Conserva la sorpresa y elimina la exclusión",
+    "body": "Anuncia capacidades, admite teclado, mando, tacto, reasignación, micrófono simulado, modo sin cámara, archivos de muestra y menú. Pausa ataques y no exijas fuerza, respiración, movimiento preciso, datos privados ni cambios del sistema."
+  },
+  "distinction": {
+    "title": "Una frontera de interfaz, no un cambio normal de control",
+    "body": "Un cambio de control reasigna acciones ordinarias durante el juego; una herramienta especial sigue dentro del mundo. Aquí la solución cruza a otra superficie y devuelve una confirmación a la lógica del encuentro."
+  },
+  "lensNotes": [
+    {
+      "id": "rule-exception",
+      "body": "El jefe invalida una ruta familiar, pero demuestra la excepción antes de pedir que se cruce la interfaz."
+    },
+    {
+      "id": "progress-clarity",
+      "body": "La capacidad, la ruta, la confirmación y el sello cambiado conectan la acción externa con el resultado."
+    },
+    {
+      "id": "player-expression",
+      "body": "Canales equivalentes permiten elegir hardware, menú, reasignación o entrada simulada."
+    },
+    {
+      "id": "context-and-sequence",
+      "body": "Fallo, pausa, interacción, confirmación, retorno y nueva señal forman una secuencia diseñada."
+    },
+    {
+      "id": "access-paths",
+      "body": "Alternativas independientes del dispositivo y peligro pausado evitan que una limitación bloquee el progreso."
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "3D",
+      "game": "Metal Gear Solid",
+      "boss": "Psycho Mantis",
+      "screenshot": "https://i.ytimg.com/vi/UGRCf4WZWoE/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=UGRCf4WZWoE&t=1s",
+      "video": "https://www.youtube.com/watch?v=UGRCf4WZWoE&t=1s",
+      "videoDurationSeconds": 174,
+      "body": "En la PlayStation original, Psycho Mantis lee la entrada del jugador uno; mover el mando al puerto dos elimina su ventaja. Las versiones posteriores deben virtualizar la revelación."
+    },
+    {
+      "dimension": "2D",
+      "game": "Mario & Luigi: Bowser's Inside Story",
+      "boss": "Fawful Express",
+      "screenshot": "https://i.ytimg.com/vi/oIlxKFpcuCY/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=oIlxKFpcuCY&t=55s",
+      "video": "https://www.youtube.com/watch?v=oIlxKFpcuCY&t=55s",
+      "videoDurationSeconds": 341,
+      "body": "El combate gigante original usa el micrófono de Nintendo DS para el fuego de Bowser, central contra Fawful Express. El remake sustituye ese canal y demuestra la necesidad de paridad."
+    },
+    {
+      "dimension": "3D",
+      "game": "Inscryption",
+      "boss": "The Archivist",
+      "screenshot": "https://i.ytimg.com/vi/cZtZgHn_Szk/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=cZtZgHn_Szk&t=42s",
+      "video": "https://www.youtube.com/watch?v=cZtZgHn_Szk&t=42s",
+      "videoDurationSeconds": 473,
+      "body": "Archivist abre un selector: el tamaño del archivo se vuelve peso de daño y un archivo antiguo se vuelve carta. Usa metadatos reales sin borrar el archivo elegido."
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}
