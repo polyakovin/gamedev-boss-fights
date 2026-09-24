@@ -8453,31 +8453,30 @@ function primitivesFor(spec, frame) {
     const forceOpacity =
       phase === 0 ? 0.25 + prepare * 0.28 : phase === 1 ? 0.82 : 0.35 * (1 - recover);
     const angleOffset = phase === 1 ? action * 0.42 : 0;
-    const arrows = [0.32, 1.12, 1.92, 2.72].flatMap((angle) => {
-      const outer = polar(boss, 255, angle + angleOffset);
-      const inner = polar(boss, 178, angle + angleOffset);
-      const wingA = polar(inner, 18, angle + angleOffset - 0.57);
-      const wingB = polar(inner, 18, angle + angleOffset + 0.57);
-      return [
-        line(outer.x, outer.y, inner.x, inner.y, forceOpacity, 'accent', 7),
-        path(
-          `M ${wingA.x} ${wingA.y} L ${inner.x} ${inner.y} L ${wingB.x} ${wingB.y}`,
-          forceOpacity,
-          'accent',
-          6,
-        ),
-      ];
+    const stones = [0.32, 1.12, 1.92, 2.72].map((angle) => {
+      const center = polar(
+        boss,
+        245 - (phase === 1 ? action * 75 : prepare * 25),
+        angle + angleOffset,
+      );
+      return path(
+        `M ${center.x - 12} ${center.y - 7} L ${center.x + 9} ${center.y - 12} L ${center.x + 15} ${center.y + 8} L ${center.x - 8} ${center.y + 11} Z`,
+        forceOpacity,
+        'accent',
+        0,
+        0.78,
+      );
     });
     return [
-      circle(boss.x, boss.y, spec.pullRadius, ringOpacity * 0.65, 'accent', 5, 0),
+      circle(boss.x, boss.y, spec.pullRadius, ringOpacity * 0.5, 'accent', 3, 0),
       circle(
         boss.x,
         boss.y,
         spec.dangerRadius,
         phase === 1 ? 0.96 : ringOpacity,
         phase === 1 ? 'signal' : 'accent',
-        phase === 1 ? 12 : 6,
-        phase === 1 ? 0.35 : 0.08,
+        phase === 1 ? 7 : 3,
+        phase === 1 ? 0.28 : 0.06,
       ),
       circle(
         boss.x,
@@ -8485,27 +8484,10 @@ function primitivesFor(spec, frame) {
         31,
         phase === 2 ? 0.65 * (1 - recover) : 0.9,
         phase === 1 ? 'signal' : 'accent',
-        7,
-        0.3,
+        2,
+        0.72,
       ),
-      ...arrows,
-      path(
-        `M 350 660 Q 398 586 ${spec.target[0]} ${spec.target[1]}`,
-        phase === 0 ? 0.32 + prepare * 0.25 : phase === 1 ? 0.54 : 0.2 * (1 - recover),
-        'safe',
-        6,
-        0,
-        '12 10',
-      ),
-      circle(
-        spec.target[0],
-        spec.target[1],
-        27,
-        phase === 0 ? 0.38 + prepare * 0.24 : phase === 1 ? 0.7 : 0.25 * (1 - recover),
-        'safe',
-        5,
-        0.07,
-      ),
+      ...stones,
     ];
   }
   if (mode === 'turret-deployment') {
