@@ -285,7 +285,7 @@ test('every damaging promoted animation derives safety from its own active geome
     } else if (!point && id === 'speed-change') {
       point = frame.boss;
     } else if (!point && id === 'limited-spread') {
-      const projectile = frame.primitives[3];
+      const projectile = frame.primitives[2];
       point = { x: projectile.x, y: projectile.y };
     } else if (!point && id === 'attack-reflection') {
       const projectile = frame.primitives[9];
@@ -1059,17 +1059,17 @@ test('limited spread varies shot directions inside a fixed visible cone and clea
   assert.equal(blueprintFrame(id, 4.25).dangerActive, false);
   assert.equal(
     blueprintFrame(id, 4.25)
-      .primitives.slice(3, 6)
+      .primitives.slice(2, 5)
       .every((shot) => shot.opacity === 0),
     true,
   );
   assert.ok(blueprintFrame(id, 2.28).player.x > 464);
-  const shot = blueprintFrame(id, 3).primitives[3];
+  const shot = blueprintFrame(id, 3).primitives[2];
   assert.equal(blueprintPointSafe(id, 3, { x: shot.x, y: shot.y }), false);
   assert.equal(blueprintPointSafe(id, 3, { x: shot.x + 41, y: shot.y }), false);
   assert.equal(blueprintPointSafe(id, 3, { x: shot.x + 43, y: shot.y }), true);
   const shotPositions = [1.85, 2.4, 2.95].map((release, index) => {
-    const shotAt = blueprintFrame(id, release + 0.5).primitives[3 + index];
+    const shotAt = blueprintFrame(id, release + 0.5).primitives[2 + index];
     return (shotAt.x - spec.emitter[0]) / (shotAt.y - spec.emitter[1]);
   });
   assert.ok(new Set(shotPositions.map((angle) => angle.toFixed(3))).size === 3);

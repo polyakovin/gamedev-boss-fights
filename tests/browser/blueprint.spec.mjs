@@ -529,7 +529,7 @@ test('limited spread keeps its previewed cone while distinct live shots remain i
   const widget = page.locator('[data-blueprint-demo]');
   const timeline = widget.locator('[data-blueprint-timeline]');
   const cone = widget.locator('[data-blueprint-primitive="0"] path');
-  const shots = [3, 4, 5].map((index) =>
+  const shots = [2, 3, 4].map((index) =>
     widget.locator(`[data-blueprint-primitive="${index}"] circle`),
   );
   const seek = (milliseconds) =>
@@ -541,6 +541,7 @@ test('limited spread keeps its previewed cone while distinct live shots remain i
   await expect(page.locator('.wip-badge, .draft-profile')).toHaveCount(0);
   await expect(page.locator('.game-example')).toHaveCount(3);
   await expect(widget).toHaveAttribute('data-blueprint-playing', 'false');
+  await expect(widget).toHaveAttribute('data-blueprint-full-height', 'true');
   const outline = await cone.getAttribute('d');
   await seek(3000);
   await expect(widget).toHaveAttribute('data-blueprint-outcome', 'safe');
