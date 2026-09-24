@@ -364,9 +364,13 @@ test('lock, destruction, and recovery are expressed by their own geometry', () =
   assert.equal(lockStart.primitives[0].y, lockAction.primitives[0].y);
   assert.notDeepEqual(lockStart.player, lockAction.player);
 
-  const platforms = blueprintFrame('platform-destruction', 3.4).primitives;
+  const platformFrame = blueprintFrame('platform-destruction', 3.4);
+  const platforms = platformFrame.primitives;
   assert.ok(platforms[1].opacity < platforms[0].opacity);
   assert.ok(platforms[2].opacity < platforms[3].opacity);
+  assert.equal(platforms[0].width, 0);
+  assert.ok(platforms[5].opacity > 0);
+  assert.ok(Math.abs(platformFrame.player.y - platforms[3].y) < 30);
   const recoveredPlatforms = blueprintFrame('platform-destruction', 5.2).primitives;
   assert.equal(recoveredPlatforms[1].opacity, 0);
   assert.equal(recoveredPlatforms[2].opacity, 0);

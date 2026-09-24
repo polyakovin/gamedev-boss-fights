@@ -8908,18 +8908,33 @@ function primitivesFor(spec, frame) {
       }),
     ];
   }
-  if (mode === 'platforms')
-    return [0, 1, 2, 3, 4].map((index) =>
-      rect(
+  if (mode === 'platforms') {
+    const slabs = [0, 1, 2, 3, 4].map((index) => ({
+      ...rect(
         45 + index * 103,
-        700 - (index % 2) * 55,
+        index === 1 ? 645 : 700,
         82,
         28,
         index === 1 || index === 2 ? (phase === 0 ? 1 : phase === 1 ? 1 - action : 0) : 1,
         index === 1 || index === 2 ? 'signal' : 'safe',
-        0.18,
+        0.84,
       ),
-    );
+      width: 0,
+    }));
+    const falling = phase === 1 ? Math.sin(action * Math.PI) * 0.82 : 0;
+    const rubble = [1, 2].map((index) => {
+      const x = 45 + index * 103;
+      const y = (index === 1 ? 625 : 680) + action * 96;
+      return path(
+        `M ${x + 5} ${y} L ${x + 32} ${y - 9} L ${x + 40} ${y + 12} Z M ${x + 46} ${y - 4} L ${x + 75} ${y + 2} L ${x + 63} ${y + 19} Z`,
+        falling,
+        'muted',
+        0,
+        0.86,
+      );
+    });
+    return [...slabs, ...rubble];
+  }
   if (mode === 'shrink')
     return [
       circle(280, 500, mix(320, 150, action), phase === 2 ? 1 : active, 'signal', 28),
