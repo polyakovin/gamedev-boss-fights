@@ -8856,14 +8856,24 @@ function primitivesFor(spec, frame) {
       [355, 540],
       [400, 600],
     ];
+    const residues = trailPoints.map(([x, y], index) => {
+      const placed = clamp(action * trailPoints.length - index);
+      const expiresOldestFirst = clamp(1 - recover * trailPoints.length + index);
+      const opacity = phase === 0 ? 0 : phase === 1 ? placed : expiresOldestFirst;
+      return circle(x, y, 34, opacity, 'signal', 1, 0.78);
+    });
     return [
-      path('M 175 280 Q 230 410 330 500 T 410 610', preview, 'accent', 5, 0, '10 10'),
-      ...trailPoints.map(([x, y], index) => {
-        const placed = clamp(action * trailPoints.length - index);
-        const expiresOldestFirst = clamp(1 - recover * trailPoints.length + index);
-        const opacity = phase === 0 ? 0 : phase === 1 ? placed : expiresOldestFirst;
-        return circle(x, y, 34, opacity, 'signal', 5, 0.24);
-      }),
+      path('M 175 280 Q 230 410 330 500 T 410 610', preview * 0.55, 'accent', 3),
+      ...residues,
+      ...trailPoints.map(([x, y], index) =>
+        path(
+          `M ${x - 20} ${y - 3} L ${x - 7} ${y - 21} L ${x + 10} ${y - 12} L ${x + 21} ${y + 12} L ${x - 10} ${y + 19} Z`,
+          residues[index].opacity * 0.85,
+          'muted',
+          0,
+          0.68,
+        ),
+      ),
     ];
   }
   if (mode === 'platforms') {
