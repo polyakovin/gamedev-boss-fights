@@ -307,7 +307,7 @@ test('every damaging promoted animation derives safety from its own active geome
       );
       point = { x: projectile.x, y: projectile.y };
     } else if (!point && id === 'returning-projectile') {
-      const projectile = frame.primitives[3];
+      const projectile = frame.primitives[0];
       point = { x: projectile.x, y: projectile.y };
     } else if (!point && id === 'orbiting-projectiles') {
       const projectile = frame.primitives[0];
@@ -548,17 +548,17 @@ test('returning projectile announces an outbound leg and a distinct committed re
   const nearOwner = blueprintFrame('returning-projectile', 4.2);
 
   assert.deepEqual(signal.player, blueprintFrame('returning-projectile', 0).player);
-  assert.equal(signal.primitives[2].x, turn.primitives[2].x);
-  assert.equal(signal.primitives[2].y, turn.primitives[2].y);
-  assert.ok(outgoing.primitives[3].x < turn.primitives[3].x);
-  assert.ok(returning.primitives[3].y > turn.primitives[3].y);
+  assert.equal(signal.primitives[0].type, 'path');
+  assert.equal(signal.primitives[0].x, signal.boss.x);
+  assert.ok(outgoing.primitives[0].x < turn.primitives[0].x);
+  assert.ok(returning.primitives[0].y > turn.primitives[0].y);
   const distanceFromOwner = (frame) =>
-    Math.hypot(frame.primitives[3].x - frame.boss.x, frame.primitives[3].y - frame.boss.y);
+    Math.hypot(frame.primitives[0].x - frame.boss.x, frame.primitives[0].y - frame.boss.y);
   assert.ok(distanceFromOwner(nearOwner) < distanceFromOwner(returning));
   assert.equal(
     blueprintPointSafe('returning-projectile', 3.75, {
-      x: returning.primitives[3].x,
-      y: returning.primitives[3].y,
+      x: returning.primitives[0].x,
+      y: returning.primitives[0].y,
     }),
     false,
   );

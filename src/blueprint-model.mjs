@@ -8439,35 +8439,35 @@ function primitivesFor(spec, frame) {
             y: mix(start.y, turn.y, outgoingProgress),
           }
         : quadraticPoint(turn, returnControl, start, returnProgress);
+    const tangent =
+      action < turnAt
+        ? { x: turn.x - start.x, y: turn.y - start.y }
+        : {
+            x:
+              2 * (1 - returnProgress) * (returnControl.x - turn.x) +
+              2 * returnProgress * (start.x - returnControl.x),
+            y:
+              2 * (1 - returnProgress) * (returnControl.y - turn.y) +
+              2 * returnProgress * (start.y - returnControl.y),
+          };
+    const heading = Math.atan2(tangent.y, tangent.x);
+    const forward = { x: Math.cos(heading), y: Math.sin(heading) };
+    const side = { x: -forward.y, y: forward.x };
+    const bladePoint = (along, across) =>
+      `${projectile.x + forward.x * along + side.x * across} ${projectile.y + forward.y * along + side.y * across}`;
     return [
-      line(
-        start.x,
-        start.y,
-        turn.x,
-        turn.y,
-        phase === 0 ? 0.34 + prepare * 0.34 : phase === 1 ? 0.12 : 0,
-        'accent',
-        7,
-        '12 12',
-      ),
-      path(
-        `M ${turn.x} ${turn.y} Q ${returnControl.x} ${returnControl.y} ${start.x} ${start.y}`,
-        phase === 0 ? 0.26 + prepare * 0.36 : phase === 1 ? 0.12 : 0,
-        'safe',
-        7,
-        0,
-        '10 12',
-      ),
-      circle(
-        turn.x,
-        turn.y,
-        mix(24, 38, phase === 0 ? prepare : pulse(clamp((action - 0.42) / 0.2))),
-        phase === 0 ? 0.46 + prepare * 0.34 : phase === 1 ? 0.58 * (1 - returnProgress) : 0,
-        'safe',
-        5,
-        0.08,
-      ),
-      circle(projectile.x, projectile.y, 21, phase === 1 ? 1 : 0.7, 'signal', 6, 0.48),
+      {
+        ...path(
+          `M ${bladePoint(23, 0)} L ${bladePoint(7, 8)} L ${bladePoint(0, 23)} L ${bladePoint(-7, 8)} L ${bladePoint(-23, 0)} L ${bladePoint(-7, -8)} L ${bladePoint(0, -23)} L ${bladePoint(7, -8)} Z`,
+          phase === 1 ? 1 : 0.7,
+          'signal',
+          0,
+          0.9,
+        ),
+        x: projectile.x,
+        y: projectile.y,
+        radius: 23,
+      },
     ];
   }
   if (mode === 'orbiting-projectiles') {
@@ -9441,7 +9441,7 @@ function pointClearsThreat(spec, frame, value, radius = BLUEPRINT_PLAYER_RADIUS)
           Math.hypot(value.x - projectile.x, value.y - projectile.y) > projectile.radius + radius,
       );
   if (mode === 'returning-projectile') {
-    const projectile = frame.primitives[3];
+    const projectile = frame.primitives[0];
     return Math.hypot(value.x - projectile.x, value.y - projectile.y) > projectile.radius + radius;
   }
   if (mode === 'orbiting-projectiles')
