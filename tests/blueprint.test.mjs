@@ -565,6 +565,20 @@ test('ricochet damage follows the moving stone rather than its old route', () =>
   }
 });
 
+test('spiral barrage emits discrete arms and leaves a complete safe route', () => {
+  const early = blueprintFrame('spiral-barrage', 2);
+  const mature = blueprintFrame('spiral-barrage', 3.2);
+  const recovered = blueprintFrame('spiral-barrage', 5.99);
+  assert.equal(early.primitives.filter((projectile) => projectile.opacity > 0).length, 6);
+  assert.ok(mature.primitives.filter((projectile) => projectile.opacity > 0).length > 18);
+  assert.ok(mature.primitives.every((projectile) => projectile.type === 'path'));
+  assert.equal(recovered.primitives.filter((projectile) => projectile.opacity > 0).length, 0);
+  for (let step = 160; step <= 599; step += 1) {
+    const frame = blueprintFrame('spiral-barrage', step / 100);
+    assert.equal(frame.playerSafe, true, `player intersects the barrage at ${step / 100}s`);
+  }
+});
+
 test('returning projectile announces an outbound leg and a distinct committed return leg', () => {
   const signal = blueprintFrame('returning-projectile', 1.59);
   const outgoing = blueprintFrame('returning-projectile', 2.35);
