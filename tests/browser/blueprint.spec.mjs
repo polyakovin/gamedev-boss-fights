@@ -751,10 +751,11 @@ test('part break removes the actual beam until the visible launcher repair', asy
   await expect(page.locator('.wip-badge, .draft-profile')).toHaveCount(0);
   await expect(page.locator('.game-example')).toHaveCount(3);
   await expect(widget).toHaveAttribute('data-blueprint-playing', 'false');
+  await expect(widget).toHaveAttribute('data-blueprint-full-height', 'true');
   await seek(2000);
   await expect(widget).toHaveAttribute('data-blueprint-part', 'attached');
   await expect(widget).toHaveAttribute('data-blueprint-outcome', 'safe');
-  await expect(widget.locator('[data-blueprint-primitive="5"] line')).not.toHaveAttribute(
+  await expect(widget.locator('[data-blueprint-primitive="8"] line')).not.toHaveAttribute(
     'opacity',
     '0',
   );
@@ -762,11 +763,11 @@ test('part break removes the actual beam until the visible launcher repair', asy
   await expect(widget).toHaveAttribute('data-blueprint-part', 'broken-now');
   await seek(3780);
   await expect(widget).toHaveAttribute('data-blueprint-part', 'attack-disabled');
-  await expect(widget.locator('[data-blueprint-primitive="5"] line')).toHaveAttribute(
+  await expect(widget.locator('[data-blueprint-primitive="8"] line')).toHaveAttribute(
     'opacity',
     '0',
   );
-  await expect(widget.locator('[data-blueprint-primitive="8"] circle')).not.toHaveAttribute(
+  await expect(widget.locator('[data-blueprint-primitive="11"] circle')).not.toHaveAttribute(
     'opacity',
     '0',
   );
@@ -797,7 +798,7 @@ test('part break keeps its arm component and both actors visible on dark RTL mob
         '[data-blueprint-player]',
         '[data-blueprint-boss-label]',
         '[data-blueprint-player-label]',
-        '[data-blueprint-primitive="2"]',
+        '[data-blueprint-primitive="5"]',
       ].map((selector) => {
         const rect = element.querySelector(selector).getBoundingClientRect();
         return (

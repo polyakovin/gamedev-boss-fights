@@ -3308,14 +3308,29 @@ function primitivesFor(spec, frame) {
     const breakFlash = strikePulse(frame.time, spec.breakAt);
     const failedShot = strikePulse(frame.time, spec.secondAttempt, 0.3);
     return [
+      path('M 37 94 H 523 V 878 H 37 Z M 56 262 H 504 V 878 H 56 Z', 0.37, 'muted', 0, 0.56),
+      path(
+        'M 55 117 H 129 V 344 H 55 Z M 431 117 H 505 V 344 H 431 Z M 143 120 H 417 V 154 H 143 Z M 62 592 L 280 566 L 498 592 V 635 L 280 604 L 62 635 Z M 62 772 L 280 739 L 498 772 V 815 L 280 778 L 62 815 Z',
+        0.41,
+        'accent',
+        0,
+        0.56,
+      ),
+      path(
+        'M 401 565 L 446 546 L 493 565 L 485 583 L 409 583 Z M 70 847 L 280 816 L 490 847 V 859 L 280 831 L 70 859 Z',
+        0.34,
+        'muted',
+        0,
+        0.76,
+      ),
       line(boss.x + 31, boss.y - 4, launcher.x, launcher.y, 0.75, 'muted', 8),
       circle(launcher.x, launcher.y, 17, partBreakCanFire(frame.time) ? 0.55 : 0.36, 'accent', 5),
       path(
-        `M ${part.x - 20} ${part.y - 27} L ${part.x + 16} ${part.y - 24} L ${part.x + 28} ${part.y} L ${part.x + 14} ${part.y + 25} L ${part.x - 20} ${part.y + 24} L ${part.x - 28} ${part.y} Z`,
+        `M ${part.x - 20} ${part.y - 27} L ${part.x + 16} ${part.y - 24} L ${part.x + 28} ${part.y} L ${part.x + 14} ${part.y + 25} L ${part.x - 20} ${part.y + 24} L ${part.x - 28} ${part.y} Z M ${part.x + 15} ${part.y - 11} L ${part.x + 45} ${part.y - 8} L ${part.x + 45} ${part.y + 8} L ${part.x + 15} ${part.y + 11} Z`,
         0.94,
         partBreakCanFire(frame.time) ? 'accent' : 'muted',
-        6,
-        0.27,
+        0,
+        0.78,
       ),
       circle(part.x, part.y, 10, 0.9, partBreakCanFire(frame.time) ? 'signal' : 'muted', 4, 0.55),
       line(
