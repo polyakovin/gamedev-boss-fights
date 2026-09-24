@@ -49,9 +49,13 @@ export function initializeBlueprint(widget) {
   const animateWideSwingWeapon = createSweepWeaponAnimator(boss);
   const animateDecoy = decoy ? createCharacterAnimator(decoy, 'kern') : null;
   const animatePlayer = createCharacterAnimator(player, 'tavi');
+  const allies = [...widget.querySelectorAll('[data-blueprint-ally]')];
+  const animateAllies = allies.map((ally) => createCharacterAnimator(ally, 'tavi'));
   const animateEffects = createEncounterEffects(widget, (time) => blueprintFrame(mechanicId, time));
   const bossLabel = find('[data-blueprint-boss-label]');
   const groupHealthLabel = find('[data-blueprint-group-health-label]');
+  const stackReadout = find('[data-blueprint-stack-readout]');
+  const stackHealthLabels = [...widget.querySelectorAll('[data-blueprint-stack-health]')];
   const partnerLabel = find('[data-blueprint-partner-label]');
   const playerLabel = find('[data-blueprint-player-label]');
   const primitives = [...widget.querySelectorAll('[data-blueprint-primitive]')];
@@ -1148,6 +1152,30 @@ export function initializeBlueprint(widget) {
       );
       widget.dataset.blueprintCoordinatedDuoAttackRetry = String(frame.coordinatedDuoAttackRetry);
     }
+    if (mechanicId === 'stack-damage') {
+      widget.dataset.blueprintStackDamage = frame.stackDamageState;
+      widget.dataset.blueprintStackDamageEncounterId = frame.stackDamageEncounterId;
+      widget.dataset.blueprintStackDamageHitId = frame.stackDamageHitId;
+      widget.dataset.blueprintStackDamageParticipantCount = String(
+        frame.stackDamageParticipantCount,
+      );
+      widget.dataset.blueprintStackDamageShare = String(frame.stackDamageShare);
+      widget.dataset.blueprintStackDamageHealth = String(frame.stackDamageHealth[0]);
+      widget.dataset.blueprintStackDamageApplicationCount = String(
+        frame.stackDamageApplicationCount,
+      );
+      widget.dataset.blueprintStackDamageSoloFailure = String(frame.stackDamageSoloFailure);
+      widget.dataset.blueprintStackDamageRetry = String(frame.stackDamageRetry);
+      if (stackReadout)
+        stackReadout.textContent =
+          frame.time >= 0.7 && frame.time < 5.3
+            ? `90 ÷ ${frame.stackDamageParticipantCount} = ${frame.stackDamageShare}`
+            : '';
+      for (const label of stackHealthLabels)
+        label.textContent = String(
+          frame.stackDamageHealth[Number(label.dataset.blueprintStackHealth)],
+        );
+    }
     boss.setAttribute(
       'transform',
       `translate(${frame.boss.x} ${frame.boss.y})${frame.bossRotation ? ` rotate(${frame.bossRotation})` : ''} scale(${frame.bossScale})`,
@@ -1164,7 +1192,15 @@ export function initializeBlueprint(widget) {
         frame.partnerFacing ?? frame.bossFacing,
       );
     }
-    player.setAttribute('transform', `translate(${frame.player.x} ${frame.player.y})`);
+    player.setAttribute(
+      'transform',
+      `translate(${frame.player.x} ${frame.player.y})${frame.stackDamageFallAngle ? ` rotate(${frame.stackDamageFallAngle})` : ''}`,
+    );
+    for (const [index, ally] of allies.entries()) {
+      const position = frame.stackDamageAllies[index];
+      ally.setAttribute('transform', `translate(${position.x} ${position.y}) scale(.78)`);
+      animateAllies[index](frame.stackDamageAllyMotion, frame.playerFacing);
+    }
     animateBoss(frame.bossMotion, frame.bossFacing);
     animateWideSwingWeapon(frame.wideSwingWeapon);
     animatePlayer(frame.playerMotion, frame.playerFacing);

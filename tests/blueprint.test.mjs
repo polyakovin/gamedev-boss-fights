@@ -83,6 +83,8 @@ import {
   sharedGroupHealthResolve,
   coordinatedDuoAttackState,
   coordinatedDuoAttackResolve,
+  stackDamageState,
+  stackDamageResolve,
   counterStanceOutcome,
   counterStanceState,
   blueprintFrame,
@@ -110,8 +112,8 @@ import {
   renderBlueprintThumbnail,
 } from '../lib/blueprint-view.mjs';
 
-test('all 107 promoted lesson animations have distinct rule modes and complete moving frames', () => {
-  assert.equal(BLUEPRINT_MECHANIC_IDS.length, 107);
+test('all 108 promoted lesson animations have distinct rule modes and complete moving frames', () => {
+  assert.equal(BLUEPRINT_MECHANIC_IDS.length, 108);
   const modes = new Set();
   for (const id of BLUEPRINT_MECHANIC_IDS) {
     for (let time = 0; time <= BLUEPRINT_DURATION; time += 0.1) {
@@ -132,7 +134,7 @@ test('all 107 promoted lesson animations have distinct rule modes and complete m
           assert.ok(Number.isFinite(value), `${id} has an invalid ${primitive.type}`);
     }
   }
-  assert.equal(modes.size, 107);
+  assert.equal(modes.size, 108);
 });
 
 test('every blueprint exposes signal, committed action, and recovery without player teleports', () => {
@@ -188,7 +190,8 @@ test('every blueprint exposes signal, committed action, and recovery without pla
       id !== 'partner-revival' &&
       id !== 'kill-order-inheritance' &&
       id !== 'shared-group-health' &&
-      id !== 'coordinated-duo-attack'
+      id !== 'coordinated-duo-attack' &&
+      id !== 'stack-damage'
     )
       assert.equal(blueprintFrame(id, 3).dangerActive, true, id);
     assert.equal(blueprintFrame(id, 3).playerSafe, true, id);
@@ -294,6 +297,7 @@ test('every damaging promoted animation derives safety from its own active geome
       id !== 'kill-order-inheritance' &&
       id !== 'shared-group-health' &&
       id !== 'coordinated-duo-attack' &&
+      id !== 'stack-damage' &&
       id !== 'part-break' &&
       id !== 'counter-stance' &&
       id !== 'absorption-power-up' &&
@@ -4919,5 +4923,84 @@ test('coordinated duo attack shares an anchor-derived target and cancels a depen
   assert.match(
     renderBlueprintThumbnail(id, 'test-coordinated-duo-attack'),
     /data-blueprint-preview="coordinated-duo-attack"/,
+  );
+});
+
+test('stack damage snapshots the marked group and divides one hit exactly once', () => {
+  const id = 'stack-damage';
+  assert.deepEqual(
+    [0, 0.85, 1.4, 2.05, 2.35, 2.75, 3.1, 3.5, 4, 4.35, 4.7, 5.5].map(stackDamageState),
+    [
+      'spread-baseline',
+      'first-target-marked',
+      'allies-gathering',
+      'three-in-marker',
+      'three-way-share',
+      'shared-hit-recovery',
+      'second-target-marked',
+      'allies-leaving',
+      'single-in-marker',
+      'unshared-hit',
+      'solo-failure',
+      'explicit-retry',
+    ],
+  );
+  const shared = stackDamageResolve();
+  assert.equal(shared.resolution, 'applied');
+  assert.equal(shared.participantCount, 3);
+  assert.deepEqual(
+    shared.perPlayer.map(({ damage }) => damage),
+    [30, 30, 30],
+  );
+  assert.equal(shared.totalAppliedDamage, 90);
+  assert.equal(shared.applicationCount, 1);
+  const uneven = stackDamageResolve({ totalDamage: 100 });
+  assert.deepEqual(
+    uneven.perPlayer.map(({ damage }) => damage),
+    [34, 33, 33],
+  );
+  assert.equal(uneven.totalAppliedDamage, 100);
+  assert.equal(stackDamageResolve({ alreadyResolved: true }).resolution, 'duplicate');
+  assert.equal(stackDamageResolve({ alreadyResolved: true }).applicationCount, 0);
+  assert.equal(
+    stackDamageResolve({
+      players: [{ id: 'ally-left', position: { x: 200, y: 710 }, alive: true }],
+    }).resolution,
+    'invalid',
+  );
+  const boundary = stackDamageResolve({
+    players: [
+      { id: 'ally-left', position: { x: 900, y: 710 }, alive: true },
+      { id: 'ally-left', position: { x: 165, y: 710 }, alive: true },
+      { id: 'tavi', position: { x: 280, y: 710 }, alive: true },
+      { id: 'ally-right', position: { x: 360, y: 710 }, alive: false },
+    ],
+  });
+  assert.deepEqual(boundary.participantIds, ['ally-left', 'tavi']);
+  assert.deepEqual(
+    boundary.perPlayer.map(({ damage }) => damage),
+    [45, 45],
+  );
+  const first = blueprintFrame(id, 2.35);
+  assert.equal(first.stackDamageParticipantCount, 3);
+  assert.equal(first.stackDamageShare, 30);
+  assert.deepEqual(first.stackDamageHealth, [70, 70, 70]);
+  assert.equal(first.stackDamageApplicationCount, 1);
+  assert.equal(first.playerSafe, true);
+  const solo = blueprintFrame(id, 4.35);
+  assert.equal(solo.stackDamageParticipantCount, 1);
+  assert.equal(solo.stackDamageShare, 90);
+  assert.deepEqual(solo.stackDamageHealth, [0, 70, 70]);
+  assert.equal(solo.stackDamageApplicationCount, 1);
+  assert.equal(solo.playerSafe, false);
+  assert.ok(solo.stackDamageFallAngle > 50);
+  assert.equal(blueprintPointSafe(id, 4.35, { x: 280, y: 710 }), false);
+  const retry = blueprintFrame(id, 5.5);
+  assert.deepEqual(retry.stackDamageHealth, [100, 100, 100]);
+  assert.equal(retry.stackDamageRetry, true);
+  assert.deepEqual(blueprintFrame(id, 0).player, blueprintFrame(id, 6).player);
+  assert.match(
+    renderBlueprintThumbnail(id, 'test-stack-damage'),
+    /data-blueprint-preview="stack-damage"/,
   );
 });

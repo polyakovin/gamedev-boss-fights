@@ -1,0 +1,134 @@
+{
+  "title": "Daño compartido",
+  "subtitle": "Divide un impacto marcado entre jugadores dentro del área",
+  "variant": "Objetivo marcado · tiempo para reunirse · reparto exacto · fallo en solitario",
+  "summary": "Un impacto se divide entre los jugadores dentro de su marca al resolverse: participar permite sobrevivir.",
+  "overview": "El daño compartido marca a un jugador y reparte un único presupuesto entre los participantes válidos dentro del área al impactar. El grupo se calcula en ese instante, no cuando aparece la marca. Un aviso claro deja tiempo para reunirse; un objetivo aislado recibe todo el daño. No es una explosión normal que inflige el daño completo a cada persona.",
+  "learning": "Define el objetivo, la geometría, la elegibilidad, el instante de cálculo, la división entera, el resultado individual, los eventos repetidos, el reintento, la accesibilidad y la telemetría.",
+  "category": "Coordinación cooperativa",
+  "readTime": "10 min",
+  "demo": {
+    "title": "Comparte el impacto de Kern y examina un objetivo aislado",
+    "timeline": "Cronología del daño compartido",
+    "step": "Marca un jugador, reúne a tres, divide 90 y muestra el fallo sin grupo",
+    "phaseNames": ["Marcar y reunir", "Resolver un impacto compartido", "Mostrar el fallo aislado"],
+    "phaseDescriptions": [
+      "Kern marca a un jugador a los 0,70 s con un círculo de radio 115. Dos aliados entran antes del impacto de 2,25 s. Cuenta el círculo alrededor del objetivo, no la distancia al jefe; caben los tres cuerpos.",
+      "Un solo golpe de 90 se divide a los 2,25 s. Los tres reciben 30 y sus barras de 100 bajan a 70. Se aplica una vez por ID; entrar después no modifica el reparto.",
+      "Otra marca aparece a los 3,08 s. Los aliados salen antes de los 4,28 s; el único jugador recibe los 90 puntos con solo 70 restantes y cae. A los 5,30 s un reintento restaura la salud y las posiciones."
+    ],
+    "boss": "Jefe",
+    "player": "Jugador",
+    "danger": "Un área normal no es un reparto. Si los tres reciben 90, reunirse no ayuda. La suma de las cuotas de un evento debe ser exactamente 90. Los movimientos tardíos y llamadas duplicadas no deben recalcular un golpe ya resuelto. Congela el grupo al impactar y vincula el resultado al ID del golpe.",
+    "locked": "Conserva los IDs del objetivo y del golpe. En el fotograma de resolución reúne jugadores vivos y únicos dentro del círculo. Excluye cuerpos caídos, desconectados o fuera. En esta demostración el objetivo permanece quieto.",
+    "safe": "Divide un único daño entero, no apliques el total a cada cuerpo. Ordena los IDs, asigna a todos la parte entera y distribuye el resto en ese orden. Aplica el registro una sola vez y muestra participantes y cuota.",
+    "reducedMotion": "Con movimiento reducido se desactiva la reproducción automática. Recorre 0,70; 1,05; 1,90; 2,25; 2,52; 3,08; 3,90; 4,28; 4,55 y 5,30 s.",
+    "diagramDescription": "Kern marca a un jugador a los 0,70 s con un círculo de radio 115. Dos aliados entran antes del impacto de 2,25 s. Cuenta el círculo alrededor del objetivo, no la distancia al jefe; caben los tres cuerpos. Un solo golpe de 90 se divide a los 2,25 s. Los tres reciben 30 y sus barras de 100 bajan a 70. Se aplica una vez por ID; entrar después no modifica el reparto. Otra marca aparece a los 3,08 s. Los aliados salen antes de los 4,28 s; el único jugador recibe los 90 puntos con solo 70 restantes y cae. A los 5,30 s un reintento restaura la salud y las posiciones."
+  },
+  "steps": [
+    {
+      "title": "¿Quién cuenta al impactar?",
+      "body": "Conserva los IDs del objetivo y del golpe. En el fotograma de resolución reúne jugadores vivos y únicos dentro del círculo. Excluye cuerpos caídos, desconectados o fuera. En esta demostración el objetivo permanece quieto."
+    },
+    {
+      "title": "¿Cómo se divide un presupuesto?",
+      "body": "Divide un único daño entero, no apliques el total a cada cuerpo. Ordena los IDs, asigna a todos la parte entera y distribuye el resto en ese orden. Aplica el registro una sola vez y muestra participantes y cuota."
+    },
+    {
+      "title": "¿Cómo se demuestra la coordinación?",
+      "body": "Compara los mismos 90 puntos con tres participantes y con uno. Primero todos quedan en 70; después un objetivo aislado con 70 llega a cero. Deja tiempo normal para reunirse y restablece todo con un reintento explícito."
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "Cada jugador recibe todo el daño",
+      "body": "Un área normal no es un reparto. Si los tres reciben 90, reunirse no ayuda. La suma de las cuotas de un evento debe ser exactamente 90."
+    },
+    {
+      "title": "El grupo cambia después del contacto",
+      "body": "Los movimientos tardíos y llamadas duplicadas no deben recalcular un golpe ya resuelto. Congela el grupo al impactar y vincula el resultado al ID del golpe."
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "Haz posible reunirse",
+      "body": "Mide la distancia del aliado, la velocidad normal, el cuerpo entero, el aviso, los obstáculos y la latencia. No exijas coincidir en un píxel."
+    },
+    {
+      "title": "Distingue agruparse de separarse",
+      "body": "Aquí cada participante reduce la cuota. Una zona personal penaliza el solapamiento. Usa señales diferentes y tiempo para pasar de una instrucción a otra."
+    },
+    {
+      "title": "Prueba los casos límite",
+      "body": "Prueba uno, dos y tres jugadores, el borde del círculo, un aliado caído, desconexiones, entradas simultáneas, duplicados y reintentos. Registra cuotas y salud."
+    }
+  ],
+  "story": {
+    "title": "Una runa pesa menos si la cargan juntos",
+    "body": "Kern coloca una runa pesada sobre un jugador. Dos compañeros entran al círculo antes del pulso de piedra y comparten la carga. En el siguiente aviso se alejan y el peso entero cae sobre uno."
+  },
+  "adaptation": {
+    "title": "Muestra el número sin depender del color",
+    "body": "Mantén visible el borde, anuncia por texto cuántos participan y su cuota, separa sus posiciones y conserva el resultado numérico en pantallas pequeñas y con movimiento reducido."
+  },
+  "distinction": {
+    "title": "Un impacto dividido no es una torre ni una explosión común",
+    "body": "Una torre suele exigir ocupar una zona fija. Separarse implica varias áreas personales. Aquí se marca a un objetivo y un único presupuesto se divide entre quienes estén dentro de su área al impactar."
+  },
+  "lensNotes": [
+    {
+      "id": "counterplay",
+      "body": "Entrar en el círculo convierte un golpe individual letal en cuotas soportables."
+    },
+    {
+      "id": "threat-geometry",
+      "body": "El radio y los cuerpos definen quién participa; la distancia al jefe no basta."
+    },
+    {
+      "id": "risk-reward",
+      "body": "Un aliado acepta una cuota menor del impacto para proteger al objetivo."
+    },
+    {
+      "id": "difficulty-rhythm",
+      "body": "El aviso permite movimiento ordinario antes de un contacto breve y claro."
+    },
+    {
+      "id": "progress-clarity",
+      "body": "El número de participantes, los 90 puntos y tres barras muestran el reparto real."
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "MapleStory",
+      "boss": "Crimson Queen",
+      "screenshot": "https://i.ytimg.com/vi/w05NnIP1Svs/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=w05NnIP1Svs&t=155s",
+      "video": "https://www.youtube.com/watch?v=w05NnIP1Svs&t=155s",
+      "videoDurationSeconds": 516,
+      "body": "La guía explica que el aliento de fuego de la Reina Furiosa reparte el daño entre quienes alcanza. Su partida individual no muestra visualmente el reparto multijugador; la descripción del encuentro confirma la regla. Usa un aliento frontal, no el círculo de nuestra escena."
+    },
+    {
+      "dimension": "3D",
+      "game": "Final Fantasy XIV",
+      "boss": "Bahamut Prime",
+      "screenshot": "https://i.ytimg.com/vi/Fbmd4eRNwnE/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=Fbmd4eRNwnE&t=675s",
+      "video": "https://www.youtube.com/watch?v=Fbmd4eRNwnE&t=675s",
+      "videoDurationSeconds": 866,
+      "body": "Akh Morn es una serie de golpes compartidos para tanques: deben permanecer juntos hasta que termine. El clip comienza junto a esa habilidad; cada impacto necesita un grupo válido."
+    },
+    {
+      "dimension": "3D",
+      "game": "World of Warcraft",
+      "boss": "Malkorok",
+      "screenshot": "https://i.ytimg.com/vi/B5i8ErpMdXM/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=B5i8ErpMdXM&t=207s",
+      "video": "https://www.youtube.com/watch?v=B5i8ErpMdXM&t=207s",
+      "videoDurationSeconds": 278,
+      "body": "Durante Furia sangrienta, el enorme golpe frontal de Malkorok se reparte entre los miembros de la banda delante de él. El clip muestra al grupo reunido; el área es un cono, no un círculo sobre el objetivo."
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

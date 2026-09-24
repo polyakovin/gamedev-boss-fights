@@ -447,9 +447,9 @@ test('volley releases three parallel bolts on one beat and clears its outside ro
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
 });
 
-test('catalog and builder reuse the 107 promoted rule-specific previews', async ({ page }) => {
+test('catalog and builder reuse the 108 promoted rule-specific previews', async ({ page }) => {
   await page.goto('en/');
-  await expect(page.locator('[data-blueprint-preview]')).toHaveCount(107);
+  await expect(page.locator('[data-blueprint-preview]')).toHaveCount(108);
   const catalogLayouts = await page.locator('[data-blueprint-preview]').evaluateAll((previews) =>
     previews.map((preview) => {
       const boss = preview.querySelector('[data-character-art-preview="kern"]');
@@ -473,7 +473,7 @@ test('catalog and builder reuse the 107 promoted rule-specific previews', async 
   expect(new Set(catalogLayouts.map(({ layout }) => layout)).size).toBeGreaterThanOrEqual(18);
 
   await page.goto('en/builder/');
-  await expect(page.locator('[data-blueprint-preview]')).toHaveCount(107);
+  await expect(page.locator('[data-blueprint-preview]')).toHaveCount(108);
   const builderLayouts = await page.locator('[data-blueprint-preview]').evaluateAll((previews) =>
     previews.map((preview) => {
       const boss = preview.querySelector('[data-character-art-preview="kern"]');
@@ -4876,6 +4876,49 @@ test('coordinated duo attack overlaps one target and cancels the second follow-u
   await seek(5500);
   await expect(widget).toHaveAttribute('data-blueprint-coordinated-duo-attack-retry', 'true');
   await expect(widget).toHaveAttribute('data-blueprint-coordinated-duo-attack-followup-count', '0');
+  await page.setViewportSize({ width: 375, height: 812 });
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+});
+
+test('stack damage gathers three players for one split, then exposes the lone failure', async ({
+  page,
+}) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.goto('en/mechanics/stack-damage/');
+  const widget = page.locator('[data-blueprint-demo]');
+  const timeline = widget.locator('[data-blueprint-timeline]');
+  const seek = (milliseconds) =>
+    timeline.evaluate((element, value) => {
+      element.value = String(value);
+      element.dispatchEvent(new Event('input', { bubbles: true }));
+    }, milliseconds);
+  await expect(page.locator('.lesson-title-line h1')).toHaveText('Shared-damage stack');
+  await expect(page.locator('.wip-badge, .draft-profile')).toHaveCount(0);
+  await expect(page.locator('.game-example')).toHaveCount(3);
+  await expect(page.locator('.lens-chip')).toHaveCount(5);
+  await expect(widget).toHaveAttribute('data-blueprint-full-height', 'true');
+  await expect(widget.locator('[data-blueprint-ally]')).toHaveCount(2);
+  await seek(2050);
+  await expect(widget).toHaveAttribute('data-blueprint-stack-damage', 'three-in-marker');
+  await expect(widget).toHaveAttribute('data-blueprint-stack-damage-participant-count', '3');
+  await seek(2350);
+  await expect(widget).toHaveAttribute('data-blueprint-stack-damage-share', '30');
+  await expect(widget).toHaveAttribute('data-blueprint-stack-damage-health', '70');
+  await expect(widget).toHaveAttribute('data-blueprint-stack-damage-application-count', '1');
+  await expect(widget).toHaveAttribute('data-blueprint-outcome', 'safe');
+  await expect(widget.locator('[data-blueprint-stack-readout]')).toHaveText('90 ÷ 3 = 30');
+  await seek(4350);
+  await expect(widget).toHaveAttribute('data-blueprint-stack-damage-participant-count', '1');
+  await expect(widget).toHaveAttribute('data-blueprint-stack-damage-share', '90');
+  await expect(widget).toHaveAttribute('data-blueprint-stack-damage-health', '0');
+  await expect(widget.locator('[data-blueprint-stack-health="0"]')).toHaveText('0');
+  await expect(widget.locator('[data-blueprint-player]')).toHaveAttribute('transform', /rotate\(/);
+  await expect(widget).toHaveAttribute('data-blueprint-stack-damage-solo-failure', 'true');
+  await expect(widget).toHaveAttribute('data-blueprint-outcome', 'danger');
+  await expect(widget.locator('[data-blueprint-stack-readout]')).toHaveText('90 ÷ 1 = 90');
+  await seek(5500);
+  await expect(widget).toHaveAttribute('data-blueprint-stack-damage-retry', 'true');
+  await expect(widget).toHaveAttribute('data-blueprint-stack-damage-health', '100');
   await page.setViewportSize({ width: 375, height: 812 });
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
 });

@@ -1,0 +1,134 @@
+{
+  "title": "Shared-damage stack",
+  "subtitle": "Divide one marked impact among eligible nearby players",
+  "variant": "Target marker · join window · exact split · isolated failure",
+  "summary": "A marked impact has one damage budget split among players inside its area at resolution, making participation a survival rule.",
+  "overview": "A shared-damage stack marks one player and divides a fixed impact among eligible players in the marked area. Count participants at impact, not when the marker appears. A readable join window lets allies enter; an isolated target takes the whole budget and may fall. This is not a generic area attack that deals full damage to everyone.",
+  "learning": "Define target ownership, marker geometry, participant eligibility, snapshot time, integer damage division, solo outcome, repeated-hit policy, retry reset, accessibility, and multiplayer telemetry.",
+  "category": "Cooperative coordination",
+  "readTime": "10 min",
+  "demo": {
+    "title": "Share Kern's rune impact, then inspect an isolated target",
+    "timeline": "Shared-damage stack timeline",
+    "step": "Mark a player, gather three bodies, divide 90, then show a missed group",
+    "phaseNames": ["Mark and gather", "Resolve one shared hit", "Expose the isolated failure"],
+    "phaseDescriptions": [
+      "Kern marks one player at 0.70 seconds with a circle of radius 115. Two allies enter before the 2.25-second impact. The circle, not proximity to Kern, defines who counts; all three bodies fit inside it.",
+      "One 90-point hit resolves at 2.25 seconds. The three eligible players each take 30, so their 100-point bars become 70. The same hit ID is applied once; simply standing nearby after impact cannot change the division.",
+      "A second marker appears at 3.08 seconds. The allies leave before the 4.28-second impact, leaving one eligible player. That player takes all 90 from a remaining 70 and falls. The comparison makes the cost of missing the stack explicit; an authored retry at 5.30 resets all bars and positions."
+    ],
+    "boss": "Boss",
+    "player": "Player",
+    "danger": "Counting at warning time, counting players outside the circle, or resolving the same hit twice can turn a fair shared hit into an unexplained lethal one",
+    "locked": "Target ID, hit ID, one total damage budget, collision radius, eligibility snapshot, deterministic remainder allocation, health application, and retry reset belong to encounter logic",
+    "safe": "Mark the target and circle early, show how many players are in range, leave room for each full body, and display the actual per-player share when the hit resolves",
+    "reducedMotion": "Reduced motion disables autoplay. Scrub through 0.70, 1.05, 1.90, 2.25, 2.52, 3.08, 3.22, 3.90, 4.28, 4.55, and 5.30 seconds.",
+    "diagramDescription": "A stone boss marks a player. Two identical player rigs move inside the circle; a ninety-point impact is divided three ways and three health bars fall to seventy. On a second warning the allies move out, so the isolated target takes the full ninety and falls. A visible retry restores the group."
+  },
+  "steps": [
+    {
+      "title": "Who counts at impact?",
+      "body": "Keep a stable target player and hit ID. At the exact resolution frame, gather living eligible player IDs whose positions fall inside the marked circle. Count each ID once and do not include a disconnected, downed, duplicate, or outside body. Marker movement follows the target until its authored lock time; this demo keeps the target planted."
+    },
+    {
+      "title": "How is one budget divided?",
+      "body": "Resolve one total integer damage value, not one full hit per body. Sort participant IDs, give each the floor of total divided by count, then distribute any remainder in that stable order. Apply this ledger once by encounter and hit ID. Expose both count and per-player result so the consequence of joining is legible."
+    },
+    {
+      "title": "What proves the coordination rule?",
+      "body": "Compare the same 90-point attack with three participants and one. The first leaves each player at 70; the second takes an isolated 70-health target to zero. Make the warning long enough for the group to meet, avoid requiring pixel-perfect overlap, and restore roster and health on an explicit retry."
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "Every body takes the full budget",
+      "body": "A regular area attack is not a stack. Applying 90 to each of three players removes the promised benefit of joining. Generate exactly one event, split its total among the participant snapshot, and assert that all shares add back to 90."
+    },
+    {
+      "title": "The participant count changes after contact",
+      "body": "Late movement or duplicate callbacks must not recalculate a resolved hit. Freeze the eligibility snapshot at contact and key the damage ledger to the hit ID; only the next distinct impact may take a new snapshot."
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "Budget for reachable grouping",
+      "body": "Measure the farthest expected ally distance, ordinary movement speed, full-body radius, warning duration, arena obstacles, and latency. A marker should be generous enough for players to converge without precise stacking on one pixel."
+    },
+    {
+      "title": "Separate stack from spread",
+      "body": "A stack rewards additional participants in one marked area; a personal spread punishes overlapping individual areas. If both appear in one encounter, use distinct silhouettes and enough transition time to prevent contradictory instructions."
+    },
+    {
+      "title": "Test roster edge cases",
+      "body": "Try one, two, and three players; an ally exactly on the boundary; a downed ally inside; a disconnect before impact; simultaneous join and impact; a duplicate callback; and retry. Record hit ID, eligible IDs, shares, health before and after, and application count."
+    }
+  ],
+  "story": {
+    "title": "A rune becomes lighter when carried together",
+    "body": "Kern places a heavy rune over one player. Two companions enter its circle before the stone pulse lands, dividing the burden. When they leave during the next warning, the rune falls on one pair of shoulders instead."
+  },
+  "adaptation": {
+    "title": "Show the count without relying on color or sound",
+    "body": "Keep the target marker and its boundary visible, announce the eligible count and resulting share in text, give each player a distinct position, and preserve the numeric result under reduced motion and on small screens."
+  },
+  "distinction": {
+    "title": "One divided hit is not a tower or ordinary splash",
+    "body": "A tower often requires somebody to occupy a fixed zone, with a separate failure rule. A personal spread creates several independent areas. A shared-damage stack marks one target and divides one attack's budget among eligible bodies inside that target's area at impact."
+  },
+  "lensNotes": [
+    {
+      "id": "counterplay",
+      "body": "Joining the marked circle before contact changes one lethal personal hit into survivable shares."
+    },
+    {
+      "id": "threat-geometry",
+      "body": "The marker radius and full-body positions determine the participant snapshot; mere proximity to the boss does not."
+    },
+    {
+      "id": "risk-reward",
+      "body": "Moving into an impending impact accepts a smaller known share to protect an isolated ally."
+    },
+    {
+      "id": "difficulty-rhythm",
+      "body": "The warning must contain enough ordinary travel time for grouping, followed by a brief, unambiguous impact."
+    },
+    {
+      "id": "progress-clarity",
+      "body": "Participant count, a single 90-point budget, and three numeric health changes reveal exactly how the split resolved."
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "MapleStory",
+      "boss": "Crimson Queen",
+      "screenshot": "https://i.ytimg.com/vi/w05NnIP1Svs/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=w05NnIP1Svs&t=155s",
+      "video": "https://www.youtube.com/watch?v=w05NnIP1Svs&t=155s",
+      "videoDurationSeconds": 516,
+      "body": "The guide identifies Wrathful Queen's fire breath as a fixed hit distributed among players it catches. Its solo footage explains the rule but does not visually demonstrate a multiplayer split; the encounter reference documents the division. This differs from the demo's circular target marker because Queen uses a frontal breath."
+    },
+    {
+      "dimension": "3D",
+      "game": "Final Fantasy XIV",
+      "boss": "Bahamut Prime",
+      "screenshot": "https://i.ytimg.com/vi/Fbmd4eRNwnE/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=Fbmd4eRNwnE&t=675s",
+      "video": "https://www.youtube.com/watch?v=Fbmd4eRNwnE&t=675s",
+      "videoDurationSeconds": 866,
+      "body": "Akh Morn is a repeated shared tankbuster: the tanks group for several hits rather than dispersing after the first. The clip starts at the named attack, illustrating that each impact requires a valid shared group."
+    },
+    {
+      "dimension": "3D",
+      "game": "World of Warcraft",
+      "boss": "Malkorok",
+      "screenshot": "https://i.ytimg.com/vi/B5i8ErpMdXM/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=B5i8ErpMdXM&t=207s",
+      "video": "https://www.youtube.com/watch?v=B5i8ErpMdXM&t=207s",
+      "videoDurationSeconds": 278,
+      "body": "During Blood Rage, each huge frontal hit is divided among raid members in front of Malkorok. The clip shows the stacked group. Its cone-shaped eligibility contrasts with the target-centered circle in the original demo."
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

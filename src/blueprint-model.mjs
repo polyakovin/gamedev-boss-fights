@@ -1830,6 +1830,37 @@ const SPECS = {
     leaderBossId: 'echo-kern',
     followerBossId: 'kern',
   },
+  'stack-damage': {
+    mode: 'stack-damage',
+    boss: [280, 360],
+    player: [280, 710],
+    target: [280, 710],
+    arena: [55, 245, 450, 650],
+    allies: [
+      [100, 710],
+      [460, 710],
+    ],
+    stackPoints: [
+      [200, 710],
+      [360, 710],
+    ],
+    markerRadius: 115,
+    totalDamage: 90,
+    firstSignal: [0.7, 2.25],
+    gather: [1.05, 1.9],
+    firstHit: [2.25, 2.52],
+    firstResolveAt: 2.25,
+    secondSignal: [3.08, 4.28],
+    disperse: [3.22, 3.9],
+    secondHit: [4.28, 4.55],
+    secondResolveAt: 4.28,
+    resetAt: 5.3,
+    encounterId: 'kern-shared-impact-1',
+    firstHitId: 'rune-impact-1',
+    secondHitId: 'rune-impact-2',
+    targetPlayerId: 'tavi',
+    allyIds: ['ally-left', 'ally-right'],
+  },
   'wide-swing': { mode: 'arc', boss: [225, 340], player: [380, 500], target: [420, 780] },
   lunge: {
     mode: 'lunge',
@@ -4002,6 +4033,88 @@ export function coordinatedDuoAttackResolve({
     cancellationCount: resolution === 'interrupted' ? 1 : 0,
     duplicateFollowupCount: 0,
     resolution,
+  });
+}
+
+export function stackDamageState(time) {
+  const spec = SPECS['stack-damage'];
+  const t = localTime(time);
+  if (t < spec.firstSignal[0]) return 'spread-baseline';
+  if (t < spec.gather[0]) return 'first-target-marked';
+  if (t < spec.gather[1]) return 'allies-gathering';
+  if (t < spec.firstHit[0]) return 'three-in-marker';
+  if (t < spec.firstHit[1]) return 'three-way-share';
+  if (t < spec.secondSignal[0]) return 'shared-hit-recovery';
+  if (t < spec.disperse[0]) return 'second-target-marked';
+  if (t < spec.disperse[1]) return 'allies-leaving';
+  if (t < spec.secondHit[0]) return 'single-in-marker';
+  if (t < spec.secondHit[1]) return 'unshared-hit';
+  if (t < spec.resetAt) return 'solo-failure';
+  return 'explicit-retry';
+}
+
+export function stackDamageResolve({
+  encounterId = 'kern-shared-impact-1',
+  hitId = 'rune-impact-1',
+  targetPlayerId = 'tavi',
+  targetPosition = { x: 280, y: 710 },
+  players = [
+    { id: 'tavi', position: { x: 280, y: 710 }, alive: true },
+    { id: 'ally-left', position: { x: 200, y: 710 }, alive: true },
+    { id: 'ally-right', position: { x: 360, y: 710 }, alive: true },
+  ],
+  markerRadius = 115,
+  totalDamage = 90,
+  alreadyResolved = false,
+} = {}) {
+  const valid =
+    Number.isFinite(targetPosition.x) &&
+    Number.isFinite(targetPosition.y) &&
+    Number.isFinite(markerRadius) &&
+    markerRadius > 0 &&
+    Number.isSafeInteger(totalDamage) &&
+    totalDamage >= 0;
+  const roster = Array.isArray(players) ? players : [];
+  const unique = new Set();
+  const participants = valid
+    ? roster
+        .filter(({ id, position, alive }) => {
+          if (!alive || !position || !Number.isFinite(position.x) || !Number.isFinite(position.y))
+            return false;
+          const key = String(id);
+          if (unique.has(key)) return false;
+          if (
+            Math.hypot(position.x - targetPosition.x, position.y - targetPosition.y) > markerRadius
+          )
+            return false;
+          unique.add(key);
+          return true;
+        })
+        .map(({ id }) => String(id))
+        .sort()
+    : [];
+  const eligible = participants.includes(String(targetPlayerId)) && participants.length > 0;
+  const perPlayer =
+    eligible && !alreadyResolved
+      ? participants.map((id, index) =>
+          Object.freeze({
+            id,
+            damage:
+              Math.floor(totalDamage / participants.length) +
+              (index < totalDamage % participants.length ? 1 : 0),
+          }),
+        )
+      : [];
+  return Object.freeze({
+    encounterId: String(encounterId),
+    hitId: String(hitId),
+    targetPlayerId: String(targetPlayerId),
+    participantIds: Object.freeze(participants),
+    participantCount: participants.length,
+    perPlayer: Object.freeze(perPlayer),
+    totalAppliedDamage: perPlayer.reduce((sum, item) => sum + item.damage, 0),
+    resolution: !valid || !eligible ? 'invalid' : alreadyResolved ? 'duplicate' : 'applied',
+    applicationCount: eligible && !alreadyResolved ? 1 : 0,
   });
 }
 
@@ -8993,6 +9106,89 @@ function primitivesFor(spec, frame) {
       ),
     ];
   }
+  if (mode === 'stack-damage') {
+    const t = frame.time;
+    const target = point(spec.target);
+    const first = t >= spec.firstSignal[0] && t < spec.firstHit[1];
+    const second = t >= spec.secondSignal[0] && t < spec.secondHit[1];
+    const marked = first || second;
+    const hit = frame.stackDamageHitActive;
+    const count = frame.stackDamageParticipantCount;
+    const health = frame.stackDamageHealth;
+    return [
+      rect(...spec.arena, 0.58, 'muted', 0.025),
+      path(
+        'M 64 762 L 166 734 L 280 760 L 394 734 L 496 762 V 800 L 394 770 L 280 808 L 166 770 L 64 800 Z M 70 850 L 280 808 L 490 850',
+        0.5,
+        'muted',
+        0,
+        0.45,
+      ),
+      ...[0, 1, 2].flatMap((index) => {
+        const x = [230, 95, 365][index];
+        const current = health[index];
+        return [
+          rect(x, 125, 100, 20, 0.76, 'muted', 0.09),
+          rect(x, 125, current, 20, 0.9, current === 0 ? 'signal' : 'safe', 0.55),
+        ];
+      }),
+      circle(
+        target.x,
+        target.y,
+        spec.markerRadius,
+        marked ? 0.82 : 0.2,
+        hit ? 'signal' : 'accent',
+        hit ? 11 : 7,
+        marked ? 0.065 : 0.015,
+      ),
+      line(
+        spec.boss[0],
+        spec.boss[1] + 40,
+        target.x,
+        target.y - 45,
+        marked ? 0.72 : 0,
+        'signal',
+        8,
+        hit ? '' : '13 10',
+      ),
+      path(
+        `M ${target.x} ${target.y - 42} L ${target.x + 24} ${target.y - 18} L ${target.x} ${target.y + 6} L ${target.x - 24} ${target.y - 18} Z`,
+        marked ? 0.96 : 0.1,
+        'signal',
+        7,
+        0.035,
+      ),
+      circle(target.x, target.y, spec.markerRadius + 22, hit ? 0.9 : 0, 'signal', 13),
+      circle(target.x, target.y, 50, hit && count === 1 ? 0.86 : 0, 'signal', 11, 0.04),
+      circle(target.x, target.y, 38, hit && count === 3 ? 0.8 : 0, 'safe', 8),
+      line(
+        target.x - 30,
+        target.y - 25,
+        target.x + 30,
+        target.y + 25,
+        frame.stackDamageSoloFailure ? 0.9 : 0,
+        'signal',
+        10,
+      ),
+      line(
+        target.x + 30,
+        target.y - 25,
+        target.x - 30,
+        target.y + 25,
+        frame.stackDamageSoloFailure ? 0.9 : 0,
+        'signal',
+        10,
+      ),
+      circle(
+        target.x,
+        target.y,
+        75 * smooth((t - spec.resetAt) / (BLUEPRINT_DURATION - spec.resetAt)),
+        frame.stackDamageRetry ? 0.75 : 0,
+        'accent',
+        7,
+      ),
+    ];
+  }
   if (mode === 'coordinated-duo-attack') {
     const t = frame.time;
     const leader = frame.decoy;
@@ -11423,6 +11619,27 @@ function pointClearsThreat(spec, frame, value, radius = BLUEPRINT_PLAYER_RADIUS)
     return true;
   }
   if (mode === 'partner-revival') return true;
+  if (mode === 'stack-damage') {
+    if (!frame.stackDamageHitActive) return true;
+    const ledger = stackDamageResolve({
+      encounterId: spec.encounterId,
+      hitId: frame.stackDamageSecondHit ? spec.secondHitId : spec.firstHitId,
+      targetPlayerId: spec.targetPlayerId,
+      targetPosition: point(spec.target),
+      markerRadius: spec.markerRadius,
+      totalDamage: spec.totalDamage,
+      players: [
+        { id: spec.targetPlayerId, position: value, alive: true },
+        ...frame.stackDamageAllies.map((ally, index) => ({
+          id: spec.allyIds[index],
+          position: ally,
+          alive: true,
+        })),
+      ],
+    });
+    const share = ledger.perPlayer.find(({ id }) => id === spec.targetPlayerId)?.damage;
+    return share !== undefined && share < frame.stackDamageHealthBefore;
+  }
   if (mode === 'coordinated-duo-attack') {
     const target = frame.coordinatedDuoAttackTarget;
     return (
@@ -13602,6 +13819,10 @@ export function blueprintFrame(id, time) {
     player = { x: mix(staged.x, start.x, retry), y: mix(staged.y, start.y, retry) };
     stride = Math.max(pulse(escape), pulse(approach), pulse(withdraw), pulse(retry));
   }
+  if (spec.mode === 'stack-damage') {
+    player = point(spec.player);
+    stride = 0;
+  }
   const bossVisible =
     spec.mode === 'secondary-cues-invisibility'
       ? t < spec.vanishAt
@@ -13972,7 +14193,8 @@ export function blueprintFrame(id, time) {
             spec.mode === 'partner-revival' ||
             spec.mode === 'kill-order-inheritance' ||
             spec.mode === 'shared-group-health' ||
-            spec.mode === 'coordinated-duo-attack'
+            spec.mode === 'coordinated-duo-attack' ||
+            spec.mode === 'stack-damage'
           ? (Math.atan2(boss.y - player.y, boss.x - player.x) * 180) / Math.PI
           : spec.mode === 'active-phase'
             ? (Math.atan2(boss.y - player.y, boss.x - player.x) * 180) / Math.PI
@@ -15908,6 +16130,70 @@ export function blueprintFrame(id, time) {
     frame.playerMotion.dodge = strikePulse(t, spec.leaderAttack[0], 0.7);
     frame.playerMotion.impact = 0;
   }
+  if (spec.mode === 'stack-damage') {
+    const gather = smooth((t - spec.gather[0]) / (spec.gather[1] - spec.gather[0]));
+    const disperse = smooth((t - spec.disperse[0]) / (spec.disperse[1] - spec.disperse[0]));
+    frame.stackDamageAllies = spec.allies.map((origin, index) => ({
+      x: mix(mix(origin[0], spec.stackPoints[index][0], gather), origin[0], disperse),
+      y: mix(mix(origin[1], spec.stackPoints[index][1], gather), origin[1], disperse),
+    }));
+    const secondHit = t >= spec.secondHit[0] && t < spec.secondHit[1];
+    const hitActive = (t >= spec.firstHit[0] && t < spec.firstHit[1]) || secondHit;
+    const ledger = stackDamageResolve({
+      encounterId: spec.encounterId,
+      hitId: secondHit ? spec.secondHitId : spec.firstHitId,
+      targetPlayerId: spec.targetPlayerId,
+      targetPosition: point(spec.target),
+      markerRadius: spec.markerRadius,
+      totalDamage: spec.totalDamage,
+      players: [
+        { id: spec.targetPlayerId, position: player, alive: true },
+        ...frame.stackDamageAllies.map((ally, index) => ({
+          id: spec.allyIds[index],
+          position: ally,
+          alive: true,
+        })),
+      ],
+    });
+    frame.stackDamageState = stackDamageState(t);
+    frame.stackDamageEncounterId = ledger.encounterId;
+    frame.stackDamageHitId = ledger.hitId;
+    frame.stackDamageParticipantCount = ledger.participantCount;
+    frame.stackDamageShare =
+      ledger.perPlayer.find(({ id }) => id === spec.targetPlayerId)?.damage ?? 0;
+    frame.stackDamageFirstHit = t >= spec.firstHit[0] && t < spec.firstHit[1];
+    frame.stackDamageSecondHit = secondHit;
+    frame.stackDamageHitActive = hitActive;
+    frame.stackDamageHealthBefore = secondHit ? 70 : 100;
+    frame.stackDamageHealth =
+      t >= spec.resetAt
+        ? [100, 100, 100]
+        : t >= spec.secondResolveAt
+          ? [0, 70, 70]
+          : t >= spec.firstResolveAt
+            ? [70, 70, 70]
+            : [100, 100, 100];
+    frame.stackDamageSoloFailure = t >= spec.secondResolveAt && t < spec.resetAt;
+    frame.stackDamageRetry = t >= spec.resetAt;
+    frame.stackDamageFallAngle = frame.stackDamageSoloFailure
+      ? 75 * smooth((t - spec.secondResolveAt) / 0.1)
+      : 0;
+    frame.stackDamageApplicationCount = hitActive ? ledger.applicationCount : 0;
+    frame.dangerActive = hitActive;
+    frame.bossMotion.attack = Math.max(
+      strikePulse(t, spec.firstResolveAt, 0.6),
+      strikePulse(t, spec.secondResolveAt, 0.6),
+    );
+    frame.playerMotion.impact = Math.max(
+      strikePulse(t, spec.firstResolveAt, 0.5) * 0.4,
+      strikePulse(t, spec.secondResolveAt, 0.65),
+    );
+    frame.stackDamageAllyMotion = motion({
+      idle: 1,
+      stride: Math.max(pulse(gather), pulse(disperse)),
+      impact: strikePulse(t, spec.firstResolveAt, 0.5) * 0.4,
+    });
+  }
   if (spec.mode === 'real-time-progression') {
     frame.realTimeProgressionState = realTimeProgressionState(t);
     frame.realTimeProgressionCheckpointId = spec.checkpointId;
@@ -16296,7 +16582,8 @@ export function blueprintFrame(id, time) {
               spec.mode === 'partner-revival' ||
               spec.mode === 'kill-order-inheritance' ||
               spec.mode === 'shared-group-health' ||
-              spec.mode === 'coordinated-duo-attack'
+              spec.mode === 'coordinated-duo-attack' ||
+              spec.mode === 'stack-damage'
             ? 92
             : -62),
   };
