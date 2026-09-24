@@ -67,17 +67,25 @@ export function patternFrame(kind, time) {
   const boss = {
     x: 280,
     y:
-      kind === 'gap-volley' ? 175 : kind === 'projectile-fan' ? 165 : kind === 'summon' ? 235 : 275,
+      kind === 'gap-volley'
+        ? 175
+        : kind === 'projectile-fan'
+          ? 165
+          : kind === 'summon'
+            ? 235
+            : kind === 'sweep'
+              ? 385
+              : 275,
   };
   const playerStart =
     volley?.playerStart ??
     fan?.playerStart ??
-    (kind === 'sweep' ? { x: 412, y: 525 } : { x: 390, y: 700 });
+    (kind === 'sweep' ? { x: 412, y: 635 } : { x: 390, y: 700 });
   const playerTarget =
     volley?.playerTarget ??
     fan?.playerTarget ??
     (kind === 'sweep'
-      ? { x: 440, y: 650 }
+      ? { x: 440, y: 770 }
       : kind === 'ground-slam'
         ? { x: 280, y: 785 }
         : kind === 'summon'

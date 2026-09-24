@@ -90,6 +90,9 @@ test('the weapon remains present when its trail fades and reverse seeking reprod
 });
 
 test('the sweep scene and its static preview share weapon artwork without arming other patterns', () => {
+  const activeFrame = patternFrame('sweep', 3);
+  assert.equal(activeFrame.boss.y, 385);
+  assert.equal(activeFrame.player.y, 770);
   const demo = {
     title: 'Arc sweep',
     timeline: 'Attack timeline',
@@ -109,6 +112,7 @@ test('the sweep scene and its static preview share weapon artwork without arming
       if (kind === 'sweep') {
         assert.match(markup, weaponMarker);
         assert.ok(markup.includes(SWEEP_WEAPON_ART));
+        if (markup === scene) assert.match(markup, /data-pattern-sweep-scene/);
       } else {
         assert.doesNotMatch(markup, weaponMarker);
       }
