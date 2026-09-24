@@ -3133,15 +3133,7 @@ function primitivesFor(spec, frame) {
     const lit = frame.dangerActive;
     const visible = phase === 2 ? 1 - recover : phase === 0 ? 0.4 + 0.5 * prepare : 1;
     return [
-      line(
-        boss.x + 38,
-        boss.y + 40,
-        x,
-        y,
-        phase === 0 ? 0.28 + 0.48 * prepare : 0,
-        'accent',
-        3,
-      ),
+      line(boss.x + 38, boss.y + 40, x, y, phase === 0 ? 0.28 + 0.48 * prepare : 0, 'accent', 3),
       circle(x, y, spec.radius, visible, lit ? 'signal' : 'accent', lit ? 7 : 2, lit ? 0.33 : 0.04),
       circle(x, y, mix(118, spec.radius, countdown), phase === 1 && !lit ? 0.75 : 0, 'accent', 3),
       path(
@@ -8769,11 +8761,32 @@ function primitivesFor(spec, frame) {
       line(boss.x, boss.y, 390, 620, phase === 0 ? preview : active, 'accent', 5, '10 10'),
       circle(390, 620, 12, active, 'signal', 8, phase === 1 ? 0.3 : 0),
     ];
-  if (mode === 'combo')
+  if (mode === 'combo') {
+    const angle =
+      phase === 0
+        ? mix(-0.75, -1.3, prepare)
+        : phase === 1
+          ? mix(-1.3, 1.05, clamp(action * 1.5))
+          : mix(1.05, 0.88, recover);
+    const grip = { x: boss.x + 36, y: boss.y + 17 };
+    const head = polar(grip, 116, angle);
+    const along = { x: Math.cos(angle), y: Math.sin(angle) };
+    const across = { x: -along.y, y: along.x };
+    const corner = (length, width) =>
+      `${head.x + along.x * length + across.x * width} ${head.y + along.y * length + across.y * width}`;
     return [
       path(arcPath(boss, 190, -1.15, mix(-1.15, 2.1, clamp(action * 1.7))), active, 'signal', 25),
       circle(boss.x, boss.y, mix(40, 380, clamp(action * 1.7 - 0.7)), active, 'accent', 16),
+      line(grip.x, grip.y, head.x, head.y, 0.92, 'muted', 11),
+      path(
+        `M ${corner(-17, -30)} L ${corner(17, -30)} L ${corner(17, 30)} L ${corner(-17, 30)} Z`,
+        0.95,
+        'accent',
+        0,
+        0.88,
+      ),
     ];
+  }
   if (mode === 'weak-point') {
     const exposed = phase === 0 ? prepare : phase === 1 ? 1 : 1 - recover;
     const crystal = { x: boss.x + 58, y: boss.y - 12 };

@@ -1006,6 +1006,19 @@ test('delayed rune remains safe through its countdown, then activates at its fix
   );
 });
 
+test('attack combination keeps a held hammer through both strikes and recovery', () => {
+  const id = 'attack-combination';
+  const frames = [0, 1.5, 2.3, 3.36, 4.8, 5.9].map((time) => blueprintFrame(id, time));
+  for (const frame of frames) {
+    assert.equal(frame.primitives[2].type, 'line');
+    assert.ok(frame.primitives[2].opacity > 0);
+    assert.equal(frame.primitives[3].type, 'path');
+    assert.ok(frame.primitives[3].fill > 0);
+  }
+  assert.notEqual(frames[1].primitives[3].data, frames[2].primitives[3].data);
+  assert.notEqual(frames[2].primitives[3].data, frames[3].primitives[3].data);
+});
+
 test('speed change keeps one route, accelerates at its rune, and clears the whole player', () => {
   const id = 'speed-change';
   const spec = blueprintSpec(id);
