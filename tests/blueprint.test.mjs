@@ -214,7 +214,7 @@ test('every damaging promoted animation derives safety from its own active geome
     'control-mode-shift': { x: 120, y: 724 },
     'cover-line-of-sight': { x: 470, y: 850 },
     'wide-swing': { x: 280, y: 515 },
-    lunge: { x: 300, y: 440 },
+    lunge: { x: 265, y: 450 },
     grab: { x: 390, y: 555 },
     'burrow-and-emerge': { x: 420, y: 590 },
     'ring-volley': { x: 516, y: 400 },
@@ -481,6 +481,16 @@ test('landing jump locks its destination before takeoff and resolves the marked 
   assert.equal(impact.playerSafe, true);
   assert.equal(recovery.dangerActive, false);
   assert.ok(recovery.boss.x < impact.boss.x);
+});
+
+test('lunge drives an armored body down a fixed stone lane with room for the full player', () => {
+  const windup = blueprintFrame('lunge', 1.3);
+  const passage = blueprintFrame('lunge', 3.5);
+  assert.equal(windup.primitives[0].dash, '');
+  assert.ok(passage.boss.y > 650);
+  assert.ok(passage.player.y - passage.boss.y > 100);
+  assert.equal(passage.playerSafe, true);
+  assert.equal(blueprintPointSafe('lunge', 3.5, { x: 265, y: 450 }), false);
 });
 
 test('single shot locks one straight trajectory and lets the full player body sidestep it', () => {

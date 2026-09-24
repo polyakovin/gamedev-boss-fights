@@ -55,11 +55,13 @@
   }
 }
 @media (max-width: 960px) {
-  .blueprint-demo[data-blueprint-id='landing-jump'] .blueprint-demo__canvas {
+  .blueprint-demo:is([data-blueprint-id='landing-jump'], [data-blueprint-id='lunge'])
+    .blueprint-demo__canvas {
     height: 100svh;
     overflow: hidden;
   }
-  .blueprint-demo[data-blueprint-id='landing-jump'] .blueprint-demo__svg {
+  .blueprint-demo:is([data-blueprint-id='landing-jump'], [data-blueprint-id='lunge'])
+    .blueprint-demo__svg {
     height: 100%;
     width: max(100%, 58.333svh);
     max-width: none;

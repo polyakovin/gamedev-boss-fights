@@ -1645,7 +1645,13 @@ const SPECS = {
     fallbackRoute: 'menu-fallback',
   },
   'wide-swing': { mode: 'arc', boss: [280, 310], player: [410, 470], target: [470, 650] },
-  lunge: { mode: 'lunge', boss: [170, 290], player: [390, 590], target: [470, 660] },
+  lunge: {
+    mode: 'lunge',
+    boss: [145, 210],
+    player: [350, 620],
+    target: [440, 820],
+    lungeEnd: [385, 690],
+  },
   grab: {
     mode: 'grab',
     boss: [280, 370],
@@ -1896,6 +1902,29 @@ const arcPath = (center, radius, from, to) => {
   const start = polar(center, radius, from);
   const end = polar(center, radius, to);
   return `M ${start.x} ${start.y} A ${radius} ${radius} 0 ${Math.abs(to - from) > Math.PI ? 1 : 0} 1 ${end.x} ${end.y}`;
+};
+const lungeScuffPath = (origin, end, halfWidth = 27) => {
+  const dx = end.x - origin.x;
+  const dy = end.y - origin.y;
+  const length = Math.hypot(dx, dy) || 1;
+  const side = { x: (-dy / length) * halfWidth, y: (dx / length) * halfWidth };
+  const at = (amount, width) =>
+    `${(origin.x + dx * amount + side.x * width).toFixed(1)} ${(origin.y + dy * amount + side.y * width).toFixed(1)}`;
+  return `M ${at(0, 0.65)} L ${at(0.2, 0.95)} L ${at(0.37, 0.78)} L ${at(0.55, 1)} L ${at(0.78, 0.86)} L ${at(1, 0.6)} L ${at(1, -0.6)} L ${at(0.78, -0.86)} L ${at(0.55, -1)} L ${at(0.37, -0.78)} L ${at(0.2, -0.95)} L ${at(0, -0.65)} Z`;
+};
+const lungeGougesPath = (origin, end) => {
+  const dx = end.x - origin.x;
+  const dy = end.y - origin.y;
+  const length = Math.hypot(dx, dy) || 1;
+  const normal = { x: (-dy / length) * 27, y: (dx / length) * 27 };
+  const at = (amount, across) =>
+    `${(origin.x + dx * amount + normal.x * across).toFixed(1)} ${(origin.y + dy * amount + normal.y * across).toFixed(1)}`;
+  return [0.13, 0.34, 0.57, 0.81]
+    .flatMap((amount) => [
+      `M ${at(amount - 0.025, -0.82)} L ${at(amount + 0.038, -0.73)} L ${at(amount + 0.055, -0.48)} L ${at(amount - 0.035, -0.51)} Z`,
+      `M ${at(amount - 0.034, 0.52)} L ${at(amount + 0.052, 0.45)} L ${at(amount + 0.031, 0.78)} L ${at(amount - 0.016, 0.87)} Z`,
+    ])
+    .join(' ');
 };
 const spiralShots = (center, time) =>
   Array.from({ length: 12 }, (_, releaseIndex) => {
@@ -9432,11 +9461,19 @@ function primitivesFor(spec, frame) {
       path(arcPath(boss, 205, -1.15, 2.25), preview, 'accent', 20, 0, '12 10'),
       path(arcPath(boss, 205, -1.15, mix(-1.15, 2.25, action)), active, 'signal', 30),
     ];
-  if (mode === 'lunge')
+  if (mode === 'lunge') {
+    const origin = point(spec.boss);
     return [
-      line(170, 290, 430, 590, preview, 'accent', 38, '14 12'),
-      line(170, 290, boss.x, boss.y, active, 'signal', 54),
+      path(lungeScuffPath(origin, point(spec.lungeEnd)), preview, 'accent', 0, 0.33),
+      path(
+        lungeGougesPath(origin, phase === 2 ? point(spec.lungeEnd) : boss),
+        active,
+        'muted',
+        0,
+        0.72,
+      ),
     ];
+  }
   if (mode === 'grab') {
     const target = point(spec.grabPoint);
     const reach = phase === 0 ? prepare * 0.18 : phase === 1 ? smooth(action / 0.35) : 1 - recover;
@@ -9978,7 +10015,7 @@ function pointClearsThreat(spec, frame, value, radius = BLUEPRINT_PLAYER_RADIUS)
   }
   if (mode === 'arc') return distanceFromBoss > 205 + radius;
   if (mode === 'lunge')
-    return distanceToSegment(value, { x: 170, y: 290 }, { x: 430, y: 590 }) > 27 + radius;
+    return distanceToSegment(value, point(spec.boss), point(spec.lungeEnd)) > 27 + radius;
   if (mode === 'grab') {
     const hand = frame.primitives[1];
     return Math.hypot(value.x - hand.x, value.y - hand.y) > hand.radius + radius;
@@ -10579,7 +10616,10 @@ export function blueprintFrame(id, time) {
     }
   } else if (spec.mode === 'lunge') {
     const travel = phase === 0 ? 0 : phase === 1 ? smooth(action / 0.62) : 1 - recover;
-    boss = { x: mix(170, 430, travel), y: mix(290, 590, travel) };
+    boss = {
+      x: mix(startBoss.x, spec.lungeEnd[0], travel),
+      y: mix(startBoss.y, spec.lungeEnd[1], travel),
+    };
   } else if (spec.mode === 'burrow') {
     boss =
       phase === 0
