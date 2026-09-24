@@ -1,0 +1,138 @@
+{
+  "title": "Entity tether",
+  "subtitle": "Keep a linked pair within a visible distance limit",
+  "variant": "Two moving endpoints · maximum length · one held check · one broken check",
+  "summary": "A visible bond makes two entities' movement interdependent; crossing its stated limit changes the outcome for both.",
+  "overview": "A tether links two identified entities and checks their distance at a defined instant. This pair must move together within a maximum range; a visible boundary enables coordination, and a failed check hurts both. Other encounters require a deliberate break or link the boss to one player, so label those rules separately.",
+  "learning": "Specify endpoint IDs, attachment and release times, measured positions, maximum length and equality rule, warning budget, simultaneous resolution, failure recipients, duplicate protection, and retry reset.",
+  "category": "Cooperative coordination",
+  "readTime": "10 min",
+  "demo": {
+    "title": "Keep Kern's link together, then break its limit",
+    "timeline": "Entity tether timeline",
+    "step": "A paired move holds the bond; opposite moves break it",
+    "phaseNames": [
+      "See the paired link",
+      "Move together through the check",
+      "Compare an overlong link"
+    ],
+    "phaseDescriptions": [
+      "At 0.70 seconds Kern links Tavi and one ally. The line joins their actual positions, and the circle around the ally marks the 150-unit maximum. A distance readout identifies the tested quantity; the first movement begins at 0.95 seconds.",
+      "Both endpoints travel in the same general direction and remain about 135 units apart. At 2.20 seconds the first pulse samples their centers once: 135 is within 150, the line holds, and both health bars remain at 100. The pair returns before the second warning.",
+      "After 3.08 seconds the pair separates. By 4.30 seconds their distance is about 308, beyond 150. One check breaks the line, deals 90 damage to each endpoint, and leaves both at 10 health. At 5.30 seconds an explicit retry restores positions, link, and health."
+    ],
+    "boss": "Boss",
+    "player": "Player",
+    "danger": "The line is not an attack lane: the danger is exceeding the shown endpoint-to-endpoint limit when the check resolves",
+    "locked": "Endpoint IDs, distance metric, threshold, resolution instant, both damage recipients, and one application per hit ID are encounter rules",
+    "safe": "Show the partner and limit before movement is required; budget paired routes around obstacles and overlapping attacks",
+    "reducedMotion": "Reduced motion disables autoplay. Scrub through 0.70, 1.30, 2.30, 3.10, 3.80, 4.40, and 5.50 seconds.",
+    "diagramDescription": "Kern links Tavi and an ally. A line and a 150-unit radius travel with the endpoints. The pair moves together and survives the first check; then it separates to roughly 308 units, the link breaks and both lose 90 health, before a retry resets the scene."
+  },
+  "steps": [
+    {
+      "title": "Which two entities are linked?",
+      "body": "Store two distinct live endpoint IDs and draw from the same world positions used by the rule. Decide whether the test uses centers, body edges, path length, or line of sight. This demo uses center-to-center Euclidean distance: 150 is held; anything greater breaks. The circle follows the ally only to explain the limit, not to create a stationary zone."
+    },
+    {
+      "title": "When and how does the link resolve?",
+      "body": "Signal attachment, then snapshot both endpoints at the same 2.20- or 4.30-second pulse. Resolve once per encounter-and-hit ID. A held pair takes no damage here; a broken pair takes 90 each. The first check must not silently carry damage into the second, and a duplicate callback must not hit twice."
+    },
+    {
+      "title": "Can the pair move as a pair?",
+      "body": "Compare warning time with the slower endpoint's route, obstacles, knockback, and other threats. A bond should constrain choices without requiring a hidden dash or impossible synchronization. Test exactly 150, just over 150, a missing or downed endpoint, simultaneous movement, stale network positions, and a retry with fresh hit IDs."
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "Drawing one rule and checking another",
+      "body": "A line that appears to reach farther than the measured maximum makes a break feel arbitrary. Tie the line, boundary, numeric readout, and resolver to one coordinate system and threshold."
+    },
+    {
+      "title": "Treating every tether as keep-close",
+      "body": "Some encounters require a deliberate break; others connect a boss to one player and apply a debuff. State the required action and consequence before reusing this visual vocabulary."
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "Leave a coordination margin",
+      "body": "Do not tune routine movement to run exactly along the 150-unit edge. Leave room for animation, input delay, and a partner choosing a slightly different route; use the edge as a meaningful warning."
+    },
+    {
+      "title": "Clarify crossing and contact",
+      "body": "If crossing the threshold breaks instantly, check continuously and communicate that. If the bond is sampled only at a pulse, show the pulse and avoid implying a continuous penalty. This demo uses two timed samples."
+    },
+    {
+      "title": "Log both endpoints",
+      "body": "Capture endpoint IDs, positions, measured distance, limit, hit ID, outcome, both health deltas, and retry reset. Replay a successful shared route and an overlong route on narrow and wide layouts."
+    }
+  ],
+  "story": {
+    "title": "One bond, two routes",
+    "body": "Kern joins two figures with a rune line. They shift together and the first pulse passes. On the next pass they flee in opposite directions; the same line stretches beyond its ring, snaps, and harms both."
+  },
+  "adaptation": {
+    "title": "Make the limit legible without color",
+    "body": "Keep a solid line for a held link, a split line and cross for a break, a numeric distance/limit readout, and separate health bars. Let the timeline reveal both checks when autoplay is off; avoid depending on a colored ring alone."
+  },
+  "distinction": {
+    "title": "A relational distance, not a fixed area",
+    "body": "A tower checks bodies at a world-fixed point; a stack gathers bodies around one marked target; a tether measures the relationship between two moving endpoints. A spread may reward separation, while this variant penalizes it."
+  },
+  "lensNotes": [
+    {
+      "id": "counterplay",
+      "body": "The pair can move together inside the shown distance margin rather than simply staying still."
+    },
+    {
+      "id": "threat-geometry",
+      "body": "Two moving centers define the line and the maximum-radius boundary; no fixed arena point decides the result."
+    },
+    {
+      "id": "risk-reward",
+      "body": "Taking separate routes may gain space but risks a shared 90-damage break."
+    },
+    {
+      "id": "difficulty-rhythm",
+      "body": "A warning, paired move, pulse, second warning, and contrasting failure create a readable cadence."
+    },
+    {
+      "id": "progress-clarity",
+      "body": "Distance/limit text, an intact or split line, and both health bars expose the cause and consequence."
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "3D",
+      "game": "World of Warcraft",
+      "boss": "Sludgefist",
+      "screenshot": "https://i.ytimg.com/vi/0EDAGdaIJmo/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=0EDAGdaIJmo",
+      "video": "https://www.youtube.com/watch?v=Jf1MCPKsd0M&t=35s",
+      "videoDurationSeconds": 107,
+      "body": "Chain Link pairs players and punishes both if they move too far apart. It is the close-pair reference for this demo, but the game's range and damage are not the demo's illustrative 150 units and 90 health."
+    },
+    {
+      "dimension": "3D",
+      "game": "Final Fantasy XIV",
+      "boss": "Hesperos",
+      "screenshot": "https://i.ytimg.com/vi/pILr92b_6n0/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=pILr92b_6n0",
+      "video": "https://www.youtube.com/watch?v=JJqFsM8FTqI&t=1018s",
+      "videoDurationSeconds": 1279,
+      "body": "In Akanthai: Curtain Call, each player is linked to a thorn and must deliberately break that tether in a staggered sequence; a break triggers group damage. This is the opposite response and different endpoint pairing from the demo."
+    },
+    {
+      "dimension": "2D",
+      "game": "Terraria",
+      "boss": "Moon Lord",
+      "screenshot": "https://s1.dmcdn.net/v/BB3rC1LuVdOS_Sqmv/x1080",
+      "screenshotSource": "https://www.dailymotion.com/video/x33lob0",
+      "video": "https://www.youtube.com/watch?v=ULSgKxBQE78&t=60s",
+      "videoDurationSeconds": 453,
+      "body": "Moon Lord's tongue reaches toward a player and, on contact, applies Moon Bite, suppressing lifesteal. This is a boss-to-player connection with a debuff, not a cooperative keep-close pair or the demo's break damage."
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

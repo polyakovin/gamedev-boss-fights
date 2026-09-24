@@ -1,0 +1,30 @@
+{
+  "id": "entity-tether",
+  "number": 117,
+  "published": true,
+  "sourceLocale": "en",
+  "contentVersion": 1,
+  "animation": "entity-tether",
+  "lenses": [
+    "counterplay",
+    "threat-geometry",
+    "risk-reward",
+    "difficulty-rhythm",
+    "progress-clarity"
+  ],
+  "related": ["coordinated-duo-attack", "personal-spread", "stack-damage", "party-size-scaling"],
+  "sources": [
+    {
+      "title": "Sludgefist Chain Link — Wowhead",
+      "url": "https://www.wowhead.com/guide/sludgefist-castle-nathria-raid-strategy-guide"
+    },
+    {
+      "title": "Akanthai: Curtain Call — Final Fantasy XIV Community Wiki",
+      "url": "https://ffxiv.consolegameswiki.com/wiki/Asphodelos:_The_Fourth_Circle_(Savage)"
+    },
+    {
+      "title": "Moon Lord's tongue and Moon Bite — Official Terraria Wiki",
+      "url": "https://terraria.wiki.gg/wiki/Guide:Moon_Lord_strategies"
+    }
+  ]
+}

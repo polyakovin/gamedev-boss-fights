@@ -1915,6 +1915,32 @@ const SPECS = {
     secondHitId: 'tower-two-1',
     playerIds: ['tavi', 'ally'],
   },
+  'entity-tether': {
+    mode: 'entity-tether',
+    boss: [280, 345],
+    player: [180, 700],
+    target: [180, 700],
+    arena: [55, 245, 450, 650],
+    ally: [300, 760],
+    togetherPlayer: [285, 690],
+    togetherAlly: [400, 760],
+    apartPlayer: [100, 690],
+    apartAlly: [400, 760],
+    maxLength: 150,
+    breakDamage: 90,
+    linkAt: 0.7,
+    travelTogether: [0.95, 1.8],
+    firstCheck: [2.2, 2.48],
+    regroup: [2.62, 3.03],
+    secondWarn: 3.08,
+    travelApart: [3.28, 3.98],
+    secondCheck: [4.3, 4.6],
+    resetAt: 5.3,
+    encounterId: 'kern-pair-tether-1',
+    firstHitId: 'tether-pulse-1',
+    secondHitId: 'tether-pulse-2',
+    playerIds: ['tavi', 'ally'],
+  },
   'wide-swing': { mode: 'arc', boss: [225, 340], player: [380, 500], target: [420, 780] },
   lunge: {
     mode: 'lunge',
@@ -4333,6 +4359,64 @@ export function towerSoakResolve({
             ? 'soaked'
             : 'failed',
     applicationCount: valid && unique && !alreadyResolved ? 1 : 0,
+  });
+}
+
+export function entityTetherState(time) {
+  const spec = SPECS['entity-tether'];
+  const t = localTime(time);
+  if (t < spec.linkAt) return 'unlinked';
+  if (t < spec.travelTogether[0]) return 'linked-warned';
+  if (t < spec.travelTogether[1]) return 'moving-together';
+  if (t < spec.firstCheck[0]) return 'within-limit';
+  if (t < spec.firstCheck[1]) return 'first-check-held';
+  if (t < spec.secondWarn) return 'regrouping';
+  if (t < spec.travelApart[0]) return 'second-link-warned';
+  if (t < spec.travelApart[1]) return 'moving-apart';
+  if (t < spec.secondCheck[0]) return 'over-limit';
+  if (t < spec.secondCheck[1]) return 'second-check-broken';
+  if (t < spec.resetAt) return 'pair-damaged';
+  return 'explicit-retry';
+}
+
+export function entityTetherResolve({
+  encounterId = 'kern-pair-tether-1',
+  hitId = 'tether-pulse-1',
+  first = { id: 'tavi', position: { x: 285, y: 690 }, alive: true },
+  second = { id: 'ally', position: { x: 400, y: 760 }, alive: true },
+  maxLength = 150,
+  breakDamage = 90,
+  alreadyResolved = false,
+} = {}) {
+  const validActor = (actor) =>
+    actor &&
+    actor.id != null &&
+    actor.alive === true &&
+    actor.position &&
+    Number.isFinite(actor.position.x) &&
+    Number.isFinite(actor.position.y);
+  const valid =
+    validActor(first) &&
+    validActor(second) &&
+    String(first.id) !== String(second.id) &&
+    Number.isFinite(maxLength) &&
+    maxLength > 0 &&
+    Number.isSafeInteger(breakDamage) &&
+    breakDamage >= 0;
+  const distance = valid
+    ? Math.hypot(first.position.x - second.position.x, first.position.y - second.position.y)
+    : 0;
+  const held = Boolean(valid && distance <= maxLength);
+  return Object.freeze({
+    encounterId: String(encounterId),
+    hitId: String(hitId),
+    endpointIds: Object.freeze(valid ? [String(first.id), String(second.id)] : []),
+    distance,
+    maxLength,
+    held,
+    damagePerEndpoint: valid && !held && !alreadyResolved ? breakDamage : 0,
+    resolution: !valid ? 'invalid' : alreadyResolved ? 'duplicate' : held ? 'held' : 'broken',
+    applicationCount: valid && !alreadyResolved ? 1 : 0,
   });
 }
 
@@ -9542,6 +9626,82 @@ function primitivesFor(spec, frame) {
       ),
     ];
   }
+  if (mode === 'entity-tether') {
+    const t = frame.time;
+    const ally = frame.entityTetherAlly;
+    const player = frame.player;
+    const visible = frame.entityTetherVisible;
+    const broken = frame.entityTetherBroken;
+    const held = frame.entityTetherHeld;
+    const tone = broken ? 'signal' : held ? 'safe' : 'accent';
+    const midX = (player.x + ally.x) / 2;
+    const midY = (player.y + ally.y) / 2;
+    const breakGap = 22;
+    const dx = ally.x - player.x;
+    const dy = ally.y - player.y;
+    const length = Math.hypot(dx, dy) || 1;
+    const nearX = midX - (dx / length) * breakGap;
+    const nearY = midY - (dy / length) * breakGap;
+    const farX = midX + (dx / length) * breakGap;
+    const farY = midY + (dy / length) * breakGap;
+    return [
+      rect(...spec.arena, 0.58, 'muted', 0.025),
+      path(
+        'M 65 795 L 175 760 L 280 800 L 390 760 L 495 795 V 825 L 390 792 L 280 836 L 175 792 L 65 825 Z',
+        0.54,
+        'muted',
+        0,
+        0.05,
+      ),
+      ...frame.entityTetherHealth.flatMap((health, index) => [
+        rect(145 + index * 170, 125, 100, 20, 0.78, 'muted', 0.09),
+        rect(145 + index * 170, 125, health, 20, 0.9, health < 100 ? 'signal' : 'safe', 0.55),
+      ]),
+      circle(ally.x, ally.y, spec.maxLength, visible ? 0.4 : 0, 'accent', 3),
+      line(
+        player.x,
+        player.y,
+        broken ? nearX : ally.x,
+        broken ? nearY : ally.y,
+        visible ? 0.92 : 0,
+        tone,
+        9,
+      ),
+      line(farX, farY, ally.x, ally.y, broken ? 0.92 : 0, 'signal', 9),
+      circle(player.x, player.y, 11, visible ? 0.9 : 0, tone, 4, 0.18),
+      circle(ally.x, ally.y, 11, visible ? 0.9 : 0, tone, 4, 0.18),
+      circle(
+        midX,
+        midY,
+        20,
+        visible && held && frame.entityTetherHitActive ? 0.95 : 0,
+        'safe',
+        5,
+        0.15,
+      ),
+      path(
+        `M ${midX - 12} ${midY} L ${midX - 2} ${midY + 10} L ${midX + 15} ${midY - 12}`,
+        visible && held && frame.entityTetherHitActive ? 0.95 : 0,
+        'safe',
+        6,
+      ),
+      circle(midX, midY, 28, broken ? 0.9 : 0, 'signal', 7, 0.08),
+      path(
+        `M ${midX - 12} ${midY - 12} L ${midX + 12} ${midY + 12} M ${midX + 12} ${midY - 12} L ${midX - 12} ${midY + 12}`,
+        broken ? 0.95 : 0,
+        'signal',
+        7,
+      ),
+      circle(
+        spec.player[0],
+        spec.player[1],
+        78 * smooth((t - spec.resetAt) / (BLUEPRINT_DURATION - spec.resetAt)),
+        frame.entityTetherRetry ? 0.75 : 0,
+        'accent',
+        7,
+      ),
+    ];
+  }
   if (mode === 'coordinated-duo-attack') {
     const t = frame.time;
     const leader = frame.decoy;
@@ -12023,6 +12183,17 @@ function pointClearsThreat(spec, frame, value, radius = BLUEPRINT_PLAYER_RADIUS)
     });
     return ledger.succeeded;
   }
+  if (mode === 'entity-tether') {
+    if (!frame.entityTetherHitActive) return true;
+    return entityTetherResolve({
+      encounterId: spec.encounterId,
+      hitId: frame.entityTetherHitId,
+      first: { id: spec.playerIds[0], position: value, alive: true },
+      second: { id: spec.playerIds[1], position: frame.entityTetherAlly, alive: true },
+      maxLength: spec.maxLength,
+      breakDamage: spec.breakDamage,
+    }).held;
+  }
   if (mode === 'coordinated-duo-attack') {
     const target = frame.coordinatedDuoAttackTarget;
     return (
@@ -14224,6 +14395,31 @@ export function blueprintFrame(id, time) {
     const second = mix(middle, spec.secondTower[0], enterSecond);
     player = { x: mix(second, spec.player[0], retry), y: spec.player[1] };
     stride = Math.max(pulse(enterFirst), pulse(returnMiddle), pulse(enterSecond), pulse(retry));
+  }
+  if (spec.mode === 'entity-tether') {
+    const together = smooth(
+      (t - spec.travelTogether[0]) / (spec.travelTogether[1] - spec.travelTogether[0]),
+    );
+    const regroup = smooth((t - spec.regroup[0]) / (spec.regroup[1] - spec.regroup[0]));
+    const apart = smooth((t - spec.travelApart[0]) / (spec.travelApart[1] - spec.travelApart[0]));
+    const retry = smooth((t - spec.resetAt) / (BLUEPRINT_DURATION - spec.resetAt));
+    const moved = {
+      x: mix(spec.player[0], spec.togetherPlayer[0], together),
+      y: mix(spec.player[1], spec.togetherPlayer[1], together),
+    };
+    const returned = {
+      x: mix(moved.x, spec.player[0], regroup),
+      y: mix(moved.y, spec.player[1], regroup),
+    };
+    const separated = {
+      x: mix(returned.x, spec.apartPlayer[0], apart),
+      y: mix(returned.y, spec.apartPlayer[1], apart),
+    };
+    player = {
+      x: mix(separated.x, spec.player[0], retry),
+      y: mix(separated.y, spec.player[1], retry),
+    };
+    stride = Math.max(pulse(together), pulse(regroup), pulse(apart), pulse(retry));
   }
   const bossVisible =
     spec.mode === 'secondary-cues-invisibility'
@@ -16749,6 +16945,73 @@ export function blueprintFrame(id, time) {
       impact: strikePulse(t, spec.secondHit[0], 0.65),
     });
   }
+  if (spec.mode === 'entity-tether') {
+    const together = smooth(
+      (t - spec.travelTogether[0]) / (spec.travelTogether[1] - spec.travelTogether[0]),
+    );
+    const regroup = smooth((t - spec.regroup[0]) / (spec.regroup[1] - spec.regroup[0]));
+    const apart = smooth((t - spec.travelApart[0]) / (spec.travelApart[1] - spec.travelApart[0]));
+    const retry = smooth((t - spec.resetAt) / (BLUEPRINT_DURATION - spec.resetAt));
+    const moved = {
+      x: mix(spec.ally[0], spec.togetherAlly[0], together),
+      y: mix(spec.ally[1], spec.togetherAlly[1], together),
+    };
+    const returned = {
+      x: mix(moved.x, spec.ally[0], regroup),
+      y: mix(moved.y, spec.ally[1], regroup),
+    };
+    const separated = {
+      x: mix(returned.x, spec.apartAlly[0], apart),
+      y: mix(returned.y, spec.apartAlly[1], apart),
+    };
+    const ally = {
+      x: mix(separated.x, spec.ally[0], retry),
+      y: mix(separated.y, spec.ally[1], retry),
+    };
+    const second = t >= spec.secondWarn && t < spec.resetAt;
+    const hitActive =
+      (t >= spec.firstCheck[0] && t < spec.firstCheck[1]) ||
+      (t >= spec.secondCheck[0] && t < spec.secondCheck[1]);
+    const ledger = entityTetherResolve({
+      encounterId: spec.encounterId,
+      hitId: second ? spec.secondHitId : spec.firstHitId,
+      first: { id: spec.playerIds[0], position: player, alive: true },
+      second: { id: spec.playerIds[1], position: ally, alive: true },
+      maxLength: spec.maxLength,
+      breakDamage: spec.breakDamage,
+    });
+    frame.entityTetherState = entityTetherState(t);
+    frame.entityTetherAlly = ally;
+    frame.entityTetherDistance = ledger.distance;
+    frame.entityTetherMaxLength = ledger.maxLength;
+    frame.entityTetherHeld = ledger.held;
+    frame.entityTetherHitId = ledger.hitId;
+    frame.entityTetherHitActive = hitActive;
+    frame.entityTetherApplicationCount = hitActive ? ledger.applicationCount : 0;
+    frame.entityTetherVisible = t >= spec.linkAt && t < spec.resetAt;
+    frame.entityTetherBroken = t >= spec.secondCheck[0] && t < spec.resetAt && !ledger.held;
+    frame.entityTetherHealth =
+      t >= spec.resetAt
+        ? [100, 100]
+        : t >= spec.secondCheck[0]
+          ? [100 - ledger.damagePerEndpoint, 100 - ledger.damagePerEndpoint]
+          : [100, 100];
+    frame.entityTetherRetry = t >= spec.resetAt;
+    frame.entityTetherFallAngle = frame.entityTetherBroken
+      ? 72 * smooth((t - spec.secondCheck[0]) / 0.12)
+      : 0;
+    frame.dangerActive = hitActive;
+    frame.bossMotion.attack = Math.max(
+      strikePulse(t, spec.firstCheck[0], 0.56),
+      strikePulse(t, spec.secondCheck[0], 0.56),
+    );
+    frame.playerMotion.impact = strikePulse(t, spec.secondCheck[0], 0.6);
+    frame.entityTetherAllyMotion = motion({
+      idle: 1,
+      stride: Math.max(pulse(together), pulse(regroup), pulse(apart), pulse(retry)),
+      impact: strikePulse(t, spec.secondCheck[0], 0.6),
+    });
+  }
   if (spec.mode === 'real-time-progression') {
     frame.realTimeProgressionState = realTimeProgressionState(t);
     frame.realTimeProgressionCheckpointId = spec.checkpointId;
@@ -17140,7 +17403,8 @@ export function blueprintFrame(id, time) {
               spec.mode === 'coordinated-duo-attack' ||
               spec.mode === 'stack-damage' ||
               spec.mode === 'personal-spread' ||
-              spec.mode === 'tower-soak'
+              spec.mode === 'tower-soak' ||
+              spec.mode === 'entity-tether'
             ? 92
             : -62),
   };

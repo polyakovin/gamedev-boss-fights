@@ -89,6 +89,8 @@ import {
   personalSpreadResolve,
   towerSoakState,
   towerSoakResolve,
+  entityTetherState,
+  entityTetherResolve,
   counterStanceOutcome,
   counterStanceState,
   blueprintFrame,
@@ -116,8 +118,8 @@ import {
   renderBlueprintThumbnail,
 } from '../lib/blueprint-view.mjs';
 
-test('all 110 promoted lesson animations have distinct rule modes and complete moving frames', () => {
-  assert.equal(BLUEPRINT_MECHANIC_IDS.length, 110);
+test('all 111 promoted lesson animations have distinct rule modes and complete moving frames', () => {
+  assert.equal(BLUEPRINT_MECHANIC_IDS.length, 111);
   const modes = new Set();
   for (const id of BLUEPRINT_MECHANIC_IDS) {
     for (let time = 0; time <= BLUEPRINT_DURATION; time += 0.1) {
@@ -138,7 +140,7 @@ test('all 110 promoted lesson animations have distinct rule modes and complete m
           assert.ok(Number.isFinite(value), `${id} has an invalid ${primitive.type}`);
     }
   }
-  assert.equal(modes.size, 110);
+  assert.equal(modes.size, 111);
 });
 
 test('every blueprint exposes signal, committed action, and recovery without player teleports', () => {
@@ -197,7 +199,8 @@ test('every blueprint exposes signal, committed action, and recovery without pla
       id !== 'coordinated-duo-attack' &&
       id !== 'stack-damage' &&
       id !== 'personal-spread' &&
-      id !== 'tower-soak'
+      id !== 'tower-soak' &&
+      id !== 'entity-tether'
     )
       assert.equal(blueprintFrame(id, 3).dangerActive, true, id);
     assert.equal(blueprintFrame(id, 3).playerSafe, true, id);
@@ -306,6 +309,7 @@ test('every damaging promoted animation derives safety from its own active geome
       id !== 'stack-damage' &&
       id !== 'personal-spread' &&
       id !== 'tower-soak' &&
+      id !== 'entity-tether' &&
       id !== 'part-break' &&
       id !== 'counter-stance' &&
       id !== 'absorption-power-up' &&
@@ -5169,5 +5173,74 @@ test('fixed tower requires the exact living occupancy at resolution', () => {
   assert.match(
     renderBlueprintThumbnail(id, 'test-tower-soak'),
     /data-blueprint-preview="tower-soak"/,
+  );
+});
+
+test('entity tether samples two distinct live endpoints against one maximum', () => {
+  const id = 'entity-tether';
+  assert.deepEqual(
+    [0, 0.8, 1.2, 2, 2.3, 2.8, 3.15, 3.5, 4.1, 4.4, 4.8, 5.5].map(entityTetherState),
+    [
+      'unlinked',
+      'linked-warned',
+      'moving-together',
+      'within-limit',
+      'first-check-held',
+      'regrouping',
+      'second-link-warned',
+      'moving-apart',
+      'over-limit',
+      'second-check-broken',
+      'pair-damaged',
+      'explicit-retry',
+    ],
+  );
+  const held = entityTetherResolve();
+  assert.equal(held.resolution, 'held');
+  assert.equal(held.damagePerEndpoint, 0);
+  assert.deepEqual(held.endpointIds, ['tavi', 'ally']);
+  const atEdge = entityTetherResolve({
+    first: { id: 'tavi', position: { x: 0, y: 0 }, alive: true },
+    second: { id: 'ally', position: { x: 90, y: 120 }, alive: true },
+  });
+  assert.equal(atEdge.distance, 150);
+  assert.equal(atEdge.held, true);
+  const broken = entityTetherResolve({
+    first: { id: 'tavi', position: { x: 0, y: 0 }, alive: true },
+    second: { id: 'ally', position: { x: 151, y: 0 }, alive: true },
+  });
+  assert.equal(broken.resolution, 'broken');
+  assert.equal(broken.damagePerEndpoint, 90);
+  assert.equal(broken.applicationCount, 1);
+  const duplicate = entityTetherResolve({
+    first: { id: 'tavi', position: { x: 0, y: 0 }, alive: true },
+    second: { id: 'ally', position: { x: 151, y: 0 }, alive: true },
+    alreadyResolved: true,
+  });
+  assert.equal(duplicate.resolution, 'duplicate');
+  assert.equal(duplicate.damagePerEndpoint, 0);
+  assert.equal(duplicate.applicationCount, 0);
+  assert.equal(entityTetherResolve({ maxLength: 0 }).resolution, 'invalid');
+  assert.equal(entityTetherResolve({ second: null }).resolution, 'invalid');
+  assert.equal(
+    entityTetherResolve({ second: { id: 'tavi', position: { x: 400, y: 760 }, alive: true } })
+      .resolution,
+    'invalid',
+  );
+  assert.equal(
+    entityTetherResolve({ second: { id: 'ally', position: { x: 400, y: 760 }, alive: false } })
+      .resolution,
+    'invalid',
+  );
+  assert.equal(blueprintFrame(id, 2.3).entityTetherHeld, true);
+  assert.deepEqual(blueprintFrame(id, 2.3).entityTetherHealth, [100, 100]);
+  assert.equal(blueprintFrame(id, 4.4).entityTetherBroken, true);
+  assert.deepEqual(blueprintFrame(id, 4.4).entityTetherHealth, [10, 10]);
+  assert.equal(blueprintPointSafe(id, 2.3, { x: 285, y: 690 }), true);
+  assert.equal(blueprintPointSafe(id, 4.4, { x: 100, y: 690 }), false);
+  assert.deepEqual(blueprintFrame(id, 5.5).entityTetherHealth, [100, 100]);
+  assert.match(
+    renderBlueprintThumbnail(id, 'test-entity-tether'),
+    /data-blueprint-preview="entity-tether"/,
   );
 });

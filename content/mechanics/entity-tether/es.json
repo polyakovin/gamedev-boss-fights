@@ -1,0 +1,138 @@
+{
+  "title": "Vínculo entre entidades",
+  "subtitle": "Mantén a la pareja enlazada dentro de una distancia visible",
+  "variant": "Dos extremos móviles · longitud máxima · una comprobación intacta y otra rota",
+  "summary": "Un vínculo visible hace que el movimiento de dos entidades dependa del otro; superar el límite cambia el resultado para ambas.",
+  "overview": "Un vínculo une dos entidades y comprueba su distancia en un instante definido. La pareja debe moverse junta sin superar el máximo; el límite visible permite coordinarse y el fallo daña a ambas. Otros encuentros exigen romper el vínculo o enlazan al jefe con un jugador; sus reglas deben explicarse aparte.",
+  "learning": "Define los ID de los extremos, cuándo se crea y termina el vínculo, las posiciones medidas, el máximo y la igualdad, el aviso, la resolución simultánea, los destinatarios del daño, la protección contra duplicados y el reinicio.",
+  "category": "Coordinación cooperativa",
+  "readTime": "10 min",
+  "demo": {
+    "title": "Conserva el vínculo de Kern y luego supera su límite",
+    "timeline": "Cronología del vínculo entre entidades",
+    "step": "Avanzar juntos conserva el vínculo; separarse lo rompe",
+    "phaseNames": [
+      "Identificar la pareja",
+      "Superar juntos la prueba",
+      "Comparar un vínculo demasiado largo"
+    ],
+    "phaseDescriptions": [
+      "A los 0,70 s Kern enlaza a Tavi con un aliado. La línea une sus posiciones reales y el círculo alrededor del aliado marca el máximo de 150 unidades. Una cifra muestra la distancia comprobada; el primer movimiento empieza a los 0,95 s.",
+      "Ambos extremos avanzan aproximadamente en la misma dirección y quedan a unas 135 unidades. A los 2,20 s el primer pulso toma una sola muestra simultánea: 135 no supera 150, el vínculo resiste y ambos conservan 100 de salud. La pareja vuelve antes del segundo aviso.",
+      "Después de 3,08 s la pareja se separa. A los 4,30 s hay unas 308 unidades entre ambos, más de 150. Una sola comprobación rompe la línea y causa 90 de daño a cada uno: quedan con 10 de salud. A los 5,30 s un reinicio explícito restaura posiciones, vínculo y salud."
+    ],
+    "boss": "Jefe",
+    "player": "Jugador",
+    "danger": "La línea no es un carril de ataque: el peligro es superar la distancia máxima entre extremos al resolverse la prueba",
+    "locked": "Los ID, la métrica de distancia, el umbral, el instante de prueba, ambos destinatarios y una sola aplicación por ID de impacto son reglas del encuentro",
+    "safe": "Muestra al compañero y el límite antes de exigir movimiento; deja tiempo para rodear obstáculos y otras amenazas",
+    "reducedMotion": "El movimiento reducido desactiva la reproducción automática. Recorre 0,70, 1,30, 2,30, 3,10, 3,80, 4,40 y 5,50 s en la barra de tiempo.",
+    "diagramDescription": "Kern enlaza a Tavi y un aliado. La línea y el radio de 150 unidades siguen a los extremos. Avanzan juntos y superan la primera prueba; después se separan unas 308 unidades, se rompe el vínculo, ambos pierden 90 de salud y el reinicio restaura la escena."
+  },
+  "steps": [
+    {
+      "title": "¿Qué entidades están unidas?",
+      "body": "Guarda dos ID distintos y vivos; dibuja la línea desde las mismas posiciones mundiales que usa la regla. Decide si mides centros, bordes, recorrido o visión. Aquí se usa la distancia euclídea entre centros: exactamente 150 resiste, más de 150 rompe. El círculo sigue al aliado solo para explicar el máximo; no es una zona fija."
+    },
+    {
+      "title": "¿Cuándo y cómo se resuelve?",
+      "body": "Señala el enlace y toma una muestra simultánea de ambos extremos en el pulso de 2,20 o 4,30 s. Resuelve una vez por pareja de ID de encuentro e impacto. Un vínculo intacto no daña; uno roto causa 90 a cada extremo. El primer resultado no debe contaminar el segundo y una llamada duplicada no debe repetir el daño."
+    },
+    {
+      "title": "¿Puede moverse la pareja junta?",
+      "body": "Compara el aviso con la ruta del extremo más lento, los obstáculos, empujones y demás peligros. La restricción no debería exigir una carrera oculta ni una sincronía imposible. Prueba 150 exactos, algo más de 150, un extremo ausente o caído, movimiento simultáneo, posiciones de red antiguas y un reinicio con nuevos ID de impacto."
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "Dibujar una regla y comprobar otra",
+      "body": "Si la línea parece llegar más allá del máximo medido, la rotura resulta arbitraria. Usa el mismo sistema de coordenadas y umbral para línea, círculo, cifra y resolución."
+    },
+    {
+      "title": "Suponer que todo vínculo exige cercanía",
+      "body": "Algunos encuentros piden romperlo adrede; otros unen al jefe con un jugador y aplican un perjuicio. Indica la acción necesaria y su consecuencia antes de reutilizar esta imagen."
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "Deja margen para coordinarse",
+      "body": "No ajustes el movimiento normal al borde exacto de 150 unidades. Reserva espacio para animación, latencia y rutas algo distintas: el borde debe advertir, no tender una trampa."
+    },
+    {
+      "title": "Aclara el cruce y el contacto",
+      "body": "Si superar el umbral rompe al instante, compruébalo continuamente y comunícalo. Si solo se toma una muestra en un pulso, muestra ese pulso sin sugerir una penalización continua. Aquí hay dos muestras temporizadas."
+    },
+    {
+      "title": "Registra ambos extremos",
+      "body": "Guarda ID, posiciones, distancia, límite, ID de impacto, resultado, daño de cada uno y reinicio. Reproduce una ruta coordinada y otra excesiva en pantallas estrechas y anchas."
+    }
+  ],
+  "story": {
+    "title": "Un vínculo, dos rutas",
+    "body": "Kern une dos figuras con una línea rúnica. Se desplazan juntas y pasan el primer pulso. En el segundo intento huyen en direcciones opuestas: la línea rebasa el círculo, se rompe y hiere a ambas."
+  },
+  "adaptation": {
+    "title": "Haz legible el límite sin depender del color",
+    "body": "Mantén una línea continua mientras resiste, una línea partida y una cruz cuando se rompe, una cifra distancia/límite y dos barras de salud. La barra de tiempo debe mostrar ambos resultados sin reproducción automática; un círculo de color no basta."
+  },
+  "distinction": {
+    "title": "Relación entre puntos, no área fija",
+    "body": "Una torre comprueba cuerpos en un punto fijo; una acumulación agrupa cuerpos alrededor de un objetivo marcado; un vínculo mide dos extremos móviles. Dispersarse puede recompensar la separación, mientras esta variante la castiga."
+  },
+  "lensNotes": [
+    {
+      "id": "counterplay",
+      "body": "La pareja puede avanzar junta dentro del margen mostrado en lugar de quedarse quieta."
+    },
+    {
+      "id": "threat-geometry",
+      "body": "Dos centros móviles definen la línea y el radio máximo; ningún punto fijo de la arena decide el resultado."
+    },
+    {
+      "id": "risk-reward",
+      "body": "Las rutas separadas ganan espacio, pero arriesgan una rotura que causa 90 a ambos."
+    },
+    {
+      "id": "difficulty-rhythm",
+      "body": "Aviso, movimiento conjunto, pulso, segundo aviso y fallo contrastante forman un ritmo claro."
+    },
+    {
+      "id": "progress-clarity",
+      "body": "La cifra distancia/límite, la línea entera o rota y ambas barras muestran causa y consecuencia."
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "3D",
+      "game": "World of Warcraft",
+      "boss": "Sludgefist",
+      "screenshot": "https://i.ytimg.com/vi/0EDAGdaIJmo/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=0EDAGdaIJmo",
+      "video": "https://www.youtube.com/watch?v=Jf1MCPKsd0M&t=35s",
+      "videoDurationSeconds": 107,
+      "body": "Chain Link empareja jugadores y castiga a ambos si se alejan demasiado. Es el ejemplo de mantenerse cerca, aunque sus valores reales no son las 150 unidades y 90 de salud ilustrativos de la demo."
+    },
+    {
+      "dimension": "3D",
+      "game": "Final Fantasy XIV",
+      "boss": "Hesperos",
+      "screenshot": "https://i.ytimg.com/vi/pILr92b_6n0/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=pILr92b_6n0",
+      "video": "https://www.youtube.com/watch?v=JJqFsM8FTqI&t=1018s",
+      "videoDurationSeconds": 1279,
+      "body": "En Akanthai: Curtain Call, cada jugador está unido a una espina y debe romper el vínculo a propósito en un orden escalonado; la rotura daña al grupo. Tanto los extremos como la respuesta difieren de la demo."
+    },
+    {
+      "dimension": "2D",
+      "game": "Terraria",
+      "boss": "Moon Lord",
+      "screenshot": "https://s1.dmcdn.net/v/BB3rC1LuVdOS_Sqmv/x1080",
+      "screenshotSource": "https://www.dailymotion.com/video/x33lob0",
+      "video": "https://www.youtube.com/watch?v=ULSgKxBQE78&t=60s",
+      "videoDurationSeconds": 453,
+      "body": "La lengua de Moon Lord alcanza al jugador y, al tocarlo, aplica Moon Bite, que impide curarse por robo de vida. Es una conexión jefe-jugador con perjuicio, no una pareja cooperativa ni el daño por rotura de la demo."
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

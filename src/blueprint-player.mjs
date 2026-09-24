@@ -60,6 +60,8 @@ export function initializeBlueprint(widget) {
   const spreadHealthLabels = [...widget.querySelectorAll('[data-blueprint-spread-health]')];
   const towerReadout = find('[data-blueprint-tower-readout]');
   const towerHealthLabels = [...widget.querySelectorAll('[data-blueprint-tower-health]')];
+  const tetherReadout = find('[data-blueprint-tether-readout]');
+  const tetherHealthLabels = [...widget.querySelectorAll('[data-blueprint-tether-health]')];
   const partnerLabel = find('[data-blueprint-partner-label]');
   const playerLabel = find('[data-blueprint-player-label]');
   const primitives = [...widget.querySelectorAll('[data-blueprint-primitive]')];
@@ -1218,6 +1220,26 @@ export function initializeBlueprint(widget) {
           frame.towerSoakHealth[Number(label.dataset.blueprintTowerHealth)],
         );
     }
+    if (mechanicId === 'entity-tether') {
+      widget.dataset.blueprintEntityTether = frame.entityTetherState;
+      widget.dataset.blueprintEntityTetherHitId = frame.entityTetherHitId;
+      widget.dataset.blueprintEntityTetherDistance = String(Math.round(frame.entityTetherDistance));
+      widget.dataset.blueprintEntityTetherHeld = String(frame.entityTetherHeld);
+      widget.dataset.blueprintEntityTetherHealth = frame.entityTetherHealth.join('/');
+      widget.dataset.blueprintEntityTetherApplicationCount = String(
+        frame.entityTetherApplicationCount,
+      );
+      widget.dataset.blueprintEntityTetherBroken = String(frame.entityTetherBroken);
+      widget.dataset.blueprintEntityTetherRetry = String(frame.entityTetherRetry);
+      if (tetherReadout)
+        tetherReadout.textContent = frame.entityTetherVisible
+          ? `${Math.round(frame.entityTetherDistance)} / ${frame.entityTetherMaxLength}`
+          : '';
+      for (const label of tetherHealthLabels)
+        label.textContent = String(
+          frame.entityTetherHealth[Number(label.dataset.blueprintTetherHealth)],
+        );
+    }
     boss.setAttribute(
       'transform',
       `translate(${frame.boss.x} ${frame.boss.y})${frame.bossRotation ? ` rotate(${frame.bossRotation})` : ''} scale(${frame.bossScale})`,
@@ -1236,14 +1258,19 @@ export function initializeBlueprint(widget) {
     }
     player.setAttribute(
       'transform',
-      `translate(${frame.player.x} ${frame.player.y})${frame.stackDamageFallAngle || frame.personalSpreadFallAngle || frame.towerSoakFallAngle ? ` rotate(${frame.stackDamageFallAngle || frame.personalSpreadFallAngle || frame.towerSoakFallAngle})` : ''}`,
+      `translate(${frame.player.x} ${frame.player.y})${frame.stackDamageFallAngle || frame.personalSpreadFallAngle || frame.towerSoakFallAngle || frame.entityTetherFallAngle ? ` rotate(${frame.stackDamageFallAngle || frame.personalSpreadFallAngle || frame.towerSoakFallAngle || frame.entityTetherFallAngle})` : ''}`,
     );
     for (const [index, ally] of allies.entries()) {
       const position = (frame.stackDamageAllies ??
-        frame.personalSpreadPositions?.slice(1) ?? [frame.towerSoakAlly])[index];
+        frame.personalSpreadPositions?.slice(1) ?? [frame.towerSoakAlly ?? frame.entityTetherAlly])[
+        index
+      ];
       ally.setAttribute('transform', `translate(${position.x} ${position.y}) scale(.78)`);
       animateAllies[index](
-        frame.stackDamageAllyMotion ?? frame.personalSpreadAllyMotion ?? frame.towerSoakAllyMotion,
+        frame.stackDamageAllyMotion ??
+          frame.personalSpreadAllyMotion ??
+          frame.towerSoakAllyMotion ??
+          frame.entityTetherAllyMotion,
         frame.playerFacing,
       );
     }
