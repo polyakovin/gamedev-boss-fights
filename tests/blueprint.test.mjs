@@ -1782,25 +1782,25 @@ test('forced scrolling keeps one authored pace, a fixed failure edge, and a visi
 
   const signal = blueprintFrame(id, 0.9);
   assert.equal(signal.forcedScrollingActive, false);
-  assert.ok(signal.primitives[2].opacity > 0, 'the lower failure edge warns before scrolling');
-  assert.equal(signal.primitives[3].opacity, 0, 'the warning has no active collision');
+  assert.ok(signal.primitives[5].opacity > 0, 'the lower current warns before scrolling');
+  assert.equal(signal.primitives[6].opacity, 0, 'the warning has no active collision');
 
   const active = blueprintFrame(id, 2.75);
   assert.equal(active.forcedScrollingActive, true);
   assert.equal(active.playerSafe, true);
   assert.ok(active.forcedScrollingOffset > 100);
-  assert.ok(active.primitives[3].opacity > 0.9, 'the fixed lower edge becomes solid');
+  assert.ok(active.primitives[6].opacity > 0.9, 'the fixed lower current becomes dangerous');
   assert.equal(blueprintPointSafe(id, 2.75, { x: 350, y: 750 }), false);
   assert.equal(blueprintPointSafe(id, 2.75, { x: 350, y: 620 }), true);
 
   const cleared = blueprintFrame(id, 4.4);
   assert.equal(cleared.forcedScrollingRouteCleared, true);
   assert.equal(cleared.dangerActive, false);
-  assert.equal(cleared.primitives[3].opacity, 0, 'the danger edge ends at the stop rune');
+  assert.equal(cleared.primitives[6].opacity, 0, 'the lower current ends at the stop rune');
 
   const punish = blueprintFrame(id, 5.05);
   assert.equal(punish.punishStrike, true);
-  assert.ok(punish.primitives[11].opacity > 0, 'the sword response follows route completion');
+  assert.ok(punish.primitives[13].opacity > 0, 'the sword response follows route completion');
   assert.deepEqual(blueprintFrame(id, 0).player, blueprintFrame(id, 6).player);
   assert.deepEqual(blueprintFrame(id, 0).boss, blueprintFrame(id, 6).boss);
   assert.match(

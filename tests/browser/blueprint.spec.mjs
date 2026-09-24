@@ -1982,15 +1982,22 @@ test('forced scrolling exposes its fixed pace, lower failure edge, and route-com
   await expect(page.locator('.wip-badge, .draft-profile')).toHaveCount(0);
   await expect(page.locator('.game-example')).toHaveCount(3);
   await expect(widget).toHaveAttribute('data-blueprint-playing', 'false');
+  await expect(widget).toHaveAttribute('data-blueprint-full-height', 'true');
+  expect(
+    await widget
+      .locator('[data-blueprint-primitives]')
+      .evaluate((element) => element.getBBox().height),
+  ).toBeGreaterThan(760);
+  await expect(widget.locator('[data-blueprint-primitives] [stroke-dasharray]')).toHaveCount(0);
 
   await seek(900);
   await expect(widget).toHaveAttribute('data-blueprint-forced-scrolling', 'scroll-signal');
   await expect(widget).toHaveAttribute('data-blueprint-forced-scrolling-active', 'false');
-  await expect(widget.locator('[data-blueprint-primitive="2"] rect')).not.toHaveAttribute(
+  await expect(widget.locator('[data-blueprint-primitive="5"] path')).not.toHaveAttribute(
     'opacity',
     '0',
   );
-  await expect(widget.locator('[data-blueprint-primitive="3"] rect')).toHaveAttribute(
+  await expect(widget.locator('[data-blueprint-primitive="6"] path')).toHaveAttribute(
     'opacity',
     '0',
   );
@@ -2002,7 +2009,7 @@ test('forced scrolling exposes its fixed pace, lower failure edge, and route-com
   expect(
     Number(await widget.getAttribute('data-blueprint-forced-scrolling-offset')),
   ).toBeGreaterThan(100);
-  await expect(widget.locator('[data-blueprint-primitive="3"] rect')).not.toHaveAttribute(
+  await expect(widget.locator('[data-blueprint-primitive="6"] path')).not.toHaveAttribute(
     'opacity',
     '0',
   );
@@ -2010,7 +2017,7 @@ test('forced scrolling exposes its fixed pace, lower failure edge, and route-com
   await seek(4400);
   await expect(widget).toHaveAttribute('data-blueprint-forced-scrolling', 'route-cleared');
   await expect(widget).toHaveAttribute('data-blueprint-forced-scrolling-cleared', 'true');
-  await expect(widget.locator('[data-blueprint-primitive="3"] rect')).toHaveAttribute(
+  await expect(widget.locator('[data-blueprint-primitive="6"] path')).toHaveAttribute(
     'opacity',
     '0',
   );
@@ -2018,7 +2025,7 @@ test('forced scrolling exposes its fixed pace, lower failure edge, and route-com
   await seek(5050);
   await expect(widget).toHaveAttribute('data-blueprint-forced-scrolling', 'opening');
   await expect(widget).toHaveAttribute('data-blueprint-punish-strike', 'true');
-  await expect(widget.locator('[data-blueprint-primitive="11"] line')).not.toHaveAttribute(
+  await expect(widget.locator('[data-blueprint-primitive="13"] line')).not.toHaveAttribute(
     'opacity',
     '0',
   );
