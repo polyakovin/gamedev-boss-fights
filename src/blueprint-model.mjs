@@ -9179,23 +9179,26 @@ function primitivesFor(spec, frame) {
   if (mode === 'ring') {
     const radius = mix(70, 390, action);
     const gapCenter = Math.atan2(690 - boss.y, 440 - boss.x);
-    const gapHalfAngle = 0.24;
-    return [
-      path(
-        arcPath(boss, radius, gapCenter + gapHalfAngle, gapCenter - gapHalfAngle + Math.PI * 2),
-        active,
-        'signal',
-        18,
-      ),
-      path(
-        arcPath(boss, radius, gapCenter - gapHalfAngle, gapCenter + gapHalfAngle),
-        active,
-        'safe',
-        5,
-        0,
-        '8 8',
-      ),
-    ];
+    return Array.from({ length: 32 }, (_, index) => {
+      const angle = (index * Math.PI * 2) / 32;
+      const center = polar(boss, radius, angle);
+      const forward = { x: Math.cos(angle), y: Math.sin(angle) };
+      const side = { x: -forward.y, y: forward.x };
+      const tip = (along, across) =>
+        `${center.x + forward.x * along + side.x * across} ${center.y + forward.y * along + side.y * across}`;
+      return {
+        ...path(
+          `M ${tip(16, 0)} L ${tip(-8, 10)} L ${tip(-14, 0)} L ${tip(-8, -10)} Z`,
+          Math.abs(angleDifference(angle, gapCenter)) > 0.28 ? active : 0,
+          'signal',
+          0,
+          0.9,
+        ),
+        x: center.x,
+        y: center.y,
+        radius: 15,
+      };
+    });
   }
   if (mode === 'spiral')
     return spiralShots(boss, frame.time).map((shot) => {
@@ -9649,19 +9652,13 @@ function pointClearsThreat(spec, frame, value, radius = BLUEPRINT_PLAYER_RADIUS)
     return distanceToSegment(value, { x: 170, y: 290 }, { x: 430, y: 590 }) > 27 + radius;
   if (mode === 'grab') return Math.hypot(value.x - 390, value.y - 485) > 60 + radius;
   if (mode === 'burrow') return Math.hypot(value.x - 420, value.y - 590) > 78 + radius;
-  if (mode === 'ring') {
-    const ringRadius = mix(70, 390, frame.action);
-    if (Math.abs(distanceFromBoss - ringRadius) > 9 + radius) return true;
-    const gapCenter = Math.atan2(690 - frame.boss.y, 440 - frame.boss.x);
-    const bodyHalfAngle = Math.asin(clamp(radius / Math.max(distanceFromBoss, radius), -1, 1));
-    return (
-      Math.abs(
-        angleDifference(Math.atan2(value.y - frame.boss.y, value.x - frame.boss.x), gapCenter),
-      ) +
-        bodyHalfAngle <
-      0.24
-    );
-  }
+  if (mode === 'ring')
+    return frame.primitives
+      .filter((projectile) => projectile.opacity > 0)
+      .every(
+        (projectile) =>
+          Math.hypot(value.x - projectile.x, value.y - projectile.y) > projectile.radius + radius,
+      );
   if (mode === 'crossfire')
     return frame.primitives.every(
       (projectile) =>

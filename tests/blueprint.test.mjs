@@ -396,9 +396,9 @@ test('lock, destruction, and recovery are expressed by their own geometry', () =
 
 test('rule-specific commitments stay visible through the response and recovery', () => {
   const ring = blueprintFrame('ring-volley', 3);
-  assert.equal(ring.primitives[0].type, 'path');
-  assert.equal(ring.primitives[1].tone, 'safe');
-  assert.ok(ring.primitives[1].dash);
+  assert.equal(ring.primitives.length, 32);
+  assert.ok(ring.primitives.every((projectile) => projectile.type === 'path'));
+  assert.ok(ring.primitives.some((projectile) => projectile.opacity === 0));
 
   const homing = blueprintFrame('homing-projectile', 4.15);
   const homingHead = homing.primitives[1];
@@ -576,6 +576,20 @@ test('spiral barrage emits discrete arms and leaves a complete safe route', () =
   for (let step = 160; step <= 599; step += 1) {
     const frame = blueprintFrame('spiral-barrage', step / 100);
     assert.equal(frame.playerSafe, true, `player intersects the barrage at ${step / 100}s`);
+  }
+});
+
+test('ring volley expands its individual stones around a fixed full-body gap', () => {
+  const signal = blueprintFrame('ring-volley', 1.6);
+  const active = blueprintFrame('ring-volley', 3);
+  assert.equal(active.primitives.length, 32);
+  assert.ok(active.primitives[0].x > signal.primitives[0].x);
+  assert.deepEqual(
+    signal.primitives.map((projectile) => projectile.opacity === 0),
+    active.primitives.map((projectile) => projectile.opacity === 0),
+  );
+  for (let step = 160; step <= 430; step += 1) {
+    assert.equal(blueprintFrame('ring-volley', step / 100).playerSafe, true);
   }
 });
 
