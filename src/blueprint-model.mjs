@@ -8997,16 +8997,37 @@ function primitivesFor(spec, frame) {
       path(spiralPath(boss, action), active, 'signal', 14),
       circle(boss.x, boss.y, 52, active, 'accent', 4, 0.08),
     ];
-  if (mode === 'ricochet')
-    return [
-      path('M 160 250 L 500 420 L 110 610 L 430 790', preview, 'accent', 9, 0, '15 12'),
-      path(
-        `M 160 250 L ${mix(160, 500, clamp(action * 3))} ${mix(250, 420, clamp(action * 3))} L ${mix(500, 110, clamp(action * 3 - 1))} ${mix(420, 610, clamp(action * 3 - 1))} L ${mix(110, 430, clamp(action * 3 - 2))} ${mix(610, 790, clamp(action * 3 - 2))}`,
-        active,
-        'signal',
-        12,
-      ),
+  if (mode === 'ricochet') {
+    const corners = [
+      { x: 160, y: 250 },
+      { x: 500, y: 420 },
+      { x: 110, y: 610 },
+      { x: 430, y: 790 },
     ];
+    const segment = Math.min(2, Math.floor(action * 3));
+    const progress = clamp(action * 3 - segment);
+    const start = corners[segment];
+    const end = corners[segment + 1];
+    const head = { x: mix(start.x, end.x, progress), y: mix(start.y, end.y, progress) };
+    const tailProgress = Math.max(0, progress - 0.22);
+    const tail = { x: mix(start.x, end.x, tailProgress), y: mix(start.y, end.y, tailProgress) };
+    return [
+      line(160, 250, 500, 420, phase === 0 ? preview * 0.42 : 0, 'accent', 4),
+      line(tail.x, tail.y, head.x, head.y, active * 0.35, 'signal', 5),
+      {
+        ...path(
+          `M ${head.x - 16} ${head.y - 8} L ${head.x - 3} ${head.y - 17} L ${head.x + 15} ${head.y - 9} L ${head.x + 16} ${head.y + 8} L ${head.x + 2} ${head.y + 17} L ${head.x - 16} ${head.y + 9} Z`,
+          phase === 1 ? 1 : 0.65,
+          'signal',
+          0,
+          0.9,
+        ),
+        x: head.x,
+        y: head.y,
+        radius: 18,
+      },
+    ];
+  }
   if (mode === 'homing') {
     const lockedTarget = { x: 400, y: 650 };
     const control = { x: 500, y: 350 };
@@ -9771,16 +9792,10 @@ function pointClearsThreat(spec, frame, value, radius = BLUEPRINT_PLAYER_RADIUS)
       distanceFromBoss > 52 + radius &&
       distanceToPolyline(value, spiralPoints(frame.boss, frame.action)) > 7 + radius
     );
-  if (mode === 'ricochet')
-    return (
-      distanceToPolyline(value, [
-        { x: 160, y: 250 },
-        { x: 500, y: 420 },
-        { x: 110, y: 610 },
-        { x: 430, y: 790 },
-      ]) >
-      6 + radius
-    );
+  if (mode === 'ricochet') {
+    const head = frame.primitives[2];
+    return Math.hypot(value.x - head.x, value.y - head.y) > head.radius + radius;
+  }
   if (mode === 'homing') {
     const head = frame.primitives[1];
     return Math.hypot(value.x - head.x, value.y - head.y) > head.radius + radius;

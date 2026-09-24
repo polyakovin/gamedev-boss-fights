@@ -213,7 +213,7 @@ test('every damaging promoted animation derives safety from its own active geome
     'burrow-and-emerge': { x: 420, y: 590 },
     'ring-volley': { x: 516, y: 400 },
     'spiral-barrage': { x: 280, y: 390 },
-    'ricochet-projectile': { x: 330, y: 335 },
+    'ricochet-projectile': null,
     'homing-projectile': null,
     'straight-beam': { x: 280, y: 600 },
     'scanning-beam': null,
@@ -286,6 +286,9 @@ test('every damaging promoted animation derives safety from its own active geome
     let point = unsafePoints[id];
     if (!point && id === 'homing-projectile') {
       const projectile = frame.primitives[1];
+      point = { x: projectile.x, y: projectile.y };
+    } else if (!point && id === 'ricochet-projectile') {
+      const projectile = frame.primitives[2];
       point = { x: projectile.x, y: projectile.y };
     } else if (!point && id === 'single-shot') {
       const projectile = frame.primitives[2];
@@ -536,6 +539,19 @@ test('splitting projectile commits one parent, one split point, and three fragme
     false,
   );
   assert.equal(fragments.playerSafe, true);
+});
+
+test('ricochet damage follows the moving stone rather than its old route', () => {
+  const firstBounce = blueprintFrame('ricochet-projectile', 2.5);
+  const secondBounce = blueprintFrame('ricochet-projectile', 3.4);
+  assert.equal(firstBounce.primitives[2].x, 500);
+  assert.equal(firstBounce.primitives[2].y, 420);
+  assert.equal(secondBounce.primitives[2].x, 110);
+  assert.equal(secondBounce.primitives[2].y, 610);
+  assert.equal(blueprintPointSafe('ricochet-projectile', 3, { x: 330, y: 335 }), true);
+  for (let step = 160; step <= 430; step += 1) {
+    assert.equal(blueprintFrame('ricochet-projectile', step / 100).playerSafe, true);
+  }
 });
 
 test('returning projectile announces an outbound leg and a distinct committed return leg', () => {
