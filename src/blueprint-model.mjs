@@ -1962,6 +1962,29 @@ const SPECS = {
     firstHitId: 'gaze-pulse-1',
     secondHitId: 'gaze-pulse-2',
   },
+  'proximity-damage': {
+    mode: 'proximity-damage',
+    boss: [280, 285],
+    player: [280, 600],
+    target: [280, 600],
+    source: [280, 380],
+    farPoint: [280, 790],
+    nearPoint: [280, 560],
+    firstWarnAt: 0.68,
+    moveFar: [1.02, 1.78],
+    firstCheck: [2.2, 2.48],
+    secondWarnAt: 3.08,
+    moveNear: [3.25, 3.76],
+    secondCheck: [4.3, 4.58],
+    resetAt: 5.3,
+    innerRadius: 140,
+    outerRadius: 420,
+    maxDamage: 90,
+    minDamage: 10,
+    encounterId: 'kern-proximity-1',
+    firstHitId: 'distance-pulse-1',
+    secondHitId: 'distance-pulse-2',
+  },
   'wide-swing': { mode: 'arc', boss: [225, 340], player: [380, 500], target: [420, 780] },
   lunge: {
     mode: 'lunge',
@@ -4500,6 +4523,70 @@ export function gazeCheckResolve({
     damage: valid && looking && !alreadyResolved ? failureDamage : 0,
     resolution: !valid ? 'invalid' : alreadyResolved ? 'duplicate' : looking ? 'hit' : 'avoided',
     applicationCount: valid && looking && !alreadyResolved ? 1 : 0,
+  });
+}
+
+export function proximityDamageState(time) {
+  const spec = SPECS['proximity-damage'];
+  const t = localTime(time);
+  if (t < spec.firstWarnAt) return 'idle';
+  if (t < spec.moveFar[0]) return 'source-warned';
+  if (t < spec.moveFar[1]) return 'moving-far';
+  if (t < spec.firstCheck[0]) return 'far-position-held';
+  if (t < spec.firstCheck[1]) return 'lower-damage-hit';
+  if (t < spec.secondWarnAt) return 'first-recovery';
+  if (t < spec.moveNear[0]) return 'second-source-warned';
+  if (t < spec.moveNear[1]) return 'moving-near';
+  if (t < spec.secondCheck[0]) return 'near-position-held';
+  if (t < spec.secondCheck[1]) return 'higher-damage-hit';
+  if (t < spec.resetAt) return 'second-recovery';
+  return 'explicit-retry';
+}
+
+export function proximityDamageResolve({
+  encounterId = 'kern-proximity-1',
+  hitId = 'distance-pulse-1',
+  source = { x: 280, y: 380 },
+  target = { id: 'tavi', position: { x: 280, y: 790 }, alive: true },
+  innerRadius = 140,
+  outerRadius = 420,
+  maxDamage = 90,
+  minDamage = 10,
+  alreadyResolved = false,
+} = {}) {
+  const valid =
+    source &&
+    Number.isFinite(source.x) &&
+    Number.isFinite(source.y) &&
+    target &&
+    target.id != null &&
+    target.alive === true &&
+    target.position &&
+    Number.isFinite(target.position.x) &&
+    Number.isFinite(target.position.y) &&
+    Number.isFinite(innerRadius) &&
+    Number.isFinite(outerRadius) &&
+    innerRadius >= 0 &&
+    outerRadius > innerRadius &&
+    Number.isSafeInteger(minDamage) &&
+    Number.isSafeInteger(maxDamage) &&
+    minDamage > 0 &&
+    maxDamage >= minDamage;
+  const distance = valid
+    ? Math.hypot(source.x - target.position.x, source.y - target.position.y)
+    : 0;
+  const severity = valid ? 1 - clamp((distance - innerRadius) / (outerRadius - innerRadius)) : 0;
+  const potentialDamage = valid ? Math.round(minDamage + (maxDamage - minDamage) * severity) : 0;
+  return Object.freeze({
+    encounterId: String(encounterId),
+    hitId: String(hitId),
+    targetId: valid ? String(target.id) : null,
+    distance,
+    severity,
+    potentialDamage,
+    damage: valid && !alreadyResolved ? potentialDamage : 0,
+    resolution: !valid ? 'invalid' : alreadyResolved ? 'duplicate' : 'hit',
+    applicationCount: valid && !alreadyResolved ? 1 : 0,
   });
 }
 
@@ -9862,6 +9949,59 @@ function primitivesFor(spec, frame) {
       ),
     ];
   }
+  if (mode === 'proximity-damage') {
+    const visible = frame.proximityVisible;
+    const pulse = frame.proximityHitActive;
+    const source = point(spec.source);
+    const sample = frame.proximityCurrentDamage;
+    const tone = sample > 50 ? 'signal' : 'safe';
+    const flash = Math.max(
+      strikePulse(frame.time, spec.firstCheck[0], 0.4),
+      strikePulse(frame.time, spec.secondCheck[0], 0.4),
+    );
+    return [
+      rect(55, 245, 450, 650, 0.58, 'muted', 0.025),
+      path('M 75 805 L 190 785 L 280 810 L 370 785 L 485 805', 0.5, 'muted', 4),
+      rect(200, 126, 160, 22, 0.8, 'muted', 0.08),
+      rect(200, 126, frame.proximityHealth * 1.6, 22, 0.95, 'safe', 0.55),
+      circle(source.x, source.y, spec.innerRadius, visible ? 0.68 : 0.24, 'signal', 5, 0.04),
+      circle(
+        source.x,
+        source.y,
+        (spec.innerRadius + spec.outerRadius) / 2,
+        visible ? 0.58 : 0.18,
+        'accent',
+        4,
+        0.02,
+      ),
+      circle(source.x, source.y, spec.outerRadius, visible ? 0.56 : 0.14, 'safe', 4, 0.015),
+      path(
+        `M ${source.x} ${source.y - 36} L ${source.x + 30} ${source.y} L ${source.x} ${source.y + 36} L ${source.x - 30} ${source.y} Z`,
+        visible ? 0.94 : 0.34,
+        'accent',
+        5,
+        0.12,
+      ),
+      circle(source.x, source.y, 18, visible ? 0.95 : 0.3, 'accent', 5, 0.2),
+      circle(source.x, source.y, spec.outerRadius * flash, flash * 0.84, tone, 13, 0.045),
+      line(
+        source.x,
+        source.y,
+        frame.player.x,
+        frame.player.y - 38,
+        pulse ? 0.9 : 0,
+        tone,
+        pulse ? 8 : 0,
+      ),
+      circle(frame.player.x, frame.player.y - 38, 56 + 22 * flash, pulse ? 0.82 : 0, tone, 8, 0.04),
+      path(
+        `M ${frame.player.x - 23} ${frame.player.y - 55} L ${frame.player.x + 23} ${frame.player.y - 9} M ${frame.player.x + 23} ${frame.player.y - 55} L ${frame.player.x - 23} ${frame.player.y - 9}`,
+        frame.proximityNearHit ? 0.9 : 0,
+        'signal',
+        8,
+      ),
+    ];
+  }
   if (mode === 'coordinated-duo-attack') {
     const t = frame.time;
     const leader = frame.decoy;
@@ -12365,6 +12505,21 @@ function pointClearsThreat(spec, frame, value, radius = BLUEPRINT_PLAYER_RADIUS)
       failureDamage: spec.failureDamage,
     }).looking;
   }
+  if (mode === 'proximity-damage') {
+    if (!frame.proximityHitActive) return true;
+    return (
+      proximityDamageResolve({
+        encounterId: spec.encounterId,
+        hitId: frame.proximityHitId,
+        source: point(spec.source),
+        target: { id: 'tavi', position: value, alive: true },
+        innerRadius: spec.innerRadius,
+        outerRadius: spec.outerRadius,
+        minDamage: spec.minDamage,
+        maxDamage: spec.maxDamage,
+      }).damage === 0
+    );
+  }
   if (mode === 'coordinated-duo-attack') {
     const target = frame.coordinatedDuoAttackTarget;
     return (
@@ -14591,6 +14746,14 @@ export function blueprintFrame(id, time) {
       y: mix(separated.y, spec.player[1], retry),
     };
     stride = Math.max(pulse(together), pulse(regroup), pulse(apart), pulse(retry));
+  }
+  if (spec.mode === 'proximity-damage') {
+    const far = smooth((t - spec.moveFar[0]) / (spec.moveFar[1] - spec.moveFar[0]));
+    const near = smooth((t - spec.moveNear[0]) / (spec.moveNear[1] - spec.moveNear[0]));
+    const retry = smooth((t - spec.resetAt) / (BLUEPRINT_DURATION - spec.resetAt));
+    const staged = mix(mix(spec.player[1], spec.farPoint[1], far), spec.nearPoint[1], near);
+    player = { x: spec.player[0], y: mix(staged, spec.player[1], retry) };
+    stride = Math.max(pulse(far), pulse(near), pulse(retry));
   }
   const bossVisible =
     spec.mode === 'secondary-cues-invisibility'
@@ -17229,6 +17392,66 @@ export function blueprintFrame(id, time) {
     );
     frame.playerMotion.impact = strikePulse(t, spec.secondCheck[0], 0.6);
   }
+  if (spec.mode === 'proximity-damage') {
+    const source = point(spec.source);
+    const first = proximityDamageResolve({
+      encounterId: spec.encounterId,
+      hitId: spec.firstHitId,
+      source,
+      target: { id: 'tavi', position: point(spec.farPoint), alive: true },
+      innerRadius: spec.innerRadius,
+      outerRadius: spec.outerRadius,
+      minDamage: spec.minDamage,
+      maxDamage: spec.maxDamage,
+    });
+    const second = proximityDamageResolve({
+      encounterId: spec.encounterId,
+      hitId: spec.secondHitId,
+      source,
+      target: { id: 'tavi', position: point(spec.nearPoint), alive: true },
+      innerRadius: spec.innerRadius,
+      outerRadius: spec.outerRadius,
+      minDamage: spec.minDamage,
+      maxDamage: spec.maxDamage,
+    });
+    const current = proximityDamageResolve({
+      encounterId: spec.encounterId,
+      hitId: t >= spec.secondWarnAt ? spec.secondHitId : spec.firstHitId,
+      source,
+      target: { id: 'tavi', position: player, alive: true },
+      innerRadius: spec.innerRadius,
+      outerRadius: spec.outerRadius,
+      minDamage: spec.minDamage,
+      maxDamage: spec.maxDamage,
+    });
+    const firstApplied = t >= spec.firstCheck[0] && t < spec.resetAt;
+    const secondApplied = t >= spec.secondCheck[0] && t < spec.resetAt;
+    frame.proximityState = proximityDamageState(t);
+    frame.proximityVisible = t >= spec.firstWarnAt && t < spec.resetAt;
+    frame.proximityHitActive =
+      (t >= spec.firstCheck[0] && t < spec.firstCheck[1]) ||
+      (t >= spec.secondCheck[0] && t < spec.secondCheck[1]);
+    frame.proximityHitId = t >= spec.secondWarnAt ? spec.secondHitId : spec.firstHitId;
+    frame.proximityCurrentDistance = current.distance;
+    frame.proximityCurrentDamage = current.potentialDamage;
+    frame.proximityFirstDamage = first.damage;
+    frame.proximitySecondDamage = second.damage;
+    frame.proximityApplicationCount = Number(firstApplied) + Number(secondApplied);
+    frame.proximityHealth =
+      100 - (firstApplied ? first.damage : 0) - (secondApplied ? second.damage : 0);
+    frame.proximityNearHit = secondApplied;
+    frame.proximityRetry = t >= spec.resetAt;
+    frame.proximityFallAngle = secondApplied ? 72 * smooth((t - spec.secondCheck[0]) / 0.12) : 0;
+    frame.dangerActive = frame.proximityHitActive;
+    frame.bossMotion.attack = Math.max(
+      strikePulse(t, spec.firstCheck[0], 0.56),
+      strikePulse(t, spec.secondCheck[0], 0.56),
+    );
+    frame.playerMotion.impact = Math.max(
+      strikePulse(t, spec.firstCheck[0], 0.5) * 0.35,
+      strikePulse(t, spec.secondCheck[0], 0.6),
+    );
+  }
   if (spec.mode === 'real-time-progression') {
     frame.realTimeProgressionState = realTimeProgressionState(t);
     frame.realTimeProgressionCheckpointId = spec.checkpointId;
@@ -17543,88 +17766,95 @@ export function blueprintFrame(id, time) {
     y: boss.y + BLUEPRINT_BOSS_LABEL_OFFSET_Y * frame.bossScale - (frame.bossMotion.altitude ?? 0),
   };
   frame.playerLabel = {
-    x: spec.mode === 'party-size-scaling' ? player.x - 85 : player.x,
+    x:
+      spec.mode === 'party-size-scaling'
+        ? player.x - 85
+        : spec.mode === 'proximity-damage'
+          ? player.x + 85
+          : player.x,
     y:
       player.y +
-      (spec.mode === 'party-size-scaling'
-        ? 10
-        : spec.mode === 'resource-steal' ||
-            spec.mode === 'ability-lock' ||
-            spec.mode === 'maximum-health-reduction' ||
-            spec.mode === 'instant-kill' ||
-            spec.mode === 'status-buildup' ||
-            spec.mode === 'persistent-progress' ||
-            spec.mode === 'pacifist-resolution' ||
-            spec.mode === 'posture-stagger-gauge' ||
-            spec.mode === 'baited-self-hit' ||
-            spec.mode === 'projectile-rally'
-          ? 55
-          : spec.mode === 'weak-point' ||
-              spec.mode === 'directional-shield' ||
-              spec.mode === 'damage-type-resistance' ||
-              spec.mode === 'situational-immunity' ||
-              spec.mode === 'part-break' ||
-              spec.mode === 'attack-reflection' ||
-              spec.mode === 'counter-stance' ||
-              spec.mode === 'absorption-power-up' ||
-              spec.mode === 'interruptible-wind-up' ||
-              spec.mode === 'loadout-adaptation' ||
-              spec.mode === 'wind-up' ||
-              spec.mode === 'attack-lock' ||
-              spec.mode === 'active-phase' ||
-              spec.mode === 'recovery' ||
-              spec.mode === 'survival-phase' ||
-              spec.mode === 'teleport' ||
-              spec.mode === 'boundary-attack' ||
-              spec.mode === 'forced-scrolling' ||
-              spec.mode === 'chase-herding' ||
-              spec.mode === 'escape-phase' ||
-              spec.mode === 'boss-as-terrain' ||
-              spec.mode === 'cover-line-of-sight' ||
-              spec.mode === 'forced-inertia' ||
-              spec.mode === 'wraparound-projectile' ||
-              spec.mode === 'beat-synced-attack' ||
-              spec.mode === 'secondary-cues-invisibility' ||
-              spec.mode === 'sound-detection' ||
-              spec.mode === 'objective-linked-invulnerability' ||
-              spec.mode === 'wave-clear-objective' ||
-              spec.mode === 'environmental-weapon' ||
-              spec.mode === 'encounter-specific-tool' ||
-              spec.mode === 'player-controlled-boss' ||
-              spec.mode === 'projectile-rally' ||
-              spec.mode === 'baited-self-hit' ||
-              spec.mode === 'posture-stagger-gauge' ||
-              spec.mode === 'pacifist-resolution' ||
-              spec.mode === 'persistent-progress' ||
-              spec.mode === 'status-buildup' ||
-              spec.mode === 'instant-kill' ||
-              spec.mode === 'maximum-health-reduction' ||
+      (spec.mode === 'proximity-damage'
+        ? 15
+        : spec.mode === 'party-size-scaling'
+          ? 10
+          : spec.mode === 'resource-steal' ||
               spec.mode === 'ability-lock' ||
-              spec.mode === 'on-hit-healing' ||
-              spec.mode === 'self-heal-cast' ||
-              spec.mode === 'external-healing-source' ||
-              spec.mode === 'damage-rate-cap' ||
-              spec.mode === 'loadout-mirror' ||
-              spec.mode === 'moveset-shapeshifting' ||
-              spec.mode === 'ally-theft' ||
-              spec.mode === 'false-death' ||
-              spec.mode === 'action-reactive-punish' ||
-              spec.mode === 'run-history-manifestation' ||
-              spec.mode === 'real-time-progression' ||
-              spec.mode === 'interface-interaction' ||
-              spec.mode === 'world-state-variant' ||
-              spec.mode === 'party-size-scaling' ||
-              spec.mode === 'partner-revival' ||
-              spec.mode === 'kill-order-inheritance' ||
-              spec.mode === 'shared-group-health' ||
-              spec.mode === 'coordinated-duo-attack' ||
-              spec.mode === 'stack-damage' ||
-              spec.mode === 'personal-spread' ||
-              spec.mode === 'tower-soak' ||
-              spec.mode === 'entity-tether' ||
-              spec.mode === 'gaze-check'
-            ? 92
-            : -62),
+              spec.mode === 'maximum-health-reduction' ||
+              spec.mode === 'instant-kill' ||
+              spec.mode === 'status-buildup' ||
+              spec.mode === 'persistent-progress' ||
+              spec.mode === 'pacifist-resolution' ||
+              spec.mode === 'posture-stagger-gauge' ||
+              spec.mode === 'baited-self-hit' ||
+              spec.mode === 'projectile-rally'
+            ? 55
+            : spec.mode === 'weak-point' ||
+                spec.mode === 'directional-shield' ||
+                spec.mode === 'damage-type-resistance' ||
+                spec.mode === 'situational-immunity' ||
+                spec.mode === 'part-break' ||
+                spec.mode === 'attack-reflection' ||
+                spec.mode === 'counter-stance' ||
+                spec.mode === 'absorption-power-up' ||
+                spec.mode === 'interruptible-wind-up' ||
+                spec.mode === 'loadout-adaptation' ||
+                spec.mode === 'wind-up' ||
+                spec.mode === 'attack-lock' ||
+                spec.mode === 'active-phase' ||
+                spec.mode === 'recovery' ||
+                spec.mode === 'survival-phase' ||
+                spec.mode === 'teleport' ||
+                spec.mode === 'boundary-attack' ||
+                spec.mode === 'forced-scrolling' ||
+                spec.mode === 'chase-herding' ||
+                spec.mode === 'escape-phase' ||
+                spec.mode === 'boss-as-terrain' ||
+                spec.mode === 'cover-line-of-sight' ||
+                spec.mode === 'forced-inertia' ||
+                spec.mode === 'wraparound-projectile' ||
+                spec.mode === 'beat-synced-attack' ||
+                spec.mode === 'secondary-cues-invisibility' ||
+                spec.mode === 'sound-detection' ||
+                spec.mode === 'objective-linked-invulnerability' ||
+                spec.mode === 'wave-clear-objective' ||
+                spec.mode === 'environmental-weapon' ||
+                spec.mode === 'encounter-specific-tool' ||
+                spec.mode === 'player-controlled-boss' ||
+                spec.mode === 'projectile-rally' ||
+                spec.mode === 'baited-self-hit' ||
+                spec.mode === 'posture-stagger-gauge' ||
+                spec.mode === 'pacifist-resolution' ||
+                spec.mode === 'persistent-progress' ||
+                spec.mode === 'status-buildup' ||
+                spec.mode === 'instant-kill' ||
+                spec.mode === 'maximum-health-reduction' ||
+                spec.mode === 'ability-lock' ||
+                spec.mode === 'on-hit-healing' ||
+                spec.mode === 'self-heal-cast' ||
+                spec.mode === 'external-healing-source' ||
+                spec.mode === 'damage-rate-cap' ||
+                spec.mode === 'loadout-mirror' ||
+                spec.mode === 'moveset-shapeshifting' ||
+                spec.mode === 'ally-theft' ||
+                spec.mode === 'false-death' ||
+                spec.mode === 'action-reactive-punish' ||
+                spec.mode === 'run-history-manifestation' ||
+                spec.mode === 'real-time-progression' ||
+                spec.mode === 'interface-interaction' ||
+                spec.mode === 'world-state-variant' ||
+                spec.mode === 'party-size-scaling' ||
+                spec.mode === 'partner-revival' ||
+                spec.mode === 'kill-order-inheritance' ||
+                spec.mode === 'shared-group-health' ||
+                spec.mode === 'coordinated-duo-attack' ||
+                spec.mode === 'stack-damage' ||
+                spec.mode === 'personal-spread' ||
+                spec.mode === 'tower-soak' ||
+                spec.mode === 'entity-tether' ||
+                spec.mode === 'gaze-check'
+              ? 92
+              : -62),
   };
   return Object.freeze(frame);
 }

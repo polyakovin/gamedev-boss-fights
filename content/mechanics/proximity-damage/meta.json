@@ -1,0 +1,24 @@
+{
+  "id": "proximity-damage",
+  "number": 119,
+  "published": true,
+  "sourceLocale": "en",
+  "contentVersion": 1,
+  "animation": "proximity-damage",
+  "lenses": ["telegraphing", "threat-geometry", "counterplay", "risk-reward", "difficulty-rhythm"],
+  "related": ["marked-area-strike", "shockwave", "stack-damage", "tower-soak"],
+  "sources": [
+    {
+      "title": "Exdeath and The Decisive Battle — Final Fantasy XIV Community Wiki",
+      "url": "https://ffxiv.consolegameswiki.com/wiki/Deltascape_V4.0"
+    },
+    {
+      "title": "Garothi Worldbreaker and Eradication — Wowhead",
+      "url": "https://www.wowhead.com/guide/garothi-worldbreaker-antorus-raid-strategy-guide-5611"
+    },
+    {
+      "title": "Hark Saniss, the Last Giant — Wakfu Wiki",
+      "url": "https://wakfu.wiki.gg/wiki/Hark_Saniss%2C_the_Last_Giant"
+    }
+  ]
+}

@@ -1,0 +1,138 @@
+{
+  "title": "Daño por proximidad",
+  "subtitle": "Que la distancia cambie el coste de un pulso del jefe",
+  "variant": "Fuente marcada · caída radial · dos muestras · daño exterior no nulo",
+  "summary": "El pulso también alcanza a distancia, pero causa menos daño cuanto más lejos esté el personaje.",
+  "overview": "El daño por proximidad depende de la distancia a una fuente anunciada. A diferencia de un círculo binario, alejarse puede reducir la pérdida aunque no exista un punto totalmente seguro. Esta escena compara una retirada a tiempo con una posición cercana: ambos pulsos impactan, pero con distinta intensidad.",
+  "learning": "Define la fuente, la medida de distancia, los límites de la caída, el daño mínimo y máximo, el instante de muestra, la identidad del impacto y una retirada alcanzable.",
+  "category": "Coordinación cooperativa",
+  "readTime": "10 min",
+  "demo": {
+    "title": "Compara dos distancias de la runa de Kern",
+    "timeline": "Cronología del daño por proximidad",
+    "step": "Alejarse reduce el golpe, no lo elimina",
+    "phaseNames": [
+      "Leer la fuente y retirarse",
+      "Medir el golpe lejano",
+      "Comparar un golpe cercano"
+    ],
+    "phaseDescriptions": [
+      "A los 0,68 segundos Kern marca una runa fija. Tavi pasa de 220 a 410 unidades antes del primer pulso. Los anillos concéntricos anuncian grados de peligro, no una frontera de seguridad binaria.",
+      "A los 2,20 segundos la runa mide la distancia de Tavi. La caída limitada causa 13 puntos de daño a 410 unidades y deja 87 de salud. El rayo y la barra de salud responden a la misma regla.",
+      "La runa avisa de nuevo a los 3,08 segundos. Tavi vuelve a 180 unidades; el pulso de los 4,30 segundos causa 79 de daño una sola vez y deja 8 de salud. Se ve la caída y un reinicio explícito a los 5,30 segundos."
+    ],
+    "boss": "Jefe",
+    "player": "Jugador",
+    "danger": "Ambos pulsos dañan a Tavi; el cercano causa más daño",
+    "locked": "Permanecen fijos la fuente, la caída entre 140 y 420 unidades, los límites de 90 y 10 de daño, los instantes y los ID de impacto",
+    "safe": "Una retirada legible reduce el daño sin prometer un refugio de daño cero",
+    "reducedMotion": "El movimiento reducido desactiva la reproducción automática. Busca los segundos 0,68; 1,50; 2,30; 3,10; 3,50; 4,40 y 5,50.",
+    "diagramDescription": "Kern marca una runa. Tavi se aleja entre anillos de peligro y pierde 13 de salud con el primer pulso. Luego se acerca y la misma runa le quita 79. Se muestra la caída y después el reinicio."
+  },
+  "steps": [
+    {
+      "title": "¿Desde dónde se mide?",
+      "body": "Fija una fuente al anunciar el ataque. Mide desde ella hasta el punto elegido del objetivo, no desde la posición posterior del jefe o la cámara. Esta variante limita el daño a 90 hasta 140 unidades y a 10 desde 420, con interpolación intermedia; no hay borde exterior seguro."
+    },
+    {
+      "title": "¿Cuándo se decide el daño?",
+      "body": "Mantén visible la fuente y toma una muestra a los 2,20 y 4,30 segundos con ID distintos. Moverse después no cambia el golpe anterior. Rechaza llamadas duplicadas y documenta por separado el orden de cobertura, mitigación y efectos de grupo."
+    },
+    {
+      "title": "¿Hay tiempo para ganar distancia?",
+      "body": "Prueba el movimiento normal desde el inicio cercano más probable y comprueba que el cuerpo completo cabe en la arena. Compara salud en ambos límites y entre ellos; prueba fronteras exactas, coordenadas inválidas, ID repetidos y reinicio. Los anillos y números deben entenderse sin color."
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "Dibujar un borde seguro inexistente",
+      "body": "El contorno habitual de un AoE promete daño cero fuera de él. Con un mínimo no nulo, usa anillos graduados, una marca de origen y cambios de salud en lugar de una falsa frontera."
+    },
+    {
+      "title": "Mover la fuente sin avisar",
+      "body": "Si el jefe se desplaza tras la advertencia, medir desde su nueva posición contradice la señal. Guarda la fuente o muestra cómo se mueve y usa esa misma posición en el cálculo."
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "Ajusta el tiempo de respuesta",
+      "body": "Equilibra juntos aviso, velocidad al caminar, profundidad de la arena y daño mínimo. Alcanzar la banda de menor daño no debe exigir un impulso, invulnerabilidad ni un truco de cámara inesperados."
+    },
+    {
+      "title": "Separa dosis y mitigación",
+      "body": "Calcula primero el daño por distancia y después aplica escudos, resistencia o reglas de grupo en un orden documentado. Registra daño bruto y final para distinguir errores de geometría y de equilibrio."
+    },
+    {
+      "title": "Registra cada muestra",
+      "body": "Guarda encuentro, fuente, objetivo, ID, distancia, fracción antes del límite, daño limitado, salud anterior y posterior y reinicio. Retroceder y repetir los dos pulsos debe dar el mismo resultado sin aplicar dos veces el golpe."
+    }
+  ],
+  "story": {
+    "title": "Una runa, dos costes",
+    "body": "Kern carga una runa. Tavi se aleja y soporta el primer pulso con pocas pérdidas. Ante el siguiente aviso se queda más cerca y la misma runa golpea mucho más fuerte."
+  },
+  "adaptation": {
+    "title": "Expresa la intensidad sin depender del color",
+    "body": "Combina el glifo de origen, los anillos, la lectura de distancia y daño, el pulso, la cifra de salud y una reacción clara. La cronología sigue siendo manipulable sin reproducción automática."
+  },
+  "distinction": {
+    "title": "Un golpe graduado, no una explosión binaria",
+    "body": "Un AoE radial común pregunta si el objetivo está dentro del radio. Aquí la distancia fija la cantidad incluso en el borde exterior. Hark Saniss de Wakfu usa una regla emparentada pero distinta: los jugadores cercanos aumentan permanentemente el daño futuro del jefe en turnos programados."
+  },
+  "lensNotes": [
+    {
+      "id": "telegraphing",
+      "body": "La runa fija y el pulso repetido anuncian origen e instante de muestra."
+    },
+    {
+      "id": "threat-geometry",
+      "body": "Los anillos muestran intensidades alrededor de un punto sin prometer daño cero fuera."
+    },
+    {
+      "id": "counterplay",
+      "body": "Retirarse caminando reduce el golpe sin exigir una habilidad especial."
+    },
+    {
+      "id": "risk-reward",
+      "body": "Estar cerca puede conservar oportunidades de ataque a cambio de un coste de salud visible."
+    },
+    {
+      "id": "difficulty-rhythm",
+      "body": "El pulso débil enseña la regla antes de la comparación cercana deliberada."
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "3D",
+      "game": "Final Fantasy XIV",
+      "boss": "Exdeath",
+      "screenshot": "https://i.ytimg.com/vi/-QE38bqV1P0/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=-QE38bqV1P0",
+      "video": "https://www.youtube.com/watch?v=-QE38bqV1P0&t=150s",
+      "videoDurationSeconds": 257,
+      "body": "The Decisive Battle sitúa una marca de proximidad en el centro: acercarse al borde reduce el daño antes de la siguiente amenaza. El encuentro enlaza distancia y continuación de fase, a diferencia del pulso aislado de la escena."
+    },
+    {
+      "dimension": "3D",
+      "game": "World of Warcraft",
+      "boss": "Garothi Worldbreaker",
+      "screenshot": "https://i.ytimg.com/vi/6TlEB-tYFgY/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=6TlEB-tYFgY",
+      "video": "https://www.youtube.com/watch?v=6TlEB-tYFgY&t=152s",
+      "videoDurationSeconds": 277,
+      "body": "Tras destruir un arma, Eradication inflige daño a la banda que disminuye al alejarse del jefe. El grupo retrocede, pero un tanque puede quedarse más cerca para evitar Carnage: la solución espacial crea otra restricción."
+    },
+    {
+      "dimension": "2D",
+      "game": "Wakfu",
+      "boss": "Hark Saniss, the Last Giant",
+      "screenshot": "https://i.ytimg.com/vi/TgJ9-L82nOY/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=TgJ9-L82nOY",
+      "video": "https://www.youtube.com/watch?v=TgJ9-L82nOY&t=600s",
+      "videoDurationSeconds": 3382,
+      "body": "Hark Saniss cuenta a los jugadores situados a cuatro casillas o menos en ciertos turnos y gana daño permanente por cada uno. Este umbral en una cuadrícula modifica ataques futuros, no calcula una caída radial por objetivo como la escena."
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

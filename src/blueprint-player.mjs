@@ -64,6 +64,8 @@ export function initializeBlueprint(widget) {
   const tetherHealthLabels = [...widget.querySelectorAll('[data-blueprint-tether-health]')];
   const gazeHealthLabel = find('[data-blueprint-gaze-health]');
   const gazeFacingLabel = find('[data-blueprint-gaze-facing]');
+  const proximityHealthLabel = find('[data-blueprint-proximity-health]');
+  const proximityReadout = find('[data-blueprint-proximity-readout]');
   const partnerLabel = find('[data-blueprint-partner-label]');
   const playerLabel = find('[data-blueprint-player-label]');
   const primitives = [...widget.querySelectorAll('[data-blueprint-primitive]')];
@@ -1257,6 +1259,22 @@ export function initializeBlueprint(widget) {
           ? `${Math.round(frame.playerFacing)}° / ${Math.round(frame.gazeBearing)}°`
           : '';
     }
+    if (mechanicId === 'proximity-damage') {
+      widget.dataset.blueprintProximity = frame.proximityState;
+      widget.dataset.blueprintProximityHitId = frame.proximityHitId;
+      widget.dataset.blueprintProximityDistance = String(
+        Math.round(frame.proximityCurrentDistance),
+      );
+      widget.dataset.blueprintProximityDamage = String(frame.proximityCurrentDamage);
+      widget.dataset.blueprintProximityHealth = String(frame.proximityHealth);
+      widget.dataset.blueprintProximityApplicationCount = String(frame.proximityApplicationCount);
+      widget.dataset.blueprintProximityRetry = String(frame.proximityRetry);
+      if (proximityHealthLabel) proximityHealthLabel.textContent = String(frame.proximityHealth);
+      if (proximityReadout)
+        proximityReadout.textContent = frame.proximityVisible
+          ? `${Math.round(frame.proximityCurrentDistance)} → ${frame.proximityCurrentDamage}`
+          : '';
+    }
     boss.setAttribute(
       'transform',
       `translate(${frame.boss.x} ${frame.boss.y})${frame.bossRotation ? ` rotate(${frame.bossRotation})` : ''} scale(${frame.bossScale})`,
@@ -1275,7 +1293,7 @@ export function initializeBlueprint(widget) {
     }
     player.setAttribute(
       'transform',
-      `translate(${frame.player.x} ${frame.player.y})${frame.stackDamageFallAngle || frame.personalSpreadFallAngle || frame.towerSoakFallAngle || frame.entityTetherFallAngle || frame.gazeFallAngle ? ` rotate(${frame.stackDamageFallAngle || frame.personalSpreadFallAngle || frame.towerSoakFallAngle || frame.entityTetherFallAngle || frame.gazeFallAngle})` : ''}`,
+      `translate(${frame.player.x} ${frame.player.y})${frame.stackDamageFallAngle || frame.personalSpreadFallAngle || frame.towerSoakFallAngle || frame.entityTetherFallAngle || frame.gazeFallAngle || frame.proximityFallAngle ? ` rotate(${frame.stackDamageFallAngle || frame.personalSpreadFallAngle || frame.towerSoakFallAngle || frame.entityTetherFallAngle || frame.gazeFallAngle || frame.proximityFallAngle})` : ''}`,
     );
     for (const [index, ally] of allies.entries()) {
       const position = (frame.stackDamageAllies ??

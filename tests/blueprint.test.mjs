@@ -93,6 +93,8 @@ import {
   entityTetherResolve,
   gazeCheckState,
   gazeCheckResolve,
+  proximityDamageState,
+  proximityDamageResolve,
   counterStanceOutcome,
   counterStanceState,
   blueprintFrame,
@@ -120,8 +122,8 @@ import {
   renderBlueprintThumbnail,
 } from '../lib/blueprint-view.mjs';
 
-test('all 112 promoted lesson animations have distinct rule modes and complete moving frames', () => {
-  assert.equal(BLUEPRINT_MECHANIC_IDS.length, 112);
+test('all 113 promoted lesson animations have distinct rule modes and complete moving frames', () => {
+  assert.equal(BLUEPRINT_MECHANIC_IDS.length, 113);
   const modes = new Set();
   for (const id of BLUEPRINT_MECHANIC_IDS) {
     for (let time = 0; time <= BLUEPRINT_DURATION; time += 0.1) {
@@ -142,7 +144,7 @@ test('all 112 promoted lesson animations have distinct rule modes and complete m
           assert.ok(Number.isFinite(value), `${id} has an invalid ${primitive.type}`);
     }
   }
-  assert.equal(modes.size, 112);
+  assert.equal(modes.size, 113);
 });
 
 test('every blueprint exposes signal, committed action, and recovery without player teleports', () => {
@@ -203,7 +205,8 @@ test('every blueprint exposes signal, committed action, and recovery without pla
       id !== 'personal-spread' &&
       id !== 'tower-soak' &&
       id !== 'entity-tether' &&
-      id !== 'gaze-check'
+      id !== 'gaze-check' &&
+      id !== 'proximity-damage'
     )
       assert.equal(blueprintFrame(id, 3).dangerActive, true, id);
     assert.equal(blueprintFrame(id, 3).playerSafe, true, id);
@@ -314,6 +317,7 @@ test('every damaging promoted animation derives safety from its own active geome
       id !== 'tower-soak' &&
       id !== 'entity-tether' &&
       id !== 'gaze-check' &&
+      id !== 'proximity-damage' &&
       id !== 'part-break' &&
       id !== 'counter-stance' &&
       id !== 'absorption-power-up' &&
@@ -5303,5 +5307,58 @@ test('gaze check resolves the visible character facing at two distinct pulses', 
   assert.match(
     renderBlueprintThumbnail(id, 'test-gaze-check'),
     /data-blueprint-preview="gaze-check"/,
+  );
+});
+
+test('proximity damage samples a fixed source and applies two graded, nonzero hits once', () => {
+  const id = 'proximity-damage';
+  assert.deepEqual(
+    [0, 0.8, 1.3, 1.9, 2.3, 2.8, 3.2, 3.5, 4.0, 4.4, 4.8, 5.5].map(proximityDamageState),
+    [
+      'idle',
+      'source-warned',
+      'moving-far',
+      'far-position-held',
+      'lower-damage-hit',
+      'first-recovery',
+      'second-source-warned',
+      'moving-near',
+      'near-position-held',
+      'higher-damage-hit',
+      'second-recovery',
+      'explicit-retry',
+    ],
+  );
+  const at = (distance) =>
+    proximityDamageResolve({
+      target: { id: 'tavi', position: { x: 280, y: 380 + distance }, alive: true },
+    });
+  assert.equal(at(0).damage, 90);
+  assert.equal(at(140).damage, 90);
+  assert.equal(at(180).damage, 79);
+  assert.equal(at(410).damage, 13);
+  assert.equal(at(420).damage, 10);
+  assert.equal(at(900).damage, 10);
+  assert.ok(at(180).damage > at(410).damage);
+  assert.equal(proximityDamageResolve({ alreadyResolved: true }).damage, 0);
+  assert.equal(proximityDamageResolve({ alreadyResolved: true }).applicationCount, 0);
+  assert.equal(proximityDamageResolve({ target: null }).resolution, 'invalid');
+  assert.equal(proximityDamageResolve({ outerRadius: 140 }).resolution, 'invalid');
+  assert.equal(proximityDamageResolve({ minDamage: 0 }).resolution, 'invalid');
+  assert.equal(proximityDamageResolve({ source: { x: NaN, y: 380 } }).resolution, 'invalid');
+  assert.equal(blueprintFrame(id, 2.3).proximityCurrentDistance, 410);
+  assert.equal(blueprintFrame(id, 2.3).proximityFirstDamage, 13);
+  assert.equal(blueprintFrame(id, 2.3).proximityHealth, 87);
+  assert.equal(blueprintFrame(id, 2.3).proximityApplicationCount, 1);
+  assert.equal(blueprintFrame(id, 4.4).proximityCurrentDistance, 180);
+  assert.equal(blueprintFrame(id, 4.4).proximitySecondDamage, 79);
+  assert.equal(blueprintFrame(id, 4.4).proximityHealth, 8);
+  assert.equal(blueprintFrame(id, 4.4).proximityApplicationCount, 2);
+  assert.equal(blueprintPointSafe(id, 2.3, { x: 280, y: 790 }), false);
+  assert.equal(blueprintPointSafe(id, 4.4, { x: 280, y: 560 }), false);
+  assert.equal(blueprintFrame(id, 5.5).proximityHealth, 100);
+  assert.match(
+    renderBlueprintThumbnail(id, 'test-proximity-damage'),
+    /data-blueprint-preview="proximity-damage"/,
   );
 });

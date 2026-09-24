@@ -643,7 +643,13 @@ const PROFILE_OVERRIDES = {
       'progress-clarity',
     ],
   },
-  'proximity-damage': { geometry: ['radial'], response: ['coordinate', 'reposition'] },
+  'proximity-damage': {
+    geometry: ['radial'],
+    signal: ['marker'],
+    response: ['reposition', 'manage'],
+    dimensions: ['2d', '3d'],
+    lenses: ['telegraphing', 'threat-geometry', 'counterplay', 'risk-reward', 'difficulty-rhythm'],
+  },
   'party-split': { geometry: ['arena'], response: ['coordinate', 'reposition', 'manage'] },
 };
 

@@ -1,0 +1,134 @@
+{
+  "title": "Proximity damage",
+  "subtitle": "Make distance change the cost of a boss pulse",
+  "variant": "Marked source · radial falloff · two samples · nonzero outer damage",
+  "summary": "A marked burst still hurts at range, but its damage falls as the player moves away.",
+  "overview": "Proximity damage scales a hit by distance from its announced source. Unlike a binary circle, moving farther can reduce damage even when no point in the arena is completely safe. This demo compares a timely retreat with standing near the same rune; both pulses hit once, but with different severity.",
+  "learning": "Define the source, distance metric, inner and outer clamps, minimum and maximum damage, sampling instant, hit identity, reachable retreat, and visible health change.",
+  "category": "Cooperative coordination",
+  "readTime": "10 min",
+  "demo": {
+    "title": "Compare two distances from Kern's rune",
+    "timeline": "Proximity damage timeline",
+    "step": "More distance lowers the hit; it does not erase it",
+    "phaseNames": ["Read the source and retreat", "Sample the distant hit", "Compare a close hit"],
+    "phaseDescriptions": [
+      "At 0.68 seconds Kern marks one fixed rune. Tavi walks from 220 to 410 units away before the first pulse. Concentric bands preview relative severity rather than a binary safe border.",
+      "At 2.20 seconds the rune samples Tavi's distance. The clamped falloff applies 13 damage at 410 units, so health becomes 87. The beam and health bar agree with the same pure distance rule.",
+      "The rune warns again at 3.08 seconds. Tavi returns to 180 units from the same source; the 4.30-second pulse applies 79 damage once, leaving 8 health. A visible fall and explicit retry at 5.30 seconds reset health and position."
+    ],
+    "boss": "Boss",
+    "player": "Player",
+    "danger": "Both pulses damage Tavi; the near position takes more",
+    "locked": "The source, 140–420 unit falloff range, 90–10 damage bounds, sample times, and hit IDs stay fixed",
+    "safe": "A readable retreat lowers the dose without promising a zero-damage refuge",
+    "reducedMotion": "Reduced motion disables autoplay. Scrub through 0.68, 1.50, 2.30, 3.10, 3.50, 4.40, and 5.50 seconds.",
+    "diagramDescription": "Kern marks a rune beneath the boss. Tavi retreats through its severity rings; the first pulse takes 13 health. Tavi comes closer for a second pulse from the same source and loses 79 health. The scene shows the resulting fall, then explicitly resets."
+  },
+  "steps": [
+    {
+      "title": "Where is distance measured?",
+      "body": "Lock one source at the warning. Measure from that point to the target's chosen sample point, not from the boss's later position or the camera. This version clamps damage to 90 at 140 units or less and 10 at 420 units or more, interpolating between; it never claims an outer safe edge."
+    },
+    {
+      "title": "When is the dose committed?",
+      "body": "Keep the source visible through the warning and sample each target once at 2.20 and 4.30 seconds with distinct hit IDs. A target moving after the pulse does not retroactively alter that hit. Reject duplicate callbacks and document whether cover, mitigation, and group effects modify the result."
+    },
+    {
+      "title": "Can distance be gained in time?",
+      "body": "Test ordinary walking from the nearest likely starting position, with the full character inside the arena. Compare health changes near, between, and beyond the clamps; test exact boundaries, invalid coordinates, duplicate IDs, and retry. Keep bands and numeric feedback legible without color."
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "Drawing a safe circle that does not exist",
+      "body": "A standard AoE outline suggests zero damage beyond it. When the attack has a nonzero floor, use graded rings, a source marker, and health feedback instead of a false safe boundary."
+    },
+    {
+      "title": "Letting the source drift unnoticed",
+      "body": "If the boss moves after the warning, a live boss-centered measurement can contradict the telegraph. Snapshot the source or visibly track it, and use that same position in the damage calculation."
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "Choose a response budget",
+      "body": "Tune warning time, run speed, arena depth, and damage floor together. Reaching the low-damage band should not require an unannounced dash, immunity, or a camera trick."
+    },
+    {
+      "title": "Separate dose from mitigation",
+      "body": "First calculate distance-based damage, then apply shielding, resistance, or group rules in a documented order. Log both raw and final damage so tests can distinguish bad geometry from balance values."
+    },
+    {
+      "title": "Instrument the snapshot",
+      "body": "Record encounter, source, target, hit ID, sampled distance, unclamped fraction, clamped dose, health before and after, and reset. Rewind through both pulses to confirm identical results without a second application."
+    }
+  ],
+  "story": {
+    "title": "One rune, two costs",
+    "body": "Kern charges a rune. Tavi backs away and survives its first pulse with modest damage. On the next warning Tavi stands closer; the same rune strikes much harder."
+  },
+  "adaptation": {
+    "title": "Show severity without relying on hue",
+    "body": "Combine the source glyph, concentric bands, distance-and-damage readout, pulse, health number, and clear hit reaction. Leave the timeline seekable with autoplay disabled."
+  },
+  "distinction": {
+    "title": "A graded hit, not a binary blast",
+    "body": "An ordinary radial AoE asks whether a target is inside a radius. Here distance sets the amount even at the outer edge. Wakfu's Hark Saniss is a related but different proximity rule: nearby players add a permanent boss damage bonus on scheduled turns, rather than receiving a continuously graded pulse."
+  },
+  "lensNotes": [
+    {
+      "id": "telegraphing",
+      "body": "The fixed rune and repeated pulse identify both the damage source and the exact sampling time."
+    },
+    {
+      "id": "threat-geometry",
+      "body": "Concentric bands describe graded severity around one point; no ring falsely promises zero damage."
+    },
+    {
+      "id": "counterplay",
+      "body": "Ordinary retreat reduces the hit without making a special movement ability mandatory."
+    },
+    {
+      "id": "risk-reward",
+      "body": "The designer can trade time near the boss for higher exposure, but the health cost must remain readable."
+    },
+    {
+      "id": "difficulty-rhythm",
+      "body": "The low-damage pulse establishes the rule before the deliberately closer comparison."
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "3D",
+      "game": "Final Fantasy XIV",
+      "boss": "Exdeath",
+      "screenshot": "https://i.ytimg.com/vi/-QE38bqV1P0/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=-QE38bqV1P0",
+      "video": "https://www.youtube.com/watch?v=-QE38bqV1P0&t=150s",
+      "videoDurationSeconds": 257,
+      "body": "The Decisive Battle places a proximity marker at the arena center; players move toward the edge to reduce the damage before a new arena threat appears. The encounter combines distance with a follow-up, unlike the isolated pulse in this demo."
+    },
+    {
+      "dimension": "3D",
+      "game": "World of Warcraft",
+      "boss": "Garothi Worldbreaker",
+      "screenshot": "https://i.ytimg.com/vi/6TlEB-tYFgY/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=6TlEB-tYFgY",
+      "video": "https://www.youtube.com/watch?v=6TlEB-tYFgY&t=152s",
+      "videoDurationSeconds": 277,
+      "body": "After a weapon is destroyed, Eradication deals raid-wide damage that decreases with distance from the boss. The raid can retreat, while one tank may stay closer to prevent Carnage: the range response creates a second positioning constraint."
+    },
+    {
+      "dimension": "2D",
+      "game": "Wakfu",
+      "boss": "Hark Saniss, the Last Giant",
+      "screenshot": "https://i.ytimg.com/vi/TgJ9-L82nOY/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=TgJ9-L82nOY",
+      "video": "https://www.youtube.com/watch?v=TgJ9-L82nOY&t=600s",
+      "videoDurationSeconds": 3382,
+      "body": "Hark Saniss counts players within four cells on scheduled turns and gains a permanent damage bonus for each. This grid-based proximity threshold changes future boss damage; it is a contrast to the demo's per-target radial falloff, not an example of the same formula."
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}
