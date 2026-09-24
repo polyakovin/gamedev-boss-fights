@@ -9089,11 +9089,23 @@ function primitivesFor(spec, frame) {
       line(330, 620, 430, 620, preview, 'accent', 3),
       line(380, 570, 380, 670, preview, 'accent', 3),
     ];
-  if (mode === 'shockwave')
+  if (mode === 'shockwave') {
+    const origin = { x: boss.x, y: boss.y + 30 };
+    const radius = mix(50, 440, action);
     return [
-      circle(boss.x, boss.y + 30, mix(50, 440, action), active, 'signal', 24),
-      circle(boss.x, boss.y + 30, mix(35, 425, action), active, 'accent', 3),
+      circle(origin.x, origin.y, radius, active, 'signal', 24),
+      ...Array.from({ length: 8 }, (_, index) => {
+        const center = polar(origin, radius, (index * Math.PI) / 4);
+        return path(
+          `M ${center.x - 6} ${center.y + 3} L ${center.x + 2} ${center.y - 9} L ${center.x + 9} ${center.y + 5} Z`,
+          active * 0.8,
+          'muted',
+          0,
+          0.86,
+        );
+      }),
     ];
+  }
   if (mode === 'lingering') {
     const radius = mix(26, 105, phase === 0 ? prepare : 1);
     const opacity = phase === 2 ? 1 - recover : active;
