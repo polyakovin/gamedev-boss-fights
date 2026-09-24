@@ -3860,64 +3860,57 @@ function primitivesFor(spec, frame) {
     const strike = strikePulse(frame.time, spec.punishAt, 0.38);
     const resetVisible = frame.time >= spec.openingEnd;
     return [
-      rect(
-        spec.leftBoundary,
-        400,
-        spec.rightBoundary - spec.leftBoundary,
-        380,
-        0.45,
-        'muted',
-        0.02,
-      ),
-      circle(
-        spec.leftBoundary,
-        spec.laneStart[1],
-        mix(34, 78, signalProgress),
-        signalVisible ? 0.82 : activeWindow ? 0.34 : 0.16,
-        activeWindow ? 'signal' : 'accent',
-        activeWindow ? 10 : 6,
-        0.04,
-        signalVisible ? '10 8' : '',
-      ),
-      rect(
-        spec.leftBoundary,
-        spec.laneStart[1] - spec.laneHalfWidth,
-        spec.rightBoundary - spec.leftBoundary,
-        spec.laneHalfWidth * 2,
-        signalVisible ? 0.68 : 0,
-        'accent',
-        0.08,
-      ),
-      rect(
-        spec.laneStart[0],
-        spec.laneStart[1] - spec.laneHalfWidth,
-        spec.laneEnd[0] - spec.laneStart[0],
-        spec.laneHalfWidth * 2,
-        activeWindow ? 0.94 : 0,
-        'signal',
-        0.32,
-      ),
       path(
-        `M 18 ${spec.laneStart[1] - 54} L 46 ${spec.laneStart[1]} L 18 ${
-          spec.laneStart[1] + 54
-        } M 42 ${spec.laneStart[1] - 54} L 70 ${spec.laneStart[1]} L 42 ${spec.laneStart[1] + 54}`,
-        signalVisible ? 0.48 + 0.42 * signalProgress : activeWindow ? 0.92 : 0,
-        activeWindow ? 'signal' : 'accent',
-        8,
-      ),
-      circle(spec.rightBoundary, spec.laneEnd[1], 42 + impact * 42, impact, 'signal', 9, 0.08),
-      path(
-        `M ${spec.rightBoundary} ${spec.laneEnd[1]} L 525 270 L 35 270 L ${
-          spec.leftBoundary
-        } ${spec.laneStart[1]}`,
-        resetVisible ? 0.42 : 0,
+        'M 40 94 L 520 94 L 520 878 L 40 878 Z M 72 364 L 488 364 L 490 849 L 70 849 Z',
+        0.37,
         'muted',
-        5,
         0,
-        '12 12',
+        0.5,
+      ),
+      path(
+        'M 36 378 L 86 378 L 86 829 L 36 829 Z M 474 378 L 524 378 L 524 829 L 474 829 Z',
+        0.74,
+        'accent',
+        0,
+        0.64,
+      ),
+      path(
+        'M 63 569 L 498 569 L 498 651 L 63 651 Z',
+        signalVisible ? 0.52 + signalProgress * 0.24 : 0,
+        'accent',
+        0,
+        0.58,
+      ),
+      path('M 40 569 L 520 569 L 520 651 L 40 651 Z', activeWindow ? 0.94 : 0, 'signal', 0, 0.72),
+      path(
+        'M 46 586 L 61 569 L 77 586 L 62 610 Z M 46 634 L 62 610 L 77 634 L 61 651 Z',
+        signalVisible ? 0.56 + signalProgress * 0.36 : activeWindow ? 0.94 : 0.18,
+        activeWindow ? 'signal' : 'accent',
+        0,
+        0.82,
+      ),
+      path(
+        'M 476 573 L 501 556 L 499 584 Z M 483 624 L 513 602 L 508 637 Z M 471 650 L 497 636 L 502 668 Z',
+        impact,
+        'signal',
+        0,
+        0.86,
+      ),
+      path(
+        'M 28 238 L 532 238 L 520 301 L 40 301 Z M 28 301 L 73 301 L 73 568 L 28 568 Z M 487 301 L 532 301 L 532 568 L 487 568 Z',
+        resetVisible ? 0.66 : 0.34,
+        'accent',
+        0,
+        0.62,
       ),
       line(frame.player.x, frame.player.y, boss.x, boss.y, strike, 'safe', 9),
-      circle(boss.x - 34, boss.y - 4, 12 + strike * 24, strike, 'safe', 7, 0.12),
+      path(
+        `M ${boss.x - 41} ${boss.y - 25} L ${boss.x - 18} ${boss.y - 40} L ${boss.x - 23} ${boss.y - 12} Z`,
+        strike,
+        'safe',
+        0,
+        0.85,
+      ),
     ];
   }
   if (mode === 'forced-scrolling') {

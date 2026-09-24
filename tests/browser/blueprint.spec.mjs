@@ -1923,15 +1923,22 @@ test('boundary attack signals one edge before its fixed crossing and visible out
   await expect(page.locator('.wip-badge, .draft-profile')).toHaveCount(0);
   await expect(page.locator('.game-example')).toHaveCount(3);
   await expect(widget).toHaveAttribute('data-blueprint-playing', 'false');
+  await expect(widget).toHaveAttribute('data-blueprint-full-height', 'true');
+  expect(
+    await widget
+      .locator('[data-blueprint-primitives]')
+      .evaluate((element) => element.getBBox().height),
+  ).toBeGreaterThan(760);
+  await expect(widget.locator('[data-blueprint-primitives] [stroke-dasharray]')).toHaveCount(0);
 
   await seek(900);
   await expect(widget).toHaveAttribute('data-blueprint-boundary-attack', 'edge-signal');
   await expect(widget).toHaveAttribute('data-blueprint-boundary-signal', 'true');
-  await expect(widget.locator('[data-blueprint-primitive="2"] rect')).not.toHaveAttribute(
+  await expect(widget.locator('[data-blueprint-primitive="2"] path')).not.toHaveAttribute(
     'opacity',
     '0',
   );
-  await expect(widget.locator('[data-blueprint-primitive="3"] rect')).toHaveAttribute(
+  await expect(widget.locator('[data-blueprint-primitive="3"] path')).toHaveAttribute(
     'opacity',
     '0',
   );
@@ -1940,7 +1947,7 @@ test('boundary attack signals one edge before its fixed crossing and visible out
   await expect(widget).toHaveAttribute('data-blueprint-boundary-attack', 'boundary-crossing');
   await expect(widget).toHaveAttribute('data-blueprint-boundary-crossing', 'true');
   await expect(widget).toHaveAttribute('data-blueprint-outcome', 'safe');
-  await expect(widget.locator('[data-blueprint-primitive="3"] rect')).not.toHaveAttribute(
+  await expect(widget.locator('[data-blueprint-primitive="3"] path')).not.toHaveAttribute(
     'opacity',
     '0',
   );
