@@ -85,7 +85,7 @@ test('projectile fan keeps its complete preview readable without JavaScript', as
 }) => {
   const context = await browser.newContext({ javaScriptEnabled: false });
   const page = await context.newPage();
-  await page.goto('http://127.0.0.1:4173/gamedev-boss-fights/ru/mechanics/projectile-fan/');
+  await page.goto('ru/mechanics/projectile-fan/');
   await expect(page.locator('[data-pattern-demo]')).toBeVisible();
   await expect(page.locator('[data-projectile-fan-ray]')).toHaveCount(6);
   await expect(page.locator('[data-pattern-boss] [data-character-art="kern"]')).toHaveCount(1);
