@@ -1,0 +1,138 @@
+{
+  "title": "Party-size scaling",
+  "subtitle": "Adapt encounter capacity without erasing earned progress",
+  "variant": "Roster queue · safe-boundary resolve · separate curves · stable eligibility",
+  "summary": "The encounter converts active party size into bounded health, target, hazard, and reward budgets while preserving progress across joins, leaves, and retries.",
+  "overview": "Party-size scaling keeps one boss meaningful for solo players and groups without multiplying every value equally. Roster changes queue during committed actions, resolve at safe boundaries, preserve the visible health fraction, and settle reward eligibility independently.",
+  "learning": "Define roster authority, active-member rules, join and leave grace, safe resolve points, health and target curves, progress preservation, phase thresholds, reward eligibility, reconnect behavior, caps, accessibility, and telemetry.",
+  "category": "States, resources, and scaling",
+  "readTime": "10 min",
+  "demo": {
+    "title": "Scale Kern's trial from one participant to two and back",
+    "timeline": "Party-size scaling timeline",
+    "step": "Queue, resolve safely, preserve progress",
+    "phaseNames": [
+      "Queue and resolve the joining member",
+      "Play scaled targets, then queue the leave",
+      "Settle eligibility and preserve retry state"
+    ],
+    "phaseDescriptions": [
+      "At 0.62 seconds, a second participant joins the roster queue. At 1.18, a safe boundary selects the two-player curve: maximum health becomes 1.6× while the displayed 68% progress remains unchanged.",
+      "At 1.80 seconds, Kern marks two separate targets; both clear the 2.22-second impacts. A leave at 3.28 stays queued until the 3.72 recovery boundary, where the solo package returns without a mid-attack swap.",
+      "At 4.00 seconds, reward eligibility still includes both qualified participants. At 4.55, retry restores the current one-player package with no reversed progress or duplicate scale event."
+    ],
+    "boss": "Boss",
+    "player": "Player",
+    "danger": "Immediate roster updates can heal the boss on screen, remove a required target mid-cast, duplicate rewards, or punish the remaining player for a disconnect",
+    "locked": "Roster authority, grace windows, curve version, health fraction, target slots, hazard budget, resolve boundary, participation credit, reconnect, and retry persistence belong to encounter logic",
+    "safe": "Queue roster changes, resolve them after committed danger, use separate diminishing curves, preserve visible progress, and settle rewards from qualified participation",
+    "reducedMotion": "Autoplay is disabled by reduced motion. Scrub across 0.40, 0.62, 0.90, 1.18, 1.50, 1.80, 2.22, 2.52, 2.82, 3.28, 3.50, 3.72, 4.00, 4.55, and 5.35 seconds.",
+    "diagramDescription": "A second roster token joins and safely changes Kern to a two-player package with two target circles; the participant then leaves, scaling returns after the attack, the health bar stays at 68%, and both qualified participants keep reward credit."
+  },
+  "steps": [
+    {
+      "title": "Who counts as an active participant?",
+      "body": "Choose one authoritative roster and define joined, loading, alive, downed, disconnected, reconnecting, spectator, and departed states. Add grace for short drops, deduplicate identities, cap the party size, and never derive encounter strength from every client independently."
+    },
+    {
+      "title": "Which values need separate curves?",
+      "body": "Tune health, stagger, target slots, simultaneous hazards, add count, revive pressure, and resource drops independently. Use diminishing returns instead of multiplying everything by party size; extra bodies already add damage, coverage, revives, roles, and attention."
+    },
+    {
+      "title": "When may the package be recomputed?",
+      "body": "Queue changes during telegraphs and active attacks, then apply them in recovery, phase handoff, or another authored safe point. Preserve the health fraction and completed objectives, keep phase thresholds monotonic, and snapshot qualified reward shares separately from the current combat roster."
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "Every value scales by the same multiplier",
+      "body": "Doubling health, damage, hazards, and adds can compound into far more than double difficulty. Treat durability, attention load, target coverage, recovery, and rewards as different budgets with explicit caps."
+    },
+    {
+      "title": "Join and leave events mutate an active attack",
+      "body": "A target disappearing mid-cast or a health bar jumping backward breaks causality. Lock committed targets, queue the roster event, preserve the visible progress fraction, and apply one idempotent resolution at the next safe boundary."
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "Version a deterministic curve table",
+      "body": "Map party sizes to health, stagger, target, hazard, and reward values in one data table. Clamp unsupported sizes, record the curve version, and test every transition in both directions so a leave never produces an easier exploit or an impossible remainder."
+    },
+    {
+      "title": "Separate combat roster from reward roster",
+      "body": "Combat can scale down after a genuine departure while contribution credit remains. Define participation thresholds, reconnect windows, anti-idle rules, and disconnect handling so neither late joins nor network loss silently duplicate or erase a share."
+    },
+    {
+      "title": "Measure transitions, not only clears",
+      "body": "Record anonymized party size, curve version, queued event, resolve boundary, health fraction before and after, target count, disconnect class, retries, completion, and reward grants. Audit oscillation and repeated join-leave patterns separately."
+    }
+  ],
+  "story": {
+    "title": "Kern weighs the covenant only between blows",
+    "body": "A second rune joins Tavi's trial, so the scale adds another target without moving the progress mark. When the rune fades, Kern finishes the promised attack before the covenant returns to one participant; the departed ally's contribution seal remains."
+  },
+  "adaptation": {
+    "title": "Scale coordination without requiring a fixed role mix",
+    "body": "Keep solo, duo, and larger groups viable; avoid mechanics that require an absent role; provide generous reconnect and downed-state grace; mark personal targets with redundant shape, color, text, and sound; and do not accelerate cues merely because more players are present."
+  },
+  "distinction": {
+    "title": "Current roster capacity, not a static difficulty or world variant",
+    "body": "A difficulty setting selects an authored challenge level, and a world-state variant selects a contextual rule package. Party-size scaling converts the current authoritative roster into bounded encounter budgets and defines how those budgets change safely during the fight."
+  },
+  "lensNotes": [
+    {
+      "id": "difficulty-rhythm",
+      "body": "Separate diminishing curves keep time-to-defeat and attention load comparable without making every extra participant a full difficulty multiplier."
+    },
+    {
+      "id": "progress-clarity",
+      "body": "Roster tokens, one resolve mark, unchanged health fraction, target count, and contribution seal explain every scaling transition."
+    },
+    {
+      "id": "risk-reward",
+      "body": "Reward shares follow qualified participation rather than the combat roster at the exact finishing frame."
+    },
+    {
+      "id": "access-paths",
+      "body": "Solo-safe target rules, reconnect grace, and role-independent responses prevent group composition or network instability from blocking completion."
+    },
+    {
+      "id": "context-and-sequence",
+      "body": "Join, queue, safe resolve, committed attack, leave queue, recovery resolve, and reward settlement form an explicit lifecycle."
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "Terraria",
+      "boss": "Skeletron",
+      "screenshot": "https://i.ytimg.com/vi/YNbg8-PkeOM/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=YNbg8-PkeOM&t=1s",
+      "video": "https://www.youtube.com/watch?v=YNbg8-PkeOM&t=1s",
+      "videoDurationSeconds": 35,
+      "body": "In Expert and Master multiplayer, boss maximum health uses a player-count factor rather than remaining at the solo value, while each participant can receive an individual Treasure Bag. Skeletron illustrates how durability scaling and reward sharing solve different group problems."
+    },
+    {
+      "dimension": "3D",
+      "game": "Monster Hunter: World — Iceborne",
+      "boss": "Alatreon",
+      "screenshot": "https://i.ytimg.com/vi/QEyiePCDbbs/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=QEyiePCDbbs&t=60s",
+      "video": "https://www.youtube.com/watch?v=QEyiePCDbbs&t=60s",
+      "videoDurationSeconds": 196,
+      "body": "Iceborne added solo, two-player, and three-to-four-player quest settings and made difficulty update in real time with the quest roster. Alatreon's shared elemental checks show why health, team output, failure budget, and group coordination cannot be treated as one linear multiplier."
+    },
+    {
+      "dimension": "3D",
+      "game": "Deep Rock Galactic",
+      "boss": "Glyphid Dreadnought",
+      "screenshot": "https://i.ytimg.com/vi/u6HlfUFqqC0/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=u6HlfUFqqC0&t=1s",
+      "video": "https://www.youtube.com/watch?v=u6HlfUFqqC0&t=1s",
+      "videoDurationSeconds": 1320,
+      "body": "The Glyphid Dreadnought uses effective-health tables that combine Hazard level and player count, including its protective shell. The explicit matrix demonstrates why party size and global difficulty are separate axes that should be tested together."
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

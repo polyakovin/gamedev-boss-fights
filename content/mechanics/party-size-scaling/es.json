@@ -1,0 +1,138 @@
+{
+  "title": "Escalado por tamaño del grupo",
+  "subtitle": "Adapta la capacidad del encuentro sin borrar el progreso ganado",
+  "variant": "Cola de grupo · resolución segura · curvas separadas · elegibilidad estable",
+  "summary": "El encuentro convierte el número de participantes activos en presupuestos limitados de salud, objetivos, peligros y recompensas, conservando el progreso ante entradas, salidas y reintentos.",
+  "overview": "El escalado permite que un mismo jefe sea significativo en solitario y en grupo sin multiplicar todos los valores por igual. Los cambios de integrantes esperan durante las acciones comprometidas, se resuelven en límites seguros, conservan la fracción de salud visible y liquidan por separado la elegibilidad de recompensa.",
+  "learning": "Define la autoridad del grupo, quién está activo, la gracia de entrada y salida, puntos seguros, curvas de salud y objetivos, conservación del progreso, umbrales de fase, elegibilidad, reconexión, límites, accesibilidad y telemetría.",
+  "category": "Estados, recursos y escalado",
+  "readTime": "10 min",
+  "demo": {
+    "title": "Escala la prueba de Kern de una persona a dos y de vuelta",
+    "timeline": "Cronología del escalado por tamaño del grupo",
+    "step": "Poner en cola, resolver con seguridad y conservar el progreso",
+    "phaseNames": [
+      "Pon en cola y resuelve la incorporación",
+      "Juega objetivos escalados y pon en cola la salida",
+      "Liquida la elegibilidad y conserva el reintento"
+    ],
+    "phaseDescriptions": [
+      "A los 0,62 segundos, una segunda persona entra en la cola. A 1,18, un límite seguro selecciona la curva para dos: la salud máxima pasa a 1,6× y el progreso visible permanece en 68%.",
+      "A 1,80, Kern marca dos objetivos separados; ambos despejan los impactos de 2,22. Una salida a 3,28 espera hasta la recuperación de 3,72, donde vuelve el paquete individual sin cambiar el ataque en curso.",
+      "A 4,00, la recompensa aún incluye a las dos personas cualificadas. A 4,55, el reintento restaura el paquete actual para una persona sin invertir el progreso ni duplicar el escalado."
+    ],
+    "boss": "Jefe",
+    "player": "Jugador",
+    "danger": "Actualizar el grupo de inmediato puede curar visualmente al jefe, quitar un objetivo durante el lanzamiento, duplicar recompensas o castigar a quien queda por una desconexión",
+    "locked": "Autoridad del grupo, ventanas de gracia, versión de curvas, fracción de salud, plazas de objetivo, presupuesto de peligro, límite de resolución, contribución, reconexión y reintento pertenecen a la lógica del encuentro",
+    "safe": "Pon los cambios en cola, resuélvelos tras el peligro comprometido, usa curvas decrecientes separadas, conserva el progreso visible y concede recompensas por participación cualificada",
+    "reducedMotion": "Con movimiento reducido, la reproducción automática se desactiva. Recorre 0,40, 0,62, 0,90, 1,18, 1,50, 1,80, 2,22, 2,52, 2,82, 3,28, 3,50, 3,72, 4,00, 4,55 y 5,35 segundos.",
+    "diagramDescription": "Un segundo símbolo de grupo entra y activa con seguridad un paquete para dos con dos círculos objetivo; después la persona sale, el escalado vuelve tras el ataque, la salud sigue en 68% y ambas conservan el crédito de recompensa."
+  },
+  "steps": [
+    {
+      "title": "¿Quién cuenta como participante activo?",
+      "body": "Elige una lista autoritativa y define estados de unión, carga, vida, caída, desconexión, reconexión, espectador y salida. Añade gracia para cortes breves, elimina identidades duplicadas, limita el tamaño y no derives la fuerza del encuentro por separado en cada cliente."
+    },
+    {
+      "title": "¿Qué valores necesitan curvas separadas?",
+      "body": "Ajusta por separado salud, tambaleo, plazas de objetivo, peligros simultáneos, refuerzos, presión de reanimación y recursos. Usa rendimientos decrecientes: más cuerpos ya aportan daño, cobertura, reanimaciones, roles y atención."
+    },
+    {
+      "title": "¿Cuándo puede recalcularse el paquete?",
+      "body": "Pon los cambios en cola durante señales y ataques activos; aplícalos en recuperación, cambio de fase u otro punto seguro diseñado. Conserva la fracción de salud y los objetivos cumplidos, mantén umbrales monótonos y captura las recompensas aparte del grupo de combate actual."
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "Todos los valores usan el mismo multiplicador",
+      "body": "Duplicar a la vez salud, daño, peligros y refuerzos puede crear mucho más del doble de dificultad. Trata duración, carga de atención, cobertura, recuperación y recompensa como presupuestos distintos con límites explícitos."
+    },
+    {
+      "title": "Las entradas y salidas alteran un ataque activo",
+      "body": "Un objetivo que desaparece durante el lanzamiento o una barra que retrocede rompen la causalidad. Bloquea los objetivos comprometidos, pon el evento en cola, conserva la fracción visible y resuelve una sola vez en el siguiente límite seguro."
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "Versiona una tabla determinista de curvas",
+      "body": "Asocia tamaños de grupo con salud, tambaleo, objetivos, peligros y recompensas en una tabla. Limita tamaños no admitidos, registra la versión y prueba cada transición en ambos sentidos para evitar restos imposibles o abusos al salir."
+    },
+    {
+      "title": "Separa el grupo de combate del grupo de recompensa",
+      "body": "El combate puede reducirse tras una salida real mientras se conserva el crédito. Define umbrales de participación, ventanas de reconexión, reglas antiinactividad y desconexiones para que una entrada tardía no duplique ni una pérdida de red borre una parte."
+    },
+    {
+      "title": "Mide transiciones, no solo victorias",
+      "body": "Registra tamaño anonimizado, versión, evento en cola, límite, fracción de salud antes y después, objetivos, clase de desconexión, reintentos, finalización y premios. Audita por separado la oscilación de entradas y salidas."
+    }
+  ],
+  "story": {
+    "title": "Kern pesa el pacto solo entre golpes",
+    "body": "Una segunda runa se une a la prueba de Tavi, y la balanza añade otro objetivo sin mover la marca de progreso. Cuando la runa se apaga, Kern termina el ataque prometido antes de devolver el pacto a una persona; el sello de contribución del aliado permanece."
+  },
+  "adaptation": {
+    "title": "Escala la coordinación sin exigir una composición fija",
+    "body": "Mantén viables el modo individual, dúo y grupos mayores; no exijas un rol ausente; ofrece gracia amplia para reconexión y caída; marca objetivos personales con forma, color, texto y sonido; y no aceleres las señales solo porque haya más personas."
+  },
+  "distinction": {
+    "title": "Capacidad del grupo actual, no dificultad estática ni variante del mundo",
+    "body": "Un ajuste de dificultad elige un nivel diseñado y una variante del mundo elige un paquete contextual. Este escalado convierte la lista autoritativa actual en presupuestos limitados y define cómo cambiarlos con seguridad durante el combate."
+  },
+  "lensNotes": [
+    {
+      "id": "difficulty-rhythm",
+      "body": "Curvas decrecientes separadas mantienen comparables la duración y la carga de atención sin convertir a cada persona adicional en un multiplicador completo."
+    },
+    {
+      "id": "progress-clarity",
+      "body": "Símbolos del grupo, una marca de resolución, fracción de salud fija, número de objetivos y sello de contribución explican cada transición."
+    },
+    {
+      "id": "risk-reward",
+      "body": "Las partes de recompensa siguen la participación cualificada, no el grupo presente en el fotograma del golpe final."
+    },
+    {
+      "id": "access-paths",
+      "body": "Objetivos seguros en solitario, gracia de reconexión y respuestas sin rol fijo evitan que la composición o la red bloqueen la victoria."
+    },
+    {
+      "id": "context-and-sequence",
+      "body": "Entrada, cola, resolución segura, ataque comprometido, cola de salida, recuperación y recompensa forman un ciclo explícito."
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "Terraria",
+      "boss": "Skeletron",
+      "screenshot": "https://i.ytimg.com/vi/YNbg8-PkeOM/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=YNbg8-PkeOM&t=1s",
+      "video": "https://www.youtube.com/watch?v=YNbg8-PkeOM&t=1s",
+      "videoDurationSeconds": 35,
+      "body": "En multijugador Expert y Master, la salud máxima de los jefes usa un factor por número de jugadores, mientras cada participante puede recibir su propia Treasure Bag. Skeletron muestra que duración y reparto de premios resuelven problemas grupales distintos."
+    },
+    {
+      "dimension": "3D",
+      "game": "Monster Hunter: World — Iceborne",
+      "boss": "Alatreon",
+      "screenshot": "https://i.ytimg.com/vi/QEyiePCDbbs/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=QEyiePCDbbs&t=60s",
+      "video": "https://www.youtube.com/watch?v=QEyiePCDbbs&t=60s",
+      "videoDurationSeconds": 196,
+      "body": "Iceborne añadió ajustes para una, dos y tres o cuatro personas, con dificultad actualizada en tiempo real según el grupo de misión. Las comprobaciones elementales compartidas de Alatreon muestran por qué salud, daño, margen de fallo y coordinación no son un multiplicador lineal."
+    },
+    {
+      "dimension": "3D",
+      "game": "Deep Rock Galactic",
+      "boss": "Glyphid Dreadnought",
+      "screenshot": "https://i.ytimg.com/vi/u6HlfUFqqC0/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=u6HlfUFqqC0&t=1s",
+      "video": "https://www.youtube.com/watch?v=u6HlfUFqqC0&t=1s",
+      "videoDurationSeconds": 1320,
+      "body": "Glyphid Dreadnought usa tablas de salud efectiva que combinan Hazard y número de jugadores, incluido su caparazón. La matriz explícita demuestra que tamaño del grupo y dificultad global son ejes separados que deben probarse juntos."
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

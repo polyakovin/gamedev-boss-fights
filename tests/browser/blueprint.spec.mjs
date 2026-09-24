@@ -447,9 +447,9 @@ test('volley releases three parallel bolts on one beat and clears its outside ro
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
 });
 
-test('catalog and builder reuse the 102 promoted rule-specific previews', async ({ page }) => {
+test('catalog and builder reuse the 103 promoted rule-specific previews', async ({ page }) => {
   await page.goto('en/');
-  await expect(page.locator('[data-blueprint-preview]')).toHaveCount(102);
+  await expect(page.locator('[data-blueprint-preview]')).toHaveCount(103);
   const catalogLayouts = await page.locator('[data-blueprint-preview]').evaluateAll((previews) =>
     previews.map((preview) => {
       const boss = preview.querySelector('[data-character-art-preview="kern"]');
@@ -473,7 +473,7 @@ test('catalog and builder reuse the 102 promoted rule-specific previews', async 
   expect(new Set(catalogLayouts.map(({ layout }) => layout)).size).toBeGreaterThanOrEqual(18);
 
   await page.goto('en/builder/');
-  await expect(page.locator('[data-blueprint-preview]')).toHaveCount(102);
+  await expect(page.locator('[data-blueprint-preview]')).toHaveCount(103);
   const builderLayouts = await page.locator('[data-blueprint-preview]').evaluateAll((previews) =>
     previews.map((preview) => {
       const boss = preview.querySelector('[data-character-art-preview="kern"]');
@@ -4500,6 +4500,80 @@ test('world-state variant snapshots one package and keeps it stable when outside
     'true',
   );
   await expect(widget).toHaveAttribute('data-blueprint-world-state-variant-live-resnapshots', '0');
+  await page.setViewportSize({ width: 375, height: 812 });
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+});
+
+test('party-size scaling applies roster changes only at safe boundaries and keeps earned reward credit', async ({
+  page,
+}) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.goto('en/mechanics/party-size-scaling/');
+  const widget = page.locator('[data-blueprint-demo]');
+  const timeline = widget.locator('[data-blueprint-timeline]');
+  const seek = (milliseconds) =>
+    timeline.evaluate((element, value) => {
+      element.value = String(value);
+      element.dispatchEvent(new Event('input', { bubbles: true }));
+    }, milliseconds);
+
+  await expect(page.locator('.lesson-title-line h1')).toHaveText('Party-size scaling');
+  await expect(page.locator('.wip-badge, .draft-profile')).toHaveCount(0);
+  await expect(page.locator('.game-example')).toHaveCount(3);
+  await expect(page.locator('.lens-chip')).toHaveCount(5);
+  await expect(widget).toHaveAttribute('data-blueprint-full-height', 'true');
+  await seek(800);
+  await expect(widget).toHaveAttribute('data-blueprint-party-size-scaling', 'join-queued');
+  await expect(widget).toHaveAttribute('data-blueprint-party-size-scaling-join-queued', 'true');
+  await expect(widget).toHaveAttribute('data-blueprint-party-size-scaling-party-size', '1');
+  await seek(1400);
+  await expect(widget).toHaveAttribute('data-blueprint-party-size-scaling', 'party-scaled');
+  await expect(widget).toHaveAttribute(
+    'data-blueprint-party-size-scaling-resolution-id',
+    'party-scale-join-1',
+  );
+  await expect(widget).toHaveAttribute('data-blueprint-party-size-scaling-party-size', '2');
+  await expect(widget).toHaveAttribute('data-blueprint-party-size-scaling-max-health', '1600');
+  await expect(widget).toHaveAttribute('data-blueprint-party-size-scaling-current-health', '1088');
+  await expect(widget).toHaveAttribute('data-blueprint-party-size-scaling-health-fraction', '0.68');
+  await expect(widget).toHaveAttribute('data-blueprint-party-size-scaling-target-slots', '2');
+  await seek(2500);
+  await expect(widget).toHaveAttribute('data-blueprint-party-size-scaling', 'scaled-attack-active');
+  await expect(widget).toHaveAttribute('data-blueprint-party-size-scaling-attack-active', 'true');
+  await expect(widget).toHaveAttribute('data-blueprint-outcome', 'safe');
+  await seek(3500);
+  await expect(widget).toHaveAttribute('data-blueprint-party-size-scaling', 'leave-queued');
+  await expect(widget).toHaveAttribute('data-blueprint-party-size-scaling-leave-queued', 'true');
+  await expect(widget).toHaveAttribute('data-blueprint-party-size-scaling-party-size', '2');
+  await seek(3900);
+  await expect(widget).toHaveAttribute('data-blueprint-party-size-scaling', 'party-recomputed');
+  await expect(widget).toHaveAttribute(
+    'data-blueprint-party-size-scaling-resolution-id',
+    'party-scale-leave-1',
+  );
+  await expect(widget).toHaveAttribute('data-blueprint-party-size-scaling-party-size', '1');
+  await expect(widget).toHaveAttribute('data-blueprint-party-size-scaling-max-health', '1000');
+  await expect(widget).toHaveAttribute('data-blueprint-party-size-scaling-current-health', '680');
+  await expect(widget).toHaveAttribute('data-blueprint-party-size-scaling-health-fraction', '0.68');
+  await expect(widget).toHaveAttribute('data-blueprint-party-size-scaling-application-count', '2');
+  await expect(widget).toHaveAttribute(
+    'data-blueprint-party-size-scaling-progress-reversed',
+    'false',
+  );
+  await seek(4200);
+  await expect(widget).toHaveAttribute('data-blueprint-party-size-scaling', 'eligibility-settled');
+  await expect(widget).toHaveAttribute(
+    'data-blueprint-party-size-scaling-eligibility-settled',
+    'true',
+  );
+  await expect(widget).toHaveAttribute('data-blueprint-party-size-scaling-reward-share-count', '2');
+  await seek(4700);
+  await expect(widget).toHaveAttribute('data-blueprint-party-size-scaling', 'retry-stable');
+  await expect(widget).toHaveAttribute('data-blueprint-party-size-scaling-party-size', '1');
+  await expect(widget).toHaveAttribute(
+    'data-blueprint-party-size-scaling-mid-attack-applications',
+    '0',
+  );
   await page.setViewportSize({ width: 375, height: 812 });
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
 });

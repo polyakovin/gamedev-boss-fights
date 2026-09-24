@@ -1679,6 +1679,41 @@ const SPECS = {
     variantId: 'eclipse-ruin',
     rewardTableId: 'eclipse-relic-table',
   },
+  'party-size-scaling': {
+    mode: 'party-size-scaling',
+    boss: [300, 425],
+    player: [405, 720],
+    target: [490, 845],
+    arena: [55, 330, 450, 560],
+    rosterTokens: [
+      [120, 145],
+      [225, 145],
+      [335, 145],
+      [440, 145],
+    ],
+    scaleNode: [280, 255],
+    healthBar: [120, 310, 320, 24],
+    targetCenters: [
+      [405, 720],
+      [135, 690],
+    ],
+    allyTarget: [80, 820],
+    joinQueuedAt: 0.62,
+    scaleApplyAt: 1.18,
+    attackSignal: [1.8, 2.22],
+    attack: [2.22, 2.82],
+    playerMove: [2.05, 2.55],
+    opening: [2.82, 3.28],
+    leaveQueuedAt: 3.28,
+    leaveApplyAt: 3.72,
+    reward: [4, 4.45],
+    retry: [4.55, 5.35],
+    resetAt: 5.35,
+    targetRadius: 75,
+    encounterId: 'kern-party-trial-1',
+    joinResolutionId: 'party-scale-join-1',
+    leaveResolutionId: 'party-scale-leave-1',
+  },
   'wide-swing': { mode: 'arc', boss: [225, 340], player: [380, 500], target: [420, 780] },
   lunge: {
     mode: 'lunge',
@@ -3509,6 +3544,72 @@ export function worldStateVariantResolve({
     snapshotCount: alreadyResolved ? 0 : 1,
     eventCount: alreadyResolved ? 0 : 1,
     liveResnapshotCount: 0,
+  });
+}
+
+export function partySizeScalingState(time) {
+  const spec = SPECS['party-size-scaling'];
+  const t = localTime(time);
+  if (t < spec.joinQueuedAt) return 'solo-baseline';
+  if (t < spec.scaleApplyAt) return 'join-queued';
+  if (t < spec.attackSignal[0]) return 'party-scaled';
+  if (t < spec.attack[0]) return 'scaled-attack-signaled';
+  if (t < spec.attack[1]) return 'scaled-attack-active';
+  if (t < spec.leaveQueuedAt) return 'opening-active';
+  if (t < spec.leaveApplyAt) return 'leave-queued';
+  if (t < spec.reward[0]) return 'party-recomputed';
+  if (t < spec.reward[1]) return 'eligibility-settled';
+  if (t < spec.retry[0]) return 'encounter-stable';
+  if (t < spec.retry[1]) return 'retry-stable';
+  return 'reset';
+}
+
+export function partySizeScalingResolve({
+  encounterId = 'kern-party-trial-1',
+  resolutionId = 'party-scale-join-1',
+  rosterVersion = 1,
+  partySize = 2,
+  baselineMaxHealth = 1000,
+  currentHealthFraction = 0.68,
+  midAttack = false,
+  alreadyApplied = false,
+} = {}) {
+  const rawPartySize = Math.trunc(Number(partySize));
+  const normalizedPartySize = Number.isFinite(rawPartySize)
+    ? Math.max(1, Math.min(4, rawPartySize))
+    : 1;
+  const fallbackUsed = rawPartySize !== normalizedPartySize;
+  const healthCurve = [1, 1.6, 2.05, 2.4];
+  const targetCurve = [1, 2, 2, 3];
+  const hazardCurve = [1, 1.35, 1.65, 1.9];
+  const safeFraction = clamp(Number(currentHealthFraction));
+  const baseHealth = Math.max(1, Math.round(Number(baselineMaxHealth) || 1));
+  const healthMultiplier = healthCurve[normalizedPartySize - 1];
+  const maxHealth = Math.round(baseHealth * healthMultiplier);
+  const accepted = !midAttack && !alreadyApplied;
+  return Object.freeze({
+    encounterId: String(encounterId),
+    resolutionId: String(resolutionId),
+    rosterVersion: Math.max(1, Math.trunc(Number(rosterVersion) || 1)),
+    partySize: normalizedPartySize,
+    baselineMaxHealth: baseHealth,
+    healthMultiplier,
+    maxHealth,
+    currentHealth: Math.round(maxHealth * safeFraction),
+    healthFraction: safeFraction,
+    targetSlots: targetCurve[normalizedPartySize - 1],
+    hazardBudget: hazardCurve[normalizedPartySize - 1],
+    rewardShareCount: normalizedPartySize,
+    fallbackUsed,
+    accepted,
+    rejectionReason: alreadyApplied
+      ? 'duplicate-resolution'
+      : midAttack
+        ? 'unsafe-boundary'
+        : 'none',
+    applicationCount: accepted ? 1 : 0,
+    midAttackApplications: 0,
+    progressReversed: false,
   });
 }
 
@@ -8510,6 +8611,181 @@ function primitivesFor(spec, frame) {
       ),
     ];
   }
+  if (mode === 'party-size-scaling') {
+    const rosterProgress = smooth((frame.time - spec.joinQueuedAt) / 0.38);
+    const scaleProgress = smooth((frame.time - spec.scaleApplyAt) / 0.36);
+    const moveProgress = smooth(
+      (frame.time - spec.playerMove[0]) / (spec.playerMove[1] - spec.playerMove[0]),
+    );
+    const resetProgress = smooth((frame.time - spec.resetAt) / (BLUEPRINT_DURATION - spec.resetAt));
+    const ally = {
+      x: mix(
+        mix(spec.targetCenters[1][0], spec.allyTarget[0], moveProgress),
+        spec.targetCenters[1][0],
+        resetProgress,
+      ),
+      y: mix(
+        mix(spec.targetCenters[1][1], spec.allyTarget[1], moveProgress),
+        spec.targetCenters[1][1],
+        resetProgress,
+      ),
+    };
+    const signalProgress = clamp(
+      (frame.time - spec.attackSignal[0]) / (spec.attackSignal[1] - spec.attackSignal[0]),
+    );
+    const attackProgress = clamp((frame.time - spec.attack[0]) / (spec.attack[1] - spec.attack[0]));
+    const openingStrike = strikePulse(
+      frame.time,
+      (spec.opening[0] + spec.opening[1]) / 2,
+      spec.opening[1] - spec.opening[0],
+    );
+    const secondMemberVisible = frame.time >= spec.joinQueuedAt && frame.time < spec.leaveApplyAt;
+    const panelVisible = frame.time < spec.resetAt;
+    return [
+      rect(...spec.arena, 0.52, 'muted', 0.025),
+      path(
+        'M 70 760 L 176 734 L 280 762 L 386 734 L 490 760 V 793 L 386 764 L 280 794 L 176 764 L 70 793 Z M 88 850 L 280 818 L 472 850 V 868 L 280 837 L 88 868 Z',
+        0.54,
+        'muted',
+        0,
+        0.5,
+      ),
+      rect(64, 82, 432, 218, panelVisible ? 0.86 : 0.3, 'muted', 0.16),
+      ...spec.rosterTokens.flatMap((token, index) => {
+        const active = index === 0 || (index === 1 && secondMemberVisible);
+        const queued = index === 1 && frame.partySizeScalingJoinQueued;
+        const opacity = active ? 0.94 : 0.24;
+        return [
+          circle(
+            token[0],
+            token[1],
+            32 + (queued ? 7 * pulse(rosterProgress * 2) : 0),
+            panelVisible ? opacity : 0,
+            active ? (index === 0 ? 'safe' : 'accent') : 'muted',
+            7,
+            active ? 0.04 : 0.015,
+            active ? '' : '8 7',
+          ),
+          circle(
+            token[0],
+            token[1] - 8,
+            9,
+            panelVisible ? opacity : 0,
+            active ? (index === 0 ? 'safe' : 'accent') : 'muted',
+            5,
+            0.08,
+          ),
+          path(
+            `M ${token[0] - 16} ${token[1] + 18} Q ${token[0]} ${token[1] - 2} ${token[0] + 16} ${token[1] + 18}`,
+            panelVisible ? opacity : 0,
+            active ? (index === 0 ? 'safe' : 'accent') : 'muted',
+            6,
+          ),
+        ];
+      }),
+      ...spec.rosterTokens
+        .slice(0, 2)
+        .map((token, index) =>
+          line(
+            token[0],
+            token[1] + 34,
+            spec.scaleNode[0],
+            spec.scaleNode[1] - 30,
+            index === 0 || secondMemberVisible ? 0.66 : 0.18,
+            index === 0 ? 'safe' : 'accent',
+            5,
+            '9 7',
+          ),
+        ),
+      circle(
+        spec.scaleNode[0],
+        spec.scaleNode[1],
+        36 + scaleProgress * 8,
+        frame.partySizeScalingScaleApplied ? 0.94 : 0.42,
+        'signal',
+        8,
+        0.04,
+      ),
+      path(
+        `M ${spec.scaleNode[0] - 19} ${spec.scaleNode[1] + 4} L ${spec.scaleNode[0] - 3} ${spec.scaleNode[1] + 18} L ${spec.scaleNode[0] + 24} ${spec.scaleNode[1] - 17}`,
+        frame.partySizeScalingScaleApplied ? 0.96 : 0.28,
+        'safe',
+        7,
+      ),
+      rect(
+        spec.healthBar[0],
+        spec.healthBar[1],
+        spec.healthBar[2],
+        spec.healthBar[3],
+        0.78,
+        'muted',
+        0.1,
+      ),
+      rect(
+        spec.healthBar[0],
+        spec.healthBar[1],
+        spec.healthBar[2] * 0.68,
+        spec.healthBar[3],
+        0.92,
+        'signal',
+        0.3,
+      ),
+      line(
+        spec.healthBar[0] + spec.healthBar[2] * 0.68,
+        spec.healthBar[1] - 6,
+        spec.healthBar[0] + spec.healthBar[2] * 0.68,
+        spec.healthBar[1] + spec.healthBar[3] + 6,
+        panelVisible ? 0.92 : 0,
+        'safe',
+        4,
+      ),
+      circle(ally.x, ally.y, 28, secondMemberVisible ? 0.9 : 0, 'accent', 7, 0.08),
+      path(
+        `M ${ally.x - 12} ${ally.y + 12} L ${ally.x + 12} ${ally.y - 12} M ${ally.x + 4} ${ally.y - 18} L ${ally.x + 18} ${ally.y - 4}`,
+        secondMemberVisible ? 0.92 : 0,
+        'accent',
+        6,
+      ),
+      ...spec.targetCenters.map((center, index) =>
+        circle(
+          center[0],
+          center[1],
+          mix(28, spec.targetRadius, signalProgress),
+          frame.partySizeScalingAttackSignaled && (index === 0 || secondMemberVisible) ? 0.78 : 0,
+          index === 0 ? 'signal' : 'accent',
+          8,
+          0.02,
+          '11 8',
+        ),
+      ),
+      ...spec.targetCenters.map((center, index) =>
+        circle(
+          center[0],
+          center[1],
+          spec.targetRadius + attackProgress * 22,
+          frame.partySizeScalingAttackActive && (index === 0 || secondMemberVisible)
+            ? 0.96 - attackProgress * 0.28
+            : 0,
+          index === 0 ? 'signal' : 'accent',
+          12,
+          0.025,
+        ),
+      ),
+      path(
+        `M ${frame.player.x - 8} ${frame.player.y - 54} L ${frame.boss.x + 12} ${frame.boss.y + 26}`,
+        openingStrike,
+        'safe',
+        13,
+      ),
+      circle(450, 390, 29, frame.partySizeScalingEligibilitySettled ? 0.92 : 0, 'safe', 7, 0.05),
+      path(
+        'M 433 390 L 446 403 L 468 378',
+        frame.partySizeScalingEligibilitySettled ? 0.98 : 0,
+        'safe',
+        7,
+      ),
+    ];
+  }
   if (mode === 'world-state-variant') {
     const materializeProgress = smooth(
       (frame.time - spec.materialize[0]) / (spec.materialize[1] - spec.materialize[0]),
@@ -10669,6 +10945,14 @@ function pointClearsThreat(spec, frame, value, radius = BLUEPRINT_PLAYER_RADIUS)
       );
     return true;
   }
+  if (mode === 'party-size-scaling')
+    return (
+      !frame.partySizeScalingAttackActive ||
+      spec.targetCenters.every(
+        (center) =>
+          Math.hypot(value.x - center[0], value.y - center[1]) > spec.targetRadius + radius,
+      )
+    );
   if (mode === 'world-state-variant')
     return (
       !frame.worldStateVariantAttackActive ||
@@ -11094,6 +11378,7 @@ export function blueprintFrame(id, time) {
   else if (spec.mode === 'real-time-progression') responseProgress = 0;
   else if (spec.mode === 'interface-interaction') responseProgress = 0;
   else if (spec.mode === 'world-state-variant') responseProgress = 0;
+  else if (spec.mode === 'party-size-scaling') responseProgress = 0;
   else if (spec.mode === 'knockback')
     responseProgress = phase === 0 ? 0 : phase === 1 ? smooth(action) : 1;
   else if (spec.mode === 'target-lock')
@@ -12636,6 +12921,20 @@ export function blueprintFrame(id, time) {
     };
     stride = Math.max(pulse(move), pulse(reset));
   }
+  if (spec.mode === 'party-size-scaling') {
+    const move = smooth((t - spec.playerMove[0]) / (spec.playerMove[1] - spec.playerMove[0]));
+    const reset = smooth((t - spec.resetAt) / (BLUEPRINT_DURATION - spec.resetAt));
+    const safe = point(spec.target);
+    const movedPlayer = {
+      x: mix(startPlayer.x, safe.x, move),
+      y: mix(startPlayer.y, safe.y, move),
+    };
+    player = {
+      x: mix(movedPlayer.x, startPlayer.x, reset),
+      y: mix(movedPlayer.y, startPlayer.y, reset),
+    };
+    stride = Math.max(pulse(move), pulse(reset));
+  }
   const bossVisible =
     spec.mode === 'secondary-cues-invisibility'
       ? t < spec.vanishAt
@@ -12927,7 +13226,8 @@ export function blueprintFrame(id, time) {
             spec.mode === 'run-history-manifestation' ||
             spec.mode === 'real-time-progression' ||
             spec.mode === 'interface-interaction' ||
-            spec.mode === 'world-state-variant'
+            spec.mode === 'world-state-variant' ||
+            spec.mode === 'party-size-scaling'
           ? (Math.atan2(boss.y - player.y, boss.x - player.x) * 180) / Math.PI
           : spec.mode === 'active-phase'
             ? (Math.atan2(boss.y - player.y, boss.x - player.x) * 180) / Math.PI
@@ -14551,6 +14851,44 @@ export function blueprintFrame(id, time) {
     frame.playerMotion.impact = 0;
     frame.bossMotion.attack = strikePulse(t, (spec.attack[0] + spec.attack[1]) / 2, 0.58);
   }
+  if (spec.mode === 'party-size-scaling') {
+    frame.partySizeScalingState = partySizeScalingState(t);
+    frame.partySizeScalingEncounterId = spec.encounterId;
+    frame.partySizeScalingRosterVersion = 1;
+    frame.partySizeScalingJoinQueued = t >= spec.joinQueuedAt && t < spec.scaleApplyAt;
+    frame.partySizeScalingLeaveQueued = t >= spec.leaveQueuedAt && t < spec.leaveApplyAt;
+    frame.partySizeScalingScaleApplied = t >= spec.scaleApplyAt && t < spec.resetAt;
+    frame.partySizeScalingPartySize = t < spec.scaleApplyAt || t >= spec.leaveApplyAt ? 1 : 2;
+    frame.partySizeScalingResolutionId =
+      t >= spec.leaveApplyAt && t < spec.resetAt
+        ? spec.leaveResolutionId
+        : t >= spec.scaleApplyAt
+          ? spec.joinResolutionId
+          : 'none';
+    frame.partySizeScalingHealthMultiplier = frame.partySizeScalingPartySize === 2 ? 1.6 : 1;
+    frame.partySizeScalingMaxHealth = frame.partySizeScalingPartySize === 2 ? 1600 : 1000;
+    frame.partySizeScalingHealthFraction = 0.68;
+    frame.partySizeScalingCurrentHealth = Math.round(
+      frame.partySizeScalingMaxHealth * frame.partySizeScalingHealthFraction,
+    );
+    frame.partySizeScalingTargetSlots = frame.partySizeScalingPartySize === 2 ? 2 : 1;
+    frame.partySizeScalingHazardBudget = frame.partySizeScalingPartySize === 2 ? 1.35 : 1;
+    frame.partySizeScalingApplicationCount =
+      t >= spec.leaveApplyAt && t < spec.resetAt ? 2 : t >= spec.scaleApplyAt ? 1 : 0;
+    frame.partySizeScalingMidAttackApplications = 0;
+    frame.partySizeScalingProgressReversed = false;
+    frame.partySizeScalingAttackSignaled = t >= spec.attackSignal[0] && t < spec.attack[0];
+    frame.partySizeScalingAttackActive = t >= spec.attack[0] && t < spec.attack[1];
+    frame.partySizeScalingOpeningActive = t >= spec.opening[0] && t < spec.opening[1];
+    frame.partySizeScalingEligibilitySettled = t >= spec.reward[0] && t < spec.resetAt;
+    frame.partySizeScalingRewardShareCount = frame.partySizeScalingEligibilitySettled ? 2 : 0;
+    frame.partySizeScalingRetryStable = t >= spec.retry[0] && t < spec.retry[1];
+    frame.dangerActive = frame.partySizeScalingAttackActive;
+    frame.playerMotion.dodge = strikePulse(t, spec.playerMove[0] + 0.3, 0.5);
+    frame.playerMotion.attack = strikePulse(t, (spec.opening[0] + spec.opening[1]) / 2, 0.5);
+    frame.playerMotion.impact = 0;
+    frame.bossMotion.attack = strikePulse(t, (spec.attack[0] + spec.attack[1]) / 2, 0.58);
+  }
   if (spec.mode === 'real-time-progression') {
     frame.realTimeProgressionState = realTimeProgressionState(t);
     frame.realTimeProgressionCheckpointId = spec.checkpointId;
@@ -14865,76 +15203,79 @@ export function blueprintFrame(id, time) {
     y: boss.y + BLUEPRINT_BOSS_LABEL_OFFSET_Y * frame.bossScale,
   };
   frame.playerLabel = {
-    x: player.x,
+    x: spec.mode === 'party-size-scaling' ? player.x - 85 : player.x,
     y:
       player.y +
-      (spec.mode === 'resource-steal' ||
-      spec.mode === 'ability-lock' ||
-      spec.mode === 'maximum-health-reduction' ||
-      spec.mode === 'instant-kill' ||
-      spec.mode === 'status-buildup' ||
-      spec.mode === 'persistent-progress' ||
-      spec.mode === 'pacifist-resolution' ||
-      spec.mode === 'posture-stagger-gauge' ||
-      spec.mode === 'baited-self-hit' ||
-      spec.mode === 'projectile-rally'
-        ? 55
-        : spec.mode === 'weak-point' ||
-            spec.mode === 'directional-shield' ||
-            spec.mode === 'damage-type-resistance' ||
-            spec.mode === 'situational-immunity' ||
-            spec.mode === 'part-break' ||
-            spec.mode === 'attack-reflection' ||
-            spec.mode === 'counter-stance' ||
-            spec.mode === 'absorption-power-up' ||
-            spec.mode === 'interruptible-wind-up' ||
-            spec.mode === 'loadout-adaptation' ||
-            spec.mode === 'wind-up' ||
-            spec.mode === 'attack-lock' ||
-            spec.mode === 'active-phase' ||
-            spec.mode === 'recovery' ||
-            spec.mode === 'survival-phase' ||
-            spec.mode === 'teleport' ||
-            spec.mode === 'boundary-attack' ||
-            spec.mode === 'forced-scrolling' ||
-            spec.mode === 'chase-herding' ||
-            spec.mode === 'escape-phase' ||
-            spec.mode === 'boss-as-terrain' ||
-            spec.mode === 'cover-line-of-sight' ||
-            spec.mode === 'forced-inertia' ||
-            spec.mode === 'wraparound-projectile' ||
-            spec.mode === 'beat-synced-attack' ||
-            spec.mode === 'secondary-cues-invisibility' ||
-            spec.mode === 'sound-detection' ||
-            spec.mode === 'objective-linked-invulnerability' ||
-            spec.mode === 'wave-clear-objective' ||
-            spec.mode === 'environmental-weapon' ||
-            spec.mode === 'encounter-specific-tool' ||
-            spec.mode === 'player-controlled-boss' ||
-            spec.mode === 'projectile-rally' ||
-            spec.mode === 'baited-self-hit' ||
-            spec.mode === 'posture-stagger-gauge' ||
-            spec.mode === 'pacifist-resolution' ||
-            spec.mode === 'persistent-progress' ||
-            spec.mode === 'status-buildup' ||
-            spec.mode === 'instant-kill' ||
-            spec.mode === 'maximum-health-reduction' ||
+      (spec.mode === 'party-size-scaling'
+        ? 10
+        : spec.mode === 'resource-steal' ||
             spec.mode === 'ability-lock' ||
-            spec.mode === 'on-hit-healing' ||
-            spec.mode === 'self-heal-cast' ||
-            spec.mode === 'external-healing-source' ||
-            spec.mode === 'damage-rate-cap' ||
-            spec.mode === 'loadout-mirror' ||
-            spec.mode === 'moveset-shapeshifting' ||
-            spec.mode === 'ally-theft' ||
-            spec.mode === 'false-death' ||
-            spec.mode === 'action-reactive-punish' ||
-            spec.mode === 'run-history-manifestation' ||
-            spec.mode === 'real-time-progression' ||
-            spec.mode === 'interface-interaction' ||
-            spec.mode === 'world-state-variant'
-          ? 92
-          : -62),
+            spec.mode === 'maximum-health-reduction' ||
+            spec.mode === 'instant-kill' ||
+            spec.mode === 'status-buildup' ||
+            spec.mode === 'persistent-progress' ||
+            spec.mode === 'pacifist-resolution' ||
+            spec.mode === 'posture-stagger-gauge' ||
+            spec.mode === 'baited-self-hit' ||
+            spec.mode === 'projectile-rally'
+          ? 55
+          : spec.mode === 'weak-point' ||
+              spec.mode === 'directional-shield' ||
+              spec.mode === 'damage-type-resistance' ||
+              spec.mode === 'situational-immunity' ||
+              spec.mode === 'part-break' ||
+              spec.mode === 'attack-reflection' ||
+              spec.mode === 'counter-stance' ||
+              spec.mode === 'absorption-power-up' ||
+              spec.mode === 'interruptible-wind-up' ||
+              spec.mode === 'loadout-adaptation' ||
+              spec.mode === 'wind-up' ||
+              spec.mode === 'attack-lock' ||
+              spec.mode === 'active-phase' ||
+              spec.mode === 'recovery' ||
+              spec.mode === 'survival-phase' ||
+              spec.mode === 'teleport' ||
+              spec.mode === 'boundary-attack' ||
+              spec.mode === 'forced-scrolling' ||
+              spec.mode === 'chase-herding' ||
+              spec.mode === 'escape-phase' ||
+              spec.mode === 'boss-as-terrain' ||
+              spec.mode === 'cover-line-of-sight' ||
+              spec.mode === 'forced-inertia' ||
+              spec.mode === 'wraparound-projectile' ||
+              spec.mode === 'beat-synced-attack' ||
+              spec.mode === 'secondary-cues-invisibility' ||
+              spec.mode === 'sound-detection' ||
+              spec.mode === 'objective-linked-invulnerability' ||
+              spec.mode === 'wave-clear-objective' ||
+              spec.mode === 'environmental-weapon' ||
+              spec.mode === 'encounter-specific-tool' ||
+              spec.mode === 'player-controlled-boss' ||
+              spec.mode === 'projectile-rally' ||
+              spec.mode === 'baited-self-hit' ||
+              spec.mode === 'posture-stagger-gauge' ||
+              spec.mode === 'pacifist-resolution' ||
+              spec.mode === 'persistent-progress' ||
+              spec.mode === 'status-buildup' ||
+              spec.mode === 'instant-kill' ||
+              spec.mode === 'maximum-health-reduction' ||
+              spec.mode === 'ability-lock' ||
+              spec.mode === 'on-hit-healing' ||
+              spec.mode === 'self-heal-cast' ||
+              spec.mode === 'external-healing-source' ||
+              spec.mode === 'damage-rate-cap' ||
+              spec.mode === 'loadout-mirror' ||
+              spec.mode === 'moveset-shapeshifting' ||
+              spec.mode === 'ally-theft' ||
+              spec.mode === 'false-death' ||
+              spec.mode === 'action-reactive-punish' ||
+              spec.mode === 'run-history-manifestation' ||
+              spec.mode === 'real-time-progression' ||
+              spec.mode === 'interface-interaction' ||
+              spec.mode === 'world-state-variant' ||
+              spec.mode === 'party-size-scaling'
+            ? 92
+            : -62),
   };
   return Object.freeze(frame);
 }

@@ -73,6 +73,8 @@ import {
   interfaceInteractionResolve,
   worldStateVariantState,
   worldStateVariantResolve,
+  partySizeScalingState,
+  partySizeScalingResolve,
   counterStanceOutcome,
   counterStanceState,
   blueprintFrame,
@@ -100,8 +102,8 @@ import {
   renderBlueprintThumbnail,
 } from '../lib/blueprint-view.mjs';
 
-test('all 102 promoted lesson animations have distinct rule modes and complete moving frames', () => {
-  assert.equal(BLUEPRINT_MECHANIC_IDS.length, 102);
+test('all 103 promoted lesson animations have distinct rule modes and complete moving frames', () => {
+  assert.equal(BLUEPRINT_MECHANIC_IDS.length, 103);
   const modes = new Set();
   for (const id of BLUEPRINT_MECHANIC_IDS) {
     for (let time = 0; time <= BLUEPRINT_DURATION; time += 0.1) {
@@ -122,7 +124,7 @@ test('all 102 promoted lesson animations have distinct rule modes and complete m
           assert.ok(Number.isFinite(value), `${id} has an invalid ${primitive.type}`);
     }
   }
-  assert.equal(modes.size, 102);
+  assert.equal(modes.size, 103);
 });
 
 test('every blueprint exposes signal, committed action, and recovery without player teleports', () => {
@@ -173,7 +175,8 @@ test('every blueprint exposes signal, committed action, and recovery without pla
       id !== 'run-history-manifestation' &&
       id !== 'real-time-progression' &&
       id !== 'interface-interaction' &&
-      id !== 'world-state-variant'
+      id !== 'world-state-variant' &&
+      id !== 'party-size-scaling'
     )
       assert.equal(blueprintFrame(id, 3).dangerActive, true, id);
     assert.equal(blueprintFrame(id, 3).playerSafe, true, id);
@@ -274,6 +277,7 @@ test('every damaging promoted animation derives safety from its own active geome
       id !== 'real-time-progression' &&
       id !== 'interface-interaction' &&
       id !== 'world-state-variant' &&
+      id !== 'party-size-scaling' &&
       id !== 'part-break' &&
       id !== 'counter-stance' &&
       id !== 'absorption-power-up' &&
@@ -4513,5 +4517,101 @@ test('world-state variant snapshots one named package and preserves it through r
   assert.match(
     renderBlueprintThumbnail(id, 'test-world-state-variant'),
     /data-blueprint-preview="world-state-variant"/,
+  );
+});
+
+test('party-size scaling queues roster changes, preserves progress, and settles rewards separately', () => {
+  const id = 'party-size-scaling';
+  const spec = blueprintSpec(id);
+  assert.deepEqual([0.4, 0.8, 1.4, 2, 2.5, 3, 3.5, 3.9, 4.2, 4.7, 5.5].map(partySizeScalingState), [
+    'solo-baseline',
+    'join-queued',
+    'party-scaled',
+    'scaled-attack-signaled',
+    'scaled-attack-active',
+    'opening-active',
+    'leave-queued',
+    'party-recomputed',
+    'eligibility-settled',
+    'retry-stable',
+    'reset',
+  ]);
+  assert.deepEqual(partySizeScalingResolve(), {
+    encounterId: 'kern-party-trial-1',
+    resolutionId: 'party-scale-join-1',
+    rosterVersion: 1,
+    partySize: 2,
+    baselineMaxHealth: 1000,
+    healthMultiplier: 1.6,
+    maxHealth: 1600,
+    currentHealth: 1088,
+    healthFraction: 0.68,
+    targetSlots: 2,
+    hazardBudget: 1.35,
+    rewardShareCount: 2,
+    fallbackUsed: false,
+    accepted: true,
+    rejectionReason: 'none',
+    applicationCount: 1,
+    midAttackApplications: 0,
+    progressReversed: false,
+  });
+  const unsafe = partySizeScalingResolve({ midAttack: true });
+  assert.equal(unsafe.accepted, false);
+  assert.equal(unsafe.rejectionReason, 'unsafe-boundary');
+  assert.equal(unsafe.applicationCount, 0);
+  const duplicate = partySizeScalingResolve({ alreadyApplied: true });
+  assert.equal(duplicate.accepted, false);
+  assert.equal(duplicate.rejectionReason, 'duplicate-resolution');
+  const fallback = partySizeScalingResolve({ partySize: 9 });
+  assert.equal(fallback.partySize, 4);
+  assert.equal(fallback.healthMultiplier, 2.4);
+  assert.equal(fallback.targetSlots, 3);
+  assert.equal(fallback.fallbackUsed, true);
+
+  const queuedJoin = blueprintFrame(id, 0.8);
+  assert.equal(queuedJoin.partySizeScalingJoinQueued, true);
+  assert.equal(queuedJoin.partySizeScalingPartySize, 1);
+  const scaled = blueprintFrame(id, 1.4);
+  assert.equal(scaled.partySizeScalingScaleApplied, true);
+  assert.equal(scaled.partySizeScalingResolutionId, 'party-scale-join-1');
+  assert.equal(scaled.partySizeScalingPartySize, 2);
+  assert.equal(scaled.partySizeScalingMaxHealth, 1600);
+  assert.equal(scaled.partySizeScalingCurrentHealth, 1088);
+  assert.equal(scaled.partySizeScalingHealthFraction, 0.68);
+  assert.equal(scaled.partySizeScalingTargetSlots, 2);
+  assert.equal(scaled.partySizeScalingApplicationCount, 1);
+  const active = blueprintFrame(id, 2.5);
+  assert.equal(active.partySizeScalingAttackActive, true);
+  assert.equal(active.playerSafe, true);
+  assert.equal(active.playerLabel.x, active.player.x - 85);
+  assert.equal(active.playerLabel.y, active.player.y + 10);
+  assert.ok(active.playerLabel.y < 900);
+  assert.equal(
+    blueprintPointSafe(id, 2.5, { x: spec.targetCenters[0][0], y: spec.targetCenters[0][1] }),
+    false,
+  );
+  const queuedLeave = blueprintFrame(id, 3.5);
+  assert.equal(queuedLeave.partySizeScalingLeaveQueued, true);
+  assert.equal(queuedLeave.partySizeScalingPartySize, 2);
+  const recomputed = blueprintFrame(id, 3.9);
+  assert.equal(recomputed.partySizeScalingResolutionId, 'party-scale-leave-1');
+  assert.equal(recomputed.partySizeScalingPartySize, 1);
+  assert.equal(recomputed.partySizeScalingMaxHealth, 1000);
+  assert.equal(recomputed.partySizeScalingCurrentHealth, 680);
+  assert.equal(recomputed.partySizeScalingHealthFraction, 0.68);
+  assert.equal(recomputed.partySizeScalingApplicationCount, 2);
+  assert.equal(recomputed.partySizeScalingProgressReversed, false);
+  const reward = blueprintFrame(id, 4.2);
+  assert.equal(reward.partySizeScalingEligibilitySettled, true);
+  assert.equal(reward.partySizeScalingRewardShareCount, 2);
+  const retry = blueprintFrame(id, 4.7);
+  assert.equal(retry.partySizeScalingRetryStable, true);
+  assert.equal(retry.partySizeScalingPartySize, 1);
+  assert.equal(retry.partySizeScalingMidAttackApplications, 0);
+  assert.deepEqual(blueprintFrame(id, 0).player, blueprintFrame(id, 6).player);
+  assert.match(
+    renderBlueprintThumbnail(id, 'test-party-size-scaling'),
+    /data-blueprint-preview="party-size-scaling"/,
   );
 });

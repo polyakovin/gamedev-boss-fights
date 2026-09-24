@@ -956,6 +956,65 @@ export function initializeBlueprint(widget) {
         frame.worldStateVariantFallbackUsed,
       );
     }
+    if (mechanicId === 'party-size-scaling') {
+      widget.dataset.blueprintPartySizeScaling = frame.partySizeScalingState;
+      widget.dataset.blueprintPartySizeScalingEncounterId = frame.partySizeScalingEncounterId;
+      widget.dataset.blueprintPartySizeScalingResolutionId = frame.partySizeScalingResolutionId;
+      widget.dataset.blueprintPartySizeScalingRosterVersion = String(
+        frame.partySizeScalingRosterVersion,
+      );
+      widget.dataset.blueprintPartySizeScalingPartySize = String(frame.partySizeScalingPartySize);
+      widget.dataset.blueprintPartySizeScalingJoinQueued = String(frame.partySizeScalingJoinQueued);
+      widget.dataset.blueprintPartySizeScalingLeaveQueued = String(
+        frame.partySizeScalingLeaveQueued,
+      );
+      widget.dataset.blueprintPartySizeScalingScaleApplied = String(
+        frame.partySizeScalingScaleApplied,
+      );
+      widget.dataset.blueprintPartySizeScalingHealthMultiplier = String(
+        frame.partySizeScalingHealthMultiplier,
+      );
+      widget.dataset.blueprintPartySizeScalingMaxHealth = String(frame.partySizeScalingMaxHealth);
+      widget.dataset.blueprintPartySizeScalingCurrentHealth = String(
+        frame.partySizeScalingCurrentHealth,
+      );
+      widget.dataset.blueprintPartySizeScalingHealthFraction = String(
+        frame.partySizeScalingHealthFraction,
+      );
+      widget.dataset.blueprintPartySizeScalingTargetSlots = String(
+        frame.partySizeScalingTargetSlots,
+      );
+      widget.dataset.blueprintPartySizeScalingHazardBudget = String(
+        frame.partySizeScalingHazardBudget,
+      );
+      widget.dataset.blueprintPartySizeScalingApplicationCount = String(
+        frame.partySizeScalingApplicationCount,
+      );
+      widget.dataset.blueprintPartySizeScalingMidAttackApplications = String(
+        frame.partySizeScalingMidAttackApplications,
+      );
+      widget.dataset.blueprintPartySizeScalingProgressReversed = String(
+        frame.partySizeScalingProgressReversed,
+      );
+      widget.dataset.blueprintPartySizeScalingAttackSignaled = String(
+        frame.partySizeScalingAttackSignaled,
+      );
+      widget.dataset.blueprintPartySizeScalingAttackActive = String(
+        frame.partySizeScalingAttackActive,
+      );
+      widget.dataset.blueprintPartySizeScalingOpeningActive = String(
+        frame.partySizeScalingOpeningActive,
+      );
+      widget.dataset.blueprintPartySizeScalingEligibilitySettled = String(
+        frame.partySizeScalingEligibilitySettled,
+      );
+      widget.dataset.blueprintPartySizeScalingRewardShareCount = String(
+        frame.partySizeScalingRewardShareCount,
+      );
+      widget.dataset.blueprintPartySizeScalingRetryStable = String(
+        frame.partySizeScalingRetryStable,
+      );
+    }
     boss.setAttribute(
       'transform',
       `translate(${frame.boss.x} ${frame.boss.y}) scale(${frame.bossScale})`,

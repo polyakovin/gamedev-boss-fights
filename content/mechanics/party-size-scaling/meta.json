@@ -1,0 +1,39 @@
+{
+  "id": "party-size-scaling",
+  "number": 109,
+  "published": true,
+  "sourceLocale": "en",
+  "contentVersion": 1,
+  "animation": "party-size-scaling",
+  "lenses": [
+    "difficulty-rhythm",
+    "progress-clarity",
+    "risk-reward",
+    "access-paths",
+    "context-and-sequence"
+  ],
+  "related": [
+    "fight-phase",
+    "persistent-progress",
+    "wave-clear-objective",
+    "player-controlled-boss"
+  ],
+  "sources": [
+    {
+      "title": "Expert Mode — Official Terraria Wiki",
+      "url": "https://terraria.wiki.gg/wiki/Expert_Mode"
+    },
+    {
+      "title": "Monster Hunter: World update Ver. 10.10",
+      "url": "https://www.monsterhunter.com/update/mhw/us/ver10_10.html"
+    },
+    {
+      "title": "Glyphid Dreadnought — Official Deep Rock Galactic Wiki",
+      "url": "https://deeprockgalactic.wiki.gg/wiki/Glyphid_Dreadnought"
+    },
+    {
+      "title": "Boss Up: Boss Battle Design",
+      "url": "https://media.gdcvault.com/gdc2018/presentations/Keren_Itay_BossUp.pdf"
+    }
+  ]
+}
