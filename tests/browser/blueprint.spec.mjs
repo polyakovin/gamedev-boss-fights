@@ -160,6 +160,7 @@ test('turret deployment is seekable, shows its fixed beam, and clears after firi
   await expect(page.locator('.game-example')).toHaveCount(3);
   await expect(widget).toHaveAttribute('data-blueprint-ready', 'true');
   await expect(widget).toHaveAttribute('data-blueprint-playing', 'false');
+  await expect(widget).toHaveAttribute('data-blueprint-full-height', 'true');
   await timeline.evaluate((element) => {
     element.value = '3000';
     element.dispatchEvent(new Event('input', { bubbles: true }));

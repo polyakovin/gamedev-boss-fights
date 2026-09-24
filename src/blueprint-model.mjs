@@ -8703,8 +8703,8 @@ function primitivesFor(spec, frame) {
     };
     const live = phase === 1 && frame.time <= 3.75;
     return [
-      line(player.x, player.y, predicted.x, predicted.y, phase === 0 ? 0.55 : 0, 'muted', 4, '8 9'),
-      circle(predicted.x, predicted.y, 29, phase === 2 ? 0 : 0.72, 'signal', 5, 0, '11 8'),
+      line(player.x, player.y, predicted.x, predicted.y, phase === 0 ? 0.55 : 0, 'muted', 3),
+      circle(predicted.x, predicted.y, 29, phase === 2 ? 0 : 0.72, 'signal', 2, 0.12),
       line(
         boss.x,
         boss.y,
@@ -8712,11 +8712,9 @@ function primitivesFor(spec, frame) {
         predicted.y,
         phase === 2 ? 0 : phase === 0 ? 0.36 : 0.55,
         'signal',
-        5,
-        '12 10',
+        3,
       ),
-      circle(shot.x, shot.y, spec.shotRadius, live ? 0.96 : 0, 'signal', 5, 0.3),
-      circle(player.x, player.y, 31, phase === 0 ? 0.42 : 0, 'accent', 4),
+      circle(shot.x, shot.y, spec.shotRadius, live ? 0.96 : 0, 'signal', 2, 0.88),
     ];
   }
   if (mode === 'source-track') {
