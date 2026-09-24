@@ -1397,10 +1397,10 @@ const SPECS = {
   },
   'external-healing-source': {
     mode: 'external-healing-source',
-    boss: [300, 375],
-    player: [300, 660],
+    boss: [300, 300],
+    player: [300, 760],
     target: [170, 555],
-    arena: [55, 310, 450, 590],
+    arena: [55, 145, 450, 735],
     firstSource: [165, 510],
     secondSource: [435, 510],
     firstSignal: [0.28, 0.72],
@@ -7580,65 +7580,73 @@ function primitivesFor(spec, frame) {
     const healthWidth = 236 * (frame.externalHealingSourceBossHealth / 100);
     const firstOpacity = sourceSignal * firstFade * resetFade;
     const secondOpacity = sourceSignal * resetFade;
-    return [
-      rect(...spec.arena, 0.52, 'muted', 0.025),
-      rect(178, 318, 244, 24, 0.74, 'muted', 0.035),
-      rect(182, 322, healthWidth, 16, 0.96, 'safe', 0.18),
-      line(182 + healthWidth, 314, 182 + healthWidth, 346, 0.82, 'safe', 4),
-      line(
-        firstSource.x,
-        firstSource.y,
-        bossCore.x,
-        bossCore.y,
-        0.5 * firstOpacity,
-        'signal',
-        4,
-        '12 9',
-      ),
-      line(
-        secondSource.x,
-        secondSource.y,
-        bossCore.x,
-        bossCore.y,
-        frame.externalHealingSourceSecondSignaled ? 0.74 * secondOpacity : 0.24 * secondOpacity,
-        'safe',
-        5,
-        '12 9',
-      ),
-      circle(
-        firstSource.x,
-        firstSource.y,
-        spec.sourceRadius + 10 * pulse(frame.time * 0.8),
-        firstOpacity,
-        'signal',
-        6,
-        0.04,
+    const healingBrazier = (source, opacity, tone) => [
+      path(
+        `M ${source.x - 27} ${source.y + 16} H ${source.x + 27} L ${source.x + 20} ${source.y + 96} H ${source.x - 20} Z M ${source.x - 38} ${source.y + 92} H ${source.x + 38} V ${source.y + 110} H ${source.x - 38} Z`,
+        opacity,
+        'muted',
+        0,
+        0.82,
       ),
       path(
-        `M ${firstSource.x} ${firstSource.y - 31} L ${firstSource.x + 27} ${firstSource.y} L ${firstSource.x} ${firstSource.y + 31} L ${firstSource.x - 27} ${firstSource.y} Z`,
-        firstOpacity,
+        `M ${source.x - 37} ${source.y + 5} Q ${source.x} ${source.y + 36} ${source.x + 37} ${source.y + 5} L ${source.x + 27} ${source.y + 31} Q ${source.x} ${source.y + 52} ${source.x - 27} ${source.y + 31} Z`,
+        opacity,
         'accent',
-        7,
-        0.04,
+        0,
+        0.76,
       ),
-      circle(
-        secondSource.x,
-        secondSource.y,
-        spec.sourceRadius + 10 * pulse(frame.time * 0.8 + 0.5),
+      path(
+        `M ${source.x - 19} ${source.y + 8} Q ${source.x - 23} ${source.y - 26} ${source.x} ${source.y - 43 - 8 * pulse(frame.time * 0.8)} Q ${source.x + 26} ${source.y - 7} ${source.x + 17} ${source.y + 8} Q ${source.x + 3} ${source.y - 13} ${source.x - 7} ${source.y + 13} Z`,
+        opacity,
+        tone,
+        0,
+        0.84,
+      ),
+    ];
+    return [
+      path(
+        'M 70 187 L 280 148 L 490 187 V 216 L 280 177 L 70 216 Z M 72 846 L 280 804 L 488 846 V 874 L 280 832 L 72 874 Z',
+        0.42,
+        'muted',
+        0,
+        0.6,
+      ),
+      path('M 145 102 H 415 V 130 H 145 Z', 0.76, 'muted', 0, 0.7),
+      rect(155, 107, healthWidth, 17, 0.98, 'safe', 0.82),
+      ...healingBrazier(firstSource, firstOpacity, 'signal'),
+      ...healingBrazier(
+        secondSource,
         secondOpacity,
         frame.externalHealingSourceSecondSignaled ? 'safe' : 'signal',
-        6,
-        0.04,
       ),
       path(
-        `M ${secondSource.x} ${secondSource.y - 31} L ${secondSource.x + 27} ${secondSource.y} L ${secondSource.x} ${secondSource.y + 31} L ${secondSource.x - 27} ${secondSource.y} Z`,
-        secondOpacity,
-        frame.externalHealingSourceSecondSignaled ? 'safe' : 'accent',
-        7,
-        0.04,
+        `M ${firstSource.x - 8} ${firstSource.y - 29} Q 186 344 ${bossCore.x - 28} ${bossCore.y + 14} L ${bossCore.x - 8} ${bossCore.y + 26} Q 211 350 ${firstSource.x + 8} ${firstSource.y - 18} Z`,
+        firstActive * 0.5,
+        'signal',
+        0,
+        0.52,
       ),
-      circle(firstPacket.x, firstPacket.y, 14, firstActive, 'signal', 6, 0.2),
-      circle(secondPacket.x, secondPacket.y, 15, secondActive, 'safe', 7, 0.22),
+      path(
+        `M ${secondSource.x + 8} ${secondSource.y - 29} Q 406 344 ${bossCore.x + 28} ${bossCore.y + 14} L ${bossCore.x + 8} ${bossCore.y + 26} Q 389 350 ${secondSource.x - 8} ${secondSource.y - 18} Z`,
+        secondActive * 0.5,
+        'safe',
+        0,
+        0.52,
+      ),
+      path(
+        `M ${firstPacket.x} ${firstPacket.y - 17} Q ${firstPacket.x + 14} ${firstPacket.y} ${firstPacket.x} ${firstPacket.y + 17} Q ${firstPacket.x - 14} ${firstPacket.y} ${firstPacket.x} ${firstPacket.y - 17} Z`,
+        firstActive,
+        'signal',
+        0,
+        0.9,
+      ),
+      path(
+        `M ${secondPacket.x} ${secondPacket.y - 17} Q ${secondPacket.x + 14} ${secondPacket.y} ${secondPacket.x} ${secondPacket.y + 17} Q ${secondPacket.x - 14} ${secondPacket.y} ${secondPacket.x} ${secondPacket.y - 17} Z`,
+        secondActive,
+        'safe',
+        0,
+        0.9,
+      ),
       ...Array.from({ length: 3 }, (_, index) => {
         const lag = Math.max(0, secondProgress - (index + 1) * 0.08);
         return circle(
@@ -7675,20 +7683,12 @@ function primitivesFor(spec, frame) {
         'accent',
         10,
       ),
-      circle(
-        bossCore.x,
-        bossCore.y,
-        60 + healPulse * 58,
+      path(
+        `M ${bossCore.x - 68} ${bossCore.y + 52} Q ${bossCore.x} ${bossCore.y - 110 - healPulse * 52} ${bossCore.x + 68} ${bossCore.y + 52} Z`,
         frame.externalHealingSourceHealing ? Math.max(0.34, healPulse) : 0,
         'safe',
-        10,
-        0.06,
-      ),
-      path(
-        `M ${bossCore.x - 22} ${bossCore.y + 2} L ${bossCore.x - 5} ${bossCore.y + 19} L ${bossCore.x + 31} ${bossCore.y - 25}`,
-        frame.externalHealingSourceDelivered ? 0.96 : 0,
-        'safe',
-        8,
+        0,
+        0.42,
       ),
     ];
   }
