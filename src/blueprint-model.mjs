@@ -8494,12 +8494,18 @@ function primitivesFor(spec, frame) {
         spec.shotRadius,
         visible ? 0.98 : 0,
         'signal',
-        6,
-        0.4,
+        2,
+        0.88,
       );
     });
     return [
-      circle(origin.x, origin.y, 21, 0.95, 'accent', 5, 0.16),
+      path(
+        `M ${origin.x - 31} ${origin.y - 36} L ${origin.x - 16} ${origin.y - 44} L ${origin.x + 16} ${origin.y - 10} L ${origin.x + 4} ${origin.y + 10} Z`,
+        0.95,
+        'accent',
+        0,
+        0.85,
+      ),
       line(
         origin.x,
         origin.y,
@@ -8507,14 +8513,11 @@ function primitivesFor(spec, frame) {
         end.y,
         phase === 0 ? 0.35 + prepare * 0.4 : phase === 1 ? 0.2 : 0,
         'accent',
-        5,
-        '13 11',
+        3,
       ),
       ...shots,
-      circle(
-        origin.x,
-        origin.y,
-        31,
+      path(
+        `M ${origin.x - 8} ${origin.y + 18} L ${origin.x + 17} ${origin.y + 50} L ${origin.x + 24} ${origin.y + 20} L ${origin.x + 9} ${origin.y + 34} Z`,
         phase === 1
           ? Math.max(
               ...spec.releases.map((release) =>
@@ -8523,7 +8526,8 @@ function primitivesFor(spec, frame) {
             ) * 0.75
           : 0,
         'signal',
-        7,
+        0,
+        0.9,
       ),
     ];
   }

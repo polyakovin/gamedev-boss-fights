@@ -347,6 +347,7 @@ test('burst fire shows three separate shots from one locked source', async ({ pa
   await expect(page.locator('.wip-badge, .draft-profile')).toHaveCount(0);
   await expect(page.locator('.game-example')).toHaveCount(3);
   await expect(widget).toHaveAttribute('data-blueprint-playing', 'false');
+  await expect(widget).toHaveAttribute('data-blueprint-full-height', 'true');
   await seek(1850);
   for (const shot of shots) await expect(shot).toHaveAttribute('opacity', '0');
   await seek(2200);
