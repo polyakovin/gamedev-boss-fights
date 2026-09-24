@@ -1600,7 +1600,7 @@ const SPECS = {
     mode: 'weak-point',
     boss: [280, 350],
     player: [440, 570],
-    target: [385, 485],
+    target: [390, 425],
   },
   telegraph: {
     mode: 'telegraph',
@@ -8534,27 +8534,51 @@ function primitivesFor(spec, frame) {
       path(arcPath(boss, 190, -1.15, mix(-1.15, 2.1, clamp(action * 1.7))), active, 'signal', 25),
       circle(boss.x, boss.y, mix(40, 380, clamp(action * 1.7 - 0.7)), active, 'accent', 16),
     ];
-  if (mode === 'weak-point')
+  if (mode === 'weak-point') {
+    const exposed = phase === 0 ? prepare : phase === 1 ? 1 : 1 - recover;
+    const crystal = { x: boss.x + 58, y: boss.y - 12 };
+    const plateX = crystal.x + mix(0, 39, exposed);
     return [
-      circle(
-        boss.x + 58,
-        boss.y - 12,
-        mix(12, 25, phase === 1 ? pulse(action) : prepare),
-        active,
+      path('M 38 94 H 522 V 878 H 38 Z M 58 258 H 502 V 878 H 58 Z', 0.37, 'muted', 0, 0.56),
+      path(
+        'M 56 117 H 129 V 352 H 56 Z M 431 117 H 504 V 352 H 431 Z M 145 120 H 415 V 154 H 145 Z M 64 525 L 280 502 L 496 525 V 563 L 280 534 L 64 563 Z M 64 741 L 280 708 L 496 741 V 783 L 280 747 L 64 783 Z',
+        0.4,
+        'accent',
+        0,
+        0.57,
+      ),
+      path(
+        'M 70 621 H 192 L 179 641 H 83 Z M 368 621 H 490 L 477 641 H 381 Z M 74 829 L 280 799 L 486 829 V 844 L 280 816 L 74 844 Z',
+        0.33,
+        'muted',
+        0,
+        0.74,
+      ),
+      path(
+        `M ${crystal.x} ${crystal.y - 25} L ${crystal.x + 20} ${crystal.y} L ${crystal.x} ${crystal.y + 25} L ${crystal.x - 20} ${crystal.y} Z`,
+        0.3 + exposed * 0.64,
         'safe',
-        6,
-        0.35,
+        0,
+        0.76,
+      ),
+      path(
+        `M ${plateX - 22} ${crystal.y - 31} L ${plateX + 20} ${crystal.y - 25} L ${plateX + 24} ${crystal.y + 13} L ${plateX - 17} ${crystal.y + 30} Z`,
+        0.82,
+        'muted',
+        0,
+        0.84,
       ),
       line(
-        player.x,
-        player.y,
-        boss.x + 58,
-        boss.y - 12,
+        player.x - 32,
+        player.y - 36,
+        crystal.x,
+        crystal.y,
         phase === 1 ? pulse(action * 1.5) : 0,
         'accent',
         8,
       ),
     ];
+  }
   if (mode === 'telegraph')
     return [
       path('M 38 94 H 522 V 878 H 38 Z M 58 300 H 502 V 878 H 58 Z', 0.38, 'muted', 0, 0.56),
@@ -12831,7 +12855,8 @@ export function blueprintFrame(id, time) {
       spec.mode === 'baited-self-hit' ||
       spec.mode === 'projectile-rally'
         ? 55
-        : spec.mode === 'directional-shield' ||
+        : spec.mode === 'weak-point' ||
+            spec.mode === 'directional-shield' ||
             spec.mode === 'damage-type-resistance' ||
             spec.mode === 'situational-immunity' ||
             spec.mode === 'part-break' ||
