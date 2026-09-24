@@ -3359,6 +3359,21 @@ function primitivesFor(spec, frame) {
     const impact = strikePulse(frame.time, spec.outgoing[1], 0.24);
     const swordHit = strikePulse(frame.time, spec.meleeStrike, 0.3);
     return [
+      path('M 37 94 H 523 V 878 H 37 Z M 57 265 H 503 V 878 H 57 Z', 0.36, 'muted', 0, 0.56),
+      path(
+        'M 55 118 H 132 V 345 H 55 Z M 428 118 H 505 V 345 H 428 Z M 147 121 H 413 V 155 H 147 Z M 63 495 L 280 477 L 497 495 V 534 L 280 510 L 63 534 Z M 63 713 L 280 685 L 497 713 V 757 L 280 724 L 63 757 Z',
+        0.41,
+        'accent',
+        0,
+        0.56,
+      ),
+      path(
+        'M 65 380 H 496 V 395 H 65 Z M 65 813 L 280 782 L 496 813 V 829 L 280 801 L 65 829 Z',
+        0.32,
+        'muted',
+        0,
+        0.7,
+      ),
       line(
         spec.swordBoltStart[0],
         spec.swordBoltStart[1],
@@ -3373,8 +3388,8 @@ function primitivesFor(spec, frame) {
         `M ${mirror.x - 20} ${mirror.y - 37} L ${mirror.x + 15} ${mirror.y - 30} L ${mirror.x + 24} ${mirror.y} L ${mirror.x + 15} ${mirror.y + 30} L ${mirror.x - 20} ${mirror.y + 37} L ${mirror.x - 28} ${mirror.y} Z`,
         0.88,
         frame.time < spec.mirrorLowered || frame.time >= spec.mirrorRaised ? 'accent' : 'muted',
-        7,
-        0.26,
+        0,
+        0.72,
       ),
       circle(mirror.x, mirror.y, 13, 0.88, 'signal', 5, 0.27),
       circle(
@@ -8817,7 +8832,7 @@ function pointClearsThreat(spec, frame, value, radius = BLUEPRINT_PLAYER_RADIUS)
       spec.beamHalfWidth + radius
     );
   if (mode === 'attack-reflection') {
-    const shot = frame.primitives[6];
+    const shot = frame.primitives[9];
     return Math.hypot(value.x - shot.x, value.y - shot.y) > spec.boltRadius + radius;
   }
   if (mode === 'counter-stance')

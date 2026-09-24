@@ -284,7 +284,7 @@ test('every damaging promoted animation derives safety from its own active geome
       const projectile = frame.primitives[3];
       point = { x: projectile.x, y: projectile.y };
     } else if (!point && id === 'attack-reflection') {
-      const projectile = frame.primitives[6];
+      const projectile = frame.primitives[9];
       point = { x: projectile.x, y: projectile.y };
     } else if (!point && id === 'crossfire') {
       const projectile = frame.primitives[4];
@@ -1220,19 +1220,19 @@ test('reflection transfers one sword pulse into a dodgeable hostile return', () 
   const open = blueprintFrame(id, spec.meleeStrike);
   assert.equal(outgoing.outgoingShot, true);
   assert.equal(outgoing.dangerActive, false);
-  assert.ok(outgoing.primitives[3].opacity > 0.9);
-  assert.equal(outgoing.primitives[6].opacity, 0);
-  assert.equal(contact.primitives[3].opacity, 0);
-  assert.ok(contact.primitives[4].opacity > 0.9);
+  assert.ok(outgoing.primitives[6].opacity > 0.9);
+  assert.equal(outgoing.primitives[9].opacity, 0);
+  assert.equal(contact.primitives[6].opacity, 0);
+  assert.ok(contact.primitives[7].opacity > 0.9);
   assert.equal(returnShot.reflectedShot, true);
-  assert.equal(returnShot.primitives[3].opacity, 0);
-  assert.ok(returnShot.primitives[6].opacity > 0.9);
-  assert.equal(blueprintPointSafe(id, 2.9, { x: returnShot.primitives[6].x, y: 405 }), false);
+  assert.equal(returnShot.primitives[6].opacity, 0);
+  assert.ok(returnShot.primitives[9].opacity > 0.9);
+  assert.equal(blueprintPointSafe(id, 2.9, { x: returnShot.primitives[9].x, y: 405 }), false);
   assert.equal(returnShot.playerSafe, true);
   assert.ok(returnShot.player.y > 405 + spec.boltRadius + 24);
   assert.equal(open.reflectionState, 'open');
   assert.equal(open.meleeStrike, true);
-  assert.ok(open.primitives[8].opacity > 0.9);
+  assert.ok(open.primitives[11].opacity > 0.9);
   assert.deepEqual(blueprintFrame(id, 0).player, blueprintFrame(id, 6).player);
   assert.match(
     renderBlueprintThumbnail(id, 'test-attack-reflection'),

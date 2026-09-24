@@ -829,19 +829,20 @@ test('attack reflection replaces the sword pulse with one hostile return and ope
   await expect(page.locator('.wip-badge, .draft-profile')).toHaveCount(0);
   await expect(page.locator('.game-example')).toHaveCount(3);
   await expect(widget).toHaveAttribute('data-blueprint-playing', 'false');
+  await expect(widget).toHaveAttribute('data-blueprint-full-height', 'true');
   await seek(2050);
   await expect(widget).toHaveAttribute('data-blueprint-reflection', 'player-shot');
-  await expect(widget.locator('[data-blueprint-primitive="3"] circle')).not.toHaveAttribute(
+  await expect(widget.locator('[data-blueprint-primitive="6"] circle')).not.toHaveAttribute(
     'opacity',
     '0',
   );
   await seek(2350);
   await expect(widget).toHaveAttribute('data-blueprint-reflection', 'returning-danger');
-  await expect(widget.locator('[data-blueprint-primitive="3"] circle')).toHaveAttribute(
+  await expect(widget.locator('[data-blueprint-primitive="6"] circle')).toHaveAttribute(
     'opacity',
     '0',
   );
-  await expect(widget.locator('[data-blueprint-primitive="6"] circle')).not.toHaveAttribute(
+  await expect(widget.locator('[data-blueprint-primitive="9"] circle')).not.toHaveAttribute(
     'opacity',
     '0',
   );
@@ -849,7 +850,7 @@ test('attack reflection replaces the sword pulse with one hostile return and ope
   await expect(widget).toHaveAttribute('data-blueprint-outcome', 'safe');
   await seek(4720);
   await expect(widget).toHaveAttribute('data-blueprint-reflection', 'open-hit');
-  await expect(widget.locator('[data-blueprint-primitive="8"] circle')).not.toHaveAttribute(
+  await expect(widget.locator('[data-blueprint-primitive="11"] circle')).not.toHaveAttribute(
     'opacity',
     '0',
   );
@@ -878,7 +879,7 @@ test('attack reflection keeps its mirror and actors in frame on dark RTL mobile'
         '[data-blueprint-player]',
         '[data-blueprint-boss-label]',
         '[data-blueprint-player-label]',
-        '[data-blueprint-primitive="1"]',
+        '[data-blueprint-primitive="4"]',
       ].map((selector) => {
         const rect = element.querySelector(selector).getBoundingClientRect();
         return (
