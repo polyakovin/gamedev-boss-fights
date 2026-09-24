@@ -4373,6 +4373,7 @@ test('interface interaction pauses danger and confirms one accessible route befo
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await page.goto('en/mechanics/interface-interaction/');
   const widget = page.locator('[data-blueprint-demo]');
+  await expect(widget).toHaveAttribute('data-blueprint-screen-height', 'true');
   const timeline = widget.locator('[data-blueprint-timeline]');
   const seek = (milliseconds) =>
     timeline.evaluate((element, value) => {

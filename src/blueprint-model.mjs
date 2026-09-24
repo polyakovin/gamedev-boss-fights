@@ -1624,8 +1624,8 @@ const SPECS = {
     mode: 'interface-interaction',
     boss: [300, 400],
     player: [370, 610],
-    target: [480, 720],
-    arena: [55, 300, 450, 590],
+    target: [430, 720],
+    arena: [55, 145, 450, 735],
     primaryPort: [145, 165],
     alternatePort: [415, 165],
     routeHub: [280, 260],
@@ -8733,110 +8733,83 @@ function primitivesFor(spec, frame) {
       spec.opening[1] - spec.opening[0],
     );
     const interfaceVisible = frame.time >= spec.pause[0] && frame.time < spec.retry[1];
-    const primaryOpacity = interfaceVisible ? mix(0.96, 0.24, switchProgress) : 0.34;
-    const alternateOpacity = interfaceVisible ? mix(0.24, 0.98, switchProgress) : 0.18;
+    const primaryOpacity = interfaceVisible ? mix(0.94, 0.22, switchProgress) : 0.34;
+    const alternateOpacity = interfaceVisible ? mix(0.22, 0.98, switchProgress) : 0.18;
     const wardOpacity = frame.interfaceInteractionConfirmed
-      ? Math.max(0, 0.94 - confirmProgress)
-      : 0.94;
+      ? Math.max(0, 0.75 - confirmProgress)
+      : 0.75;
+    const leverX = mix(spec.primaryPort[0], spec.alternatePort[0], switchProgress);
     return [
-      rect(...spec.arena, 0.52, 'muted', 0.025),
       path(
-        'M 70 742 L 176 716 L 280 744 L 386 716 L 490 742 V 775 L 386 746 L 280 776 L 176 746 L 70 775 Z M 88 839 L 280 807 L 472 839 V 857 L 280 826 L 88 857 Z',
-        0.54,
+        'M 70 187 L 280 148 L 490 187 V 216 L 280 177 L 70 216 Z M 72 846 L 280 804 L 488 846 V 874 L 280 832 L 72 874 Z',
+        0.42,
         'muted',
         0,
-        0.5,
-      ),
-      rect(72, 92, 416, 190, interfaceVisible ? 0.9 : 0.36, 'muted', 0.18),
-      circle(
-        spec.primaryPort[0],
-        spec.primaryPort[1],
-        46,
-        primaryOpacity,
-        frame.interfaceInteractionSelectedRoute === spec.primaryRoute ? 'signal' : 'accent',
-        7,
-        0.04,
+        0.6,
       ),
       path(
-        `M ${spec.primaryPort[0] - 18} ${spec.primaryPort[1] - 17} H ${spec.primaryPort[0] + 18} V ${spec.primaryPort[1] + 17} H ${spec.primaryPort[0] - 18} Z M ${spec.primaryPort[0] - 8} ${spec.primaryPort[1] - 27} V ${spec.primaryPort[1] - 17} M ${spec.primaryPort[0] + 8} ${spec.primaryPort[1] - 27} V ${spec.primaryPort[1] - 17}`,
+        'M 73 88 H 487 V 286 H 73 Z M 85 101 H 475 V 271 H 85 Z',
+        interfaceVisible ? 0.72 : 0.34,
+        'muted',
+        0,
+        0.7,
+      ),
+      path(
+        `M ${spec.primaryPort[0] - 45} ${spec.primaryPort[1] - 36} H ${spec.primaryPort[0] + 45} V ${spec.primaryPort[1] + 37} H ${spec.primaryPort[0] - 45} Z`,
         primaryOpacity,
         'accent',
-        6,
-      ),
-      circle(
-        spec.alternatePort[0],
-        spec.alternatePort[1],
-        46,
-        alternateOpacity,
-        frame.interfaceInteractionConfirmed ? 'safe' : 'accent',
-        7,
-        frame.interfaceInteractionConfirmed ? 0.08 : 0.025,
+        0,
+        0.64,
       ),
       path(
-        `M ${spec.alternatePort[0] - 18} ${spec.alternatePort[1] - 17} H ${spec.alternatePort[0] + 18} V ${spec.alternatePort[1] + 17} H ${spec.alternatePort[0] - 18} Z M ${spec.alternatePort[0] - 8} ${spec.alternatePort[1] - 27} V ${spec.alternatePort[1] - 17} M ${spec.alternatePort[0] + 8} ${spec.alternatePort[1] - 27} V ${spec.alternatePort[1] - 17}`,
+        `M ${spec.alternatePort[0] - 45} ${spec.alternatePort[1] - 36} H ${spec.alternatePort[0] + 45} V ${spec.alternatePort[1] + 37} H ${spec.alternatePort[0] - 45} Z`,
         alternateOpacity,
-        frame.interfaceInteractionConfirmed ? 'safe' : 'accent',
-        6,
-      ),
-      line(
-        spec.primaryPort[0],
-        spec.primaryPort[1] + 48,
-        mix(spec.primaryPort[0], spec.alternatePort[0], switchProgress),
-        mix(spec.primaryPort[1] + 48, spec.alternatePort[1] + 48, switchProgress),
-        interfaceVisible ? 0.92 : 0.36,
         frame.interfaceInteractionConfirmed ? 'safe' : 'signal',
-        9,
+        0,
+        0.64,
       ),
-      line(
-        mix(spec.primaryPort[0], spec.alternatePort[0], switchProgress),
-        spec.primaryPort[1] + 48,
-        spec.routeHub[0],
-        spec.routeHub[1],
+      path(
+        `M ${spec.primaryPort[0] - 13} ${spec.primaryPort[1] - 20} H ${spec.primaryPort[0] + 13} V ${spec.primaryPort[1] + 18} H ${spec.primaryPort[0] - 13} Z M ${spec.primaryPort[0] - 22} ${spec.primaryPort[1] + 21} H ${spec.primaryPort[0] + 22} V ${spec.primaryPort[1] + 29} H ${spec.primaryPort[0] - 22} Z`,
+        primaryOpacity,
+        'muted',
+        0,
+        0.82,
+      ),
+      path(
+        `M ${spec.alternatePort[0] - 13} ${spec.alternatePort[1] - 20} H ${spec.alternatePort[0] + 13} V ${spec.alternatePort[1] + 18} H ${spec.alternatePort[0] - 13} Z M ${spec.alternatePort[0] - 22} ${spec.alternatePort[1] + 21} H ${spec.alternatePort[0] + 22} V ${spec.alternatePort[1] + 29} H ${spec.alternatePort[0] - 22} Z`,
+        alternateOpacity,
+        'muted',
+        0,
+        0.82,
+      ),
+      path(
+        `M ${leverX - 8} ${spec.primaryPort[1] - 46} H ${leverX + 8} V ${spec.primaryPort[1] - 14} H ${leverX - 8} Z M ${leverX - 22} ${spec.primaryPort[1] - 55} H ${leverX + 22} V ${spec.primaryPort[1] - 43} H ${leverX - 22} Z`,
+        interfaceVisible ? 0.96 : 0.3,
+        frame.interfaceInteractionConfirmed ? 'safe' : 'signal',
+        0,
+        0.82,
+      ),
+      path(
+        `M ${spec.routeHub[0] - 35} ${spec.routeHub[1] - 22} H ${spec.routeHub[0] + 35} V ${spec.routeHub[1] + 18} H ${spec.routeHub[0] - 35} Z`,
         interfaceVisible ? 0.82 : 0.28,
-        frame.interfaceInteractionConfirmed ? 'safe' : 'accent',
-        7,
-      ),
-      circle(
-        spec.routeHub[0],
-        spec.routeHub[1],
-        25 + confirmProgress * 12,
-        interfaceVisible ? 0.72 + confirmProgress * 0.24 : 0.28,
         frame.interfaceInteractionConfirmed ? 'safe' : 'signal',
-        7,
-        0.04,
+        0,
+        0.72,
       ),
       path(
-        `M ${spec.routeHub[0] - 19} ${spec.routeHub[1]} L ${spec.routeHub[0] - 5} ${spec.routeHub[1] + 15} L ${spec.routeHub[0] + 23} ${spec.routeHub[1] - 18}`,
-        frame.interfaceInteractionConfirmed ? 0.98 : 0,
-        'safe',
-        7,
-      ),
-      circle(
-        485,
-        250,
-        19,
-        frame.interfaceInteractionFallbackAvailable && interfaceVisible ? 0.78 : 0,
-        'safe',
-        5,
-        0.04,
+        `M ${spec.routeHub[0] - 17} ${spec.routeHub[1] - 2} L ${spec.routeHub[0] - 4} ${spec.routeHub[1] + 10} L ${spec.routeHub[0] + 20} ${spec.routeHub[1] - 12} Z`,
+        frame.interfaceInteractionConfirmed ? 0.96 : 0,
+        'muted',
+        0,
+        0.86,
       ),
       path(
-        'M 474 250 H 496 M 485 239 V 261',
-        frame.interfaceInteractionFallbackAvailable && interfaceVisible ? 0.88 : 0,
-        'safe',
-        5,
+        `M ${frame.boss.x - 82} ${frame.boss.y - 64} Q ${frame.boss.x} ${frame.boss.y - 155} ${frame.boss.x + 82} ${frame.boss.y - 64} L ${frame.boss.x + 70} ${frame.boss.y + 36} Q ${frame.boss.x} ${frame.boss.y + 88} ${frame.boss.x - 70} ${frame.boss.y + 36} Z`,
+        wardOpacity,
+        'signal',
+        0,
+        0.28,
       ),
-      line(
-        spec.routeHub[0],
-        spec.routeHub[1] + 26,
-        frame.boss.x,
-        frame.boss.y - 70,
-        frame.interfaceInteractionConfirmed ? 0.2 : 0.72,
-        frame.interfaceInteractionConfirmed ? 'muted' : 'signal',
-        6,
-        '10 8',
-      ),
-      circle(frame.boss.x, frame.boss.y + 8, 92, wardOpacity, 'signal', 10, 0.025),
       path(
         `M ${frame.player.x - 8} ${frame.player.y - 54} L ${frame.boss.x + 34} ${frame.boss.y + 54}`,
         firstStrike * 0.92,
@@ -8844,10 +8817,11 @@ function primitivesFor(spec, frame) {
         12,
       ),
       path(
-        `M ${frame.boss.x + 18} ${frame.boss.y + 34} L ${frame.boss.x + 58} ${frame.boss.y + 74} M ${frame.boss.x + 58} ${frame.boss.y + 34} L ${frame.boss.x + 18} ${frame.boss.y + 74}`,
+        `M ${frame.boss.x + 18} ${frame.boss.y + 34} L ${frame.boss.x + 58} ${frame.boss.y + 74} L ${frame.boss.x + 27} ${frame.boss.y + 79} Z`,
         firstStrike,
         'signal',
-        10,
+        0,
+        0.74,
       ),
       path(
         `M ${frame.player.x - 8} ${frame.player.y - 54} L ${frame.boss.x + 10} ${frame.boss.y + 24}`,
@@ -8855,34 +8829,18 @@ function primitivesFor(spec, frame) {
         'safe',
         13,
       ),
-      circle(
-        frame.boss.x,
-        frame.boss.y + 10,
-        46 + openingStrike * 58,
-        openingStrike,
-        'safe',
-        9,
-        0.04,
-      ),
-      circle(
-        frame.boss.x,
-        frame.boss.y + 12,
-        mix(88, spec.attackRadius, signalProgress),
-        frame.interfaceInteractionCounterSignaled ? 0.72 : 0,
+      path(
+        `M ${frame.boss.x - 92} ${frame.boss.y + 100 + counterProgress * 42} L ${frame.boss.x - 48} ${frame.boss.y + 42} L ${frame.boss.x - 7} ${frame.boss.y + 94} L ${frame.boss.x + 32} ${frame.boss.y + 36} L ${frame.boss.x + 95} ${frame.boss.y + 110 + counterProgress * 42} L ${frame.boss.x} ${frame.boss.y + 137} Z`,
+        frame.interfaceInteractionCounterActive
+          ? 0.82
+          : frame.interfaceInteractionCounterSignaled
+            ? 0.12 + signalProgress * 0.2
+            : 0,
         'accent',
-        8,
-        0.015,
+        0,
+        0.64,
       ),
-      circle(
-        frame.boss.x,
-        frame.boss.y + 12,
-        spec.attackRadius + counterProgress * 38,
-        frame.interfaceInteractionCounterActive ? 0.96 - counterProgress * 0.3 : 0,
-        'signal',
-        12,
-        0.02,
-      ),
-      rect(55, 300, 450, 590, frame.interfaceInteractionPaused ? 0.34 : 0, 'muted', 0.62),
+      rect(55, 300, 450, 590, frame.interfaceInteractionPaused ? 0.24 : 0, 'muted', 0.62),
     ];
   }
   if (mode === 'real-time-progression') {
