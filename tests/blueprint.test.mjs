@@ -67,6 +67,8 @@ import {
   actionReactivePunishResolve,
   runHistoryManifestationState,
   runHistoryManifestationResolve,
+  realTimeProgressionState,
+  realTimeProgressionResolve,
   counterStanceOutcome,
   counterStanceState,
   blueprintFrame,
@@ -94,8 +96,8 @@ import {
   renderBlueprintThumbnail,
 } from '../lib/blueprint-view.mjs';
 
-test('all 99 promoted lesson animations have distinct rule modes and complete moving frames', () => {
-  assert.equal(BLUEPRINT_MECHANIC_IDS.length, 99);
+test('all 100 promoted lesson animations have distinct rule modes and complete moving frames', () => {
+  assert.equal(BLUEPRINT_MECHANIC_IDS.length, 100);
   const modes = new Set();
   for (const id of BLUEPRINT_MECHANIC_IDS) {
     for (let time = 0; time <= BLUEPRINT_DURATION; time += 0.1) {
@@ -116,7 +118,7 @@ test('all 99 promoted lesson animations have distinct rule modes and complete mo
           assert.ok(Number.isFinite(value), `${id} has an invalid ${primitive.type}`);
     }
   }
-  assert.equal(modes.size, 99);
+  assert.equal(modes.size, 100);
 });
 
 test('every blueprint exposes signal, committed action, and recovery without player teleports', () => {
@@ -164,7 +166,8 @@ test('every blueprint exposes signal, committed action, and recovery without pla
       id !== 'moveset-shapeshifting' &&
       id !== 'false-death' &&
       id !== 'action-reactive-punish' &&
-      id !== 'run-history-manifestation'
+      id !== 'run-history-manifestation' &&
+      id !== 'real-time-progression'
     )
       assert.equal(blueprintFrame(id, 3).dangerActive, true, id);
     assert.equal(blueprintFrame(id, 3).playerSafe, true, id);
@@ -262,6 +265,7 @@ test('every damaging promoted animation derives safety from its own active geome
       id !== 'false-death' &&
       id !== 'action-reactive-punish' &&
       id !== 'run-history-manifestation' &&
+      id !== 'real-time-progression' &&
       id !== 'part-break' &&
       id !== 'counter-stance' &&
       id !== 'absorption-power-up' &&
@@ -4180,5 +4184,81 @@ test('run-history manifestation freezes one entry journal through the encounter 
   assert.match(
     renderBlueprintThumbnail(id, 'test-run-history-manifestation'),
     /data-blueprint-preview="run-history-manifestation"/,
+  );
+});
+
+test('real-time progression applies one bounded reconciliation before combat resumes', () => {
+  const id = 'real-time-progression';
+  assert.deepEqual(
+    [0.4, 0.85, 1.4, 2.1, 2.6, 3.1, 3.5, 4.1, 4.9, 5.5].map(realTimeProgressionState),
+    [
+      'encounter-active',
+      'checkpoint-saved',
+      'game-closed',
+      'time-reconciling',
+      'return-summary',
+      'progression-signaled',
+      'progression-active',
+      'progression-opening',
+      'retry-stable',
+      'reset',
+    ],
+  );
+  assert.deepEqual(realTimeProgressionResolve(), {
+    checkpointId: 'kern-clock-vault-1',
+    reconciliationId: 'offline-reconcile-1',
+    authority: 'trusted-server',
+    stateVersion: 1,
+    savedAtMs: 43_200_000,
+    nowMs: 68_400_000,
+    elapsedMs: 25_200_000,
+    maxOfflineMs: 21_600_000,
+    appliedElapsedMs: 21_600_000,
+    progressionUnits: 6,
+    bossTier: 2,
+    capped: true,
+    clockRollback: false,
+    accepted: true,
+    rejectionReason: 'none',
+    eventCount: 1,
+  });
+  const duplicate = realTimeProgressionResolve({ alreadyApplied: true });
+  assert.equal(duplicate.accepted, false);
+  assert.equal(duplicate.appliedElapsedMs, 0);
+  assert.equal(duplicate.rejectionReason, 'duplicate-reconciliation');
+  assert.equal(duplicate.eventCount, 0);
+  const rollback = realTimeProgressionResolve({ savedAtMs: 20_000, nowMs: 10_000 });
+  assert.equal(rollback.clockRollback, true);
+  assert.equal(rollback.accepted, false);
+  assert.equal(rollback.elapsedMs, 0);
+  assert.equal(rollback.rejectionReason, 'clock-rollback');
+
+  const closed = blueprintFrame(id, 1.4);
+  assert.equal(closed.realTimeProgressionClosed, true);
+  assert.equal(closed.realTimeProgressionReconciled, false);
+  const reconciled = blueprintFrame(id, 2.1);
+  assert.equal(reconciled.realTimeProgressionCheckpointId, 'kern-clock-vault-1');
+  assert.equal(reconciled.realTimeProgressionReconciliationId, 'offline-reconcile-1');
+  assert.equal(reconciled.realTimeProgressionAuthority, 'trusted-server');
+  assert.equal(reconciled.realTimeProgressionElapsedHours, 7);
+  assert.equal(reconciled.realTimeProgressionAppliedHours, 6);
+  assert.equal(reconciled.realTimeProgressionCapped, true);
+  assert.equal(reconciled.realTimeProgressionEventCount, 1);
+  assert.equal(reconciled.realTimeProgressionLiveTicks, 0);
+  assert.equal(reconciled.realTimeProgressionBossTier, 2);
+  assert.equal(reconciled.realTimeProgressionOfflineHazardCount, 2);
+  const active = blueprintFrame(id, 3.5);
+  assert.equal(active.realTimeProgressionAttackActive, true);
+  assert.equal(blueprintPointSafe(id, 3.5, active.player), true);
+  assert.equal(blueprintPointSafe(id, 3.5, { x: active.boss.x + 225, y: active.boss.y }), false);
+  const retry = blueprintFrame(id, 4.95);
+  assert.equal(retry.realTimeProgressionRetryStable, true);
+  assert.equal(retry.realTimeProgressionProgressionUnchanged, true);
+  assert.equal(retry.realTimeProgressionEventCount, 1);
+  assert.equal(retry.realTimeProgressionLiveTicks, 0);
+  assert.deepEqual(blueprintFrame(id, 0).player, blueprintFrame(id, 6).player);
+  assert.match(
+    renderBlueprintThumbnail(id, 'test-real-time-progression'),
+    /data-blueprint-preview="real-time-progression"/,
   );
 });

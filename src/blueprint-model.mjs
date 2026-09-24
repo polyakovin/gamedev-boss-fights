@@ -1584,6 +1584,38 @@ const SPECS = {
     entryId: 'vault-entry-1',
     manifestId: 'run-manifest-echo-ward-relic-1',
   },
+  'real-time-progression': {
+    mode: 'real-time-progression',
+    boss: [300, 400],
+    player: [410, 720],
+    target: [470, 720],
+    arena: [55, 300, 450, 600],
+    savedClock: [110, 165],
+    currentClock: [450, 165],
+    ledger: [280, 250],
+    offlineSeals: [
+      [135, 610],
+      [430, 575],
+    ],
+    checkpointAt: 0.72,
+    closed: [1.02, 1.72],
+    reconcile: [1.72, 2.35],
+    summary: [2.35, 2.9],
+    attackSignal: [2.9, 3.3],
+    attack: [3.3, 3.78],
+    opening: [3.78, 4.55],
+    retry: [4.55, 5.35],
+    resetAt: 5.35,
+    playerMove: [2.82, 3.38],
+    attackRadius: 225,
+    checkpointId: 'kern-clock-vault-1',
+    reconciliationId: 'offline-reconcile-1',
+    authority: 'trusted-server',
+    savedHour: 12,
+    currentHour: 19,
+    elapsedHours: 7,
+    appliedHours: 6,
+  },
   'wide-swing': { mode: 'arc', boss: [280, 310], player: [410, 470], target: [470, 650] },
   lunge: { mode: 'lunge', boss: [170, 290], player: [390, 590], target: [470, 660] },
   grab: { mode: 'grab', boss: [280, 300], player: [390, 485], target: [470, 610] },
@@ -3197,6 +3229,62 @@ export function runHistoryManifestationResolve({
     bossModifierIds: Object.freeze(normalizedHistory.claimedRelic ? ['relic-ring-1'] : []),
     accepted: !alreadyCaptured,
     eventCount: alreadyCaptured ? 0 : 1,
+  });
+}
+
+export function realTimeProgressionState(time) {
+  const spec = SPECS['real-time-progression'];
+  const t = localTime(time);
+  if (t < spec.checkpointAt) return 'encounter-active';
+  if (t < spec.closed[0]) return 'checkpoint-saved';
+  if (t < spec.closed[1]) return 'game-closed';
+  if (t < spec.reconcile[1]) return 'time-reconciling';
+  if (t < spec.summary[1]) return 'return-summary';
+  if (t < spec.attack[0]) return 'progression-signaled';
+  if (t < spec.attack[1]) return 'progression-active';
+  if (t < spec.opening[1]) return 'progression-opening';
+  if (t < spec.retry[1]) return 'retry-stable';
+  return 'reset';
+}
+
+export function realTimeProgressionResolve({
+  checkpointId = 'kern-clock-vault-1',
+  reconciliationId = 'offline-reconcile-1',
+  authority = 'trusted-server',
+  stateVersion = 1,
+  savedAtMs = 43_200_000,
+  nowMs = 68_400_000,
+  maxOfflineMs = 21_600_000,
+  alreadyApplied = false,
+} = {}) {
+  const saved = Number.isFinite(Number(savedAtMs)) ? Number(savedAtMs) : 0;
+  const current = Number.isFinite(Number(nowMs)) ? Number(nowMs) : saved;
+  const cap = Math.max(0, Number(maxOfflineMs) || 0);
+  const elapsedMs = current - saved;
+  const clockRollback = elapsedMs < 0;
+  const accepted = !alreadyApplied && !clockRollback;
+  const appliedElapsedMs = accepted ? Math.min(elapsedMs, cap) : 0;
+  return Object.freeze({
+    checkpointId: String(checkpointId),
+    reconciliationId: String(reconciliationId),
+    authority: String(authority),
+    stateVersion: Math.max(1, Math.trunc(Number(stateVersion) || 1)),
+    savedAtMs: saved,
+    nowMs: current,
+    elapsedMs: Math.max(0, elapsedMs),
+    maxOfflineMs: cap,
+    appliedElapsedMs,
+    progressionUnits: Math.floor(appliedElapsedMs / 3_600_000),
+    bossTier: appliedElapsedMs >= 18_000_000 ? 2 : 1,
+    capped: accepted && elapsedMs > cap,
+    clockRollback,
+    accepted,
+    rejectionReason: alreadyApplied
+      ? 'duplicate-reconciliation'
+      : clockRollback
+        ? 'clock-rollback'
+        : 'none',
+    eventCount: accepted ? 1 : 0,
   });
 }
 
@@ -8198,6 +8286,128 @@ function primitivesFor(spec, frame) {
       ),
     ];
   }
+  if (mode === 'real-time-progression') {
+    const reconcileProgress = clamp(
+      (frame.time - spec.reconcile[0]) / (spec.reconcile[1] - spec.reconcile[0]),
+    );
+    const signalProgress = clamp(
+      (frame.time - spec.attackSignal[0]) / (spec.attackSignal[1] - spec.attackSignal[0]),
+    );
+    const attackProgress = clamp((frame.time - spec.attack[0]) / (spec.attack[1] - spec.attack[0]));
+    const retryProgress = clamp((frame.time - spec.retry[0]) / (spec.retry[1] - spec.retry[0]));
+    const clockVisible = frame.time < spec.retry[1];
+    const progressionVisible = frame.realTimeProgressionReconciled && frame.time < spec.retry[1];
+    return [
+      rect(...spec.arena, 0.52, 'muted', 0.025),
+      path(
+        'M 70 742 L 176 716 L 280 744 L 386 716 L 490 742 V 775 L 386 746 L 280 776 L 176 746 L 70 775 Z M 88 839 L 280 807 L 472 839 V 857 L 280 826 L 88 857 Z',
+        0.54,
+        'muted',
+        0,
+        0.5,
+      ),
+      circle(
+        spec.savedClock[0],
+        spec.savedClock[1],
+        48,
+        clockVisible ? 0.88 : 0,
+        'accent',
+        7,
+        0.025,
+      ),
+      path(
+        `M ${spec.savedClock[0]} ${spec.savedClock[1]} V ${spec.savedClock[1] - 30} M ${spec.savedClock[0]} ${spec.savedClock[1]} H ${spec.savedClock[0] + 24}`,
+        clockVisible ? 0.94 : 0,
+        'accent',
+        7,
+      ),
+      circle(
+        spec.currentClock[0],
+        spec.currentClock[1],
+        48,
+        frame.realTimeProgressionReconciled ? 0.94 : 0.3,
+        'signal',
+        7,
+        0.025,
+      ),
+      path(
+        `M ${spec.currentClock[0]} ${spec.currentClock[1]} L ${spec.currentClock[0] - 24} ${spec.currentClock[1] + 18} M ${spec.currentClock[0]} ${spec.currentClock[1]} V ${spec.currentClock[1] - 28}`,
+        frame.realTimeProgressionReconciled ? 0.96 : 0.3,
+        'signal',
+        7,
+      ),
+      line(
+        spec.savedClock[0] + 58,
+        spec.savedClock[1],
+        spec.currentClock[0] - 58,
+        spec.currentClock[1],
+        clockVisible ? 0.55 : 0,
+        'muted',
+        6,
+        '12 10',
+      ),
+      ...Array.from({ length: spec.appliedHours }, (_, index) =>
+        circle(
+          205 + index * 30,
+          spec.savedClock[1],
+          7,
+          frame.realTimeProgressionReconciled ? 0.42 + reconcileProgress * 0.5 : 0.16,
+          index === spec.appliedHours - 1 ? 'signal' : 'safe',
+          3,
+          0.1,
+        ),
+      ),
+      circle(
+        spec.ledger[0],
+        spec.ledger[1],
+        28 + reconcileProgress * 34,
+        frame.realTimeProgressionReconciled ? 0.88 - retryProgress * 0.25 : 0.18,
+        'safe',
+        7,
+        0.03,
+      ),
+      path(
+        `M ${spec.ledger[0] - 21} ${spec.ledger[1]} L ${spec.ledger[0] - 5} ${spec.ledger[1] + 17} L ${spec.ledger[0] + 25} ${spec.ledger[1] - 19}`,
+        frame.realTimeProgressionReconciled ? 0.96 : 0,
+        'safe',
+        7,
+      ),
+      rect(60, 318, 440, 545, frame.realTimeProgressionClosed ? 0.88 : 0, 'muted', 0.74),
+      path(
+        'M 92 360 H 468 M 92 445 H 468 M 92 530 H 468 M 92 615 H 468 M 92 700 H 468',
+        frame.realTimeProgressionClosed ? 0.72 : 0,
+        'accent',
+        8,
+      ),
+      ...spec.offlineSeals.flatMap(([x, y], index) => [
+        circle(x, y, 50, progressionVisible ? 0.82 : 0, index ? 'signal' : 'accent', 7, 0.045),
+        path(
+          `M ${x - 25} ${y} H ${x + 25} M ${x} ${y - 25} V ${y + 25}`,
+          progressionVisible ? 0.88 : 0,
+          index ? 'signal' : 'accent',
+          6,
+        ),
+      ]),
+      circle(
+        frame.boss.x,
+        frame.boss.y + 15,
+        74 + signalProgress * 38,
+        progressionVisible ? 0.46 + signalProgress * 0.34 : 0,
+        'signal',
+        8,
+        0.02,
+      ),
+      circle(
+        frame.boss.x,
+        frame.boss.y + 15,
+        spec.attackRadius + attackProgress * 42,
+        frame.realTimeProgressionAttackActive ? 0.96 - attackProgress * 0.28 : 0,
+        'accent',
+        12,
+        0.02,
+      ),
+    ];
+  }
   if (mode === 'encounter-specific-tool') {
     const pedestal = point(spec.pedestal);
     const spearBase = { x: frame.player.x + 20, y: frame.player.y - 10 };
@@ -9776,6 +9986,12 @@ function pointClearsThreat(spec, frame, value, radius = BLUEPRINT_PLAYER_RADIUS)
       );
     return true;
   }
+  if (mode === 'real-time-progression')
+    return (
+      !frame.realTimeProgressionAttackActive ||
+      Math.abs(Math.hypot(value.x - frame.boss.x, value.y - frame.boss.y) - spec.attackRadius) >
+        12 + radius
+    );
   if (mode === 'projectile-rally')
     return (
       !frame.dangerActive ||
@@ -10165,6 +10381,7 @@ export function blueprintFrame(id, time) {
   else if (spec.mode === 'false-death') responseProgress = 0;
   else if (spec.mode === 'action-reactive-punish') responseProgress = 0;
   else if (spec.mode === 'run-history-manifestation') responseProgress = 0;
+  else if (spec.mode === 'real-time-progression') responseProgress = 0;
   else if (spec.mode === 'knockback')
     responseProgress = phase === 0 ? 0 : phase === 1 ? smooth(action) : 1;
   else if (spec.mode === 'target-lock')
@@ -11665,6 +11882,20 @@ export function blueprintFrame(id, time) {
     };
     stride = Math.max(pulse(move), pulse(reset));
   }
+  if (spec.mode === 'real-time-progression') {
+    const move = smooth((t - spec.playerMove[0]) / (spec.playerMove[1] - spec.playerMove[0]));
+    const reset = smooth((t - spec.resetAt) / (BLUEPRINT_DURATION - spec.resetAt));
+    const safe = point(spec.target);
+    const movedPlayer = {
+      x: mix(startPlayer.x, safe.x, move),
+      y: mix(startPlayer.y, safe.y, move),
+    };
+    player = {
+      x: mix(movedPlayer.x, startPlayer.x, reset),
+      y: mix(movedPlayer.y, startPlayer.y, reset),
+    };
+    stride = Math.max(pulse(move), pulse(reset));
+  }
   const bossVisible =
     spec.mode === 'secondary-cues-invisibility'
       ? t < spec.vanishAt
@@ -11943,7 +12174,8 @@ export function blueprintFrame(id, time) {
             spec.mode === 'ally-theft' ||
             spec.mode === 'false-death' ||
             spec.mode === 'action-reactive-punish' ||
-            spec.mode === 'run-history-manifestation'
+            spec.mode === 'run-history-manifestation' ||
+            spec.mode === 'real-time-progression'
           ? (Math.atan2(boss.y - player.y, boss.x - player.x) * 180) / Math.PI
           : spec.mode === 'active-phase'
             ? (Math.atan2(boss.y - player.y, boss.x - player.x) * 180) / Math.PI
@@ -13492,6 +13724,32 @@ export function blueprintFrame(id, time) {
       strikePulse(t, (spec.relicActive[0] + spec.relicActive[1]) / 2, 0.58),
     );
   }
+  if (spec.mode === 'real-time-progression') {
+    frame.realTimeProgressionState = realTimeProgressionState(t);
+    frame.realTimeProgressionCheckpointId = spec.checkpointId;
+    frame.realTimeProgressionReconciliationId = spec.reconciliationId;
+    frame.realTimeProgressionAuthority = spec.authority;
+    frame.realTimeProgressionSavedHour = spec.savedHour;
+    frame.realTimeProgressionCurrentHour = spec.currentHour;
+    frame.realTimeProgressionElapsedHours = spec.elapsedHours;
+    frame.realTimeProgressionAppliedHours = spec.appliedHours;
+    frame.realTimeProgressionCapped = true;
+    frame.realTimeProgressionClosed = t >= spec.closed[0] && t < spec.closed[1];
+    frame.realTimeProgressionReconciled = t >= spec.reconcile[0] && t < spec.resetAt;
+    frame.realTimeProgressionEventCount = frame.realTimeProgressionReconciled ? 1 : 0;
+    frame.realTimeProgressionLiveTicks = 0;
+    frame.realTimeProgressionClockRollback = false;
+    frame.realTimeProgressionBossTier = frame.realTimeProgressionReconciled ? 2 : 1;
+    frame.realTimeProgressionOfflineHazardCount = frame.realTimeProgressionReconciled ? 2 : 0;
+    frame.realTimeProgressionAttackActive = t >= spec.attack[0] && t < spec.attack[1];
+    frame.realTimeProgressionRetryStable = t >= spec.retry[0] && t < spec.retry[1];
+    frame.realTimeProgressionProgressionUnchanged = frame.realTimeProgressionRetryStable;
+    frame.dangerActive = frame.realTimeProgressionAttackActive;
+    frame.playerMotion.dodge = strikePulse(t, spec.playerMove[0] + 0.3, 0.5);
+    frame.playerMotion.attack = 0;
+    frame.playerMotion.impact = 0;
+    frame.bossMotion.attack = strikePulse(t, (spec.attack[0] + spec.attack[1]) / 2, 0.58);
+  }
   if (spec.mode === 'ability-lock') {
     frame.abilityLockState = abilityLockState(t);
     frame.abilityLockFirstAvoided = t >= spec.firstResolveAt && t < spec.secondTelegraph[0];
@@ -13835,7 +14093,8 @@ export function blueprintFrame(id, time) {
             spec.mode === 'ally-theft' ||
             spec.mode === 'false-death' ||
             spec.mode === 'action-reactive-punish' ||
-            spec.mode === 'run-history-manifestation'
+            spec.mode === 'run-history-manifestation' ||
+            spec.mode === 'real-time-progression'
           ? 92
           : -62),
   };

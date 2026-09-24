@@ -409,9 +409,9 @@ test('volley releases three parallel bolts on one beat and clears its outside ro
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
 });
 
-test('catalog and builder reuse the 99 promoted rule-specific previews', async ({ page }) => {
+test('catalog and builder reuse the 100 promoted rule-specific previews', async ({ page }) => {
   await page.goto('en/');
-  await expect(page.locator('[data-blueprint-preview]')).toHaveCount(99);
+  await expect(page.locator('[data-blueprint-preview]')).toHaveCount(100);
   const catalogLayouts = await page.locator('[data-blueprint-preview]').evaluateAll((previews) =>
     previews.map((preview) => {
       const boss = preview.querySelector('[data-character-art-preview="kern"]');
@@ -435,7 +435,7 @@ test('catalog and builder reuse the 99 promoted rule-specific previews', async (
   expect(new Set(catalogLayouts.map(({ layout }) => layout)).size).toBeGreaterThanOrEqual(18);
 
   await page.goto('en/builder/');
-  await expect(page.locator('[data-blueprint-preview]')).toHaveCount(99);
+  await expect(page.locator('[data-blueprint-preview]')).toHaveCount(100);
   const builderLayouts = await page.locator('[data-blueprint-preview]').evaluateAll((previews) =>
     previews.map((preview) => {
       const boss = preview.querySelector('[data-character-art-preview="kern"]');
@@ -4232,6 +4232,74 @@ test('run-history manifestation keeps one captured journal stable through retry'
     'data-blueprint-run-history-manifestation-live-resnapshots',
     '0',
   );
+  await page.setViewportSize({ width: 375, height: 812 });
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+});
+
+test('real-time progression reconciles a bounded interval once before resuming combat', async ({
+  page,
+}) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.goto('en/mechanics/real-time-progression/');
+  const widget = page.locator('[data-blueprint-demo]');
+  const timeline = widget.locator('[data-blueprint-timeline]');
+  const seek = (milliseconds) =>
+    timeline.evaluate((element, value) => {
+      element.value = String(value);
+      element.dispatchEvent(new Event('input', { bubbles: true }));
+    }, milliseconds);
+
+  await expect(page.locator('.lesson-title-line h1')).toHaveText('Real-time progression');
+  await expect(page.locator('.wip-badge, .draft-profile')).toHaveCount(0);
+  await expect(page.locator('.game-example')).toHaveCount(3);
+  await expect(page.locator('.lens-chip')).toHaveCount(5);
+  await seek(1400);
+  await expect(widget).toHaveAttribute('data-blueprint-real-time-progression', 'game-closed');
+  await expect(widget).toHaveAttribute('data-blueprint-real-time-progression-closed', 'true');
+  await expect(widget).toHaveAttribute('data-blueprint-real-time-progression-reconciled', 'false');
+  await seek(2100);
+  await expect(widget).toHaveAttribute('data-blueprint-real-time-progression', 'time-reconciling');
+  await expect(widget).toHaveAttribute(
+    'data-blueprint-real-time-progression-checkpoint-id',
+    'kern-clock-vault-1',
+  );
+  await expect(widget).toHaveAttribute(
+    'data-blueprint-real-time-progression-reconciliation-id',
+    'offline-reconcile-1',
+  );
+  await expect(widget).toHaveAttribute(
+    'data-blueprint-real-time-progression-authority',
+    'trusted-server',
+  );
+  await expect(widget).toHaveAttribute('data-blueprint-real-time-progression-elapsed-hours', '7');
+  await expect(widget).toHaveAttribute('data-blueprint-real-time-progression-applied-hours', '6');
+  await expect(widget).toHaveAttribute('data-blueprint-real-time-progression-capped', 'true');
+  await expect(widget).toHaveAttribute('data-blueprint-real-time-progression-event-count', '1');
+  await expect(widget).toHaveAttribute('data-blueprint-real-time-progression-live-ticks', '0');
+  await expect(widget).toHaveAttribute('data-blueprint-real-time-progression-boss-tier', '2');
+  await expect(widget).toHaveAttribute(
+    'data-blueprint-real-time-progression-offline-hazard-count',
+    '2',
+  );
+  await seek(3500);
+  await expect(widget).toHaveAttribute(
+    'data-blueprint-real-time-progression',
+    'progression-active',
+  );
+  await expect(widget).toHaveAttribute(
+    'data-blueprint-real-time-progression-attack-active',
+    'true',
+  );
+  await expect(widget).toHaveAttribute('data-blueprint-outcome', 'safe');
+  await seek(4950);
+  await expect(widget).toHaveAttribute('data-blueprint-real-time-progression', 'retry-stable');
+  await expect(widget).toHaveAttribute('data-blueprint-real-time-progression-retry-stable', 'true');
+  await expect(widget).toHaveAttribute(
+    'data-blueprint-real-time-progression-progression-unchanged',
+    'true',
+  );
+  await expect(widget).toHaveAttribute('data-blueprint-real-time-progression-event-count', '1');
+  await expect(widget).toHaveAttribute('data-blueprint-real-time-progression-live-ticks', '0');
   await page.setViewportSize({ width: 375, height: 812 });
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
 });
