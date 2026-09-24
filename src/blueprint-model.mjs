@@ -8726,11 +8726,17 @@ function primitivesFor(spec, frame) {
     const cue = phase === 0 ? 0.44 + prepare * 0.32 : frame.time < 2.4 ? 0.84 : 0;
     const beam = frame.dangerActive ? 0.96 : 0;
     return [
-      circle(source.x, source.y, 21, 0.95, 'accent', 5, 0.16),
-      line(source.x, source.y, tip.x, tip.y, 0.98, 'accent', 11),
-      line(source.x, source.y, end.x, end.y, cue, 'accent', 5, '12 11'),
+      circle(source.x, source.y, 21, 0.95, 'accent', 2, 0.82),
+      line(source.x, source.y, tip.x, tip.y, 0.98, 'muted', 15),
+      line(source.x, source.y, end.x, end.y, cue, 'accent', 3),
       line(source.x, source.y, end.x, end.y, beam, 'signal', spec.beamHalfWidth * 2),
-      circle(source.x, source.y, 28, beam * 0.8, 'signal', 7),
+      path(
+        `M ${tip.x - 16} ${tip.y - 15} L ${tip.x + 13} ${tip.y} L ${tip.x - 16} ${tip.y + 15} Z`,
+        beam * 0.8,
+        'signal',
+        0,
+        0.82,
+      ),
     ];
   }
   if (mode === 'burst-fire') {

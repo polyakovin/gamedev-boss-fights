@@ -307,6 +307,7 @@ test('source tracking shows a harmless moving guide and a fixed damaging beam', 
   await expect(page.locator('.game-example')).toHaveCount(3);
   await expect(widget).toHaveAttribute('data-blueprint-ready', 'true');
   await expect(widget).toHaveAttribute('data-blueprint-playing', 'false');
+  await expect(widget).toHaveAttribute('data-blueprint-full-height', 'true');
   const seek = (milliseconds) =>
     timeline.evaluate((element, value) => {
       element.value = String(value);
