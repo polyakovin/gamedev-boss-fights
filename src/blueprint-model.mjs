@@ -8501,30 +8501,15 @@ function primitivesFor(spec, frame) {
     const guideOpacity =
       phase === 0 ? 0.35 + prepare * 0.5 : phase === 1 ? 0.24 : 0.24 * (1 - recover);
     return [
-      line(beamStart.x, beamStart.y, beamEnd.x, beamEnd.y, guideOpacity, 'accent', 8, '13 11'),
+      line(beamStart.x, beamStart.y, beamEnd.x, beamEnd.y, guideOpacity, 'accent', 4),
       line(beamStart.x, beamStart.y, beamEnd.x, beamEnd.y, beamOpacity, 'signal', 34),
-      circle(
-        beamStart.x,
-        beamStart.y,
-        mix(28, 46, phase === 0 ? prepare : activePulse >= 0 ? 1 : 0.35),
-        phase === 2 ? 1 - recover : 0.64 + beamOpacity * 0.3,
+      path(
+        'M 128 322 L 150 309 L 172 322 L 180 340 L 172 358 L 150 371 L 128 358 L 120 340 Z',
+        phase === 2 ? 1 - recover : 0.68 + beamOpacity * 0.3,
         activePulse >= 0 ? 'signal' : 'accent',
-        7,
-        activePulse >= 0 ? 0.34 : 0.08,
+        0,
+        activePulse >= 0 ? 0.82 : 0.4,
       ),
-      ...PULSE_BEAM_WINDOWS.map(([start, end], index) => {
-        const elapsed = phase === 1 && action > end;
-        const current = index === activePulse;
-        return circle(
-          214 + index * 66,
-          230,
-          current ? 18 : 13,
-          phase === 2 ? 0.28 * (1 - recover) : 0.46 + (current ? 0.5 : elapsed ? 0.22 : 0),
-          current ? 'signal' : elapsed ? 'safe' : 'accent',
-          5,
-          current ? 0.42 : elapsed ? 0.18 : 0.06,
-        );
-      }),
     ];
   }
   if (mode === 'chain-explosions') {
