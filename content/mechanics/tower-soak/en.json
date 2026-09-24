@@ -1,0 +1,134 @@
+{
+  "title": "Tower soak",
+  "subtitle": "Fill a fixed rune with the required number of bodies",
+  "variant": "World-fixed circle · exact occupancy · one success · one raidwide failure",
+  "summary": "A fixed point checks how many living players occupy it when the timer ends; a missed count changes the whole group's outcome.",
+  "overview": "A tower is a fixed zone with a required headcount. At resolution, count distinct living players whose full bodies fit inside its radius. A correct soak may hurt occupants; an underfilled tower may punish the group. The demo compares one required player with two. Other games use sustained occupancy or orb collection instead of exact counts.",
+  "learning": "Define a stable tower ID and center, required headcount, full-body boundary, live roster, snapshot instant, occupant and raidwide damage, duplicate prevention, travel budget, failure readability, and retry behavior.",
+  "category": "Cooperative coordination",
+  "readTime": "10 min",
+  "demo": {
+    "title": "Fill Kern's first rune, then see one of two fail",
+    "timeline": "Tower soak timeline",
+    "step": "One required body succeeds; one body in a two-person tower fails",
+    "phaseNames": ["See a fixed point", "Resolve one of one", "Compare one of two"],
+    "phaseDescriptions": [
+      "At 0.70 seconds Kern reveals a fixed rune at x405, y710. Its outer radius is 66 units; Tavi's 24-unit body must fit within 42 units of the center. The ally stays outside. The warning lasts to 2.20 seconds and the readout reaches 1/1.",
+      "At 2.20 seconds the first rune snapshots one living occupant and succeeds. Tavi takes the tower's 15 occupant damage, changing health from 100 to 85; the ally remains at 100. An encounter-and-hit ledger prevents a second application.",
+      "At 3.08 seconds a new fixed rune appears at x155, y710 with two required bodies. Tavi enters but the ally remains outside: the count is 1/2. At 4.30 seconds the failed tower deals 90 to both, leaving 0/10 from their previous 85/100. At 5.30 seconds a deliberate retry restores both health bars and positions."
+    ],
+    "boss": "Boss",
+    "player": "Player",
+    "danger": "A glowing circle is not automatically a safe zone: the count and the resolution instant determine success, and a correct soak can still hurt its occupant",
+    "locked": "Tower and hit IDs, fixed world center, required count, living roster, full-body occupancy, simultaneous snapshot, damage recipients, and retry reset are encounter rules",
+    "safe": "Show the needed count before contact; leave enough travel time for the farthest assigned player and make the final count and health consequence legible",
+    "reducedMotion": "Reduced motion disables autoplay. Scrub through 0.70, 1.30, 2.10, 2.30, 3.10, 3.75, 4.20, 4.45, and 5.45 seconds.",
+    "diagramDescription": "Kern marks a rune fixed on the right. Tavi stands fully inside, the displayed count becomes 1/1, and the pulse costs Tavi 15 health. Kern then marks a fixed left rune needing two; Tavi alone gives 1/2. The missed check damages both players for 90, then a retry restores them."
+  },
+  "steps": [
+    {
+      "title": "What counts as occupying the tower?",
+      "body": "Store the tower center in world space, not on a target. At contact, snapshot unique living player IDs whose complete collision bodies fit inside the effective radius. Here the painted radius is 66 and the body radius is 24, so a center more than 42 units away does not count. Decide explicitly whether a production tower allows partial overlap, exactly N, or at least N; never let the graphic decide by accident."
+    },
+    {
+      "title": "What happens at resolution?",
+      "body": "Compare the snapshot count with the signaled requirement once per tower hit ID. This demo uses exact equality: 1/1 succeeds and deals 15 only to its occupant; 1/2 fails and deals 90 to every living party member. Keep occupied IDs, recipients, and health deltas in one ledger so replay or network callbacks cannot apply damage twice."
+    },
+    {
+      "title": "Can the assigned group arrive?",
+      "body": "Budget warning time against the farthest assigned player's path, obstacles, movement speed, and latency. Signal two required players before anyone commits to a solo soak. Test both reachable and unreachable assignments, a player on the exact boundary, a downed teammate, and a retry that restores roster and health without reusing an old hit ID."
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "Counting a body that only touches the border",
+      "body": "If the rule requires full occupancy, center-in-circle and full-body-in-circle produce different results. Use the same collision body for the count, indicator, and hit logic, and specify which boundary convention the encounter uses."
+    },
+    {
+      "title": "Treating a correct soak as invulnerability",
+      "body": "A correct count may prevent a raidwide failure while still costing the occupants health. Show both outcomes separately; otherwise players cannot distinguish a deliberate soak cost from an underfilled-tower penalty."
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "Scale counts with the roster, not by accident",
+      "body": "A two-person requirement in a two-person party gives no spare body. Recompute assignments for downed members, party size, and simultaneous towers; make an impossible roster state explicit instead of silently failing it."
+    },
+    {
+      "title": "Separate exact count from hold duration",
+      "body": "A headcount snapshot, a sustained occupancy test, and an orb that one player collects all use a fixed location but create different decisions. Label the chosen rule, contact time, and whether extra players help or invalidate it."
+    },
+    {
+      "title": "Instrument each check",
+      "body": "Log tower ID, hit ID, center, radius, body radius, required count, living roster, occupied IDs, positions at contact, success, each damage recipient, and retry reset. Reproduce exact-edge, excess-player, missing-player, duplicate-callback, and narrow-screen cases."
+    }
+  ],
+  "story": {
+    "title": "Two runes, two different promises",
+    "body": "Kern lights a single-person rune. Tavi steps inside and holds it, absorbing the small pulse. The next rune asks for two bodies, but Tavi arrives alone. Its unfilled mark flashes across the arena and the whole group pays for the missed check."
+  },
+  "adaptation": {
+    "title": "Make the count readable without color",
+    "body": "Keep the tower fixed while characters move. Use one or two pips and a numeric 1/1 or 1/2 readout, retain results when paused, show both health bars, and identify raidwide failure by shape as well as color. At reduced motion, the same timeline checkpoints must reveal the complete rule."
+  },
+  "distinction": {
+    "title": "Fixed occupancy, not a moving stack",
+    "body": "A shared-damage stack follows a marked player and divides one hit among nearby bodies. A tower checks who occupies a fixed world point and can punish everyone when its count is missed. A personal spread instead asks marked players to separate."
+  },
+  "lensNotes": [
+    {
+      "id": "counterplay",
+      "body": "Assign the required number of living players to the fixed point before its check; leaving it underfilled changes the group outcome."
+    },
+    {
+      "id": "threat-geometry",
+      "body": "A world-fixed center, effective body-clearance radius, and exact snapshot determine who counts."
+    },
+    {
+      "id": "risk-reward",
+      "body": "Occupants may accept a smaller personal hit to avoid a much larger raidwide failure."
+    },
+    {
+      "id": "difficulty-rhythm",
+      "body": "The warning-to-contact interval must cover assignment and movement, especially when the next tower needs more bodies."
+    },
+    {
+      "id": "progress-clarity",
+      "body": "A visible required/occupied count and separate health outcomes explain why one tower succeeded and the next failed."
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "MapleStory M",
+      "boss": "Will",
+      "screenshot": "https://i.ytimg.com/vi/mPMtiTv3QoU/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=mPMtiTv3QoU",
+      "video": "https://www.youtube.com/watch?v=mPMtiTv3QoU&t=480s",
+      "videoDurationSeconds": 2317,
+      "body": "Will's first-phase moonlight barrier forms at a world location after the pupil is redirected. Occupying that barrier in the relevant dimension advances the screen-break test. It is a sustained safe-area variant, not this demo's exact one- or two-person headcount."
+    },
+    {
+      "dimension": "3D",
+      "game": "Final Fantasy XIV",
+      "boss": "Idol of Darkness",
+      "screenshot": "https://ffxiv.consolegameswiki.com/mediawiki/images/thumb/7/76/E7_boss.png/1067px-E7_boss.png",
+      "screenshotSource": "https://ffxiv.consolegameswiki.com/wiki/Eden%27s_Verse:_Iconoclasm_(Savage)",
+      "video": "https://www.youtube.com/watch?v=kG0_7Go40gM&t=600s",
+      "videoDurationSeconds": 1056,
+      "body": "Words of Entrapment places four corner towers with light or dark aspects. Assigned players must occupy towers of the opposite aspect before they resolve. This is an occupancy-and-assignment variant with one suitable player per tower, not a two-player tower."
+    },
+    {
+      "dimension": "3D",
+      "game": "World of Warcraft",
+      "boss": "The Tarragrue",
+      "screenshot": "https://wow.zamimg.com/uploads/blog/images/24511-patch-9-1-hotfixes-for-july-12th-class-tuning-sanctum-of-domination-bugfix.jpg",
+      "screenshotSource": "https://www.wowhead.com/tw/news/patch-9-1-hotfixes-for-july-12th-class-tuning-sanctum-of-domination-bugfix-323363",
+      "video": "https://www.youtube.com/watch?v=-66UN_KLZ0U&t=135s",
+      "videoDurationSeconds": 225,
+      "body": "Remnants of Forgotten Torments create fixed orbs that designated players collect so the group avoids the unclaimed effect. Their number and debuffs change who should take each orb. This is a collection-and-transfer variant, not an exact-count tower; the video shows the live raid context."
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

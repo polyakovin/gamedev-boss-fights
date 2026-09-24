@@ -1,0 +1,38 @@
+{
+  "id": "tower-soak",
+  "number": 116,
+  "published": true,
+  "sourceLocale": "en",
+  "contentVersion": 1,
+  "animation": "tower-soak",
+  "lenses": [
+    "counterplay",
+    "threat-geometry",
+    "risk-reward",
+    "difficulty-rhythm",
+    "progress-clarity"
+  ],
+  "related": ["stack-damage", "personal-spread", "party-size-scaling", "coordinated-duo-attack"],
+  "sources": [
+    {
+      "title": "Tower — Final Fantasy XIV Community Wiki",
+      "url": "https://ffxiv.consolegameswiki.com/wiki/Tower"
+    },
+    {
+      "title": "Eden's Verse: Iconoclasm (Savage) — Final Fantasy XIV Community Wiki",
+      "url": "https://ffxiv.consolegameswiki.com/wiki/Eden%27s_Verse:_Iconoclasm_(Savage)"
+    },
+    {
+      "title": "Will monster patterns — MapleStory Wiki",
+      "url": "https://maplestorywiki.net/w/Will/Monster"
+    },
+    {
+      "title": "MapleStory M Will update — Nexon",
+      "url": "https://forum.nexon.com/MapleStoryMGlobal/board_view?board=2690&thread=3273866"
+    },
+    {
+      "title": "The Tarragrue Mythic guide — Method",
+      "url": "https://www.method.gg/guides/sanctum-of-domination/the-tarragrue"
+    }
+  ]
+}

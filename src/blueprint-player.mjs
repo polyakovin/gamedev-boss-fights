@@ -58,6 +58,8 @@ export function initializeBlueprint(widget) {
   const stackHealthLabels = [...widget.querySelectorAll('[data-blueprint-stack-health]')];
   const spreadReadout = find('[data-blueprint-spread-readout]');
   const spreadHealthLabels = [...widget.querySelectorAll('[data-blueprint-spread-health]')];
+  const towerReadout = find('[data-blueprint-tower-readout]');
+  const towerHealthLabels = [...widget.querySelectorAll('[data-blueprint-tower-health]')];
   const partnerLabel = find('[data-blueprint-partner-label]');
   const playerLabel = find('[data-blueprint-player-label]');
   const primitives = [...widget.querySelectorAll('[data-blueprint-primitive]')];
@@ -1197,6 +1199,25 @@ export function initializeBlueprint(widget) {
           frame.personalSpreadHealth[Number(label.dataset.blueprintSpreadHealth)],
         );
     }
+    if (mechanicId === 'tower-soak') {
+      widget.dataset.blueprintTowerSoak = frame.towerSoakState;
+      widget.dataset.blueprintTowerSoakHitId = frame.towerSoakHitId;
+      widget.dataset.blueprintTowerSoakOccupancy = `${frame.towerSoakOccupiedCount}/${frame.towerSoakRequiredCount}`;
+      widget.dataset.blueprintTowerSoakSucceeded = String(frame.towerSoakSucceeded);
+      widget.dataset.blueprintTowerSoakHealth = frame.towerSoakHealth.join('/');
+      widget.dataset.blueprintTowerSoakApplicationCount = String(frame.towerSoakApplicationCount);
+      widget.dataset.blueprintTowerSoakFailure = String(frame.towerSoakFailure);
+      widget.dataset.blueprintTowerSoakRetry = String(frame.towerSoakRetry);
+      if (towerReadout)
+        towerReadout.textContent =
+          frame.time >= 0.7 && frame.time < 5.3
+            ? `${frame.towerSoakOccupiedCount} / ${frame.towerSoakRequiredCount}`
+            : '';
+      for (const label of towerHealthLabels)
+        label.textContent = String(
+          frame.towerSoakHealth[Number(label.dataset.blueprintTowerHealth)],
+        );
+    }
     boss.setAttribute(
       'transform',
       `translate(${frame.boss.x} ${frame.boss.y})${frame.bossRotation ? ` rotate(${frame.bossRotation})` : ''} scale(${frame.bossScale})`,
@@ -1215,13 +1236,14 @@ export function initializeBlueprint(widget) {
     }
     player.setAttribute(
       'transform',
-      `translate(${frame.player.x} ${frame.player.y})${frame.stackDamageFallAngle || frame.personalSpreadFallAngle ? ` rotate(${frame.stackDamageFallAngle || frame.personalSpreadFallAngle})` : ''}`,
+      `translate(${frame.player.x} ${frame.player.y})${frame.stackDamageFallAngle || frame.personalSpreadFallAngle || frame.towerSoakFallAngle ? ` rotate(${frame.stackDamageFallAngle || frame.personalSpreadFallAngle || frame.towerSoakFallAngle})` : ''}`,
     );
     for (const [index, ally] of allies.entries()) {
-      const position = (frame.stackDamageAllies ?? frame.personalSpreadPositions?.slice(1))[index];
+      const position = (frame.stackDamageAllies ??
+        frame.personalSpreadPositions?.slice(1) ?? [frame.towerSoakAlly])[index];
       ally.setAttribute('transform', `translate(${position.x} ${position.y}) scale(.78)`);
       animateAllies[index](
-        frame.stackDamageAllyMotion ?? frame.personalSpreadAllyMotion,
+        frame.stackDamageAllyMotion ?? frame.personalSpreadAllyMotion ?? frame.towerSoakAllyMotion,
         frame.playerFacing,
       );
     }

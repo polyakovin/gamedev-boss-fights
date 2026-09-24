@@ -87,6 +87,8 @@ import {
   stackDamageResolve,
   personalSpreadState,
   personalSpreadResolve,
+  towerSoakState,
+  towerSoakResolve,
   counterStanceOutcome,
   counterStanceState,
   blueprintFrame,
@@ -114,8 +116,8 @@ import {
   renderBlueprintThumbnail,
 } from '../lib/blueprint-view.mjs';
 
-test('all 109 promoted lesson animations have distinct rule modes and complete moving frames', () => {
-  assert.equal(BLUEPRINT_MECHANIC_IDS.length, 109);
+test('all 110 promoted lesson animations have distinct rule modes and complete moving frames', () => {
+  assert.equal(BLUEPRINT_MECHANIC_IDS.length, 110);
   const modes = new Set();
   for (const id of BLUEPRINT_MECHANIC_IDS) {
     for (let time = 0; time <= BLUEPRINT_DURATION; time += 0.1) {
@@ -136,7 +138,7 @@ test('all 109 promoted lesson animations have distinct rule modes and complete m
           assert.ok(Number.isFinite(value), `${id} has an invalid ${primitive.type}`);
     }
   }
-  assert.equal(modes.size, 109);
+  assert.equal(modes.size, 110);
 });
 
 test('every blueprint exposes signal, committed action, and recovery without player teleports', () => {
@@ -194,7 +196,8 @@ test('every blueprint exposes signal, committed action, and recovery without pla
       id !== 'shared-group-health' &&
       id !== 'coordinated-duo-attack' &&
       id !== 'stack-damage' &&
-      id !== 'personal-spread'
+      id !== 'personal-spread' &&
+      id !== 'tower-soak'
     )
       assert.equal(blueprintFrame(id, 3).dangerActive, true, id);
     assert.equal(blueprintFrame(id, 3).playerSafe, true, id);
@@ -302,6 +305,7 @@ test('every damaging promoted animation derives safety from its own active geome
       id !== 'coordinated-duo-attack' &&
       id !== 'stack-damage' &&
       id !== 'personal-spread' &&
+      id !== 'tower-soak' &&
       id !== 'part-break' &&
       id !== 'counter-stance' &&
       id !== 'absorption-power-up' &&
@@ -5069,5 +5073,101 @@ test('personal spread counts foreign-body hits, not merely intersecting circles'
   assert.match(
     renderBlueprintThumbnail(id, 'test-personal-spread'),
     /data-blueprint-preview="personal-spread"/,
+  );
+});
+
+test('fixed tower requires the exact living occupancy at resolution', () => {
+  const id = 'tower-soak';
+  assert.deepEqual([0, 0.8, 1.25, 2, 2.3, 2.8, 3.15, 3.5, 4.1, 4.4, 4.8, 5.5].map(towerSoakState), [
+    'empty-arena',
+    'single-tower-warned',
+    'entering-single-tower',
+    'one-of-one',
+    'single-tower-succeeded',
+    'between-towers',
+    'double-tower-warned',
+    'entering-double-tower',
+    'one-of-two',
+    'double-tower-failed',
+    'raidwide-failure',
+    'explicit-retry',
+  ]);
+  const soaked = towerSoakResolve();
+  assert.equal(soaked.resolution, 'soaked');
+  assert.equal(soaked.occupiedCount, 1);
+  assert.equal(soaked.occupantDamage, 15);
+  assert.equal(soaked.raidwideDamage, 0);
+  const failed = towerSoakResolve({
+    center: { x: 155, y: 710 },
+    requiredCount: 2,
+    players: [
+      { id: 'tavi', position: { x: 155, y: 710 }, alive: true },
+      { id: 'ally', position: { x: 280, y: 800 }, alive: true },
+    ],
+  });
+  assert.equal(failed.resolution, 'failed');
+  assert.equal(failed.occupiedCount, 1);
+  assert.equal(failed.raidwideDamage, 90);
+  const filled = towerSoakResolve({
+    center: { x: 155, y: 710 },
+    requiredCount: 2,
+    players: [
+      { id: 'tavi', position: { x: 155, y: 710 }, alive: true },
+      { id: 'ally', position: { x: 175, y: 710 }, alive: true },
+    ],
+  });
+  assert.equal(filled.resolution, 'soaked');
+  assert.equal(filled.occupiedCount, 2);
+  assert.equal(filled.raidwideDamage, 0);
+  assert.equal(
+    towerSoakResolve({
+      requiredCount: 1,
+      players: [
+        { id: 'tavi', position: { x: 405, y: 710 }, alive: true },
+        { id: 'ally', position: { x: 415, y: 710 }, alive: true },
+      ],
+    }).resolution,
+    'failed',
+  );
+  const duplicate = towerSoakResolve({ alreadyResolved: true });
+  assert.equal(duplicate.applicationCount, 0);
+  assert.equal(duplicate.occupantDamage, 0);
+  assert.equal(towerSoakResolve({ requiredCount: 0 }).resolution, 'invalid');
+  assert.equal(towerSoakResolve({ players: [null] }).resolution, 'invalid');
+  assert.equal(
+    towerSoakResolve({
+      center: { x: 155, y: 710 },
+      requiredCount: 1,
+      players: [{ id: 'tavi', position: { x: 198, y: 710 }, alive: true }],
+    }).occupiedCount,
+    0,
+  );
+  assert.equal(
+    towerSoakResolve({
+      center: { x: 155, y: 710 },
+      requiredCount: 1,
+      players: [{ id: 'tavi', position: { x: 197, y: 710 }, alive: true }],
+    }).occupiedCount,
+    1,
+  );
+  assert.equal(
+    towerSoakResolve({
+      players: [
+        { id: 'tavi', position: { x: 405, y: 710 }, alive: true },
+        { id: 'tavi', position: { x: 280, y: 800 }, alive: true },
+      ],
+    }).resolution,
+    'invalid',
+  );
+  assert.equal(blueprintFrame(id, 2.3).towerSoakSucceeded, true);
+  assert.deepEqual(blueprintFrame(id, 2.3).towerSoakHealth, [85, 100]);
+  assert.equal(blueprintFrame(id, 4.4).towerSoakSucceeded, false);
+  assert.deepEqual(blueprintFrame(id, 4.4).towerSoakHealth, [0, 10]);
+  assert.equal(blueprintPointSafe(id, 2.3, { x: 405, y: 710 }), true);
+  assert.equal(blueprintPointSafe(id, 4.4, { x: 155, y: 710 }), false);
+  assert.deepEqual(blueprintFrame(id, 5.5).towerSoakHealth, [100, 100]);
+  assert.match(
+    renderBlueprintThumbnail(id, 'test-tower-soak'),
+    /data-blueprint-preview="tower-soak"/,
   );
 });

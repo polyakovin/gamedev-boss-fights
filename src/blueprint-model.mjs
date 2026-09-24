@@ -1889,6 +1889,32 @@ const SPECS = {
     secondHitId: 'spread-pulse-2',
     playerIds: ['tavi', 'ally-left', 'ally-right'],
   },
+  'tower-soak': {
+    mode: 'tower-soak',
+    boss: [280, 360],
+    player: [280, 710],
+    target: [280, 710],
+    arena: [55, 245, 450, 650],
+    ally: [330, 795],
+    firstTower: [405, 710],
+    secondTower: [155, 710],
+    towerRadius: 66,
+    bodyRadius: BLUEPRINT_PLAYER_RADIUS,
+    occupantDamage: 15,
+    failureDamage: 90,
+    firstSignal: [0.7, 2.2],
+    enterFirst: [0.95, 1.78],
+    firstHit: [2.2, 2.48],
+    returnMiddle: [2.62, 3.03],
+    secondSignal: [3.08, 4.3],
+    enterSecond: [3.28, 3.98],
+    secondHit: [4.3, 4.6],
+    resetAt: 5.3,
+    encounterId: 'kern-fixed-towers-1',
+    firstHitId: 'tower-one-1',
+    secondHitId: 'tower-two-1',
+    playerIds: ['tavi', 'ally'],
+  },
   'wide-swing': { mode: 'arc', boss: [225, 340], player: [380, 500], target: [420, 780] },
   lunge: {
     mode: 'lunge',
@@ -4215,6 +4241,98 @@ export function personalSpreadResolve({
     perPlayer: Object.freeze(perPlayer),
     applicationCount: perPlayer.length,
     resolution: !valid || !distinct ? 'invalid' : alreadyResolved ? 'duplicate' : 'applied',
+  });
+}
+
+export function towerSoakState(time) {
+  const spec = SPECS['tower-soak'];
+  const t = localTime(time);
+  if (t < spec.firstSignal[0]) return 'empty-arena';
+  if (t < spec.enterFirst[0]) return 'single-tower-warned';
+  if (t < spec.enterFirst[1]) return 'entering-single-tower';
+  if (t < spec.firstHit[0]) return 'one-of-one';
+  if (t < spec.firstHit[1]) return 'single-tower-succeeded';
+  if (t < spec.secondSignal[0]) return 'between-towers';
+  if (t < spec.enterSecond[0]) return 'double-tower-warned';
+  if (t < spec.enterSecond[1]) return 'entering-double-tower';
+  if (t < spec.secondHit[0]) return 'one-of-two';
+  if (t < spec.secondHit[1]) return 'double-tower-failed';
+  if (t < spec.resetAt) return 'raidwide-failure';
+  return 'explicit-retry';
+}
+
+export function towerSoakResolve({
+  encounterId = 'kern-fixed-towers-1',
+  hitId = 'tower-one-1',
+  center = { x: 405, y: 710 },
+  players = [
+    { id: 'tavi', position: { x: 405, y: 710 }, alive: true },
+    { id: 'ally', position: { x: 330, y: 795 }, alive: true },
+  ],
+  radius = 66,
+  bodyRadius = BLUEPRINT_PLAYER_RADIUS,
+  requiredCount = 1,
+  occupantDamage = 15,
+  failureDamage = 90,
+  alreadyResolved = false,
+} = {}) {
+  const valid =
+    center &&
+    Number.isFinite(center.x) &&
+    Number.isFinite(center.y) &&
+    Number.isFinite(radius) &&
+    radius > 0 &&
+    Number.isFinite(bodyRadius) &&
+    bodyRadius >= 0 &&
+    bodyRadius < radius &&
+    Number.isSafeInteger(requiredCount) &&
+    requiredCount > 0 &&
+    Number.isSafeInteger(occupantDamage) &&
+    occupantDamage >= 0 &&
+    Number.isSafeInteger(failureDamage) &&
+    failureDamage >= 0 &&
+    Array.isArray(players) &&
+    players.every(
+      (player) =>
+        player &&
+        player.id != null &&
+        player.position &&
+        Number.isFinite(player.position.x) &&
+        Number.isFinite(player.position.y),
+    );
+  const ids = valid ? players.map(({ id }) => String(id)) : [];
+  const unique = new Set(ids).size === ids.length;
+  const occupiedIds =
+    valid && unique
+      ? players
+          .filter(
+            ({ position, alive }) =>
+              alive &&
+              Math.hypot(position.x - center.x, position.y - center.y) <= radius - bodyRadius,
+          )
+          .map(({ id }) => String(id))
+          .sort()
+      : [];
+  const succeeded = valid && unique && occupiedIds.length === requiredCount;
+  return Object.freeze({
+    encounterId: String(encounterId),
+    hitId: String(hitId),
+    center: Object.freeze({ x: center?.x, y: center?.y }),
+    requiredCount,
+    occupiedIds: Object.freeze(occupiedIds),
+    occupiedCount: occupiedIds.length,
+    succeeded,
+    occupantDamage: succeeded && !alreadyResolved ? occupantDamage : 0,
+    raidwideDamage: !succeeded && valid && unique && !alreadyResolved ? failureDamage : 0,
+    resolution:
+      !valid || !unique
+        ? 'invalid'
+        : alreadyResolved
+          ? 'duplicate'
+          : succeeded
+            ? 'soaked'
+            : 'failed',
+    applicationCount: valid && unique && !alreadyResolved ? 1 : 0,
   });
 }
 
@@ -9356,6 +9474,74 @@ function primitivesFor(spec, frame) {
       ),
     ];
   }
+  if (mode === 'tower-soak') {
+    const t = frame.time;
+    const center = frame.towerSoakCenter;
+    const visible = frame.towerSoakFirstVisible || frame.towerSoakSecondVisible;
+    const resolved = t >= spec.firstHit[0] && t < spec.secondSignal[0];
+    const failure = frame.towerSoakFailure;
+    const tone = failure ? 'signal' : resolved ? 'safe' : 'accent';
+    const strength = visible ? 0.9 : 0.14;
+    return [
+      rect(...spec.arena, 0.58, 'muted', 0.025),
+      path(
+        'M 65 786 L 170 750 L 280 790 L 390 750 L 495 786 V 813 L 390 782 L 280 826 L 170 782 L 65 813 Z',
+        0.54,
+        'muted',
+        0,
+        0.05,
+      ),
+      ...frame.towerSoakHealth.flatMap((health, index) => [
+        rect(145 + index * 170, 125, 100, 20, 0.78, 'muted', 0.09),
+        rect(145 + index * 170, 125, health, 20, 0.9, health === 0 ? 'signal' : 'safe', 0.55),
+      ]),
+      circle(center.x, center.y, spec.towerRadius + 8, strength * 0.65, tone, 7, 0.022),
+      circle(center.x, center.y, spec.towerRadius, strength, tone, failure ? 12 : 8, 0.07),
+      circle(
+        center.x,
+        center.y,
+        spec.towerRadius - spec.bodyRadius,
+        strength * 0.7,
+        tone,
+        3,
+        0.025,
+      ),
+      path(
+        `M ${center.x} ${center.y - 25} L ${center.x + 22} ${center.y} L ${center.x} ${center.y + 25} L ${center.x - 22} ${center.y} Z`,
+        strength,
+        tone,
+        6,
+        0.08,
+      ),
+      ...Array.from({ length: frame.towerSoakRequiredCount }, (_, index) =>
+        circle(
+          center.x + (index - (frame.towerSoakRequiredCount - 1) / 2) * 24,
+          center.y - 98,
+          7,
+          strength,
+          index < frame.towerSoakOccupiedCount ? 'safe' : 'signal',
+          4,
+          index < frame.towerSoakOccupiedCount ? 0.55 : 0.025,
+        ),
+      ),
+      line(280, 415, center.x, center.y - 100, visible ? 0.58 : 0, 'signal', 7, '10 10'),
+      circle(center.x, center.y, 95, failure ? 0.8 : 0, 'signal', 10, 0.04),
+      path(
+        `M ${center.x - 26} ${center.y - 26} L ${center.x + 26} ${center.y + 26} M ${center.x + 26} ${center.y - 26} L ${center.x - 26} ${center.y + 26}`,
+        failure ? 0.92 : 0,
+        'signal',
+        10,
+      ),
+      circle(
+        spec.player[0],
+        spec.player[1],
+        78 * smooth((t - spec.resetAt) / (BLUEPRINT_DURATION - spec.resetAt)),
+        frame.towerSoakRetry ? 0.75 : 0,
+        'accent',
+        7,
+      ),
+    ];
+  }
   if (mode === 'coordinated-duo-attack') {
     const t = frame.time;
     const leader = frame.decoy;
@@ -11821,6 +12007,22 @@ function pointClearsThreat(spec, frame, value, radius = BLUEPRINT_PLAYER_RADIUS)
     const damage = ledger.perPlayer.find(({ id }) => id === spec.playerIds[0])?.damage;
     return damage !== undefined && damage < frame.personalSpreadHealthBefore;
   }
+  if (mode === 'tower-soak') {
+    if (!frame.towerSoakHitActive) return true;
+    const ledger = towerSoakResolve({
+      center: frame.towerSoakCenter,
+      players: [
+        { id: spec.playerIds[0], position: value, alive: true },
+        { id: spec.playerIds[1], position: frame.towerSoakAlly, alive: true },
+      ],
+      radius: spec.towerRadius,
+      bodyRadius: spec.bodyRadius,
+      requiredCount: frame.towerSoakRequiredCount,
+      occupantDamage: spec.occupantDamage,
+      failureDamage: spec.failureDamage,
+    });
+    return ledger.succeeded;
+  }
   if (mode === 'coordinated-duo-attack') {
     const target = frame.coordinatedDuoAttackTarget;
     return (
@@ -14007,6 +14209,21 @@ export function blueprintFrame(id, time) {
   if (spec.mode === 'personal-spread') {
     player = point(spec.player);
     stride = 0;
+  }
+  if (spec.mode === 'tower-soak') {
+    const enterFirst = smooth((t - spec.enterFirst[0]) / (spec.enterFirst[1] - spec.enterFirst[0]));
+    const returnMiddle = smooth(
+      (t - spec.returnMiddle[0]) / (spec.returnMiddle[1] - spec.returnMiddle[0]),
+    );
+    const enterSecond = smooth(
+      (t - spec.enterSecond[0]) / (spec.enterSecond[1] - spec.enterSecond[0]),
+    );
+    const retry = smooth((t - spec.resetAt) / (BLUEPRINT_DURATION - spec.resetAt));
+    const first = mix(spec.player[0], spec.firstTower[0], enterFirst);
+    const middle = mix(first, spec.player[0], returnMiddle);
+    const second = mix(middle, spec.secondTower[0], enterSecond);
+    player = { x: mix(second, spec.player[0], retry), y: spec.player[1] };
+    stride = Math.max(pulse(enterFirst), pulse(returnMiddle), pulse(enterSecond), pulse(retry));
   }
   const bossVisible =
     spec.mode === 'secondary-cues-invisibility'
@@ -16437,6 +16654,101 @@ export function blueprintFrame(id, time) {
       impact: strikePulse(t, spec.firstHit[0], 0.5) * 0.35,
     });
   }
+  if (spec.mode === 'tower-soak') {
+    const second = t >= spec.secondSignal[0] && t < spec.resetAt;
+    const center = point(second ? spec.secondTower : spec.firstTower);
+    const hitActive =
+      (t >= spec.firstHit[0] && t < spec.firstHit[1]) ||
+      (t >= spec.secondHit[0] && t < spec.secondHit[1]);
+    const ledger = towerSoakResolve({
+      encounterId: spec.encounterId,
+      hitId: second ? spec.secondHitId : spec.firstHitId,
+      center,
+      players: [
+        { id: spec.playerIds[0], position: player, alive: true },
+        { id: spec.playerIds[1], position: point(spec.ally), alive: true },
+      ],
+      radius: spec.towerRadius,
+      bodyRadius: spec.bodyRadius,
+      requiredCount: second ? 2 : 1,
+      occupantDamage: spec.occupantDamage,
+      failureDamage: spec.failureDamage,
+    });
+    const firstLedger = towerSoakResolve({
+      encounterId: spec.encounterId,
+      hitId: spec.firstHitId,
+      center: point(spec.firstTower),
+      players: [
+        { id: spec.playerIds[0], position: point(spec.firstTower), alive: true },
+        { id: spec.playerIds[1], position: point(spec.ally), alive: true },
+      ],
+      radius: spec.towerRadius,
+      bodyRadius: spec.bodyRadius,
+      requiredCount: 1,
+      occupantDamage: spec.occupantDamage,
+      failureDamage: spec.failureDamage,
+    });
+    const firstHealth = spec.playerIds.map((id) =>
+      Math.max(
+        0,
+        100 -
+          (firstLedger.succeeded
+            ? firstLedger.occupiedIds.includes(id)
+              ? firstLedger.occupantDamage
+              : 0
+            : firstLedger.raidwideDamage),
+      ),
+    );
+    const secondHealth = spec.playerIds.map((id, index) =>
+      Math.max(
+        0,
+        firstHealth[index] -
+          (ledger.succeeded
+            ? ledger.occupiedIds.includes(id)
+              ? ledger.occupantDamage
+              : 0
+            : ledger.raidwideDamage),
+      ),
+    );
+    frame.towerSoakState = towerSoakState(t);
+    frame.towerSoakCenter = center;
+    frame.towerSoakAlly = point(spec.ally);
+    frame.towerSoakRequiredCount = ledger.requiredCount;
+    frame.towerSoakOccupiedCount = ledger.occupiedCount;
+    frame.towerSoakOccupiedIds = ledger.occupiedIds;
+    frame.towerSoakSucceeded = ledger.succeeded;
+    frame.towerSoakHitId = ledger.hitId;
+    frame.towerSoakHitActive = hitActive;
+    frame.towerSoakApplicationCount = hitActive ? ledger.applicationCount : 0;
+    frame.towerSoakFirstVisible = t >= spec.firstSignal[0] && t < spec.secondSignal[0];
+    frame.towerSoakSecondVisible = t >= spec.secondSignal[0] && t < spec.resetAt;
+    frame.towerSoakHealth =
+      t >= spec.resetAt
+        ? [100, 100]
+        : t >= spec.secondHit[0]
+          ? secondHealth
+          : t >= spec.firstHit[0]
+            ? firstHealth
+            : [100, 100];
+    frame.towerSoakFailure = t >= spec.secondHit[0] && t < spec.resetAt && !ledger.succeeded;
+    frame.towerSoakRetry = t >= spec.resetAt;
+    frame.towerSoakFallAngle = frame.towerSoakFailure
+      ? 75 * smooth((t - spec.secondHit[0]) / 0.12)
+      : 0;
+    frame.dangerActive = hitActive;
+    frame.bossMotion.attack = Math.max(
+      strikePulse(t, spec.firstHit[0], 0.58),
+      strikePulse(t, spec.secondHit[0], 0.58),
+    );
+    frame.playerMotion.impact = Math.max(
+      strikePulse(t, spec.firstHit[0], 0.46) * 0.3,
+      strikePulse(t, spec.secondHit[0], 0.65),
+    );
+    frame.towerSoakAllyMotion = motion({
+      idle: 1,
+      impact: strikePulse(t, spec.secondHit[0], 0.65),
+    });
+  }
   if (spec.mode === 'real-time-progression') {
     frame.realTimeProgressionState = realTimeProgressionState(t);
     frame.realTimeProgressionCheckpointId = spec.checkpointId;
@@ -16827,7 +17139,8 @@ export function blueprintFrame(id, time) {
               spec.mode === 'shared-group-health' ||
               spec.mode === 'coordinated-duo-attack' ||
               spec.mode === 'stack-damage' ||
-              spec.mode === 'personal-spread'
+              spec.mode === 'personal-spread' ||
+              spec.mode === 'tower-soak'
             ? 92
             : -62),
   };

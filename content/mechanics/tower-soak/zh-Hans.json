@@ -1,0 +1,134 @@
+{
+  "title": "站塔",
+  "subtitle": "让指定人数进入固定符文区域",
+  "variant": "固定圆区 · 精确人数 · 成功与全队失败",
+  "summary": "固定地点在结算时检查其中的存活玩家人数；人数不足会改变全队结果。",
+  "overview": "塔是固定在场地上的区域，有明确的占位要求。结算瞬间应统计身体完全位于有效半径内、身份不同且存活的玩家。成功站塔也可能伤害站塔者；空塔或人数不足则可能伤害全队。演示先要求一人，再要求两人。其他游戏可能要求持续停留或拾取球体，而非精确点数。",
+  "learning": "定义塔与攻击的 ID、固定中心、所需人数、完整身体边界、存活名单、结算时刻、个人和全队伤害、去重、移动时间及重试重置。",
+  "category": "合作协调",
+  "readTime": "10 分钟",
+  "demo": {
+    "title": "站进克恩的第一道符文，再看第二道为何失败",
+    "timeline": "站塔时间轴",
+    "step": "一人站一人塔成功；一人站双人塔失败",
+    "phaseNames": ["显示固定地点", "结算 1/1", "对比 1/2"],
+    "phaseDescriptions": [
+      "0.70 秒，克恩在 x405、y710 显示固定符文。圆半径为 66，塔维身体半径为 24；身体中心最多离塔心 42。盟友仍在外面。预警持续到 2.20 秒，计数达到 1/1。",
+      "2.20 秒，第一道符文截取一名存活占位者并成功。塔维受到 15 点伤害，生命从 100 降到 85；盟友仍为 100。遭遇和命中 ID 防止重复扣血。",
+      "3.08 秒，x155、y710 出现要求两人的新符文。只有塔维进入，显示 1/2。4.30 秒失败对两人各造成 90 点伤害，生命从 85/100 变为 0/10。5.30 秒显式重试恢复位置和生命。"
+    ],
+    "boss": "首领",
+    "player": "玩家",
+    "danger": "发光圆圈不一定是安全区：人数和结算时间决定结果；成功占位也可能伤害占位者。",
+    "locked": "塔与命中 ID、固定中心、人数、存活名单、身体边界、同帧位置快照、受伤对象及重试都是遭遇规则。",
+    "safe": "事先显示要求人数，给最远的指定玩家留下赶路时间，并清楚显示最终计数与生命变化。",
+    "reducedMotion": "减少动态效果时关闭自动播放。可拖动至 0.70、1.30、2.10、2.30、3.10、3.75、4.20、4.45 和 5.45 秒。",
+    "diagramDescription": "克恩在右侧标出固定符文。塔维完整进入，计数为 1/1，并失去 15 点生命。左侧符文需要两人，但只有塔维：1/2。失败使两人各失去 90 点生命，然后重试。"
+  },
+  "steps": [
+    {
+      "title": "谁算进入塔内？",
+      "body": "把塔心保存在世界坐标而非目标身上。结算时只统计身体完全进入的不同存活玩家 ID。圆半径 66、身体半径 24，因此中心距离超过 42 不算。明确要求是恰好 N 人还是至少 N 人。"
+    },
+    {
+      "title": "结算时发生什么？",
+      "body": "每个命中 ID 只比较一次人数。演示中 1/1 成功，仅占位者受到 15 点伤害；1/2 失败，所有存活者受到 90 点伤害。统一记录占位者、受伤者和生命变化，避免重复回调扣血。"
+    },
+    {
+      "title": "被分配的人能赶到吗？",
+      "body": "将预警时间与最远路径、障碍、移动速度和延迟比较。在玩家决定独自前往前就显示双人要求。测试可达与不可达分配、精确边界、倒下的队友及使用新命中 ID 的重试。"
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "把碰到边缘算作完全占位",
+      "body": "若要求身体全部进入，只检测中心会得到不同结果。计数、标记和伤害应使用相同碰撞体积。"
+    },
+    {
+      "title": "把成功站塔当成无敌",
+      "body": "正确人数可能阻止全队受伤，却仍伤害占位者。分别展示这两种结果。"
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "人数要适应队伍",
+      "body": "两人队伍要求两人时没有余量。考虑倒下者、队伍规模和同时出现的塔；明确标示不可能完成的分配。"
+    },
+    {
+      "title": "区分人数与停留时间",
+      "body": "瞬时人数快照、持续占位和拾取固定球体看似相近，决策却不同。说明检查时间以及多余玩家是否有影响。"
+    },
+    {
+      "title": "记录每次检查",
+      "body": "记录塔和命中 ID、中心、半径、需求、存活名单、占位者、结算位置、结果和受伤者。测试边界、人数过多或不足、重复回调及窄屏。"
+    }
+  ],
+  "story": {
+    "title": "两道符文，两种承诺",
+    "body": "克恩点亮单人符文。塔维进入并承受较小冲击。下一道需要两人，但塔维独自到达；未填满的符文向全场释放伤害。"
+  },
+  "adaptation": {
+    "title": "不用颜色也能读懂人数",
+    "body": "人物移动时保持塔不动。使用一枚或两枚标记和 1/1、1/2 数字，暂停时保留结果，并显示两条生命值。用形状标明失败；减少动态效果时仍可查看同样的时间点。"
+  },
+  "distinction": {
+    "title": "固定占位，不是移动集合",
+    "body": "分摊伤害跟随被标记的玩家并在附近身体间分配。塔检查固定地点的占位人数，不足时可能惩罚全队。个人散开则要求彼此远离。"
+  },
+  "lensNotes": [
+    {
+      "id": "counterplay",
+      "body": "结算前把所需数量的存活玩家分配到固定地点；不足会改变全队结果。"
+    },
+    {
+      "id": "threat-geometry",
+      "body": "固定世界中心、身体有效半径和同一瞬间的位置决定谁计入人数。"
+    },
+    {
+      "id": "risk-reward",
+      "body": "占位者可能承受较小伤害，以避免更大的全队伤害。"
+    },
+    {
+      "id": "difficulty-rhythm",
+      "body": "预警间隔必须容纳分工和赶路，尤其是下一座塔要求更多人时。"
+    },
+    {
+      "id": "progress-clarity",
+      "body": "已入/所需人数与各自生命值说明第一座成功、第二座失败。"
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "MapleStory M",
+      "boss": "Will",
+      "screenshot": "https://i.ytimg.com/vi/mPMtiTv3QoU/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=mPMtiTv3QoU",
+      "video": "https://www.youtube.com/watch?v=mPMtiTv3QoU&t=480s",
+      "videoDurationSeconds": 2317,
+      "body": "威尔第一阶段中，转动瞳孔后月光屏障在固定地点出现。玩家在相应空间持续站进屏障，才能通过屏幕破裂测试。这是持续安全区，不是演示中的精确一人或两人计数。"
+    },
+    {
+      "dimension": "3D",
+      "game": "Final Fantasy XIV",
+      "boss": "Idol of Darkness",
+      "screenshot": "https://ffxiv.consolegameswiki.com/mediawiki/images/thumb/7/76/E7_boss.png/1067px-E7_boss.png",
+      "screenshotSource": "https://ffxiv.consolegameswiki.com/wiki/Eden%27s_Verse:_Iconoclasm_(Savage)",
+      "video": "https://www.youtube.com/watch?v=kG0_7Go40gM&t=600s",
+      "videoDurationSeconds": 1056,
+      "body": "“禁锢之言”在四角生成光暗两类塔。指定玩家须在爆炸前进入属性相反的塔。这是一塔一名合适玩家的分配变体，而非双人塔。"
+    },
+    {
+      "dimension": "3D",
+      "game": "World of Warcraft",
+      "boss": "The Tarragrue",
+      "screenshot": "https://wow.zamimg.com/uploads/blog/images/24511-patch-9-1-hotfixes-for-july-12th-class-tuning-sanctum-of-domination-bugfix.jpg",
+      "screenshotSource": "https://www.wowhead.com/tw/news/patch-9-1-hotfixes-for-july-12th-class-tuning-sanctum-of-domination-bugfix-323363",
+      "video": "https://www.youtube.com/watch?v=-66UN_KLZ0U&t=135s",
+      "videoDurationSeconds": 225,
+      "body": "“被遗忘折磨的残余”生成固定球体，指定玩家拾取它们以免效果留给团队。球体数量和减益决定分配。这是拾取与转移变体，不是精确人数塔；视频显示实际战斗。"
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

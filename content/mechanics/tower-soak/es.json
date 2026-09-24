@@ -1,0 +1,134 @@
+{
+  "title": "Ocupar una torre",
+  "subtitle": "Llena una runa fija con el número requerido de jugadores",
+  "variant": "Círculo fijo · ocupación exacta · éxito · daño al grupo",
+  "summary": "Un punto fijo comprueba cuántos jugadores vivos lo ocupan al resolverse; si faltan, cambia el resultado para todo el grupo.",
+  "overview": "Una torre es una zona fija con un número requerido. Al resolverse, cuenta jugadores vivos distintos cuyos cuerpos completos caben dentro. Un éxito puede dañar a quienes entran; un déficit puede castigar a todo el grupo. La demostración compara torres para una y dos personas. Otros juegos exigen permanencia o recoger orbes, no una cuenta exacta.",
+  "learning": "Define identificador y centro de la torre, número requerido, límite del cuerpo completo, miembros vivos, instante de resolución, daño personal y grupal, prevención de duplicados, tiempo de desplazamiento y reinicio.",
+  "category": "Coordinación cooperativa",
+  "readTime": "10 min",
+  "demo": {
+    "title": "Ocupa la primera runa de Kern y observa el fallo de la segunda",
+    "timeline": "Secuencia de ocupación",
+    "step": "Uno de uno funciona; uno de dos falla",
+    "phaseNames": ["Aparece un punto fijo", "Se resuelve 1/1", "Compara con 1/2"],
+    "phaseDescriptions": [
+      "A los 0,70 s, Kern revela una runa fija en x405, y710. Radio 66, cuerpo de Tavi de radio 24: su centro debe estar a 42 unidades como máximo. El aliado queda fuera. La advertencia dura hasta los 2,20 s y el contador llega a 1/1.",
+      "A los 2,20 s, la primera runa registra un ocupante vivo y funciona. Tavi recibe 15 de daño y pasa de 100 a 85; el aliado conserva 100. El registro de encuentro e impacto impide aplicar el daño dos veces.",
+      "A los 3,08 s aparece otra runa fija en x155, y710 que requiere dos cuerpos. Tavi entra, el aliado no: 1/2. A los 4,30 s, el fallo inflige 90 a ambos, que quedan con 0/10 desde 85/100. A los 5,30 s un nuevo intento restaura posiciones y salud."
+    ],
+    "boss": "Jefe",
+    "player": "Jugador",
+    "danger": "Un círculo luminoso no siempre es seguro: cuentan el número de cuerpos y el instante; acertar también puede dañar al ocupante.",
+    "locked": "Los ID de torre e impacto, centro fijo, recuento, grupo vivo, cuerpo completo, foto simultánea, destinatarios del daño y reinicio son reglas del encuentro.",
+    "safe": "Muestra el número exigido antes del impacto y deja tiempo al jugador asignado más lejano; haz legibles el recuento final y la salud.",
+    "reducedMotion": "Con movimiento reducido no hay reproducción automática. Revisa 0,70; 1,30; 2,10; 2,30; 3,10; 3,75; 4,20; 4,45 y 5,45 s.",
+    "diagramDescription": "Kern marca una runa fija a la derecha. Tavi entra entero: 1/1, pierde 15 de salud. La runa izquierda pide dos, pero Tavi llega solo: 1/2. Ambos reciben 90 y luego se reinicia el intento."
+  },
+  "steps": [
+    {
+      "title": "¿Quién ocupa la torre?",
+      "body": "Guarda el centro en coordenadas del mundo, no del objetivo. Al contacto, cuenta ID únicos de jugadores vivos cuyo cuerpo completo cabe dentro. Con radio 66 y cuerpo 24, un centro a más de 42 unidades no cuenta. Decide si se exige exactamente N o al menos N."
+    },
+    {
+      "title": "¿Qué ocurre al resolver?",
+      "body": "Compara el recuento con el requisito una sola vez por ID de impacto. Aquí 1/1 inflige 15 solo al ocupante; 1/2 inflige 90 a todos los vivos. Registra ocupantes, destinatarios y cambios de salud para impedir daños duplicados."
+    },
+    {
+      "title": "¿Puede llegar el grupo asignado?",
+      "body": "Compara el aviso con el trayecto más largo, obstáculos, velocidad y latencia. Anuncia el requisito de dos antes de que alguien vaya solo. Prueba asignaciones posibles e imposibles, el borde exacto, un aliado caído y un nuevo intento con otro ID."
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "Contar un cuerpo que apenas toca el borde",
+      "body": "Si se exige ocupación completa, comprobar solo el centro da otro resultado. Usa el mismo tamaño corporal para contador, señal y daño."
+    },
+    {
+      "title": "Confundir éxito con invulnerabilidad",
+      "body": "Un recuento correcto puede evitar daño grupal y aun así herir al ocupante. Muestra las dos consecuencias por separado."
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "Ajusta el recuento al grupo",
+      "body": "Exigir dos de dos no deja reserva. Considera miembros caídos, tamaño del grupo y torres simultáneas; señala si una asignación es imposible."
+    },
+    {
+      "title": "Distingue número y duración",
+      "body": "Una foto del recuento, una permanencia prolongada y recoger un orbe parecen similares, pero exigen decisiones distintas. Explica el instante y si sobran jugadores."
+    },
+    {
+      "title": "Registra cada comprobación",
+      "body": "Guarda ID, centro, radios, requisito, vivos, ocupantes, posiciones, resultado, destinatarios y reinicio. Prueba borde, exceso, falta, callback repetido y pantalla estrecha."
+    }
+  ],
+  "story": {
+    "title": "Dos runas, dos promesas",
+    "body": "Kern enciende una runa para uno. Tavi entra y soporta un pulso pequeño. La siguiente exige dos, pero Tavi llega sin su aliado; la runa incompleta golpea a todo el grupo."
+  },
+  "adaptation": {
+    "title": "Haz visible el recuento sin depender del color",
+    "body": "Mantén fija la torre mientras se mueven los personajes. Usa una o dos marcas y 1/1 o 1/2, conserva el resultado al pausar y muestra ambas barras de salud. Identifica el fallo también por forma y conserva los hitos con movimiento reducido."
+  },
+  "distinction": {
+    "title": "Ocupación fija, no agrupación móvil",
+    "body": "Un impacto compartido sigue a un jugador marcado y reparte el daño. Una torre comprueba quién ocupa un punto del mundo y puede castigar a todos si faltan cuerpos. Dispersarse exige lo contrario: separarse."
+  },
+  "lensNotes": [
+    {
+      "id": "counterplay",
+      "body": "Asigna el número necesario de jugadores vivos al punto antes de la comprobación."
+    },
+    {
+      "id": "threat-geometry",
+      "body": "Centro fijo, radio efectivo del cuerpo y posiciones simultáneas determinan quién cuenta."
+    },
+    {
+      "id": "risk-reward",
+      "body": "Los ocupantes aceptan un daño menor para evitar un golpe grupal mayor."
+    },
+    {
+      "id": "difficulty-rhythm",
+      "body": "El aviso debe permitir asignación y desplazamiento, sobre todo si la siguiente torre exige más personas."
+    },
+    {
+      "id": "progress-clarity",
+      "body": "El contador ocupados/requeridos y las barras de salud explican el éxito y el fallo."
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "MapleStory M",
+      "boss": "Will",
+      "screenshot": "https://i.ytimg.com/vi/mPMtiTv3QoU/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=mPMtiTv3QoU",
+      "video": "https://www.youtube.com/watch?v=mPMtiTv3QoU&t=480s",
+      "videoDurationSeconds": 2317,
+      "body": "En la primera fase de Will, la barrera lunar aparece en un lugar tras redirigir el ojo. Permanecer dentro en la dimensión correcta ayuda a superar la prueba de ruptura. Es una zona de permanencia, no el recuento exacto de la demostración."
+    },
+    {
+      "dimension": "3D",
+      "game": "Final Fantasy XIV",
+      "boss": "Idol of Darkness",
+      "screenshot": "https://ffxiv.consolegameswiki.com/mediawiki/images/thumb/7/76/E7_boss.png/1067px-E7_boss.png",
+      "screenshotSource": "https://ffxiv.consolegameswiki.com/wiki/Eden%27s_Verse:_Iconoclasm_(Savage)",
+      "video": "https://www.youtube.com/watch?v=kG0_7Go40gM&t=600s",
+      "videoDurationSeconds": 1056,
+      "body": "Words of Entrapment crea cuatro torres en las esquinas, de aspecto claro u oscuro. Un jugador asignado ocupa una torre de aspecto opuesto antes de la explosión. Es una variante de asignación de una persona compatible por torre, no una torre para dos."
+    },
+    {
+      "dimension": "3D",
+      "game": "World of Warcraft",
+      "boss": "The Tarragrue",
+      "screenshot": "https://wow.zamimg.com/uploads/blog/images/24511-patch-9-1-hotfixes-for-july-12th-class-tuning-sanctum-of-domination-bugfix.jpg",
+      "screenshotSource": "https://www.wowhead.com/tw/news/patch-9-1-hotfixes-for-july-12th-class-tuning-sanctum-of-domination-bugfix-323363",
+      "video": "https://www.youtube.com/watch?v=-66UN_KLZ0U&t=135s",
+      "videoDurationSeconds": 225,
+      "body": "Remnants of Forgotten Torments crea orbes fijos que jugadores asignados recogen para evitar el efecto abandonado. El número de orbes y sus perjuicios afectan la asignación. Es recogida y transferencia, no recuento exacto; el vídeo muestra el combate."
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

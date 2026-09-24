@@ -447,9 +447,9 @@ test('volley releases three parallel bolts on one beat and clears its outside ro
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
 });
 
-test('catalog and builder reuse the 109 promoted rule-specific previews', async ({ page }) => {
+test('catalog and builder reuse the 110 promoted rule-specific previews', async ({ page }) => {
   await page.goto('en/');
-  await expect(page.locator('[data-blueprint-preview]')).toHaveCount(109);
+  await expect(page.locator('[data-blueprint-preview]')).toHaveCount(110);
   const catalogLayouts = await page.locator('[data-blueprint-preview]').evaluateAll((previews) =>
     previews.map((preview) => {
       const boss = preview.querySelector('[data-character-art-preview="kern"]');
@@ -473,7 +473,7 @@ test('catalog and builder reuse the 109 promoted rule-specific previews', async 
   expect(new Set(catalogLayouts.map(({ layout }) => layout)).size).toBeGreaterThanOrEqual(18);
 
   await page.goto('en/builder/');
-  await expect(page.locator('[data-blueprint-preview]')).toHaveCount(109);
+  await expect(page.locator('[data-blueprint-preview]')).toHaveCount(110);
   const builderLayouts = await page.locator('[data-blueprint-preview]').evaluateAll((previews) =>
     previews.map((preview) => {
       const boss = preview.querySelector('[data-character-art-preview="kern"]');
@@ -4958,6 +4958,47 @@ test('personal spread separates marked bodies before a safe hit and counts crowd
   await seek(5500);
   await expect(widget).toHaveAttribute('data-blueprint-personal-spread-retry', 'true');
   await expect(widget).toHaveAttribute('data-blueprint-personal-spread-health', '100/100/100');
+  await page.setViewportSize({ width: 375, height: 812 });
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+});
+
+test('tower soak counts fixed-point occupants and distinguishes personal cost from raidwide failure', async ({
+  page,
+}) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.goto('en/mechanics/tower-soak/');
+  const widget = page.locator('[data-blueprint-demo]');
+  const timeline = widget.locator('[data-blueprint-timeline]');
+  const seek = (milliseconds) =>
+    timeline.evaluate((element, value) => {
+      element.value = String(value);
+      element.dispatchEvent(new Event('input', { bubbles: true }));
+    }, milliseconds);
+  await expect(page.locator('.lesson-title-line h1')).toHaveText('Tower soak');
+  await expect(page.locator('.wip-badge, .draft-profile')).toHaveCount(0);
+  await expect(page.locator('.game-example')).toHaveCount(3);
+  await expect(page.locator('.lens-chip')).toHaveCount(5);
+  await expect(widget).toHaveAttribute('data-blueprint-full-height', 'true');
+  await expect(widget.locator('[data-blueprint-ally]')).toHaveCount(1);
+  await expect(widget).toHaveAttribute('data-blueprint-playing', 'false');
+  await seek(2350);
+  await expect(widget).toHaveAttribute('data-blueprint-tower-soak-occupancy', '1/1');
+  await expect(widget).toHaveAttribute('data-blueprint-tower-soak-succeeded', 'true');
+  await expect(widget).toHaveAttribute('data-blueprint-tower-soak-health', '85/100');
+  await expect(widget).toHaveAttribute('data-blueprint-tower-soak-application-count', '1');
+  await expect(widget).toHaveAttribute('data-blueprint-outcome', 'safe');
+  await expect(widget.locator('[data-blueprint-tower-readout]')).toHaveText('1 / 1');
+  await seek(4450);
+  await expect(widget).toHaveAttribute('data-blueprint-tower-soak-occupancy', '1/2');
+  await expect(widget).toHaveAttribute('data-blueprint-tower-soak-succeeded', 'false');
+  await expect(widget).toHaveAttribute('data-blueprint-tower-soak-health', '0/10');
+  await expect(widget).toHaveAttribute('data-blueprint-tower-soak-application-count', '1');
+  await expect(widget).toHaveAttribute('data-blueprint-tower-soak-failure', 'true');
+  await expect(widget).toHaveAttribute('data-blueprint-outcome', 'danger');
+  await expect(widget.locator('[data-blueprint-tower-readout]')).toHaveText('1 / 2');
+  await seek(5500);
+  await expect(widget).toHaveAttribute('data-blueprint-tower-soak-retry', 'true');
+  await expect(widget).toHaveAttribute('data-blueprint-tower-soak-health', '100/100');
   await page.setViewportSize({ width: 375, height: 812 });
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
 });
