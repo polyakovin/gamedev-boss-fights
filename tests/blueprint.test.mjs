@@ -302,7 +302,7 @@ test('every damaging promoted animation derives safety from its own active geome
       const projectile = frame.primitives[9];
       point = { x: projectile.x, y: projectile.y };
     } else if (!point && id === 'crossfire') {
-      const projectile = frame.primitives[4];
+      const projectile = frame.primitives[0];
       point = { x: projectile.x, y: projectile.y };
     } else if (!point && id === 'splitting-projectile') {
       const projectile = frame.primitives.find(
@@ -504,19 +504,26 @@ test('crossfire commits two opposing sources and clears their shared intersectio
   const afterCross = blueprintFrame('crossfire', 3.6);
 
   assert.deepEqual(signal.player, blueprintFrame('crossfire', 0).player);
-  assert.equal(signal.primitives[2].x2, intersection.primitives[2].x2);
-  assert.equal(signal.primitives[3].x2, intersection.primitives[3].x2);
-  const separation = (frame) => Math.abs(frame.primitives[4].x - frame.primitives[5].x);
+  assert.deepEqual(
+    signal.primitives.map((projectile) => projectile.x),
+    [90, 470],
+  );
+  const separation = (frame) => Math.abs(frame.primitives[0].x - frame.primitives[1].x);
   assert.ok(separation(intersection) < separation(beforeCross));
   assert.ok(separation(intersection) < separation(afterCross));
   assert.equal(
     blueprintPointSafe('crossfire', 3, {
-      x: intersection.primitives[4].x,
-      y: intersection.primitives[4].y,
+      x: intersection.primitives[0].x,
+      y: intersection.primitives[0].y,
     }),
     false,
   );
   assert.equal(intersection.playerSafe, true);
+  for (let step = 160; step <= 430; step += 1) {
+    const frame = blueprintFrame('crossfire', step / 100);
+    assert.equal(frame.playerSafe, true, `player intersects a bolt at ${step / 100}s`);
+    assert.ok(frame.player.x <= 500);
+  }
 });
 
 test('splitting projectile commits one parent, one split point, and three fragment routes', () => {

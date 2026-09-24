@@ -22,7 +22,7 @@ const SPECS = {
     mode: 'crossfire',
     boss: [280, 235],
     player: [280, 595],
-    target: [445, 735],
+    target: [500, 735],
     sources: [
       [90, 315],
       [470, 315],
@@ -8343,32 +8343,27 @@ function primitivesFor(spec, frame) {
       x: mix(source.x, ends[index].x, action),
       y: mix(source.y, ends[index].y, action),
     }));
-    return [
-      ...sources.map((source) =>
-        circle(
-          source.x,
-          source.y,
-          24,
-          phase === 0 ? 0.45 + prepare * 0.4 : phase === 1 ? 0.34 : 0,
-          'accent',
-          5,
-          0.14,
+    return heads.map((head, index) => {
+      const source = sources[index];
+      const end = ends[index];
+      const heading = Math.atan2(end.y - source.y, end.x - source.x);
+      const forward = { x: Math.cos(heading), y: Math.sin(heading) };
+      const side = { x: -forward.y, y: forward.x };
+      const tip = (along, across) =>
+        `${head.x + forward.x * along + side.x * across} ${head.y + forward.y * along + side.y * across}`;
+      return {
+        ...path(
+          `M ${tip(21, 0)} L ${tip(-11, 11)} L ${tip(-17, 0)} L ${tip(-11, -11)} Z`,
+          phase === 1 ? 1 : 0.42 + prepare * 0.35,
+          'signal',
+          0,
+          0.9,
         ),
-      ),
-      ...sources.map((source, index) =>
-        line(
-          source.x,
-          source.y,
-          ends[index].x,
-          ends[index].y,
-          phase === 0 ? 0.28 + prepare * 0.42 : phase === 1 ? 0.12 * (1 - action) : 0,
-          'accent',
-          7,
-          '12 12',
-        ),
-      ),
-      ...heads.map((head) => circle(head.x, head.y, 19, phase === 1 ? 1 : 0, 'signal', 6, 0.48)),
-    ];
+        x: head.x,
+        y: head.y,
+        radius: 19,
+      };
+    });
   }
   if (mode === 'splitting-projectile') {
     const start = point(spec.boss);
@@ -9444,12 +9439,10 @@ function pointClearsThreat(spec, frame, value, radius = BLUEPRINT_PLAYER_RADIUS)
     );
   }
   if (mode === 'crossfire')
-    return frame.primitives
-      .slice(4)
-      .every(
-        (projectile) =>
-          Math.hypot(value.x - projectile.x, value.y - projectile.y) > projectile.radius + radius,
-      );
+    return frame.primitives.every(
+      (projectile) =>
+        Math.hypot(value.x - projectile.x, value.y - projectile.y) > projectile.radius + radius,
+    );
   if (mode === 'splitting-projectile')
     return frame.primitives
       .filter((projectile) => projectile.opacity > 0.15)
