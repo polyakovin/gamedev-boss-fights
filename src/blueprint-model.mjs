@@ -1646,7 +1646,13 @@ const SPECS = {
   },
   'wide-swing': { mode: 'arc', boss: [280, 310], player: [410, 470], target: [470, 650] },
   lunge: { mode: 'lunge', boss: [170, 290], player: [390, 590], target: [470, 660] },
-  grab: { mode: 'grab', boss: [280, 300], player: [390, 485], target: [470, 610] },
+  grab: {
+    mode: 'grab',
+    boss: [280, 370],
+    player: [390, 555],
+    target: [470, 680],
+    grabPoint: [390, 555],
+  },
   'burrow-and-emerge': {
     mode: 'burrow',
     boss: [190, 300],
@@ -9426,11 +9432,41 @@ function primitivesFor(spec, frame) {
       line(170, 290, 430, 590, preview, 'accent', 38, '14 12'),
       line(170, 290, boss.x, boss.y, active, 'signal', 54),
     ];
-  if (mode === 'grab')
+  if (mode === 'grab') {
+    const target = point(spec.grabPoint);
+    const reach = phase === 0 ? prepare * 0.18 : phase === 1 ? smooth(action / 0.35) : 1 - recover;
+    const hand = {
+      x: mix(boss.x + 34, target.x, reach),
+      y: mix(boss.y + 18, target.y, reach),
+    };
+    const heading = Math.atan2(hand.y - boss.y, hand.x - boss.x);
+    const forward = { x: Math.cos(heading), y: Math.sin(heading) };
+    const side = { x: -forward.y, y: forward.x };
+    const finger = (along, across) =>
+      `${hand.x + forward.x * along + side.x * across} ${hand.y + forward.y * along + side.y * across}`;
     return [
-      circle(390, 485, mix(30, 58, prepare), preview, 'accent', 4, 0.06),
-      line(boss.x, boss.y, 390, 485, active, 'signal', 32),
+      line(boss.x + 24, boss.y + 12, hand.x, hand.y, 0.84, 'muted', 18),
+      {
+        ...path(
+          `M ${finger(-19, -21)} L ${finger(13, -21)} L ${finger(22, 0)} L ${finger(13, 21)} L ${finger(-19, 21)} Z`,
+          0.94,
+          'accent',
+          0,
+          0.9,
+        ),
+        x: hand.x,
+        y: hand.y,
+        radius: 60,
+      },
+      path(
+        `M ${finger(8, -20)} L ${finger(39, -31)} L ${finger(51, -12)} L ${finger(35, -7)} L ${finger(24, -17)} Z M ${finger(8, 20)} L ${finger(39, 31)} L ${finger(51, 12)} L ${finger(35, 7)} L ${finger(24, 17)} Z`,
+        0.94,
+        'signal',
+        0,
+        0.9,
+      ),
     ];
+  }
   if (mode === 'burrow') {
     const underground = quadraticPoint(
       { x: 190, y: 320 },
@@ -9938,7 +9974,10 @@ function pointClearsThreat(spec, frame, value, radius = BLUEPRINT_PLAYER_RADIUS)
   if (mode === 'arc') return distanceFromBoss > 205 + radius;
   if (mode === 'lunge')
     return distanceToSegment(value, { x: 170, y: 290 }, { x: 430, y: 590 }) > 27 + radius;
-  if (mode === 'grab') return Math.hypot(value.x - 390, value.y - 485) > 60 + radius;
+  if (mode === 'grab') {
+    const hand = frame.primitives[1];
+    return Math.hypot(value.x - hand.x, value.y - hand.y) > hand.radius + radius;
+  }
   if (mode === 'burrow') return Math.hypot(value.x - 420, value.y - 590) > 78 + radius;
   if (mode === 'ring')
     return frame.primitives

@@ -215,7 +215,7 @@ test('every damaging promoted animation derives safety from its own active geome
     'cover-line-of-sight': { x: 470, y: 850 },
     'wide-swing': { x: 280, y: 515 },
     lunge: { x: 300, y: 440 },
-    grab: { x: 390, y: 485 },
+    grab: { x: 390, y: 555 },
     'burrow-and-emerge': { x: 420, y: 590 },
     'ring-volley': { x: 516, y: 400 },
     'spiral-barrage': { x: 280, y: 390 },
@@ -610,6 +610,21 @@ test('burrow leaves a moving ground disturbance and walks back after emergence',
   assert.ok(recovering.boss.x < 420);
   assert.ok(Math.hypot(seam.boss.x - 190, seam.boss.y - 300) < 1);
   assert.equal(late.playerSafe, true);
+});
+
+test('grab extends an open claw and retracts it before the next loop', () => {
+  const signal = blueprintFrame('grab', 1.2);
+  const extended = blueprintFrame('grab', 3);
+  const retracted = blueprintFrame('grab', 5.99);
+  assert.equal(extended.primitives[1].type, 'path');
+  assert.equal(extended.primitives[1].x, 390);
+  assert.equal(extended.primitives[1].y, 555);
+  assert.ok(signal.primitives[1].x < extended.primitives[1].x);
+  assert.ok(retracted.primitives[1].x < extended.primitives[1].x);
+  assert.equal(blueprintPointSafe('grab', 3, { x: 390, y: 555 }), false);
+  for (let step = 160; step <= 430; step += 1) {
+    assert.equal(blueprintFrame('grab', step / 100).playerSafe, true);
+  }
 });
 
 test('returning projectile announces an outbound leg and a distinct committed return leg', () => {
