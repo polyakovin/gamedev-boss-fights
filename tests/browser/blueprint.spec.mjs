@@ -4165,6 +4165,7 @@ test('action-reactive punish locks one response and preserves the committed reco
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await page.goto('en/mechanics/action-reactive-punish/');
   const widget = page.locator('[data-blueprint-demo]');
+  await expect(widget).toHaveAttribute('data-blueprint-screen-height', 'true');
   const timeline = widget.locator('[data-blueprint-timeline]');
   const seek = (milliseconds) =>
     timeline.evaluate((element, value) => {
