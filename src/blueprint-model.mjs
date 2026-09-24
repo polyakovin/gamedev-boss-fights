@@ -8536,7 +8536,7 @@ function primitivesFor(spec, frame) {
       .map((center, index) => `${index ? 'L' : 'M'} ${center.x} ${center.y}`)
       .join(' ');
     return [
-      path(chainPath, pathOpacity, 'accent', 7, 0, '11 11'),
+      path(chainPath, pathOpacity * 0.7, 'muted', 3),
       ...centers.map((center, index) => {
         const elapsed = phase === 1 && action > CHAIN_EXPLOSION_WINDOWS[index][1];
         const current = index === activeIndex;
@@ -8553,24 +8553,22 @@ function primitivesFor(spec, frame) {
         return circle(
           center.x,
           center.y,
-          current ? spec.blastRadius + 12 * pulse(action * 7) : spec.blastRadius,
+          spec.blastRadius,
           opacity,
           current ? 'signal' : elapsed ? 'safe' : 'accent',
-          current ? 16 : 6,
-          current ? 0.34 : elapsed ? 0.08 : 0.04,
+          current ? 4 : 2,
+          current ? 0.62 : elapsed ? 0.08 : 0.05,
         );
       }),
       ...centers.map((center, index) => {
         const elapsed = phase === 1 && action > CHAIN_EXPLOSION_WINDOWS[index][1];
         const current = index === activeIndex;
-        return circle(
-          center.x,
-          center.y,
-          current ? 17 : 11,
+        return path(
+          `M ${center.x} ${center.y - 18} L ${center.x + 16} ${center.y - 9} L ${center.x + 16} ${center.y + 9} L ${center.x} ${center.y + 18} L ${center.x - 16} ${center.y + 9} L ${center.x - 16} ${center.y - 9} Z`,
           phase === 2 ? 0.24 * (1 - recover) : current ? 1 : 0.66,
           current ? 'signal' : elapsed ? 'safe' : 'accent',
-          current ? 7 : 4,
-          current ? 0.58 : 0.16,
+          0,
+          current ? 0.9 : 0.72,
         );
       }),
     ];

@@ -628,6 +628,7 @@ test('chain explosions keep a fixed order, damage one live node, and let the pla
   assert.equal(first.dangerActive, true);
   assert.equal(gap.dangerActive, false);
   assert.equal(third.dangerActive, true);
+  assert.equal(third.primitives[3].radius, blueprintSpec('chain-explosions').blastRadius);
   assert.equal(
     third.primitives.slice(1, 6).filter((primitive) => primitive.tone === 'signal').length,
     1,
