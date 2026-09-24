@@ -381,6 +381,8 @@ test('lock, destruction, and recovery are expressed by their own geometry', () =
 
   const activeBeam = blueprintFrame('straight-beam', 3).primitives[1];
   const recoveredBeam = blueprintFrame('straight-beam', 5.95).primitives[1];
+  assert.equal(blueprintFrame('straight-beam', 1.2).primitives[0].width, activeBeam.width);
+  assert.equal(blueprintFrame('straight-beam', 1.2).primitives[0].dash, '');
   assert.ok(activeBeam.opacity > 0.9);
   assert.ok(recoveredBeam.opacity < 0.1);
 });

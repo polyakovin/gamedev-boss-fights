@@ -9041,7 +9041,7 @@ function primitivesFor(spec, frame) {
   }
   if (mode === 'beam')
     return [
-      line(boss.x, boss.y, boss.x, 900, preview, 'accent', 34, '12 10'),
+      line(boss.x, boss.y, boss.x, 900, preview * 0.38, 'accent', 72),
       line(boss.x, boss.y, boss.x, 900, active, 'signal', 72),
     ];
   if (mode === 'scanning') {
