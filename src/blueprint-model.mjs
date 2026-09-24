@@ -1861,6 +1861,34 @@ const SPECS = {
     targetPlayerId: 'tavi',
     allyIds: ['ally-left', 'ally-right'],
   },
+  'personal-spread': {
+    mode: 'personal-spread',
+    boss: [280, 360],
+    player: [280, 710],
+    target: [280, 710],
+    arena: [55, 245, 450, 650],
+    allies: [
+      [210, 710],
+      [350, 710],
+    ],
+    safePoints: [
+      [145, 710],
+      [415, 710],
+    ],
+    markerRadius: 110,
+    damagePerHit: 25,
+    firstSignal: [0.65, 2.25],
+    separate: [0.9, 1.8],
+    firstHit: [2.25, 2.52],
+    secondSignal: [3.05, 4.3],
+    regroup: [3.25, 3.95],
+    secondHit: [4.3, 4.58],
+    resetAt: 5.3,
+    encounterId: 'kern-three-marks-1',
+    firstHitId: 'spread-pulse-1',
+    secondHitId: 'spread-pulse-2',
+    playerIds: ['tavi', 'ally-left', 'ally-right'],
+  },
   'wide-swing': { mode: 'arc', boss: [225, 340], player: [380, 500], target: [420, 780] },
   lunge: {
     mode: 'lunge',
@@ -4115,6 +4143,78 @@ export function stackDamageResolve({
     totalAppliedDamage: perPlayer.reduce((sum, item) => sum + item.damage, 0),
     resolution: !valid || !eligible ? 'invalid' : alreadyResolved ? 'duplicate' : 'applied',
     applicationCount: eligible && !alreadyResolved ? 1 : 0,
+  });
+}
+
+export function personalSpreadState(time) {
+  const spec = SPECS['personal-spread'];
+  const t = localTime(time);
+  if (t < spec.firstSignal[0]) return 'group-baseline';
+  if (t < spec.separate[0]) return 'three-marks';
+  if (t < spec.separate[1]) return 'separating';
+  if (t < spec.firstHit[0]) return 'safe-spread';
+  if (t < spec.firstHit[1]) return 'one-hit-each';
+  if (t < spec.secondSignal[0]) return 'safe-recovery';
+  if (t < spec.regroup[0]) return 'second-three-marks';
+  if (t < spec.regroup[1]) return 'too-close';
+  if (t < spec.secondHit[0]) return 'foreign-body-inside';
+  if (t < spec.secondHit[1]) return 'multiple-hits';
+  if (t < spec.resetAt) return 'spread-failure';
+  return 'explicit-retry';
+}
+
+export function personalSpreadResolve({
+  encounterId = 'kern-three-marks-1',
+  hitId = 'spread-pulse-1',
+  marked = [
+    { id: 'tavi', position: { x: 280, y: 710 } },
+    { id: 'ally-left', position: { x: 145, y: 710 } },
+    { id: 'ally-right', position: { x: 415, y: 710 } },
+  ],
+  markerRadius = 110,
+  bodyRadius = BLUEPRINT_PLAYER_RADIUS,
+  damagePerHit = 25,
+  alreadyResolved = false,
+} = {}) {
+  const valid =
+    Array.isArray(marked) &&
+    marked.length > 0 &&
+    Number.isFinite(markerRadius) &&
+    markerRadius > 0 &&
+    Number.isFinite(bodyRadius) &&
+    bodyRadius >= 0 &&
+    Number.isSafeInteger(damagePerHit) &&
+    damagePerHit >= 0 &&
+    marked.every(
+      ({ id, position }) =>
+        id != null && position && Number.isFinite(position.x) && Number.isFinite(position.y),
+    );
+  const ids = valid ? marked.map(({ id }) => String(id)) : [];
+  const distinct = new Set(ids).size === ids.length;
+  const perPlayer =
+    valid && distinct && !alreadyResolved
+      ? marked.map(({ id, position }) => {
+          const hitIds = marked
+            .filter(
+              ({ position: center }) =>
+                Math.hypot(position.x - center.x, position.y - center.y) <=
+                markerRadius + bodyRadius,
+            )
+            .map(({ id: sourceId }) => String(sourceId));
+          return Object.freeze({
+            id: String(id),
+            hitIds: Object.freeze(hitIds),
+            hitCount: hitIds.length,
+            damage: hitIds.length * damagePerHit,
+          });
+        })
+      : [];
+  return Object.freeze({
+    encounterId: String(encounterId),
+    hitId: String(hitId),
+    perPlayer: Object.freeze(perPlayer),
+    applicationCount: perPlayer.length,
+    resolution: !valid || !distinct ? 'invalid' : alreadyResolved ? 'duplicate' : 'applied',
   });
 }
 
@@ -9189,6 +9289,73 @@ function primitivesFor(spec, frame) {
       ),
     ];
   }
+  if (mode === 'personal-spread') {
+    const t = frame.time;
+    const marked =
+      (t >= spec.firstSignal[0] && t < spec.firstHit[1]) ||
+      (t >= spec.secondSignal[0] && t < spec.secondHit[1]);
+    const active = frame.personalSpreadHitActive;
+    const unsafe = frame.personalSpreadHitCounts[0] > 1;
+    return [
+      rect(...spec.arena, 0.58, 'muted', 0.025),
+      path(
+        'M 62 775 L 172 738 L 280 775 L 388 738 L 498 775 V 805 L 388 773 L 280 813 L 172 773 L 62 805 Z',
+        0.55,
+        'muted',
+        0,
+        0.045,
+      ),
+      ...frame.personalSpreadHealth.flatMap((value, index) => {
+        const x = [230, 95, 365][index];
+        return [
+          rect(x, 125, 100, 20, 0.76, 'muted', 0.09),
+          rect(x, 125, value, 20, 0.9, value === 0 ? 'signal' : 'safe', 0.55),
+        ];
+      }),
+      ...frame.personalSpreadPositions.flatMap((center, index) => [
+        circle(
+          center.x,
+          center.y,
+          spec.markerRadius,
+          marked ? 0.9 : 0.16,
+          active && unsafe ? 'signal' : 'accent',
+          active ? 10 : 6,
+          marked ? 0.045 : 0.008,
+        ),
+        path(
+          `M ${center.x - 15} ${center.y - 60} L ${center.x} ${center.y - 82} L ${center.x + 15} ${center.y - 60} Z`,
+          marked ? 0.92 : 0,
+          index === 0 ? 'signal' : 'accent',
+          6,
+          0.03,
+        ),
+        circle(
+          center.x,
+          center.y,
+          spec.markerRadius + 16,
+          active ? 0.7 : 0,
+          unsafe ? 'signal' : 'safe',
+          9,
+        ),
+      ]),
+      line(280, 415, 280, 555, marked ? 0.65 : 0, 'signal', 7, '10 10'),
+      circle(280, 710, 54, active && unsafe ? 0.86 : 0, 'signal', 11, 0.045),
+      path(
+        'M 252 683 L 308 739 M 308 683 L 252 739',
+        frame.personalSpreadFailure ? 0.94 : 0,
+        'signal',
+        11,
+      ),
+      circle(
+        280,
+        710,
+        76 * smooth((t - spec.resetAt) / (BLUEPRINT_DURATION - spec.resetAt)),
+        frame.personalSpreadRetry ? 0.75 : 0,
+        'accent',
+        7,
+      ),
+    ];
+  }
   if (mode === 'coordinated-duo-attack') {
     const t = frame.time;
     const leader = frame.decoy;
@@ -11640,6 +11807,20 @@ function pointClearsThreat(spec, frame, value, radius = BLUEPRINT_PLAYER_RADIUS)
     const share = ledger.perPlayer.find(({ id }) => id === spec.targetPlayerId)?.damage;
     return share !== undefined && share < frame.stackDamageHealthBefore;
   }
+  if (mode === 'personal-spread') {
+    if (!frame.personalSpreadHitActive) return true;
+    const marked = frame.personalSpreadPositions.map((position, index) => ({
+      id: spec.playerIds[index],
+      position: index === 0 ? value : position,
+    }));
+    const ledger = personalSpreadResolve({
+      marked,
+      markerRadius: spec.markerRadius,
+      damagePerHit: spec.damagePerHit,
+    });
+    const damage = ledger.perPlayer.find(({ id }) => id === spec.playerIds[0])?.damage;
+    return damage !== undefined && damage < frame.personalSpreadHealthBefore;
+  }
   if (mode === 'coordinated-duo-attack') {
     const target = frame.coordinatedDuoAttackTarget;
     return (
@@ -13820,6 +14001,10 @@ export function blueprintFrame(id, time) {
     stride = Math.max(pulse(escape), pulse(approach), pulse(withdraw), pulse(retry));
   }
   if (spec.mode === 'stack-damage') {
+    player = point(spec.player);
+    stride = 0;
+  }
+  if (spec.mode === 'personal-spread') {
     player = point(spec.player);
     stride = 0;
   }
@@ -16194,6 +16379,64 @@ export function blueprintFrame(id, time) {
       impact: strikePulse(t, spec.firstResolveAt, 0.5) * 0.4,
     });
   }
+  if (spec.mode === 'personal-spread') {
+    const separate = smooth((t - spec.separate[0]) / (spec.separate[1] - spec.separate[0]));
+    const regroup = smooth((t - spec.regroup[0]) / (spec.regroup[1] - spec.regroup[0]));
+    const retry = smooth((t - spec.resetAt) / (BLUEPRINT_DURATION - spec.resetAt));
+    const allies = spec.allies.map((origin, index) => ({
+      x:
+        mix(mix(origin[0], spec.safePoints[index][0], separate), origin[0], regroup) +
+        (index === 0 ? -1 : 1) * 3 * pulse(retry),
+      y: origin[1],
+    }));
+    frame.personalSpreadPositions = [player, ...allies];
+    const secondHit = t >= spec.secondHit[0] && t < spec.secondHit[1];
+    const hitActive = (t >= spec.firstHit[0] && t < spec.firstHit[1]) || secondHit;
+    const ledger = personalSpreadResolve({
+      encounterId: spec.encounterId,
+      hitId: secondHit ? spec.secondHitId : spec.firstHitId,
+      marked: frame.personalSpreadPositions.map((position, index) => ({
+        id: spec.playerIds[index],
+        position,
+      })),
+      markerRadius: spec.markerRadius,
+      damagePerHit: spec.damagePerHit,
+    });
+    frame.personalSpreadState = personalSpreadState(t);
+    frame.personalSpreadEncounterId = ledger.encounterId;
+    frame.personalSpreadHitId = ledger.hitId;
+    frame.personalSpreadHitCounts = ledger.perPlayer.map(({ hitCount }) => hitCount);
+    frame.personalSpreadApplicationCount = hitActive ? ledger.applicationCount : 0;
+    frame.personalSpreadHitActive = hitActive;
+    frame.personalSpreadHealthBefore = secondHit ? 75 : 100;
+    frame.personalSpreadHealth =
+      t >= spec.resetAt
+        ? [100, 100, 100]
+        : t >= spec.secondHit[0]
+          ? [0, 25, 25]
+          : t >= spec.firstHit[0]
+            ? [75, 75, 75]
+            : [100, 100, 100];
+    frame.personalSpreadFailure = t >= spec.secondHit[0] && t < spec.resetAt;
+    frame.personalSpreadRetry = t >= spec.resetAt;
+    frame.personalSpreadFallAngle = frame.personalSpreadFailure
+      ? 75 * smooth((t - spec.secondHit[0]) / 0.12)
+      : 0;
+    frame.dangerActive = hitActive;
+    frame.bossMotion.attack = Math.max(
+      strikePulse(t, spec.firstHit[0], 0.6),
+      strikePulse(t, spec.secondHit[0], 0.6),
+    );
+    frame.playerMotion.impact = Math.max(
+      strikePulse(t, spec.firstHit[0], 0.5) * 0.35,
+      strikePulse(t, spec.secondHit[0], 0.65),
+    );
+    frame.personalSpreadAllyMotion = motion({
+      idle: 1,
+      stride: Math.max(pulse(separate), pulse(regroup), pulse(retry)),
+      impact: strikePulse(t, spec.firstHit[0], 0.5) * 0.35,
+    });
+  }
   if (spec.mode === 'real-time-progression') {
     frame.realTimeProgressionState = realTimeProgressionState(t);
     frame.realTimeProgressionCheckpointId = spec.checkpointId;
@@ -16583,7 +16826,8 @@ export function blueprintFrame(id, time) {
               spec.mode === 'kill-order-inheritance' ||
               spec.mode === 'shared-group-health' ||
               spec.mode === 'coordinated-duo-attack' ||
-              spec.mode === 'stack-damage'
+              spec.mode === 'stack-damage' ||
+              spec.mode === 'personal-spread'
             ? 92
             : -62),
   };

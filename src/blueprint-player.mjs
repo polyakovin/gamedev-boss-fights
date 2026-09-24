@@ -56,6 +56,8 @@ export function initializeBlueprint(widget) {
   const groupHealthLabel = find('[data-blueprint-group-health-label]');
   const stackReadout = find('[data-blueprint-stack-readout]');
   const stackHealthLabels = [...widget.querySelectorAll('[data-blueprint-stack-health]')];
+  const spreadReadout = find('[data-blueprint-spread-readout]');
+  const spreadHealthLabels = [...widget.querySelectorAll('[data-blueprint-spread-health]')];
   const partnerLabel = find('[data-blueprint-partner-label]');
   const playerLabel = find('[data-blueprint-player-label]');
   const primitives = [...widget.querySelectorAll('[data-blueprint-primitive]')];
@@ -1176,6 +1178,25 @@ export function initializeBlueprint(widget) {
           frame.stackDamageHealth[Number(label.dataset.blueprintStackHealth)],
         );
     }
+    if (mechanicId === 'personal-spread') {
+      widget.dataset.blueprintPersonalSpread = frame.personalSpreadState;
+      widget.dataset.blueprintPersonalSpreadEncounterId = frame.personalSpreadEncounterId;
+      widget.dataset.blueprintPersonalSpreadHitId = frame.personalSpreadHitId;
+      widget.dataset.blueprintPersonalSpreadHitCounts = frame.personalSpreadHitCounts.join('/');
+      widget.dataset.blueprintPersonalSpreadHealth = frame.personalSpreadHealth.join('/');
+      widget.dataset.blueprintPersonalSpreadApplicationCount = String(
+        frame.personalSpreadApplicationCount,
+      );
+      widget.dataset.blueprintPersonalSpreadFailure = String(frame.personalSpreadFailure);
+      widget.dataset.blueprintPersonalSpreadRetry = String(frame.personalSpreadRetry);
+      if (spreadReadout)
+        spreadReadout.textContent =
+          frame.time >= 0.65 && frame.time < 5.3 ? frame.personalSpreadHitCounts.join(' / ') : '';
+      for (const label of spreadHealthLabels)
+        label.textContent = String(
+          frame.personalSpreadHealth[Number(label.dataset.blueprintSpreadHealth)],
+        );
+    }
     boss.setAttribute(
       'transform',
       `translate(${frame.boss.x} ${frame.boss.y})${frame.bossRotation ? ` rotate(${frame.bossRotation})` : ''} scale(${frame.bossScale})`,
@@ -1194,12 +1215,15 @@ export function initializeBlueprint(widget) {
     }
     player.setAttribute(
       'transform',
-      `translate(${frame.player.x} ${frame.player.y})${frame.stackDamageFallAngle ? ` rotate(${frame.stackDamageFallAngle})` : ''}`,
+      `translate(${frame.player.x} ${frame.player.y})${frame.stackDamageFallAngle || frame.personalSpreadFallAngle ? ` rotate(${frame.stackDamageFallAngle || frame.personalSpreadFallAngle})` : ''}`,
     );
     for (const [index, ally] of allies.entries()) {
-      const position = frame.stackDamageAllies[index];
+      const position = (frame.stackDamageAllies ?? frame.personalSpreadPositions?.slice(1))[index];
       ally.setAttribute('transform', `translate(${position.x} ${position.y}) scale(.78)`);
-      animateAllies[index](frame.stackDamageAllyMotion, frame.playerFacing);
+      animateAllies[index](
+        frame.stackDamageAllyMotion ?? frame.personalSpreadAllyMotion,
+        frame.playerFacing,
+      );
     }
     animateBoss(frame.bossMotion, frame.bossFacing);
     animateWideSwingWeapon(frame.wideSwingWeapon);

@@ -1,0 +1,138 @@
+{
+  "title": "Separación de marcas personales",
+  "subtitle": "Evita que cada impacto marcado alcance a otros jugadores",
+  "variant": "Tres objetivos · distancia entre cuerpos · un impacto por persona · fallo por cercanía",
+  "summary": "Varios jugadores reciben áreas de impacto independientes; al resolverse a la vez, ninguno debe estar dentro del área de otra persona.",
+  "overview": "Varias marcas personales crean ataques de área simultáneos. Cada jugador recibe su propio impacto; entrar en el área de otro añade uno más. Muestra las marcas pronto para permitir una separación normal y resuelve cada ataque una sola vez. Los círculos pueden cruzarse sin daño extra si no contienen a otro jugador.",
+  "learning": "Especifique ID marcadas, comportamiento de seguimiento versus bloqueo, colisión de radio y cuerpo, resolución simultánea, prevención de duplicados, daño acumulativo, espacio alcanzable, reinicio de reintento y telemetría multijugador.",
+  "category": "Coordinación cooperativa",
+  "readTime": "10 minutos",
+  "demo": {
+    "title": "Difunde las tres marcas rúnicas de Kern y luego compara una formación estrecha.",
+    "timeline": "Cronograma de propagación personal",
+    "step": "Marque tres cuerpos, sepárelos para un golpe cada uno y luego exponga el costo de reagruparse",
+    "phaseNames": [
+      "marcar y separar",
+      "Resuelve un golpe cada uno.",
+      "Comparar un fracaso lleno de gente"
+    ],
+    "phaseDescriptions": [
+      "A los 0,65 segundos, Kern marca a los tres jugadores con círculos de radio de 110. Los dos aliados se mueven desde el centro hacia posiciones laterales accesibles. Sus círculos todavía se cruzan, pero ningún cuerpo toca un círculo extraño: las distancias entre centros son 135 y el espacio libre de todo el cuerpo requiere más de 134.",
+      "Los tres golpes se resuelven juntos en 2,25 segundos y causan 25 daños cada uno. Cada barra de 100 puntos se convierte en 75; el libro de visitas cuenta una fuente por jugador. Los contornos del marcador y el resultado numérico permanecen visibles después del contacto.",
+      "Una nueva advertencia comienza a los 3,05 segundos. Los aliados se acercan demasiado, a 70 unidades del centro. A los 4.30 segundos el central recibe tres aciertos de 25 puntos y cae de 75 a cero; cada jugador del lado recibe dos y permanece en 25. A los 5,30 segundos, un reintento explícito restaura posiciones y salud."
+    ],
+    "boss": "jefe",
+    "player": "Jugador",
+    "danger": "Tratar cualquier intersección de círculos pintados como falla, o contar solo un impacto por cuerpo, oculta la regla real de colisión y daño.",
+    "locked": "Los ID de encuentros y golpes, lista marcada, radio, colisión corporal, instantánea del tiempo de contacto, daño por fuente, una resolución por golpe y reinicio de reintento son lógica de encuentro.",
+    "safe": "Dale a cada jugador un límite personal visible y suficiente tiempo de viaje; contar cuerpos dentro de zonas extrañas en lugar de probar si los círculos dibujados se cruzan",
+    "reducedMotion": "El movimiento reducido desactiva la reproducción automática. Frote durante 0,65, 1,20, 2,10, 2,30, 3,05, 3,65, 4,20, 4,35 y 5,45 segundos.",
+    "diagramDescription": "Kern marca a Tavi y a dos aliados idénticos. Se separan hasta que cada cuerpo está fuera de los otros dos círculos, luego cada uno recibe un golpe. Tras una segunda advertencia, los aliados se acercan; Tavi recibe tres golpes y cae mientras los demás reciben dos. Las barras de salud y un conteo de golpes de una barra-una-barra-uno versus dos-barras-tres-barras-dos revelan la regla."
+  },
+  "steps": [
+    {
+      "title": "¿Qué es exactamente inseguro?",
+      "body": "Dale a cada marca un dueño estable y un círculo. En el contacto, prueba la forma de colisión completa de cada jugador vivo contra cada zona marcada. Se espera el golpe del propio dueño; un cuerpo dentro de la zona de otro propietario recibe esa fuente adicional. Dos círculos pueden compartir píxeles mientras ambos propietarios se mantienen alejados."
+    },
+    {
+      "title": "¿Cuándo las posiciones se vuelven definitivas?",
+      "body": "Defina si las zonas siguen a los propietarios hasta que se contacten o se bloqueen de antemano, y comunique esa elección. Tome una instantánea de todas las posiciones marcadas en el mismo cuadro de resolución, obtenga una lista de resultados por jugador y aplique cada fuente una vez por encuentro e ID de resultado. No permita que las devoluciones de llamadas de la red conviertan un impacto en varios."
+    },
+    {
+      "title": "¿Podrá el grupo alcanzar un diseño seguro?",
+      "body": "Mida el ancho utilizable de la arena, el radio de la marca más el radio del cuerpo completo, la velocidad de movimiento, la duración de la advertencia y los obstáculos. Aquí una separación de 135 unidades despeja una zona de 110 unidades más un cuerpo de 24 unidades, mientras que una separación de 70 unidades no lo hace. Compara el número de aciertos y la salud, luego reinicia toda la lista al volver a intentarlo."
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "Rechazando cada contorno que se cruza",
+      "body": "Los círculos pintados pueden superponerse en el espacio vacío. Llamar a eso un fracaso exige innecesariamente un espaciamiento imposible en un ámbito compacto. Compruebe si un cuerpo extraño intersecta una zona con el mismo radio de colisión utilizado por el daño."
+    },
+    {
+      "title": "Colapsando golpes simultáneos en uno",
+      "body": "Si un jugador se encuentra en tres áreas marcadas, un golpe limitado borra la consecuencia de coordinación. Conserve ID de origen separados en el libro de visitas, aplique cada uno solo una vez y muestre la salud total y superviviente."
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "Presupuestar espacio y tiempo juntos",
+      "body": "Pruebe la agrupación inicial en el peor de los casos, la distancia de viaje normal, el cuerpo completo de un jugador, los pasillos bloqueados y la latencia. La distancia libre en este ejemplo es mayor que 134 unidades; dejar una pequeña tolerancia más allá de ese borde matemático."
+    },
+    {
+      "title": "Mantenga distintas las reglas de coordinación opuestas",
+      "body": "Una acumulación de daño compartido recompensa el ingreso a un marcador; una extensión personal recompensa dejando marcadores extranjeros. Dé a las dos señales siluetas diferentes y un intervalo de transición antes de pedirle al grupo que invierta la dirección."
+    },
+    {
+      "title": "Instrumentar cada fuente",
+      "body": "Registre ID de encuentro, ID de golpe, ID marcados, posiciones finales, radio del cuerpo, intersecciones de origen a objetivo, daño por jugador, salud antes y después y devoluciones de llamada duplicadas. Pruebe un límite exacto, objetivos caídos o ausentes, movimiento de cruce y vuelva a intentarlo."
+    }
+  ],
+  "story": {
+    "title": "Tres runas necesitan tres espacios de espacio.",
+    "body": "Kern pone una runa sobre Tavi y dos compañeros. El primer pulso los encuentra lo suficientemente extendidos como para transportar sólo sus propias chispas. El segundo pulso los atrapa apiñados y sus chispas separadas se acumulan sobre Tavi."
+  },
+  "adaptation": {
+    "title": "Mostrar tanto propiedad como consecuencia",
+    "body": "Utilice puntas de marcador distintas, contornos persistentes, recuentos de visitas visibles y valores de salud. Mantenga las etiquetas legibles sin color ni audio, conserve el resultado en una línea de tiempo pausada y proporcione espacios accesibles en una pantalla estrecha sin cambiar la regla de encuentro."
+  },
+  "distinction": {
+    "title": "Varios golpes personales, ni uno compartido",
+    "body": "Una pila tiene un presupuesto de daño total dividido entre los cuerpos en un área marcada. Una extensión personal crea un hit separado de cada propietario marcado; el hacinamiento añade daño en lugar de dividirlo. En cambio, una torre fija requiere la ocupación de una zona anclada al mundo."
+  },
+  "lensNotes": [
+    {
+      "id": "counterplay",
+      "body": "Separar los cuerpos marcados antes del contacto evita golpes extraños y al mismo tiempo preserva cada golpe propio inevitable."
+    },
+    {
+      "id": "threat-geometry",
+      "body": "Las zonas centradas en el propietario y los cuerpos completos de los jugadores, sin superposición de contorno a contorno, determinan los golpes adicionales."
+    },
+    {
+      "id": "risk-reward",
+      "body": "Permanecer cerca mantiene la conveniencia del grupo, pero corre el riesgo de acumular varios impactos independientes."
+    },
+    {
+      "id": "difficulty-rhythm",
+      "body": "El aviso debe corresponder a un desplazamiento normal a distintas posiciones, seguido de un contacto simultáneo inequívoco."
+    },
+    {
+      "id": "progress-clarity",
+      "body": "El recuento de golpes por jugador y la salud hacen que una diferencia de un solo golpe y un fallo de tres golpes sean visiblemente diferentes."
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "MapleStory",
+      "boss": "Kaling",
+      "screenshot": "https://upload3.inven.co.kr/upload/2024/07/05/bbs/i1524517121.png?MW=800",
+      "screenshotSource": "https://www.inven.co.kr/board/maple/2295/239120",
+      "video": "https://www.youtube.com/watch?v=y74KWpY9xQ0&t=565s",
+      "videoDurationSeconds": 974,
+      "body": "La guía de la segunda fase de Kaling muestra a un jugador marcado que recibe un ataque periódico cada cuatro segundos durante quince segundos. Esta variante 2D con un único portador hace relevante su posición para los aliados cercanos; no muestra las tres marcas simultáneas de la demostración."
+    },
+    {
+      "dimension": "3D",
+      "game": "Final Fantasy XIV",
+      "boss": "Hephaistos",
+      "screenshot": "https://static.fanbyte.com/uploads/2022/08/FFXIV-082322-Abyssos-Eighth-Circle-Raid-Hephaistos-Guide-Into-Shadows.jpg",
+      "screenshotSource": "https://www.fanbyte.com/ffxiv/guides/abyssos-the-eighth-circle-raid-guide-pandaemonium-ffxiv-patch-6-2",
+      "video": "https://www.youtube.com/watch?v=sqMeCota2fk&t=55s",
+      "videoDurationSeconds": 1023,
+      "body": "Octaflare conceptual se resuelve como AoE separados en cada jugador después de su señal anterior. El grupo debe preservar distintas posiciones corporales mientras se resuelven otras limitaciones del escenario; el tiempo y el piso lleno de gente hacen que el presupuesto de espacio sea parte del diseño."
+    },
+    {
+      "dimension": "3D",
+      "game": "World of Warcraft",
+      "boss": "G'huun",
+      "screenshot": "https://wow.4fansites.de/bilder/dungeons/uldir/ghuun-06.jpg",
+      "screenshotSource": "https://wow.4fansites.de/dungeons-ghuun.php",
+      "video": "https://www.youtube.com/watch?v=eIcRCQf_P_w&t=35s",
+      "videoDurationSeconds": 268,
+      "body": "La corrupción explosiva marca a los jugadores que necesitan espacio antes de la detonación. En Mítico, muchos pueden estar marcados juntos; la desventaja también deja un peligro persistente, por lo que la planificación de la distribución debe considerar tanto a los vecinos inmediatos como al uso posterior de la arena. Esto difiere de los tres círculos limpios y simultáneos de la demostración."
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

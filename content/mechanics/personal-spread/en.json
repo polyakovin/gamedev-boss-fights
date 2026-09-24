@@ -1,0 +1,134 @@
+{
+  "title": "Personal spread",
+  "subtitle": "Keep each marked impact off every other player",
+  "variant": "Three targets · body clearance · one hit each · overlap failure",
+  "summary": "Several players receive independent impact zones; each must clear the other players' bodies before the simultaneous hit.",
+  "overview": "A personal spread marks several players for simultaneous area hits. Each normally takes their own hit; standing inside another player's zone adds one more. Show markers early enough for ordinary movement, then resolve each hit once. The circles may intersect without extra damage if no other player stands inside them.",
+  "learning": "Specify marked IDs, follow-versus-lock behavior, radius and body collision, simultaneous resolution, duplicate prevention, cumulative damage, reachable spacing, retry reset, and multiplayer telemetry.",
+  "category": "Cooperative coordination",
+  "readTime": "10 min",
+  "demo": {
+    "title": "Spread Kern's three rune marks, then compare a cramped formation",
+    "timeline": "Personal spread timeline",
+    "step": "Mark three bodies, separate for one hit each, then expose the cost of regrouping",
+    "phaseNames": ["Mark and separate", "Resolve one hit each", "Compare a crowded failure"],
+    "phaseDescriptions": [
+      "At 0.65 seconds Kern marks all three players with radius-110 circles. The two allies move from the center to reachable side positions. Their circles still intersect, but no body touches a foreign circle: center distances are 135 and full-body clearance requires more than 134.",
+      "All three hits resolve together at 2.25 seconds for 25 damage each. Each 100-point bar becomes 75; the hit ledger counts one source per player. The marker outlines and numeric result remain visible after contact.",
+      "A new warning starts at 3.05 seconds. The allies move too close, 70 units from the center. At 4.30 seconds the center receives three 25-point hits and falls from 75 to zero; each side player receives two and remains at 25. At 5.30 seconds an explicit retry restores positions and health."
+    ],
+    "boss": "Boss",
+    "player": "Player",
+    "danger": "Treating any intersection of painted circles as failure, or counting only one hit per body, hides the actual collision and damage rule",
+    "locked": "Encounter and hit IDs, marked roster, radius, body collision, contact-time snapshot, per-source damage, one resolution per hit, and retry reset are encounter logic",
+    "safe": "Give each player a visible personal boundary and enough travel time; count bodies inside foreign zones rather than testing whether the drawn circles intersect",
+    "reducedMotion": "Reduced motion disables autoplay. Scrub through 0.65, 1.20, 2.10, 2.30, 3.05, 3.65, 4.20, 4.35, and 5.45 seconds.",
+    "diagramDescription": "Kern marks Tavi and two identical allies. They separate until each body is outside the other two circles, then each takes one hit. On a second warning the allies close in; Tavi takes three hits and falls while the others take two. Health bars and a one-slash-one-slash-one versus two-slash-three-slash-two hit count reveal the rule."
+  },
+  "steps": [
+    {
+      "title": "What exactly is unsafe?",
+      "body": "Give every mark a stable owner and one circle. At contact, test each living player's full collision shape against each marked zone. The owner's own hit is expected; a body inside another owner's zone receives that extra source. Two circles may share pixels while both owners stand clear."
+    },
+    {
+      "title": "When do positions become final?",
+      "body": "Define whether zones follow owners until contact or lock beforehand, and communicate that choice. Snapshot all marked positions on the same resolution frame, derive one hit list per player, and apply each source once by encounter and hit ID. Do not let network callbacks turn one impact into several."
+    },
+    {
+      "title": "Can the group reach a safe layout?",
+      "body": "Measure the arena's usable width, mark radius plus full body radius, movement speed, warning duration, and obstacles. Here a 135-unit separation clears a 110-unit zone plus 24-unit body, while a 70-unit separation does not. Compare hit counts and health, then reset the entire roster on retry."
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "Rejecting every intersecting outline",
+      "body": "Painted circles can overlap in empty space. Calling that a failure needlessly demands impossible spacing in a compact arena. Check whether a foreign body intersects a zone, with the same collision radius used by damage."
+    },
+    {
+      "title": "Collapsing simultaneous hits into one",
+      "body": "If a player stands in three marked areas, one capped hit erases the coordination consequence. Retain separate source IDs in the hit ledger, apply each only once, and show the total and surviving health."
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "Budget space and time together",
+      "body": "Test worst-case initial grouping, ordinary travel distance, a player's full body, blocked corridors, and latency. The clear distance in this example is greater than 134 units; leave a small tolerance beyond that mathematical edge."
+    },
+    {
+      "title": "Keep opposite coordination rules distinct",
+      "body": "A shared-damage stack rewards entering one marker; a personal spread rewards leaving foreign markers. Give the two signals different silhouettes and a transition interval before asking a group to reverse direction."
+    },
+    {
+      "title": "Instrument each source",
+      "body": "Record encounter ID, hit ID, marked IDs, final positions, body radius, source-to-target intersections, per-player damage, health before and after, and duplicate callbacks. Test an exact boundary, downed or absent targets, crossing motion, and retry."
+    }
+  ],
+  "story": {
+    "title": "Three runes need three pockets of space",
+    "body": "Kern puts a rune over Tavi and two companions. The first pulse finds them spread enough to carry only their own sparks. The second pulse catches them crowded together, and their separate sparks stack on Tavi."
+  },
+  "adaptation": {
+    "title": "Show both ownership and consequence",
+    "body": "Use distinct marker tips, persistent outlines, visible hit counts and health values. Keep labels readable without color or audio, preserve the result on a paused timeline, and provide reachable spacing on a narrow screen without changing the encounter rule."
+  },
+  "distinction": {
+    "title": "Several personal hits, not one shared hit",
+    "body": "A stack has one total damage budget split among bodies in a marked area. A personal spread creates a separate hit from every marked owner; crowding adds damage rather than dividing it. A fixed tower instead asks for occupancy of a world-anchored zone."
+  },
+  "lensNotes": [
+    {
+      "id": "counterplay",
+      "body": "Separating marked bodies before contact prevents foreign hits while preserving each unavoidable own hit."
+    },
+    {
+      "id": "threat-geometry",
+      "body": "Owner-centered zones and full player bodies, not outline-to-outline overlap, determine extra hits."
+    },
+    {
+      "id": "risk-reward",
+      "body": "Remaining close retains group convenience but risks accumulating several independent impacts."
+    },
+    {
+      "id": "difficulty-rhythm",
+      "body": "The warning must fit ordinary travel to distinct positions, followed by one unmistakable simultaneous contact."
+    },
+    {
+      "id": "progress-clarity",
+      "body": "Per-player hit counts and health make a one-hit spread and a three-hit failure visibly different."
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "MapleStory",
+      "boss": "Kaling",
+      "screenshot": "https://upload3.inven.co.kr/upload/2024/07/05/bbs/i1524517121.png?MW=800",
+      "screenshotSource": "https://www.inven.co.kr/board/maple/2295/239120",
+      "video": "https://www.youtube.com/watch?v=y74KWpY9xQ0&t=565s",
+      "videoDurationSeconds": 974,
+      "body": "Kaling's phase-two guide shows one marked player taking a periodic attack every four seconds for fifteen seconds. This 2D, one-carrier variant makes the marked player's position relevant to nearby allies; it is not the demo's simultaneous three-mark pattern."
+    },
+    {
+      "dimension": "3D",
+      "game": "Final Fantasy XIV",
+      "boss": "Hephaistos",
+      "screenshot": "https://static.fanbyte.com/uploads/2022/08/FFXIV-082322-Abyssos-Eighth-Circle-Raid-Hephaistos-Guide-Into-Shadows.jpg",
+      "screenshotSource": "https://www.fanbyte.com/ffxiv/guides/abyssos-the-eighth-circle-raid-guide-pandaemonium-ffxiv-patch-6-2",
+      "video": "https://www.youtube.com/watch?v=sqMeCota2fk&t=55s",
+      "videoDurationSeconds": 1023,
+      "body": "Conceptual Octaflare resolves as separate AoEs on every player after its earlier signal. The group must preserve distinct body positions while other arena constraints resolve; the timing and crowded floor make the spacing budget part of the design."
+    },
+    {
+      "dimension": "3D",
+      "game": "World of Warcraft",
+      "boss": "G'huun",
+      "screenshot": "https://wow.4fansites.de/bilder/dungeons/uldir/ghuun-06.jpg",
+      "screenshotSource": "https://wow.4fansites.de/dungeons-ghuun.php",
+      "video": "https://www.youtube.com/watch?v=eIcRCQf_P_w&t=35s",
+      "videoDurationSeconds": 268,
+      "body": "Explosive Corruption marks players who need space before detonation. On Mythic, many may be marked together; the debuff also leaves persistent danger, so spread planning has to consider both immediate neighbors and later arena use. This differs from the demo's three clean, simultaneous circles."
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

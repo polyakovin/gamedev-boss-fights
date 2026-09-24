@@ -632,21 +632,21 @@ test('boss builder persists a local draft and downloads portable JSON', async ({
   await expect(page.locator('.boss-builder-phases [data-boss-download]')).toHaveCount(1);
   await expect(page.locator('.boss-builder-form [data-boss-download]')).toHaveCount(0);
   await expect(page.locator('.boss-builder-mechanic')).toHaveCount(124);
-  await expect(page.locator('.boss-builder-mechanic--wip')).toHaveCount(10);
+  await expect(page.locator('.boss-builder-mechanic--wip')).toHaveCount(9);
   await expect(page.locator('.boss-builder-mechanic:not(.boss-builder-mechanic--wip)')).toHaveCount(
-    114,
+    115,
   );
   await expect(
     page.locator(
       '.boss-builder-mechanic:not(.boss-builder-mechanic--wip):has([data-character-art="kern"])',
     ),
-  ).toHaveCount(114);
+  ).toHaveCount(115);
   await expect(
     page.locator(
       '.boss-builder-mechanic:not(.boss-builder-mechanic--wip):has([data-character-art="tavi"])',
     ),
-  ).toHaveCount(114);
-  await expect(page.locator('.boss-builder-mechanic [data-blueprint-preview]')).toHaveCount(108);
+  ).toHaveCount(115);
+  await expect(page.locator('.boss-builder-mechanic [data-blueprint-preview]')).toHaveCount(109);
   await expect(page.locator('.boss-builder-mechanic [data-pattern-preview]')).toHaveCount(5);
   await expect(page.locator('[data-boss-filter]')).toHaveCount(5);
   await page.locator('[data-boss-filter="geometry"]').selectOption('radial');
@@ -825,7 +825,9 @@ test('boss builder surfaces compatible and conflicting mechanics in the active p
 
   await page.locator('[data-boss-mechanic][value="stack-damage"]').check();
   await page.locator('[data-boss-mechanic][value="personal-spread"]').check();
-  await expect(page.locator('[data-boss-conflicts]')).toContainText('Shared-damage stack + Spread');
+  await expect(page.locator('[data-boss-conflicts]')).toContainText(
+    'Shared-damage stack + Personal spread',
+  );
   await expect(page.locator('[data-mechanic-id="personal-spread"]')).toHaveClass(
     /boss-builder-mechanic--conflict/,
   );
@@ -1198,17 +1200,17 @@ test('the root defaults to English and localized catalogs point to real pages', 
   ]);
   await expect(page.locator('.catalog-part')).toHaveCount(14);
   await expect(page.locator('.catalog-lesson')).toHaveCount(124);
-  await expect(page.locator('.catalog-lesson--wip')).toHaveCount(10);
-  await expect(page.locator('.catalog-lesson:not(.catalog-lesson--wip)')).toHaveCount(114);
+  await expect(page.locator('.catalog-lesson--wip')).toHaveCount(9);
+  await expect(page.locator('.catalog-lesson:not(.catalog-lesson--wip)')).toHaveCount(115);
   await expect(page.locator('.catalog-lesson__number').first()).toHaveText('1.1');
   await expect(page.locator('.catalog-lesson__number').last()).toHaveText('14.11');
   await expect(
     page.locator('.catalog-lesson:not(.catalog-lesson--wip):has([data-character-art="kern"])'),
-  ).toHaveCount(114);
+  ).toHaveCount(115);
   await expect(
     page.locator('.catalog-lesson:not(.catalog-lesson--wip):has([data-character-art="tavi"])'),
-  ).toHaveCount(114);
-  await expect(page.locator('.catalog-lesson__preview [data-blueprint-preview]')).toHaveCount(108);
+  ).toHaveCount(115);
+  await expect(page.locator('.catalog-lesson__preview [data-blueprint-preview]')).toHaveCount(109);
   await expect(page.locator('.catalog-lesson__preview [data-pattern-preview]')).toHaveCount(5);
   const publishedPage = await request.get('en/mechanics/environmental-weapon/');
   expect(publishedPage.status()).toBe(200);
@@ -1464,6 +1466,14 @@ test('the root defaults to English and localized catalogs point to real pages', 
   await page.goto('en/mechanics/stack-damage/');
   await expect(page.locator('.lesson-title-line h1')).toHaveText('Shared-damage stack');
   await expect(page.locator('[data-blueprint-id="stack-damage"]')).toBeVisible();
+  await expect(page.locator('.game-example')).toHaveCount(3);
+  await expect(page.locator('.lens-chip')).toHaveCount(5);
+  const personalSpreadPage = await request.get('en/mechanics/personal-spread/');
+  expect(personalSpreadPage.status()).toBe(200);
+  expect(await personalSpreadPage.text()).not.toContain('class="wip-badge"');
+  await page.goto('en/mechanics/personal-spread/');
+  await expect(page.locator('.lesson-title-line h1')).toHaveText('Personal spread');
+  await expect(page.locator('[data-blueprint-id="personal-spread"]')).toBeVisible();
   await expect(page.locator('.game-example')).toHaveCount(3);
   await expect(page.locator('.lens-chip')).toHaveCount(5);
   await page.setViewportSize({ width: 375, height: 812 });

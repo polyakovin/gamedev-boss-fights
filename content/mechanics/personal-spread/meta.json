@@ -1,0 +1,34 @@
+{
+  "id": "personal-spread",
+  "number": 115,
+  "published": true,
+  "sourceLocale": "en",
+  "contentVersion": 1,
+  "animation": "personal-spread",
+  "lenses": [
+    "counterplay",
+    "threat-geometry",
+    "risk-reward",
+    "difficulty-rhythm",
+    "progress-clarity"
+  ],
+  "related": ["stack-damage", "marked-area-strike", "party-size-scaling", "coordinated-duo-attack"],
+  "sources": [
+    {
+      "title": "Area of Effect — FFXIV Community Wiki",
+      "url": "https://ffxiv.consolegameswiki.com/wiki/Area_of_Effect"
+    },
+    {
+      "title": "The Eighth Circle Phase 1 Savage — Icy Veins",
+      "url": "https://www.icy-veins.com/ffxiv/the-eighth-circle-phase-1-savage-raid-guide"
+    },
+    {
+      "title": "G'huun Mythic Uldir strategy — Wowhead",
+      "url": "https://www.wowhead.com/guide/mythic-ghuun-uldir-raid-strategy-guide"
+    },
+    {
+      "title": "Kaling monster patterns — MapleStory Wiki",
+      "url": "https://maplestorywiki.net/w/Kaling/Monster"
+    }
+  ]
+}

@@ -85,6 +85,8 @@ import {
   coordinatedDuoAttackResolve,
   stackDamageState,
   stackDamageResolve,
+  personalSpreadState,
+  personalSpreadResolve,
   counterStanceOutcome,
   counterStanceState,
   blueprintFrame,
@@ -112,8 +114,8 @@ import {
   renderBlueprintThumbnail,
 } from '../lib/blueprint-view.mjs';
 
-test('all 108 promoted lesson animations have distinct rule modes and complete moving frames', () => {
-  assert.equal(BLUEPRINT_MECHANIC_IDS.length, 108);
+test('all 109 promoted lesson animations have distinct rule modes and complete moving frames', () => {
+  assert.equal(BLUEPRINT_MECHANIC_IDS.length, 109);
   const modes = new Set();
   for (const id of BLUEPRINT_MECHANIC_IDS) {
     for (let time = 0; time <= BLUEPRINT_DURATION; time += 0.1) {
@@ -134,7 +136,7 @@ test('all 108 promoted lesson animations have distinct rule modes and complete m
           assert.ok(Number.isFinite(value), `${id} has an invalid ${primitive.type}`);
     }
   }
-  assert.equal(modes.size, 108);
+  assert.equal(modes.size, 109);
 });
 
 test('every blueprint exposes signal, committed action, and recovery without player teleports', () => {
@@ -191,7 +193,8 @@ test('every blueprint exposes signal, committed action, and recovery without pla
       id !== 'kill-order-inheritance' &&
       id !== 'shared-group-health' &&
       id !== 'coordinated-duo-attack' &&
-      id !== 'stack-damage'
+      id !== 'stack-damage' &&
+      id !== 'personal-spread'
     )
       assert.equal(blueprintFrame(id, 3).dangerActive, true, id);
     assert.equal(blueprintFrame(id, 3).playerSafe, true, id);
@@ -298,6 +301,7 @@ test('every damaging promoted animation derives safety from its own active geome
       id !== 'shared-group-health' &&
       id !== 'coordinated-duo-attack' &&
       id !== 'stack-damage' &&
+      id !== 'personal-spread' &&
       id !== 'part-break' &&
       id !== 'counter-stance' &&
       id !== 'absorption-power-up' &&
@@ -5002,5 +5006,68 @@ test('stack damage snapshots the marked group and divides one hit exactly once',
   assert.match(
     renderBlueprintThumbnail(id, 'test-stack-damage'),
     /data-blueprint-preview="stack-damage"/,
+  );
+});
+
+test('personal spread counts foreign-body hits, not merely intersecting circles', () => {
+  const id = 'personal-spread';
+  assert.deepEqual(
+    [0, 0.7, 1.2, 2.1, 2.35, 2.8, 3.1, 3.6, 4.1, 4.4, 4.7, 5.5].map(personalSpreadState),
+    [
+      'group-baseline',
+      'three-marks',
+      'separating',
+      'safe-spread',
+      'one-hit-each',
+      'safe-recovery',
+      'second-three-marks',
+      'too-close',
+      'foreign-body-inside',
+      'multiple-hits',
+      'spread-failure',
+      'explicit-retry',
+    ],
+  );
+  const safe = personalSpreadResolve();
+  assert.equal(safe.resolution, 'applied');
+  assert.deepEqual(
+    safe.perPlayer.map(({ hitCount }) => hitCount),
+    [1, 1, 1],
+  );
+  assert.deepEqual(
+    safe.perPlayer.map(({ damage }) => damage),
+    [25, 25, 25],
+  );
+  assert.equal(safe.applicationCount, 3);
+  assert.deepEqual(personalSpreadResolve({ alreadyResolved: true }).perPlayer, []);
+  assert.equal(personalSpreadResolve({ alreadyResolved: true }).resolution, 'duplicate');
+  const crowded = personalSpreadResolve({
+    marked: [
+      { id: 'tavi', position: { x: 280, y: 710 } },
+      { id: 'ally-left', position: { x: 210, y: 710 } },
+      { id: 'ally-right', position: { x: 350, y: 710 } },
+    ],
+  });
+  assert.deepEqual(
+    crowded.perPlayer.map(({ hitCount }) => hitCount),
+    [3, 2, 2],
+  );
+  assert.equal(
+    personalSpreadResolve({
+      marked: [
+        { id: 'tavi', position: { x: 0, y: 0 } },
+        { id: 'tavi', position: { x: 200, y: 0 } },
+      ],
+    }).resolution,
+    'invalid',
+  );
+  assert.deepEqual(blueprintFrame(id, 2.35).personalSpreadHealth, [75, 75, 75]);
+  assert.deepEqual(blueprintFrame(id, 4.4).personalSpreadHealth, [0, 25, 25]);
+  assert.equal(blueprintPointSafe(id, 2.35, { x: 280, y: 710 }), true);
+  assert.equal(blueprintPointSafe(id, 4.4, { x: 280, y: 710 }), false);
+  assert.deepEqual(blueprintFrame(id, 5.5).personalSpreadHealth, [100, 100, 100]);
+  assert.match(
+    renderBlueprintThumbnail(id, 'test-personal-spread'),
+    /data-blueprint-preview="personal-spread"/,
   );
 });
