@@ -899,6 +899,61 @@ export function initializeBlueprint(widget) {
         frame.interfaceInteractionRouteRestored,
       );
     }
+    if (mechanicId === 'world-state-variant') {
+      widget.dataset.blueprintWorldStateVariant = frame.worldStateVariantState;
+      widget.dataset.blueprintWorldStateVariantEncounterId = frame.worldStateVariantEncounterId;
+      widget.dataset.blueprintWorldStateVariantEntryId = frame.worldStateVariantEntryId;
+      widget.dataset.blueprintWorldStateVariantSnapshotVersion = String(
+        frame.worldStateVariantSnapshotVersion,
+      );
+      widget.dataset.blueprintWorldStateVariantSnapshotCaptured = String(
+        frame.worldStateVariantSnapshotCaptured,
+      );
+      widget.dataset.blueprintWorldStateVariantSnapshotCount = String(
+        frame.worldStateVariantSnapshotCount,
+      );
+      widget.dataset.blueprintWorldStateVariantSelectedTimeBand =
+        frame.worldStateVariantSelectedTimeBand;
+      widget.dataset.blueprintWorldStateVariantOutsideTimeBand =
+        frame.worldStateVariantOutsideTimeBand;
+      widget.dataset.blueprintWorldStateVariantRegionState = frame.worldStateVariantRegionState;
+      widget.dataset.blueprintWorldStateVariantWorldMode = frame.worldStateVariantWorldMode;
+      widget.dataset.blueprintWorldStateVariantVariantId = frame.worldStateVariantVariantId;
+      widget.dataset.blueprintWorldStateVariantPackageMaterialized = String(
+        frame.worldStateVariantPackageMaterialized,
+      );
+      widget.dataset.blueprintWorldStateVariantHazardCount = String(
+        frame.worldStateVariantHazardCount,
+      );
+      widget.dataset.blueprintWorldStateVariantModifierCount = String(
+        frame.worldStateVariantModifierCount,
+      );
+      widget.dataset.blueprintWorldStateVariantRewardTableId = frame.worldStateVariantRewardTableId;
+      widget.dataset.blueprintWorldStateVariantRewardMapped = String(
+        frame.worldStateVariantRewardMapped,
+      );
+      widget.dataset.blueprintWorldStateVariantAttackSignaled = String(
+        frame.worldStateVariantAttackSignaled,
+      );
+      widget.dataset.blueprintWorldStateVariantAttackActive = String(
+        frame.worldStateVariantAttackActive,
+      );
+      widget.dataset.blueprintWorldStateVariantOpeningActive = String(
+        frame.worldStateVariantOpeningActive,
+      );
+      widget.dataset.blueprintWorldStateVariantRetryStable = String(
+        frame.worldStateVariantRetryStable,
+      );
+      widget.dataset.blueprintWorldStateVariantVariantUnchanged = String(
+        frame.worldStateVariantVariantUnchanged,
+      );
+      widget.dataset.blueprintWorldStateVariantLiveResnapshots = String(
+        frame.worldStateVariantLiveResnapshots,
+      );
+      widget.dataset.blueprintWorldStateVariantFallbackUsed = String(
+        frame.worldStateVariantFallbackUsed,
+      );
+    }
     boss.setAttribute(
       'transform',
       `translate(${frame.boss.x} ${frame.boss.y}) scale(${frame.bossScale})`,

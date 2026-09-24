@@ -1,0 +1,134 @@
+{
+  "title": "世界状态遭遇变体",
+  "subtitle": "把世界情境固化为一个具名规则包",
+  "variant": "入场快照 · 可见规则包 · 稳定重试 · 匹配奖励",
+  "summary": "规范化的世界状态会选择完整遭遇变体：规则、几何、阵容和奖励一起变化，而不只是数值缩放。",
+  "overview": "时段、区域状态、游戏模式或共享世界标记可以选择一套连贯的遭遇。游戏先展示相关情境，入场时只解析一次，并在所有攻击和重试中保持同一规则包。",
+  "learning": "定义情境输入、规范化、优先级、快照时机、变体ID、规则、几何、阵容、奖励、回退、存档迁移、重试持久化、提示、无障碍和遥测。",
+  "category": "状态、资源与缩放",
+  "readTime": "10 分钟",
+  "demo": {
+    "title": "在世界门为凯恩解析日蚀废墟规则包",
+    "timeline": "世界状态变体时间线",
+    "step": "拍摄快照、执行规则包、保持结果",
+    "phaseNames": ["捕获规范化情境", "执行所选规则包", "重试时保持快照"],
+    "phaseDescriptions": [
+      "0.78 秒时，门捕获日蚀、废墟区域和诅咒模式。1.05 至 1.60 秒间，这些输入解析为一个具名规则包和两枚场地封印。",
+      "1.80 秒时，凯恩提示规则包的环形攻击；塔维避开后利用 2.85 秒的破绽，3.55 秒出现对应的日蚀奖励。",
+      "4.55 秒时，外部时间显示变为黎明，但重试仍保留日蚀废墟规则包、危险和奖励表，不进行实时重拍。"
+    ],
+    "boss": "首领",
+    "player": "玩家",
+    "danger": "在攻击中读取可变世界数据，可能暗中替换几何、阵容或奖励，使重试不一致",
+    "locked": "规范化、优先级、快照版本、变体ID、规则包、奖励表、重试状态、迁移和回退属于遭遇逻辑",
+    "safe": "先展示情境，入场时解析一次，为规则包命名，提示其独特几何，并将其保持到遭遇结束",
+    "reducedMotion": "减少动态效果时关闭自动播放。可拖动至 0.40、0.78、1.05、1.32、1.60、1.80、2.25、2.55、2.85、3.20、3.55、4.20、4.55、4.90 和 5.35 秒。",
+    "diagramDescription": "三枚世界情境符文汇入日蚀废墟规则包，生成两枚场地封印、环形攻击和匹配奖励；外部黎明不会在重试时替换已捕获的规则包。"
+  },
+  "steps": [
+    {
+      "title": "哪些世界事实可以选择变体？",
+      "body": "选择小而明确的输入契约，例如时段、区域状态、模式或共享解放标记。规范化每个值，规定冲突优先级，并让未知值或旧存档落入经过测试的基础变体。"
+    },
+    {
+      "title": "哪些内容要作为一个整体变化？",
+      "body": "为每个变体提供稳定ID，把规则、攻击几何、阵容、阶段节奏、场地表现、视听提示和奖励表一起设计。不可逆入场前展示情境，用首个独特威胁教学。"
+    },
+    {
+      "title": "何时允许改变选择？",
+      "body": "在明确的遭遇边界只解析一次，死亡、加载、重连和重试后仍保留ID。仅在明确退出或重置后重拍，并记录紧凑的情境ID和解析器版本。"
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "变体只是隐藏倍率",
+      "body": "增加生命或伤害无法表达不同世界状态。至少改变一条可读规则、空间问题、阵容关系或奖励，并在玩家必须响应前提示。"
+    },
+    {
+      "title": "可变情境泄漏到战斗中",
+      "body": "逐帧轮询昼夜、网络标记或世界事件会在中途替换攻击或奖励。冻结带版本的快照，把外部变化排到下次有效入场。"
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "使用表，而不是分散条件",
+      "body": "在一个解析器中把规范化键映射到具名规则包。验证每个规则包的规则、素材、奖励、本地化和基础回退，并独立测试解析器。"
+    },
+    {
+      "title": "按新增决策分配变体成本",
+      "body": "有价值的变体要求不同判断或响应，而不是复制全部内容。保留能延续掌握感的骨架和攻击，把成本花在有意义的规则、几何、阵容或奖励上。"
+    },
+    {
+      "title": "按规则包ID比较结果",
+      "body": "记录解析器版本、输入ID、所选包、入场、完成、重试、回退和奖励发放。在访问条件不同的前提下比较失败点和通关率。"
+    }
+  ],
+  "story": {
+    "title": "门记得开启时的天空",
+    "body": "入场时，三枚符文告诉凯恩决斗受日蚀、废墟和诅咒模式约束。门封存答案。即使外面迎来黎明，塔维的重试仍处于同一契约。"
+  },
+  "adaptation": {
+    "title": "无需背景知识也能看懂规则",
+    "body": "用颜色、形状、文字和声音冗余表达情境；在首个威胁前展示所选包；保证各变体的对比度和阅读时间；季节、在线或时间情境不可用时提供稳定基础包。"
+  },
+  "distinction": {
+    "title": "规范化世界规则包，而非实时钟或个人历史回放",
+    "body": "现实时间进展应用游戏关闭期间的时间。历程具现化呈现具体旧选择。世界状态变体在入场时选择一套规则包，并在整场遭遇中固定其规则和奖励。"
+  },
+  "lensNotes": [
+    {
+      "id": "context-and-sequence",
+      "body": "世界情境要先预告、在边界捕获、解析为规则包并贯穿遭遇，才有意义。"
+    },
+    {
+      "id": "rule-exception",
+      "body": "变体改变具名规则或空间关系，而不只是首领的隐藏数值强度。"
+    },
+    {
+      "id": "progress-clarity",
+      "body": "情境符文、规则包ID、变化的场地元素和奖励提示让解析结果可见。"
+    },
+    {
+      "id": "risk-reward",
+      "body": "更苛刻的规则包可以使用独立奖励表，但条件必须在承诺前明确。"
+    },
+    {
+      "id": "difficulty-rhythm",
+      "body": "变体可以改变阵容和攻击节奏，同时保留可教学的破绽和稳定重试节奏。"
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "Terraria",
+      "boss": "Empress of Light",
+      "screenshot": "https://i.ytimg.com/vi/W28Zd9UtAfA/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=W28Zd9UtAfA&t=122s",
+      "video": "https://www.youtube.com/watch?v=W28Zd9UtAfA&t=122s",
+      "videoDurationSeconds": 843,
+      "body": "时段选择实质不同的遭遇。白天的 Empress of Light 攻击致命，且全程在白天造成伤害并取胜会获得 Terraprisma，把风险包与特定奖励相连。"
+    },
+    {
+      "dimension": "3D",
+      "game": "Dark Souls II",
+      "boss": "The Lost Sinner",
+      "screenshot": "https://i.ytimg.com/vi/e5MHk-w20ZE/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=e5MHk-w20ZE&t=60s",
+      "video": "https://www.youtube.com/watch?v=e5MHk-w20ZE&t=60s",
+      "videoDurationSeconds": 201,
+      "body": "Bonfire Intensity 2 及以上时，The Lost Sinner 达到 60% 生命会加入两名 Prisoned Sinners，并可获得 Old Witch Soul。模式改变阵容压力和奖励，而不只是属性。"
+    },
+    {
+      "dimension": "3D",
+      "game": "The Legend of Zelda: Breath of the Wild",
+      "boss": "Calamity Ganon",
+      "screenshot": "https://i.ytimg.com/vi/k9Zx0vZWKtE/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=k9Zx0vZWKtE&t=180s",
+      "video": "https://www.youtube.com/watch?v=k9Zx0vZWKtE&t=180s",
+      "videoDurationSeconds": 905,
+      "body": "已解放的 Divine Beasts 是共享世界标记：它们会削减 Calamity Ganon 的生命，未击败的 Blights 仍留在路线中。入场状态会选择不同首领序列。"
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

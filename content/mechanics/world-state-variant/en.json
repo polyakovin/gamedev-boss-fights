@@ -1,0 +1,138 @@
+{
+  "title": "World-state encounter variant",
+  "subtitle": "Snapshot world context into one named rule package",
+  "variant": "Entry snapshot · visible package · stable retry · matched reward",
+  "summary": "A normalized world state selects a complete encounter variant: rules, geometry, roster, and rewards change together rather than only scaling numbers.",
+  "overview": "World-state variants let time band, region condition, game mode, or shared world flags choose a coherent version of the encounter. The game previews the relevant context, resolves it once at entry, and keeps the selected package stable through every attack and retry.",
+  "learning": "Define context inputs, normalization, precedence, snapshot timing, variant IDs, changed rules, geometry, roster, rewards, fallback mapping, save migration, retry persistence, preview cues, accessibility, and telemetry.",
+  "category": "States, resources, and scaling",
+  "readTime": "10 min",
+  "demo": {
+    "title": "Resolve Kern's eclipse-ruin package at the world gate",
+    "timeline": "World-state variant timeline",
+    "step": "Snapshot, play the package, preserve it",
+    "phaseNames": [
+      "Capture normalized context",
+      "Play the selected package",
+      "Preserve the snapshot on retry"
+    ],
+    "phaseDescriptions": [
+      "At 0.78 seconds, the gate snapshots eclipse, ruined region, and cursed mode. Between 1.05 and 1.60, those inputs resolve into one named package and two arena seals.",
+      "At 1.80 seconds, Kern signals the package's ring attack; Tavi clears it, uses the 2.85-second opening, and the matching eclipse reward appears at 3.55.",
+      "At 4.55 seconds, the outside time display changes to dawn, but retry keeps the captured eclipse-ruin package, hazards, and reward table without a live resnapshot."
+    ],
+    "boss": "Boss",
+    "player": "Player",
+    "danger": "Reading mutable world data during attacks can silently swap geometry, roster, or rewards and make retries inconsistent",
+    "locked": "Context normalization, precedence, snapshot version, variant ID, rule package, reward table, retry state, migration, and fallback belong to encounter logic",
+    "safe": "Preview the relevant context, resolve it once at entry, name the package, telegraph its unique geometry, and preserve that package until the encounter ends",
+    "reducedMotion": "Autoplay is disabled by reduced motion. Scrub across 0.40, 0.78, 1.05, 1.32, 1.60, 1.80, 2.25, 2.55, 2.85, 3.20, 3.55, 4.20, 4.55, 4.90, and 5.35 seconds.",
+    "diagramDescription": "Three world-context runes converge into an eclipse-ruin package, which creates two arena seals, a ring attack, and a matching reward; an outside change to dawn does not replace the captured package on retry."
+  },
+  "steps": [
+    {
+      "title": "Which world facts are allowed to select a variant?",
+      "body": "Choose a small explicit input contract such as time band, region state, difficulty mode, or shared liberation flag. Normalize every value, define precedence when several flags overlap, and map unknown or migrated saves to a tested baseline instead of branching directly on the whole save file."
+    },
+    {
+      "title": "What changes as one coherent package?",
+      "body": "Give each variant a stable ID and author its rules, attack geometry, roster, phase timing, arena dressing, audiovisual cues, and reward table together. Preview the relevant context before irreversible entry and make the first unique threat teach what this package changes."
+    },
+    {
+      "title": "When is the selection allowed to change?",
+      "body": "Resolve the package once at a clear encounter boundary, persist its ID through death, reload, reconnect, and checkpoint retry, and only resnapshot after an explicit exit or reset. Log compact context IDs and the resolver version so designers can compare variants without storing the full world state."
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "The variant is only a hidden multiplier",
+      "body": "More health or damage does not communicate a different world condition. Change at least one legible rule, spatial problem, roster relationship, or reward, and signal it before the player must respond."
+    },
+    {
+      "title": "Mutable context leaks into live combat",
+      "body": "Polling day-night time, network flags, or world events every frame can replace an attack or reward halfway through the encounter. Freeze a versioned snapshot and queue external changes for the next valid entry."
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "Use a table, not scattered conditionals",
+      "body": "Map normalized context keys to named packages in one resolver. Validate that every package has rules, assets, rewards, localization, and a baseline fallback, then test the resolver independently from presentation."
+    },
+    {
+      "title": "Budget variants by changed decisions",
+      "body": "A useful variant asks for a different read or response, not a duplicate content set. Reuse the core rig and attacks where they preserve mastery, then spend production effort on the rule, geometry, roster, or reward that makes the context meaningful."
+    },
+    {
+      "title": "Compare completion by package ID",
+      "body": "Record resolver version, normalized input IDs, selected package, entry, completion, retry, fallback, and reward grant. Compare failure points and clear rates across packages, but do not infer difficulty from completion rate alone when access conditions differ."
+    }
+  ],
+  "story": {
+    "title": "The gate remembers the sky it opened under",
+    "body": "At entry, three runes tell Kern which covenant governs the duel: eclipse, ruined ground, and cursed mode. The gate seals that answer. Even when dawn reaches the world outside, Tavi's retry remains inside the same covenant."
+  },
+  "adaptation": {
+    "title": "Expose the rule without demanding prior lore",
+    "body": "Represent each context through redundant color, shape, label, and sound; show the selected package before its first threat; keep contrast and timing readable in every variant; and offer a stable baseline when seasonal, online, or time-based context is unavailable."
+  },
+  "distinction": {
+    "title": "A normalized world package, not live time or a personal history replay",
+    "body": "Real-time progression applies elapsed time while the game is closed. Run-history manifestation materializes specific prior choices. A world-state variant consumes normalized context at entry and selects one authored package whose rules and rewards remain stable for that encounter."
+  },
+  "lensNotes": [
+    {
+      "id": "context-and-sequence",
+      "body": "World context matters only after it is previewed, captured at a boundary, resolved into a package, and preserved through the encounter sequence."
+    },
+    {
+      "id": "rule-exception",
+      "body": "The variant changes a named rule or spatial relationship, not merely the boss's hidden numerical strength."
+    },
+    {
+      "id": "progress-clarity",
+      "body": "Context runes, package ID, changed arena elements, and reward cue make the resolver's result observable."
+    },
+    {
+      "id": "risk-reward",
+      "body": "A harder or more restrictive package can map to a distinct reward table, but the reward condition must be known before commitment."
+    },
+    {
+      "id": "difficulty-rhythm",
+      "body": "Variants can change roster and attack cadence while preserving a teachable opening and a stable retry rhythm."
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "Terraria",
+      "boss": "Empress of Light",
+      "screenshot": "https://i.ytimg.com/vi/W28Zd9UtAfA/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=W28Zd9UtAfA&t=122s",
+      "video": "https://www.youtube.com/watch?v=W28Zd9UtAfA&t=122s",
+      "videoDurationSeconds": 843,
+      "body": "Time of day selects a materially different Empress of Light encounter. During daytime, her attacks become lethal, and defeating her after dealing all damage during the day grants Terraprisma, tying the risk package to a specific reward condition."
+    },
+    {
+      "dimension": "3D",
+      "game": "Dark Souls II",
+      "boss": "The Lost Sinner",
+      "screenshot": "https://i.ytimg.com/vi/e5MHk-w20ZE/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=e5MHk-w20ZE&t=60s",
+      "video": "https://www.youtube.com/watch?v=e5MHk-w20ZE&t=60s",
+      "videoDurationSeconds": 201,
+      "body": "At Bonfire Intensity 2 and above, two Prisoned Sinners join when the Lost Sinner reaches 60% health, and the encounter can award the Old Witch Soul. The world mode changes roster pressure and reward identity, not only statistics."
+    },
+    {
+      "dimension": "3D",
+      "game": "The Legend of Zelda: Breath of the Wild",
+      "boss": "Calamity Ganon",
+      "screenshot": "https://i.ytimg.com/vi/k9Zx0vZWKtE/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=k9Zx0vZWKtE&t=180s",
+      "video": "https://www.youtube.com/watch?v=k9Zx0vZWKtE&t=180s",
+      "videoDurationSeconds": 905,
+      "body": "The liberated Divine Beasts are shared world flags consumed at the final confrontation: their aid removes part of Calamity Ganon's health, while undefeated Blights remain in the route. The entry state selects a different boss sequence before direct combat begins."
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

@@ -1,0 +1,138 @@
+{
+  "title": "Variante del encuentro por estado del mundo",
+  "subtitle": "Convierte el contexto del mundo en un paquete de reglas con nombre",
+  "variant": "Captura al entrar · paquete visible · reintento estable · recompensa vinculada",
+  "summary": "Un estado del mundo normalizado elige una variante completa: reglas, geometría, elenco y recompensas cambian juntos, no solo los números.",
+  "overview": "La hora, el estado de la región, el modo o las banderas globales pueden elegir una versión coherente del encuentro. El juego anticipa el contexto, lo resuelve una vez al entrar y conserva el paquete durante ataques y reintentos.",
+  "learning": "Define entradas, normalización, precedencia, captura, IDs de variante, reglas, geometría, elenco, recompensas, alternativa, migración, persistencia, señales, accesibilidad y telemetría.",
+  "category": "Estados, recursos y escalado",
+  "readTime": "10 min",
+  "demo": {
+    "title": "Resuelve el paquete de eclipse y ruinas de Kern en la puerta del mundo",
+    "timeline": "Cronología de la variante por estado del mundo",
+    "step": "Capturar, jugar el paquete y conservarlo",
+    "phaseNames": [
+      "Captura el contexto normalizado",
+      "Juega el paquete seleccionado",
+      "Conserva la captura al reintentar"
+    ],
+    "phaseDescriptions": [
+      "A los 0,78 segundos, la puerta captura eclipse, región en ruinas y modo maldito. Entre 1,05 y 1,60, las entradas forman un paquete con nombre y dos sellos de arena.",
+      "A 1,80, Kern señala el ataque anular del paquete; Tavi lo evita, usa la apertura de 2,85 y la recompensa del eclipse aparece a 3,55.",
+      "A 4,55, el indicador exterior cambia a amanecer, pero el reintento mantiene el paquete de eclipse y ruinas, sus peligros y su tabla de recompensas."
+    ],
+    "boss": "Jefe",
+    "player": "Jugador",
+    "danger": "Leer datos mutables durante los ataques puede cambiar geometría, elenco o recompensas y volver incoherentes los reintentos",
+    "locked": "Normalización, precedencia, versión, ID, paquete, tabla de recompensas, reintento, migración y alternativa pertenecen a la lógica del encuentro",
+    "safe": "Anticipa el contexto, resuélvelo una vez al entrar, nombra el paquete, señala su geometría única y consérvalo hasta terminar el encuentro",
+    "reducedMotion": "Con movimiento reducido, la reproducción automática se desactiva. Recorre 0,40, 0,78, 1,05, 1,32, 1,60, 1,80, 2,25, 2,55, 2,85, 3,20, 3,55, 4,20, 4,55, 4,90 y 5,35 segundos.",
+    "diagramDescription": "Tres runas del mundo convergen en un paquete de eclipse y ruinas que crea dos sellos, un ataque anular y una recompensa; el amanecer exterior no sustituye la captura al reintentar."
+  },
+  "steps": [
+    {
+      "title": "¿Qué hechos del mundo pueden elegir una variante?",
+      "body": "Elige un contrato pequeño: franja horaria, estado regional, modo o bandera global. Normaliza cada valor, decide la precedencia y envía datos desconocidos o migrados a una variante base probada."
+    },
+    {
+      "title": "¿Qué cambia como un único paquete?",
+      "body": "Da a cada variante un ID estable y crea juntos reglas, geometría, elenco, ritmo, presentación, señales y recompensa. Muestra el contexto antes de entrar y usa la primera amenaza exclusiva para enseñar la diferencia."
+    },
+    {
+      "title": "¿Cuándo puede cambiar la selección?",
+      "body": "Resuelve el paquete una vez en el límite del encuentro, conserva su ID tras muerte, carga, reconexión y reintento, y vuelve a capturar solo tras una salida o reinicio explícito. Registra IDs compactos y la versión del resolvedor."
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "La variante es solo un multiplicador oculto",
+      "body": "Más salud o daño no expresan otro estado del mundo. Cambia al menos una regla legible, problema espacial, relación del elenco o recompensa, y señálalo antes de exigir respuesta."
+    },
+    {
+      "title": "El contexto mutable entra en combate",
+      "body": "Consultar hora, red o eventos cada fotograma puede sustituir un ataque o premio a mitad del encuentro. Congela una captura versionada y aplaza cambios hasta la siguiente entrada válida."
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "Usa una tabla, no condicionales dispersos",
+      "body": "Asocia claves normalizadas a paquetes con nombre en un solo resolvedor. Valida reglas, recursos, recompensas, localización y alternativa base, y prueba el resolvedor por separado."
+    },
+    {
+      "title": "Presupuesta variantes por decisiones nuevas",
+      "body": "Una variante útil exige otra lectura o respuesta, no duplicar todo. Reutiliza el rig y ataques cuando preserven el dominio, y dedica esfuerzo a la regla, geometría, elenco o recompensa significativa."
+    },
+    {
+      "title": "Compara resultados por ID de paquete",
+      "body": "Registra versión, IDs normalizados, paquete, entrada, finalización, reintento, alternativa y recompensa. Compara fallos y éxito considerando que las condiciones de acceso pueden diferir."
+    }
+  ],
+  "story": {
+    "title": "La puerta recuerda el cielo bajo el que se abrió",
+    "body": "Al entrar, tres runas indican a Kern el pacto del duelo: eclipse, tierra en ruinas y modo maldito. La puerta sella la respuesta. Aunque fuera amanezca, el reintento de Tavi sigue bajo el mismo pacto."
+  },
+  "adaptation": {
+    "title": "Expón la regla sin exigir conocimiento previo",
+    "body": "Representa el contexto con color, forma, texto y sonido; muestra el paquete antes de la primera amenaza; mantén contraste y tiempo legibles; y ofrece una base estable cuando el contexto estacional, en línea o temporal no esté disponible."
+  },
+  "distinction": {
+    "title": "Un paquete del mundo normalizado, no tiempo vivo ni historia personal",
+    "body": "La progresión en tiempo real aplica el intervalo con el juego cerrado. La historia de la partida materializa decisiones previas. Esta mecánica selecciona al entrar un paquete cuyas reglas y recompensas quedan estables."
+  },
+  "lensNotes": [
+    {
+      "id": "context-and-sequence",
+      "body": "El contexto importa cuando se anticipa, se captura en un límite, se resuelve en un paquete y se conserva durante la secuencia."
+    },
+    {
+      "id": "rule-exception",
+      "body": "La variante cambia una regla o relación espacial nombrada, no solo la fuerza numérica oculta del jefe."
+    },
+    {
+      "id": "progress-clarity",
+      "body": "Runas, ID del paquete, arena modificada y señal de recompensa hacen observable el resultado."
+    },
+    {
+      "id": "risk-reward",
+      "body": "Un paquete más estricto puede tener otra tabla de premios, pero la condición debe conocerse antes del compromiso."
+    },
+    {
+      "id": "difficulty-rhythm",
+      "body": "Las variantes cambian elenco y cadencia conservando una apertura didáctica y un reintento estable."
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "Terraria",
+      "boss": "Empress of Light",
+      "screenshot": "https://i.ytimg.com/vi/W28Zd9UtAfA/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=W28Zd9UtAfA&t=122s",
+      "video": "https://www.youtube.com/watch?v=W28Zd9UtAfA&t=122s",
+      "videoDurationSeconds": 843,
+      "body": "La hora elige un encuentro distinto. De día, los ataques de Empress of Light son letales y vencerla tras infligir todo el daño durante el día concede Terraprisma, vinculando riesgo y recompensa."
+    },
+    {
+      "dimension": "3D",
+      "game": "Dark Souls II",
+      "boss": "The Lost Sinner",
+      "screenshot": "https://i.ytimg.com/vi/e5MHk-w20ZE/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=e5MHk-w20ZE&t=60s",
+      "video": "https://www.youtube.com/watch?v=e5MHk-w20ZE&t=60s",
+      "videoDurationSeconds": 201,
+      "body": "Con Bonfire Intensity 2 o más, dos Prisoned Sinners aparecen al 60% de salud de The Lost Sinner y puede obtenerse Old Witch Soul. El modo cambia presión de elenco y recompensa, no solo estadísticas."
+    },
+    {
+      "dimension": "3D",
+      "game": "The Legend of Zelda: Breath of the Wild",
+      "boss": "Calamity Ganon",
+      "screenshot": "https://i.ytimg.com/vi/k9Zx0vZWKtE/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=k9Zx0vZWKtE&t=180s",
+      "video": "https://www.youtube.com/watch?v=k9Zx0vZWKtE&t=180s",
+      "videoDurationSeconds": 905,
+      "body": "Las Divine Beasts liberadas son banderas globales: su ayuda reduce la salud de Calamity Ganon y los Blights no vencidos siguen en la ruta. El estado de entrada selecciona otra secuencia de jefes."
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}
