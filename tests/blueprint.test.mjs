@@ -426,6 +426,14 @@ test('rule-specific commitments stay visible through the response and recovery',
   assert.ok(enragedRecovery.primitives.slice(4).every((primitive) => primitive.opacity === 0));
 });
 
+test('rotating beams keep the full player inside the arena throughout the orbit', () => {
+  for (let step = 0; step <= 600; step += 1) {
+    const { player } = blueprintFrame('rotating-beams', step / 100);
+    assert.ok(player.x >= 60 && player.x <= 500);
+    assert.ok(player.y >= 180 && player.y <= 800);
+  }
+});
+
 test('target lock commits before the marked player leaves', () => {
   const start = blueprintFrame('target-lock', 0);
   const beforeCommit = blueprintFrame('target-lock', 1.59);

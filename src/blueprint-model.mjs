@@ -1624,6 +1624,7 @@ const SPECS = {
     boss: [280, 430],
     player: [430, 650],
     target: [390, 730],
+    safeOrbitRadius: 210,
   },
   'marked-area-strike': {
     mode: 'marked',
@@ -11131,17 +11132,17 @@ export function blueprintFrame(id, time) {
     } else player = startPlayer;
   }
   if (spec.mode === 'rotating' && phase === 0) {
-    const initialPosition = polar(boss, 255, Math.PI / 3);
+    const initialPosition = polar(boss, spec.safeOrbitRadius, Math.PI / 3);
     player = {
       x: mix(startPlayer.x, initialPosition.x, prepare),
       y: mix(startPlayer.y, initialPosition.y, prepare),
     };
   } else if (spec.mode === 'rotating' && phase === 1) {
     const safeSector = action * Math.PI * 1.25 + Math.PI / 3;
-    player = polar(boss, 255, safeSector);
+    player = polar(boss, spec.safeOrbitRadius, safeSector);
   } else if (spec.mode === 'rotating' && phase === 2) {
     const finalSector = Math.PI * 1.25 + Math.PI / 3;
-    const finalPosition = polar(boss, 255, finalSector);
+    const finalPosition = polar(boss, spec.safeOrbitRadius, finalSector);
     player = {
       x: mix(finalPosition.x, startPlayer.x, returnProgress),
       y: mix(finalPosition.y, startPlayer.y, returnProgress),
