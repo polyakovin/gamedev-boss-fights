@@ -8400,50 +8400,22 @@ function primitivesFor(spec, frame) {
     const right = spec.arenaWidth - edge;
     const opacity = phase === 0 ? 0.38 + prepare * 0.32 : phase === 1 ? 0.94 : 0.6 * (1 - recover);
     const tone = phase === 1 ? 'signal' : phase === 2 ? 'safe' : 'accent';
-    const mid = spec.threatTop + spec.threatHeight / 2;
     return [
-      rect(0, spec.threatTop, edge, spec.threatHeight, opacity, tone, phase === 1 ? 0.28 : 0.07),
-      rect(
-        right,
-        spec.threatTop,
-        edge,
-        spec.threatHeight,
-        opacity,
-        tone,
-        phase === 1 ? 0.28 : 0.07,
-      ),
-      line(edge - 80, mid, edge - 25, mid, opacity, tone, 8),
+      { ...rect(0, spec.threatTop, edge, spec.threatHeight, opacity, tone, 0.65), width: 0 },
+      { ...rect(right, spec.threatTop, edge, spec.threatHeight, opacity, tone, 0.65), width: 0 },
       path(
-        `M ${edge - 43} ${mid - 16} L ${edge - 25} ${mid} L ${edge - 43} ${mid + 16}`,
-        opacity,
-        tone,
-        7,
+        `M 0 ${spec.threatTop} H ${edge} L ${edge - 18} ${spec.threatTop + 24} H 0 Z`,
+        opacity * 0.65,
+        'muted',
+        0,
+        0.78,
       ),
-      line(right + 80, mid, right + 25, mid, opacity, tone, 8),
       path(
-        `M ${right + 43} ${mid - 16} L ${right + 25} ${mid} L ${right + 43} ${mid + 16}`,
-        opacity,
-        tone,
-        7,
-      ),
-      line(
-        280,
-        655,
-        280,
-        455,
-        phase === 0 ? 0.5 + prepare * 0.2 : phase === 1 ? 0.4 : 0,
-        'safe',
-        7,
-        '12 10',
-      ),
-      circle(
-        280,
-        455,
-        28,
-        phase === 0 ? 0.48 + prepare * 0.2 : phase === 1 ? 0.62 : 0.3 * (1 - recover),
-        'safe',
-        6,
-        0.08,
+        `M ${right} ${spec.threatTop} H ${spec.arenaWidth} V ${spec.threatTop + 24} H ${right + 18} Z`,
+        opacity * 0.65,
+        'muted',
+        0,
+        0.78,
       ),
     ];
   }

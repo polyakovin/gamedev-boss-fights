@@ -98,6 +98,7 @@ test('converging fronts visibly close both sides while the player exits above', 
   await expect(page.locator('.lesson-title-line h1')).toHaveText('Converging threats');
   await expect(page.locator('.wip-badge, .draft-profile')).toHaveCount(0);
   await expect(widget).toHaveAttribute('data-blueprint-ready', 'true');
+  await expect(widget).toHaveAttribute('data-blueprint-full-height', 'true');
   await expect(page.locator('.game-example')).toHaveCount(3);
   const left = widget.locator('[data-blueprint-primitive="0"] rect');
   const right = widget.locator('[data-blueprint-primitive="1"] rect');

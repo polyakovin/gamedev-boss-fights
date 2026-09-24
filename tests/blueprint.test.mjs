@@ -700,10 +700,10 @@ test('two converging fronts close the lower corridor while the ordinary upper ex
     assert.equal(left.rectHeight, right.rectHeight);
     assert.equal(right.x + right.rectWidth, 560);
     assert.equal(right.x - left.rectWidth, 560 - left.rectWidth * 2);
-    assert.ok(frame.primitives[2].x1 < frame.primitives[2].x2);
-    assert.ok(frame.primitives[2].x2 < left.x + left.rectWidth);
-    assert.ok(frame.primitives[4].x1 > frame.primitives[4].x2);
-    assert.ok(frame.primitives[4].x2 > right.x);
+    assert.equal(frame.primitives.length, 4);
+    assert.equal(left.width, 0);
+    assert.equal(right.width, 0);
+    assert.equal(frame.primitives[2].type, 'path');
   }
   assert.equal(blueprintPointSafe('converging-threats', 1.59, { x: 280, y: 650 }), true);
   assert.equal(blueprintPointSafe('converging-threats', 3, { x: 100, y: 650 }), false);
