@@ -1375,10 +1375,10 @@ const SPECS = {
   },
   'self-heal-cast': {
     mode: 'self-heal-cast',
-    boss: [300, 375],
-    player: [300, 660],
+    boss: [300, 300],
+    player: [300, 760],
     target: [300, 490],
-    arena: [55, 310, 450, 590],
+    arena: [55, 145, 450, 735],
     interruptPoint: [300, 500],
     firstTelegraph: [0.3, 0.78],
     firstChannel: [0.78, 1.46],
@@ -7462,45 +7462,50 @@ function primitivesFor(spec, frame) {
     );
     const ringOpacity = channeling ? 0.62 + pulse(channelProgress) * 0.28 : telegraphing ? 0.48 : 0;
     const healthWidth = 236 * (frame.selfHealCastBossHealth / 100);
-    const meterWidth = 196 * channelProgress;
     const moteOpacity = channeling ? 0.94 : 0;
     return [
-      rect(...spec.arena, 0.52, 'muted', 0.025),
-      rect(178, 318, 244, 24, 0.74, 'muted', 0.035),
-      rect(182, 322, healthWidth, 16, 0.96, 'safe', 0.18),
-      line(182 + healthWidth, 314, 182 + healthWidth, 346, 0.82, 'safe', 4),
-      rect(200, 480, 200, 18, channeling || telegraphing ? 0.78 : 0, 'muted', 0.04),
-      rect(202, 482, meterWidth, 14, channeling ? 0.96 : 0, 'signal', 0.2),
-      circle(
-        frame.boss.x,
-        frame.boss.y - 22,
-        spec.channelRadius + 18 * (1 - channelProgress),
-        ringOpacity,
-        'signal',
-        7,
-        0.03,
-        '12 8',
+      path(
+        'M 70 187 L 280 148 L 490 187 V 216 L 280 177 L 70 216 Z M 72 846 L 280 804 L 488 846 V 874 L 280 832 L 72 874 Z',
+        0.42,
+        'muted',
+        0,
+        0.6,
       ),
-      circle(
-        frame.boss.x,
-        frame.boss.y - 22,
-        45 + 30 * channelProgress,
-        ringOpacity,
-        'accent',
-        5,
-        0.025,
+      path('M 145 102 H 415 V 130 H 145 Z', 0.76, 'muted', 0, 0.7),
+      rect(155, 107, healthWidth, 17, 0.98, 'safe', 0.82),
+      path(
+        'M 210 425 L 300 399 L 390 425 L 376 452 L 300 430 L 224 452 Z M 238 452 L 300 432 L 362 452 L 348 553 L 300 569 L 252 553 Z M 222 558 L 300 541 L 378 558 V 585 L 300 567 L 222 585 Z',
+        0.68,
+        'muted',
+        0,
+        0.78,
+      ),
+      path(
+        `M 278 420 L 300 ${409 - 38 * channelProgress} L 322 420 L 312 455 L 288 455 Z`,
+        channeling || telegraphing ? ringOpacity : 0,
+        'signal',
+        0,
+        0.72,
+      ),
+      path(
+        `M ${frame.boss.x - 74} ${frame.boss.y + 26} Q ${frame.boss.x} ${frame.boss.y - 116 - 26 * channelProgress} ${frame.boss.x + 74} ${frame.boss.y + 26} Z`,
+        ringOpacity * 0.56,
+        'safe',
+        0,
+        0.38,
       ),
       ...Array.from({ length: 6 }, (_, index) => {
         const angle = (Math.PI * 2 * index) / 6 + frame.time * 1.8;
         const radius = mix(138, 54, channelProgress);
-        return circle(
-          frame.boss.x + Math.cos(angle) * radius,
-          frame.boss.y - 22 + Math.sin(angle) * radius * 0.62,
-          7 + 2 * pulse(channelProgress + index / 6),
+        const x = frame.boss.x + Math.cos(angle) * radius;
+        const y = frame.boss.y - 22 + Math.sin(angle) * radius * 0.62;
+        const size = 8 + 2 * pulse(channelProgress + index / 6);
+        return path(
+          `M ${x} ${y - size} L ${x + size * 0.7} ${y} L ${x} ${y + size} L ${x - size * 0.7} ${y} Z`,
           moteOpacity,
           index % 2 ? 'signal' : 'safe',
-          4,
-          0.18,
+          0,
+          0.9,
         );
       }),
       line(
@@ -7521,20 +7526,12 @@ function primitivesFor(spec, frame) {
         'safe',
         5,
       ),
-      circle(
-        frame.boss.x,
-        frame.boss.y - 22,
-        62 + healPulse * 58,
+      path(
+        `M ${frame.boss.x - 65} ${frame.boss.y + 32} Q ${frame.boss.x} ${frame.boss.y - 104 - healPulse * 62} ${frame.boss.x + 65} ${frame.boss.y + 32} Z`,
         frame.selfHealCastHealing ? Math.max(0.32, healPulse) : 0,
         'safe',
-        10,
-        0.06,
-      ),
-      path(
-        `M ${frame.boss.x - 22} ${frame.boss.y - 20} L ${frame.boss.x - 5} ${frame.boss.y - 3} L ${frame.boss.x + 30} ${frame.boss.y - 46}`,
-        frame.selfHealCastCompleted ? 0.96 : 0,
-        'safe',
-        8,
+        0,
+        0.48,
       ),
       path(
         `M ${frame.player.x + 30} ${frame.player.y - 70} L ${frame.player.x + 94} ${frame.player.y - 134}`,

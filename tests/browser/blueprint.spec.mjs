@@ -3788,7 +3788,9 @@ test('on-hit healing separates a blocked contact from applied damage and ignores
   await expect(widget).toHaveAttribute('data-blueprint-on-hit-healing-event-count', '1');
   await expect(widget).toHaveAttribute('data-blueprint-on-hit-healing-boss-health', '64');
   await page.setViewportSize({ width: 375, height: 812 });
-  expect((await widget.locator('.blueprint-demo__canvas').boundingBox()).height).toBeGreaterThanOrEqual(812);
+  expect(
+    (await widget.locator('.blueprint-demo__canvas').boundingBox()).height,
+  ).toBeGreaterThanOrEqual(812);
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
 });
 
@@ -3798,6 +3800,8 @@ test('self-heal cast cancels the first channel and resolves the second exactly o
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await page.goto('en/mechanics/self-heal-cast/');
   const widget = page.locator('[data-blueprint-demo]');
+  await expect(widget).toHaveAttribute('data-blueprint-full-height', 'true');
+  await expect(widget).toHaveAttribute('data-blueprint-screen-height', 'true');
   const timeline = widget.locator('[data-blueprint-timeline]');
   const seek = (milliseconds) =>
     timeline.evaluate((element, value) => {
