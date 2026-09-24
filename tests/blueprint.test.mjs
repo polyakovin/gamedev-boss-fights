@@ -75,6 +75,8 @@ import {
   worldStateVariantResolve,
   partySizeScalingState,
   partySizeScalingResolve,
+  partnerRevivalState,
+  partnerRevivalResolve,
   counterStanceOutcome,
   counterStanceState,
   blueprintFrame,
@@ -102,8 +104,8 @@ import {
   renderBlueprintThumbnail,
 } from '../lib/blueprint-view.mjs';
 
-test('all 103 promoted lesson animations have distinct rule modes and complete moving frames', () => {
-  assert.equal(BLUEPRINT_MECHANIC_IDS.length, 103);
+test('all 104 promoted lesson animations have distinct rule modes and complete moving frames', () => {
+  assert.equal(BLUEPRINT_MECHANIC_IDS.length, 104);
   const modes = new Set();
   for (const id of BLUEPRINT_MECHANIC_IDS) {
     for (let time = 0; time <= BLUEPRINT_DURATION; time += 0.1) {
@@ -124,7 +126,7 @@ test('all 103 promoted lesson animations have distinct rule modes and complete m
           assert.ok(Number.isFinite(value), `${id} has an invalid ${primitive.type}`);
     }
   }
-  assert.equal(modes.size, 103);
+  assert.equal(modes.size, 104);
 });
 
 test('every blueprint exposes signal, committed action, and recovery without player teleports', () => {
@@ -176,7 +178,8 @@ test('every blueprint exposes signal, committed action, and recovery without pla
       id !== 'real-time-progression' &&
       id !== 'interface-interaction' &&
       id !== 'world-state-variant' &&
-      id !== 'party-size-scaling'
+      id !== 'party-size-scaling' &&
+      id !== 'partner-revival'
     )
       assert.equal(blueprintFrame(id, 3).dangerActive, true, id);
     assert.equal(blueprintFrame(id, 3).playerSafe, true, id);
@@ -278,6 +281,7 @@ test('every damaging promoted animation derives safety from its own active geome
       id !== 'interface-interaction' &&
       id !== 'world-state-variant' &&
       id !== 'party-size-scaling' &&
+      id !== 'partner-revival' &&
       id !== 'part-break' &&
       id !== 'counter-stance' &&
       id !== 'absorption-power-up' &&
@@ -4613,5 +4617,78 @@ test('party-size scaling queues roster changes, preserves progress, and settles 
   assert.match(
     renderBlueprintThumbnail(id, 'test-party-size-scaling'),
     /data-blueprint-preview="party-size-scaling"/,
+  );
+});
+
+test('partner revival has bounded casts, a reachable interrupt, and one pair completion', () => {
+  const id = 'partner-revival';
+  assert.deepEqual(
+    [0.4, 0.55, 1.2, 1.6, 2.35, 3, 3.2, 3.6, 3.75, 4.1, 4.5, 4.7, 5.5].map(partnerRevivalState),
+    [
+      'paired-baseline',
+      'partner-downed',
+      'revive-channel-one',
+      'partner-revived',
+      'partner-downed-again',
+      'revive-channel-two',
+      'revive-interrupted',
+      'synchronized-finish',
+      'survivor-downed',
+      'completion-authorized',
+      'encounter-stable',
+      'retry-stable',
+      'reset',
+    ],
+  );
+  const restored = partnerRevivalResolve();
+  assert.equal(restored.resolution, 'revived');
+  assert.equal(restored.reviveGrantCount, 1);
+  assert.equal(restored.reviveHealthFraction, 0.4);
+  assert.equal(restored.completionAuthorized, false);
+  assert.equal(partnerRevivalResolve({ elapsed: 0.3 }).resolution, 'pending');
+  assert.equal(partnerRevivalResolve({ interrupted: true }).resolution, 'interrupted');
+  assert.equal(partnerRevivalResolve({ reviveGrantCount: 2 }).resolution, 'revive-cap-reached');
+  assert.equal(partnerRevivalResolve({ alreadyResolved: true }).eventCount, 0);
+  assert.equal(partnerRevivalResolve({ downedBossId: 'kern' }).resolution, 'invalid-pair');
+  assert.equal(
+    partnerRevivalResolve({ reviverDefeated: true, partnerDowned: false }).completionAuthorized,
+    false,
+  );
+  const final = partnerRevivalResolve({ reviverDefeated: true });
+  assert.equal(final.resolution, 'pair-defeated');
+  assert.equal(final.completionAuthorized, true);
+  assert.equal(final.revivalAuthorized, false);
+  assert.equal(final.duplicateGrantCount, 0);
+
+  const firstCast = blueprintFrame(id, 1.2);
+  assert.equal(firstCast.partnerRevivalPartnerDowned, true);
+  assert.equal(firstCast.partnerRevivalFirstChannelActive, true);
+  assert.equal(firstCast.partnerRevivalChannelProgress > 0, true);
+  assert.equal(firstCast.partnerRevivalCompletionCount, 0);
+  const returned = blueprintFrame(id, 1.8);
+  assert.equal(returned.partnerRevivalPartnerDowned, false);
+  assert.equal(returned.partnerRevivalRevivedHealthFraction, 0.4);
+  assert.equal(returned.partnerRevivalReviveGrantCount, 1);
+  const secondCast = blueprintFrame(id, 3.04);
+  assert.equal(secondCast.partnerRevivalSecondChannelActive, true);
+  assert.equal(secondCast.partnerRevivalAttemptId, 'partner-revive-2');
+  assert.equal(secondCast.partnerRevivalPartnerDowned, true);
+  const interrupted = blueprintFrame(id, 3.3);
+  assert.equal(interrupted.partnerRevivalInterrupted, true);
+  assert.equal(interrupted.partnerRevivalInterruptLockActive, true);
+  assert.equal(interrupted.partnerRevivalSecondChannelActive, false);
+  const complete = blueprintFrame(id, 4.1);
+  assert.equal(complete.partnerRevivalSurvivorDowned, true);
+  assert.equal(complete.partnerRevivalCompletionAuthorized, true);
+  assert.equal(complete.partnerRevivalCompletionCount, 1);
+  assert.equal(complete.partnerRevivalDuplicateGrantCount, 0);
+  const retry = blueprintFrame(id, 4.7);
+  assert.equal(retry.partnerRevivalRetryStable, true);
+  assert.equal(retry.partnerRevivalPartnerDowned, false);
+  assert.equal(retry.partnerRevivalCompletionCount, 0);
+  assert.deepEqual(blueprintFrame(id, 0).player, blueprintFrame(id, 6).player);
+  assert.match(
+    renderBlueprintThumbnail(id, 'test-partner-revival'),
+    /data-blueprint-preview="partner-revival"/,
   );
 });

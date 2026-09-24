@@ -1,0 +1,138 @@
+{
+  "title": "Resurrección del compañero",
+  "subtitle": "La caída de un jefe cambia la siguiente decisión del superviviente",
+  "variant": "Compañero caído · canal visible · interrupción · final conjunto",
+  "summary": "Un jefe superviviente puede devolver al compañero caído salvo que se interrumpa el canal o se complete la pareja dentro de la ventana prevista.",
+  "overview": "La resurrección vincula dos cuerpos de jefe a una regla de finalización. Una derrota deja un estado caído legible; el superviviente dedica una acción visible a devolverlo y el jugador dispone de una respuesta finita. El encuentro termina solo cuando se cumple la condición explícita de la pareja.",
+  "learning": "Define identidades, estados caído y final, permiso para resucitar, señal y duración del canal, requisitos de interrupción, salud restaurada, límite de intentos, muerte simultánea, autoridad de victoria, reintento, accesibilidad y telemetría.",
+  "category": "Relaciones entre varios jefes",
+  "readTime": "10 min",
+  "demo": {
+    "title": "Lee e interrumpe el pacto de Kern para devolver a su compañero",
+    "timeline": "Cronología de resurrección del compañero",
+    "step": "Derribar, leer el canal, interrumpir, terminar",
+    "phaseNames": [
+      "Muestra al caído y la primera resurrección",
+      "Expón el segundo canal e interrúmpelo",
+      "Termina con la pareja y confirma la victoria"
+    ],
+    "phaseDescriptions": [
+      "Tavi derriba al eco a los 0,55 segundos. Su cuerpo y salud siguen visibles mientras Kern canaliza de 0,90 a 1,55; el eco vuelve con 40% de salud. El primer canal completo enseña la relación.",
+      "El eco cae de nuevo a 2,35. Kern inicia un segundo canal anunciado a 2,75, pero Tavi llega al lanzador a 3,18 y lo interrumpe. El compañero permanece caído y el superviviente queda bloqueado un momento.",
+      "Tavi remata a Kern a 3,72 durante esa ventana. Solo con ambos cuerpos caídos se concede una victoria a 3,95. El reintento de 4,65 restaura la pareja inicial sin resurrecciones fantasma."
+    ],
+    "boss": "Jefe",
+    "player": "Jugador",
+    "danger": "Una vuelta inexplicable parece borrar el progreso; un ciclo infinito o sin respuesta atasca el combate y dar victoria tras una sola caída contradice un canal pendiente",
+    "locked": "Identidad de la pareja, caída, dueño del canal, reglas de interrupción, presupuesto de retorno, salud restaurada, muerte simultánea, victoria única y reinicio pertenecen a la lógica del encuentro",
+    "safe": "Deja visible al caído, señala el compromiso del superviviente, ofrece una ventana alcanzable de interrupción o remate, limita los retornos y explicita la condición de victoria",
+    "reducedMotion": "Con movimiento reducido se desactiva la reproducción automática. Recorre 0,40, 0,55, 0,90, 1,20, 1,55, 1,85, 2,35, 2,75, 3,04, 3,18, 3,55, 3,72, 3,95, 4,65 y 5,35 segundos.",
+    "diagramDescription": "Dos jefes de piedra comparten un vínculo. El de la izquierda cae, el de la derecha completa una resurrección visible y luego el primero cae otra vez. Tavi interrumpe el segundo canal, vence al superviviente y aparece un único sello de victoria cuando ambos están caídos."
+  },
+  "steps": [
+    {
+      "title": "¿Qué persiste cuando cae el primer cuerpo?",
+      "body": "Mantén visibles identidad y posición del caído, retornos disponibles y salud del superviviente. Distingue caído, recuperable y derrotado definitivamente; decide si el caído recibe daño y si la cola de acciones del otro cambia de inmediato."
+    },
+    {
+      "title": "¿Cómo se lee y disputa la resurrección?",
+      "body": "Da al superviviente una pose especial, vínculo, indicador de progreso y duración comprometida. Especifica si la detiene un tambaleo, golpe cualificado, interacción, pérdida de visión o remate. Ajusta recorrido y recuperación para que la respuesta sea alcanzable desde una posición normal."
+    },
+    {
+      "title": "¿Cuándo termina realmente el encuentro?",
+      "body": "Resuelve de forma determinista las dos caídas simultáneas y una interrupción en el último instante. Concede victoria una sola vez si se cumple la condición de la pareja, cancela canales pendientes, limita resurrecciones y restaura ambos cuerpos al reintentar."
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "El retorno ocurre fuera de pantalla sin aviso",
+      "body": "El jugador ve caer un jefe y reaparecer sin explicación. Conserva el cuerpo, únelo al lanzador, muestra una cuenta atrás y la fracción de salud que recuperará."
+    },
+    {
+      "title": "El canal y el final usan reglas incompatibles",
+      "body": "Una llamada tardía puede devolver al jefe tras la victoria o pagarla dos veces. Resuelve por ID estables de pareja e intento, cancela canales al morir ambos, limita concesiones y haz idempotente la finalización."
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "Presupuesta intentos, no frustración",
+      "body": "Elige un número finito de retornos o una condición final alternativa clara. Ajusta juntos salud recuperada, duración del canal, bloqueo y distancia; prueba configuraciones de daño alto y bajo sin exigir un umbral exacto."
+    },
+    {
+      "title": "Mantén legibles los dos cuerpos",
+      "body": "Separa siluetas y posiciones, señala quién ha caído y quién canaliza e impide que ataques superpuestos oculten el canal. Repite la señal con forma, luz, texto y sonido."
+    },
+    {
+      "title": "Prueba explícitamente las carreras de eventos",
+      "body": "Simula ambas muertes en un fotograma, interrupción y final del canal a la vez, reconexión, límite agotado, cambio de fase y reintento. Registra IDs de intento, resultados, retornos y número de victorias."
+    }
+  ],
+  "story": {
+    "title": "Kern presta otro latido a su eco",
+    "body": "El eco cae sobre el sello izquierdo. Kern apoya las manos y el vínculo brilla hasta que el eco se levanta. La segunda vez, Tavi corta el canal y el pacto inmoviliza ambas piedras durante el último golpe."
+  },
+  "adaptation": {
+    "title": "Ofrece respuestas a distintas configuraciones",
+    "body": "Permite varias interrupciones cualificadas o un final sincronizado; concede tiempo para cruzar la arena a velocidad normal; no exijas el tambaleo de una sola configuración y muestra caída y canal sin depender solo del color o del sonido."
+  },
+  "distinction": {
+    "title": "Relación entre jefes, no curación propia",
+    "body": "La autocuración restaura la salud del propio lanzador. Aquí un segundo cuerpo pasa de caído a activo, por lo que hacen falta identidad de pareja, dueño del canal, autoridad de victoria y reglas de muerte simultánea."
+  },
+  "lensNotes": [
+    {
+      "id": "context-and-sequence",
+      "body": "Primera caída, canal, retorno, segunda caída, interrupción y final conjunto hacen que cada paso dependa del anterior."
+    },
+    {
+      "id": "progress-clarity",
+      "body": "Dos barras, cuerpo persistente, vínculo, medidor del canal y sello único indican si se conserva el progreso."
+    },
+    {
+      "id": "risk-reward",
+      "body": "Acercarse al lanzador expone al jugador, pero evita otra salud concedida y abre una breve ventana de remate."
+    },
+    {
+      "id": "difficulty-rhythm",
+      "body": "Un retorno limitado añade un problema de coordinación sin volver el encuentro una repetición interminable."
+    },
+    {
+      "id": "counterplay",
+      "body": "Duración del canal, lanzador alcanzable y condición explícita convierten la resurrección en una respuesta comprobable."
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "Final Fantasy IV Pixel Remaster",
+      "boss": "Magus Sisters",
+      "screenshot": "https://i.ytimg.com/vi/pQVbIq5bHH4/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=pQVbIq5bHH4&t=1359s",
+      "video": "https://www.youtube.com/watch?v=pQVbIq5bHH4&t=1359s",
+      "videoDurationSeconds": 1776,
+      "body": "Cindy puede devolver a una hermana caída, por lo que las funciones del trío cambian el significado de cada derrota. Esta variante por turnos enfatiza orden de objetivos y reconocimiento de roles; no es una larga acción interrumpible."
+    },
+    {
+      "dimension": "3D",
+      "game": "Dark Souls II",
+      "boss": "Throne Watcher & Defender",
+      "screenshot": "https://i.ytimg.com/vi/2c82UFLVZeU/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=2c82UFLVZeU&t=1s",
+      "video": "https://www.youtube.com/watch?v=2c82UFLVZeU&t=1s",
+      "videoDurationSeconds": 182,
+      "body": "El superviviente puede revivir al otro tras una demora, lo que acerca los tiempos de derrota. El acto se puede detener tambaleando o rematando al lanzador, y el último cuerpo vivo pasa a ser un objetivo urgente y legible."
+    },
+    {
+      "dimension": "3D",
+      "game": "Elden Ring",
+      "boss": "Godskin Duo",
+      "screenshot": "https://i.ytimg.com/vi/iygrSgc9mhA/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=iygrSgc9mhA&t=30s",
+      "video": "https://www.youtube.com/watch?v=iygrSgc9mhA&t=30s",
+      "videoDurationSeconds": 198,
+      "body": "El superviviente puede invocar al Godskin caído; también existe reaparición temporizada y una barra compartida aparte. El caso muestra que la muerte de los cuerpos visibles y la conclusión del encuentro necesitan autoridades distintas."
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

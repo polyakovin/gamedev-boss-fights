@@ -51,6 +51,7 @@ export function initializeBlueprint(widget) {
   const animatePlayer = createCharacterAnimator(player, 'tavi');
   const animateEffects = createEncounterEffects(widget, (time) => blueprintFrame(mechanicId, time));
   const bossLabel = find('[data-blueprint-boss-label]');
+  const partnerLabel = find('[data-blueprint-partner-label]');
   const playerLabel = find('[data-blueprint-player-label]');
   const primitives = [...widget.querySelectorAll('[data-blueprint-primitive]')];
   const status = find('[data-blueprint-status]');
@@ -1015,6 +1016,61 @@ export function initializeBlueprint(widget) {
         frame.partySizeScalingRetryStable,
       );
     }
+    if (mechanicId === 'partner-revival') {
+      widget.dataset.blueprintPartnerRevival = frame.partnerRevivalState;
+      widget.dataset.blueprintPartnerRevivalEncounterId = frame.partnerRevivalEncounterId;
+      widget.dataset.blueprintPartnerRevivalPairVersion = String(frame.partnerRevivalPairVersion);
+      widget.dataset.blueprintPartnerRevivalPartnerBossId = frame.partnerRevivalPartnerBossId;
+      widget.dataset.blueprintPartnerRevivalReviverBossId = frame.partnerRevivalReviverBossId;
+      widget.dataset.blueprintPartnerRevivalAttemptId = frame.partnerRevivalAttemptId;
+      widget.dataset.blueprintPartnerRevivalPartnerDowned = String(
+        frame.partnerRevivalPartnerDowned,
+      );
+      widget.dataset.blueprintPartnerRevivalFirstChannelActive = String(
+        frame.partnerRevivalFirstChannelActive,
+      );
+      widget.dataset.blueprintPartnerRevivalSecondChannelActive = String(
+        frame.partnerRevivalSecondChannelActive,
+      );
+      widget.dataset.blueprintPartnerRevivalChannelProgress = String(
+        frame.partnerRevivalChannelProgress,
+      );
+      widget.dataset.blueprintPartnerRevivalReviveSucceeded = String(
+        frame.partnerRevivalReviveSucceeded,
+      );
+      widget.dataset.blueprintPartnerRevivalRevivedHealthFraction = String(
+        frame.partnerRevivalRevivedHealthFraction,
+      );
+      widget.dataset.blueprintPartnerRevivalReviveGrantCount = String(
+        frame.partnerRevivalReviveGrantCount,
+      );
+      widget.dataset.blueprintPartnerRevivalInterrupted = String(frame.partnerRevivalInterrupted);
+      widget.dataset.blueprintPartnerRevivalInterruptCount = String(
+        frame.partnerRevivalInterruptCount,
+      );
+      widget.dataset.blueprintPartnerRevivalInterruptLockActive = String(
+        frame.partnerRevivalInterruptLockActive,
+      );
+      widget.dataset.blueprintPartnerRevivalSynchronizedWindowActive = String(
+        frame.partnerRevivalSynchronizedWindowActive,
+      );
+      widget.dataset.blueprintPartnerRevivalSurvivorHealthFraction = String(
+        frame.partnerRevivalSurvivorHealthFraction,
+      );
+      widget.dataset.blueprintPartnerRevivalSurvivorDowned = String(
+        frame.partnerRevivalSurvivorDowned,
+      );
+      widget.dataset.blueprintPartnerRevivalCompletionAuthorized = String(
+        frame.partnerRevivalCompletionAuthorized,
+      );
+      widget.dataset.blueprintPartnerRevivalCompletionCount = String(
+        frame.partnerRevivalCompletionCount,
+      );
+      widget.dataset.blueprintPartnerRevivalDuplicateGrantCount = String(
+        frame.partnerRevivalDuplicateGrantCount,
+      );
+      widget.dataset.blueprintPartnerRevivalRetryStable = String(frame.partnerRevivalRetryStable);
+    }
     boss.setAttribute(
       'transform',
       `translate(${frame.boss.x} ${frame.boss.y}) scale(${frame.bossScale})`,
@@ -1023,7 +1079,10 @@ export function initializeBlueprint(widget) {
     if (decoy && frame.decoy) {
       decoy.setAttribute('transform', `translate(${frame.decoy.x} ${frame.decoy.y})`);
       decoy.setAttribute('opacity', String(frame.decoy.opacity));
-      animateDecoy(frame.bossMotion, frame.bossFacing);
+      animateDecoy(
+        frame.partnerMotion ?? frame.bossMotion,
+        frame.partnerFacing ?? frame.bossFacing,
+      );
     }
     player.setAttribute('transform', `translate(${frame.player.x} ${frame.player.y})`);
     animateBoss(frame.bossMotion, frame.bossFacing);
@@ -1037,6 +1096,11 @@ export function initializeBlueprint(widget) {
     bossLabel.setAttribute('x', frame.bossLabel.x);
     bossLabel.setAttribute('y', frame.bossLabel.y);
     bossLabel.setAttribute('opacity', String(frame.bossVisible));
+    if (partnerLabel && frame.decoy) {
+      partnerLabel.setAttribute('x', String(frame.decoy.x));
+      partnerLabel.setAttribute('y', String(frame.decoy.y + 92));
+      partnerLabel.setAttribute('opacity', String(frame.decoy.opacity));
+    }
     playerLabel.setAttribute('x', frame.playerLabel.x);
     playerLabel.setAttribute('y', frame.playerLabel.y);
     primitives.forEach((primitive, index) => updatePrimitive(primitive, frame.primitives[index]));

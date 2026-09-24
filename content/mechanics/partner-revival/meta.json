@@ -1,0 +1,43 @@
+{
+  "id": "partner-revival",
+  "number": 110,
+  "published": true,
+  "sourceLocale": "en",
+  "contentVersion": 1,
+  "animation": "partner-revival",
+  "lenses": [
+    "context-and-sequence",
+    "progress-clarity",
+    "risk-reward",
+    "difficulty-rhythm",
+    "counterplay"
+  ],
+  "related": [
+    "fight-phase",
+    "interruptible-wind-up",
+    "wave-clear-objective",
+    "persistent-progress"
+  ],
+  "sources": [
+    {
+      "title": "Magus Sisters — Final Fantasy IV guide",
+      "url": "https://strategywiki.org/wiki/Final_Fantasy_IV/Tower_of_Zot_to_the_Underground"
+    },
+    {
+      "title": "Throne Watcher & Defender — Dark Souls II Wiki",
+      "url": "https://darksouls2.wiki.gg/wiki/Throne_Watcher_%26_Defender"
+    },
+    {
+      "title": "Godskin Duo — Eldenpedia",
+      "url": "https://eldenring.wiki.gg/wiki/Godskin_Duo"
+    },
+    {
+      "title": "Godskin Duo event analysis — Souls Modding Wiki",
+      "url": "https://www.soulsmodding.com/doku.php?id=tutorial%3Aintro-to-elden-ring-emevd"
+    },
+    {
+      "title": "Boss Up: Boss Battle Design",
+      "url": "https://media.gdcvault.com/gdc2018/presentations/Keren_Itay_BossUp.pdf"
+    }
+  ]
+}

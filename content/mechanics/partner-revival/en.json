@@ -1,0 +1,138 @@
+{
+  "title": "Partner revival",
+  "subtitle": "Make a fallen boss change the surviving boss's next decision",
+  "variant": "Downed partner · visible channel · interruption · synchronized finish",
+  "summary": "A surviving boss can restore a downed partner unless the cast is stopped or the pair is finished within the authored window.",
+  "overview": "Partner revival ties two boss bodies to one completion rule. A defeat leaves a readable downed state, the survivor spends a visible action to restore the partner, and the player has a finite response. The encounter ends only after its explicit pair condition is met.",
+  "learning": "Define both identities, downed and final states, who may revive whom, cast cue and duration, interruption requirements, restored health, revive cap, simultaneous death handling, completion authority, retry reset, accessibility, and telemetry.",
+  "category": "Multi-boss relationships",
+  "readTime": "10 min",
+  "demo": {
+    "title": "Read and interrupt Kern's partner revival covenant",
+    "timeline": "Partner revival timeline",
+    "step": "Down, channel, restore, interrupt, finish",
+    "phaseNames": [
+      "Show the downed body and first revival",
+      "Expose the second cast and interrupt it",
+      "Finish the pair and authorize completion"
+    ],
+    "phaseDescriptions": [
+      "Tavi drops the echo at 0.55 seconds. Its body and health remain visible while Kern channels from 0.90 to 1.55; the echo returns with 40% health. This first completed cast teaches the relationship.",
+      "The echo falls again at 2.35. Kern begins a second telegraphed channel at 2.75, but Tavi reaches the caster at 3.18 and interrupts it. The fallen partner stays down while the survivor is briefly locked.",
+      "Tavi finishes Kern at 3.72 during that window. Only with both bodies down does the encounter grant one completion at 3.95. A retry at 4.65 restores the starting pair, not a phantom revive event."
+    ],
+    "boss": "Boss",
+    "player": "Player",
+    "danger": "An unexplained return feels like erased progress; an unbounded or uninterruptible loop can stall the fight, and awarding victory when one body falls can conflict with a pending revive",
+    "locked": "Pair identity, downed state, cast ownership, interrupt rules, revive budget, restored health, simultaneous defeat, one completion grant, and retry reset belong to encounter logic",
+    "safe": "Keep the fallen body visible, signal the survivor's commitment, give a reachable interrupt or finishing window, bound revival, and make victory authority explicit",
+    "reducedMotion": "Reduced motion disables autoplay. Scrub through 0.40, 0.55, 0.90, 1.20, 1.55, 1.85, 2.35, 2.75, 3.04, 3.18, 3.55, 3.72, 3.95, 4.65, and 5.35 seconds.",
+    "diagramDescription": "Two stone bosses share a tether. The left body falls, the right one completes a visible revival, then the left falls again. Tavi interrupts the second channel, defeats the survivor during the lock, and one completion seal appears only when both are down."
+  },
+  "steps": [
+    {
+      "title": "What persists when the first body falls?",
+      "body": "Keep the downed identity, location, remaining revive allowance, and survivor health visible. Distinguish downed, revivable, and final states; decide whether damage can still reach a downed body and whether the survivor's action queue changes immediately."
+    },
+    {
+      "title": "How can the player read and contest the revival?",
+      "body": "Give the survivor a distinct pose, tether, progress cue, and committed cast duration. Specify whether a stagger, qualified hit, interaction, line-of-sight break, or finishing blow stops it. Budget travel and attack recovery so the response is possible from a normal position."
+    },
+    {
+      "title": "When does the encounter actually end?",
+      "body": "Resolve simultaneous defeats and an interrupt on the last cast deterministically. Grant completion once only when the authored pair condition is true, cancel pending revival events, persist a bounded revive count, and restore the starting pair on retry."
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "Revival happens off screen without a promise",
+      "body": "The player sees one boss die and then inexplicably return. Preserve the fallen body, connect it to the caster, expose a countdown, and show the health fraction that will be restored."
+    },
+    {
+      "title": "The cast and completion rules disagree",
+      "body": "A delayed callback can restore a boss after victory or pay the encounter twice. Resolve events by stable pair and attempt IDs, cancel pending casts on final defeat, cap grants, and make completion idempotent."
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "Budget the loop in attempts, not frustration",
+      "body": "Choose a finite revive allowance or a clear alternate finish rule. Set restored health, channel length, lock duration, and travel distance together; test low-damage and high-damage builds without forcing an exact damage threshold."
+    },
+    {
+      "title": "Keep two bodies readable",
+      "body": "Separate silhouettes and positions, show who is down and who is channeling, and prevent overlapping attacks from hiding the cast. Give the interrupt cue shape, light, text, and sound equivalents."
+    },
+    {
+      "title": "Test race conditions explicitly",
+      "body": "Simulate both bosses dying in one frame, interrupt and cast completion on the same frame, reconnect during a channel, a revive cap, a phase handoff, and retry. Record attempt IDs, outcomes, grants, and completion count."
+    }
+  ],
+  "story": {
+    "title": "Kern lends his echo one more heartbeat",
+    "body": "The echo collapses on the left seal. Kern plants his hands and the tether glows until the echo stands again. When it falls a second time, Tavi cuts the channel and the covenant holds both stones still long enough for one final strike."
+  },
+  "adaptation": {
+    "title": "Keep the response available across abilities",
+    "body": "Allow more than one qualified interrupt or a synchronized finish; give enough time to cross the arena at ordinary speed; avoid requiring one build's stagger value; make the downed and casting states legible without color or sound alone."
+  },
+  "distinction": {
+    "title": "A relationship between bosses, not ordinary self healing",
+    "body": "Self healing restores the caster's own health. Partner revival changes a second entity from downed to active and therefore needs pair identity, cast ownership, completion authority, and simultaneous-death rules."
+  },
+  "lensNotes": [
+    {
+      "id": "context-and-sequence",
+      "body": "The first down, channel, return, second down, interrupt, and joint finish make each beat depend on the previous one."
+    },
+    {
+      "id": "progress-clarity",
+      "body": "Two health bars, a persistent downed body, tether, cast meter, and one victory seal show whether progress has been preserved."
+    },
+    {
+      "id": "risk-reward",
+      "body": "Moving toward the caster risks exposure but can prevent another health grant and create a short finishing window."
+    },
+    {
+      "id": "difficulty-rhythm",
+      "body": "A bounded revival adds one fresh coordination problem without turning the encounter into a limitless repetition."
+    },
+    {
+      "id": "counterplay",
+      "body": "The cast duration, reachable caster, and explicit interrupt condition turn the revival from a surprise into a testable response."
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "Final Fantasy IV Pixel Remaster",
+      "boss": "Magus Sisters",
+      "screenshot": "https://i.ytimg.com/vi/pQVbIq5bHH4/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=pQVbIq5bHH4&t=1359s",
+      "video": "https://www.youtube.com/watch?v=pQVbIq5bHH4&t=1359s",
+      "videoDurationSeconds": 1776,
+      "body": "Cindy can restore a fallen sister, so the group's roles affect the meaning of an individual defeat. This turn-based variant emphasizes target order and role recognition; it is not a long interruptible action cast."
+    },
+    {
+      "dimension": "3D",
+      "game": "Dark Souls II",
+      "boss": "Throne Watcher & Defender",
+      "screenshot": "https://i.ytimg.com/vi/2c82UFLVZeU/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=2c82UFLVZeU&t=1s",
+      "video": "https://www.youtube.com/watch?v=2c82UFLVZeU&t=1s",
+      "videoDurationSeconds": 182,
+      "body": "The survivor can revive the defeated partner after a delay, encouraging close defeat timing. The revival action can be stopped by staggering or finishing the caster, making the last surviving body an urgent, readable objective."
+    },
+    {
+      "dimension": "3D",
+      "game": "Elden Ring",
+      "boss": "Godskin Duo",
+      "screenshot": "https://i.ytimg.com/vi/iygrSgc9mhA/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=iygrSgc9mhA&t=30s",
+      "video": "https://www.youtube.com/watch?v=iygrSgc9mhA&t=30s",
+      "videoDurationSeconds": 198,
+      "body": "A fallen Godskin can be summoned back by the survivor, and the fight also has a timed respawn path and a separate shared health bar. It shows why visible body deaths and final encounter completion must have different authority."
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}
