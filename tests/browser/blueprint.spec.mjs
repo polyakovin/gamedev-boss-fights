@@ -7,6 +7,7 @@ test('a reduced-motion blueprint stays still and remains fully seekable', async 
 
   await expect(widget).toHaveAttribute('data-blueprint-ready', 'true');
   await expect(widget).toHaveAttribute('data-blueprint-playing', 'false');
+  await expect(widget).toHaveAttribute('data-blueprint-full-height', 'true');
   await expect(widget.locator('[data-blueprint-motion-note]')).toBeVisible();
 
   await timeline.evaluate((element) => {

@@ -9010,9 +9010,9 @@ function primitivesFor(spec, frame) {
     ];
   if (mode === 'target-lock')
     return [
-      circle(390, 620, mix(78, 38, prepare), phase === 0 ? 0.8 : active, 'signal', 5),
-      line(boss.x, boss.y, 390, 620, phase === 0 ? preview : active, 'accent', 5, '10 10'),
-      circle(390, 620, 12, active, 'signal', 8, phase === 1 ? 0.3 : 0),
+      circle(390, 620, mix(78, 38, prepare), phase === 0 ? 0.8 : active, 'signal', 3, 0.11),
+      line(boss.x, boss.y, 390, 620, phase === 0 ? preview : active, 'accent', 3),
+      path('M 390 602 L 402 620 L 390 638 L 378 620 Z', active, 'signal', 0, 0.78),
     ];
   if (mode === 'combo') {
     const angle =
