@@ -1718,13 +1718,13 @@ const SPECS = {
     mode: 'partner-revival',
     boss: [355, 420],
     partner: [165, 520],
-    player: [445, 760],
-    target: [430, 570],
+    player: [390, 760],
+    target: [390, 570],
     arena: [55, 300, 450, 590],
     firstApproach: [280, 650],
-    waitPoint: [460, 760],
-    interruptPoint: [445, 575],
-    finishPoint: [405, 535],
+    waitPoint: [400, 760],
+    interruptPoint: [385, 575],
+    finishPoint: [375, 535],
     firstDownAt: 0.55,
     firstChannel: [0.9, 1.55],
     firstReviveAt: 1.55,
@@ -8561,120 +8561,85 @@ function primitivesFor(spec, frame) {
     ];
   }
   if (mode === 'partner-revival') {
-    const firstChannelProgress = clamp(
-      (frame.time - spec.firstChannel[0]) / (spec.firstChannel[1] - spec.firstChannel[0]),
-    );
-    const secondChannelProgress = clamp(
-      (frame.time - spec.secondChannel[0]) / (spec.secondChannel[1] - spec.secondChannel[0]),
-    );
-    const activeChannelProgress = frame.partnerRevivalFirstChannelActive
-      ? firstChannelProgress
-      : frame.partnerRevivalSecondChannelActive
-        ? secondChannelProgress
-        : frame.partnerRevivalReviveSucceeded
-          ? 1
-          : 0;
+    const activeChannelProgress = frame.partnerRevivalChannelProgress;
+    const partnerDown = frame.partnerRevivalPartnerDowned;
+    const completion = frame.partnerRevivalCompletionAuthorized;
+    const channel = frame.partnerRevivalChannelActive;
     const firstStrike = strikePulse(frame.time, spec.firstDownAt, 0.34);
     const secondStrike = strikePulse(frame.time, spec.secondDownAt, 0.34);
     const interruptStrike = strikePulse(frame.time, spec.interruptAt, 0.38);
     const finishStrike = strikePulse(frame.time, spec.survivorDownAt, 0.4);
-    const partnerDown = frame.partnerRevivalPartnerDowned;
-    const completion = frame.partnerRevivalCompletionAuthorized;
-    const panelVisible = frame.time < spec.resetAt;
     return [
-      rect(...spec.arena, 0.54, 'muted', 0.025),
       path(
-        'M 68 760 L 174 733 L 280 760 L 386 733 L 492 760 V 794 L 386 766 L 280 796 L 174 766 L 68 794 Z M 82 855 L 280 822 L 478 855 V 874 L 280 840 L 82 874 Z',
+        'M 88 126 H 472 V 339 H 438 V 165 H 122 V 339 H 88 Z M 212 165 H 348 V 324 H 212 Z',
+        0.72,
+        'muted',
+        0,
+        0.54,
+      ),
+      path(
+        'M 212 165 H 280 V 324 H 212 Z M 280 165 H 348 V 324 H 280 Z',
+        completion ? 0.1 : 0.64,
+        'accent',
+        0,
+        0.36,
+      ),
+      path(
+        'M 241 184 H 255 V 307 H 241 Z M 305 184 H 319 V 307 H 305 Z',
+        completion ? 0.08 : 0.45,
+        'muted',
+        0,
+        0.62,
+      ),
+      path('M 218 168 H 342 V 324 H 218 Z', completion ? 0.86 : 0, 'safe', 0, 0.48),
+      path(
+        'M 90 316 H 132 V 813 H 90 Z M 428 316 H 470 V 813 H 428 Z M 75 805 H 485 V 842 H 75 Z',
+        0.5,
+        'muted',
+        0,
+        0.52,
+      ),
+      path(
+        'M 78 752 L 280 714 L 482 752 V 781 L 280 742 L 78 781 Z M 80 867 L 280 829 L 480 867 V 894 L 280 856 L 80 894 Z',
         0.52,
         'muted',
         0,
-        0.48,
-      ),
-      rect(76, 94, 408, 150, panelVisible ? 0.84 : 0.24, 'muted', 0.14),
-      rect(104, 132, 150, 18, panelVisible ? 0.78 : 0, 'muted', 0.08),
-      rect(
-        104,
-        132,
-        150 *
-          (frame.partnerRevivalPartnerDowned ? 0 : frame.partnerRevivalRevivedHealthFraction || 1),
-        18,
-        panelVisible ? 0.9 : 0,
-        'accent',
-        0.28,
-      ),
-      rect(306, 132, 150, 18, panelVisible ? 0.78 : 0, 'muted', 0.08),
-      rect(
-        306,
-        132,
-        150 * (frame.partnerRevivalSurvivorDowned ? 0 : spec.survivorHealthFraction),
-        18,
-        panelVisible ? 0.9 : 0,
-        'signal',
-        0.28,
-      ),
-      line(
-        spec.partner[0],
-        spec.partner[1] - 18,
-        spec.boss[0],
-        spec.boss[1] - 18,
-        panelVisible ? (partnerDown ? 0.38 : 0.72) : 0,
-        partnerDown ? 'signal' : 'safe',
-        6,
-        partnerDown ? '10 9' : '',
-      ),
-      circle(
-        spec.partner[0],
-        spec.partner[1],
-        72,
-        partnerDown ? 0.82 : 0.2,
-        partnerDown ? 'signal' : 'accent',
-        8,
-        0.025,
-        partnerDown ? '11 8' : '',
+        0.6,
       ),
       path(
-        `M ${spec.partner[0] - 28} ${spec.partner[1] - 28} L ${spec.partner[0] + 28} ${spec.partner[1] + 28} M ${spec.partner[0] + 28} ${spec.partner[1] - 28} L ${spec.partner[0] - 28} ${spec.partner[1] + 28}`,
-        partnerDown ? 0.88 : 0,
+        'M 92 535 L 250 523 L 267 549 L 91 565 Z M 91 565 L 267 549 V 590 L 91 605 Z',
+        0.86,
+        'muted',
+        0,
+        0.72,
+      ),
+      path(
+        'M 102 532 L 244 521 L 252 534 L 103 550 Z',
+        partnerDown ? 0.86 : 0.44,
         'signal',
-        8,
-      ),
-      line(
-        spec.boss[0],
-        spec.boss[1],
-        spec.partner[0],
-        spec.partner[1],
-        frame.partnerRevivalChannelActive ? 0.94 : 0,
-        'accent',
-        12,
-        '13 9',
-      ),
-      circle(
-        spec.partner[0],
-        spec.partner[1],
-        30 + activeChannelProgress * 48,
-        frame.partnerRevivalChannelActive ? 0.94 : 0,
-        'accent',
-        10,
-        0.04,
-      ),
-      rect(120, 194, 320, 18, frame.partnerRevivalChannelActive ? 0.82 : 0.24, 'muted', 0.08),
-      rect(
-        120,
-        194,
-        320 * activeChannelProgress,
-        18,
-        frame.partnerRevivalChannelActive ? 0.96 : 0.22,
-        frame.partnerRevivalSecondChannelActive ? 'signal' : 'accent',
+        0,
         0.32,
       ),
-      circle(
-        spec.partner[0],
-        spec.partner[1],
-        86,
-        frame.partnerRevivalReviveSucceeded && !frame.partnerRevivalPartnerDowned ? 0.82 : 0,
+      path(
+        'M 116 352 L 104 331 L 116 303 L 129 333 Z M 444 352 L 431 333 L 444 303 L 456 331 Z',
+        0.86,
+        'accent',
+        0,
+        0.76,
+      ),
+      path(
+        `M ${spec.boss[0] - 12} ${spec.boss[1] - 42} L ${spec.partner[0] + 20} ${spec.partner[1] - 31} L ${spec.partner[0] + 8} ${spec.partner[1] - 54} L ${spec.boss[0] + 9} ${spec.boss[1] - 58} Z`,
+        channel ? 0.42 + activeChannelProgress * 0.38 : 0,
         'safe',
-        9,
-        0.03,
+        0,
+        0.48,
+      ),
+      path(
+        `M ${spec.partner[0] + 3} ${spec.partner[1] - 80} L ${spec.partner[0] + 22} ${spec.partner[1] - 52} L ${spec.partner[0] + 3} ${spec.partner[1] - 28} L ${spec.partner[0] - 15} ${spec.partner[1] - 52} Z`,
+        channel ? 0.42 + activeChannelProgress * 0.54 : 0,
+        'safe',
+        0,
+        0.72,
       ),
       line(
         frame.player.x - 8,
@@ -8683,7 +8648,7 @@ function primitivesFor(spec, frame) {
         spec.partner[1] + 18,
         Math.max(firstStrike, secondStrike),
         'safe',
-        12,
+        11,
       ),
       line(
         frame.player.x - 8,
@@ -8692,25 +8657,16 @@ function primitivesFor(spec, frame) {
         spec.boss[1] + 24,
         Math.max(interruptStrike, finishStrike),
         'safe',
-        13,
-      ),
-      circle(
-        spec.boss[0],
-        spec.boss[1],
-        76,
-        frame.partnerRevivalInterrupted ? 0.9 : 0,
-        'signal',
-        10,
-        0.035,
+        12,
       ),
       path(
-        `M ${spec.boss[0] - 30} ${spec.boss[1] - 30} L ${spec.boss[0] + 30} ${spec.boss[1] + 30} M ${spec.boss[0] + 30} ${spec.boss[1] - 30} L ${spec.boss[0] - 30} ${spec.boss[1] + 30}`,
-        frame.partnerRevivalInterrupted ? 0.92 : 0,
+        `M ${spec.boss[0] - 38} ${spec.boss[1] - 95} L ${spec.boss[0] - 17} ${spec.boss[1] - 126} L ${spec.boss[0] - 3} ${spec.boss[1] - 86} Z M ${spec.boss[0] + 22} ${spec.boss[1] - 90} L ${spec.boss[0] + 45} ${spec.boss[1] - 117} L ${spec.boss[0] + 42} ${spec.boss[1] - 78} Z`,
+        frame.partnerRevivalInterrupted ? 0.9 : 0,
         'signal',
-        9,
+        0,
+        0.86,
       ),
-      circle(280, 650, 66, completion ? 0.92 : 0, 'safe', 9, 0.05),
-      path('M 242 650 L 271 679 L 322 621', completion ? 0.98 : 0, 'safe', 11),
+      path('M 264 222 L 280 195 L 296 222 L 280 249 Z', completion ? 0.92 : 0.18, 'safe', 0, 0.78),
     ];
   }
   if (mode === 'kill-order-inheritance') {
@@ -13236,15 +13192,20 @@ export function blueprintFrame(id, time) {
         ? {
             x: spec.partner[0],
             y: spec.partner[1],
+            rotation:
+              (t >= spec.firstDownAt && t < spec.firstReviveAt) ||
+              (t >= spec.secondDownAt && t < spec.retry[0])
+                ? 70
+                : 0,
             opacity:
               t < spec.firstDownAt
                 ? 1
                 : t < spec.firstReviveAt
-                  ? 0.24
+                  ? 0.82
                   : t < spec.secondDownAt
-                    ? mix(0.24, 1, smooth((t - spec.firstReviveAt) / 0.3))
+                    ? mix(0.82, 1, smooth((t - spec.firstReviveAt) / 0.3))
                     : t < spec.retry[0]
-                      ? 0.24
+                      ? 0.82
                       : 1,
           }
         : spec.mode === 'kill-order-inheritance'
