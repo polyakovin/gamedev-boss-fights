@@ -3765,6 +3765,21 @@ function primitivesFor(spec, frame) {
         : 0;
     const strike = strikePulse(frame.time, spec.punishAt, 0.38);
     return [
+      path('M 36 94 H 524 V 878 H 36 Z M 53 246 H 507 V 878 H 53 Z', 0.34, 'muted', 0, 0.58),
+      path(
+        'M 52 111 H 114 V 344 H 52 Z M 446 111 H 508 V 344 H 446 Z M 126 115 H 434 V 154 H 126 Z M 60 381 H 504 V 397 H 60 Z M 60 467 H 504 V 483 H 60 Z M 60 590 L 280 566 L 500 590 V 612 L 280 587 L 60 612 Z M 60 751 L 280 724 L 500 751 V 778 L 280 747 L 60 778 Z',
+        0.37,
+        'accent',
+        0,
+        0.54,
+      ),
+      path(
+        'M 64 420 H 510 V 445 H 64 Z M 64 629 L 279 610 L 497 629 V 639 L 280 623 L 64 639 Z M 64 816 L 280 790 L 497 816 V 829 L 280 804 L 64 829 Z',
+        0.27,
+        'muted',
+        0,
+        0.7,
+      ),
       path(
         `M ${spec.laneStart[0]} ${spec.laneStart[1] - spec.laneHalfWidth} H ${spec.laneEnd[0]} V ${spec.laneEnd[1] + spec.laneHalfWidth} H ${spec.laneStart[0]} Z`,
         startup ? 0.58 : 0,

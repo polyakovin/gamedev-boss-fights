@@ -1595,35 +1595,35 @@ test('recovery locks the boss long enough for a measured approach and sword puni
 
   const startup = blueprintFrame(id, 0.9);
   assert.equal(startup.dangerActive, false);
-  assert.ok(startup.primitives[0].opacity > 0, 'startup previews the complete lane');
-  assert.equal(startup.primitives[1].opacity, 0, 'the preview is not damaging');
+  assert.ok(startup.primitives[3].opacity > 0, 'startup previews the complete lane');
+  assert.equal(startup.primitives[4].opacity, 0, 'the preview is not damaging');
 
   const active = blueprintFrame(id, 1.4);
   assert.equal(active.recoveryState, 'active');
   assert.equal(active.dangerActive, true);
   assert.equal(active.playerSafe, true);
   assert.equal(blueprintPointSafe(id, 1.4, { x: 400, y: 430 }), false);
-  assert.ok(active.primitives[1].opacity > 0, 'the damaging lane is solid');
+  assert.ok(active.primitives[4].opacity > 0, 'the damaging lane is solid');
 
   const opening = blueprintFrame(id, 1.8);
   assert.equal(opening.dangerActive, false);
   assert.equal(opening.recoveryLocked, true);
   assert.equal(opening.bossReady, false);
   assert.equal(blueprintPointSafe(id, 1.8, { x: 400, y: 430 }), true);
-  assert.ok(opening.primitives[2].opacity > 0, 'sword reach is visible during recovery');
-  assert.ok(opening.primitives[3].opacity > 0, 'the countdown is visible during recovery');
-  assert.equal(opening.primitives[5].opacity, 0, 'the ready flash cannot appear early');
+  assert.ok(opening.primitives[5].opacity > 0, 'sword reach is visible during recovery');
+  assert.ok(opening.primitives[6].opacity > 0, 'the countdown is visible during recovery');
+  assert.equal(opening.primitives[8].opacity, 0, 'the ready flash cannot appear early');
 
   const punish = blueprintFrame(id, 3.48);
   assert.equal(punish.recoveryLocked, true);
   assert.equal(punish.withinPunishReach, true);
   assert.equal(punish.punishStrike, true);
-  assert.ok(punish.primitives[6].opacity > 0, 'the sword response reaches Kern');
+  assert.ok(punish.primitives[9].opacity > 0, 'the sword response reaches Kern');
 
   const ready = blueprintFrame(id, 4.6);
   assert.equal(ready.recoveryLocked, false);
   assert.equal(ready.bossReady, true);
-  assert.ok(ready.primitives[5].opacity > 0, 'the ready flash follows the exact cutoff');
+  assert.ok(ready.primitives[8].opacity > 0, 'the ready flash follows the exact cutoff');
   assert.deepEqual(blueprintFrame(id, 0).player, blueprintFrame(id, 6).player);
   assert.match(renderBlueprintThumbnail(id, 'test-recovery'), /data-blueprint-preview="recovery"/);
 });

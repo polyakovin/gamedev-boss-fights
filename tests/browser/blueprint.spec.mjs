@@ -1614,10 +1614,11 @@ test('recovery separates the last active instant, approach budget, punish, and r
   await expect(page.locator('.wip-badge, .draft-profile')).toHaveCount(0);
   await expect(page.locator('.game-example')).toHaveCount(3);
   await expect(widget).toHaveAttribute('data-blueprint-playing', 'false');
+  await expect(widget).toHaveAttribute('data-blueprint-full-height', 'true');
 
   await seek(900);
   await expect(widget).toHaveAttribute('data-blueprint-recovery', 'startup');
-  await expect(widget.locator('[data-blueprint-primitive="0"] path')).not.toHaveAttribute(
+  await expect(widget.locator('[data-blueprint-primitive="3"] path')).not.toHaveAttribute(
     'opacity',
     '0',
   );
@@ -1625,7 +1626,7 @@ test('recovery separates the last active instant, approach budget, punish, and r
   await seek(1400);
   await expect(widget).toHaveAttribute('data-blueprint-recovery', 'active');
   await expect(widget).toHaveAttribute('data-blueprint-outcome', 'safe');
-  await expect(widget.locator('[data-blueprint-primitive="1"] rect')).not.toHaveAttribute(
+  await expect(widget.locator('[data-blueprint-primitive="4"] rect')).not.toHaveAttribute(
     'opacity',
     '0',
   );
@@ -1634,7 +1635,7 @@ test('recovery separates the last active instant, approach budget, punish, and r
   await expect(widget).toHaveAttribute('data-blueprint-recovery', 'approach-window');
   await expect(widget).toHaveAttribute('data-blueprint-recovery-locked', 'true');
   await expect(widget).toHaveAttribute('data-blueprint-boss-ready', 'false');
-  await expect(widget.locator('[data-blueprint-primitive="2"] circle')).not.toHaveAttribute(
+  await expect(widget.locator('[data-blueprint-primitive="5"] circle')).not.toHaveAttribute(
     'opacity',
     '0',
   );
@@ -1643,7 +1644,7 @@ test('recovery separates the last active instant, approach budget, punish, and r
   await expect(widget).toHaveAttribute('data-blueprint-recovery', 'punish-window');
   await expect(widget).toHaveAttribute('data-blueprint-within-punish-reach', 'true');
   await expect(widget).toHaveAttribute('data-blueprint-punish-strike', 'true');
-  await expect(widget.locator('[data-blueprint-primitive="6"] line')).not.toHaveAttribute(
+  await expect(widget.locator('[data-blueprint-primitive="9"] line')).not.toHaveAttribute(
     'opacity',
     '0',
   );
@@ -1652,7 +1653,7 @@ test('recovery separates the last active instant, approach budget, punish, and r
   await expect(widget).toHaveAttribute('data-blueprint-recovery', 'boss-ready');
   await expect(widget).toHaveAttribute('data-blueprint-recovery-locked', 'false');
   await expect(widget).toHaveAttribute('data-blueprint-boss-ready', 'true');
-  await expect(widget.locator('[data-blueprint-primitive="5"] circle')).not.toHaveAttribute(
+  await expect(widget.locator('[data-blueprint-primitive="8"] circle')).not.toHaveAttribute(
     'opacity',
     '0',
   );
@@ -1679,8 +1680,8 @@ test('recovery keeps the attack lane, countdown, and actors inside dark RTL mobi
         '[data-blueprint-player]',
         '[data-blueprint-boss-label]',
         '[data-blueprint-player-label]',
-        '[data-blueprint-primitive="0"]',
         '[data-blueprint-primitive="3"]',
+        '[data-blueprint-primitive="6"]',
       ].map((selector) => {
         const rect = element.querySelector(selector).getBoundingClientRect();
         return (
