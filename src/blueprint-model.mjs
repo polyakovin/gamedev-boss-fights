@@ -1682,9 +1682,9 @@ const SPECS = {
   'party-size-scaling': {
     mode: 'party-size-scaling',
     boss: [300, 425],
-    player: [405, 720],
-    target: [490, 845],
-    arena: [55, 330, 450, 560],
+    player: [330, 650],
+    target: [430, 780],
+    arena: [55, 145, 450, 735],
     rosterTokens: [
       [120, 145],
       [225, 145],
@@ -1692,12 +1692,12 @@ const SPECS = {
       [440, 145],
     ],
     scaleNode: [280, 255],
-    healthBar: [120, 310, 320, 24],
+    healthBar: [120, 230, 320, 24],
     targetCenters: [
-      [405, 720],
-      [135, 690],
+      [330, 650],
+      [170, 650],
     ],
-    allyTarget: [80, 820],
+    allyTarget: [110, 790],
     joinQueuedAt: 0.62,
     scaleApplyAt: 1.18,
     attackSignal: [1.8, 2.22],
@@ -8389,121 +8389,102 @@ function primitivesFor(spec, frame) {
     );
     const secondMemberVisible = frame.time >= spec.joinQueuedAt && frame.time < spec.leaveApplyAt;
     const panelVisible = frame.time < spec.resetAt;
+    const scaled = frame.partySizeScalingScaleApplied && frame.partySizeScalingPartySize > 1;
+    const healthWidth = scaled ? 320 : 240;
     return [
-      rect(...spec.arena, 0.52, 'muted', 0.025),
       path(
-        'M 70 760 L 176 734 L 280 762 L 386 734 L 490 760 V 793 L 386 764 L 280 794 L 176 764 L 70 793 Z M 88 850 L 280 818 L 472 850 V 868 L 280 837 L 88 868 Z',
-        0.54,
+        'M 70 187 L 280 148 L 490 187 V 216 L 280 177 L 70 216 Z M 72 846 L 280 804 L 488 846 V 874 L 280 832 L 72 874 Z',
+        0.42,
         'muted',
         0,
-        0.5,
+        0.6,
       ),
-      rect(64, 82, 432, 218, panelVisible ? 0.86 : 0.3, 'muted', 0.16),
-      ...spec.rosterTokens.flatMap((token, index) => {
+      path(
+        'M 88 97 H 472 V 213 H 88 Z M 100 109 H 460 V 200 H 100 Z',
+        panelVisible ? 0.6 : 0.22,
+        'muted',
+        0,
+        0.68,
+      ),
+      ...spec.rosterTokens.flatMap(([x, y], index) => {
         const active = index === 0 || (index === 1 && secondMemberVisible);
         const queued = index === 1 && frame.partySizeScalingJoinQueued;
-        const opacity = active ? 0.94 : 0.24;
+        const opacity = panelVisible ? (active ? 0.94 : 0.24) : 0;
+        const tone = index === 0 ? 'safe' : 'accent';
         return [
-          circle(
-            token[0],
-            token[1],
-            32 + (queued ? 7 * pulse(rosterProgress * 2) : 0),
-            panelVisible ? opacity : 0,
-            active ? (index === 0 ? 'safe' : 'accent') : 'muted',
-            7,
-            active ? 0.04 : 0.015,
-            active ? '' : '8 7',
-          ),
-          circle(
-            token[0],
-            token[1] - 8,
-            9,
-            panelVisible ? opacity : 0,
-            active ? (index === 0 ? 'safe' : 'accent') : 'muted',
-            5,
-            0.08,
+          path(
+            `M ${x - 34} ${y - 33} H ${x + 34} V ${y + 42} H ${x - 34} Z`,
+            opacity,
+            active ? tone : 'muted',
+            0,
+            0.48,
           ),
           path(
-            `M ${token[0] - 16} ${token[1] + 18} Q ${token[0]} ${token[1] - 2} ${token[0] + 16} ${token[1] + 18}`,
-            panelVisible ? opacity : 0,
-            active ? (index === 0 ? 'safe' : 'accent') : 'muted',
-            6,
+            `M ${x - 13} ${y - 19} Q ${x} ${y - 31} ${x + 13} ${y - 19} L ${x + 11} ${y - 2} H ${x - 11} Z M ${x - 22} ${y + 29} Q ${x - 22} ${y + 1} ${x} ${y + 2} Q ${x + 22} ${y + 1} ${x + 22} ${y + 29} Z`,
+            opacity,
+            active ? tone : 'muted',
+            0,
+            0.86,
+          ),
+          path(
+            `M ${x - 30} ${y + 37} H ${x + 30} V ${y + 42} H ${x - 30} Z`,
+            queued ? 0.4 + 0.5 * pulse(rosterProgress * 2) : 0,
+            tone,
+            0,
+            0.9,
           ),
         ];
       }),
-      ...spec.rosterTokens
-        .slice(0, 2)
-        .map((token, index) =>
-          line(
-            token[0],
-            token[1] + 34,
-            spec.scaleNode[0],
-            spec.scaleNode[1] - 30,
-            index === 0 || secondMemberVisible ? 0.66 : 0.18,
-            index === 0 ? 'safe' : 'accent',
-            5,
-            '9 7',
-          ),
-        ),
-      circle(
-        spec.scaleNode[0],
-        spec.scaleNode[1],
-        36 + scaleProgress * 8,
-        frame.partySizeScalingScaleApplied ? 0.94 : 0.42,
-        'signal',
-        8,
-        0.04,
-      ),
       path(
-        `M ${spec.scaleNode[0] - 19} ${spec.scaleNode[1] + 4} L ${spec.scaleNode[0] - 3} ${spec.scaleNode[1] + 18} L ${spec.scaleNode[0] + 24} ${spec.scaleNode[1] - 17}`,
-        frame.partySizeScalingScaleApplied ? 0.96 : 0.28,
-        'safe',
-        7,
-      ),
-      rect(
-        spec.healthBar[0],
-        spec.healthBar[1],
-        spec.healthBar[2],
-        spec.healthBar[3],
-        0.78,
+        `M ${spec.healthBar[0] - 8} ${spec.healthBar[1] - 8} H ${spec.healthBar[0] + 328} V ${spec.healthBar[1] + 32} H ${spec.healthBar[0] - 8} Z`,
+        0.68,
         'muted',
-        0.1,
+        0,
+        0.68,
       ),
       rect(
         spec.healthBar[0],
         spec.healthBar[1],
-        spec.healthBar[2] * 0.68,
+        healthWidth * frame.partySizeScalingHealthFraction,
         spec.healthBar[3],
-        0.92,
+        0.94,
         'signal',
-        0.3,
+        0.84,
       ),
-      line(
-        spec.healthBar[0] + spec.healthBar[2] * 0.68,
-        spec.healthBar[1] - 6,
-        spec.healthBar[0] + spec.healthBar[2] * 0.68,
-        spec.healthBar[1] + spec.healthBar[3] + 6,
-        panelVisible ? 0.92 : 0,
-        'safe',
-        4,
-      ),
-      circle(ally.x, ally.y, 28, secondMemberVisible ? 0.9 : 0, 'accent', 7, 0.08),
       path(
-        `M ${ally.x - 12} ${ally.y + 12} L ${ally.x + 12} ${ally.y - 12} M ${ally.x + 4} ${ally.y - 18} L ${ally.x + 18} ${ally.y - 4}`,
-        secondMemberVisible ? 0.92 : 0,
+        `M ${frame.boss.x - 93 - 18 * scaleProgress} ${frame.boss.y - 80} L ${frame.boss.x - 46} ${frame.boss.y - 129 - 25 * scaleProgress} L ${frame.boss.x - 15} ${frame.boss.y - 63} L ${frame.boss.x - 67} ${frame.boss.y + 18} Z M ${frame.boss.x + 93 + 18 * scaleProgress} ${frame.boss.y - 80} L ${frame.boss.x + 46} ${frame.boss.y - 129 - 25 * scaleProgress} L ${frame.boss.x + 15} ${frame.boss.y - 63} L ${frame.boss.x + 67} ${frame.boss.y + 18} Z`,
+        scaled ? 0.74 : 0,
+        'signal',
+        0,
+        0.6,
+      ),
+      circle(ally.x, ally.y + 3, 24, secondMemberVisible ? 0.42 : 0, 'muted', 0, 0.66),
+      circle(ally.x, ally.y - 67, 13, secondMemberVisible ? 0.96 : 0, 'accent', 0, 0.88),
+      path(
+        `M ${ally.x - 23} ${ally.y - 50} L ${ally.x + 20} ${ally.y - 50} L ${ally.x + 27} ${ally.y - 10} L ${ally.x - 28} ${ally.y - 10} Z M ${ally.x - 20} ${ally.y - 8} H ${ally.x - 5} V ${ally.y + 9} H ${ally.x - 24} Z M ${ally.x + 5} ${ally.y - 8} H ${ally.x + 20} V ${ally.y + 9} H ${ally.x + 5} Z`,
+        secondMemberVisible ? 0.94 : 0,
         'accent',
-        6,
+        0,
+        0.78,
+      ),
+      path(
+        `M ${ally.x + 17} ${ally.y - 42} L ${ally.x + 48} ${ally.y - 103} L ${ally.x + 55} ${ally.y - 117} L ${ally.x + 52} ${ally.y - 95} L ${ally.x + 26} ${ally.y - 37} Z`,
+        secondMemberVisible ? 0.92 : 0,
+        'safe',
+        0,
+        0.84,
       ),
       ...spec.targetCenters.map((center, index) =>
         circle(
           center[0],
           center[1],
           mix(28, spec.targetRadius, signalProgress),
-          frame.partySizeScalingAttackSignaled && (index === 0 || secondMemberVisible) ? 0.78 : 0,
+          frame.partySizeScalingAttackSignaled && (index === 0 || secondMemberVisible)
+            ? 0.18 + 0.2 * signalProgress
+            : 0,
           index === 0 ? 'signal' : 'accent',
-          8,
-          0.02,
-          '11 8',
+          0,
+          0.58,
         ),
       ),
       ...spec.targetCenters.map((center, index) =>
@@ -8512,11 +8493,11 @@ function primitivesFor(spec, frame) {
           center[1],
           spec.targetRadius + attackProgress * 22,
           frame.partySizeScalingAttackActive && (index === 0 || secondMemberVisible)
-            ? 0.96 - attackProgress * 0.28
+            ? 0.64 - attackProgress * 0.18
             : 0,
           index === 0 ? 'signal' : 'accent',
-          12,
-          0.025,
+          0,
+          0.6,
         ),
       ),
       path(
@@ -8525,12 +8506,12 @@ function primitivesFor(spec, frame) {
         'safe',
         13,
       ),
-      circle(450, 390, 29, frame.partySizeScalingEligibilitySettled ? 0.92 : 0, 'safe', 7, 0.05),
       path(
-        'M 433 390 L 446 403 L 468 378',
-        frame.partySizeScalingEligibilitySettled ? 0.98 : 0,
+        'M 396 434 L 457 434 L 464 456 H 389 Z M 402 421 H 451 L 460 434 H 393 Z',
+        frame.partySizeScalingEligibilitySettled ? 0.88 : 0,
         'safe',
-        7,
+        0,
+        0.68,
       ),
     ];
   }
