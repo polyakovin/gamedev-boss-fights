@@ -8213,19 +8213,61 @@ function primitivesFor(spec, frame) {
       ),
       circle(boss.x, boss.y, 55 + prepare * 22, phase === 0 ? 0.8 : 0, 'accent', 5),
     ];
-  if (mode === 'phase')
+  if (mode === 'phase') {
+    const changed = phase === 0 ? prepare * 0.3 : phase === 1 ? 1 : 1 - recover * 0.65;
+    const gateTop = mix(680, 650, changed);
     return [
-      circle(
-        280,
-        500,
-        phase === 0 ? 310 : mix(310, 230, action),
-        0.7,
-        phase === 0 ? 'accent' : 'signal',
-        16,
+      path(
+        'M 38 94 H 522 V 878 H 38 Z M 62 120 H 498 V 637 H 62 Z M 62 713 H 498 V 878 H 62 Z',
+        0.38,
+        'muted',
+        0,
+        0.56,
       ),
-      rect(55, 680, 450, 30, phase === 1 ? active : 0.25, 'signal', phase === 1 ? 0.3 : 0.05),
-      circle(boss.x, boss.y, 65 + pulse(action * 2) * 35, active, 'accent', 6),
+      path(
+        'M 62 120 H 112 V 636 H 62 Z M 448 120 H 498 V 636 H 448 Z M 112 120 H 448 V 155 H 112 Z M 64 722 L 280 700 L 496 722 V 878 H 64 Z',
+        0.4,
+        'accent',
+        0,
+        0.48,
+      ),
+      path(
+        'M 118 175 H 442 V 182 H 118 Z M 112 522 H 448 V 532 H 112 Z M 80 777 L 280 756 L 480 777 V 786 L 280 765 L 80 786 Z',
+        0.38,
+        'muted',
+        0,
+        0.66,
+      ),
+      path(
+        `M 54 ${gateTop} H 506 V 710 H 54 Z M 63 ${gateTop + 5} H 497 V ${gateTop + 11} H 63 Z`,
+        0.28 + changed * 0.64,
+        'signal',
+        0,
+        0.72,
+      ),
+      path(
+        'M 164 211 L 180 235 L 164 259 L 148 235 Z M 396 211 L 412 235 L 396 259 L 380 235 Z M 280 162 L 310 194 L 280 226 L 250 194 Z',
+        0.18 + changed * 0.55,
+        'signal',
+        0,
+        0.7,
+      ),
+      path(
+        `M ${boss.x} ${boss.y - 33} L ${boss.x + 23} ${boss.y} L ${boss.x} ${boss.y + 32} L ${boss.x - 23} ${boss.y} Z`,
+        0.13 + changed * 0.72,
+        'signal',
+        0,
+        0.78,
+      ),
+      path(
+        'M 338 753 L 365 728 L 392 753 L 365 778 Z M 355 752 L 365 741 L 375 752 L 365 763 Z',
+        0.25 + changed * 0.42,
+        'safe',
+        0,
+        0.46,
+      ),
     ];
+  }
   const enragedState = phase === 0 ? 0.3 + prepare * 0.7 : 1;
   const enragedAttack = phase === 1 ? 1 : 0;
   return [
@@ -8694,12 +8736,11 @@ function pointClearsThreat(spec, frame, value, radius = BLUEPRINT_PLAYER_RADIUS)
     );
   }
   if (mode === 'phase') {
-    const boundary = frame.primitives[1];
     return (
-      value.x + radius < boundary.x ||
-      value.x - radius > boundary.x + boundary.rectWidth ||
-      value.y + radius < boundary.y ||
-      value.y - radius > boundary.y + boundary.rectHeight
+      value.x + radius < 55 ||
+      value.x - radius > 505 ||
+      value.y + radius < 650 ||
+      value.y - radius > 710
     );
   }
   if (mode === 'enrage')
