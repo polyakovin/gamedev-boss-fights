@@ -399,8 +399,9 @@ test('rule-specific commitments stay visible through the response and recovery',
 
   const enragedRecovery = blueprintFrame('enrage', 5.2);
   assert.equal(enragedRecovery.bossScale, 1.1);
-  assert.equal(enragedRecovery.primitives[0].opacity, 1);
-  assert.ok(enragedRecovery.primitives.slice(1).every((primitive) => primitive.opacity === 0));
+  assert.equal(enragedRecovery.primitives[2].opacity, 1);
+  assert.equal(enragedRecovery.primitives[3].opacity, 1);
+  assert.ok(enragedRecovery.primitives.slice(4).every((primitive) => primitive.opacity === 0));
 });
 
 test('target lock commits before the marked player leaves', () => {

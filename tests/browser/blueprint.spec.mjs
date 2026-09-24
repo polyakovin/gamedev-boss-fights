@@ -3957,3 +3957,44 @@ test('moveset shapeshifting exposes complete ordered package handoffs', async ({
   await page.setViewportSize({ width: 375, height: 812 });
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
 });
+test('enrage fills the forge and keeps its core lit after the volley', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.goto('en/mechanics/enrage/');
+  const widget = page.locator('[data-blueprint-demo]');
+  const timeline = widget.locator('[data-blueprint-timeline]');
+  const seek = (milliseconds) =>
+    timeline.evaluate((element, value) => {
+      element.value = String(value);
+      element.dispatchEvent(new Event('input', { bubbles: true }));
+    }, milliseconds);
+
+  await expect(widget).toHaveAttribute('data-blueprint-full-height', 'true');
+  expect(
+    await widget
+      .locator('[data-blueprint-primitives]')
+      .evaluate((element) => element.getBBox().height),
+  ).toBeGreaterThan(760);
+  await expect(widget.locator('[data-blueprint-primitives] [stroke-dasharray]')).toHaveCount(0);
+
+  await seek(3500);
+  await expect(widget.locator('[data-blueprint-primitive="4"] line')).toHaveAttribute(
+    'opacity',
+    '1',
+  );
+  await seek(5200);
+  await expect(widget.locator('[data-blueprint-primitive="2"] path')).toHaveAttribute(
+    'opacity',
+    '1',
+  );
+  await expect(widget.locator('[data-blueprint-primitive="3"] path')).toHaveAttribute(
+    'opacity',
+    '1',
+  );
+  await expect(widget.locator('[data-blueprint-primitive="4"] line')).toHaveAttribute(
+    'opacity',
+    '0',
+  );
+
+  await page.setViewportSize({ width: 375, height: 812 });
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+});

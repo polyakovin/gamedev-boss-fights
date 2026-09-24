@@ -8229,8 +8229,37 @@ function primitivesFor(spec, frame) {
   const enragedState = phase === 0 ? 0.3 + prepare * 0.7 : 1;
   const enragedAttack = phase === 1 ? 1 : 0;
   return [
-    circle(boss.x, boss.y, 90 + pulse(action * 4) * 30, enragedState, 'signal', 13),
-    ...projectileLines(boss, 5, 1, mix(150, 610, action), enragedAttack, action * 0.8),
+    path(
+      'M 40 94 L 520 94 L 520 878 L 40 878 Z M 59 702 L 502 702 L 514 870 L 47 870 Z',
+      0.38,
+      'muted',
+      0,
+      0.52,
+    ),
+    path(
+      'M 60 126 L 134 126 L 140 554 L 58 554 Z M 426 126 L 500 126 L 502 554 L 420 554 Z M 150 129 L 410 129 L 386 157 L 174 157 Z M 70 750 L 226 717 L 257 782 L 65 820 Z M 265 782 L 341 716 L 496 749 L 506 820 Z',
+      0.42,
+      'accent',
+      0,
+      0.58,
+    ),
+    path(
+      `M ${boss.x - 86} ${boss.y - 10} L ${boss.x - 106} ${boss.y - 74} L ${boss.x - 56} ${boss.y - 49} Z M ${boss.x + 86} ${boss.y - 10} L ${boss.x + 106} ${boss.y - 74} L ${boss.x + 56} ${boss.y - 49} Z M ${boss.x - 32} ${boss.y + 52} L ${boss.x - 3} ${boss.y + 98} L ${boss.x + 16} ${boss.y + 53} Z`,
+      enragedState,
+      'signal',
+      0,
+      0.78,
+    ),
+    path(
+      `M ${boss.x} ${boss.y - 31} L ${boss.x + 24} ${boss.y} L ${boss.x} ${boss.y + 30} L ${boss.x - 24} ${boss.y} Z`,
+      enragedState,
+      'signal',
+      0,
+      0.82,
+    ),
+    ...projectileLines(boss, 5, 1, mix(150, 610, action), enragedAttack, action * 0.8).map(
+      (projectile) => ({ ...projectile, width: 5 }),
+    ),
   ];
 }
 
