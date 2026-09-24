@@ -1823,9 +1823,9 @@ test('chase herding keeps a readable distance band, a bounded intercept, and a c
 
   const signal = blueprintFrame(id, 0.9);
   assert.equal(signal.dangerActive, false);
-  assert.ok(signal.primitives[3].opacity > 0.7, 'the destination is visible before pursuit');
-  assert.ok(signal.primitives[5].opacity > 0, 'the inner distance ring is visible');
-  assert.ok(signal.primitives[6].opacity > 0, 'the outer distance ring is visible');
+  assert.ok(signal.primitives[4].opacity > 0.7, 'the stone capture gate is visible before pursuit');
+  assert.ok(signal.primitives[6].opacity > 0, 'the inner distance ring is visible');
+  assert.ok(signal.primitives[7].opacity > 0, 'the outer distance ring is visible');
 
   const pursuit = blueprintFrame(id, 2.1);
   assert.equal(pursuit.chaseHerdingState, 'maintain-distance');
@@ -1836,7 +1836,7 @@ test('chase herding keeps a readable distance band, a bounded intercept, and a c
 
   const intercept = blueprintFrame(id, 3.1);
   assert.equal(intercept.chaseIntercepted, true);
-  assert.ok(intercept.primitives[11].opacity > 0.6, 'the authored inside waypoint stays visible');
+  assert.ok(intercept.primitives[11].opacity > 0.6, 'the stone shortcut stays visible');
 
   const captured = blueprintFrame(id, 3.9);
   assert.equal(captured.chaseCaptured, true);

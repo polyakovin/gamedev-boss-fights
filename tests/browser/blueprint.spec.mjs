@@ -2044,6 +2044,13 @@ test('chase herding exposes the pressure band, authored intercept, capture, and 
   await expect(page.locator('.wip-badge, .draft-profile')).toHaveCount(0);
   await expect(page.locator('.game-example')).toHaveCount(3);
   await expect(widget).toHaveAttribute('data-blueprint-playing', 'false');
+  await expect(widget).toHaveAttribute('data-blueprint-full-height', 'true');
+  expect(
+    await widget
+      .locator('[data-blueprint-primitives]')
+      .evaluate((element) => element.getBBox().height),
+  ).toBeGreaterThan(760);
+  await expect(widget.locator('[data-blueprint-primitives] [stroke-dasharray]')).toHaveCount(0);
 
   await seek(900);
   await expect(widget).toHaveAttribute('data-blueprint-chase-herding', 'route-signal');
@@ -2052,7 +2059,7 @@ test('chase herding exposes the pressure band, authored intercept, capture, and 
     'opacity',
     '0',
   );
-  await expect(widget.locator('[data-blueprint-primitive="4"] circle')).not.toHaveAttribute(
+  await expect(widget.locator('[data-blueprint-primitive="4"] path')).not.toHaveAttribute(
     'opacity',
     '0',
   );
@@ -2061,11 +2068,11 @@ test('chase herding exposes the pressure band, authored intercept, capture, and 
   await expect(widget).toHaveAttribute('data-blueprint-chase-herding', 'maintain-distance');
   await expect(widget).toHaveAttribute('data-blueprint-chase-in-band', 'true');
   await expect(widget).toHaveAttribute('data-blueprint-outcome', 'safe');
-  await expect(widget.locator('[data-blueprint-primitive="5"] circle')).not.toHaveAttribute(
+  await expect(widget.locator('[data-blueprint-primitive="6"] circle')).not.toHaveAttribute(
     'opacity',
     '0',
   );
-  await expect(widget.locator('[data-blueprint-primitive="6"] circle')).not.toHaveAttribute(
+  await expect(widget.locator('[data-blueprint-primitive="7"] circle')).not.toHaveAttribute(
     'opacity',
     '0',
   );
@@ -2073,7 +2080,7 @@ test('chase herding exposes the pressure band, authored intercept, capture, and 
   await seek(3100);
   await expect(widget).toHaveAttribute('data-blueprint-chase-herding', 'intercept');
   await expect(widget).toHaveAttribute('data-blueprint-chase-intercepted', 'true');
-  await expect(widget.locator('[data-blueprint-primitive="11"] circle')).not.toHaveAttribute(
+  await expect(widget.locator('[data-blueprint-primitive="11"] path')).not.toHaveAttribute(
     'opacity',
     '0',
   );

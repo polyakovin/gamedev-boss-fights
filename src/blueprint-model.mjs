@@ -3991,80 +3991,71 @@ function primitivesFor(spec, frame) {
     const chasing = frame.time >= spec.active[0] && frame.time < spec.active[1];
     const captured = frame.time >= spec.active[1] && frame.time < spec.resetAt;
     const strike = strikePulse(frame.time, spec.punishAt, 0.38);
-    const capture = point(spec.captureZone);
-    const innerOpacity = chasing ? 0.42 : signalVisible ? 0.28 + signalProgress * 0.2 : 0.12;
-    const outerOpacity = chasing ? 0.72 : signalVisible ? 0.35 + signalProgress * 0.25 : 0.16;
+    const innerOpacity = chasing ? 0.28 : signalVisible ? 0.2 + signalProgress * 0.14 : 0.08;
+    const outerOpacity = chasing ? 0.46 : signalVisible ? 0.28 + signalProgress * 0.12 : 0.1;
     return [
-      rect(58, 390, 444, 390, 0.45, 'muted', 0.02),
+      path('M 40 94 L 520 94 L 520 879 L 40 879 Z', 0.36, 'muted', 0, 0.48),
       path(
-        `M ${spec.bossRoute.map(([x, y]) => `${x} ${y}`).join(' L ')}`,
-        captured ? 0.22 : 0.58,
+        'M 58 128 L 501 128 L 484 405 L 76 405 Z M 61 144 L 145 144 L 140 376 L 67 376 Z M 404 144 L 493 144 L 482 375 L 410 375 Z',
+        0.33,
         'accent',
-        6,
         0,
-        '12 10',
+        0.46,
       ),
       path(
-        `M ${spec.playerRoute.map(([x, y]) => `${x} ${y}`).join(' L ')}`,
-        chasing ? 0.5 : signalVisible ? 0.3 : 0.16,
+        'M 54 748 L 150 664 L 255 552 L 365 625 L 451 593 L 512 649 L 506 751 L 442 681 L 354 703 L 268 630 L 165 744 L 62 826 Z',
+        0.56,
+        'muted',
+        0,
+        0.64,
+      ),
+      path(
+        'M 70 748 L 170 667 L 239 487 L 352 463 L 382 520 L 272 555 L 209 719 L 95 791 Z',
+        signalVisible || chasing ? 0.42 : 0.24,
         'safe',
-        5,
         0,
-        '10 10',
+        0.38,
       ),
       path(
-        `M ${capture.x - 56} ${capture.y - 48} L ${capture.x - 56} ${capture.y + 48} L ${
-          capture.x + 56
-        } ${capture.y + 48} L ${capture.x + 56} ${capture.y - 48}`,
-        frame.time >= spec.signal[0] ? 0.78 : 0.2,
+        'M 393 545 L 414 545 L 418 688 L 391 688 Z M 480 545 L 502 545 L 503 688 L 476 688 Z M 391 682 L 503 682 L 493 707 L 402 707 Z',
+        frame.time >= spec.signal[0] ? 0.82 : 0.3,
         captured ? 'safe' : 'accent',
-        8,
-      ),
-      circle(
-        capture.x,
-        capture.y,
-        spec.captureRadius,
-        captured ? 0.9 : 0.48 + signalProgress * 0.25,
-        captured ? 'safe' : 'accent',
-        captured ? 9 : 6,
-        captured ? 0.18 : 0.04,
-        captured ? '' : '9 8',
-      ),
-      circle(frame.boss.x, frame.boss.y, spec.distanceBand[0], innerOpacity, 'signal', 4, 0, '8 8'),
-      circle(
-        frame.boss.x,
-        frame.boss.y,
-        spec.distanceBand[1],
-        outerOpacity,
-        'accent',
-        5,
         0,
-        '13 11',
+        0.74,
       ),
-      line(
-        frame.player.x,
-        frame.player.y,
-        frame.boss.x,
-        frame.boss.y,
-        chasing ? 0.76 : signalVisible ? 0.45 : 0.2,
-        frame.chaseInBand ? 'safe' : 'accent',
-        5,
-        '10 8',
+      path(
+        'M 414 618 L 445 595 L 478 618 L 445 646 Z',
+        captured ? 0.94 : 0.38 + signalProgress * 0.33,
+        captured ? 'safe' : 'signal',
+        0,
+        0.72,
       ),
+      circle(frame.boss.x, frame.boss.y, spec.distanceBand[0], innerOpacity, 'signal', 3, 0.03),
+      circle(frame.boss.x, frame.boss.y, spec.distanceBand[1], outerOpacity, 'accent', 3, 0.015),
       ...spec.checkpoints.map(([x, y], index) =>
-        circle(
-          x,
-          y,
-          13,
+        path(
+          `M ${x - 22} ${y + 5} L ${x} ${y - 17} L ${x + 22} ${y + 5} L ${x} ${y + 20} Z`,
           signalVisible || chasing || captured ? 0.68 : 0.18,
           chaseProgress >= (index + 1) / spec.checkpoints.length ? 'safe' : 'accent',
-          5,
-          chaseProgress >= (index + 1) / spec.checkpoints.length ? 0.24 : 0.03,
+          0,
+          0.7,
         ),
       ),
-      circle(spec.safePosition[0], spec.safePosition[1], 24, chasing ? 0.7 : 0.2, 'safe', 5, 0.06),
+      path(
+        'M 307 495 L 350 472 L 393 495 L 375 522 L 324 522 Z',
+        chasing ? 0.76 : 0.3,
+        'safe',
+        0,
+        0.68,
+      ),
       line(frame.player.x, frame.player.y, frame.boss.x, frame.boss.y, strike, 'safe', 9),
-      circle(frame.boss.x - 32, frame.boss.y - 5, 12 + strike * 24, strike, 'safe', 7, 0.12),
+      path(
+        `M ${frame.boss.x - 39} ${frame.boss.y - 30} L ${frame.boss.x - 15} ${frame.boss.y - 42} L ${frame.boss.x - 20} ${frame.boss.y - 13} Z`,
+        strike,
+        'safe',
+        0,
+        0.85,
+      ),
     ];
   }
   if (mode === 'escape-phase') {
