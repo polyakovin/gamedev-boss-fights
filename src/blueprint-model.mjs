@@ -3227,7 +3227,22 @@ function primitivesFor(spec, frame) {
     const slashRecorded = frame.time >= spec.slashStrike ? 1 : 0;
     const thrustRecorded = frame.time >= spec.thrustStrike ? 1 : 0;
     return [
-      circle(boss.x, boss.y, 79, 0.42 + 0.12 * Math.sin(frame.time * 2), 'accent', 4, 0, '7 8'),
+      path('M 38 94 H 522 V 878 H 38 Z M 56 259 H 504 V 878 H 56 Z', 0.37, 'muted', 0, 0.56),
+      path(
+        'M 55 116 H 131 V 345 H 55 Z M 429 116 H 505 V 345 H 429 Z M 146 120 H 414 V 153 H 146 Z M 64 555 L 280 531 L 496 555 V 592 L 280 563 L 64 592 Z M 64 762 L 280 729 L 496 762 V 806 L 280 769 L 64 806 Z',
+        0.41,
+        'accent',
+        0,
+        0.56,
+      ),
+      path(
+        'M 342 282 H 458 V 360 H 342 Z M 351 290 H 449 V 299 H 351 Z M 351 348 H 449 V 356 H 351 Z M 74 840 L 280 809 L 486 840 V 853 L 280 825 L 74 853 Z',
+        0.4,
+        'muted',
+        0,
+        0.76,
+      ),
+      circle(boss.x, boss.y, 79, 0.36 + 0.08 * Math.sin(frame.time * 2), 'accent', 3),
       path(
         `M ${player.x - 10} ${player.y - 62} Q ${boss.x + 100} ${boss.y - 88} ${boss.x + 45} ${boss.y - 10}`,
         slashFlash,
@@ -3243,6 +3258,13 @@ function primitivesFor(spec, frame) {
       rect(350, 332, 100 * thrustRecorded, 12, thrustRecorded, 'signal', 0.8),
       line(328, 301, 338, 315, 0.72, 'accent', 5),
       line(328, 338, 340, 338, 0.72, 'signal', 5),
+      path(
+        `M ${boss.x} ${boss.y - 88} L ${boss.x + 9} ${boss.y - 79} L ${boss.x} ${boss.y - 70} L ${boss.x - 9} ${boss.y - 79} Z M ${boss.x - 88} ${boss.y} L ${boss.x - 79} ${boss.y - 9} L ${boss.x - 70} ${boss.y} L ${boss.x - 79} ${boss.y + 9} Z M ${boss.x} ${boss.y + 70} L ${boss.x + 9} ${boss.y + 79} L ${boss.x} ${boss.y + 88} L ${boss.x - 9} ${boss.y + 79} Z`,
+        0.44,
+        'accent',
+        0,
+        0.68,
+      ),
     ];
   }
   if (mode === 'situational-immunity') {

@@ -621,34 +621,38 @@ test('damage-type resistance shows two connected hits with unequal damage at one
   await expect(page.locator('.wip-badge, .draft-profile')).toHaveCount(0);
   await expect(page.locator('.game-example')).toHaveCount(3);
   await expect(widget).toHaveAttribute('data-blueprint-playing', 'false');
+  await expect(widget).toHaveAttribute('data-blueprint-full-height', 'true');
   await seek(2050);
   await expect(widget).toHaveAttribute('data-blueprint-resistance', 'reduced');
-  await expect(widget.locator('[data-blueprint-primitive="2"] circle')).not.toHaveAttribute(
+  await expect(widget.locator('[data-blueprint-primitive="5"] circle')).not.toHaveAttribute(
     'opacity',
     '0',
   );
-  await expect(widget.locator('[data-blueprint-primitive="6"] rect')).toHaveAttribute(
+  await expect(widget.locator('[data-blueprint-primitive="9"] rect')).toHaveAttribute(
     'width',
     '20',
   );
-  await expect(widget.locator('[data-blueprint-primitive="8"] rect')).toHaveAttribute('width', '0');
+  await expect(widget.locator('[data-blueprint-primitive="11"] rect')).toHaveAttribute(
+    'width',
+    '0',
+  );
   await seek(3550);
   await expect(widget).toHaveAttribute('data-blueprint-resistance', 'normal');
-  await expect(widget.locator('[data-blueprint-primitive="4"] circle')).not.toHaveAttribute(
+  await expect(widget.locator('[data-blueprint-primitive="7"] circle')).not.toHaveAttribute(
     'opacity',
     '0',
   );
-  await expect(widget.locator('[data-blueprint-primitive="6"] rect')).toHaveAttribute(
+  await expect(widget.locator('[data-blueprint-primitive="9"] rect')).toHaveAttribute(
     'width',
     '20',
   );
-  await expect(widget.locator('[data-blueprint-primitive="8"] rect')).toHaveAttribute(
+  await expect(widget.locator('[data-blueprint-primitive="11"] rect')).toHaveAttribute(
     'width',
     '100',
   );
   await seek(4300);
   await expect(widget).toHaveAttribute('data-blueprint-resistance', 'idle');
-  await expect(widget.locator('[data-blueprint-primitive="0"] circle')).not.toHaveAttribute(
+  await expect(widget.locator('[data-blueprint-primitive="3"] circle')).not.toHaveAttribute(
     'opacity',
     '0',
   );

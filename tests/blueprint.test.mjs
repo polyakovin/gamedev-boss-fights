@@ -1121,15 +1121,15 @@ test('damage-type resistance reduces a connected slash without changing the targ
   assert.equal(thrust.resistedStrike, false);
   assert.equal(thrust.normalStrike, true);
   assert.deepEqual(slash.damageComparison, { slash: 20, thrust: 100 });
-  assert.equal(slash.primitives[2].x, thrust.primitives[4].x);
-  assert.equal(slash.primitives[2].y, thrust.primitives[4].y);
-  assert.ok(slash.primitives[2].opacity > 0);
-  assert.ok(thrust.primitives[4].opacity > 0);
-  assert.equal(slash.primitives[6].rectWidth, 20);
-  assert.equal(slash.primitives[8].rectWidth, 0);
-  assert.equal(thrust.primitives[6].rectWidth, 20);
-  assert.equal(thrust.primitives[8].rectWidth, 100);
-  assert.ok(blueprintFrame(id, 4.5).primitives[0].opacity > 0);
+  assert.equal(slash.primitives[5].x, thrust.primitives[7].x);
+  assert.equal(slash.primitives[5].y, thrust.primitives[7].y);
+  assert.ok(slash.primitives[5].opacity > 0);
+  assert.ok(thrust.primitives[7].opacity > 0);
+  assert.equal(slash.primitives[9].rectWidth, 20);
+  assert.equal(slash.primitives[11].rectWidth, 0);
+  assert.equal(thrust.primitives[9].rectWidth, 20);
+  assert.equal(thrust.primitives[11].rectWidth, 100);
+  assert.ok(blueprintFrame(id, 4.5).primitives[3].opacity > 0);
   assert.deepEqual(blueprintFrame(id, 0).player, blueprintFrame(id, 6).player);
   assert.match(
     renderBlueprintThumbnail(id, 'test-damage-type-resistance'),
