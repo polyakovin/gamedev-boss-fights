@@ -1,0 +1,138 @@
+{
+  "title": "सहयोगी की चोरी और वशीकरण",
+  "subtitle": "खिलाड़ी के निवेश को मिटाए बिना एक सहायक की निष्ठा बदलें",
+  "variant": "चिह्न · हस्तांतरण · शत्रु आदेश · मुक्ति",
+  "summary": "बॉस खिलाड़ी के किसी सहायक या दल-सदस्य को अस्थायी रूप से नियंत्रित करके उसकी पहचानी जा सकने वाली क्षमताएँ पुराने मालिक के विरुद्ध कर देता है।",
+  "overview": "सहयोगी की चोरी नया असंबद्ध शत्रु बनाने के बजाय मौजूदा सहायक का पक्ष बदलती है। चुराया गया सहयोगी अपनी पहचान और सीमित क्षमताएँ रखता है; स्पष्ट चिह्न, स्वामित्व हस्तांतरण, शत्रु अवधि और मुक्ति नियम नुकसान को समझने योग्य और पलटने योग्य बनाते हैं।",
+  "learning": "योग्य सहयोगी, चयन क्रम, चेतावनी, स्वामित्व id, हस्तांतरित क्षमताएँ, लक्ष्य नियम, शत्रु अवधि, मित्र-आघात, क्षति सीमा, बाधा और शुद्धि, स्वास्थ्य और मृत्यु, cooldown स्वामित्व, वापसी स्थान, duplicate guard और telemetry तय करें।",
+  "category": "स्थितियाँ, संसाधन और स्केलिंग",
+  "readTime": "10 मिनट",
+  "demo": {
+    "title": "एक rune familiar को पकड़ने, हमला करने और लौटने तक देखें",
+    "timeline": "सहयोगी चोरी की समयरेखा",
+    "step": "मित्र परिक्रमा, चिह्नित हस्तांतरण, शत्रु आदेश, सुरक्षित वापसी",
+    "phaseNames": [
+      "एक योग्य सहयोगी को चिह्नित करें",
+      "स्वामित्व देकर गोली चलाएँ",
+      "नियंत्रण तोड़कर लौटाएँ"
+    ],
+    "phaseDescriptions": [
+      "Tavi का rune familiar खिलाड़ी के स्वामित्व में शुरू होता है। 0.55 से 1.15 सेकंड तक Kern उसी सहायक को बाधित की जा सकने वाली control tether से चिह्नित करता है; निष्ठा अभी नहीं बदलती।",
+      "1.15 सेकंड पर स्वामित्व घटना केवल एक बार हल होती है। familiar Kern की ओर जाता है, स्वामित्व संकेत बदलता है और 1.75 से 3.25 सेकंड तक तीन सीमित shots चलाता है, जबकि Tavi स्थिर रेखाओं से हटता है।",
+      "3.55 सेकंड पर शत्रु आदेश समाप्त होता है और tether टूटती है। familiar पहले नुकसान रोकता है, Tavi के पास लौटता है, मित्र संकेत बहाल करता है और recovery पूरी होने से पहले फिर नहीं चुराया जा सकता।"
+    ],
+    "boss": "बॉस",
+    "player": "खिलाड़ी",
+    "danger": "चुराए गए सहयोगी की जानी-पहचानी क्षमताएँ अब खिलाड़ी को निशाना बनाती हैं; असीम kit, तत्काल विश्वासघात या छिपा स्वामित्व नियम को मनमाना बनाते हैं",
+    "locked": "योग्यता, captureId, वर्तमान मालिक, आदेश संख्या, cooldown, स्वास्थ्य, बाधा, मुक्ति, मृत्यु और rollback encounter logic में रहते हैं",
+    "safe": "एक सहयोगी को चिह्नित करें, स्वामित्व का रास्ता दिखाएँ, शत्रु kit सीमित रखें, जवाब बचाएँ और वापसी या निष्कर्ष केवल एक बार करें",
+    "reducedMotion": "कम गति में autoplay बंद रहता है। 0.25, 0.55, 1.15, 1.45, 1.75, 2.25, 2.75, 3.25, 3.55, 4.15, 4.85 और 5.35 सेकंड देखें।",
+    "diagramDescription": "Kern Tavi के rune familiar को चिह्नित करता है, स्वामित्व tether से खींचता है, तीन साफ शत्रु shots का आदेश देता है और फिर सुरक्षित रूप से Tavi के पास लौटाता है।"
+  },
+  "steps": [
+    {
+      "title": "किन सहयोगियों को लिया जा सकता है?",
+      "body": "summons, pets, party members, अस्थायी guests, अजेय companions, quest-critical actors और accessibility substitutes के लिए स्पष्ट eligibility table बनाएँ। deterministic चयन करें और transfer से पहले लक्ष्य दिखाएँ।"
+    },
+    {
+      "title": "स्वामित्व सीमा के पार क्या जाता है?",
+      "body": "पूरा runtime brain नहीं, चुना हुआ hostile package transfer करें। target filters, movement bounds, damage, support inversion, cooldown, collision team, navigation और health persistence तय करें। हर command को captureId दें ताकि देर से आने वाला callback लौटे हुए सहयोगी को न छुए।"
+    },
+    {
+      "title": "सहयोगी कैसे लौटता है?",
+      "body": "दिखने वाली release condition चुनें: समय, interrupt, cleanse, focus object टूटना, सुरक्षित damage threshold या phase exit। पहले hostile collision हटाएँ, projectiles साफ या retarget करें, सहयोगी को reachable position पर लौटाएँ और तत्काल recapture रोकें।"
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "बिना लक्ष्य या जवाब बताए सहयोगी पलट जाता है",
+      "body": "तत्काल team swap खिलाड़ी को उसी companion system के लिए दंडित करता है जिसे खेल ने सिखाया। सही सहयोगी की चेतावनी दें और interrupt, दूरी, control, cleanse या छोटी प्रतीक्षा में कम से कम एक सामान्य जवाब रखें।"
+    },
+    {
+      "title": "पूरा ally build अनियंत्रित burst बन जाता है",
+      "body": "खिलाड़ी-निर्मित companions में hostile उपयोग के लिए असंतुलित burst, healing या invulnerability हो सकती है। eligible skills को capped boss package में map करें और empty roster, duplicates, despawn, death, reconnect और rollback जाँचें।"
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "निष्ठा बदलते हुए पहचान रखें",
+      "body": "silhouette, नाम, मुख्य गति और एक signature ability रखें; केवल रंग पर निर्भर न रहने वाला ownership ring, tether, pose, sound, icon और text alternative जोड़ें।"
+    },
+    {
+      "title": "खिलाड़ी के पुराने निवेश की रक्षा करें",
+      "body": "अस्थायी नियंत्रण equipment, progress, charges, permanent health या customization को चुपचाप न मिटाए। hostile package के लिए आवश्यक मान ही snapshot करें और release के बाद बचने वाले cooldown और damage लिखें।"
+    },
+    {
+      "title": "हस्तांतरण के दोनों पक्ष मापें",
+      "body": "eligibleRoster, selectedAllyId, captureId, warning और hostile duration, transferredAbilityIds, command count, owner के अनुसार damage/healing, interrupts, cleanses, ally deaths, release reason, restore failures, recapture interval, duplicate events और disconnect recovery दर्ज करें।"
+    }
+  ],
+  "story": {
+    "title": "Kern familiar की loyalty rune फिर लिखता है",
+    "body": "Tavi का छोटा rune familiar तलवार वाले हाथ के पास घूमता है, जब तक Kern उसे amber command से नहीं बाँधता। वह arena पार करके पुराने मालिक पर तीन उधार sparks चलाता है, hostile rune छोड़ता है और घर लौटता है।"
+  },
+  "adaptation": {
+    "title": "गति से पहले स्वामित्व को पढ़ने योग्य बनाएँ",
+    "body": "लंबा mark, fixed selection, कम hostile damage, कम commands, मजबूत ownership icons, persistent timer और ally control को neutral decoy से बदलने का विकल्प दें। गति, ध्वनि, text, haptics और shape से संकेत दोहराएँ।"
+  },
+  "distinction": {
+    "title": "मौजूदा सहयोगी का स्वामित्व, summon या सामान्य status नहीं",
+    "body": "Summon नई boss-owned unit बनाता है। खिलाड़ी पर charm उसके controls या targeting बदलता है। Ally theft पहले से सक्रिय player-owned helper को फिर assign करता है, पहचान बचाता है और बाद में मूल मालिक को लौटने वाली स्थिति तय करता है।"
+  },
+  "lensNotes": [
+    {
+      "id": "telegraphing",
+      "body": "सटीक सहयोगी, capture path, ownership change, hostile start और release को नियम लागू होने से पहले अलग संकेत चाहिए।"
+    },
+    {
+      "id": "counterplay",
+      "body": "Interrupt, cleanse, दूरी, control या प्रतीक्षा काम कर सकती है, पर हर eligible roster में कम से कम एक सामान्य जवाब रहना चाहिए।"
+    },
+    {
+      "id": "player-expression",
+      "body": "खिलाड़ी का चुना companion encounter को निजी बनाता है, यदि hostile mapping निवेश का सम्मान करे और किसी एक build को विनाशकारी न बनाए।"
+    },
+    {
+      "id": "risk-reward",
+      "body": "शक्तिशाली सहयोगी जोखिम बढ़ाते हैं; सीमित transfer खाली roster को optimal बनाए बिना सार्थक चुनाव देता है।"
+    },
+    {
+      "id": "rule-exception",
+      "body": "खाली roster, अजेय या quest-critical सहयोगी, duplicates, death, despawn, phase exit, reconnect और rollback के लिए स्पष्ट ownership outcome चाहिए।"
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "The Binding of Isaac: Repentance",
+      "boss": "The Siren",
+      "screenshot": "https://i.ytimg.com/vi/qj288Dmw8Q0/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=qj288Dmw8Q0&t=5s",
+      "video": "https://www.youtube.com/watch?v=qj288Dmw8Q0&t=5s",
+      "videoDurationSeconds": 77,
+      "body": "0:05 से The Siren Isaac के मौजूदा familiars में से तीन तक को charm करती है। वे पहचानने योग्य व्यवहार और shot blocking रखते हैं और हारने पर लौटते हैं। target cap और identity ownership को साफ रखते हैं।"
+    },
+    {
+      "dimension": "3D",
+      "game": "Bravely Default",
+      "boss": "Fiore DeRosa",
+      "screenshot": "https://i.ytimg.com/vi/vMRukz57fnc/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=vMRukz57fnc&t=330s",
+      "video": "https://www.youtube.com/watch?v=vMRukz57fnc&t=330s",
+      "videoDurationSeconds": 683,
+      "body": "5:30 पर लड़ाई पहले से charmed Edea के साथ शुरू होती है और Captivating Cologne दूसरे party member को allies के विरुद्ध कर सकता है। turn-based रूप selection, hostile action और recovery अलग करता है।"
+    },
+    {
+      "dimension": "3D",
+      "game": "World of Warcraft: Wrath of the Lich King",
+      "boss": "Lady Deathwhisper",
+      "screenshot": "https://i.ytimg.com/vi/mseB_We9mes/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=mseB_We9mes&t=40s",
+      "video": "https://www.youtube.com/watch?v=mseB_We9mes&t=40s",
+      "videoDurationSeconds": 623,
+      "body": "0:40 से Dominate Mind चुने raid members को बढ़े damage और healing के साथ अस्थायी शत्रु बनाता है। यह target cap, friendly-fire protection और साफ temporary control दिखाता है।"
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

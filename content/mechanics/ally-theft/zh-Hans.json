@@ -1,0 +1,134 @@
+{
+  "title": "窃取与魅惑盟友",
+  "subtitle": "转移助手的阵营，同时保留玩家投入的价值",
+  "variant": "标记 · 转移 · 敌对指令 · 释放",
+  "summary": "Boss 暂时控制玩家的助手或队员，并把该盟友可识别的能力转向原主人。",
+  "overview": "盟友窃取改变现有助手的归属，而不是生成无关敌人。被窃取者保留可识别身份和受限能力；清晰的标记、所有权交接、敌对窗口与释放规则，让损失可理解且可逆。",
+  "learning": "定义可选盟友、选择顺序、预警时间、所有权 id、转移能力、目标规则、敌对时长、友军伤害、伤害上限、中断与净化、生命与死亡、冷却归属、返回位置、防重复事件和遥测。",
+  "category": "状态、资源与缩放",
+  "readTime": "10 分钟",
+  "demo": {
+    "title": "跟踪符文使魔从捕获、敌对射击到返回",
+    "timeline": "盟友窃取时间轴",
+    "step": "友方环绕、标记转移、敌对指令、安全返回",
+    "phaseNames": ["标记一个合格盟友", "转移所有权并射击", "打破控制并恢复"],
+    "phaseDescriptions": [
+      "Tavi 的符文使魔起初属于玩家。0.55 至 1.15 秒，Kern 用可中断的控制链精确标记它，阵营尚未改变。",
+      "1.15 秒时所有权事件只结算一次。使魔飞向 Kern、改变归属提示，并在 1.75 至 3.25 秒发射三次受限攻击；Tavi 横移离开固定弹道。",
+      "3.55 秒时敌对指令结束，控制链断裂。使魔先停止造成伤害，再回到 Tavi 身边恢复友方提示，并在恢复结束前免于再次捕获。"
+    ],
+    "boss": "Boss",
+    "player": "玩家",
+    "danger": "被窃取盟友的熟悉能力会攻击玩家；无限能力、瞬间背叛或隐藏归属会让规则显得任意",
+    "locked": "资格、captureId、当前主人、指令数、冷却、生命、中断、释放、死亡与回滚属于遭遇逻辑",
+    "safe": "标记一个盟友，显示所有权路径，限制敌对能力，保留应对方式，并只结算一次返回或终止",
+    "reducedMotion": "启用减少动态效果时关闭自动播放。可检查 0.25、0.55、1.15、1.45、1.75、2.25、2.75、3.25、3.55、4.15、4.85 和 5.35 秒。",
+    "diagramDescription": "Kern 标记 Tavi 的符文使魔，用所有权链将其拉走，命令它发射三次清晰的敌对射击，再释放它安全返回。"
+  },
+  "steps": [
+    {
+      "title": "哪些盟友可以被夺取？",
+      "body": "为召唤物、宠物、队员、临时伙伴、无敌助手、关键剧情角色和无障碍替代物建立明确资格表。确定性选择，并在转移前公开目标。"
+    },
+    {
+      "title": "哪些内容跨越所有权边界？",
+      "body": "转移经过策划的敌对能力包，而不是完整运行时 AI。定义目标过滤、移动边界、伤害、辅助反转、冷却、碰撞队伍、寻路和生命继承。每条指令绑定 captureId，阻止延迟回调影响已归还盟友。"
+    },
+    {
+      "title": "盟友如何返回？",
+      "body": "选择可见释放条件：时长、中断、净化、破坏焦点、安全伤害阈值或阶段结束。先关闭敌对碰撞，再清理或重定向投射物，将盟友恢复到可达位置，并设置防止立即再次捕获的宽限期。"
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "盟友在没有明确目标和回应时背叛",
+      "body": "瞬间换队会惩罚玩家使用游戏教过的伙伴系统。预告确切盟友，并保留至少一种常规回应：中断、拉开距离、控制、净化或等待短暂窗口。"
+    },
+    {
+      "title": "完整盟友配置变成失控爆发",
+      "body": "玩家配置的助手可能有爆发、治疗、无敌和不适合敌对使用的效果。把合格技能映射到有上限的 Boss 能力包，并测试空阵容、重复召唤、消失、死亡、重连和回滚。"
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "改变阵营时保留身份",
+      "body": "保留轮廓、名称、核心动作和一种招牌能力；再加入不只依赖颜色的归属环、控制链、姿势、声音、图标和文本替代。"
+    },
+    {
+      "title": "保护玩家此前投入",
+      "body": "临时控制不应暗中删除装备、进度、次数、永久生命或自定义。只快照敌对能力包所需数值，并规定释放后保留哪些冷却和伤害。"
+    },
+    {
+      "title": "记录转移两端",
+      "body": "记录 eligibleRoster、selectedAllyId、captureId、预警与敌对时长、transferredAbilityIds、指令数、按主人统计的伤害与治疗、中断、净化、死亡、释放原因、返回失败、再捕获间隔、重复事件和断线恢复。"
+    }
+  ],
+  "story": {
+    "title": "Kern 重写使魔的忠诚符文",
+    "body": "Tavi 的小型符文使魔绕着持剑手盘旋，直到 Kern 用琥珀指令贯穿它。它飞越竞技场，向旧主人发出三枚借来的火花，随后甩掉敌对符文并赶回家。"
+  },
+  "adaptation": {
+    "title": "先让所有权清楚，再提高速度",
+    "body": "提供更长标记、固定顺序、较低敌对伤害、更少指令、更强归属图标、常驻计时器，以及用中立诱饵替代盟友控制的选项。用动作、声音、文本、触觉和形状重复提示。"
+  },
+  "distinction": {
+    "title": "现有盟友的所有权，而非召唤或普通状态",
+    "body": "召唤会创建新的 Boss 单位；魅惑玩家本人会改变其控制或目标。盟友窃取重新分配已经存在的玩家助手，保留身份，并在之后明确归还给原主的内容。"
+  },
+  "lensNotes": [
+    {
+      "id": "telegraphing",
+      "body": "确切盟友、捕获路径、所有权变化、敌对开始和释放都应在规则生效前拥有不同提示。"
+    },
+    {
+      "id": "counterplay",
+      "body": "中断、净化、拉开距离、控制或等待都可成立，但每种合格阵容至少要保留一种常规回应。"
+    },
+    {
+      "id": "player-expression",
+      "body": "玩家选择的伙伴能个性化遭遇，但敌对映射应尊重投入，不能让某种配置成为灾难。"
+    },
+    {
+      "id": "risk-reward",
+      "body": "强力盟友提高风险价值；受限转移使携带选择有意义，而不会让空阵容成为最优。"
+    },
+    {
+      "id": "rule-exception",
+      "body": "空阵容、无敌或剧情盟友、重复召唤、死亡、消失、阶段结束、重连和回滚都需要明确所有权结果。"
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "The Binding of Isaac: Repentance",
+      "boss": "The Siren",
+      "screenshot": "https://i.ytimg.com/vi/qj288Dmw8Q0/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=qj288Dmw8Q0&t=5s",
+      "video": "https://www.youtube.com/watch?v=qj288Dmw8Q0&t=5s",
+      "videoDurationSeconds": 77,
+      "body": "从 0:05 起，The Siren 最多魅惑 Isaac 的三个现有使魔；它们保留可识别行为、阻挡射击，并在被击败后返回。目标上限和保留身份让所有权清晰可见。"
+    },
+    {
+      "dimension": "3D",
+      "game": "Bravely Default",
+      "boss": "Fiore DeRosa",
+      "screenshot": "https://i.ytimg.com/vi/vMRukz57fnc/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=vMRukz57fnc&t=330s",
+      "video": "https://www.youtube.com/watch?v=vMRukz57fnc&t=330s",
+      "videoDurationSeconds": 683,
+      "body": "5:30 时战斗以已被魅惑的 Edea 开始，Captivating Cologne 还能让另一名队员攻击盟友。回合制呈现把选择、敌对行动和恢复分开，便于审计阵营状态。"
+    },
+    {
+      "dimension": "3D",
+      "game": "World of Warcraft: Wrath of the Lich King",
+      "boss": "Lady Deathwhisper",
+      "screenshot": "https://i.ytimg.com/vi/mseB_We9mes/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=mseB_We9mes&t=40s",
+      "video": "https://www.youtube.com/watch?v=mseB_We9mes&t=40s",
+      "videoDurationSeconds": 623,
+      "body": "从 0:40 起，Dominate Mind 会让选中的团队成员暂时敌对，并提高伤害与治疗。此例强调目标上限、友军伤害保护和清晰的临时控制。"
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

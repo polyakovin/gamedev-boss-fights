@@ -1,0 +1,138 @@
+{
+  "title": "Robo y control de aliados",
+  "subtitle": "Cambia la lealtad de un ayudante sin borrar la inversión del jugador",
+  "variant": "Marca · transferencia · orden hostil · liberación",
+  "summary": "El jefe toma temporalmente el control de un ayudante o miembro del grupo y dirige sus habilidades reconocibles contra su antiguo dueño.",
+  "overview": "El robo de aliados cambia la lealtad de un ayudante existente en vez de crear un enemigo ajeno. El aliado conserva su identidad y un subconjunto acotado de habilidades; una marca, un traspaso, una ventana hostil y una regla de liberación claras hacen que la pérdida sea comprensible y reversible.",
+  "learning": "Define aliados válidos, orden de selección, aviso, id de propiedad, habilidades transferidas, objetivos, duración hostil, fuego amigo, límites de daño, interrupción y limpieza, salud y muerte, enfriamientos, posición de retorno, protección contra eventos duplicados y telemetría.",
+  "category": "Estados, recursos y escalado",
+  "readTime": "10 min",
+  "demo": {
+    "title": "Sigue a un familiar rúnico durante captura, ataque y regreso",
+    "timeline": "Cronología del robo de aliado",
+    "step": "Órbita aliada, transferencia marcada, orden hostil y regreso seguro",
+    "phaseNames": [
+      "Marcar un aliado válido",
+      "Transferir la propiedad y disparar",
+      "Romper el control y restaurar"
+    ],
+    "phaseDescriptions": [
+      "El familiar rúnico de Tavi empieza bajo propiedad del jugador. Entre 0,55 y 1,15 segundos, Kern marca exactamente a ese ayudante con un vínculo interrumpible antes de cambiar su lealtad.",
+      "A los 1,15 segundos, la transferencia se resuelve una sola vez. El familiar cruza hacia Kern, cambia su señal de propiedad y lanza tres disparos acotados entre 1,75 y 3,25 segundos mientras Tavi sale de sus líneas fijas.",
+      "A los 3,55 segundos termina la orden hostil y se rompe el vínculo. El familiar deja de causar daño, vuelve junto a Tavi, recupera su señal aliada y no puede ser capturado otra vez hasta acabar la recuperación."
+    ],
+    "boss": "Jefe",
+    "player": "Jugador",
+    "danger": "Las habilidades familiares del aliado robado ahora apuntan al jugador; un kit ilimitado, una traición instantánea o propiedad oculta vuelven arbitraria la regla",
+    "locked": "Validez, captureId, dueño actual, órdenes, enfriamientos, salud, interrupción, liberación, muerte y rollback pertenecen a la lógica del encuentro",
+    "safe": "Marca un aliado, muestra la ruta de propiedad, limita el kit hostil, conserva una respuesta y devuelve o resuelve al aliado exactamente una vez",
+    "reducedMotion": "Con movimiento reducido, la reproducción automática se desactiva. Revisa 0,25; 0,55; 1,15; 1,45; 1,75; 2,25; 2,75; 3,25; 3,55; 4,15; 4,85 y 5,35 segundos.",
+    "diagramDescription": "Kern marca al familiar rúnico de Tavi, lo atrae por un vínculo de propiedad, ordena tres disparos hostiles legibles y lo libera para que vuelva con Tavi."
+  },
+  "steps": [
+    {
+      "title": "¿Qué aliados pueden ser robados?",
+      "body": "Crea una tabla explícita para invocaciones, mascotas, miembros del grupo, invitados temporales, compañeros invulnerables, actores críticos y sustitutos de accesibilidad. Selecciona de forma determinista y revela el objetivo antes de transferirlo."
+    },
+    {
+      "title": "¿Qué cruza el límite de propiedad?",
+      "body": "Transfiere un paquete hostil curado, no toda la IA en ejecución. Especifica filtros de objetivo, movimiento, daño, inversión de apoyo, enfriamientos, equipo de colisión, navegación y salud persistente. Sella cada orden con captureId para bloquear callbacks tardíos."
+    },
+    {
+      "title": "¿Cómo regresa el aliado?",
+      "body": "Elige una condición visible: duración, interrupción, limpieza, foco roto, umbral de daño seguro o fin de fase. Desactiva primero la colisión hostil, limpia o redirige proyectiles, restaura al aliado en una posición válida e impide la recaptura inmediata."
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "El aliado traiciona sin objetivo ni respuesta anunciados",
+      "body": "Un cambio instantáneo castiga al jugador por usar el sistema de compañeros. Anticipa qué aliado cambia y conserva una respuesta normal: interrumpir, separarse, controlar, limpiar o esperar una ventana breve."
+    },
+    {
+      "title": "La configuración completa produce un pico incontrolable",
+      "body": "Los aliados creados por jugadores pueden incluir ráfagas, curación e invulnerabilidad no equilibradas para uso hostil. Asigna habilidades válidas a un paquete limitado y prueba plantillas vacías, duplicados, desaparición, muerte, reconexión y rollback."
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "Conserva la identidad al cambiar la lealtad",
+      "body": "Mantén silueta, nombre, movimiento central y una habilidad distintiva. Añade anillo de propiedad, vínculo, pose, sonido, icono y alternativa textual que no dependan solo del color."
+    },
+    {
+      "title": "Protege la inversión previa del jugador",
+      "body": "El control temporal no debe borrar equipo, progreso, cargas, salud permanente o personalización. Captura solo los valores necesarios y define qué enfriamientos y daño persisten al liberar."
+    },
+    {
+      "title": "Instrumenta ambos lados de la transferencia",
+      "body": "Registra eligibleRoster, selectedAllyId, captureId, aviso y duración hostil, transferredAbilityIds, órdenes, daño y curación por dueño, interrupciones, limpiezas, muertes, motivo de liberación, fallos de retorno, intervalo de recaptura, duplicados y recuperación de conexión."
+    }
+  ],
+  "story": {
+    "title": "Kern reescribe la runa de lealtad del familiar",
+    "body": "El pequeño familiar de Tavi orbita la mano de la espada hasta que Kern lo atraviesa con una orden ámbar. Cruza la arena, devuelve tres chispas prestadas contra su dueño y, al perder la runa hostil, vuelve a casa."
+  },
+  "adaptation": {
+    "title": "Haz legible la propiedad antes de acelerar",
+    "body": "Ofrece una marca más larga, orden fijo, menos daño y órdenes, iconos fuertes, temporizador persistente y una opción que reemplace el control por un señuelo neutral. Repite la señal con movimiento, sonido, texto, háptica y forma."
+  },
+  "distinction": {
+    "title": "Propiedad de un aliado existente, no invocación ni estado común",
+    "body": "Invocar crea una nueva unidad del jefe. Encantar al jugador cambia sus controles u objetivos. El robo reasigna un ayudante activo del jugador, conserva su identidad y después resuelve qué vuelve al dueño original."
+  },
+  "lensNotes": [
+    {
+      "id": "telegraphing",
+      "body": "El aliado exacto, la ruta de captura, el cambio de dueño, el inicio hostil y la liberación necesitan señales distintas antes de aplicar sus reglas."
+    },
+    {
+      "id": "counterplay",
+      "body": "Interrupción, limpieza, separación, control o espera pueden servir, pero toda plantilla válida debe conservar al menos una respuesta normal."
+    },
+    {
+      "id": "player-expression",
+      "body": "Un compañero elegido personaliza el encuentro si el mapeo hostil respeta esa inversión y no vuelve catastrófica una configuración."
+    },
+    {
+      "id": "risk-reward",
+      "body": "Los aliados potentes elevan lo que está en juego; reglas acotadas crean una elección sin hacer óptima una plantilla vacía."
+    },
+    {
+      "id": "rule-exception",
+      "body": "Plantillas vacías, aliados invulnerables o críticos, duplicados, muerte, desaparición, fin de fase, reconexión y rollback necesitan resultados de propiedad explícitos."
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "The Binding of Isaac: Repentance",
+      "boss": "The Siren",
+      "screenshot": "https://i.ytimg.com/vi/qj288Dmw8Q0/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=qj288Dmw8Q0&t=5s",
+      "video": "https://www.youtube.com/watch?v=qj288Dmw8Q0&t=5s",
+      "videoDurationSeconds": 77,
+      "body": "Desde 0:05, The Siren encanta hasta tres familiares existentes de Isaac: conservan comportamientos reconocibles, bloquean disparos y regresan al ser derrotados. El límite y la identidad preservada muestran la propiedad."
+    },
+    {
+      "dimension": "3D",
+      "game": "Bravely Default",
+      "boss": "Fiore DeRosa",
+      "screenshot": "https://i.ytimg.com/vi/vMRukz57fnc/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=vMRukz57fnc&t=330s",
+      "video": "https://www.youtube.com/watch?v=vMRukz57fnc&t=330s",
+      "videoDurationSeconds": 683,
+      "body": "A 5:30, el combate empieza con Edea encantada y Captivating Cologne puede volver a otro miembro contra sus aliados. El turno separa selección, acción hostil y recuperación para auditar la lealtad."
+    },
+    {
+      "dimension": "3D",
+      "game": "World of Warcraft: Wrath of the Lich King",
+      "boss": "Lady Deathwhisper",
+      "screenshot": "https://i.ytimg.com/vi/mseB_We9mes/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=mseB_We9mes&t=40s",
+      "video": "https://www.youtube.com/watch?v=mseB_We9mes&t=40s",
+      "videoDurationSeconds": 623,
+      "body": "Desde 0:40, Dominate Mind vuelve hostiles temporalmente a miembros elegidos con daño y curación amplificados. El caso destaca límites de objetivo, protección ante fuego amigo y control temporal claro."
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

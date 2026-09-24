@@ -631,13 +631,13 @@ test('boss builder persists a local draft and downloads portable JSON', async ({
   await expect(page.locator('.boss-builder-phases [data-boss-download]')).toHaveCount(1);
   await expect(page.locator('.boss-builder-form [data-boss-download]')).toHaveCount(0);
   await expect(page.locator('.boss-builder-mechanic')).toHaveCount(124);
-  await expect(page.locator('.boss-builder-mechanic--wip')).toHaveCount(23);
+  await expect(page.locator('.boss-builder-mechanic--wip')).toHaveCount(22);
   await expect(page.locator('.boss-builder-mechanic:not(.boss-builder-mechanic--wip)')).toHaveCount(
-    101,
+    102,
   );
-  await expect(page.locator('.boss-builder-mechanic [data-character-art="kern"]')).toHaveCount(101);
-  await expect(page.locator('.boss-builder-mechanic [data-character-art="tavi"]')).toHaveCount(101);
-  await expect(page.locator('.boss-builder-mechanic [data-blueprint-preview]')).toHaveCount(95);
+  await expect(page.locator('.boss-builder-mechanic [data-character-art="kern"]')).toHaveCount(102);
+  await expect(page.locator('.boss-builder-mechanic [data-character-art="tavi"]')).toHaveCount(102);
+  await expect(page.locator('.boss-builder-mechanic [data-blueprint-preview]')).toHaveCount(96);
   await expect(page.locator('.boss-builder-mechanic [data-pattern-preview]')).toHaveCount(5);
   await expect(page.locator('[data-boss-filter]')).toHaveCount(5);
   await page.locator('[data-boss-filter="geometry"]').selectOption('radial');
@@ -923,7 +923,7 @@ test('lens chips show explanations and open localized lens pages', async ({ page
     /Telegraphing.*A game communicates/,
   );
   await expect(page.locator('.lens-page__hero')).not.toContainText(/boss|charge/i);
-  await expect(page.locator('.lens-mechanic-card')).toHaveCount(68);
+  await expect(page.locator('.lens-mechanic-card')).toHaveCount(69);
   await expect(page.locator('.lens-mechanic-card h2')).toHaveText([
     'Charge',
     'Arc sweep',
@@ -993,8 +993,9 @@ test('lens chips show explanations and open localized lens pages', async ({ page
     'On-hit healing or lifesteal',
     'Interruptible self-heal',
     'Interceptable healing sources',
+    'Ally theft and charm',
   ]);
-  await expect(page.locator('.lens-mechanic-card h2 .icon--directional')).toHaveCount(68);
+  await expect(page.locator('.lens-mechanic-card h2 .icon--directional')).toHaveCount(69);
   await page.locator('.language-menu summary').click();
   const languageLinks = await page
     .locator('.language-menu nav a')
@@ -1183,17 +1184,17 @@ test('the root defaults to English and localized catalogs point to real pages', 
   ]);
   await expect(page.locator('.catalog-part')).toHaveCount(14);
   await expect(page.locator('.catalog-lesson')).toHaveCount(124);
-  await expect(page.locator('.catalog-lesson--wip')).toHaveCount(23);
-  await expect(page.locator('.catalog-lesson:not(.catalog-lesson--wip)')).toHaveCount(101);
+  await expect(page.locator('.catalog-lesson--wip')).toHaveCount(22);
+  await expect(page.locator('.catalog-lesson:not(.catalog-lesson--wip)')).toHaveCount(102);
   await expect(page.locator('.catalog-lesson__number').first()).toHaveText('1.1');
   await expect(page.locator('.catalog-lesson__number').last()).toHaveText('14.11');
   await expect(page.locator('.catalog-lesson__preview [data-character-art="kern"]')).toHaveCount(
-    101,
+    102,
   );
   await expect(page.locator('.catalog-lesson__preview [data-character-art="tavi"]')).toHaveCount(
-    101,
+    102,
   );
-  await expect(page.locator('.catalog-lesson__preview [data-blueprint-preview]')).toHaveCount(95);
+  await expect(page.locator('.catalog-lesson__preview [data-blueprint-preview]')).toHaveCount(96);
   await expect(page.locator('.catalog-lesson__preview [data-pattern-preview]')).toHaveCount(5);
   const publishedPage = await request.get('en/mechanics/environmental-weapon/');
   expect(publishedPage.status()).toBe(200);
@@ -1347,7 +1348,15 @@ test('the root defaults to English and localized catalogs point to real pages', 
   await expect(page.locator('[data-blueprint-id="moveset-shapeshifting"]')).toBeVisible();
   await expect(page.locator('.game-example')).toHaveCount(3);
   await expect(page.locator('.lens-chip')).toHaveCount(5);
-  const draftPage = await request.get('en/mechanics/ally-theft/');
+  const allyTheftPage = await request.get('en/mechanics/ally-theft/');
+  expect(allyTheftPage.status()).toBe(200);
+  expect(await allyTheftPage.text()).not.toContain('class="wip-badge"');
+  await page.goto('en/mechanics/ally-theft/');
+  await expect(page.locator('.lesson-title-line h1')).toHaveText('Ally theft and charm');
+  await expect(page.locator('[data-blueprint-id="ally-theft"]')).toBeVisible();
+  await expect(page.locator('.game-example')).toHaveCount(3);
+  await expect(page.locator('.lens-chip')).toHaveCount(5);
+  const draftPage = await request.get('en/mechanics/false-death/');
   expect(draftPage.status()).toBe(200);
   expect(await draftPage.text()).toContain('class="wip-badge"');
   await page.setViewportSize({ width: 375, height: 812 });

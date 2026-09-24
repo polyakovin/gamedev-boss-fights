@@ -666,6 +666,19 @@ export function initializeBlueprint(widget) {
         frame.movesetShapeshiftingEventCount,
       );
     }
+    if (mechanicId === 'ally-theft') {
+      widget.dataset.blueprintAllyTheft = frame.allyTheftState;
+      widget.dataset.blueprintAllyTheftAllyId = frame.allyTheftAllyId;
+      widget.dataset.blueprintAllyTheftCaptureId = frame.allyTheftCaptureId;
+      widget.dataset.blueprintAllyTheftOwner = frame.allyTheftOwnerId;
+      widget.dataset.blueprintAllyTheftMarked = String(frame.allyTheftMarked);
+      widget.dataset.blueprintAllyTheftHostile = String(frame.allyTheftHostile);
+      widget.dataset.blueprintAllyTheftCommandCount = String(frame.allyTheftCommandCount);
+      widget.dataset.blueprintAllyTheftOwnershipEvents = String(frame.allyTheftOwnershipEventCount);
+      widget.dataset.blueprintAllyTheftEligibleCount = String(frame.allyTheftEligibleCount);
+      widget.dataset.blueprintAllyTheftReleaseReason = frame.allyTheftReleaseReason;
+      widget.dataset.blueprintAllyTheftRecaptureBlocked = String(frame.allyTheftRecaptureBlocked);
+    }
     boss.setAttribute(
       'transform',
       `translate(${frame.boss.x} ${frame.boss.y}) scale(${frame.bossScale})`,

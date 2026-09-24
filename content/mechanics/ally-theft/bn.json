@@ -1,0 +1,138 @@
+{
+  "title": "মিত্র চুরি ও বশীকরণ",
+  "subtitle": "খেলোয়াড়ের বিনিয়োগ না মুছে এক সহায়কের আনুগত্য বদলান",
+  "variant": "চিহ্ন · হস্তান্তর · শত্রু নির্দেশ · মুক্তি",
+  "summary": "বস সাময়িকভাবে খেলোয়াড়ের সহায়ক বা দলের সদস্যকে নিয়ন্ত্রণ করে এবং তার পরিচিত ক্ষমতা আগের মালিকের বিরুদ্ধে ব্যবহার করে।",
+  "overview": "মিত্র চুরি নতুন অসংলগ্ন শত্রু তৈরি না করে বিদ্যমান সহায়কের পক্ষ বদলায়। চুরি হওয়া মিত্র পরিচিত পরিচয় ও সীমিত ক্ষমতা ধরে রাখে; স্পষ্ট চিহ্ন, মালিকানা হস্তান্তর, শত্রু সময়সীমা ও মুক্তির নিয়ম ক্ষতিকে বোধগম্য ও উল্টানো সম্ভব করে।",
+  "learning": "যোগ্য মিত্র, নির্বাচন ক্রম, সতর্কতা, ownership id, স্থানান্তরিত ক্ষমতা, লক্ষ্য নিয়ম, শত্রু সময়, friendly fire, damage cap, interrupt ও cleanse, স্বাস্থ্য ও মৃত্যু, cooldown মালিকানা, ফেরার স্থান, duplicate guard এবং telemetry নির্ধারণ করুন।",
+  "category": "অবস্থা, সম্পদ ও স্কেলিং",
+  "readTime": "১০ মিনিট",
+  "demo": {
+    "title": "এক rune familiar-এর দখল, শত্রু আক্রমণ ও ফেরা অনুসরণ করুন",
+    "timeline": "মিত্র চুরির সময়রেখা",
+    "step": "বন্ধু কক্ষপথ, চিহ্নিত হস্তান্তর, শত্রু নির্দেশ, নিরাপদ ফেরা",
+    "phaseNames": [
+      "এক যোগ্য মিত্রকে চিহ্নিত করুন",
+      "মালিকানা দিয়ে গুলি চালান",
+      "নিয়ন্ত্রণ ভেঙে ফিরিয়ে দিন"
+    ],
+    "phaseDescriptions": [
+      "Tavi-র rune familiar খেলোয়াড়ের মালিকানায় শুরু করে। ০.৫৫ থেকে ১.১৫ সেকেন্ডে Kern আনুগত্য বদলানোর আগে interrupt করা যায় এমন tether দিয়ে ঠিক ওই সহায়ককে চিহ্নিত করে।",
+      "১.১৫ সেকেন্ডে ownership event একবারই মেটে। familiar Kern-এর দিকে যায়, মালিকানার সংকেত বদলায় এবং ১.৭৫ থেকে ৩.২৫ সেকেন্ডে তিনটি সীমিত shot ছোড়ে; Tavi স্থির রেখা থেকে পাশ কাটায়।",
+      "৩.৫৫ সেকেন্ডে শত্রু নির্দেশ শেষ ও tether ছিন্ন হয়। familiar ক্ষতি বন্ধ করে, Tavi-র পাশে ফিরে বন্ধুসুলভ সংকেত পুনরুদ্ধার করে এবং recovery শেষ হওয়ার আগে আবার দখল হয় না।"
+    ],
+    "boss": "বস",
+    "player": "খেলোয়াড়",
+    "danger": "চুরি হওয়া মিত্রের পরিচিত ক্ষমতা এখন খেলোয়াড়কে লক্ষ্য করে; সীমাহীন kit, তাৎক্ষণিক বিশ্বাসঘাতকতা বা গোপন মালিকানা নিয়মকে খামখেয়ালি করে",
+    "locked": "যোগ্যতা, captureId, বর্তমান মালিক, command count, cooldown, স্বাস্থ্য, interrupt, release, মৃত্যু ও rollback encounter logic-এর অংশ",
+    "safe": "এক মিত্রকে চিহ্নিত করুন, মালিকানার পথ দেখান, শত্রু kit সীমিত করুন, প্রতিক্রিয়া রাখুন এবং ফেরা বা সমাপ্তি ঠিক একবার মেটান",
+    "reducedMotion": "কম গতিতে autoplay বন্ধ থাকে। ০.২৫, ০.৫৫, ১.১৫, ১.৪৫, ১.৭৫, ২.২৫, ২.৭৫, ৩.২৫, ৩.৫৫, ৪.১৫, ৪.৮৫ এবং ৫.৩৫ সেকেন্ড দেখুন।",
+    "diagramDescription": "Kern Tavi-র rune familiar-কে চিহ্নিত করে ownership tether দিয়ে টানে, তিনটি স্পষ্ট শত্রু shot-এর নির্দেশ দেয় এবং নিরাপদে Tavi-র কাছে ফিরিয়ে দেয়।"
+  },
+  "steps": [
+    {
+      "title": "কোন মিত্রদের নেওয়া যাবে?",
+      "body": "summon, pet, party member, অস্থায়ী guest, অজেয় companion, quest-critical actor ও accessibility substitute-এর জন্য স্পষ্ট eligibility table করুন। deterministic নির্বাচন করে transfer-এর আগে লক্ষ্য প্রকাশ করুন।"
+    },
+    {
+      "title": "মালিকানার সীমানা পেরিয়ে কী যায়?",
+      "body": "পুরো runtime brain নয়, নির্বাচিত hostile package স্থানান্তর করুন। target filter, movement bounds, damage, support inversion, cooldown, collision team, navigation ও health persistence লিখুন। প্রতিটি command-এ captureId দিন যাতে late callback ফিরে আসা মিত্রকে না ছোঁয়।"
+    },
+    {
+      "title": "মিত্র কীভাবে ফেরে?",
+      "body": "দৃশ্যমান release condition নিন: সময়, interrupt, cleanse, focus ভাঙা, নিরাপদ damage threshold বা phase exit। আগে hostile collision বন্ধ করুন, projectile পরিষ্কার বা retarget করুন, reachable position-এ ফিরিয়ে তাৎক্ষণিক recapture ঠেকান।"
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "লক্ষ্য বা উত্তর না জানিয়ে মিত্র বিশ্বাসঘাতকতা করে",
+      "body": "তাৎক্ষণিক দলবদল খেলোয়াড়কে শেখানো companion system ব্যবহারের জন্য শাস্তি দেয়। সঠিক মিত্র আগে দেখান এবং interrupt, দূরত্ব, control, cleanse বা স্বল্প অপেক্ষার অন্তত একটি সাধারণ উত্তর রাখুন।"
+    },
+    {
+      "title": "সম্পূর্ণ ally build নিয়ন্ত্রণহীন burst হয়",
+      "body": "খেলোয়াড়-তৈরি সহায়কে hostile ব্যবহারের জন্য ভারসাম্যহীন burst, healing বা invulnerability থাকতে পারে। eligible ability-কে capped boss package-এ map করুন এবং empty roster, duplicate, despawn, death, reconnect ও rollback পরীক্ষা করুন।"
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "আনুগত্য বদলেও পরিচয় রাখুন",
+      "body": "silhouette, নাম, মূল গতি ও একটি signature ability রাখুন; শুধু রঙনির্ভর নয় এমন ownership ring, tether, pose, sound, icon ও text alternative যোগ করুন।"
+    },
+    {
+      "title": "খেলোয়াড়ের আগের বিনিয়োগ রক্ষা করুন",
+      "body": "সাময়িক control যেন equipment, progress, charge, permanent health বা customization গোপনে না মুছে। hostile package-এর দরকারি মানই snapshot করুন এবং release-এর পরে কোন cooldown ও damage থাকে তা লিখুন।"
+    },
+    {
+      "title": "হস্তান্তরের দুই দিক মাপুন",
+      "body": "eligibleRoster, selectedAllyId, captureId, warning ও hostile duration, transferredAbilityIds, command count, owner অনুযায়ী damage/healing, interrupt, cleanse, ally death, release reason, restore failure, recapture interval, duplicate event ও disconnect recovery রেকর্ড করুন।"
+    }
+  ],
+  "story": {
+    "title": "Kern familiar-এর loyalty rune নতুন করে লেখে",
+    "body": "Tavi-র ছোট rune familiar তলোয়ারের হাতের চারপাশে ঘোরে, যতক্ষণ Kern তাকে amber command-এ বাঁধে। সে arena পেরিয়ে পুরনো মালিকের দিকে তিনটি ধার করা spark ছোড়ে, hostile rune ঝরিয়ে বাড়ি ফেরে।"
+  },
+  "adaptation": {
+    "title": "গতির আগে মালিকানা পড়ার মতো করুন",
+    "body": "দীর্ঘ mark, fixed order, কম hostile damage, কম command, শক্ত ownership icon, স্থায়ী timer এবং ally control-এর বদলে neutral decoy-এর বিকল্প দিন। motion, sound, text, haptic ও shape দিয়ে সংকেত পুনরাবৃত্তি করুন।"
+  },
+  "distinction": {
+    "title": "বিদ্যমান মিত্রের মালিকানা, summon বা সাধারণ status নয়",
+    "body": "Summon নতুন boss-owned unit বানায়। খেলোয়াড়ের ওপর charm তার control বা targeting বদলায়। Ally theft সক্রিয় player-owned helper-কে পুনরায় বরাদ্দ করে, পরিচয় রাখে এবং পরে মূল মালিকের কাছে কী ফেরে তা মেটায়।"
+  },
+  "lensNotes": [
+    {
+      "id": "telegraphing",
+      "body": "ঠিক মিত্র, capture path, ownership change, hostile start ও release-এর নিয়ম কার্যকর হওয়ার আগে আলাদা সংকেত দরকার।"
+    },
+    {
+      "id": "counterplay",
+      "body": "Interrupt, cleanse, দূরত্ব, control বা অপেক্ষা কাজ করতে পারে, তবে প্রতিটি eligible roster-এ অন্তত একটি সাধারণ উত্তর থাকতে হবে।"
+    },
+    {
+      "id": "player-expression",
+      "body": "খেলোয়াড়ের বেছে নেওয়া companion encounter-কে ব্যক্তিগত করে, যদি hostile mapping বিনিয়োগকে সম্মান করে এবং একটি build-কে বিপর্যয় না বানায়।"
+    },
+    {
+      "id": "risk-reward",
+      "body": "শক্তিশালী মিত্র ঝুঁকির মূল্য বাড়ায়; সীমিত transfer empty roster-কে optimal না করে অর্থপূর্ণ নির্বাচন দেয়।"
+    },
+    {
+      "id": "rule-exception",
+      "body": "empty roster, অজেয় বা quest-critical মিত্র, duplicate, death, despawn, phase exit, reconnect ও rollback-এ স্পষ্ট ownership outcome দরকার।"
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "The Binding of Isaac: Repentance",
+      "boss": "The Siren",
+      "screenshot": "https://i.ytimg.com/vi/qj288Dmw8Q0/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=qj288Dmw8Q0&t=5s",
+      "video": "https://www.youtube.com/watch?v=qj288Dmw8Q0&t=5s",
+      "videoDurationSeconds": 77,
+      "body": "০:০৫ থেকে The Siren Isaac-এর বিদ্যমান familiar-এর মধ্যে তিনটি পর্যন্ত charm করে। তারা পরিচিত আচরণ ও shot blocking রাখে এবং পরাজিত হলে ফেরে। target cap ও পরিচয় মালিকানা দৃশ্যমান রাখে।"
+    },
+    {
+      "dimension": "3D",
+      "game": "Bravely Default",
+      "boss": "Fiore DeRosa",
+      "screenshot": "https://i.ytimg.com/vi/vMRukz57fnc/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=vMRukz57fnc&t=330s",
+      "video": "https://www.youtube.com/watch?v=vMRukz57fnc&t=330s",
+      "videoDurationSeconds": 683,
+      "body": "৫:৩০-এ Edea আগে থেকেই charmed অবস্থায় যুদ্ধ শুরু করে এবং Captivating Cologne আরেক party member-কে allies-এর বিরুদ্ধে দিতে পারে। turn-based রূপ selection, hostile action ও recovery আলাদা করে।"
+    },
+    {
+      "dimension": "3D",
+      "game": "World of Warcraft: Wrath of the Lich King",
+      "boss": "Lady Deathwhisper",
+      "screenshot": "https://i.ytimg.com/vi/mseB_We9mes/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=mseB_We9mes&t=40s",
+      "video": "https://www.youtube.com/watch?v=mseB_We9mes&t=40s",
+      "videoDurationSeconds": 623,
+      "body": "০:৪০ থেকে Dominate Mind বাছাই করা raid member-দের বাড়তি damage ও healing-সহ সাময়িক শত্রু করে। উদাহরণটি target cap, friendly-fire protection ও স্পষ্ট temporary control দেখায়।"
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

@@ -1,0 +1,28 @@
+{
+  "id": "ally-theft",
+  "number": 102,
+  "published": true,
+  "sourceLocale": "en",
+  "contentVersion": 1,
+  "animation": "ally-theft",
+  "lenses": ["telegraphing", "counterplay", "player-expression", "risk-reward", "rule-exception"],
+  "related": ["summon", "player-controlled-boss", "resource-steal", "ability-lock"],
+  "sources": [
+    {
+      "title": "Boss Up: Boss Battle Design",
+      "url": "https://media.gdcvault.com/gdc2018/presentations/Keren_Itay_BossUp.pdf"
+    },
+    {
+      "title": "The Siren — The Binding of Isaac Wiki",
+      "url": "https://bindingofisaacrebirth.wiki.gg/wiki/The_Siren"
+    },
+    {
+      "title": "Bravely Default: Chapter 2 — StrategyWiki",
+      "url": "https://strategywiki.org/wiki/Bravely_Default/Chapter_2"
+    },
+    {
+      "title": "Lady Deathwhisper — Warcraft Wiki",
+      "url": "https://warcraft.wiki.gg/wiki/Lady_Deathwhisper"
+    }
+  ]
+}
