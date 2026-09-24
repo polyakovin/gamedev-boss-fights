@@ -1623,14 +1623,14 @@
       "number": 102,
       "translations": {
         "en": {
-          "title": "Ally theft",
+          "title": "Ally theft and charm",
           "category": "States, resources, and scaling",
-          "summary": "Draft outline for the ally theft mechanic. Rules, tuning guidance, and examples are still in progress."
+          "summary": "The boss temporarily controls a player-owned helper or party member and turns a bounded set of familiar abilities against its former owner."
         },
         "ru": {
-          "title": "Кража союзников игрока",
+          "title": "Кража и подчинение союзника",
           "category": "Состояния, ресурсы и масштабирование",
-          "summary": "Призванные игроком помощники временно переходят на сторону босса или используют свои эффекты против владельца."
+          "summary": "Босс временно подчиняет помощника или члена группы игрока и обращает ограниченный набор знакомых способностей против прежнего владельца."
         }
       }
     },

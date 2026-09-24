@@ -1475,6 +1475,32 @@ const SPECS = {
     forms: ['colossus', 'serpent', 'oracle'],
     packages: ['colossus-slam', 'serpent-lane', 'oracle-fan'],
   },
+  'ally-theft': {
+    mode: 'ally-theft',
+    boss: [300, 375],
+    player: [300, 660],
+    target: [300, 660],
+    arena: [55, 310, 450, 590],
+    allyStart: [368, 650],
+    allyCaptured: [382, 458],
+    mark: [0.55, 1.15],
+    transfer: [1.15, 1.55],
+    hostile: [1.55, 3.55],
+    shotTimes: [1.75, 2.3, 2.85],
+    shotTargets: [
+      [300, 660],
+      [205, 650],
+      [365, 650],
+    ],
+    shotFlight: 0.42,
+    projectileRadius: 14,
+    release: [3.55, 4.05],
+    returning: [4.05, 4.75],
+    recoveryEndsAt: 5.32,
+    resetAt: 5.42,
+    allyId: 'rune-familiar-1',
+    captureId: 'ally-capture-1',
+  },
   'wide-swing': { mode: 'arc', boss: [280, 310], player: [410, 470], target: [470, 650] },
   lunge: { mode: 'lunge', boss: [170, 290], player: [390, 590], target: [470, 660] },
   grab: { mode: 'grab', boss: [280, 300], player: [390, 485], target: [470, 610] },
@@ -2881,6 +2907,50 @@ export function movesetShapeshiftingResolve({
     changeId: accepted ? String(changeId) : 'none',
     eventCount: accepted ? 1 : 0,
     allowedForms: Object.freeze(allowed),
+  });
+}
+
+export function allyTheftState(time) {
+  const spec = SPECS['ally-theft'];
+  const t = localTime(time);
+  if (t < spec.mark[0]) return 'ally-friendly';
+  if (t < spec.mark[1]) return 'ally-marked';
+  if (t < spec.transfer[1]) return 'ownership-transferring';
+  if (t < spec.hostile[1]) return 'hostile-command';
+  if (t < spec.release[1]) return 'control-breaking';
+  if (t < spec.returning[1]) return 'ally-returning';
+  if (t < spec.recoveryEndsAt) return 'ally-restored';
+  if (t < spec.resetAt) return 'recapture-grace';
+  return 'reset';
+}
+
+export function allyTheftTransfer({
+  eligibleAllyIds = ['rune-familiar-1'],
+  selectedAllyId = 'rune-familiar-1',
+  currentOwner = 'player',
+  requestedOwner = 'boss',
+  captureId = 'ally-capture-1',
+  allyAlive = true,
+  alreadyApplied = false,
+} = {}) {
+  const eligible = [
+    ...new Set(Array.isArray(eligibleAllyIds) ? eligibleAllyIds.map(String).filter(Boolean) : []),
+  ];
+  const selected = String(selectedAllyId);
+  const owner = String(currentOwner);
+  const requested = String(requestedOwner);
+  const accepted =
+    !alreadyApplied && allyAlive && eligible.includes(selected) && requested !== owner;
+  return Object.freeze({
+    selectedAllyId: selected,
+    currentOwner: owner,
+    requestedOwner: requested,
+    nextOwner: accepted ? requested : owner,
+    captureId: accepted ? String(captureId) : 'none',
+    accepted,
+    rejected: !allyAlive || !eligible.includes(selected),
+    eventCount: accepted ? 1 : 0,
+    eligibleAllyIds: Object.freeze(eligible),
   });
 }
 
@@ -7141,6 +7211,129 @@ function primitivesFor(spec, frame) {
       ),
     ];
   }
+  if (mode === 'ally-theft') {
+    const ally = frame.allyTheftAlly;
+    const ownerTone =
+      frame.allyTheftOwnerId === 'player'
+        ? 'safe'
+        : frame.allyTheftOwnerId === 'boss'
+          ? 'accent'
+          : 'signal';
+    const markProgress = clamp((frame.time - spec.mark[0]) / (spec.mark[1] - spec.mark[0]));
+    const transferProgress = clamp(
+      (frame.time - spec.transfer[0]) / (spec.transfer[1] - spec.transfer[0]),
+    );
+    const releaseProgress = clamp(
+      (frame.time - spec.release[0]) / (spec.release[1] - spec.release[0]),
+    );
+    const ownerPlayerOpacity = frame.allyTheftOwnerId === 'player' ? 0.95 : 0.28;
+    const ownerBossOpacity = frame.allyTheftOwnerId === 'boss' ? 0.95 : 0.28;
+    return [
+      rect(...spec.arena, 0.52, 'muted', 0.025),
+      rect(108, 490, 344, 78, 0.72, 'muted', 0.025),
+      circle(170, 529, 27, ownerPlayerOpacity, 'safe', 7, 0.08),
+      path('M 156 530 L 166 540 L 185 516', ownerPlayerOpacity, 'safe', 6),
+      circle(390, 529, 27, ownerBossOpacity, 'accent', 7, 0.08),
+      path('M 377 541 L 390 514 L 403 541 Z', ownerBossOpacity, 'accent', 6, 0.04),
+      line(202, 529, 358, 529, 0.45, ownerTone, 5, '12 9'),
+      path(
+        `M ${frame.boss.x} ${frame.boss.y + 22} Q 470 430 ${ally.x} ${ally.y}`,
+        frame.time >= spec.mark[0] && frame.time < spec.release[0] ? 0.82 : 0,
+        'accent',
+        6,
+        0,
+        '10 8',
+      ),
+      path(
+        `M ${frame.player.x + 18} ${frame.player.y - 42} Q 430 610 ${ally.x} ${ally.y}`,
+        frame.allyTheftOwnerId === 'player' ? 0.72 : 0.14,
+        'safe',
+        5,
+        0,
+        '8 8',
+      ),
+      circle(
+        ally.x,
+        ally.y,
+        40 + pulse(markProgress) * 22,
+        frame.allyTheftMarked ? 0.92 : 0,
+        'signal',
+        7,
+        0.025,
+        '8 7',
+      ),
+      circle(ally.x, ally.y, 25, 0.98, ownerTone, 7, 0.16),
+      path(
+        `M ${ally.x} ${ally.y - 15} L ${ally.x + 15} ${ally.y} L ${ally.x} ${ally.y + 15} L ${ally.x - 15} ${ally.y} Z`,
+        0.98,
+        ownerTone,
+        5,
+        0.08,
+      ),
+      line(
+        spec.allyStart[0],
+        spec.allyStart[1],
+        spec.allyCaptured[0],
+        spec.allyCaptured[1],
+        frame.time >= spec.transfer[0] && frame.time < spec.returning[1] ? 0.42 : 0,
+        ownerTone,
+        4,
+        '7 10',
+      ),
+      circle(
+        ally.x,
+        ally.y,
+        46 + pulse(transferProgress) * 46,
+        frame.time >= spec.transfer[0] && frame.time < spec.transfer[1]
+          ? 0.88 - transferProgress * 0.3
+          : 0,
+        'accent',
+        8,
+        0.02,
+      ),
+      ...spec.shotTimes.map((at, index) => {
+        const target = point(spec.shotTargets[index]);
+        const signal = clamp((frame.time - (at - 0.24)) / 0.24) * clamp((at - frame.time) / 0.08);
+        return circle(target.x, target.y, 31 + signal * 12, signal, 'accent', 6, 0.03, '7 6');
+      }),
+      ...frame.allyTheftProjectiles.flatMap((projectile) => [
+        line(
+          spec.allyCaptured[0],
+          spec.allyCaptured[1],
+          projectile.x,
+          projectile.y,
+          0.48,
+          'accent',
+          5,
+          '10 8',
+        ),
+        circle(projectile.x, projectile.y, spec.projectileRadius, 0.98, 'accent', 6, 0.2),
+        path(
+          `M ${projectile.x - 9} ${projectile.y} L ${projectile.x} ${projectile.y + 9} L ${projectile.x + 9} ${projectile.y}`,
+          0.9,
+          'signal',
+          4,
+        ),
+      ]),
+      circle(
+        ally.x,
+        ally.y,
+        45 + releaseProgress * 78,
+        frame.time >= spec.release[0] && frame.time < spec.release[1]
+          ? 0.9 - releaseProgress * 0.48
+          : 0,
+        'safe',
+        9,
+        0.025,
+      ),
+      path(
+        `M ${ally.x - 24} ${ally.y - 31} L ${ally.x + 24} ${ally.y + 31} M ${ally.x + 24} ${ally.y - 31} L ${ally.x - 24} ${ally.y + 31}`,
+        frame.time >= spec.release[0] && frame.time < spec.release[1] ? pulse(releaseProgress) : 0,
+        'safe',
+        7,
+      ),
+    ];
+  }
   if (mode === 'encounter-specific-tool') {
     const pedestal = point(spec.pedestal);
     const spearBase = { x: frame.player.x + 20, y: frame.player.y - 10 };
@@ -8727,6 +8920,15 @@ function pointClearsThreat(spec, frame, value, radius = BLUEPRINT_PLAYER_RADIUS)
   if (mode === 'damage-rate-cap') return true;
   if (mode === 'loadout-mirror') return true;
   if (mode === 'moveset-shapeshifting') return true;
+  if (mode === 'ally-theft')
+    return (
+      !frame.dangerActive ||
+      frame.allyTheftProjectiles.every(
+        (projectile) =>
+          Math.hypot(value.x - projectile.x, value.y - projectile.y) >
+          spec.projectileRadius + radius,
+      )
+    );
   if (mode === 'projectile-rally')
     return (
       !frame.dangerActive ||
@@ -9118,6 +9320,7 @@ export function blueprintFrame(id, time) {
   else if (spec.mode === 'damage-rate-cap') responseProgress = 0;
   else if (spec.mode === 'loadout-mirror') responseProgress = 0;
   else if (spec.mode === 'moveset-shapeshifting') responseProgress = 0;
+  else if (spec.mode === 'ally-theft') responseProgress = 0;
   else if (spec.mode === 'knockback')
     responseProgress = phase === 0 ? 0 : phase === 1 ? smooth(action) : 1;
   else if (spec.mode === 'target-lock')
@@ -10541,6 +10744,20 @@ export function blueprintFrame(id, time) {
       pulse(smooth((t - spec.approach[0]) / (spec.approach[1] - spec.approach[0]))),
       pulse(smooth((t - spec.return[0]) / (spec.return[1] - spec.return[0]))),
     );
+  if (spec.mode === 'ally-theft') {
+    const firstDodge = smooth((t - spec.shotTimes[0]) / 0.3);
+    const secondDodge = smooth((t - spec.shotTimes[1]) / 0.3);
+    const thirdDodge = smooth((t - spec.shotTimes[2]) / 0.3);
+    const reset = smooth((t - spec.returning[1]) / (spec.resetAt - spec.returning[1]));
+    const afterFirst = mix(startPlayer.x, 205, firstDodge);
+    const afterSecond = mix(afterFirst, 365, secondDodge);
+    const afterThird = mix(afterSecond, 220, thirdDodge);
+    player = {
+      x: mix(afterThird, startPlayer.x, reset),
+      y: mix(660, startPlayer.y, reset),
+    };
+    stride = Math.max(pulse(firstDodge), pulse(secondDodge), pulse(thirdDodge), pulse(reset));
+  }
   const bossVisible =
     spec.mode === 'secondary-cues-invisibility'
       ? t < spec.vanishAt
@@ -10815,7 +11032,8 @@ export function blueprintFrame(id, time) {
             spec.mode === 'external-healing-source' ||
             spec.mode === 'damage-rate-cap' ||
             spec.mode === 'loadout-mirror' ||
-            spec.mode === 'moveset-shapeshifting'
+            spec.mode === 'moveset-shapeshifting' ||
+            spec.mode === 'ally-theft'
           ? (Math.atan2(boss.y - player.y, boss.x - player.x) * 180) / Math.PI
           : spec.mode === 'active-phase'
             ? (Math.atan2(boss.y - player.y, boss.x - player.x) * 180) / Math.PI
@@ -12151,6 +12369,74 @@ export function blueprintFrame(id, time) {
       strikePulse(t, spec.thirdActive[0], 0.72),
     );
   }
+  if (spec.mode === 'ally-theft') {
+    const allyStart = point(spec.allyStart);
+    const allyCaptured = point(spec.allyCaptured);
+    let allyPosition = allyStart;
+    if (t >= spec.transfer[0] && t < spec.transfer[1]) {
+      const progress = smooth((t - spec.transfer[0]) / (spec.transfer[1] - spec.transfer[0]));
+      allyPosition = {
+        x: mix(allyStart.x, allyCaptured.x, progress),
+        y: mix(allyStart.y, allyCaptured.y, progress),
+      };
+    } else if (t >= spec.transfer[1] && t < spec.release[0]) {
+      allyPosition = {
+        x: allyCaptured.x + Math.sin((t - spec.transfer[1]) * Math.PI * 2) * 13,
+        y: allyCaptured.y + Math.cos((t - spec.transfer[1]) * Math.PI * 2) * 7,
+      };
+    } else if (t >= spec.release[0] && t < spec.returning[1]) {
+      const progress = smooth((t - spec.release[0]) / (spec.returning[1] - spec.release[0]));
+      allyPosition = {
+        x: mix(allyCaptured.x, allyStart.x, progress),
+        y: mix(allyCaptured.y, allyStart.y, progress),
+      };
+    }
+    const projectiles = spec.shotTimes.flatMap((at, index) => {
+      if (t < at || t >= at + spec.shotFlight) return [];
+      const progress = smooth((t - at) / spec.shotFlight);
+      const target = point(spec.shotTargets[index]);
+      return [
+        Object.freeze({
+          id: `stolen-ally-shot-${index + 1}`,
+          x: mix(allyCaptured.x, target.x, progress),
+          y: mix(allyCaptured.y, target.y, progress),
+          progress,
+          target: Object.freeze(target),
+        }),
+      ];
+    });
+    frame.allyTheftState = allyTheftState(t);
+    frame.allyTheftAllyId = spec.allyId;
+    frame.allyTheftCaptureId = t >= spec.mark[0] && t < spec.resetAt ? spec.captureId : 'none';
+    frame.allyTheftOwnerId =
+      t < spec.transfer[0]
+        ? 'player'
+        : t < spec.release[0]
+          ? 'boss'
+          : t < spec.returning[1]
+            ? 'neutral'
+            : 'player';
+    frame.allyTheftAlly = Object.freeze(allyPosition);
+    frame.allyTheftMarked = t >= spec.mark[0] && t < spec.transfer[1];
+    frame.allyTheftHostile = t >= spec.hostile[0] && t < spec.hostile[1];
+    frame.allyTheftProjectiles = Object.freeze(projectiles);
+    frame.allyTheftCommandCount = spec.shotTimes.filter((at) => t >= at && t < spec.resetAt).length;
+    frame.allyTheftOwnershipEventCount =
+      (t >= spec.transfer[0] && t < spec.resetAt ? 1 : 0) +
+      (t >= spec.returning[1] && t < spec.resetAt ? 1 : 0);
+    frame.allyTheftEligibleCount = 1;
+    frame.allyTheftReleaseReason =
+      t >= spec.release[0] && t < spec.resetAt ? 'duration-complete' : 'none';
+    frame.allyTheftRecaptureBlocked = t >= spec.returning[1] && t < spec.resetAt;
+    frame.dangerActive = projectiles.length > 0;
+    frame.playerMotion.attack = 0;
+    frame.playerMotion.dodge = Math.max(...spec.shotTimes.map((at) => strikePulse(t, at, 0.46)));
+    frame.playerMotion.impact = 0;
+    frame.bossMotion.attack = Math.max(
+      strikePulse(t, spec.mark[0], 0.7),
+      ...spec.shotTimes.map((at) => strikePulse(t, at, 0.42) * 0.35),
+    );
+  }
   if (spec.mode === 'ability-lock') {
     frame.abilityLockState = abilityLockState(t);
     frame.abilityLockFirstAvoided = t >= spec.firstResolveAt && t < spec.secondTelegraph[0];
@@ -12489,7 +12775,8 @@ export function blueprintFrame(id, time) {
             spec.mode === 'external-healing-source' ||
             spec.mode === 'damage-rate-cap' ||
             spec.mode === 'loadout-mirror' ||
-            spec.mode === 'moveset-shapeshifting'
+            spec.mode === 'moveset-shapeshifting' ||
+            spec.mode === 'ally-theft'
           ? 92
           : -62),
   };

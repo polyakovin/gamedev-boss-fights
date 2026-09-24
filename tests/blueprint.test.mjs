@@ -59,6 +59,8 @@ import {
   loadoutMirrorSnapshot,
   movesetShapeshiftingState,
   movesetShapeshiftingResolve,
+  allyTheftState,
+  allyTheftTransfer,
   counterStanceOutcome,
   counterStanceState,
   blueprintFrame,
@@ -86,8 +88,8 @@ import {
   renderBlueprintThumbnail,
 } from '../lib/blueprint-view.mjs';
 
-test('all 95 promoted lesson animations have distinct rule modes and complete moving frames', () => {
-  assert.equal(BLUEPRINT_MECHANIC_IDS.length, 95);
+test('all 96 promoted lesson animations have distinct rule modes and complete moving frames', () => {
+  assert.equal(BLUEPRINT_MECHANIC_IDS.length, 96);
   const modes = new Set();
   for (const id of BLUEPRINT_MECHANIC_IDS) {
     for (let time = 0; time <= BLUEPRINT_DURATION; time += 0.1) {
@@ -108,7 +110,7 @@ test('all 95 promoted lesson animations have distinct rule modes and complete mo
           assert.ok(Number.isFinite(value), `${id} has an invalid ${primitive.type}`);
     }
   }
-  assert.equal(modes.size, 95);
+  assert.equal(modes.size, 96);
 });
 
 test('every blueprint exposes signal, committed action, and recovery without player teleports', () => {
@@ -337,6 +339,9 @@ test('every damaging promoted animation derives safety from its own active geome
       point = { x: shot.x, y: shot.y };
     } else if (!point && id === 'volley') {
       const shot = frame.primitives[7];
+      point = { x: shot.x, y: shot.y };
+    } else if (!point && id === 'ally-theft') {
+      const shot = frame.allyTheftProjectiles[0];
       point = { x: shot.x, y: shot.y };
     }
     assert.equal(blueprintPointSafe(id, 3, point), false, `${id} accepts an unsafe point`);
@@ -3842,5 +3847,61 @@ test('moveset shapeshifting hands off three complete packages in order', () => {
   assert.match(
     renderBlueprintThumbnail(id, 'test-moveset-shapeshifting'),
     /data-blueprint-preview="moveset-shapeshifting"/,
+  );
+});
+
+test('ally theft transfers one familiar, bounds its commands, and restores ownership', () => {
+  const id = 'ally-theft';
+  assert.deepEqual([0, 0.8, 1.3, 2.1, 3.8, 4.3, 4.9, 5.35, 5.5].map(allyTheftState), [
+    'ally-friendly',
+    'ally-marked',
+    'ownership-transferring',
+    'hostile-command',
+    'control-breaking',
+    'ally-returning',
+    'ally-restored',
+    'recapture-grace',
+    'reset',
+  ]);
+  assert.deepEqual(allyTheftTransfer(), {
+    selectedAllyId: 'rune-familiar-1',
+    currentOwner: 'player',
+    requestedOwner: 'boss',
+    nextOwner: 'boss',
+    captureId: 'ally-capture-1',
+    accepted: true,
+    rejected: false,
+    eventCount: 1,
+    eligibleAllyIds: ['rune-familiar-1'],
+  });
+  assert.equal(allyTheftTransfer({ selectedAllyId: 'quest-companion' }).rejected, true);
+  assert.equal(allyTheftTransfer({ allyAlive: false }).accepted, false);
+  assert.equal(allyTheftTransfer({ alreadyApplied: true }).eventCount, 0);
+
+  const marked = blueprintFrame(id, 0.8);
+  assert.equal(marked.allyTheftOwnerId, 'player');
+  assert.equal(marked.allyTheftMarked, true);
+  assert.equal(marked.allyTheftOwnershipEventCount, 0);
+  const captured = blueprintFrame(id, 1.4);
+  assert.equal(captured.allyTheftOwnerId, 'boss');
+  assert.equal(captured.allyTheftCaptureId, 'ally-capture-1');
+  assert.equal(captured.allyTheftOwnershipEventCount, 1);
+  const hostile = blueprintFrame(id, 2.4);
+  assert.equal(hostile.allyTheftHostile, true);
+  assert.equal(hostile.allyTheftCommandCount, 2);
+  assert.equal(hostile.allyTheftProjectiles.length, 1);
+  assert.equal(blueprintPointSafe(id, 2.4, hostile.player), true);
+  assert.equal(blueprintPointSafe(id, 2.4, hostile.allyTheftProjectiles[0]), false);
+  const released = blueprintFrame(id, 3.8);
+  assert.equal(released.allyTheftOwnerId, 'neutral');
+  assert.equal(released.allyTheftReleaseReason, 'duration-complete');
+  const restored = blueprintFrame(id, 4.9);
+  assert.equal(restored.allyTheftOwnerId, 'player');
+  assert.equal(restored.allyTheftOwnershipEventCount, 2);
+  assert.equal(restored.allyTheftRecaptureBlocked, true);
+  assert.deepEqual(blueprintFrame(id, 0).player, blueprintFrame(id, 6).player);
+  assert.match(
+    renderBlueprintThumbnail(id, 'test-ally-theft'),
+    /data-blueprint-preview="ally-theft"/,
   );
 });

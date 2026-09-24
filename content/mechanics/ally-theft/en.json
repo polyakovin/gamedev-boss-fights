@@ -1,0 +1,138 @@
+{
+  "title": "Ally theft and charm",
+  "subtitle": "Transfer one helper’s allegiance without erasing the player’s investment",
+  "variant": "Mark · transfer · hostile command · release",
+  "summary": "The boss temporarily takes control of a player-owned helper or party member and turns that ally’s readable abilities against its former owner.",
+  "overview": "Ally theft changes the allegiance of an existing helper instead of spawning an unrelated enemy. The stolen ally keeps a recognizable identity and bounded subset of its abilities, while a clear mark, ownership handoff, hostile window, and release rule make the loss understandable and reversible.",
+  "learning": "Define eligible allies, selection order, warning time, ownership id, transferred abilities, target rules, hostile duration, friendly-fire policy, damage limits, interruption and cleanse paths, ally health, death behavior, cooldown ownership, restoration position, duplicate-event guards, and telemetry.",
+  "category": "States, resources, and scaling",
+  "readTime": "10 min",
+  "demo": {
+    "title": "Track one rune familiar through capture, hostile fire, and return",
+    "timeline": "Ally theft timeline",
+    "step": "Friendly orbit, marked transfer, hostile command, safe return",
+    "phaseNames": [
+      "Mark one eligible ally",
+      "Transfer ownership and fire",
+      "Break control and restore"
+    ],
+    "phaseDescriptions": [
+      "Tavi’s rune familiar begins under player ownership. From 0.55 to 1.15 seconds, Kern targets that exact helper with an interruptible control tether before any allegiance changes.",
+      "At 1.15 seconds, the ownership event resolves once. The familiar crosses to Kern, changes its allegiance cue, and releases three bounded shots from 1.75 to 3.25 seconds while Tavi sidesteps their fixed lanes.",
+      "At 3.55 seconds, the hostile command ends and the tether breaks. The familiar becomes non-damaging, returns beside Tavi, restores its friendly cue, and cannot be stolen again before recovery completes."
+    ],
+    "boss": "Boss",
+    "player": "Player",
+    "danger": "The stolen ally’s familiar abilities now target the player; unbounded kits, instant betrayal, or hidden ownership make the encounter feel arbitrary",
+    "locked": "Eligibility, capture id, current owner, hostile command count, transferred cooldowns, health, interruption, release, death, and rollback belong to encounter logic",
+    "safe": "Mark one ally, show the ownership path, limit the hostile kit, preserve a response, and return or resolve the ally exactly once",
+    "reducedMotion": "Autoplay is disabled by reduced motion. Scrub across 0.25, 0.55, 1.15, 1.45, 1.75, 2.25, 2.75, 3.25, 3.55, 4.15, 4.85, and 5.35 seconds.",
+    "diagramDescription": "Kern marks Tavi’s rune familiar, pulls it across an ownership tether, commands three readable hostile shots, then releases it to return safely to Tavi."
+  },
+  "steps": [
+    {
+      "title": "Which allies may be taken?",
+      "body": "Build an explicit eligibility table for summons, pets, party members, temporary guests, invulnerable companions, quest-critical actors, and accessibility substitutes. Select deterministically and expose the chosen ally before the transfer so players can understand which capability is about to change sides."
+    },
+    {
+      "title": "What crosses the ownership boundary?",
+      "body": "Transfer a curated hostile package rather than the ally’s complete runtime brain. Specify target filters, movement bounds, damage, support inversion, cooldown state, collision team, navigation, and whether health persists. Stamp every command with the capture id so late callbacks cannot affect the restored ally."
+    },
+    {
+      "title": "How does the ally return?",
+      "body": "Choose a visible release condition: elapsed duration, interrupt, cleanse, broken focus object, safe damage threshold, or boss phase exit. Disable hostile collision first, clear or retarget owned projectiles, restore the ally at a valid reachable position, and prevent immediate recapture with a documented grace period."
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "The ally betrays the player without a named target or response",
+      "body": "An instant team swap punishes bringing the very companion system the game taught players to use. Telegraph the exact ally and preserve at least one ordinary response such as interruption, spacing, crowd control, cleansing, or waiting out a short bounded window."
+    },
+    {
+      "title": "The full ally build becomes an uncontrolled damage spike",
+      "body": "Player-authored companions may contain burst loops, healing, invulnerability, or effects never balanced for hostile use. Map eligible abilities to a capped boss-owned package, suppress unsafe combinations, and test empty rosters, duplicate summons, despawns, ally death, reconnects, and rollback."
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "Keep identity while changing allegiance",
+      "body": "The mechanic works because players recognize their ally. Preserve silhouette, name, core motion, and one signature ability, then add an ownership ring, tether, pose, sound, icon, and text alternative that do not rely on color alone."
+    },
+    {
+      "title": "Protect the player’s prior investment",
+      "body": "Temporary control should not silently delete equipment, progression, charges, permanent health, or customization. Snapshot only the values needed for the hostile package and define exactly which cooldowns and damage persist when control ends."
+    },
+    {
+      "title": "Instrument both sides of the transfer",
+      "body": "Record eligibleRoster, selectedAllyId, captureId, warning and hostile duration, transferredAbilityIds, command count, damage and healing by owner, interruptions, cleanses, ally deaths, release reason, restoration failures, recapture interval, duplicate events, and disconnect recovery."
+    }
+  ],
+  "story": {
+    "title": "Kern rewrites the familiar’s loyalty rune",
+    "body": "Tavi’s small rune familiar circles the sword hand until Kern threads it with an amber command. The familiar crosses the arena, fires three borrowed sparks back at its owner, then sheds the hostile rune and rushes home."
+  },
+  "adaptation": {
+    "title": "Make ownership readable before speed matters",
+    "body": "Offer a longer mark, a fixed selection order, reduced hostile damage, fewer commands, stronger ownership icons, a persistent timer, and an option that replaces ally control with a neutral decoy. Repeat the cue through motion, sound, text alternatives, haptics, and shape."
+  },
+  "distinction": {
+    "title": "Existing ally ownership, not a summon or ordinary status effect",
+    "body": "Summon creates a new boss-owned unit. Charm applied to the player changes the player’s own controls or targeting. Ally theft reassigns an already active player-owned helper or party member, preserves its identity, and later resolves what returns to the original owner."
+  },
+  "lensNotes": [
+    {
+      "id": "telegraphing",
+      "body": "The exact ally, capture path, ownership change, hostile start, and release need distinct cues before their rules take effect."
+    },
+    {
+      "id": "counterplay",
+      "body": "Interruption, cleansing, spacing, crowd control, or a short wait can all work, but at least one normal response must remain valid for every eligible roster."
+    },
+    {
+      "id": "player-expression",
+      "body": "A player-chosen companion can personalize the encounter, provided the hostile mapping respects that investment instead of making one build uniquely catastrophic."
+    },
+    {
+      "id": "risk-reward",
+      "body": "Powerful allies increase the value at risk; bounded transfer rules can make bringing them a meaningful choice without making an empty roster optimal."
+    },
+    {
+      "id": "rule-exception",
+      "body": "Empty rosters, invulnerable or quest-critical allies, duplicate summons, death, despawn, phase exit, reconnect, and rollback all need explicit ownership outcomes."
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "The Binding of Isaac: Repentance",
+      "boss": "The Siren",
+      "screenshot": "https://i.ytimg.com/vi/qj288Dmw8Q0/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=qj288Dmw8Q0&t=5s",
+      "video": "https://www.youtube.com/watch?v=qj288Dmw8Q0&t=5s",
+      "videoDurationSeconds": 77,
+      "body": "From 0:05, The Siren demonstrates the defining case: up to three of Isaac’s existing familiars can be charmed, retain recognizable behaviors, block shots, and return when defeated. The limited target count and preserved identity keep ownership visible."
+    },
+    {
+      "dimension": "3D",
+      "game": "Bravely Default",
+      "boss": "Fiore DeRosa",
+      "screenshot": "https://i.ytimg.com/vi/vMRukz57fnc/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=vMRukz57fnc&t=330s",
+      "video": "https://www.youtube.com/watch?v=vMRukz57fnc&t=330s",
+      "videoDurationSeconds": 683,
+      "body": "At 5:30, DeRosa’s battle begins with Edea already charmed and his Captivating Cologne can turn another party member against allies. The turn-based presentation isolates selection, hostile action, and recovery, making the allegiance state auditable."
+    },
+    {
+      "dimension": "3D",
+      "game": "World of Warcraft: Wrath of the Lich King",
+      "boss": "Lady Deathwhisper",
+      "screenshot": "https://i.ytimg.com/vi/mseB_We9mes/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=mseB_We9mes&t=40s",
+      "video": "https://www.youtube.com/watch?v=mseB_We9mes&t=40s",
+      "videoDurationSeconds": 623,
+      "body": "From 0:40, the 25-player encounter shows Dominate Mind in a crowded roster: selected raid members become hostile with amplified damage and healing for a bounded duration. The case highlights target caps, friendly-fire protection, and clear temporary control."
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

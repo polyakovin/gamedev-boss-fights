@@ -405,9 +405,9 @@ test('volley releases three parallel bolts on one beat and clears its outside ro
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
 });
 
-test('catalog and builder reuse the 95 promoted rule-specific previews', async ({ page }) => {
+test('catalog and builder reuse the 96 promoted rule-specific previews', async ({ page }) => {
   await page.goto('en/');
-  await expect(page.locator('[data-blueprint-preview]')).toHaveCount(95);
+  await expect(page.locator('[data-blueprint-preview]')).toHaveCount(96);
   const catalogLayouts = await page.locator('[data-blueprint-preview]').evaluateAll((previews) =>
     previews.map((preview) => {
       const boss = preview.querySelector('[data-character-art-preview="kern"]');
@@ -431,7 +431,7 @@ test('catalog and builder reuse the 95 promoted rule-specific previews', async (
   expect(new Set(catalogLayouts.map(({ layout }) => layout)).size).toBeGreaterThanOrEqual(18);
 
   await page.goto('en/builder/');
-  await expect(page.locator('[data-blueprint-preview]')).toHaveCount(95);
+  await expect(page.locator('[data-blueprint-preview]')).toHaveCount(96);
   const builderLayouts = await page.locator('[data-blueprint-preview]').evaluateAll((previews) =>
     previews.map((preview) => {
       const boss = preview.querySelector('[data-character-art-preview="kern"]');
@@ -3998,7 +3998,44 @@ test('enrage fills the forge and keeps its core lit after the volley', async ({ 
     'opacity',
     '0',
   );
+  await page.setViewportSize({ width: 375, height: 812 });
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+});
 
+test('ally theft exposes one bounded ownership transfer and safe restoration', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.goto('en/mechanics/ally-theft/');
+  const widget = page.locator('[data-blueprint-demo]');
+  const timeline = widget.locator('[data-blueprint-timeline]');
+  const seek = (milliseconds) =>
+    timeline.evaluate((element, value) => {
+      element.value = String(value);
+      element.dispatchEvent(new Event('input', { bubbles: true }));
+    }, milliseconds);
+
+  await expect(page.locator('.lesson-title-line h1')).toHaveText('Ally theft and charm');
+  await expect(page.locator('.wip-badge, .draft-profile')).toHaveCount(0);
+  await expect(page.locator('.game-example')).toHaveCount(3);
+  await seek(800);
+  await expect(widget).toHaveAttribute('data-blueprint-ally-theft-owner', 'player');
+  await expect(widget).toHaveAttribute('data-blueprint-ally-theft-marked', 'true');
+  await seek(1400);
+  await expect(widget).toHaveAttribute('data-blueprint-ally-theft-owner', 'boss');
+  await expect(widget).toHaveAttribute('data-blueprint-ally-theft-capture-id', 'ally-capture-1');
+  await expect(widget).toHaveAttribute('data-blueprint-ally-theft-ownership-events', '1');
+  await seek(2400);
+  await expect(widget).toHaveAttribute('data-blueprint-ally-theft-hostile', 'true');
+  await expect(widget).toHaveAttribute('data-blueprint-ally-theft-command-count', '2');
+  await seek(3800);
+  await expect(widget).toHaveAttribute('data-blueprint-ally-theft-owner', 'neutral');
+  await expect(widget).toHaveAttribute(
+    'data-blueprint-ally-theft-release-reason',
+    'duration-complete',
+  );
+  await seek(4900);
+  await expect(widget).toHaveAttribute('data-blueprint-ally-theft-owner', 'player');
+  await expect(widget).toHaveAttribute('data-blueprint-ally-theft-ownership-events', '2');
+  await expect(widget).toHaveAttribute('data-blueprint-ally-theft-recapture-blocked', 'true');
   await page.setViewportSize({ width: 375, height: 812 });
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
 });
