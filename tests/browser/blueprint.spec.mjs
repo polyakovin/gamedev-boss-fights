@@ -4121,6 +4121,7 @@ test('false death keeps rewards locked while one revival establishes phase two',
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await page.goto('en/mechanics/false-death/');
   const widget = page.locator('[data-blueprint-demo]');
+  await expect(widget).toHaveAttribute('data-blueprint-screen-height', 'true');
   const timeline = widget.locator('[data-blueprint-timeline]');
   const seek = (milliseconds) =>
     timeline.evaluate((element, value) => {

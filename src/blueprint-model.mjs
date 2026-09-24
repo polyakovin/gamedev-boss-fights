@@ -1507,10 +1507,10 @@ const SPECS = {
   },
   'false-death': {
     mode: 'false-death',
-    boss: [300, 375],
-    player: [370, 660],
+    boss: [300, 320],
+    player: [370, 700],
     target: [430, 680],
-    arena: [55, 310, 450, 590],
+    arena: [55, 145, 450, 735],
     strikePosition: [352, 565],
     retreatPosition: [440, 680],
     dodgePosition: [170, 680],
@@ -8021,10 +8021,6 @@ function primitivesFor(spec, frame) {
       (frame.time - spec.secondActive[0]) / (spec.secondActive[1] - spec.secondActive[0]),
     );
     const healthWidth = 340 * (frame.falseDeathBossHealth / 100);
-    const coreOpacity =
-      frame.time >= spec.strikeAt && frame.time < spec.secondSignal[1] ? 0.96 : 0.16;
-    const fragmentsOpacity =
-      frame.time >= spec.collapse[0] && frame.time < spec.revivalAt ? 0.92 : 0;
     const coreX = spec.boss[0];
     const coreY = spec.boss[1] + 28;
     const fragments = [
@@ -8033,66 +8029,92 @@ function primitivesFor(spec, frame) {
       [126, 650],
       [475, 638],
     ];
+    const fallen = frame.time >= spec.collapse[0] && frame.time < spec.revivalAt;
     return [
-      rect(...spec.arena, 0.52, 'muted', 0.025),
-      rect(105, 452, 350, 26, 0.88, 'muted', 0.035),
+      path(
+        'M 70 187 L 280 148 L 490 187 V 216 L 280 177 L 70 216 Z M 72 846 L 280 804 L 488 846 V 874 L 280 832 L 72 874 Z',
+        0.42,
+        'muted',
+        0,
+        0.6,
+      ),
+      path('M 105 102 H 455 V 131 H 105 Z', 0.76, 'muted', 0, 0.72),
       rect(
         110,
-        457,
+        108,
         healthWidth,
-        16,
+        17,
         healthWidth > 0 ? 0.96 : 0,
         frame.falseDeathCurrentPhase === 1 ? 'safe' : 'accent',
-        0.24,
+        0.82,
       ),
-      circle(82, 465, 22, 0.9, frame.falseDeathCurrentPhase === 1 ? 'safe' : 'muted', 6, 0.08),
-      circle(478, 465, 22, 0.9, frame.falseDeathCurrentPhase === 2 ? 'accent' : 'muted', 6, 0.08),
-      line(96, 465, 464, 465, 0.36, 'muted', 4, '9 8'),
-      rect(72, 760, 164, 86, 0.76, 'muted', 0.025),
       path(
-        'M 112 788 L 196 822 M 196 788 L 112 822',
-        frame.falseDeathExitLocked ? 0.96 : 0.2,
+        'M 59 626 L 72 595 H 188 L 201 626 V 868 H 59 Z M 78 647 H 182 V 868 H 78 Z',
+        0.72,
+        'muted',
+        0,
+        0.72,
+      ),
+      path(
+        'M 91 659 H 169 V 852 H 91 Z M 102 669 V 842 M 118 669 V 842 M 134 669 V 842 M 150 669 V 842 M 166 669 V 842',
+        frame.falseDeathExitLocked ? 0.84 : 0.24,
         'accent',
-        8,
+        0,
+        0.7,
       ),
-      circle(430, 804, 42, 0.78, 'muted', 7, 0.04),
       path(
-        'M 407 781 L 453 827 M 453 781 L 407 827',
-        frame.falseDeathRewardLocked ? 0.96 : 0.2,
-        'accent',
-        8,
+        'M 105 667 H 111 V 844 H 105 Z M 124 667 H 130 V 844 H 124 Z M 143 667 H 149 V 844 H 143 Z M 95 742 H 166 V 752 H 95 Z',
+        0.72,
+        'muted',
+        0,
+        0.8,
       ),
-      circle(coreX, coreY, 34 + pulse(frame.time * 1.45) * 10, coreOpacity, 'signal', 8, 0.15),
       path(
-        `M ${coreX} ${coreY - 20} L ${coreX + 20} ${coreY} L ${coreX} ${coreY + 20} L ${coreX - 20} ${coreY} Z`,
-        coreOpacity,
+        'M 153 754 H 163 V 771 H 153 Z',
+        frame.falseDeathExitLocked ? 0.9 : 0.28,
         'signal',
-        6,
-        0.08,
+        0,
+        0.86,
+      ),
+      path(
+        'M 389 800 L 474 800 L 486 817 L 480 854 H 383 L 377 817 Z M 378 817 H 485 V 831 H 378 Z',
+        0.82,
+        'muted',
+        0,
+        0.72,
+      ),
+      path(
+        'M 404 808 H 460 V 846 H 404 Z M 422 812 H 440 V 830 H 422 Z',
+        frame.falseDeathRewardLocked ? 0.76 : 0.24,
+        'signal',
+        0,
+        0.62,
+      ),
+      path(
+        `M ${coreX - 28} ${coreY - 33} L ${coreX} ${coreY - 46} L ${coreX + 28} ${coreY - 33} L ${coreX + 24} ${coreY + 26} L ${coreX} ${coreY + 41} L ${coreX - 24} ${coreY + 26} Z`,
+        fallen ? 0.95 : 0.16,
+        'signal',
+        0,
+        0.82,
       ),
       ...fragments.map(([x, y], index) => {
         const angle = (Math.PI * 2 * index) / fragments.length;
-        const targetX = coreX + Math.cos(angle) * 62;
-        const targetY = coreY + Math.sin(angle) * 72;
-        return circle(
-          mix(x, targetX, smooth(rebuildProgress)),
-          mix(y, targetY, smooth(rebuildProgress)),
-          18 + index * 2,
-          fragmentsOpacity,
+        const px = mix(x, coreX + Math.cos(angle) * 62, smooth(rebuildProgress));
+        const py = mix(y, coreY + Math.sin(angle) * 72, smooth(rebuildProgress));
+        return path(
+          `M ${px - 18} ${py - 17} L ${px + 12} ${py - 22} L ${px + 24} ${py + 11} L ${px - 7} ${py + 20} Z`,
+          fallen ? 0.88 : 0,
           'muted',
-          6,
-          0.1,
+          0,
+          0.76,
         );
       }),
-      circle(
-        coreX,
-        coreY,
-        58 + rebuildProgress * 118,
-        frame.falseDeathRebuildActive ? 0.88 - rebuildProgress * 0.32 : 0,
+      path(
+        `M ${coreX - 62} ${coreY + 28} Q ${coreX} ${coreY - 95 - 80 * rebuildProgress} ${coreX + 62} ${coreY + 28} Z`,
+        frame.falseDeathRebuildActive ? 0.2 + rebuildProgress * 0.48 : 0,
         'safe',
-        8,
-        0.02,
-        '10 8',
+        0,
+        0.48,
       ),
       path(
         `M ${frame.player.x + 12} ${frame.player.y - 54} Q 360 500 ${coreX + 22} ${coreY - 72}`,
@@ -8100,37 +8122,23 @@ function primitivesFor(spec, frame) {
         'safe',
         12,
       ),
-      circle(
-        coreX,
-        coreY,
-        spec.attackRadius,
-        frame.falseDeathSecondSignalActive ? 0.36 + signalProgress * 0.44 : 0,
+      path(
+        `M ${coreX - 160} ${coreY + 96} L ${coreX - 92} ${coreY + 15} L ${coreX - 46} ${coreY + 55} L ${coreX} ${coreY - 10} L ${coreX + 55} ${coreY + 56} L ${coreX + 105} ${coreY + 11} L ${coreX + 167} ${coreY + 98} L ${coreX + 107 + activeProgress * 52} ${coreY + 129} L ${coreX} ${coreY + 90} L ${coreX - 106 - activeProgress * 52} ${coreY + 129} Z`,
+        frame.falseDeathSecondSignalActive
+          ? 0.15 + signalProgress * 0.28
+          : frame.falseDeathSecondAttackActive
+            ? 0.78
+            : 0,
         'accent',
-        7,
-        0.018,
-        '14 10',
-      ),
-      circle(
-        coreX,
-        coreY,
-        spec.attackRadius + activeProgress * 46,
-        frame.falseDeathSecondAttackActive ? 0.92 - activeProgress * 0.34 : 0,
-        'accent',
-        13,
-        0.025,
+        0,
+        0.6,
       ),
       path(
         `M ${coreX - 34} ${coreY - 96} L ${coreX} ${coreY - 138} L ${coreX + 34} ${coreY - 96} Z`,
         frame.falseDeathRevived ? 0.96 : 0,
         'accent',
-        8,
-        0.08,
-      ),
-      path(
-        'M 266 806 L 280 820 L 306 788',
-        frame.falseDeathCompletionPending ? 0.9 : 0.24,
-        'signal',
-        7,
+        0,
+        0.78,
       ),
     ];
   }
