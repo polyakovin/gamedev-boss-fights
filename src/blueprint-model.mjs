@@ -8263,14 +8263,42 @@ function primitivesFor(spec, frame) {
     ];
   if (mode === 'telegraph')
     return [
+      path('M 38 94 H 522 V 878 H 38 Z M 58 300 H 502 V 878 H 58 Z', 0.38, 'muted', 0, 0.56),
+      path(
+        'M 57 117 H 113 V 343 H 57 Z M 447 117 H 503 V 343 H 447 Z M 125 120 H 435 V 153 H 125 Z M 65 379 L 280 356 L 496 379 V 408 L 280 383 L 65 408 Z M 65 562 L 280 535 L 496 562 V 601 L 280 570 L 65 601 Z M 65 781 L 280 748 L 496 781 V 821 L 280 784 L 65 821 Z',
+        0.43,
+        'accent',
+        0,
+        0.56,
+      ),
+      path(
+        'M 138 291 L 190 271 L 242 291 L 231 315 L 149 315 Z M 145 321 L 176 304 L 168 348 Z M 211 305 L 239 321 L 217 348 Z',
+        0.5,
+        'muted',
+        0,
+        0.7,
+      ),
       path(
         'M 190 270 L 485 690 L 410 735 Z',
-        phase === 0 ? 0.45 + prepare * 0.25 : active,
+        phase === 0 ? 0.35 + prepare * 0.35 : active,
         phase === 0 ? 'accent' : 'signal',
-        phase === 0 ? 5 : 12,
-        phase === 0 ? 0.06 : 0.22,
+        0,
+        phase === 0 ? 0.24 : 0.58,
       ),
-      circle(boss.x, boss.y, 55 + prepare * 22, phase === 0 ? 0.8 : 0, 'accent', 5),
+      path(
+        'M 277 437 L 292 448 L 283 465 Z M 308 477 L 322 488 L 309 503 Z M 345 547 L 362 562 L 344 577 Z M 379 601 L 399 620 L 378 632 Z M 420 661 L 443 676 L 421 695 Z',
+        phase === 0 ? prepare * 0.3 : active,
+        'muted',
+        0,
+        0.84,
+      ),
+      path(
+        'M 209 301 L 231 330 L 215 318 Z M 171 306 L 151 334 L 168 322 Z M 189 298 L 194 335 L 185 335 Z',
+        phase === 0 ? 0.25 + prepare * 0.58 : 0,
+        'accent',
+        0,
+        0.78,
+      ),
     ];
   if (mode === 'phase') {
     const changed = phase === 0 ? prepare * 0.3 : phase === 1 ? 1 : 1 - recover * 0.65;
