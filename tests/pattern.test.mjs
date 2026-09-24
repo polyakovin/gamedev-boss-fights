@@ -7,6 +7,7 @@ import {
   patternPhaseAt,
   PATTERN_DURATION,
 } from '../src/pattern-model.mjs';
+import { renderPattern, renderPatternThumbnail } from '../lib/pattern-view.mjs';
 
 const kinds = ['sweep', 'ground-slam', 'summon', 'gap-volley'];
 
@@ -60,4 +61,25 @@ test('the boss label stays above the boss throughout every pattern', () => {
       assert.ok(frame.bossLabel.y < frame.boss.y + frame.bossRock);
     }
   }
+});
+
+test('summon uses solid ground seals and shared minion art in its preview', () => {
+  const page = renderPattern(
+    {
+      title: 'Summon',
+      timeline: 'Timeline',
+      phaseNames: ['Signal', 'Response', 'Recovery'],
+      phaseDescriptions: ['Signal.', 'Response.', 'Recovery.'],
+      diagramDescription: 'Summoned minions enter the arena.',
+      boss: 'Boss',
+      player: 'Player',
+      danger: 'Danger',
+      reducedMotion: 'Use the slider.',
+    },
+    'summon',
+  );
+  const preview = renderPatternThumbnail('summon', 'summon-preview');
+  assert.match(page, /data-pattern-summon-scene/);
+  assert.doesNotMatch(page, /stroke-dasharray="7 7"/);
+  assert.equal((preview.match(/data-character-art-preview="kern-summon"/g) ?? []).length, 3);
 });
