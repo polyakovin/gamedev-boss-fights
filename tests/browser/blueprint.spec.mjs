@@ -224,6 +224,7 @@ test('decoy keeps only the real Kern solid and clears its mirror on recovery', a
   await expect(page.locator('.game-example')).toHaveCount(3);
   await expect(widget).toHaveAttribute('data-blueprint-ready', 'true');
   await expect(widget).toHaveAttribute('data-blueprint-playing', 'false');
+  await expect(widget).toHaveAttribute('data-blueprint-full-height', 'true');
   await expect(mirror.locator('[data-character-art="kern-decoy"]')).toHaveCount(1);
   await timeline.evaluate((element) => {
     element.value = '3000';
@@ -236,14 +237,7 @@ test('decoy keeps only the real Kern solid and clears its mirror on recovery', a
     'transform',
     'translate(190 425) scale(1)',
   );
-  await expect(widget.locator('[data-blueprint-primitive="5"] circle')).toHaveAttribute(
-    'stroke-dasharray',
-    '20 14',
-  );
-  await expect(widget.locator('[data-blueprint-primitive="6"] path')).toHaveAttribute(
-    'stroke-dasharray',
-    '8 9',
-  );
+  await expect(widget.locator('[data-blueprint-primitive]')).toHaveCount(3);
   await timeline.evaluate((element) => {
     element.value = '5900';
     element.dispatchEvent(new Event('input', { bubbles: true }));

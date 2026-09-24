@@ -802,9 +802,8 @@ test('decoy separates identity from contact, lets Tavi choose the real body, and
   assert.equal(action.decoy.x, 410);
   assert.equal(action.decoy.y, 425);
   assert.equal(action.decoy.opacity, 0.65);
-  assert.equal(action.primitives[4].dash, '');
-  assert.equal(action.primitives[5].dash, '20 14');
-  assert.equal(action.primitives[6].dash, '8 9');
+  assert.equal(action.primitives.length, 3);
+  assert.equal(action.primitives[2].radius, blueprintSpec(id).contactRadius);
   assert.equal(blueprintPointSafe(id, 3, action.boss), false);
   assert.equal(blueprintPointSafe(id, 3, action.decoy), true);
   assert.equal(action.playerSafe, true);

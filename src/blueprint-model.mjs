@@ -8641,9 +8641,7 @@ function primitivesFor(spec, frame) {
     ];
   }
   if (mode === 'decoy') {
-    const mirror = frame.decoy;
     const split = phase === 0 ? prepare : 1;
-    const decision = phase === 1 ? smooth((action - 0.3) / 0.45) : phase === 2 ? 1 - recover : 0;
     return [
       line(
         spec.boss[0],
@@ -8652,8 +8650,7 @@ function primitivesFor(spec, frame) {
         spec.real[1],
         phase === 0 ? 0.3 + prepare * 0.38 : 0,
         'accent',
-        5,
-        '11 12',
+        3,
       ),
       line(
         spec.boss[0],
@@ -8662,8 +8659,7 @@ function primitivesFor(spec, frame) {
         spec.mirror[1],
         phase === 0 ? 0.3 + prepare * 0.38 : 0,
         'signal',
-        5,
-        '11 12',
+        3,
       ),
       circle(
         boss.x,
@@ -8671,27 +8667,9 @@ function primitivesFor(spec, frame) {
         spec.contactRadius,
         phase === 1 ? 0.48 : 0.14 * split,
         'signal',
-        5,
+        3,
         0.12,
       ),
-      circle(boss.x, boss.y, 70, phase === 1 ? 0.76 : 0.24 * split, 'accent', 6),
-      path(
-        `M ${boss.x - 17} ${boss.y + 62} L ${boss.x} ${boss.y + 78} L ${boss.x + 17} ${boss.y + 62}`,
-        phase === 1 ? 0.88 : 0.26 * split,
-        'accent',
-        5,
-      ),
-      circle(mirror.x, mirror.y, 70, mirror.opacity * 0.75, 'muted', 5, 0, '20 14'),
-      path(
-        `M ${mirror.x - 17} ${mirror.y + 62} L ${mirror.x - 4} ${mirror.y + 73} M ${mirror.x + 4} ${mirror.y + 73} L ${mirror.x + 17} ${mirror.y + 62}`,
-        mirror.opacity * 0.85,
-        'muted',
-        5,
-        0,
-        '8 9',
-      ),
-      line(player.x, player.y - 22, boss.x + 35, boss.y + 45, decision * 0.7, 'safe', 6, '10 9'),
-      circle(boss.x + 35, boss.y + 45, 23, decision * 0.8, 'safe', 5),
     ];
   }
   if (mode === 'predictive-aim') {
