@@ -1,0 +1,134 @@
+{
+  "title": "रन इतिहास का साकार होना",
+  "subtitle": "पहले के फैसलों को बॉस मुठभेड़ में वास्तविक रूप दें",
+  "variant": "संस्करण वाला जर्नल · प्रवेश स्नैपशॉट · निश्चित मैनिफेस्ट · स्थिर पुनः प्रयास",
+  "summary": "मुठभेड़ बॉस से पहले जमा चुने फैसलों को दुश्मन, साथी, हमले या नियमों के स्थिर समूह में बदलती है।",
+  "overview": "यह मैकेनिक प्रवेश पर पिछले फैसलों का स्पष्ट जर्नल पढ़कर निश्चित combat manifest बनाता है। हराया शत्रु echo बन सकता है, बचाया साथी सहायता दे सकता है और ली गई relic बॉस बदल सकती है। वही snapshot retry में स्थिर रहता है ताकि नतीजा समझ आए, मनमाना न लगे।",
+  "learning": "योग्य history keys, मालिक और version, entry boundary, mapping table, conflict priority, manifestId, retry policy, save migration, co-op authority, disclosure, fallback, duplicate guards और telemetry तय करें।",
+  "category": "स्थितियाँ, संसाधन और स्केलिंग",
+  "readTime": "10 मिनट",
+  "demo": {
+    "title": "तावी का रास्ता तय करे कि कर्न की memory vault में क्या इंतजार करता है",
+    "timeline": "इतिहास से मुठभेड़ समयरेखा",
+    "step": "जर्नल, स्नैपशॉट, साकार रूप, स्थिर retry",
+    "phaseNames": ["जमा इतिहास दिखाएँ", "मुठभेड़ manifest साकार करें", "retry निश्चित रखें"],
+    "phaseDescriptions": [
+      "तीन जर्नल रूण बताते हैं कि तावी ने प्रहरी हराया, मार्गदर्शक बचाया और relic ली। 1.15 सेकंड पर सीमा पार करना इन versioned facts को एक बार पकड़कर manifestId देता है।",
+      "Mapping युद्ध बनती है: प्रहरी hostile echo, मार्गदर्शक protective ward और कर्न की वापस ली relic radial attack बनते हैं। कारण रेखाएँ हर रूप को उसके रूण से जोड़ती हैं।",
+      "4.55 सेकंड पर retry live world को फिर नहीं पढ़ता। वही manifestId, echo, ward और relic बने रहते हैं; केवल नया प्रवेश या स्पष्ट migration रचना बदल सकता है।"
+    ],
+    "boss": "बॉस",
+    "player": "खिलाड़ी",
+    "danger": "बिना version वाले global flags, छिपी skill estimate, बीच युद्ध resampling या विरोधी mappings नतीजे को random बनाते और saves या retries बिगाड़ते हैं",
+    "locked": "History schema, authority, entry snapshot, priority, manifestId, composition, attempt lifetime, save migration और co-op owner encounter logic के हैं",
+    "safe": "संबंधित इतिहास दिखाएँ, एक बार capture करें, हर कारण को एक combat element बनाएँ और पूरे प्रयास में manifest स्थिर रखें",
+    "reducedMotion": "कम गति में autoplay बंद है। 0.30, 0.90, 1.15, 1.55, 1.85, 2.25, 2.55, 2.85, 3.18, 3.45, 3.72, 4.55, 4.95 और 5.35 सेकंड देखें।",
+    "diagramDescription": "तीन route-history रूण entry पर capture होकर hostile echo, friendly ward और relic attack बनते हैं, जो retry पर नहीं बदलते।"
+  },
+  "steps": [
+    {
+      "title": "पहले के कौन-से फैसले मायने रखें?",
+      "body": "कम authored durable facts चुनें: हराए या छोड़े पात्र, बचाए factions, ली relics, नष्ट objectives, vows या route counters। हर key का owner, type, version, default और provenance रखें; arbitrary save variables या असंबंधित व्यवहार से moral score न निकालें।"
+    },
+    {
+      "title": "इतिहास encounter structure कैसे बने?",
+      "body": "हर fact को सीमित enemy, ally, attack package, arena rule, phase या resolution option से map करें। conflicts की priority तय करें, budget और geometry जाँचें और combat से पहले inspectable manifestId बनाएँ।"
+    },
+    {
+      "title": "Manifest कब बदल सकता है?",
+      "body": "Named entry boundary पर capture करके death, restart, checkpoint, pause और rollback में रखें। केवल explicit world return या documented migration पर rebuild करें। Co-op में तय करें किसका history authoritative है।"
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "Encounter छिपकर performance grade करता है",
+      "body": "Hidden deaths, accuracy या damage इस्तेमाल करना adaptive difficulty है। महत्वपूर्ण फैसले बताएँ और identical journals से identical manifests बनाएँ।"
+    },
+    {
+      "title": "Retry चुपचाप दूसरी fight बनाता है",
+      "body": "Death के बाद scripts, random choice, party या cloud दोबारा पढ़ने से encounter सीखा नहीं जा सकता। Entry snapshot रखें और deliberate recomposition को visible transition बनाएँ।"
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "सिर्फ संख्या नहीं, verbs बदलें",
+      "body": "याद रखा ally lane रोक सकता है, पुराना victim पहचाना attack दोहरा सकता है और relic नया response जोड़ सकती है। यह अनजाने health multiplier से अधिक स्पष्ट और route-specific है।"
+    },
+    {
+      "title": "हर reachable combination budget करें",
+      "body": "Manifests enumerate करें या slots और priority से सीमित करें। Spawn space, simultaneous threats, camera, accessibility, dialogue, loot, achievements, skips, speedruns, sequence breaks और no optional facts case जाँचें।"
+    },
+    {
+      "title": "Mapping boundary मापें",
+      "body": "History version, keys, provenance, values, manifestId, conflicts, enemies, allies, modifiers, entries, retries, checkpoint, migration, co-op owner, completion, manifestation deaths, abandons और duplicate captures record करें।"
+    }
+  ],
+  "story": {
+    "title": "कर्न की vault तावी का रास्ता याद रखती है",
+    "body": "बंद फर्श के ऊपर तीन रूण पुराना route रखते हैं। सीमा बंद होते ही गिरा प्रहरी echo, बचाया guide ward और relic कर्न की छाती में जागती है। हार के बाद वही निशान उन्हीं जगहों पर जलते हैं।"
+  },
+  "adaptation": {
+    "title": "नतीजे से पहले कारण दिखाएँ",
+    "body": "Journal entries को अलग icon, color, sound label और text alternative से preview कर manifestations पर वही identifiers दोहराएँ। Route summary, stable retry, कम simultaneous variants, no-history fallback और irreversible choice warnings दें।"
+  },
+  "distinction": {
+    "title": "Route snapshot, persistent progress या loadout copy नहीं",
+    "body": "Persistent progress attempts में objectives रखता है। Loadout mirror current gear copy करता है। यहाँ entry से पहले के facts authored composition बनाते हैं; saves और retries में deterministic mapping मुख्य समस्या है।"
+  },
+  "lensNotes": [
+    {
+      "id": "context-and-sequence",
+      "body": "Encounter लंबे route का एक कदम है; पहले के फैसले named entry boundary पर current combat elements बनते हैं।"
+    },
+    {
+      "id": "player-expression",
+      "body": "Composition खिलाड़ी का authored route दिखाती है, अतीत को एक moral या skill score में नहीं घटाती।"
+    },
+    {
+      "id": "progress-clarity",
+      "body": "Journal keys, capture feedback, causal identifiers और stable manifestId बताते हैं कि यह version क्यों है।"
+    },
+    {
+      "id": "risk-reward",
+      "body": "पुराने फैसले support दे सकते, hostile echoes जोड़ सकते, options बंद कर सकते या boss पर advantages बदल सकते हैं।"
+    },
+    {
+      "id": "rule-exception",
+      "body": "Missing saves, old schemas, conflicts, sequence breaks, New Game Plus, guests, rollback और retries को explicit deterministic fallbacks चाहिए।"
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "Undertale",
+      "boss": "Sans",
+      "screenshot": "https://i.ytimg.com/vi/Vr4IYjeplJA/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=Vr4IYjeplJA&t=1s",
+      "video": "https://www.youtube.com/watch?v=Vr4IYjeplJA&t=1s",
+      "videoDurationSeconds": 888,
+      "body": "Sans तभी final boss बनता है जब area kill requirements और mandatory defeats Genocide state रखते हैं। Encounter का अस्तित्व और कठोर rules run ledger को सीधे दिखाते हैं।"
+    },
+    {
+      "dimension": "3D",
+      "game": "Metal Gear Solid 3: Snake Eater",
+      "boss": "The Sorrow",
+      "screenshot": "https://i.ytimg.com/vi/kAMVNrgDEPE/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=kAMVNrgDEPE&t=18s",
+      "video": "https://www.youtube.com/watch?v=kAMVNrgDEPE&t=18s",
+      "videoDurationSeconds": 595,
+      "body": "नदी में Snake द्वारा पहले मारे लोगों के ghosts आते हैं, इसलिए lethal route लंबा और घना encounter बनाता है। पुराने acts abstract penalty नहीं, पहचाने hazards बनते हैं।"
+    },
+    {
+      "dimension": "3D",
+      "game": "Dragon Age: Origins",
+      "boss": "Archdemon Urthemiel",
+      "screenshot": "https://i.ytimg.com/vi/-A9o6BlJJOY/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=-A9o6BlJJOY&t=1s",
+      "video": "https://www.youtube.com/watch?v=-A9o6BlJJOY&t=1s",
+      "videoDurationSeconds": 172,
+      "body": "Final battle faction decisions से जुटी armies और named allies देता है जिन्हें Archdemon तक के assault में खर्च किया जा सकता है। Recruitment history tactical resource बनती है।"
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

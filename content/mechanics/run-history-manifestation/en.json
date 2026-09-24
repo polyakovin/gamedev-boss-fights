@@ -1,0 +1,138 @@
+{
+  "title": "Run-history manifestation",
+  "subtitle": "Make earlier decisions materially present in the boss encounter",
+  "variant": "Versioned journal · entry snapshot · deterministic manifest · stable retries",
+  "summary": "The encounter turns selected decisions accumulated before the boss into a stable set of enemies, allies, attacks, or rules.",
+  "overview": "Run-history manifestation reads an explicit journal of prior decisions at encounter entry and builds a deterministic combat manifest. A defeated foe may return as an echo, a rescued ally may become support, or a claimed relic may alter the boss. The same snapshot stays fixed through retries so consequence is legible rather than arbitrary.",
+  "learning": "Define the eligible history keys, ownership and version, entry boundary, mapping table, conflict priority, manifest id, retry policy, save migration, co-op authority, disclosure, fallback state, duplicate-event guards, and telemetry.",
+  "category": "States, resources, and scaling",
+  "readTime": "10 min",
+  "demo": {
+    "title": "Let Tavi’s route determine what waits inside Kern’s memory vault",
+    "timeline": "History-to-encounter timeline",
+    "step": "Journal, snapshot, manifestation, stable retry",
+    "phaseNames": [
+      "Show the accumulated history",
+      "Materialize the encounter manifest",
+      "Keep retries deterministic"
+    ],
+    "phaseDescriptions": [
+      "Three readable journal runes record that Tavi defeated a sentinel, rescued a guide, and claimed a relic. At 1.15 seconds, crossing the vault boundary captures those versioned facts once and assigns one manifest id.",
+      "The mapping becomes combat: the defeated sentinel returns as a hostile echo, the rescued guide creates a protective ward, and Kern’s reclaimed relic adds a radial attack. Each manifestation keeps a visible causal line back to its journal rune.",
+      "At 4.55 seconds, the attempt resets without reading live world state again. The same manifest id, echo, ward, and relic package remain present; only a new encounter entry or an explicit migration may produce a different composition."
+    ],
+    "boss": "Boss",
+    "player": "Player",
+    "danger": "Unversioned global flags, hidden skill estimates, mid-fight resampling, or contradictory mappings make consequences feel random and can corrupt saves or retries",
+    "locked": "The history schema, source authority, entry snapshot, mapping priority, manifest id, encounter composition, retry lifetime, save migration, and co-op ownership belong to encounter logic",
+    "safe": "Expose relevant history, capture it once, show each cause becoming one combat element, and keep the resulting manifest stable for the whole attempt",
+    "reducedMotion": "Autoplay is disabled by reduced motion. Scrub across 0.30, 0.90, 1.15, 1.55, 1.85, 2.25, 2.55, 2.85, 3.18, 3.45, 3.72, 4.55, 4.95, and 5.35 seconds.",
+    "diagramDescription": "Three route-history runes are captured at the arena threshold, then materialize as a hostile echo, a friendly ward, and a relic attack that remain unchanged on retry."
+  },
+  "steps": [
+    {
+      "title": "Which earlier decisions are allowed to matter?",
+      "body": "Choose a small authored set of durable facts—defeated or spared characters, rescued factions, claimed relics, destroyed objectives, vows, or route counters. Give every key an owner, type, version, default, and provenance; do not expose arbitrary save variables or infer a moral score from unrelated behavior."
+    },
+    {
+      "title": "How does history become encounter structure?",
+      "body": "Map each eligible fact to a bounded enemy, ally, attack package, arena rule, phase, or resolution option. Define priority when facts conflict, validate the full composition against budget and geometry, and produce one inspectable manifest id before combat starts."
+    },
+    {
+      "title": "When may the manifest change?",
+      "body": "Capture at a named entry boundary and keep that snapshot through death, restart, checkpoint reload, pause, and rollback. Rebuild only after an explicit return to world state or a documented save migration. In co-op, name whose history is authoritative and what guests are allowed to contribute."
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "The encounter secretly grades performance",
+      "body": "Replacing authored route facts with hidden deaths, accuracy, or damage makes the system adaptive difficulty, not historical consequence. State which decisions matter and ensure identical journals produce identical manifests."
+    },
+    {
+      "title": "A retry silently produces a different fight",
+      "body": "If world scripts, random selection, party changes, or cloud synchronization are read again after death, players cannot learn the encounter they just saw. Persist the entry snapshot and make any deliberate recomposition a visible transition."
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "Let consequences change verbs, not only numbers",
+      "body": "A remembered ally can block a lane, an old victim can repeat a recognizable attack, and a claimed relic can add a new response. These are more legible than an unexplained health multiplier and create encounter texture that belongs to the player’s route."
+    },
+    {
+      "title": "Budget every reachable combination",
+      "body": "Enumerate valid manifests or constrain them with slots and priorities. Check spawn space, simultaneous threats, camera load, accessibility, dialogue, loot, achievements, skips, speedrun routes, sequence breaks, and the case where every optional fact is absent."
+    },
+    {
+      "title": "Instrument the mapping boundary",
+      "body": "Record history version, eligible keys, provenance, captured values, manifest id, rejected conflicts, enemies, allies, modifiers, entry and retry counts, checkpoint source, migration path, co-op owner, completion, deaths by manifestation, abandoned attempts, and duplicate captures."
+    }
+  ],
+  "story": {
+    "title": "Kern’s vault remembers the road Tavi took",
+    "body": "Above the sealed floor, three runes hold Tavi’s earlier route. When the threshold closes, one fallen sentinel condenses into an echo, a rescued guide answers with a ward, and a claimed relic wakes in Kern’s chest. After defeat, the same three marks relight in the same places."
+  },
+  "adaptation": {
+    "title": "Show cause before consequence",
+    "body": "Preview the relevant journal entries with distinct icons, colors, sound labels, and a text alternative; then repeat those identifiers on their manifestations. Offer a route summary, a stable retry composition, reduced simultaneous variants, a no-history fallback, and warnings before irreversible choices."
+  },
+  "distinction": {
+    "title": "A route snapshot, not persistent progress or loadout copying",
+    "body": "Persistent progress preserves encounter objectives across attempts. Loadout mirror copies what the player has equipped now. Run-history manifestation reads selected facts accumulated before entry and turns them into the encounter’s authored composition; its defining problem is deterministic mapping across saves and retries."
+  },
+  "lensNotes": [
+    {
+      "id": "context-and-sequence",
+      "body": "The encounter is one step in a longer route: earlier decisions become current combat elements at a named entry boundary."
+    },
+    {
+      "id": "player-expression",
+      "body": "The resulting composition reflects the player’s authored route without reducing all past behavior to a single moral or skill score."
+    },
+    {
+      "id": "progress-clarity",
+      "body": "Journal keys, capture feedback, causal identifiers, and a stable manifest help players understand why this version of the fight exists."
+    },
+    {
+      "id": "risk-reward",
+      "body": "Earlier choices may grant support, add hostile echoes, remove options, or exchange one advantage for another when the boss is reached."
+    },
+    {
+      "id": "rule-exception",
+      "body": "Missing saves, old schema versions, conflicting flags, sequence breaks, New Game Plus, co-op guests, rollback, and retries all need explicit deterministic fallbacks."
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "Undertale",
+      "boss": "Sans",
+      "screenshot": "https://i.ytimg.com/vi/Vr4IYjeplJA/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=Vr4IYjeplJA&t=1s",
+      "video": "https://www.youtube.com/watch?v=Vr4IYjeplJA&t=1s",
+      "videoDurationSeconds": 888,
+      "body": "Sans becomes the route’s final boss only when the area kill requirements and mandatory defeats preserve the Genocide state. The encounter’s existence and unusually punitive rule set are a direct manifestation of the run ledger rather than a generic late-game difficulty bump."
+    },
+    {
+      "dimension": "3D",
+      "game": "Metal Gear Solid 3: Snake Eater",
+      "boss": "The Sorrow",
+      "screenshot": "https://i.ytimg.com/vi/kAMVNrgDEPE/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=kAMVNrgDEPE&t=18s",
+      "video": "https://www.youtube.com/watch?v=kAMVNrgDEPE&t=18s",
+      "videoDurationSeconds": 595,
+      "body": "The river fills with ghostly representations of people Snake killed earlier, so a lethal route creates a longer and denser encounter than a nonlethal one. Individual prior acts become identifiable hazards instead of an abstract penalty."
+    },
+    {
+      "dimension": "3D",
+      "game": "Dragon Age: Origins",
+      "boss": "Archdemon Urthemiel",
+      "screenshot": "https://i.ytimg.com/vi/-A9o6BlJJOY/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=-A9o6BlJJOY&t=1s",
+      "video": "https://www.youtube.com/watch?v=-A9o6BlJJOY&t=1s",
+      "videoDurationSeconds": 172,
+      "body": "The final battle exposes support armies and named allies assembled through earlier faction choices, and those forces can be spent during the assault that ends at the Archdemon. Recruitment history therefore becomes a tactical resource inside the boss sequence."
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

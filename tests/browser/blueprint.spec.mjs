@@ -408,9 +408,9 @@ test('volley releases three parallel bolts on one beat and clears its outside ro
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
 });
 
-test('catalog and builder reuse the 98 promoted rule-specific previews', async ({ page }) => {
+test('catalog and builder reuse the 99 promoted rule-specific previews', async ({ page }) => {
   await page.goto('en/');
-  await expect(page.locator('[data-blueprint-preview]')).toHaveCount(98);
+  await expect(page.locator('[data-blueprint-preview]')).toHaveCount(99);
   const catalogLayouts = await page.locator('[data-blueprint-preview]').evaluateAll((previews) =>
     previews.map((preview) => {
       const boss = preview.querySelector('[data-character-art-preview="kern"]');
@@ -434,7 +434,7 @@ test('catalog and builder reuse the 98 promoted rule-specific previews', async (
   expect(new Set(catalogLayouts.map(({ layout }) => layout)).size).toBeGreaterThanOrEqual(18);
 
   await page.goto('en/builder/');
-  await expect(page.locator('[data-blueprint-preview]')).toHaveCount(98);
+  await expect(page.locator('[data-blueprint-preview]')).toHaveCount(99);
   const builderLayouts = await page.locator('[data-blueprint-preview]').evaluateAll((previews) =>
     previews.map((preview) => {
       const boss = preview.querySelector('[data-character-art-preview="kern"]');
@@ -4143,6 +4143,94 @@ test('action-reactive punish locks one response and preserves the committed reco
     'boss-busy',
   );
   await expect(widget).toHaveAttribute('data-blueprint-action-reactive-punish-response-count', '1');
+  await page.setViewportSize({ width: 375, height: 812 });
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+});
+
+test('run-history manifestation keeps one captured journal stable through retry', async ({
+  page,
+}) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.goto('en/mechanics/run-history-manifestation/');
+  const widget = page.locator('[data-blueprint-demo]');
+  const timeline = widget.locator('[data-blueprint-timeline]');
+  const seek = (milliseconds) =>
+    timeline.evaluate((element, value) => {
+      element.value = String(value);
+      element.dispatchEvent(new Event('input', { bubbles: true }));
+    }, milliseconds);
+
+  await expect(page.locator('.lesson-title-line h1')).toHaveText('Run-history manifestation');
+  await expect(page.locator('.wip-badge, .draft-profile')).toHaveCount(0);
+  await expect(page.locator('.game-example')).toHaveCount(3);
+  await expect(page.locator('.lens-chip')).toHaveCount(5);
+  await seek(1550);
+  await expect(widget).toHaveAttribute(
+    'data-blueprint-run-history-manifestation',
+    'manifest-captured',
+  );
+  await expect(widget).toHaveAttribute('data-blueprint-run-history-manifestation-captured', 'true');
+  await expect(widget).toHaveAttribute(
+    'data-blueprint-run-history-manifestation-manifest-id',
+    'run-manifest-echo-ward-relic-1',
+  );
+  await expect(widget).toHaveAttribute(
+    'data-blueprint-run-history-manifestation-history-count',
+    '3',
+  );
+  await expect(widget).toHaveAttribute('data-blueprint-run-history-manifestation-echo-count', '1');
+  await expect(widget).toHaveAttribute(
+    'data-blueprint-run-history-manifestation-support-count',
+    '1',
+  );
+  await expect(widget).toHaveAttribute(
+    'data-blueprint-run-history-manifestation-modifier-count',
+    '1',
+  );
+  await expect(widget).toHaveAttribute(
+    'data-blueprint-run-history-manifestation-capture-events',
+    '1',
+  );
+  await expect(widget).toHaveAttribute(
+    'data-blueprint-run-history-manifestation-live-resnapshots',
+    '0',
+  );
+  await seek(2550);
+  await expect(widget).toHaveAttribute('data-blueprint-run-history-manifestation', 'echo-active');
+  await expect(widget).toHaveAttribute(
+    'data-blueprint-run-history-manifestation-echo-active',
+    'true',
+  );
+  await expect(widget).toHaveAttribute('data-blueprint-outcome', 'safe');
+  await seek(3450);
+  await expect(widget).toHaveAttribute('data-blueprint-run-history-manifestation', 'relic-active');
+  await expect(widget).toHaveAttribute(
+    'data-blueprint-run-history-manifestation-relic-active',
+    'true',
+  );
+  await expect(widget).toHaveAttribute(
+    'data-blueprint-run-history-manifestation-ward-protecting',
+    'true',
+  );
+  await expect(widget).toHaveAttribute('data-blueprint-outcome', 'safe');
+  await seek(4950);
+  await expect(widget).toHaveAttribute('data-blueprint-run-history-manifestation', 'retry-stable');
+  await expect(widget).toHaveAttribute(
+    'data-blueprint-run-history-manifestation-retry-stable',
+    'true',
+  );
+  await expect(widget).toHaveAttribute(
+    'data-blueprint-run-history-manifestation-manifest-unchanged',
+    'true',
+  );
+  await expect(widget).toHaveAttribute(
+    'data-blueprint-run-history-manifestation-manifest-id',
+    'run-manifest-echo-ward-relic-1',
+  );
+  await expect(widget).toHaveAttribute(
+    'data-blueprint-run-history-manifestation-live-resnapshots',
+    '0',
+  );
   await page.setViewportSize({ width: 375, height: 812 });
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
 });

@@ -1551,6 +1551,39 @@ const SPECS = {
     actionId: 'heal-1',
     responseId: 'action-response-1',
   },
+  'run-history-manifestation': {
+    mode: 'run-history-manifestation',
+    boss: [300, 390],
+    player: [405, 700],
+    target: [470, 700],
+    arena: [55, 310, 450, 590],
+    historyMarkers: [
+      [120, 170],
+      [280, 170],
+      [440, 170],
+    ],
+    entryGate: [280, 274],
+    echo: [135, 535],
+    ward: [465, 700],
+    relic: [300, 408],
+    capturedAt: 1.15,
+    materialize: [1.15, 1.85],
+    echoSignal: [1.85, 2.25],
+    echoFlight: [2.25, 2.85],
+    echoTarget: [405, 700],
+    playerMove: [2.12, 2.62],
+    relicSignal: [2.7, 3.18],
+    relicActive: [3.18, 3.72],
+    opening: [3.72, 4.55],
+    retry: [4.55, 5.35],
+    resetAt: 5.35,
+    projectileRadius: 22,
+    relicRadius: 205,
+    wardRadius: 72,
+    encounterId: 'kern-memory-vault-1',
+    entryId: 'vault-entry-1',
+    manifestId: 'run-manifest-echo-ward-relic-1',
+  },
   'wide-swing': { mode: 'arc', boss: [280, 310], player: [410, 470], target: [470, 650] },
   lunge: { mode: 'lunge', boss: [170, 290], player: [390, 590], target: [470, 660] },
   grab: { mode: 'grab', boss: [280, 300], player: [390, 485], target: [470, 610] },
@@ -3114,6 +3147,55 @@ export function actionReactivePunishResolve({
     rejectionReason,
     eventCount: accepted ? 1 : 0,
     eligibleActionTypes: Object.freeze(eligible),
+  });
+}
+
+export function runHistoryManifestationState(time) {
+  const spec = SPECS['run-history-manifestation'];
+  const t = localTime(time);
+  if (t < spec.capturedAt) return 'history-visible';
+  if (t < spec.materialize[1]) return 'manifest-captured';
+  if (t < spec.echoFlight[0]) return 'echo-signaled';
+  if (t < spec.echoFlight[1]) return 'echo-active';
+  if (t < spec.relicActive[0]) return 'relic-signaled';
+  if (t < spec.relicActive[1]) return 'relic-active';
+  if (t < spec.opening[1]) return 'history-opening';
+  if (t < spec.retry[1]) return 'retry-stable';
+  return 'reset';
+}
+
+export function runHistoryManifestationResolve({
+  encounterId = 'kern-memory-vault-1',
+  entryId = 'vault-entry-1',
+  historyVersion = 1,
+  history = {
+    defeatedSentinel: true,
+    rescuedGuide: true,
+    claimedRelic: true,
+  },
+  alreadyCaptured = false,
+} = {}) {
+  const normalizedHistory = Object.freeze({
+    defeatedSentinel: Boolean(history?.defeatedSentinel),
+    rescuedGuide: Boolean(history?.rescuedGuide),
+    claimedRelic: Boolean(history?.claimedRelic),
+  });
+  const tokens = [
+    normalizedHistory.defeatedSentinel ? 'echo' : 'no-echo',
+    normalizedHistory.rescuedGuide ? 'ward' : 'no-ward',
+    normalizedHistory.claimedRelic ? 'relic' : 'no-relic',
+  ];
+  return Object.freeze({
+    encounterId: String(encounterId),
+    entryId: String(entryId),
+    historyVersion: Math.max(1, Math.trunc(Number(historyVersion) || 1)),
+    history: normalizedHistory,
+    manifestId: `run-manifest-${tokens.join('-')}-1`,
+    hostileEchoIds: Object.freeze(normalizedHistory.defeatedSentinel ? ['sentinel-echo-1'] : []),
+    supportIds: Object.freeze(normalizedHistory.rescuedGuide ? ['guide-ward-1'] : []),
+    bossModifierIds: Object.freeze(normalizedHistory.claimedRelic ? ['relic-ring-1'] : []),
+    accepted: !alreadyCaptured,
+    eventCount: alreadyCaptured ? 0 : 1,
   });
 }
 
@@ -7919,6 +8001,202 @@ function primitivesFor(spec, frame) {
       ),
     ];
   }
+  if (mode === 'run-history-manifestation') {
+    const materializeProgress = clamp(
+      (frame.time - spec.materialize[0]) / (spec.materialize[1] - spec.materialize[0]),
+    );
+    const echoSignalProgress = clamp(
+      (frame.time - spec.echoSignal[0]) / (spec.echoSignal[1] - spec.echoSignal[0]),
+    );
+    const relicSignalProgress = clamp(
+      (frame.time - spec.relicSignal[0]) / (spec.relicSignal[1] - spec.relicSignal[0]),
+    );
+    const relicProgress = clamp(
+      (frame.time - spec.relicActive[0]) / (spec.relicActive[1] - spec.relicActive[0]),
+    );
+    const retryProgress = clamp((frame.time - spec.retry[0]) / (spec.retry[1] - spec.retry[0]));
+    const projectile = frame.runHistoryManifestationProjectile;
+    const historyVisible = frame.time < spec.retry[1];
+    const manifestationsVisible = frame.time >= spec.materialize[0] && frame.time < spec.retry[1];
+    const markerTones = ['accent', 'safe', 'signal'];
+    return [
+      rect(...spec.arena, 0.52, 'muted', 0.025),
+      path(
+        'M 70 742 L 176 716 L 280 744 L 386 716 L 490 742 V 775 L 386 746 L 280 776 L 176 746 L 70 775 Z M 88 839 L 280 807 L 472 839 V 857 L 280 826 L 88 857 Z',
+        0.54,
+        'muted',
+        0,
+        0.5,
+      ),
+      line(90, 240, 470, 240, historyVisible ? 0.46 : 0, 'muted', 5, '10 9'),
+      ...spec.historyMarkers.flatMap(([x, y], index) => [
+        circle(
+          x,
+          y,
+          43,
+          historyVisible ? 0.92 - retryProgress * 0.35 : 0,
+          markerTones[index],
+          7,
+          0.035,
+        ),
+        index === 0
+          ? path(
+              `M ${x - 19} ${y - 23} L ${x + 20} ${y + 22} M ${x + 20} ${y - 23} L ${x - 19} ${y + 22}`,
+              historyVisible ? 0.9 : 0,
+              markerTones[index],
+              7,
+            )
+          : index === 1
+            ? path(
+                `M ${x - 22} ${y} L ${x - 4} ${y + 18} L ${x + 25} ${y - 21}`,
+                historyVisible ? 0.94 : 0,
+                markerTones[index],
+                7,
+              )
+            : path(
+                `M ${x} ${y - 25} L ${x + 24} ${y} L ${x} ${y + 25} L ${x - 24} ${y} Z`,
+                historyVisible ? 0.94 : 0,
+                markerTones[index],
+                6,
+                0.06,
+              ),
+      ]),
+      ...spec.historyMarkers.map(([x, y], index) =>
+        line(
+          x,
+          y + 44,
+          spec.entryGate[0] + (index - 1) * 32,
+          spec.entryGate[1],
+          frame.runHistoryManifestationCaptured ? 0.72 : 0.2,
+          markerTones[index],
+          5,
+          '9 7',
+        ),
+      ),
+      circle(
+        spec.entryGate[0],
+        spec.entryGate[1],
+        31 + materializeProgress * 38,
+        frame.runHistoryManifestationCaptured ? 0.86 - materializeProgress * 0.28 : 0.28,
+        'signal',
+        8,
+        0.03,
+      ),
+      line(
+        spec.historyMarkers[0][0],
+        spec.historyMarkers[0][1],
+        spec.echo[0],
+        spec.echo[1],
+        frame.runHistoryManifestationCaptured ? 0.46 : 0,
+        'accent',
+        5,
+        '12 10',
+      ),
+      line(
+        spec.historyMarkers[1][0],
+        spec.historyMarkers[1][1],
+        spec.ward[0],
+        spec.ward[1],
+        frame.runHistoryManifestationCaptured ? 0.46 : 0,
+        'safe',
+        5,
+        '12 10',
+      ),
+      line(
+        spec.historyMarkers[2][0],
+        spec.historyMarkers[2][1],
+        spec.relic[0],
+        spec.relic[1],
+        frame.runHistoryManifestationCaptured ? 0.46 : 0,
+        'signal',
+        5,
+        '12 10',
+      ),
+      circle(
+        spec.echo[0],
+        spec.echo[1],
+        42 + echoSignalProgress * 18,
+        manifestationsVisible ? 0.72 + echoSignalProgress * 0.22 : 0,
+        'accent',
+        7,
+        0.08,
+      ),
+      path(
+        `M ${spec.echo[0] - 25} ${spec.echo[1] - 18} L ${spec.echo[0] + 25} ${spec.echo[1] + 18} M ${spec.echo[0] + 25} ${spec.echo[1] - 18} L ${spec.echo[0] - 25} ${spec.echo[1] + 18}`,
+        manifestationsVisible ? 0.9 : 0,
+        'accent',
+        7,
+      ),
+      line(
+        spec.echo[0],
+        spec.echo[1],
+        projectile.x,
+        projectile.y,
+        frame.runHistoryManifestationEchoActive ? 0.64 : 0,
+        'accent',
+        7,
+      ),
+      circle(
+        projectile.x,
+        projectile.y,
+        spec.projectileRadius,
+        frame.runHistoryManifestationEchoActive ? 0.98 : 0,
+        'accent',
+        6,
+        0.2,
+      ),
+      circle(
+        spec.ward[0],
+        spec.ward[1],
+        spec.wardRadius,
+        manifestationsVisible ? 0.9 : 0,
+        'safe',
+        9,
+        0.025,
+        '12 8',
+      ),
+      path(
+        `M ${spec.ward[0] - 25} ${spec.ward[1]} L ${spec.ward[0] - 6} ${spec.ward[1] + 20} L ${spec.ward[0] + 29} ${spec.ward[1] - 28}`,
+        manifestationsVisible ? 0.94 : 0,
+        'safe',
+        8,
+      ),
+      circle(
+        spec.relic[0],
+        spec.relic[1],
+        31 + relicSignalProgress * 29,
+        manifestationsVisible ? 0.42 + relicSignalProgress * 0.48 : 0,
+        'signal',
+        7,
+        0.1,
+      ),
+      path(
+        `M ${spec.relic[0]} ${spec.relic[1] - 24} L ${spec.relic[0] + 22} ${spec.relic[1]} L ${spec.relic[0]} ${spec.relic[1] + 24} L ${spec.relic[0] - 22} ${spec.relic[1]} Z`,
+        manifestationsVisible ? 0.92 : 0,
+        'signal',
+        6,
+        0.08,
+      ),
+      circle(
+        frame.boss.x,
+        frame.boss.y + 18,
+        spec.relicRadius + relicProgress * 42,
+        frame.runHistoryManifestationRelicActive ? 0.94 - relicProgress * 0.3 : 0,
+        'signal',
+        12,
+        0.02,
+      ),
+      circle(
+        spec.ward[0],
+        spec.ward[1],
+        spec.wardRadius + 25 * pulse(frame.time * 1.7),
+        frame.runHistoryManifestationWardProtecting ? 0.48 : 0,
+        'safe',
+        7,
+        0.02,
+      ),
+    ];
+  }
   if (mode === 'encounter-specific-tool') {
     const pedestal = point(spec.pedestal);
     const spearBase = { x: frame.player.x + 20, y: frame.player.y - 10 };
@@ -9485,6 +9763,25 @@ function pointClearsThreat(spec, frame, value, radius = BLUEPRINT_PLAYER_RADIUS)
       ) >
         spec.projectileRadius + radius
     );
+  if (mode === 'run-history-manifestation') {
+    const inWard =
+      Math.hypot(value.x - spec.ward[0], value.y - spec.ward[1]) <= spec.wardRadius - radius;
+    if (inWard) return true;
+    if (frame.runHistoryManifestationEchoActive)
+      return (
+        Math.hypot(
+          value.x - frame.runHistoryManifestationProjectile.x,
+          value.y - frame.runHistoryManifestationProjectile.y,
+        ) >
+        spec.projectileRadius + radius
+      );
+    if (frame.runHistoryManifestationRelicActive)
+      return (
+        Math.abs(Math.hypot(value.x - frame.boss.x, value.y - frame.boss.y) - spec.relicRadius) >
+        12 + radius
+      );
+    return true;
+  }
   if (mode === 'projectile-rally')
     return (
       !frame.dangerActive ||
@@ -9879,6 +10176,7 @@ export function blueprintFrame(id, time) {
   else if (spec.mode === 'ally-theft') responseProgress = 0;
   else if (spec.mode === 'false-death') responseProgress = 0;
   else if (spec.mode === 'action-reactive-punish') responseProgress = 0;
+  else if (spec.mode === 'run-history-manifestation') responseProgress = 0;
   else if (spec.mode === 'knockback')
     responseProgress = phase === 0 ? 0 : phase === 1 ? smooth(action) : 1;
   else if (spec.mode === 'target-lock')
@@ -11365,6 +11663,20 @@ export function blueprintFrame(id, time) {
     };
     stride = Math.max(pulse(dodge), pulse(returning), pulse(reset));
   }
+  if (spec.mode === 'run-history-manifestation') {
+    const move = smooth((t - spec.playerMove[0]) / (spec.playerMove[1] - spec.playerMove[0]));
+    const reset = smooth((t - spec.resetAt) / (BLUEPRINT_DURATION - spec.resetAt));
+    const ward = point(spec.ward);
+    const protectedPlayer = {
+      x: mix(startPlayer.x, ward.x, move),
+      y: mix(startPlayer.y, ward.y, move),
+    };
+    player = {
+      x: mix(protectedPlayer.x, startPlayer.x, reset),
+      y: mix(protectedPlayer.y, startPlayer.y, reset),
+    };
+    stride = Math.max(pulse(move), pulse(reset));
+  }
   const bossVisible =
     spec.mode === 'secondary-cues-invisibility'
       ? t < spec.vanishAt
@@ -11642,7 +11954,8 @@ export function blueprintFrame(id, time) {
             spec.mode === 'moveset-shapeshifting' ||
             spec.mode === 'ally-theft' ||
             spec.mode === 'false-death' ||
-            spec.mode === 'action-reactive-punish'
+            spec.mode === 'action-reactive-punish' ||
+            spec.mode === 'run-history-manifestation'
           ? (Math.atan2(boss.y - player.y, boss.x - player.x) * 180) / Math.PI
           : spec.mode === 'active-phase'
             ? (Math.atan2(boss.y - player.y, boss.x - player.x) * 180) / Math.PI
@@ -13154,6 +13467,43 @@ export function blueprintFrame(id, time) {
     );
     frame.bossMotion.crouch = frame.actionReactivePunishSafeWindow ? 0.24 : 0;
   }
+  if (spec.mode === 'run-history-manifestation') {
+    const projectileProgress = clamp(
+      (t - spec.echoFlight[0]) / (spec.echoFlight[1] - spec.echoFlight[0]),
+    );
+    frame.runHistoryManifestationState = runHistoryManifestationState(t);
+    frame.runHistoryManifestationCaptured = t >= spec.capturedAt && t < spec.resetAt;
+    frame.runHistoryManifestationEncounterId = spec.encounterId;
+    frame.runHistoryManifestationEntryId = spec.entryId;
+    frame.runHistoryManifestationManifestId = frame.runHistoryManifestationCaptured
+      ? spec.manifestId
+      : 'none';
+    frame.runHistoryManifestationHistoryVersion = 1;
+    frame.runHistoryManifestationHistoryCount = 3;
+    frame.runHistoryManifestationEchoCount = frame.runHistoryManifestationCaptured ? 1 : 0;
+    frame.runHistoryManifestationSupportCount = frame.runHistoryManifestationCaptured ? 1 : 0;
+    frame.runHistoryManifestationModifierCount = frame.runHistoryManifestationCaptured ? 1 : 0;
+    frame.runHistoryManifestationCaptureEvents = frame.runHistoryManifestationCaptured ? 1 : 0;
+    frame.runHistoryManifestationLiveResnapshots = 0;
+    frame.runHistoryManifestationEchoActive = t >= spec.echoFlight[0] && t < spec.echoFlight[1];
+    frame.runHistoryManifestationProjectile = Object.freeze({
+      x: mix(spec.echo[0], spec.echoTarget[0], projectileProgress),
+      y: mix(spec.echo[1], spec.echoTarget[1], projectileProgress),
+    });
+    frame.runHistoryManifestationRelicActive = t >= spec.relicActive[0] && t < spec.relicActive[1];
+    frame.runHistoryManifestationWardProtecting = t >= spec.echoSignal[0] && t < spec.retry[1];
+    frame.runHistoryManifestationRetryStable = t >= spec.retry[0] && t < spec.retry[1];
+    frame.runHistoryManifestationManifestUnchanged = frame.runHistoryManifestationRetryStable;
+    frame.dangerActive =
+      frame.runHistoryManifestationEchoActive || frame.runHistoryManifestationRelicActive;
+    frame.playerMotion.dodge = strikePulse(t, spec.playerMove[0] + 0.28, 0.44);
+    frame.playerMotion.attack = 0;
+    frame.playerMotion.impact = 0;
+    frame.bossMotion.attack = Math.max(
+      strikePulse(t, spec.echoFlight[0], 0.36) * 0.25,
+      strikePulse(t, (spec.relicActive[0] + spec.relicActive[1]) / 2, 0.58),
+    );
+  }
   if (spec.mode === 'ability-lock') {
     frame.abilityLockState = abilityLockState(t);
     frame.abilityLockFirstAvoided = t >= spec.firstResolveAt && t < spec.secondTelegraph[0];
@@ -13496,7 +13846,8 @@ export function blueprintFrame(id, time) {
             spec.mode === 'moveset-shapeshifting' ||
             spec.mode === 'ally-theft' ||
             spec.mode === 'false-death' ||
-            spec.mode === 'action-reactive-punish'
+            spec.mode === 'action-reactive-punish' ||
+            spec.mode === 'run-history-manifestation'
           ? 92
           : -62),
   };

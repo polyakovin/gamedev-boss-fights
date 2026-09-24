@@ -1,0 +1,138 @@
+{
+  "title": "Manifestación del historial de la partida",
+  "subtitle": "Haz que las decisiones anteriores estén presentes en el encuentro",
+  "variant": "Diario versionado · captura de entrada · manifiesto determinista · reintentos estables",
+  "summary": "El encuentro convierte decisiones acumuladas antes del jefe en un conjunto estable de enemigos, aliados, ataques o reglas.",
+  "overview": "La mecánica lee un diario explícito al entrar y crea un manifiesto determinista. Un enemigo derrotado puede volver como eco, un aliado rescatado puede ayudar y una reliquia reclamada puede alterar al jefe. La misma captura se conserva entre intentos para que la consecuencia sea legible y no arbitraria.",
+  "learning": "Define claves válidas, autoridad y versión, frontera de entrada, tabla de mapeo, prioridad de conflictos, manifestId, política de reintento, migración, autoridad cooperativa, comunicación, alternativa segura, control de duplicados y telemetría.",
+  "category": "Estados, recursos y escalado",
+  "readTime": "10 min",
+  "demo": {
+    "title": "Deja que la ruta de Tavi determine qué espera en la bóveda de Kern",
+    "timeline": "Cronología de historial a encuentro",
+    "step": "Diario, captura, manifestación, reintento estable",
+    "phaseNames": [
+      "Mostrar el historial acumulado",
+      "Materializar el manifiesto",
+      "Mantener reintentos deterministas"
+    ],
+    "phaseDescriptions": [
+      "Tres runas registran que Tavi derrotó a un centinela, rescató a una guía y reclamó una reliquia. A los 1,15 segundos, cruzar el límite captura una vez esos hechos versionados y asigna un manifestId.",
+      "El mapeo se vuelve combate: el centinela regresa como eco hostil, la guía crea un escudo y la reliquia recuperada añade un ataque radial a Kern. Una línea causal conecta cada elemento con su runa.",
+      "A los 4,55 segundos el intento se reinicia sin volver a leer el mundo. Se conservan manifestId, eco, escudo y reliquia; solo una nueva entrada o migración explícita puede recomponer el encuentro."
+    ],
+    "boss": "Jefe",
+    "player": "Jugador",
+    "danger": "Indicadores globales sin versión, estimaciones ocultas de habilidad, remuestreo durante el combate o mapeos contradictorios hacen arbitrarias las consecuencias y dañan guardados o reintentos",
+    "locked": "Esquema, autoridad, captura de entrada, prioridades, manifestId, composición, vida del intento, migración y propiedad cooperativa pertenecen a la lógica del encuentro",
+    "safe": "Expón el historial relevante, captúralo una vez, muestra cada causa como elemento de combate y conserva el manifiesto durante todo el intento",
+    "reducedMotion": "Con movimiento reducido no hay reproducción automática. Recorre 0,30; 0,90; 1,15; 1,55; 1,85; 2,25; 2,55; 2,85; 3,18; 3,45; 3,72; 4,55; 4,95 y 5,35 segundos.",
+    "diagramDescription": "Tres runas de ruta se capturan en el umbral y se manifiestan como eco hostil, escudo aliado y ataque de reliquia que no cambian al reintentar."
+  },
+  "steps": [
+    {
+      "title": "¿Qué decisiones anteriores pueden importar?",
+      "body": "Elige pocos hechos duraderos y diseñados: personajes derrotados o perdonados, facciones rescatadas, reliquias, objetivos, juramentos o contadores de ruta. Da a cada clave dueño, tipo, versión, valor por defecto y procedencia; no leas variables arbitrarias ni deduzcas una puntuación moral."
+    },
+    {
+      "title": "¿Cómo se convierte el historial en estructura?",
+      "body": "Mapea cada hecho a un enemigo, aliado, paquete de ataques, regla de arena, fase u opción acotados. Define prioridades, valida presupuesto y geometría de todas las combinaciones y crea un manifestId inspeccionable antes del combate."
+    },
+    {
+      "title": "¿Cuándo puede cambiar el manifiesto?",
+      "body": "Captúralo en una frontera nombrada y mantenlo tras muerte, reinicio, punto de control, pausa y rollback. Reconstruye solo al volver explícitamente al mundo o migrar un guardado. En cooperativo, define qué historial manda y qué aportan los invitados."
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "El encuentro califica en secreto el rendimiento",
+      "body": "Usar muertes, precisión o daño ocultos crea dificultad adaptativa, no consecuencia histórica. Declara las decisiones relevantes y garantiza que diarios iguales produzcan manifiestos iguales."
+    },
+    {
+      "title": "Un reintento genera silenciosamente otra pelea",
+      "body": "Si tras morir se releen scripts, azar, grupo o nube, no se puede aprender el encuentro. Conserva la captura y presenta cualquier recomposición deliberada como transición visible."
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "Cambia verbos, no solo cifras",
+      "body": "Un aliado puede bloquear una línea, una víctima repetir un ataque reconocible y una reliquia añadir una respuesta. Se entienden mejor que un multiplicador oculto y pertenecen a la ruta del jugador."
+    },
+    {
+      "title": "Presupuesta toda combinación alcanzable",
+      "body": "Enumera manifiestos o limítalos con ranuras y prioridades. Revisa apariciones, amenazas simultáneas, cámara, accesibilidad, diálogo, botín, logros, atajos, speedruns, rupturas de secuencia y la ausencia de hechos opcionales."
+    },
+    {
+      "title": "Mide la frontera de mapeo",
+      "body": "Registra versión, claves y procedencia, valores, manifestId, conflictos, enemigos, aliados, modificadores, entradas, reintentos, punto de control, migración, dueño cooperativo, finalización, muertes, abandonos y capturas duplicadas."
+    }
+  ],
+  "story": {
+    "title": "La bóveda de Kern recuerda el camino de Tavi",
+    "body": "Sobre el suelo sellado, tres runas guardan la ruta anterior. Al cerrarse el umbral, un centinela caído se vuelve eco, una guía rescatada responde con un escudo y una reliquia despierta en el pecho de Kern. Tras la derrota, las mismas marcas vuelven al mismo lugar."
+  },
+  "adaptation": {
+    "title": "Muestra la causa antes del efecto",
+    "body": "Previsualiza las entradas con iconos, colores, etiquetas sonoras y alternativa textual, y repite sus identificadores en las manifestaciones. Ofrece resumen de ruta, reintento estable, menos variantes simultáneas, estado sin historial y avisos antes de decisiones irreversibles."
+  },
+  "distinction": {
+    "title": "Captura de ruta, no progreso persistente ni copia de equipo",
+    "body": "El progreso persistente conserva objetivos entre intentos. El espejo copia el equipo actual. Aquí hechos anteriores forman la composición diseñada del encuentro; el problema central es un mapeo determinista entre guardados y reintentos."
+  },
+  "lensNotes": [
+    {
+      "id": "context-and-sequence",
+      "body": "El encuentro es un paso de una ruta larga: decisiones anteriores se vuelven combate en una frontera de entrada concreta."
+    },
+    {
+      "id": "player-expression",
+      "body": "La composición refleja la ruta diseñada del jugador sin reducir su historia a una única nota moral o de habilidad."
+    },
+    {
+      "id": "progress-clarity",
+      "body": "Claves, confirmación de captura, identificadores causales y un manifestId estable explican por qué existe esta versión."
+    },
+    {
+      "id": "risk-reward",
+      "body": "Las decisiones previas pueden dar apoyo, añadir ecos, cerrar opciones o intercambiar una ventaja por otra al llegar al jefe."
+    },
+    {
+      "id": "rule-exception",
+      "body": "Guardados ausentes, esquemas antiguos, conflictos, rupturas, New Game Plus, invitados, rollback y reintentos necesitan alternativas deterministas."
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "Undertale",
+      "boss": "Sans",
+      "screenshot": "https://i.ytimg.com/vi/Vr4IYjeplJA/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=Vr4IYjeplJA&t=1s",
+      "video": "https://www.youtube.com/watch?v=Vr4IYjeplJA&t=1s",
+      "videoDurationSeconds": 888,
+      "body": "Sans solo se convierte en jefe final cuando los requisitos de muertes y derrotas mantienen la ruta Genocide. La existencia y reglas punitivas del encuentro manifiestan el diario, no un aumento genérico de dificultad."
+    },
+    {
+      "dimension": "3D",
+      "game": "Metal Gear Solid 3: Snake Eater",
+      "boss": "The Sorrow",
+      "screenshot": "https://i.ytimg.com/vi/kAMVNrgDEPE/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=kAMVNrgDEPE&t=18s",
+      "video": "https://www.youtube.com/watch?v=kAMVNrgDEPE&t=18s",
+      "videoDurationSeconds": 595,
+      "body": "El río se llena de representaciones de personas que Snake mató, por lo que una ruta letal crea un encuentro más largo y denso. Los actos anteriores se vuelven peligros identificables, no una penalización abstracta."
+    },
+    {
+      "dimension": "3D",
+      "game": "Dragon Age: Origins",
+      "boss": "Archdemon Urthemiel",
+      "screenshot": "https://i.ytimg.com/vi/-A9o6BlJJOY/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=-A9o6BlJJOY&t=1s",
+      "video": "https://www.youtube.com/watch?v=-A9o6BlJJOY&t=1s",
+      "videoDurationSeconds": 172,
+      "body": "La batalla final ofrece ejércitos y aliados reunidos mediante decisiones de facción, que pueden gastarse en el asalto que culmina con el Archdemon. El historial de reclutamiento se vuelve recurso táctico."
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

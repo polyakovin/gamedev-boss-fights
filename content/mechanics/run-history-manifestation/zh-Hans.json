@@ -1,0 +1,134 @@
+{
+  "title": "流程历史具现化",
+  "subtitle": "让之前的决定成为首领遭遇中的实体",
+  "variant": "版本化日志 · 入场快照 · 确定性清单 · 稳定重试",
+  "summary": "遭遇把首领前积累的选择转化为稳定的敌人、盟友、攻击或规则组合。",
+  "overview": "该机制在入场时读取明确的过往决定日志，并生成确定性的战斗清单。被击败的敌人可作为回声返回，被救盟友可提供支援，取得的遗物可改变首领。同一快照在重试间保持固定，使后果可理解而非随机。",
+  "learning": "定义有效历史键、所有权与版本、入场边界、映射表、冲突优先级、manifestId、重试政策、存档迁移、合作权威、信息披露、后备状态、重复防护和遥测。",
+  "category": "状态、资源与成长",
+  "readTime": "10 分钟",
+  "demo": {
+    "title": "让塔维的路线决定凯恩记忆库中等待的内容",
+    "timeline": "从历史到遭遇的时间线",
+    "step": "日志、快照、具现、稳定重试",
+    "phaseNames": ["展示积累的历史", "具现遭遇清单", "保持重试确定性"],
+    "phaseDescriptions": [
+      "三枚日志符文记录塔维击败守卫、救出向导并取得遗物。1.15秒越过边界时，这些带版本事实只被捕获一次，并分配一个manifestId。",
+      "映射成为战斗：守卫以敌对回声返回，向导创造保护结界，凯恩收回的遗物增加环形攻击。因果线把每个具现与日志符文连接。",
+      "4.55秒重试时不再次读取实时世界状态。同一个manifestId、回声、结界和遗物包保持不变；只有重新入场或明确迁移才能改变构成。"
+    ],
+    "boss": "首领",
+    "player": "玩家",
+    "danger": "无版本全局标记、隐藏的技巧评估、战斗中重新采样或冲突映射会让后果显得随机，并破坏存档或重试",
+    "locked": "历史模式、来源权威、入场快照、优先级、manifestId、遭遇构成、尝试生命周期、存档迁移与合作所有权属于遭遇逻辑",
+    "safe": "展示相关历史，只捕获一次，让每个原因变成一个战斗元素，并在整次尝试中固定结果",
+    "reducedMotion": "减少动态时禁用自动播放。请检查0.30、0.90、1.15、1.55、1.85、2.25、2.55、2.85、3.18、3.45、3.72、4.55、4.95和5.35秒。",
+    "diagramDescription": "三枚路线历史符文在门槛处被捕获，并具现为敌对回声、友方结界和遗物攻击，重试时保持不变。"
+  },
+  "steps": [
+    {
+      "title": "哪些先前决定可以产生影响？",
+      "body": "选择少量设计好的持久事实：击败或放过的人物、获救势力、取得遗物、被毁目标、誓言或路线计数。为每个键指定所有者、类型、版本、默认值和来源；不要暴露任意存档变量，也不要从无关行为推导道德分。"
+    },
+    {
+      "title": "历史如何变成遭遇结构？",
+      "body": "把每个事实映射到有界的敌人、盟友、攻击包、场地规则、阶段或解决选项。定义冲突优先级，按预算与几何验证完整组合，并在开战前生成一个可检查的manifestId。"
+    },
+    {
+      "title": "清单何时可以变化？",
+      "body": "在具名入场边界捕获，并在死亡、重启、检查点、暂停和回滚后保留。只在明确返回世界或执行文档化迁移时重建。合作模式要说明谁的历史具有权威以及访客能贡献什么。"
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "遭遇暗中给表现打分",
+      "body": "用隐藏死亡、命中率或伤害替代设计事实，会变成自适应难度。说明哪些决定重要，并保证相同日志生成相同清单。"
+    },
+    {
+      "title": "重试悄悄生成另一场战斗",
+      "body": "死亡后若重读世界脚本、随机选择、队伍或云状态，玩家无法学习刚才的遭遇。保存入场快照，并把有意重组表现为可见过渡。"
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "让后果改变动作，而不只是数字",
+      "body": "被记住的盟友能封锁路线，旧受害者能重复可识别攻击，遗物能增加新回应。这比不明生命倍率更清楚，并形成属于玩家路线的遭遇质感。"
+    },
+    {
+      "title": "为每种可达组合分配预算",
+      "body": "枚举清单或用槽位和优先级约束。检查出生空间、同时威胁、镜头、无障碍、对话、战利品、成就、跳过、速通、顺序破坏以及所有可选事实都缺失的情况。"
+    },
+    {
+      "title": "测量映射边界",
+      "body": "记录历史版本、键与来源、捕获值、manifestId、冲突、敌人、盟友、修改、入场与重试、检查点来源、迁移、合作所有者、完成、具现死因、放弃和重复捕获。"
+    }
+  ],
+  "story": {
+    "title": "凯恩的记忆库记得塔维走过的路",
+    "body": "封印地板上方，三枚符文保存塔维的过去。门槛关闭时，倒下的守卫凝成回声，被救向导回应结界，取得的遗物在凯恩胸口苏醒。失败后，相同标记在相同位置再次亮起。"
+  },
+  "adaptation": {
+    "title": "先展示原因，再展示后果",
+    "body": "用不同图标、颜色、声音标签和文本替代预览日志条目，再把标识重复到具现上。提供路线摘要、稳定重试、减少同时变体、无历史后备状态，以及不可逆选择前的警告。"
+  },
+  "distinction": {
+    "title": "路线快照，而非持久进度或装备复制",
+    "body": "持久进度保存尝试间的目标；装备镜像复制当前装备。本机制读取入场前积累的选定事实并生成设计好的遭遇构成，核心问题是跨存档与重试的确定性映射。"
+  },
+  "lensNotes": [
+    {
+      "id": "context-and-sequence",
+      "body": "遭遇是长路线中的一步：早先决定在具名入场边界变成当前战斗元素。"
+    },
+    {
+      "id": "player-expression",
+      "body": "构成反映玩家设计路线，而不把全部过去压缩为单一道德或技巧分数。"
+    },
+    {
+      "id": "progress-clarity",
+      "body": "日志键、捕获反馈、因果标识与稳定manifestId说明为何存在这一版本。"
+    },
+    {
+      "id": "risk-reward",
+      "body": "早先选择可提供支援、增加敌对回声、关闭选项或在到达首领时交换优势。"
+    },
+    {
+      "id": "rule-exception",
+      "body": "缺失存档、旧模式、冲突标记、顺序破坏、New Game Plus、访客、回滚和重试都需要明确的确定性后备。"
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "Undertale",
+      "boss": "Sans",
+      "screenshot": "https://i.ytimg.com/vi/Vr4IYjeplJA/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=Vr4IYjeplJA&t=1s",
+      "video": "https://www.youtube.com/watch?v=Vr4IYjeplJA&t=1s",
+      "videoDurationSeconds": 888,
+      "body": "只有区域击杀要求和必需胜利维持Genocide状态时，Sans才成为路线最终首领。遭遇本身及其严厉规则直接具现流程日志，而非普通后期难度提升。"
+    },
+    {
+      "dimension": "3D",
+      "game": "Metal Gear Solid 3: Snake Eater",
+      "boss": "The Sorrow",
+      "screenshot": "https://i.ytimg.com/vi/kAMVNrgDEPE/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=kAMVNrgDEPE&t=18s",
+      "video": "https://www.youtube.com/watch?v=kAMVNrgDEPE&t=18s",
+      "videoDurationSeconds": 595,
+      "body": "河中出现Snake早先杀死人物的幽灵，因此致命路线比非致命路线产生更长、更密的遭遇。过去的单个行为成为可识别危险，而非抽象惩罚。"
+    },
+    {
+      "dimension": "3D",
+      "game": "Dragon Age: Origins",
+      "boss": "Archdemon Urthemiel",
+      "screenshot": "https://i.ytimg.com/vi/-A9o6BlJJOY/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=-A9o6BlJJOY&t=1s",
+      "video": "https://www.youtube.com/watch?v=-A9o6BlJJOY&t=1s",
+      "videoDurationSeconds": 172,
+      "body": "最终战提供由先前势力决定集合的支援军与具名盟友，可在以Archdemon收尾的攻城战中消耗。招募历史因此成为首领序列的战术资源。"
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

@@ -1,0 +1,134 @@
+{
+  "title": "রান ইতিহাসের প্রকাশ",
+  "subtitle": "আগের সিদ্ধান্তকে বস লড়াইয়ের বাস্তব অংশ করুন",
+  "variant": "সংস্করণযুক্ত জার্নাল · প্রবেশ স্ন্যাপশট · নির্ধারিত ম্যানিফেস্ট · স্থির পুনঃচেষ্টা",
+  "summary": "বসের আগে জমা সিদ্ধান্তকে সাক্ষাৎটি শত্রু, মিত্র, আক্রমণ বা নিয়মের স্থির সমষ্টিতে বদলায়।",
+  "overview": "প্রবেশে আগের সিদ্ধান্তের স্পষ্ট জার্নাল পড়ে মেকানিকটি নির্ধারিত combat manifest বানায়। হারানো শত্রু echo হয়ে ফিরতে পারে, বাঁচানো মিত্র সহায়তা দিতে পারে, নেওয়া relic বস বদলাতে পারে। একই snapshot retry-তে স্থির থাকে, তাই ফল বোঝা যায়, ইচ্ছামতো লাগে না।",
+  "learning": "যোগ্য history keys, মালিক ও version, entry boundary, mapping table, conflict priority, manifestId, retry policy, save migration, co-op authority, disclosure, fallback, duplicate guard ও telemetry নির্ধারণ করুন।",
+  "category": "অবস্থা, রিসোর্স ও স্কেলিং",
+  "readTime": "১০ মিনিট",
+  "demo": {
+    "title": "তাভির পথ ঠিক করুক কার্নের memory vault-এ কী অপেক্ষা করে",
+    "timeline": "ইতিহাস থেকে সাক্ষাতের সময়রেখা",
+    "step": "জার্নাল, স্ন্যাপশট, প্রকাশ, স্থির retry",
+    "phaseNames": ["জমা ইতিহাস দেখান", "সাক্ষাতের manifest প্রকাশ করুন", "retry নির্ধারিত রাখুন"],
+    "phaseDescriptions": [
+      "তিন জার্নাল রুন দেখায় তাভি প্রহরী হারিয়েছে, পথপ্রদর্শক বাঁচিয়েছে ও relic নিয়েছে। ১.১৫ সেকেন্ডে সীমা পার হলে versioned facts একবার capture হয়ে manifestId পায়।",
+      "Mapping লড়াই হয়: প্রহরী hostile echo, পথপ্রদর্শক protective ward এবং কার্নের ফেরত relic radial attack হয়। কারণরেখা প্রতিটি প্রকাশকে তার রুনে যুক্ত করে।",
+      "৪.৫৫ সেকেন্ডে retry live world আবার পড়ে না। একই manifestId, echo, ward ও relic থাকে; নতুন প্রবেশ বা স্পষ্ট migration-ই শুধু composition বদলায়।"
+    ],
+    "boss": "বস",
+    "player": "খেলোয়াড়",
+    "danger": "Version ছাড়া global flags, hidden skill estimate, যুদ্ধের মাঝে resampling বা conflicting mapping ফলকে random করে এবং save বা retry নষ্ট করে",
+    "locked": "History schema, authority, entry snapshot, priority, manifestId, composition, attempt lifetime, save migration ও co-op owner encounter logic-এর",
+    "safe": "প্রাসঙ্গিক ইতিহাস দেখান, একবার capture করুন, প্রতিটি কারণকে এক combat element বানান এবং পুরো চেষ্টায় manifest স্থির রাখুন",
+    "reducedMotion": "কম গতিতে autoplay বন্ধ। ০.৩০, ০.৯০, ১.১৫, ১.৫৫, ১.৮৫, ২.২৫, ২.৫৫, ২.৮৫, ৩.১৮, ৩.৪৫, ৩.৭২, ৪.৫৫, ৪.৯৫ ও ৫.৩৫ সেকেন্ড দেখুন।",
+    "diagramDescription": "তিন route-history রুন entry-তে capture হয়ে hostile echo, friendly ward ও relic attack হয়, যা retry-তে বদলায় না।"
+  },
+  "steps": [
+    {
+      "title": "আগের কোন সিদ্ধান্ত প্রভাব ফেলবে?",
+      "body": "কয়েকটি authored durable fact বাছুন: হারানো বা ছাড়া চরিত্র, বাঁচানো faction, নেওয়া relic, ধ্বংস objective, vow বা route counter। প্রতিটি key-এর owner, type, version, default ও provenance রাখুন; arbitrary save variable বা অসংলগ্ন কাজ থেকে moral score বের করবেন না।"
+    },
+    {
+      "title": "ইতিহাস কীভাবে encounter structure হয়?",
+      "body": "প্রতিটি fact-কে সীমিত enemy, ally, attack package, arena rule, phase বা resolution option-এ map করুন। Conflict priority ঠিক করে budget ও geometry যাচাই করুন এবং combat-এর আগে inspectable manifestId বানান।"
+    },
+    {
+      "title": "Manifest কখন বদলাতে পারে?",
+      "body": "Named entry boundary-তে capture করে death, restart, checkpoint, pause ও rollback-এ রাখুন। Explicit world return বা documented migration-এ শুধু rebuild করুন। Co-op-এ কার history authoritative তা বলুন।"
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "Encounter গোপনে performance grade করে",
+      "body": "Hidden deaths, accuracy বা damage ব্যবহার adaptive difficulty। কোন সিদ্ধান্ত জরুরি বলুন এবং identical journal থেকে identical manifest বানান।"
+    },
+    {
+      "title": "Retry চুপচাপ অন্য fight বানায়",
+      "body": "Death-এর পরে scripts, random choice, party বা cloud আবার পড়লে encounter শেখা যায় না। Entry snapshot রাখুন এবং deliberate recomposition দৃশ্যমান transition করুন।"
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "শুধু সংখ্যা নয়, verb বদলান",
+      "body": "মনে রাখা ally lane বন্ধ করতে পারে, পুরনো victim পরিচিত attack করতে পারে, relic নতুন response যোগ করতে পারে। অজানা health multiplier-এর চেয়ে এটি স্পষ্ট ও route-specific।"
+    },
+    {
+      "title": "সব reachable combination budget করুন",
+      "body": "Manifest enumerate করুন বা slot ও priority দিয়ে সীমিত করুন। Spawn space, simultaneous threat, camera, accessibility, dialogue, loot, achievement, skip, speedrun, sequence break ও no optional facts case যাচাই করুন।"
+    },
+    {
+      "title": "Mapping boundary মাপুন",
+      "body": "History version, keys, provenance, values, manifestId, conflicts, enemies, allies, modifiers, entries, retries, checkpoint, migration, co-op owner, completion, manifestation death, abandon ও duplicate capture লিখুন।"
+    }
+  ],
+  "story": {
+    "title": "কার্নের vault তাভির পথ মনে রাখে",
+    "body": "বন্ধ মেঝের উপর তিন রুন আগের route ধরে। সীমা বন্ধ হলে পড়া প্রহরী echo, বাঁচানো guide ward এবং relic কার্নের বুকে জেগে ওঠে। হারার পরে একই চিহ্ন একই স্থানে জ্বলে।"
+  },
+  "adaptation": {
+    "title": "ফলের আগে কারণ দেখান",
+    "body": "Journal entry আলাদা icon, color, sound label ও text alternative-এ preview করে manifestation-এ একই identifier দিন। Route summary, stable retry, কম simultaneous variant, no-history fallback ও irreversible choice warning দিন।"
+  },
+  "distinction": {
+    "title": "Route snapshot, persistent progress বা loadout copy নয়",
+    "body": "Persistent progress attempts-এর objective রাখে। Loadout mirror current gear copy করে। এখানে entry-এর আগের fact authored composition হয়; save ও retry-তে deterministic mapping মূল সমস্যা।"
+  },
+  "lensNotes": [
+    {
+      "id": "context-and-sequence",
+      "body": "Encounter দীর্ঘ route-এর ধাপ; আগের সিদ্ধান্ত named entry boundary-তে current combat element হয়।"
+    },
+    {
+      "id": "player-expression",
+      "body": "Composition খেলোয়াড়ের authored route দেখায়, অতীতকে এক moral বা skill score-এ নামায় না।"
+    },
+    {
+      "id": "progress-clarity",
+      "body": "Journal keys, capture feedback, causal identifiers ও stable manifestId এই version-এর কারণ বোঝায়।"
+    },
+    {
+      "id": "risk-reward",
+      "body": "আগের choice support দিতে, hostile echo যোগ করতে, option বন্ধ করতে বা boss-এ advantage বদলাতে পারে।"
+    },
+    {
+      "id": "rule-exception",
+      "body": "Missing save, old schema, conflict, sequence break, New Game Plus, guest, rollback ও retry-তে explicit deterministic fallback চাই।"
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "Undertale",
+      "boss": "Sans",
+      "screenshot": "https://i.ytimg.com/vi/Vr4IYjeplJA/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=Vr4IYjeplJA&t=1s",
+      "video": "https://www.youtube.com/watch?v=Vr4IYjeplJA&t=1s",
+      "videoDurationSeconds": 888,
+      "body": "Area kill requirement ও mandatory defeat Genocide state রাখলেই Sans final boss হয়। Encounter-এর অস্তিত্ব ও কঠিন rules run ledger সরাসরি প্রকাশ করে।"
+    },
+    {
+      "dimension": "3D",
+      "game": "Metal Gear Solid 3: Snake Eater",
+      "boss": "The Sorrow",
+      "screenshot": "https://i.ytimg.com/vi/kAMVNrgDEPE/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=kAMVNrgDEPE&t=18s",
+      "video": "https://www.youtube.com/watch?v=kAMVNrgDEPE&t=18s",
+      "videoDurationSeconds": 595,
+      "body": "নদীতে Snake আগে যাদের মেরেছে তাদের ghost আসে, তাই lethal route দীর্ঘ ও ঘন encounter বানায়। পুরনো কাজ abstract penalty নয়, চেনা hazard হয়।"
+    },
+    {
+      "dimension": "3D",
+      "game": "Dragon Age: Origins",
+      "boss": "Archdemon Urthemiel",
+      "screenshot": "https://i.ytimg.com/vi/-A9o6BlJJOY/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=-A9o6BlJJOY&t=1s",
+      "video": "https://www.youtube.com/watch?v=-A9o6BlJJOY&t=1s",
+      "videoDurationSeconds": 172,
+      "body": "Final battle faction decision-এ জোগাড় army ও named ally দেয়, যা Archdemon-এ শেষ হওয়া assault-এ খরচ হয়। Recruitment history tactical resource হয়।"
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}
