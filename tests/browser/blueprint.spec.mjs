@@ -405,9 +405,9 @@ test('volley releases three parallel bolts on one beat and clears its outside ro
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
 });
 
-test('catalog and builder reuse the 96 promoted rule-specific previews', async ({ page }) => {
+test('catalog and builder reuse the 97 promoted rule-specific previews', async ({ page }) => {
   await page.goto('en/');
-  await expect(page.locator('[data-blueprint-preview]')).toHaveCount(96);
+  await expect(page.locator('[data-blueprint-preview]')).toHaveCount(97);
   const catalogLayouts = await page.locator('[data-blueprint-preview]').evaluateAll((previews) =>
     previews.map((preview) => {
       const boss = preview.querySelector('[data-character-art-preview="kern"]');
@@ -431,7 +431,7 @@ test('catalog and builder reuse the 96 promoted rule-specific previews', async (
   expect(new Set(catalogLayouts.map(({ layout }) => layout)).size).toBeGreaterThanOrEqual(18);
 
   await page.goto('en/builder/');
-  await expect(page.locator('[data-blueprint-preview]')).toHaveCount(96);
+  await expect(page.locator('[data-blueprint-preview]')).toHaveCount(97);
   const builderLayouts = await page.locator('[data-blueprint-preview]').evaluateAll((previews) =>
     previews.map((preview) => {
       const boss = preview.querySelector('[data-character-art-preview="kern"]');
@@ -4048,6 +4048,49 @@ test('ally theft exposes one bounded ownership transfer and safe restoration', a
   await expect(widget).toHaveAttribute('data-blueprint-ally-theft-owner', 'player');
   await expect(widget).toHaveAttribute('data-blueprint-ally-theft-ownership-events', '2');
   await expect(widget).toHaveAttribute('data-blueprint-ally-theft-recapture-blocked', 'true');
+  await page.setViewportSize({ width: 375, height: 812 });
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+});
+
+test('false death keeps rewards locked while one revival establishes phase two', async ({
+  page,
+}) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.goto('en/mechanics/false-death/');
+  const widget = page.locator('[data-blueprint-demo]');
+  const timeline = widget.locator('[data-blueprint-timeline]');
+  const seek = (milliseconds) =>
+    timeline.evaluate((element, value) => {
+      element.value = String(value);
+      element.dispatchEvent(new Event('input', { bubbles: true }));
+    }, milliseconds);
+
+  await expect(page.locator('.lesson-title-line h1')).toHaveText('False death and return');
+  await expect(page.locator('.wip-badge, .draft-profile')).toHaveCount(0);
+  await expect(page.locator('.game-example')).toHaveCount(3);
+  await expect(page.locator('.lens-chip')).toHaveCount(5);
+  await seek(900);
+  await expect(widget).toHaveAttribute('data-blueprint-false-death', 'phase-one-depleted');
+  await expect(widget).toHaveAttribute('data-blueprint-false-death-boss-health', '0');
+  await expect(widget).toHaveAttribute('data-blueprint-false-death-completion-pending', 'true');
+  await expect(widget).toHaveAttribute('data-blueprint-false-death-encounter-complete', 'false');
+  await expect(widget).toHaveAttribute('data-blueprint-false-death-reward-locked', 'true');
+  await seek(2500);
+  await expect(widget).toHaveAttribute('data-blueprint-false-death-rebuild-active', 'true');
+  await expect(widget).toHaveAttribute('data-blueprint-false-death-revival-count', '0');
+  await seek(3500);
+  await expect(widget).toHaveAttribute('data-blueprint-false-death-phase', '2');
+  await expect(widget).toHaveAttribute('data-blueprint-false-death-boss-health', '68');
+  await expect(widget).toHaveAttribute('data-blueprint-false-death-revived', 'true');
+  await expect(widget).toHaveAttribute(
+    'data-blueprint-false-death-revival-id',
+    'false-death-revival-1',
+  );
+  await expect(widget).toHaveAttribute('data-blueprint-false-death-event-count', '2');
+  await expect(widget).toHaveAttribute('data-blueprint-false-death-exit-locked', 'true');
+  await seek(4200);
+  await expect(widget).toHaveAttribute('data-blueprint-false-death-second-attack', 'true');
+  await expect(widget).toHaveAttribute('data-blueprint-outcome', 'safe');
   await page.setViewportSize({ width: 375, height: 812 });
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
 });

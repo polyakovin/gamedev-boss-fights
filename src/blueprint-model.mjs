@@ -1501,6 +1501,30 @@ const SPECS = {
     allyId: 'rune-familiar-1',
     captureId: 'ally-capture-1',
   },
+  'false-death': {
+    mode: 'false-death',
+    boss: [300, 375],
+    player: [370, 660],
+    target: [430, 680],
+    arena: [55, 310, 450, 590],
+    strikePosition: [352, 565],
+    retreatPosition: [440, 680],
+    dodgePosition: [170, 680],
+    strikeAt: 0.75,
+    collapse: [0.75, 1.35],
+    pending: [1.35, 2.15],
+    rebuild: [2.15, 3.15],
+    revivalAt: 3.15,
+    secondSignal: [3.45, 4],
+    secondActive: [4, 4.45],
+    secondStableUntil: 5.35,
+    resetAt: 5.35,
+    phaseOneHealth: 100,
+    phaseTwoHealth: 68,
+    attackRadius: 154,
+    depletionId: 'phase-1-depletion-1',
+    revivalId: 'false-death-revival-1',
+  },
   'wide-swing': { mode: 'arc', boss: [280, 310], player: [410, 470], target: [470, 650] },
   lunge: { mode: 'lunge', boss: [170, 290], player: [390, 590], target: [470, 660] },
   grab: { mode: 'grab', boss: [280, 300], player: [390, 485], target: [470, 610] },
@@ -2951,6 +2975,46 @@ export function allyTheftTransfer({
     rejected: !allyAlive || !eligible.includes(selected),
     eventCount: accepted ? 1 : 0,
     eligibleAllyIds: Object.freeze(eligible),
+  });
+}
+
+export function falseDeathState(time) {
+  const spec = SPECS['false-death'];
+  const t = localTime(time);
+  if (t < spec.strikeAt) return 'phase-one-active';
+  if (t < spec.collapse[1]) return 'phase-one-depleted';
+  if (t < spec.pending[1]) return 'completion-pending';
+  if (t < spec.rebuild[1]) return 'revival-building';
+  if (t < spec.secondSignal[1]) return 'phase-two-signaled';
+  if (t < spec.secondActive[1]) return 'phase-two-active';
+  if (t < spec.resetAt) return 'phase-two-stable';
+  return 'reset';
+}
+
+export function falseDeathResolve({
+  depletionId = 'phase-1-depletion-1',
+  currentPhase = 1,
+  finalPhase = false,
+  revivalAvailable = true,
+  encounterComplete = false,
+  rewardGranted = false,
+  alreadyApplied = false,
+} = {}) {
+  const phase = Math.max(1, Math.trunc(Number(currentPhase) || 1));
+  const canResolve = !alreadyApplied && !encounterComplete;
+  const revived = canResolve && !finalPhase && revivalAvailable;
+  const completed = canResolve && finalPhase;
+  return Object.freeze({
+    depletionId: String(depletionId),
+    currentPhase: phase,
+    nextPhase: revived ? phase + 1 : phase,
+    phaseHealthDepleted: canResolve,
+    revived,
+    revivalCount: revived ? 1 : 0,
+    encounterComplete: Boolean(encounterComplete || completed),
+    rewardUnlocked: Boolean(rewardGranted || completed),
+    exitUnlocked: Boolean(completed),
+    eventCount: revived || completed ? 1 : 0,
   });
 }
 
@@ -7478,6 +7542,131 @@ function primitivesFor(spec, frame) {
       ),
     ];
   }
+  if (mode === 'false-death') {
+    const strike = strikePulse(frame.time, spec.strikeAt, 0.5);
+    const rebuildProgress = clamp(
+      (frame.time - spec.rebuild[0]) / (spec.rebuild[1] - spec.rebuild[0]),
+    );
+    const signalProgress = clamp(
+      (frame.time - spec.secondSignal[0]) / (spec.secondSignal[1] - spec.secondSignal[0]),
+    );
+    const activeProgress = clamp(
+      (frame.time - spec.secondActive[0]) / (spec.secondActive[1] - spec.secondActive[0]),
+    );
+    const healthWidth = 340 * (frame.falseDeathBossHealth / 100);
+    const coreOpacity =
+      frame.time >= spec.strikeAt && frame.time < spec.secondSignal[1] ? 0.96 : 0.16;
+    const fragmentsOpacity =
+      frame.time >= spec.collapse[0] && frame.time < spec.revivalAt ? 0.92 : 0;
+    const coreX = spec.boss[0];
+    const coreY = spec.boss[1] + 28;
+    const fragments = [
+      [154, 474],
+      [455, 468],
+      [126, 650],
+      [475, 638],
+    ];
+    return [
+      rect(...spec.arena, 0.52, 'muted', 0.025),
+      rect(105, 452, 350, 26, 0.88, 'muted', 0.035),
+      rect(
+        110,
+        457,
+        healthWidth,
+        16,
+        healthWidth > 0 ? 0.96 : 0,
+        frame.falseDeathCurrentPhase === 1 ? 'safe' : 'accent',
+        0.24,
+      ),
+      circle(82, 465, 22, 0.9, frame.falseDeathCurrentPhase === 1 ? 'safe' : 'muted', 6, 0.08),
+      circle(478, 465, 22, 0.9, frame.falseDeathCurrentPhase === 2 ? 'accent' : 'muted', 6, 0.08),
+      line(96, 465, 464, 465, 0.36, 'muted', 4, '9 8'),
+      rect(72, 760, 164, 86, 0.76, 'muted', 0.025),
+      path(
+        'M 112 788 L 196 822 M 196 788 L 112 822',
+        frame.falseDeathExitLocked ? 0.96 : 0.2,
+        'accent',
+        8,
+      ),
+      circle(430, 804, 42, 0.78, 'muted', 7, 0.04),
+      path(
+        'M 407 781 L 453 827 M 453 781 L 407 827',
+        frame.falseDeathRewardLocked ? 0.96 : 0.2,
+        'accent',
+        8,
+      ),
+      circle(coreX, coreY, 34 + pulse(frame.time * 1.45) * 10, coreOpacity, 'signal', 8, 0.15),
+      path(
+        `M ${coreX} ${coreY - 20} L ${coreX + 20} ${coreY} L ${coreX} ${coreY + 20} L ${coreX - 20} ${coreY} Z`,
+        coreOpacity,
+        'signal',
+        6,
+        0.08,
+      ),
+      ...fragments.map(([x, y], index) => {
+        const angle = (Math.PI * 2 * index) / fragments.length;
+        const targetX = coreX + Math.cos(angle) * 62;
+        const targetY = coreY + Math.sin(angle) * 72;
+        return circle(
+          mix(x, targetX, smooth(rebuildProgress)),
+          mix(y, targetY, smooth(rebuildProgress)),
+          18 + index * 2,
+          fragmentsOpacity,
+          'muted',
+          6,
+          0.1,
+        );
+      }),
+      circle(
+        coreX,
+        coreY,
+        58 + rebuildProgress * 118,
+        frame.falseDeathRebuildActive ? 0.88 - rebuildProgress * 0.32 : 0,
+        'safe',
+        8,
+        0.02,
+        '10 8',
+      ),
+      path(
+        `M ${frame.player.x + 12} ${frame.player.y - 54} Q 360 500 ${coreX + 22} ${coreY - 72}`,
+        strike,
+        'safe',
+        12,
+      ),
+      circle(
+        coreX,
+        coreY,
+        spec.attackRadius,
+        frame.falseDeathSecondSignalActive ? 0.36 + signalProgress * 0.44 : 0,
+        'accent',
+        7,
+        0.018,
+        '14 10',
+      ),
+      circle(
+        coreX,
+        coreY,
+        spec.attackRadius + activeProgress * 46,
+        frame.falseDeathSecondAttackActive ? 0.92 - activeProgress * 0.34 : 0,
+        'accent',
+        13,
+        0.025,
+      ),
+      path(
+        `M ${coreX - 34} ${coreY - 96} L ${coreX} ${coreY - 138} L ${coreX + 34} ${coreY - 96} Z`,
+        frame.falseDeathRevived ? 0.96 : 0,
+        'accent',
+        8,
+        0.08,
+      ),
+      path(
+        'M 266 806 L 280 820 L 306 788',
+        frame.falseDeathCompletionPending ? 0.9 : 0.24,
+        'signal',
+        7,
+      ),
+    ];
+  }
   if (mode === 'encounter-specific-tool') {
     const pedestal = point(spec.pedestal);
     const spearBase = { x: frame.player.x + 20, y: frame.player.y - 10 };
@@ -9097,6 +9286,11 @@ function pointClearsThreat(spec, frame, value, radius = BLUEPRINT_PLAYER_RADIUS)
           spec.projectileRadius + radius,
       )
     );
+  if (mode === 'false-death')
+    return (
+      !frame.dangerActive ||
+      Math.hypot(value.x - frame.boss.x, value.y - frame.boss.y) > spec.attackRadius + radius
+    );
   if (mode === 'projectile-rally')
     return (
       !frame.dangerActive ||
@@ -9489,6 +9683,7 @@ export function blueprintFrame(id, time) {
   else if (spec.mode === 'loadout-mirror') responseProgress = 0;
   else if (spec.mode === 'moveset-shapeshifting') responseProgress = 0;
   else if (spec.mode === 'ally-theft') responseProgress = 0;
+  else if (spec.mode === 'false-death') responseProgress = 0;
   else if (spec.mode === 'knockback')
     responseProgress = phase === 0 ? 0 : phase === 1 ? smooth(action) : 1;
   else if (spec.mode === 'target-lock')
@@ -10926,6 +11121,34 @@ export function blueprintFrame(id, time) {
     };
     stride = Math.max(pulse(firstDodge), pulse(secondDodge), pulse(thirdDodge), pulse(reset));
   }
+  if (spec.mode === 'false-death') {
+    const approach = smooth((t - 0.2) / (spec.strikeAt - 0.2));
+    const retreat = smooth((t - spec.strikeAt) / (spec.collapse[1] - spec.strikeAt));
+    const dodge = smooth(
+      (t - spec.secondSignal[0]) / (spec.secondActive[0] - spec.secondSignal[0]),
+    );
+    const reset = smooth((t - spec.resetAt) / (BLUEPRINT_DURATION - spec.resetAt));
+    const strikePosition = point(spec.strikePosition);
+    const retreatPosition = point(spec.retreatPosition);
+    const dodgePosition = point(spec.dodgePosition);
+    const approached = {
+      x: mix(startPlayer.x, strikePosition.x, approach),
+      y: mix(startPlayer.y, strikePosition.y, approach),
+    };
+    const retreated = {
+      x: mix(approached.x, retreatPosition.x, retreat),
+      y: mix(approached.y, retreatPosition.y, retreat),
+    };
+    const dodged = {
+      x: mix(retreated.x, dodgePosition.x, dodge),
+      y: mix(retreated.y, dodgePosition.y, dodge),
+    };
+    player = {
+      x: mix(dodged.x, startPlayer.x, reset),
+      y: mix(dodged.y, startPlayer.y, reset),
+    };
+    stride = Math.max(pulse(approach), pulse(retreat), pulse(dodge), pulse(reset));
+  }
   const bossVisible =
     spec.mode === 'secondary-cues-invisibility'
       ? t < spec.vanishAt
@@ -11201,7 +11424,8 @@ export function blueprintFrame(id, time) {
             spec.mode === 'damage-rate-cap' ||
             spec.mode === 'loadout-mirror' ||
             spec.mode === 'moveset-shapeshifting' ||
-            spec.mode === 'ally-theft'
+            spec.mode === 'ally-theft' ||
+            spec.mode === 'false-death'
           ? (Math.atan2(boss.y - player.y, boss.x - player.x) * 180) / Math.PI
           : spec.mode === 'active-phase'
             ? (Math.atan2(boss.y - player.y, boss.x - player.x) * 180) / Math.PI
@@ -12605,6 +12829,64 @@ export function blueprintFrame(id, time) {
       ...spec.shotTimes.map((at) => strikePulse(t, at, 0.42) * 0.35),
     );
   }
+  if (spec.mode === 'false-death') {
+    const collapseProgress = clamp((t - spec.collapse[0]) / (spec.collapse[1] - spec.collapse[0]));
+    const rebuildProgress = clamp((t - spec.rebuild[0]) / (spec.rebuild[1] - spec.rebuild[0]));
+    const resetProgress = clamp((t - spec.resetAt) / (BLUEPRINT_DURATION - spec.resetAt));
+    const phaseOneHealth = t < spec.strikeAt ? spec.phaseOneHealth : 0;
+    const phaseTwoHealth = t >= spec.revivalAt && t < spec.resetAt ? spec.phaseTwoHealth : 0;
+    frame.falseDeathState = falseDeathState(t);
+    frame.falseDeathDepletionId =
+      t >= spec.strikeAt && t < spec.resetAt ? spec.depletionId : 'none';
+    frame.falseDeathRevivalId = t >= spec.revivalAt && t < spec.resetAt ? spec.revivalId : 'none';
+    frame.falseDeathCurrentPhase = t >= spec.revivalAt && t < spec.resetAt ? 2 : 1;
+    frame.falseDeathBossHealth =
+      t < spec.resetAt
+        ? Math.max(phaseOneHealth, phaseTwoHealth)
+        : mix(spec.phaseTwoHealth, spec.phaseOneHealth, smooth(resetProgress));
+    frame.falseDeathPhaseHealthDepleted = t >= spec.strikeAt && t < spec.resetAt;
+    frame.falseDeathCompletionPending = t >= spec.strikeAt && t < spec.resetAt;
+    frame.falseDeathEncounterComplete = false;
+    frame.falseDeathRewardLocked = true;
+    frame.falseDeathExitLocked = true;
+    frame.falseDeathRebuildActive = t >= spec.rebuild[0] && t < spec.rebuild[1];
+    frame.falseDeathRevived = t >= spec.revivalAt && t < spec.resetAt;
+    frame.falseDeathRevivalCount = frame.falseDeathRevived ? 1 : 0;
+    frame.falseDeathEventCount =
+      (t >= spec.strikeAt && t < spec.resetAt ? 1 : 0) +
+      (t >= spec.revivalAt && t < spec.resetAt ? 1 : 0);
+    frame.falseDeathSecondSignalActive = t >= spec.secondSignal[0] && t < spec.secondSignal[1];
+    frame.falseDeathSecondAttackActive = t >= spec.secondActive[0] && t < spec.secondActive[1];
+    frame.dangerActive = frame.falseDeathSecondAttackActive;
+    frame.bossScale =
+      t < spec.collapse[0]
+        ? 1
+        : t < spec.collapse[1]
+          ? mix(1, 0.58, smooth(collapseProgress))
+          : t < spec.rebuild[0]
+            ? 0.58
+            : t < spec.rebuild[1]
+              ? mix(0.58, 1.08, smooth(rebuildProgress))
+              : t < spec.resetAt
+                ? 1.08
+                : mix(1.08, 1, smooth(resetProgress));
+    frame.boss.y =
+      t < spec.collapse[0]
+        ? spec.boss[1]
+        : t < spec.rebuild[0]
+          ? mix(spec.boss[1], spec.boss[1] + 82, smooth(collapseProgress))
+          : t < spec.rebuild[1]
+            ? mix(spec.boss[1] + 82, spec.boss[1], smooth(rebuildProgress))
+            : spec.boss[1];
+    frame.playerMotion.attack = strikePulse(t, spec.strikeAt, 0.54);
+    frame.playerMotion.dodge = strikePulse(t, spec.secondActive[0], 0.52);
+    frame.playerMotion.impact = 0;
+    frame.bossMotion.crouch =
+      t < spec.rebuild[0] ? collapseProgress : Math.max(0, 1 - rebuildProgress);
+    frame.bossMotion.lift = frame.falseDeathRebuildActive ? pulse(rebuildProgress) * 0.3 : 0;
+    frame.bossMotion.impact = strikePulse(t, spec.strikeAt, 0.5);
+    frame.bossMotion.attack = strikePulse(t, spec.secondActive[0], 0.62);
+  }
   if (spec.mode === 'ability-lock') {
     frame.abilityLockState = abilityLockState(t);
     frame.abilityLockFirstAvoided = t >= spec.firstResolveAt && t < spec.secondTelegraph[0];
@@ -12945,7 +13227,8 @@ export function blueprintFrame(id, time) {
             spec.mode === 'damage-rate-cap' ||
             spec.mode === 'loadout-mirror' ||
             spec.mode === 'moveset-shapeshifting' ||
-            spec.mode === 'ally-theft'
+            spec.mode === 'ally-theft' ||
+            spec.mode === 'false-death'
           ? 92
           : -62),
   };

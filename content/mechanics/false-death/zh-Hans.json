@@ -1,0 +1,134 @@
+{
+  "title": "假死与归来",
+  "subtitle": "把空血条与已确认的战斗结束分开",
+  "variant": "致命一击 · 暂扣奖励 · 复苏 · 新契约",
+  "summary": "首领看似被击败，但结算保持待定，直到清晰的复苏开启新阶段。",
+  "overview": "假死把看似致命的血量归零变成阶段转换，而不是最终结果。第一次倒下可以借用熟悉的胜利语言，但奖励、出口、存档、音乐和输入状态必须服从同一个明确的结算契约，直到复苏完成且真正结局被提交。",
+  "learning": "定义归零事件、假死演出、确认窗口、复苏来源、下一阶段状态、结算权威、奖励与出口锁、存档时机、跳过行为、防重复事件和遥测。",
+  "category": "状态、资源与缩放",
+  "readTime": "10 分钟",
+  "demo": {
+    "title": "Kern 的破碎核心归来时保持战斗锁定",
+    "timeline": "假死时间线",
+    "step": "归零、结果待定、复苏、确认新阶段",
+    "phaseNames": ["清空可见血条", "暂缓结算并揭示归来", "提交下一阶段契约"],
+    "phaseDescriptions": [
+      "0.75 秒时 Tavi 打出看似终结的一击。Kern 倒下，第一阶段血条归零，但竞技场封印和奖励符文仍明确锁住。",
+      "1.35 至 3.15 秒，待定符号取代正常胜利确认。破碎核心脉动，身体重新组装，第二阶段符文在危险恢复前出现。",
+      "3.15 秒时，唯一一次复苏事件建立有限的第二阶段血量和新攻击包。因为 encounterComplete 仍为 false，出口继续关闭；只有最终死亡才能开放奖励和持久化。"
+    ],
+    "boss": "首领",
+    "player": "玩家",
+    "danger": "可逆死亡时播放正常胜利、发奖、自动存档或开放出口会教错契约并破坏状态",
+    "locked": "血量归零、阶段转换、复苏次数、结算、奖励、出口、存档、音频、跳过和回滚属于同一权威状态机",
+    "safe": "显示第一条血为空，保持结算待定，揭示复苏来源，建立新规则，并且每个事件只提交一次",
+    "reducedMotion": "减少动态时自动播放关闭。可查看 0.25、0.75、1.15、1.55、2.15、2.65、3.15、3.75、4.35、4.95 和 5.35 秒。",
+    "diagramDescription": "Tavi 清空 Kern 的第一阶段血量，但竞技场和奖励仍锁住；核心符文重组首领并宣布第二阶段。"
+  },
+  "steps": [
+    {
+      "title": "什么是死亡，什么是结算？",
+      "body": "把阶段血量归零和战斗结算建模为不同事件。明确 phaseId、depletionId、复苏预算、最终阶段标志和结算权威，避免动画回调、伤害监听、网络回滚或跳过演出重复发放胜利。"
+    },
+    {
+      "title": "哪些胜利信号可以安全借用？",
+      "body": "用倒地、静音、镜头停顿、空血条、掉落物或短消息制造假结局。至少保留一个明显未解决的不变量——封闭出口、待完成目标、锁定奖励、不稳定尸体或存活核心——且不要提前真正存档或发成就。"
+    },
+    {
+      "title": "归来如何教授新契约？",
+      "body": "在伤害恢复前揭示复苏来源，再原子地建立新血量、阶段标签、碰撞、位置、攻击包和安全间隔。定义玩家站在尸体上、重组时攻击、暂停、跳过、断线或在转换中读档的结果。"
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "假胜利与真胜利完全相同",
+      "body": "完整号角、自由控制、拾取战利品、存档和开放出口会让归来像撤销有效结果。把不可逆反馈留给 encounterComplete，并在假结局中保持未解决信号。"
+    },
+    {
+      "title": "由演出回调复活首领",
+      "body": "若血量、动画、音频和奖励分别猜测转换，跳过或重播会复制血条、战利品或阶段。由战斗逻辑解析一个幂等复苏事件，演出只观察状态。"
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "使用确认窗口，而非无效输入",
+      "body": "停顿要足够读懂未解决线索，又不能长到玩家打开菜单或离场。镜头与输入要有意图，重复挑战要能安全跳过。"
+    },
+    {
+      "title": "让归来阶段有可读差异",
+      "body": "稳定改变血条、姿态、核心形状、声音、节奏、场地规则或轮廓的组合。归来应给出新契约而非只补血，并在第一项威胁前保留普通反应时间。"
+    },
+    {
+      "title": "记录阶段与结果的边界",
+      "body": "记录 depletionId、phaseId、复苏次数、待定时长、跳过、玩家位置、恢复期伤害、阶段初始血量、completionId、奖励、存档、重复事件、断线、读档状态和假死后的退出。"
+    }
+  ],
+  "story": {
+    "title": "Kern 倒下，但心核符文仍在计数",
+    "body": "Tavi 的剑击散外层石块并清空血条。门上符文仍被划掉；小核心三次脉动，把碎片拉回更高的形体，并在 Kern 再次行动前点亮第二阶段标记。"
+  },
+  "adaptation": {
+    "title": "保留惊喜，不隐藏状态",
+    "body": "提供持续的未完成目标、较长复苏提示、更强阶段文字、较少闪光与震动、稳定字幕，以及抵达同一安全状态的重试跳过。重试可缩短戏剧时间，但不能删去规则信号和反应窗口。"
+  },
+  "distinction": {
+    "title": "可逆的击败状态，不是治疗或普通换阶段",
+    "body": "自我治疗在首领仍活跃时增加血量；普通阶段转换公开说明战斗继续。假死先呈现可信的击败，再揭示结算一直待定，因此核心设计问题是保护最终结果契约。"
+  },
+  "lensNotes": [
+    {
+      "id": "progress-clarity",
+      "body": "阶段血条清空可以表示进度，但奖励、出口、目标与最终确认必须一致回答战斗是否完成。"
+    },
+    {
+      "id": "phase-structure",
+      "body": "假死是拥有待定状态、复苏事件、新阶段入口条件和最终结算锁的边界。"
+    },
+    {
+      "id": "dramatic-framing",
+      "body": "静音、倒地、镜头停顿和延迟运动制造假结局；未解决核心让戏剧性支持规则。"
+    },
+    {
+      "id": "telegraphing",
+      "body": "复苏来源、新阶段身份、控制返回和首个危险动作要在生效前分别提示。"
+    },
+    {
+      "id": "rule-exception",
+      "body": "跳过、暂停、攻击尸体、站在重组区、读档、回滚和重复归零都需要唯一结果。"
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "Hollow Knight",
+      "boss": "Soul Master",
+      "screenshot": "https://i.ytimg.com/vi/_4GT_ztkAUk/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=_4GT_ztkAUk&t=94s",
+      "video": "https://www.youtube.com/watch?v=_4GT_ztkAUk&t=94s",
+      "videoDurationSeconds": 172,
+      "body": "从 1:34 起，漫长倒地和掉落的 Desolate Dive 很像战斗结束。Soul Master 随后归来、击穿地板并进入短第二阶段；奖励物本身成为假结局构图的一部分。"
+    },
+    {
+      "dimension": "3D",
+      "game": "Sekiro: Shadows Die Twice",
+      "boss": "Guardian Ape",
+      "screenshot": "https://i.ytimg.com/vi/26B8VI-QNok/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=26B8VI-QNok&t=255s",
+      "video": "https://www.youtube.com/watch?v=26B8VI-QNok&t=255s",
+      "videoDurationSeconds": 766,
+      "body": "4:15 的处决、尸体和停顿形成强烈终止节拍，随后无头猿持剑起身。轮廓、声音和攻击语言一起变化，使归来成为新契约而非简单回血。"
+    },
+    {
+      "dimension": "3D",
+      "game": "Dark Souls III: Ashes of Ariandel",
+      "boss": "Sister Friede",
+      "screenshot": "https://i.ytimg.com/vi/V8VZgmMncwI/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=V8VZgmMncwI&t=450s",
+      "video": "https://www.youtube.com/watch?v=V8VZgmMncwI&t=450s",
+      "videoDurationSeconds": 727,
+      "body": "从 7:30 起，第二阶段共享血量归零并出现类似结束的反馈，之后 Friede 以 Blackflame Friede 归来。此例说明阶段归零、奖励表现和最终结算必须由不同权威状态控制。"
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

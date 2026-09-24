@@ -1,0 +1,138 @@
+{
+  "title": "মিথ্যা মৃত্যু ও প্রত্যাবর্তন",
+  "subtitle": "খালি স্বাস্থ্যবারকে নিশ্চিত সংঘর্ষ-সমাপ্তি থেকে আলাদা রাখুন",
+  "variant": "মরণাঘাত · স্থগিত পুরস্কার · পুনর্জাগরণ · নতুন চুক্তি",
+  "summary": "বস পরাজিত মনে হয়, কিন্তু স্পষ্ট পুনর্জাগরণ নতুন ধাপ শুরু না করা পর্যন্ত সমাপ্তি স্থগিত থাকে।",
+  "overview": "মিথ্যা মৃত্যু প্রাণঘাতী মনে হওয়া স্বাস্থ্য-শূন্যতাকে চূড়ান্ত ফল নয়, ধাপান্তর বানায়। প্রথম পতন পরিচিত বিজয়-ভাষা ধার নিতে পারে, কিন্তু পুরস্কার, প্রস্থান, সেভ, সঙ্গীত ও নিয়ন্ত্রণ একটি স্পষ্ট completion চুক্তির অধীনে থাকে যতক্ষণ না প্রত্যাবর্তন মেটে ও সত্যিকারের শেষ commit হয়।",
+  "learning": "স্বাস্থ্য-শূন্য ঘটনা, দৃশ্যায়ন, নিশ্চিতকরণ সময়, পুনর্জাগরণের উৎস, পরের ধাপ, completion কর্তৃত্ব, পুরস্কার ও প্রস্থান লক, সেভ সময়, skip, duplicate guard এবং telemetry নির্ধারণ করুন।",
+  "category": "অবস্থা, সম্পদ ও স্কেলিং",
+  "readTime": "১০ মিনিট",
+  "demo": {
+    "title": "Kern-এর ভাঙা core ফেরার সময় সংঘর্ষ লক রাখুন",
+    "timeline": "মিথ্যা মৃত্যুর সময়রেখা",
+    "step": "শূন্যতা, স্থগিত ফল, প্রত্যাবর্তন, নিশ্চিত ধাপ",
+    "phaseNames": [
+      "দৃশ্যমান স্বাস্থ্য শূন্য করুন",
+      "সমাপ্তি আটকে প্রত্যাবর্তন দেখান",
+      "পরের ধাপের চুক্তি commit করুন"
+    ],
+    "phaseDescriptions": [
+      "০.৭৫ সেকেন্ডে Tavi শেষ মনে হওয়া আঘাত করে। Kern পড়ে যায় এবং প্রথম ধাপের স্বাস্থ্য শূন্য হয়, কিন্তু arena seal ও reward rune স্পষ্টভাবে বন্ধ থাকে।",
+      "১.৩৫ থেকে ৩.১৫ সেকেন্ডে স্থগিত-ফল চিহ্ন স্বাভাবিক বিজয়-নিশ্চিতকরণকে বদলে দেয়। ভাঙা core স্পন্দিত হয়ে দেহ জোড়ে এবং বিপদ ফেরার আগে দ্বিতীয় ধাপের rune দেখায়।",
+      "৩.১৫ সেকেন্ডে একটিমাত্র revival event সীমিত দ্বিতীয়-ধাপ স্বাস্থ্য ও নতুন attack package তৈরি করে। encounterComplete false থাকায় প্রস্থান বন্ধ; শুধু চূড়ান্ত মৃত্যু পুরস্কার ও persistence খোলে।"
+    ],
+    "boss": "বস",
+    "player": "খেলোয়াড়",
+    "danger": "ফেরানো যায় এমন মৃত্যুতে স্বাভাবিক বিজয়, পুরস্কার, autosave বা খোলা প্রস্থান ভুল চুক্তি শেখায় এবং state নষ্ট করতে পারে",
+    "locked": "স্বাস্থ্য-শূন্যতা, ধাপান্তর, revival count, completion, পুরস্কার, প্রস্থান, সেভ, audio, skip ও rollback একটি authoritative state machine-এর মালিকানায়",
+    "safe": "প্রথম বার খালি দেখান, completion স্থগিত রাখুন, revival source দেখান, নতুন নিয়ম স্থাপন করুন এবং প্রতিটি event একবার commit করুন",
+    "reducedMotion": "কম গতিতে autoplay বন্ধ। ০.২৫, ০.৭৫, ১.১৫, ১.৫৫, ২.১৫, ২.৬৫, ৩.১৫, ৩.৭৫, ৪.৩৫, ৪.৯৫ ও ৫.৩৫ সেকেন্ড দেখুন।",
+    "diagramDescription": "Tavi Kern-এর প্রথম স্বাস্থ্য খালি করে, কিন্তু core rune বসকে পুনর্গঠন করে দ্বিতীয় ধাপ ঘোষণা না করা পর্যন্ত arena ও reward লক থাকে।"
+  },
+  "steps": [
+    {
+      "title": "মৃত্যু ও completion কী?",
+      "body": "ধাপের স্বাস্থ্য-শূন্যতা এবং সংঘর্ষ completion আলাদা event করুন। phaseId, depletionId, revival budget, final-phase flag ও completion owner নাম দিন, যাতে animation callback, damage listener, rollback বা skipped cinematic দুইবার বিজয় না দেয়।"
+    },
+    {
+      "title": "কোন বিজয়-সংকেত নিরাপদে ধার নেওয়া যায়?",
+      "body": "পতন, নীরবতা, camera hold, খালি বার, পড়া বস্তু বা ছোট message বেছে নিন। অন্তত একটি unresolved invariant — বন্ধ প্রস্থান, বাকি objective, locked reward, অস্থির দেহ বা জীবিত core — দৃশ্যমান রাখুন এবং আসল সেভ বা achievement আগে দেবেন না।"
+    },
+    {
+      "title": "প্রত্যাবর্তন নতুন চুক্তি কীভাবে শেখায়?",
+      "body": "damage ফেরার আগে source দেখিয়ে health pool, phase label, collision, অবস্থান, attack package ও safe grace atomically স্থাপন করুন। দেহের উপর দাঁড়ানো, rebuild-এ আঘাত, pause, skip, disconnect বা transition reload-এর ফল নির্ধারণ করুন।"
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "মিথ্যা বিজয় আসল বিজয়ের মতো",
+      "body": "সম্পূর্ণ fanfare, মুক্ত control, loot, save ও খোলা প্রস্থান পরের প্রত্যাবর্তনকে বৈধ ফল কেড়ে নেওয়া মনে করায়। irreversible feedback encounterComplete-এর জন্য রাখুন এবং মিথ্যা শেষে unresolved signal দেখান।"
+    },
+    {
+      "title": "presentation callback বসকে জাগায়",
+      "body": "health, animation, audio ও reward আলাদা করে transition অনুমান করলে skip বা replay বার, loot বা phase নকল করতে পারে। encounter logic-এ এক idempotent revival event resolve করুন; presentation শুধু state দেখবে।"
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "মৃত input নয়, confirmation window দিন",
+      "body": "বিরতি ইঙ্গিত পড়ার মতো দীর্ঘ, কিন্তু শেষ ভেবে menu খোলার মতো দীর্ঘ নয়। camera ও input ইচ্ছাকৃত রাখুন এবং repeat attempt-এ safe skip দিন।"
+    },
+    {
+      "title": "ফেরত ধাপকে স্পষ্ট আলাদা করুন",
+      "body": "health UI, pose, core, sound, cadence, arena rule বা silhouette-এর স্থির সমন্বয় বদলান। এটি শুধু refill নয়, নতুন চুক্তি; প্রথম threat-এর আগে সাধারণ response time দিন।"
+    },
+    {
+      "title": "ধাপ ও ফলের সীমা মাপুন",
+      "body": "depletionId, phaseId, revival count, pending duration, skip, player position, rebuild damage, start health, completionId, rewards, saves, duplicate attempts, disconnect, reload state ও apparent death-এর পর abandon রেকর্ড করুন।"
+    }
+  ],
+  "story": {
+    "title": "Kern পড়ে, কিন্তু heart rune গুনতে থাকে",
+    "body": "Tavi-র তলোয়ার বাইরের পাথর ছড়িয়ে বার খালি করে। gate rune কাটা থাকে; ছোট core তিনবার স্পন্দিত হয়ে টুকরো উঁচু দেহে টানে এবং Kern নড়ার আগে দ্বিতীয় ধাপের চিহ্ন জ্বালায়।"
+  },
+  "adaptation": {
+    "title": "state না লুকিয়ে surprise রাখুন",
+    "body": "স্থায়ী unresolved-objective cue, দীর্ঘ revival tell, শক্ত phase text, কম flash ও shake, স্থিতিশীল subtitle এবং একই safe state-এ পৌঁছানো retry skip দিন। পুনরায় চেষ্টায় drama ছোট হতে পারে, rule signal ও response window নয়।"
+  },
+  "distinction": {
+    "title": "ফেরানো যায় এমন defeat, healing বা সাধারণ phase নয়",
+    "body": "self-heal সক্রিয় বসের স্বাস্থ্য বাড়ায়। সাধারণ phase change জানায় যে লড়াই চলছে। মিথ্যা মৃত্যু বিশ্বাসযোগ্য defeat দেখিয়ে পরে জানায় completion স্থগিত ছিল; তাই মূল সমস্যা final-result contract রক্ষা করা।"
+  },
+  "lensNotes": [
+    {
+      "id": "progress-clarity",
+      "body": "খালি phase bar অগ্রগতি দেখায়, কিন্তু rewards, exits, objectives ও final confirmation-কে সত্যিকারের completion-এ একমত হতে হবে।"
+    },
+    {
+      "id": "phase-structure",
+      "body": "মিথ্যা মৃত্যু নিজস্ব pending state, revival event, next-phase entry ও final completion gate-সহ একটি boundary।"
+    },
+    {
+      "id": "dramatic-framing",
+      "body": "নীরবতা, collapse, camera hold ও বিলম্ব false ending গড়ে; জীবিত core drama-কে rule-এর সঙ্গে মেলায়।"
+    },
+    {
+      "id": "telegraphing",
+      "body": "revival source, নতুন phase identity, control return ও প্রথম dangerous action চালুর আগে আলাদা cue চায়।"
+    },
+    {
+      "id": "rule-exception",
+      "body": "skip, pause, corpse attack, rebuild zone, reload, rollback ও duplicate depletion event-এর এক নির্দিষ্ট ফল চাই।"
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "Hollow Knight",
+      "boss": "Soul Master",
+      "screenshot": "https://i.ytimg.com/vi/_4GT_ztkAUk/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=_4GT_ztkAUk&t=94s",
+      "video": "https://www.youtube.com/watch?v=_4GT_ztkAUk&t=94s",
+      "videoDurationSeconds": 172,
+      "body": "১:৩৪ থেকে দীর্ঘ collapse ও পড়া Desolate Dive spell লড়াইয়ের শেষ মনে হয়। Soul Master ফিরে floor ভেঙে ছোট দ্বিতীয় phase শুরু করে; reward object-ই false ending frame-এর অংশ হয়।"
+    },
+    {
+      "dimension": "3D",
+      "game": "Sekiro: Shadows Die Twice",
+      "boss": "Guardian Ape",
+      "screenshot": "https://i.ytimg.com/vi/26B8VI-QNok/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=26B8VI-QNok&t=255s",
+      "video": "https://www.youtube.com/watch?v=26B8VI-QNok&t=255s",
+      "videoDurationSeconds": 766,
+      "body": "৪:১৫-তে execution, corpse ও pause শক্ত শেষ গড়ে, তারপর headless ape তলোয়ার নিয়ে ওঠে। silhouette, sound ও attack language বদলে return-কে নতুন contract করে।"
+    },
+    {
+      "dimension": "3D",
+      "game": "Dark Souls III: Ashes of Ariandel",
+      "boss": "Sister Friede",
+      "screenshot": "https://i.ytimg.com/vi/V8VZgmMncwI/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=V8VZgmMncwI&t=450s",
+      "video": "https://www.youtube.com/watch?v=V8VZgmMncwI&t=450s",
+      "videoDurationSeconds": 727,
+      "body": "৭:৩০ থেকে shared second-phase health শূন্য ও ending-like feedback আসে, তারপর Friede Blackflame Friede হয়ে ফেরে। উদাহরণ phase depletion, reward presentation ও final completion আলাদা রাখার কারণ দেখায়।"
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

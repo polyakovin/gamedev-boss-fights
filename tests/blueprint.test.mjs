@@ -61,6 +61,8 @@ import {
   movesetShapeshiftingResolve,
   allyTheftState,
   allyTheftTransfer,
+  falseDeathState,
+  falseDeathResolve,
   counterStanceOutcome,
   counterStanceState,
   blueprintFrame,
@@ -88,8 +90,8 @@ import {
   renderBlueprintThumbnail,
 } from '../lib/blueprint-view.mjs';
 
-test('all 96 promoted lesson animations have distinct rule modes and complete moving frames', () => {
-  assert.equal(BLUEPRINT_MECHANIC_IDS.length, 96);
+test('all 97 promoted lesson animations have distinct rule modes and complete moving frames', () => {
+  assert.equal(BLUEPRINT_MECHANIC_IDS.length, 97);
   const modes = new Set();
   for (const id of BLUEPRINT_MECHANIC_IDS) {
     for (let time = 0; time <= BLUEPRINT_DURATION; time += 0.1) {
@@ -110,7 +112,7 @@ test('all 96 promoted lesson animations have distinct rule modes and complete mo
           assert.ok(Number.isFinite(value), `${id} has an invalid ${primitive.type}`);
     }
   }
-  assert.equal(modes.size, 96);
+  assert.equal(modes.size, 97);
 });
 
 test('every blueprint exposes signal, committed action, and recovery without player teleports', () => {
@@ -155,7 +157,8 @@ test('every blueprint exposes signal, committed action, and recovery without pla
       id !== 'external-healing-source' &&
       id !== 'damage-rate-cap' &&
       id !== 'loadout-mirror' &&
-      id !== 'moveset-shapeshifting'
+      id !== 'moveset-shapeshifting' &&
+      id !== 'false-death'
     )
       assert.equal(blueprintFrame(id, 3).dangerActive, true, id);
     assert.equal(blueprintFrame(id, 3).playerSafe, true, id);
@@ -250,6 +253,7 @@ test('every damaging promoted animation derives safety from its own active geome
       id !== 'damage-rate-cap' &&
       id !== 'loadout-mirror' &&
       id !== 'moveset-shapeshifting' &&
+      id !== 'false-death' &&
       id !== 'part-break' &&
       id !== 'counter-stance' &&
       id !== 'absorption-power-up' &&
@@ -3903,5 +3907,68 @@ test('ally theft transfers one familiar, bounds its commands, and restores owner
   assert.match(
     renderBlueprintThumbnail(id, 'test-ally-theft'),
     /data-blueprint-preview="ally-theft"/,
+  );
+});
+
+test('false death keeps completion pending, revives once, and preserves final authority', () => {
+  const id = 'false-death';
+  assert.deepEqual([0, 0.9, 1.6, 2.5, 3.5, 4.2, 4.8, 5.5].map(falseDeathState), [
+    'phase-one-active',
+    'phase-one-depleted',
+    'completion-pending',
+    'revival-building',
+    'phase-two-signaled',
+    'phase-two-active',
+    'phase-two-stable',
+    'reset',
+  ]);
+  assert.deepEqual(falseDeathResolve(), {
+    depletionId: 'phase-1-depletion-1',
+    currentPhase: 1,
+    nextPhase: 2,
+    phaseHealthDepleted: true,
+    revived: true,
+    revivalCount: 1,
+    encounterComplete: false,
+    rewardUnlocked: false,
+    exitUnlocked: false,
+    eventCount: 1,
+  });
+  assert.equal(falseDeathResolve({ alreadyApplied: true }).eventCount, 0);
+  assert.deepEqual(falseDeathResolve({ currentPhase: 2, finalPhase: true }), {
+    depletionId: 'phase-1-depletion-1',
+    currentPhase: 2,
+    nextPhase: 2,
+    phaseHealthDepleted: true,
+    revived: false,
+    revivalCount: 0,
+    encounterComplete: true,
+    rewardUnlocked: true,
+    exitUnlocked: true,
+    eventCount: 1,
+  });
+
+  const depleted = blueprintFrame(id, 0.9);
+  assert.equal(depleted.falseDeathBossHealth, 0);
+  assert.equal(depleted.falseDeathCompletionPending, true);
+  assert.equal(depleted.falseDeathRewardLocked, true);
+  assert.equal(depleted.falseDeathEncounterComplete, false);
+  const rebuilding = blueprintFrame(id, 2.5);
+  assert.equal(rebuilding.falseDeathRebuildActive, true);
+  assert.equal(rebuilding.falseDeathRevivalCount, 0);
+  const revived = blueprintFrame(id, 3.5);
+  assert.equal(revived.falseDeathCurrentPhase, 2);
+  assert.equal(revived.falseDeathBossHealth, 68);
+  assert.equal(revived.falseDeathRevivalId, 'false-death-revival-1');
+  assert.equal(revived.falseDeathEventCount, 2);
+  assert.equal(revived.falseDeathExitLocked, true);
+  const active = blueprintFrame(id, 4.2);
+  assert.equal(active.falseDeathSecondAttackActive, true);
+  assert.equal(blueprintPointSafe(id, 4.2, active.player), true);
+  assert.equal(blueprintPointSafe(id, 4.2, active.boss), false);
+  assert.deepEqual(blueprintFrame(id, 0).player, blueprintFrame(id, 6).player);
+  assert.match(
+    renderBlueprintThumbnail(id, 'test-false-death'),
+    /data-blueprint-preview="false-death"/,
   );
 });
