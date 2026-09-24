@@ -4079,6 +4079,8 @@ test('ally theft exposes one bounded ownership transfer and safe restoration', a
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await page.goto('en/mechanics/ally-theft/');
   const widget = page.locator('[data-blueprint-demo]');
+  await expect(widget).toHaveAttribute('data-blueprint-full-height', 'true');
+  await expect(widget).toHaveAttribute('data-blueprint-screen-height', 'true');
   const timeline = widget.locator('[data-blueprint-timeline]');
   const seek = (milliseconds) =>
     timeline.evaluate((element, value) => {

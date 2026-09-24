@@ -1481,10 +1481,10 @@ const SPECS = {
   },
   'ally-theft': {
     mode: 'ally-theft',
-    boss: [300, 375],
-    player: [300, 660],
-    target: [300, 660],
-    arena: [55, 310, 450, 590],
+    boss: [300, 330],
+    player: [300, 760],
+    target: [300, 760],
+    arena: [55, 145, 450, 735],
     allyStart: [368, 650],
     allyCaptured: [382, 458],
     mark: [0.55, 1.15],
@@ -7929,124 +7929,83 @@ function primitivesFor(spec, frame) {
   }
   if (mode === 'ally-theft') {
     const ally = frame.allyTheftAlly;
-    const ownerTone =
-      frame.allyTheftOwnerId === 'player'
-        ? 'safe'
-        : frame.allyTheftOwnerId === 'boss'
-          ? 'accent'
-          : 'signal';
+    const ownerTone = frame.allyTheftOwnerId === 'player' ? 'safe' : 'accent';
     const markProgress = clamp((frame.time - spec.mark[0]) / (spec.mark[1] - spec.mark[0]));
-    const transferProgress = clamp(
-      (frame.time - spec.transfer[0]) / (spec.transfer[1] - spec.transfer[0]),
-    );
     const releaseProgress = clamp(
       (frame.time - spec.release[0]) / (spec.release[1] - spec.release[0]),
     );
-    const ownerPlayerOpacity = frame.allyTheftOwnerId === 'player' ? 0.95 : 0.28;
-    const ownerBossOpacity = frame.allyTheftOwnerId === 'boss' ? 0.95 : 0.28;
+    const wingLift = 12 * Math.sin(frame.time * 10);
+    const bossCommand = frame.time >= spec.mark[0] && frame.time < spec.release[0];
     return [
-      rect(...spec.arena, 0.52, 'muted', 0.025),
-      rect(108, 490, 344, 78, 0.72, 'muted', 0.025),
-      circle(170, 529, 27, ownerPlayerOpacity, 'safe', 7, 0.08),
-      path('M 156 530 L 166 540 L 185 516', ownerPlayerOpacity, 'safe', 6),
-      circle(390, 529, 27, ownerBossOpacity, 'accent', 7, 0.08),
-      path('M 377 541 L 390 514 L 403 541 Z', ownerBossOpacity, 'accent', 6, 0.04),
-      line(202, 529, 358, 529, 0.45, ownerTone, 5, '12 9'),
       path(
-        `M ${frame.boss.x} ${frame.boss.y + 22} Q 470 430 ${ally.x} ${ally.y}`,
-        frame.time >= spec.mark[0] && frame.time < spec.release[0] ? 0.82 : 0,
+        'M 70 187 L 280 148 L 490 187 V 216 L 280 177 L 70 216 Z M 72 846 L 280 804 L 488 846 V 874 L 280 832 L 72 874 Z',
+        0.42,
+        'muted',
+        0,
+        0.6,
+      ),
+      path(
+        `M ${frame.boss.x + 22} ${frame.boss.y - 12} Q 475 405 ${ally.x + 9} ${ally.y - 17} L ${ally.x - 6} ${ally.y - 9} Q 420 430 ${frame.boss.x + 12} ${frame.boss.y + 13} Z`,
+        bossCommand ? 0.42 : 0,
         'accent',
-        6,
         0,
-        '10 8',
+        0.5,
       ),
       path(
-        `M ${frame.player.x + 18} ${frame.player.y - 42} Q 430 610 ${ally.x} ${ally.y}`,
-        frame.allyTheftOwnerId === 'player' ? 0.72 : 0.14,
+        `M ${frame.player.x + 11} ${frame.player.y - 49} Q 442 637 ${ally.x - 12} ${ally.y + 12} L ${ally.x - 2} ${ally.y + 19} Q 421 671 ${frame.player.x - 5} ${frame.player.y - 34} Z`,
+        frame.allyTheftOwnerId === 'player' ? 0.35 : 0,
         'safe',
-        5,
         0,
-        '8 8',
+        0.5,
       ),
-      circle(
-        ally.x,
-        ally.y,
-        40 + pulse(markProgress) * 22,
-        frame.allyTheftMarked ? 0.92 : 0,
-        'signal',
-        7,
-        0.025,
-        '8 7',
-      ),
-      circle(ally.x, ally.y, 25, 0.98, ownerTone, 7, 0.16),
       path(
-        `M ${ally.x} ${ally.y - 15} L ${ally.x + 15} ${ally.y} L ${ally.x} ${ally.y + 15} L ${ally.x - 15} ${ally.y} Z`,
+        `M ${ally.x - 6} ${ally.y - 12} Q ${ally.x - 34} ${ally.y - 59 - wingLift} ${ally.x - 57} ${ally.y - 16} Q ${ally.x - 37} ${ally.y - 24} ${ally.x - 19} ${ally.y + 10} Z M ${ally.x + 6} ${ally.y - 12} Q ${ally.x + 34} ${ally.y - 59 - wingLift} ${ally.x + 57} ${ally.y - 16} Q ${ally.x + 37} ${ally.y - 24} ${ally.x + 19} ${ally.y + 10} Z`,
+        0.93,
+        ownerTone,
+        0,
+        0.82,
+      ),
+      path(
+        `M ${ally.x - 17} ${ally.y - 20} Q ${ally.x} ${ally.y - 37} ${ally.x + 17} ${ally.y - 20} L ${ally.x + 21} ${ally.y + 14} L ${ally.x} ${ally.y + 31} L ${ally.x - 21} ${ally.y + 14} Z M ${ally.x + 19} ${ally.y - 17} L ${ally.x + 37} ${ally.y - 10} L ${ally.x + 19} ${ally.y - 3} Z`,
         0.98,
         ownerTone,
-        5,
-        0.08,
+        0,
+        0.93,
       ),
-      line(
-        spec.allyStart[0],
-        spec.allyStart[1],
-        spec.allyCaptured[0],
-        spec.allyCaptured[1],
-        frame.time >= spec.transfer[0] && frame.time < spec.returning[1] ? 0.42 : 0,
-        ownerTone,
-        4,
-        '7 10',
-      ),
-      circle(
-        ally.x,
-        ally.y,
-        46 + pulse(transferProgress) * 46,
-        frame.time >= spec.transfer[0] && frame.time < spec.transfer[1]
-          ? 0.88 - transferProgress * 0.3
-          : 0,
-        'accent',
-        8,
-        0.02,
+      circle(ally.x + 8, ally.y - 14, 3, 0.96, 'muted', 0, 0.96),
+      path(
+        `M ${ally.x - 31} ${ally.y - 57} L ${ally.x - 12} ${ally.y - 75} L ${ally.x} ${ally.y - 53} L ${ally.x + 13} ${ally.y - 76} L ${ally.x + 32} ${ally.y - 56} L ${ally.x + 11} ${ally.y - 44} L ${ally.x} ${ally.y - 56} L ${ally.x - 11} ${ally.y - 44} Z`,
+        frame.allyTheftMarked ? 0.2 + markProgress * 0.7 : 0,
+        'signal',
+        0,
+        0.78,
       ),
       ...spec.shotTimes.map((at, index) => {
         const target = point(spec.shotTargets[index]);
         const signal = clamp((frame.time - (at - 0.24)) / 0.24) * clamp((at - frame.time) / 0.08);
-        return circle(target.x, target.y, 31 + signal * 12, signal, 'accent', 6, 0.03, '7 6');
-      }),
-      ...frame.allyTheftProjectiles.flatMap((projectile) => [
-        line(
-          spec.allyCaptured[0],
-          spec.allyCaptured[1],
-          projectile.x,
-          projectile.y,
-          0.48,
+        return path(
+          `M ${target.x - 24} ${target.y + 9} L ${target.x} ${target.y - 17} L ${target.x + 24} ${target.y + 9} Z`,
+          signal,
           'accent',
-          5,
-          '10 8',
-        ),
-        circle(projectile.x, projectile.y, spec.projectileRadius, 0.98, 'accent', 6, 0.2),
+          0,
+          0.38,
+        );
+      }),
+      ...frame.allyTheftProjectiles.map((projectile) =>
         path(
-          `M ${projectile.x - 9} ${projectile.y} L ${projectile.x} ${projectile.y + 9} L ${projectile.x + 9} ${projectile.y}`,
-          0.9,
-          'signal',
-          4,
+          `M ${projectile.x} ${projectile.y + 21} L ${projectile.x - 12} ${projectile.y - 10} L ${projectile.x} ${projectile.y - 4} L ${projectile.x + 12} ${projectile.y - 10} Z`,
+          0.98,
+          'accent',
+          0,
+          0.88,
         ),
-      ]),
-      circle(
-        ally.x,
-        ally.y,
-        45 + releaseProgress * 78,
-        frame.time >= spec.release[0] && frame.time < spec.release[1]
-          ? 0.9 - releaseProgress * 0.48
-          : 0,
-        'safe',
-        9,
-        0.025,
       ),
       path(
-        `M ${ally.x - 24} ${ally.y - 31} L ${ally.x + 24} ${ally.y + 31} M ${ally.x + 24} ${ally.y - 31} L ${ally.x - 24} ${ally.y + 31}`,
-        frame.time >= spec.release[0] && frame.time < spec.release[1] ? pulse(releaseProgress) : 0,
+        `M ${ally.x - 40} ${ally.y - 42} L ${ally.x - 25 - 20 * releaseProgress} ${ally.y - 15} L ${ally.x - 44} ${ally.y + 7} Z M ${ally.x + 40} ${ally.y - 42} L ${ally.x + 25 + 20 * releaseProgress} ${ally.y - 15} L ${ally.x + 44} ${ally.y + 7} Z`,
+        frame.time >= spec.release[0] && frame.time < spec.release[1] ? 0.84 : 0,
         'safe',
-        7,
+        0,
+        0.72,
       ),
     ];
   }
