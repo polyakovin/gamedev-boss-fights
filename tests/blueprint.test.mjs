@@ -310,7 +310,7 @@ test('every damaging promoted animation derives safety from its own active geome
       const projectile = frame.primitives[3];
       point = { x: projectile.x, y: projectile.y };
     } else if (!point && id === 'orbiting-projectiles') {
-      const projectile = frame.primitives[2];
+      const projectile = frame.primitives[0];
       point = { x: projectile.x, y: projectile.y };
     } else if (!point && id === 'pulse-beam') {
       const beam = frame.primitives[1];
@@ -572,15 +572,18 @@ test('orbiting projectiles preserve radius, spacing, and a moving gap through co
   const late = blueprintFrame('orbiting-projectiles', 4.1);
 
   assert.deepEqual(signal.player, blueprintFrame('orbiting-projectiles', 0).player);
+  assert.ok(
+    active.primitives.every((projectile) => projectile.type === 'path' && projectile.radius === 18),
+  );
   for (const frame of [signal, early, active, late]) {
-    const distances = frame.primitives
-      .slice(2)
-      .map((projectile) => Math.hypot(projectile.x - frame.boss.x, projectile.y - frame.boss.y));
+    const distances = frame.primitives.map((projectile) =>
+      Math.hypot(projectile.x - frame.boss.x, projectile.y - frame.boss.y),
+    );
     assert.ok(distances.every((distance) => Math.abs(distance - 170) < 0.001));
   }
-  const angles = active.primitives
-    .slice(2)
-    .map((projectile) => Math.atan2(projectile.y - active.boss.y, projectile.x - active.boss.x));
+  const angles = active.primitives.map((projectile) =>
+    Math.atan2(projectile.y - active.boss.y, projectile.x - active.boss.x),
+  );
   const wrappedSteps = angles.map((angle, index) => {
     const next = angles[(index + 1) % angles.length];
     return (next - angle + Math.PI * 2) % (Math.PI * 2);

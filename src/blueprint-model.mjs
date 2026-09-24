@@ -8473,26 +8473,22 @@ function primitivesFor(spec, frame) {
   if (mode === 'orbiting-projectiles') {
     const orbitRadius = phase === 2 ? mix(spec.orbitRadius, 78, recover) : spec.orbitRadius;
     const rotation = spec.startAngle + spec.rotation * action + (phase === 2 ? recover * 0.4 : 0);
-    const orbitOpacity =
-      phase === 0 ? 0.38 + prepare * 0.38 : phase === 1 ? 0.22 : 0.22 * (1 - recover);
     const projectileOpacity = phase === 0 ? 0.54 + prepare * 0.34 : phase === 1 ? 1 : 1 - recover;
     const projectiles = Array.from({ length: spec.projectileCount }, (_, index) =>
       polar(boss, orbitRadius, rotation + (index * Math.PI * 2) / spec.projectileCount),
     );
-    return [
-      circle(boss.x, boss.y, spec.orbitRadius, orbitOpacity, 'accent', 6, 0),
-      path(
-        arcPath(boss, spec.orbitRadius + 24, rotation - 0.55, rotation + 0.15),
-        phase === 0 ? 0.5 + prepare * 0.34 : phase === 1 ? 0.24 : 0,
-        'safe',
-        6,
+    return projectiles.map((projectile) => ({
+      ...path(
+        `M ${projectile.x - 16} ${projectile.y - 8} L ${projectile.x - 3} ${projectile.y - 17} L ${projectile.x + 15} ${projectile.y - 11} L ${projectile.x + 17} ${projectile.y + 5} L ${projectile.x + 3} ${projectile.y + 17} L ${projectile.x - 15} ${projectile.y + 10} Z`,
+        projectileOpacity,
+        'signal',
         0,
-        '10 9',
+        0.9,
       ),
-      ...projectiles.map((projectile) =>
-        circle(projectile.x, projectile.y, 18, projectileOpacity, 'signal', 6, 0.48),
-      ),
-    ];
+      x: projectile.x,
+      y: projectile.y,
+      radius: 18,
+    }));
   }
   if (mode === 'pulse-beam') {
     const beamStart = point(spec.beamStart);
@@ -9449,12 +9445,10 @@ function pointClearsThreat(spec, frame, value, radius = BLUEPRINT_PLAYER_RADIUS)
     return Math.hypot(value.x - projectile.x, value.y - projectile.y) > projectile.radius + radius;
   }
   if (mode === 'orbiting-projectiles')
-    return frame.primitives
-      .slice(2)
-      .every(
-        (projectile) =>
-          Math.hypot(value.x - projectile.x, value.y - projectile.y) > projectile.radius + radius,
-      );
+    return frame.primitives.every(
+      (projectile) =>
+        Math.hypot(value.x - projectile.x, value.y - projectile.y) > projectile.radius + radius,
+    );
   if (mode === 'pulse-beam')
     return distanceToSegment(value, point(spec.beamStart), point(spec.beamEnd)) > 17 + radius;
   if (mode === 'chain-explosions') {
