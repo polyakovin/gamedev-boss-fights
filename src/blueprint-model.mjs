@@ -8640,15 +8640,18 @@ function primitivesFor(spec, frame) {
       x: trackedHead.x - overshoot * 62,
       y: trackedHead.y + overshoot * 178,
     };
+    const trailControl = {
+      x: mix(boss.x, control.x, trackedProgress),
+      y: mix(boss.y, control.y, trackedProgress),
+    };
     return [
-      path('M 180 260 Q 500 350 400 650 L 338 828', preview, 'accent', 8, 0, '12 10'),
       path(
-        `M 180 260 Q 500 350 400 650${overshoot ? ` L ${head.x} ${head.y}` : ''}`,
-        phase === 1 ? 0.45 : active * 0.25,
+        `M ${boss.x} ${boss.y} Q ${trailControl.x} ${trailControl.y} ${trackedHead.x} ${trackedHead.y}${overshoot ? ` L ${head.x} ${head.y}` : ''}`,
+        phase === 1 ? 0.42 : active * 0.2,
         'signal',
-        7,
+        5,
       ),
-      circle(head.x, head.y, 16, active, 'signal', 5, 0.45),
+      circle(head.x, head.y, 16, active, 'signal', 2, 0.88),
     ];
   }
   if (mode === 'beam')
@@ -9333,7 +9336,7 @@ function pointClearsThreat(spec, frame, value, radius = BLUEPRINT_PLAYER_RADIUS)
       6 + radius
     );
   if (mode === 'homing') {
-    const head = frame.primitives[2];
+    const head = frame.primitives[1];
     return Math.hypot(value.x - head.x, value.y - head.y) > head.radius + radius;
   }
   if (mode === 'beam') return Math.abs(value.x - frame.boss.x) > 36 + radius;

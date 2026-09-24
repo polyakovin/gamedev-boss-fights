@@ -277,7 +277,7 @@ test('every damaging promoted animation derives safety from its own active geome
     const frame = blueprintFrame(id, 3);
     let point = unsafePoints[id];
     if (!point && id === 'homing-projectile') {
-      const projectile = frame.primitives[2];
+      const projectile = frame.primitives[1];
       point = { x: projectile.x, y: projectile.y };
     } else if (!point && id === 'single-shot') {
       const projectile = frame.primitives[2];
@@ -380,7 +380,7 @@ test('rule-specific commitments stay visible through the response and recovery',
   assert.ok(ring.primitives[1].dash);
 
   const homing = blueprintFrame('homing-projectile', 4.15);
-  const homingHead = homing.primitives[2];
+  const homingHead = homing.primitives[1];
   assert.ok(Math.hypot(homingHead.x - homing.player.x, homingHead.y - homing.player.y) > 80);
   assert.ok(homingHead.y > 650, 'homing projectile should continue straight after tracking ends');
 
