@@ -1750,12 +1750,12 @@ const SPECS = {
     boss: [380, 420],
     partner: [170, 500],
     player: [275, 720],
-    target: [430, 760],
+    target: [400, 760],
     arena: [55, 300, 450, 590],
     firstApproach: [215, 625],
     firstSafe: [230, 760],
     secondApproach: [340, 620],
-    secondSafe: [450, 800],
+    secondSafe: [405, 800],
     firstDefeatAt: 1.05,
     firstTransfer: [1.25, 1.58],
     waveSignal: [1.65, 2],
@@ -1768,7 +1768,7 @@ const SPECS = {
     resetAt: 5.5,
     waveMaxRadius: 250,
     waveHalfWidth: 15,
-    lanceEnd: [500, 690],
+    lanceEnd: [425, 690],
     lanceHalfWidth: 27,
     encounterId: 'kern-inheritance-duel-1',
     leftBossId: 'echo-kern',
@@ -8682,64 +8682,93 @@ function primitivesFor(spec, frame) {
     const transferRight = clamp(
       (t - spec.secondTransfer[0]) / (spec.secondTransfer[1] - spec.secondTransfer[0]),
     );
-    const waveRadius = 62 + spec.waveMaxRadius * waveProgress;
+    const waveRadius = 64 + spec.waveMaxRadius * waveProgress;
     const firstStrike = strikePulse(t, spec.firstDefeatAt, 0.4);
     const secondStrike = strikePulse(t, spec.secondDefeatAt, 0.4);
+    const firstShard = {
+      x: mix(spec.partner[0], spec.boss[0], transferLeft),
+      y: mix(spec.partner[1] - 62, spec.boss[1] - 72, transferLeft),
+    };
+    const secondShard = {
+      x: mix(spec.boss[0], spec.partner[0], transferRight),
+      y: mix(spec.boss[1] - 72, spec.partner[1] - 62, transferRight),
+    };
+    const firstTransfer = frame.killOrderInheritanceFirstTransferActive;
+    const secondTransfer = frame.killOrderInheritanceSecondTransferActive;
+    const waveInherited = frame.killOrderInheritanceInheritedPackage === 'rune-wave';
+    const lanceInherited = frame.killOrderInheritanceInheritedPackage === 'rune-lance';
     return [
-      rect(...spec.arena, 0.54, 'muted', 0.025),
       path(
-        'M 68 760 L 174 733 L 280 760 L 386 733 L 492 760 V 794 L 386 766 L 280 796 L 174 766 L 68 794 Z M 82 855 L 280 822 L 478 855 V 874 L 280 840 L 82 874 Z',
+        'M 70 116 H 490 V 161 H 70 Z M 84 161 H 125 V 806 H 84 Z M 435 161 H 476 V 806 H 435 Z',
+        0.6,
+        'muted',
+        0,
+        0.64,
+      ),
+      path(
+        'M 143 161 H 258 V 293 L 201 264 L 143 293 Z M 302 161 H 417 V 293 L 360 264 L 302 293 Z',
+        0.48,
+        'accent',
+        0,
+        0.44,
+      ),
+      path(
+        'M 184 190 L 201 173 L 218 190 L 201 219 Z M 345 188 L 360 168 L 375 188 L 360 207 Z',
+        0.67,
+        'safe',
+        0,
+        0.72,
+      ),
+      path(
+        'M 96 788 L 280 748 L 464 788 V 816 L 280 777 L 96 816 Z M 82 876 L 280 832 L 478 876 V 905 L 280 861 L 82 905 Z',
         0.52,
         'muted',
         0,
-        0.48,
+        0.62,
       ),
-      rect(76, 94, 408, 112, 0.82, 'muted', 0.14),
-      rect(104, 132, 150, 18, 0.8, 'muted', 0.08),
-      rect(104, 132, leftDown ? 0 : 150, 18, 0.9, 'accent', 0.28),
-      rect(306, 132, 150, 18, 0.8, 'muted', 0.08),
-      rect(306, 132, rightDown ? 0 : 150, 18, 0.9, 'signal', 0.28),
-      line(
-        spec.partner[0],
-        spec.partner[1] - 15,
-        spec.boss[0],
-        spec.boss[1] - 15,
-        0.55,
+      path(
+        'M 100 518 L 234 506 L 250 529 L 100 550 Z M 100 550 L 250 529 V 578 L 100 600 Z',
+        0.76,
         'muted',
-        5,
-        '12 10',
-      ),
-      circle(
-        spec.partner[0],
-        spec.partner[1],
-        71,
-        leftDown ? 0.84 : 0.35,
-        leftDown ? 'signal' : 'accent',
-        8,
-        0.025,
-        leftDown ? '12 9' : '',
-      ),
-      circle(
-        spec.boss[0],
-        spec.boss[1],
-        71,
-        rightDown ? 0.84 : 0.35,
-        rightDown ? 'signal' : 'accent',
-        8,
-        0.025,
-        rightDown ? '12 9' : '',
+        0,
+        0.64,
       ),
       path(
-        `M ${spec.partner[0] - 26} ${spec.partner[1] - 26} L ${spec.partner[0] + 26} ${spec.partner[1] + 26} M ${spec.partner[0] + 26} ${spec.partner[1] - 26} L ${spec.partner[0] - 26} ${spec.partner[1] + 26}`,
-        leftDown ? 0.9 : 0,
-        'signal',
-        8,
+        'M 302 436 L 444 423 L 460 449 L 302 466 Z M 302 466 L 460 449 V 499 L 302 516 Z',
+        0.76,
+        'muted',
+        0,
+        0.64,
+      ),
+      path('M 114 509 L 228 499 L 236 513 L 114 527 Z', leftDown ? 0.8 : 0.28, 'signal', 0, 0.52),
+      path('M 316 427 L 438 416 L 446 435 L 316 450 Z', rightDown ? 0.8 : 0.28, 'signal', 0, 0.52),
+      path(
+        `M ${firstShard.x - 16} ${firstShard.y} L ${firstShard.x} ${firstShard.y - 25} L ${firstShard.x + 16} ${firstShard.y} L ${firstShard.x} ${firstShard.y + 22} Z`,
+        firstTransfer ? 0.94 : 0,
+        'safe',
+        0,
+        0.82,
       ),
       path(
-        `M ${spec.boss[0] - 26} ${spec.boss[1] - 26} L ${spec.boss[0] + 26} ${spec.boss[1] + 26} M ${spec.boss[0] + 26} ${spec.boss[1] - 26} L ${spec.boss[0] - 26} ${spec.boss[1] + 26}`,
-        rightDown ? 0.9 : 0,
-        'signal',
-        8,
+        `M ${secondShard.x - 16} ${secondShard.y} L ${secondShard.x} ${secondShard.y - 25} L ${secondShard.x + 16} ${secondShard.y} L ${secondShard.x} ${secondShard.y + 22} Z`,
+        secondTransfer ? 0.94 : 0,
+        'accent',
+        0,
+        0.82,
+      ),
+      path(
+        `M ${spec.boss[0] - 58} ${spec.boss[1] - 126} L ${spec.boss[0] - 38} ${spec.boss[1] - 167} L ${spec.boss[0] - 16} ${spec.boss[1] - 120} L ${spec.boss[0] + 14} ${spec.boss[1] - 120} L ${spec.boss[0] + 38} ${spec.boss[1] - 167} L ${spec.boss[0] + 58} ${spec.boss[1] - 126} Z`,
+        waveInherited ? 0.92 : 0,
+        'safe',
+        0,
+        0.76,
+      ),
+      path(
+        `M ${spec.partner[0] - 50} ${spec.partner[1] - 147} L ${spec.partner[0]} ${spec.partner[1] - 213} L ${spec.partner[0] + 50} ${spec.partner[1] - 147} L ${spec.partner[0] + 12} ${spec.partner[1] - 168} V ${spec.partner[1] - 110} H ${spec.partner[0] - 12} V ${spec.partner[1] - 168} Z`,
+        lanceInherited ? 0.92 : 0,
+        'accent',
+        0,
+        0.78,
       ),
       line(
         frame.player.x - 8,
@@ -8748,7 +8777,7 @@ function primitivesFor(spec, frame) {
         spec.partner[1] + 18,
         firstStrike,
         'safe',
-        12,
+        11,
       ),
       line(
         frame.player.x - 8,
@@ -8757,101 +8786,50 @@ function primitivesFor(spec, frame) {
         spec.boss[1] + 18,
         secondStrike,
         'safe',
-        12,
-      ),
-      line(
-        spec.partner[0],
-        spec.partner[1],
-        spec.boss[0],
-        spec.boss[1],
-        frame.killOrderInheritanceFirstTransferActive ? 0.92 : 0,
-        'accent',
-        10 + transferLeft * 5,
-        '12 8',
+        11,
       ),
       circle(
         spec.boss[0],
         spec.boss[1],
-        68 + transferLeft * 20,
-        frame.killOrderInheritanceFirstTransferActive ? 0.85 : 0,
-        'accent',
-        9,
-        0.04,
-      ),
-      circle(
-        spec.boss[0],
-        spec.boss[1],
-        72,
-        frame.killOrderInheritanceWaveSignaled ? 0.87 : 0,
+        85,
+        frame.killOrderInheritanceWaveSignaled ? 0.48 : 0,
         'signal',
-        9,
-        0.03,
-        '13 9',
+        18,
+        0,
       ),
       circle(
         spec.boss[0],
         spec.boss[1],
         waveRadius,
-        frame.killOrderInheritanceWaveActive ? 0.94 : 0,
+        frame.killOrderInheritanceWaveActive ? 0.92 : 0,
         'signal',
-        17,
-        0.015,
+        22,
+        0.02,
       ),
-      circle(
-        280,
-        610,
-        115 * smooth((t - spec.intermission[0]) / (spec.intermission[1] - spec.intermission[0])),
+      path(
+        'M 154 488 L 426 665 L 440 690 L 412 681 L 158 512 Z',
+        frame.killOrderInheritanceLanceActive
+          ? 0.96
+          : frame.killOrderInheritanceLanceSignaled
+            ? 0.32
+            : 0,
+        'signal',
+        0,
+        0.8,
+      ),
+      path(
+        'M 158 488 L 425 675 L 411 684 L 151 505 Z',
+        frame.killOrderInheritanceLanceActive ? 0.82 : 0,
+        'accent',
+        0,
+        0.7,
+      ),
+      path(
+        'M 220 635 L 245 619 L 257 637 L 237 658 Z M 272 620 L 288 600 L 305 620 L 288 640 Z M 324 635 L 340 619 L 354 639 L 333 653 Z',
         frame.killOrderInheritanceRetryTransition ? 0.68 : 0,
         'safe',
-        7,
-        0.025,
-      ),
-      line(
-        spec.boss[0],
-        spec.boss[1],
-        spec.partner[0],
-        spec.partner[1],
-        frame.killOrderInheritanceSecondTransferActive ? 0.92 : 0,
-        'accent',
-        10 + transferRight * 5,
-        '12 8',
-      ),
-      circle(
-        spec.partner[0],
-        spec.partner[1],
-        68 + transferRight * 20,
-        frame.killOrderInheritanceSecondTransferActive ? 0.85 : 0,
-        'accent',
-        9,
-        0.04,
-      ),
-      line(
-        spec.partner[0],
-        spec.partner[1],
-        spec.lanceEnd[0],
-        spec.lanceEnd[1],
-        frame.killOrderInheritanceLanceSignaled ? 0.85 : 0,
-        'signal',
-        7,
-        '15 10',
-      ),
-      line(
-        spec.partner[0],
-        spec.partner[1],
-        spec.lanceEnd[0],
-        spec.lanceEnd[1],
-        frame.killOrderInheritanceLanceActive ? 0.96 : 0,
-        'signal',
-        spec.lanceHalfWidth * 2,
-      ),
-      circle(
-        spec.partner[0],
-        spec.partner[1],
-        79,
-        frame.killOrderInheritanceLanceActive ? 0.9 : 0,
-        'accent',
-        9,
-        0.04,
+        0,
+        0.46,
       ),
     ];
   }
@@ -13212,14 +13190,15 @@ export function blueprintFrame(id, time) {
           ? {
               x: spec.partner[0],
               y: spec.partner[1],
+              rotation: t >= spec.firstDefeatAt && t < spec.intermission[0] ? 70 : 0,
               opacity:
                 t < spec.firstDefeatAt
                   ? 1
                   : t < spec.intermission[0]
-                    ? 0.24
+                    ? 0.78
                     : t < spec.intermission[1]
                       ? mix(
-                          0.24,
+                          0.78,
                           1,
                           smooth(
                             (t - spec.intermission[0]) /
@@ -15261,10 +15240,11 @@ export function blueprintFrame(id, time) {
     frame.dangerActive =
       frame.killOrderInheritanceWaveActive || frame.killOrderInheritanceLanceActive;
     frame.bossVisible = frame.killOrderInheritanceRightDown
-      ? 0.24
+      ? 0.78
       : t >= spec.resetAt
-        ? mix(0.24, 1, reset)
+        ? mix(0.78, 1, reset)
         : 1;
+    frame.bossRotation = frame.killOrderInheritanceRightDown ? -70 : 0;
     frame.bossMotion.attack = Math.max(
       strikePulse(t, spec.waveActive[0], 0.65),
       frame.killOrderInheritanceFirstTransferActive ? 0.36 : 0,

@@ -4693,6 +4693,7 @@ test('kill-order inheritance previews two distinct survivor attacks with a clean
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await page.goto('en/mechanics/kill-order-inheritance/');
   const widget = page.locator('[data-blueprint-demo]');
+  await expect(widget).toHaveAttribute('data-blueprint-screen-height', 'true');
   const timeline = widget.locator('[data-blueprint-timeline]');
   const seek = (milliseconds) =>
     timeline.evaluate((element, value) => {
@@ -4772,5 +4773,11 @@ test('kill-order inheritance previews two distinct survivor attacks with a clean
     '0',
   );
   await page.setViewportSize({ width: 375, height: 812 });
+  const canvas = await widget.locator('.blueprint-demo__canvas').boundingBox();
+  const player = await widget.locator('[data-blueprint-player]').boundingBox();
+  const playerLabel = await widget.locator('[data-blueprint-player-label]').boundingBox();
+  expect(canvas.height).toBeGreaterThanOrEqual(812);
+  expect(player.x + player.width).toBeLessThanOrEqual(canvas.x + canvas.width);
+  expect(playerLabel.x + playerLabel.width).toBeLessThanOrEqual(canvas.x + canvas.width);
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
 });
