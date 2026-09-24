@@ -1460,10 +1460,10 @@ const SPECS = {
   },
   'moveset-shapeshifting': {
     mode: 'moveset-shapeshifting',
-    boss: [300, 375],
-    player: [300, 660],
-    target: [300, 660],
-    arena: [55, 310, 450, 590],
+    boss: [300, 330],
+    player: [300, 760],
+    target: [300, 760],
+    arena: [55, 145, 450, 735],
     firstSignal: [0.2, 0.55],
     firstActive: [0.55, 1.35],
     firstRecovery: [1.35, 1.72],
@@ -7849,7 +7849,6 @@ function primitivesFor(spec, frame) {
     const thirdProgress = clamp(
       (frame.time - spec.thirdActive[0]) / (spec.thirdActive[1] - spec.thirdActive[0]),
     );
-    const formIndex = spec.forms.indexOf(frame.movesetShapeshiftingForm);
     const transitionPulse = frame.movesetShapeshiftingTransitionActive
       ? pulse(
           frame.time < spec.firstChange[1]
@@ -7857,139 +7856,74 @@ function primitivesFor(spec, frame) {
             : (frame.time - spec.secondChange[0]) / (spec.secondChange[1] - spec.secondChange[0]),
         )
       : 0;
-    const firstActive = frame.movesetShapeshiftingForm === 'colossus';
-    const secondActive = frame.movesetShapeshiftingForm === 'serpent';
-    const thirdActive = frame.movesetShapeshiftingForm === 'oracle';
+    const colossus = frame.movesetShapeshiftingForm === 'colossus';
+    const serpent = frame.movesetShapeshiftingForm === 'serpent';
+    const oracle = frame.movesetShapeshiftingForm === 'oracle';
     const fanAngles = [-0.38, 0, 0.38];
+    const waveY = frame.boss.y + 90 + firstProgress * 270;
+    const serpentY = frame.boss.y + 120 + secondProgress * 290;
     return [
-      rect(...spec.arena, 0.52, 'muted', 0.025),
-      rect(102, 474, 356, 82, 0.72, 'muted', 0.025),
-      ...[160, 280, 400].flatMap((x, index) => [
-        circle(
-          x,
-          516,
-          28 + (formIndex === index ? 7 : 0),
-          formIndex === index ? 0.98 : 0.34,
-          formIndex === index ? ['accent', 'safe', 'signal'][index] : 'muted',
-          formIndex === index ? 8 : 4,
-          formIndex === index ? 0.14 : 0.04,
-        ),
-        line(
-          x - 13,
-          528 - index * 5,
-          x + 13,
-          504 + index * 5,
-          formIndex === index ? 0.96 : 0.3,
-          ['accent', 'safe', 'signal'][index],
-          6,
-        ),
-      ]),
-      line(
-        188,
-        516,
-        252,
-        516,
-        frame.movesetShapeshiftingChangeCount >= 1 ? 0.9 : 0.22,
-        'safe',
-        5,
-        '8 7',
+      path(
+        'M 70 187 L 280 148 L 490 187 V 216 L 280 177 L 70 216 Z M 72 846 L 280 804 L 488 846 V 874 L 280 832 L 72 874 Z',
+        0.42,
+        'muted',
+        0,
+        0.6,
       ),
-      line(
-        308,
-        516,
-        372,
-        516,
-        frame.movesetShapeshiftingChangeCount >= 2 ? 0.9 : 0.22,
+      path('M 95 499 L 280 461 L 465 499 V 534 L 280 495 L 95 534 Z', 0.28, 'muted', 0, 0.55),
+      path(
+        `M ${frame.boss.x - 98} ${frame.boss.y - 82} L ${frame.boss.x - 47} ${frame.boss.y - 120} L ${frame.boss.x - 20} ${frame.boss.y - 53} L ${frame.boss.x - 62} ${frame.boss.y + 18} L ${frame.boss.x - 110} ${frame.boss.y - 5} Z M ${frame.boss.x + 98} ${frame.boss.y - 82} L ${frame.boss.x + 47} ${frame.boss.y - 120} L ${frame.boss.x + 20} ${frame.boss.y - 53} L ${frame.boss.x + 62} ${frame.boss.y + 18} L ${frame.boss.x + 110} ${frame.boss.y - 5} Z`,
+        colossus ? 0.88 : 0,
+        'muted',
+        0,
+        0.86,
+      ),
+      path(
+        `M ${frame.boss.x - 80} ${waveY - 28} L ${frame.boss.x - 50} ${waveY - 44} L ${frame.boss.x - 18} ${waveY - 22} L ${frame.boss.x + 19} ${waveY - 49} L ${frame.boss.x + 46} ${waveY - 24} L ${frame.boss.x + 82} ${waveY - 39} L ${frame.boss.x + 102} ${waveY + 2} L ${frame.boss.x - 97} ${waveY + 2} Z`,
+        colossus && frame.movesetShapeshiftingPackageAttackActive ? 0.84 : 0,
+        'accent',
+        0,
+        0.68,
+      ),
+      path(
+        `M ${frame.boss.x - 65} ${frame.boss.y + 12} C ${frame.boss.x - 185} ${frame.boss.y + 128}, ${frame.boss.x + 165} ${serpentY - 130}, ${frame.boss.x + 65} ${serpentY} L ${frame.boss.x + 32} ${serpentY + 15} C ${frame.boss.x + 135} ${serpentY - 124}, ${frame.boss.x - 151} ${frame.boss.y + 167}, ${frame.boss.x - 43} ${frame.boss.y + 20} Z`,
+        serpent ? 0.9 : 0,
+        'safe',
+        0,
+        0.55,
+      ),
+      path(
+        `M ${frame.boss.x + 34} ${serpentY - 16} L ${frame.boss.x + 80} ${serpentY - 13} L ${frame.boss.x + 96} ${serpentY + 6} L ${frame.boss.x + 81} ${serpentY + 29} L ${frame.boss.x + 40} ${serpentY + 23} Z`,
+        serpent && frame.movesetShapeshiftingPackageAttackActive ? 0.96 : 0.45 * Number(serpent),
+        'safe',
+        0,
+        0.88,
+      ),
+      path(
+        `M ${frame.boss.x - 56} ${frame.boss.y - 116} L ${frame.boss.x - 32} ${frame.boss.y - 163} L ${frame.boss.x - 12} ${frame.boss.y - 128} L ${frame.boss.x} ${frame.boss.y - 176} L ${frame.boss.x + 12} ${frame.boss.y - 128} L ${frame.boss.x + 32} ${frame.boss.y - 163} L ${frame.boss.x + 56} ${frame.boss.y - 116} Z`,
+        oracle ? 0.94 : 0,
         'signal',
-        5,
-        '8 7',
+        0,
+        0.76,
       ),
-      circle(
-        frame.boss.x,
-        frame.boss.y - 24,
-        64 + transitionPulse * 56,
-        transitionPulse,
-        'safe',
-        9,
-        0.025,
-        '10 8',
-      ),
-      circle(
-        frame.boss.x,
-        frame.boss.y - 24,
-        74 + firstProgress * 112,
-        firstActive && frame.movesetShapeshiftingPackageAttackActive
-          ? 0.9 - firstProgress * 0.35
-          : 0,
-        'accent',
-        12,
-        0.025,
-      ),
-      line(
-        frame.boss.x - 58,
-        frame.boss.y + 18,
-        frame.boss.x + 58,
-        frame.boss.y + 18,
-        firstActive ? 0.82 : 0,
-        'accent',
-        12,
-      ),
-      rect(
-        76,
-        564 - secondProgress * 46,
-        408,
-        86,
-        secondActive && frame.movesetShapeshiftingPackageAttackActive
-          ? 0.88
-          : secondActive
-            ? 0.2
-            : 0,
-        'safe',
-        0.035,
-      ),
-      line(
-        92,
-        607 - secondProgress * 46,
-        468,
-        607 - secondProgress * 46,
-        secondActive ? 0.92 : 0,
-        'safe',
-        8,
-        '16 10',
-      ),
-      ...fanAngles.flatMap((angle, index) => {
-        const distance = 120 + thirdProgress * 300;
-        const end = {
-          x: frame.boss.x + Math.sin(angle) * distance,
-          y: frame.boss.y + Math.cos(angle) * distance,
-        };
-        return [
-          line(
-            frame.boss.x,
-            frame.boss.y,
-            end.x,
-            end.y,
-            thirdActive ? 0.86 : 0,
-            'signal',
-            6,
-            index === 1 ? '' : '10 8',
-          ),
-          circle(
-            end.x,
-            end.y,
-            13,
-            thirdActive && frame.movesetShapeshiftingPackageAttackActive ? 0.96 : 0,
-            'signal',
-            5,
-            0.18,
-          ),
-        ];
+      ...fanAngles.map((angle) => {
+        const distance = 115 + thirdProgress * 390;
+        const x = frame.boss.x + Math.sin(angle) * distance;
+        const y = frame.boss.y + Math.cos(angle) * distance;
+        return path(
+          `M ${x} ${y + 24} L ${x - 13} ${y - 16} L ${x} ${y - 9} L ${x + 13} ${y - 16} Z`,
+          oracle && frame.movesetShapeshiftingPackageAttackActive ? 0.98 : 0,
+          'signal',
+          0,
+          0.9,
+        );
       }),
       path(
-        `M ${frame.boss.x - 32} ${frame.boss.y - 98} L ${frame.boss.x} ${frame.boss.y - 132} L ${frame.boss.x + 32} ${frame.boss.y - 98}`,
-        thirdActive ? 0.94 : 0,
-        'signal',
-        8,
+        `M ${frame.boss.x - 95} ${frame.boss.y + 53} L ${frame.boss.x - 46} ${frame.boss.y + 8} L ${frame.boss.x - 17} ${frame.boss.y + 74} Z M ${frame.boss.x + 95} ${frame.boss.y + 53} L ${frame.boss.x + 46} ${frame.boss.y + 8} L ${frame.boss.x + 17} ${frame.boss.y + 74} Z`,
+        transitionPulse,
+        'safe',
+        0,
+        0.74,
       ),
     ];
   }
