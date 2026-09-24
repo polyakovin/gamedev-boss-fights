@@ -3745,16 +3745,34 @@ function primitivesFor(spec, frame) {
         : 0;
     const strike = strikePulse(frame.time, spec.punishAt, 0.38);
     return [
-      circle(boss.x, boss.y, 76, survivalOpen ? 0.9 : 0, 'accent', 8, 0.08, '8 7'),
-      circle(
-        boss.x,
-        boss.y,
-        mix(118, 48, survivalProgress),
-        survivalOpen ? 0.78 : 0,
-        'safe',
-        6,
-        0.02,
-        '12 9',
+      path(
+        'M 40 94 L 520 94 L 520 878 L 40 878 Z M 55 669 L 505 669 L 510 865 L 50 865 Z',
+        0.35,
+        'muted',
+        0,
+        0.48,
+      ),
+      path(
+        'M 52 106 L 95 106 L 98 660 L 50 660 Z M 465 106 L 508 106 L 510 660 L 462 660 Z M 50 670 L 220 668 L 246 750 L 49 767 Z M 258 670 L 510 670 L 511 766 L 260 750 Z M 57 779 L 247 761 L 250 870 L 54 870 Z M 260 761 L 503 779 L 506 870 L 262 870 Z',
+        0.42,
+        'accent',
+        0,
+        0.64,
+      ),
+      circle(boss.x, boss.y, 76, survivalOpen ? 0.88 : 0, 'accent', 5, 0.07),
+      path(
+        'M 436 158 L 504 158 L 504 327 L 436 327 Z M 447 176 L 493 176 L 493 310 L 447 310 Z M 447 226 L 493 226 L 470 252 Z',
+        0.72,
+        'accent',
+        0,
+        0.68,
+      ),
+      path(
+        `M 453 ${306 - 124 * (1 - survivalProgress)} L 487 ${306 - 124 * (1 - survivalProgress)} L 487 306 L 453 306 Z`,
+        frame.time < spec.shieldDropsAt ? 0.9 : 0.14,
+        frame.time >= spec.shieldDropsAt ? 'safe' : 'signal',
+        0,
+        0.84,
       ),
       ...spec.hazards.map(({ center, preview: previewWindow, active }) => {
         const previewing = frame.time >= previewWindow[0] && frame.time < active[0];
@@ -3766,14 +3784,25 @@ function primitivesFor(spec, frame) {
           activeNow ? spec.hazardRadius : mix(38, spec.hazardRadius, buildup),
           activeNow ? 0.94 : previewing ? 0.68 : 0,
           activeNow ? 'signal' : 'accent',
-          activeNow ? 12 : 5,
-          activeNow ? 0.3 : 0.04,
-          activeNow ? '' : '10 9',
+          activeNow ? 7 : 4,
+          activeNow ? 0.3 : 0.07,
         );
       }),
-      circle(boss.x, boss.y, 58 + completionFlash * 34, completionFlash, 'safe', 8),
+      path(
+        `M ${boss.x - 74} ${boss.y - 32} L ${boss.x - 90} ${boss.y - 48} L ${boss.x - 60} ${boss.y - 52} Z M ${boss.x + 74} ${boss.y - 32} L ${boss.x + 90} ${boss.y - 48} L ${boss.x + 60} ${boss.y - 52} Z M ${boss.x - 18} ${boss.y + 72} L ${boss.x} ${boss.y + 92} L ${boss.x + 18} ${boss.y + 72} Z`,
+        completionFlash,
+        'safe',
+        0,
+        0.86,
+      ),
       line(frame.player.x, frame.player.y, boss.x, boss.y, strike, 'safe', 9),
-      circle(boss.x + 35, boss.y - 4, 12 + strike * 24, strike, 'safe', 7, 0.12),
+      path(
+        `M ${boss.x + 20} ${boss.y - 32} L ${boss.x + 47} ${boss.y - 43} L ${boss.x + 33} ${boss.y - 11} Z`,
+        strike,
+        'safe',
+        0,
+        0.84,
+      ),
     ];
   }
   if (mode === 'teleport') {

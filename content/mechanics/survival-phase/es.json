@@ -17,7 +17,7 @@
       "Completa y devuelve el control"
     ],
     "phaseDescriptions": [
-      "A los 0,55 s Kern obtiene un escudo discontinuo y una runa de finalización que se contrae. La primera marca del suelo avisa durante 0,60 s; Tavi sale con movimiento normal mientras la espada no aporta progreso.",
+      "A los 0,55 s se ilumina el escudo rúnico de Kern y empieza a vaciarse un medidor incrustado en el muro superior. El primer sello del suelo avisa durante 0,60 s antes de volverse peligroso; Tavi sale con movimiento normal mientras la espada no aporta progreso.",
       "Cuatro círculos fijos se activan a los 1,15, 2,08, 3,01 y 3,94 s. Cada aviso fija su posición antes de activarse, solo el círculo sólido causa daño y la runa de finalización avanza únicamente con el tiempo de supervivencia.",
       "A los 4,35 s terminó el cuarto pulso, el contador llegó a cero y el escudo de Kern cae con un destello verde. Tavi puede acercarse y golpear con la espada a los 5,08 s antes de reiniciar el bucle."
     ],
@@ -27,7 +27,7 @@
     "locked": "Kern sigue protegido hasta que el temporizador termina a los 4,35 segundos",
     "safe": "Sal de cada círculo avisado antes de que se solidifique; ataca solo después del destello final",
     "reducedMotion": "Con movimiento reducido, la reproducción automática se desactiva. Recorre 0,55, 1,15, 2,08, 3,01, 3,94 y 4,35 segundos para revisar todo el contrato.",
-    "diagramDescription": "Un jefe de piedra protegido permanece dentro de dos anillos rúnicos que se contraen. Cuatro círculos del suelo avisan y se activan en secuencia mientras un jugador con espada sale de cada zona. Al llegar el contador a cero, el escudo desaparece con un destello verde y el jugador se acerca para golpear."
+    "diagramDescription": "Una cámara de piedra llena la escena. Un escudo rúnico rodea a Kern mientras se vacía un medidor en el muro y cuatro sellos del suelo avisan y pulsan en secuencia. Tavi sale de cada zona; cuando el medidor se vacía, el escudo se rompe y se abre un golpe de espada."
   },
   "steps": [
     {

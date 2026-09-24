@@ -1642,10 +1642,10 @@ test('survival phase advances on elapsed survival, clears each pulse, then resto
   assert.equal(signal.survivalShielded, true);
   assert.equal(signal.dangerActive, false);
   assert.ok(
-    signal.primitives[0].opacity > 0,
+    signal.primitives[2].opacity > 0,
     'the shield is visible for the whole survival contract',
   );
-  assert.ok(signal.primitives[2].opacity > 0, 'the first fixed circle previews before activation');
+  assert.ok(signal.primitives[5].opacity > 0, 'the first fixed circle previews before activation');
 
   for (const [time, index] of [
     [1.2, 0],
@@ -1657,7 +1657,7 @@ test('survival phase advances on elapsed survival, clears each pulse, then resto
     assert.equal(active.survivalHazardIndex, index);
     assert.equal(active.dangerActive, true);
     assert.equal(active.playerSafe, true, `Tavi clears pulse ${index + 1}`);
-    const circle = active.primitives[2 + index];
+    const circle = active.primitives[5 + index];
     assert.equal(blueprintPointSafe(id, time, { x: circle.x, y: circle.y }), false);
   }
 
@@ -1666,11 +1666,11 @@ test('survival phase advances on elapsed survival, clears each pulse, then resto
   assert.equal(complete.survivalShielded, false);
   assert.equal(complete.dangerActive, false);
   assert.equal(complete.survivalRemaining, 0);
-  assert.ok(complete.primitives[6].opacity > 0, 'one completion flash marks the handoff');
+  assert.ok(complete.primitives[9].opacity > 0, 'one completion burst marks the handoff');
 
   const punish = blueprintFrame(id, 5.08);
   assert.equal(punish.punishStrike, true);
-  assert.ok(punish.primitives[7].opacity > 0, 'the sword response appears only after completion');
+  assert.ok(punish.primitives[10].opacity > 0, 'the sword response appears only after completion');
   assert.deepEqual(blueprintFrame(id, 0).player, blueprintFrame(id, 6).player);
   assert.match(
     renderBlueprintThumbnail(id, 'test-survival-phase'),

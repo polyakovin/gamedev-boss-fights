@@ -17,7 +17,7 @@
       "Complete and hand back control"
     ],
     "phaseDescriptions": [
-      "At 0.55 s Kern gains a dashed shield and a shrinking completion rune. The first floor mark previews for 0.60 s before becoming dangerous; Tavi leaves it through ordinary movement while the sword remains irrelevant to progress.",
+      "At 0.55 s Kern’s runic shield lights and a gauge set into the upper wall begins to drain. The first floor seal previews for 0.60 s before becoming dangerous; Tavi leaves it through ordinary movement while the sword remains irrelevant to progress.",
       "Four fixed circles activate at 1.15, 2.08, 3.01, and 3.94 s. Each preview captures its position before activation, each solid circle is the only damaging geometry, and the completion rune advances only with elapsed survival time.",
       "At 4.35 s the fourth pulse is over, the timer reaches zero, and Kern's shield drops in one green completion flash. Tavi may then approach and land an ordinary sword strike at 5.08 s before the continuous loop resets."
     ],
@@ -27,7 +27,7 @@
     "locked": "Kern remains shielded until the survival timer completes at 4.35 seconds",
     "safe": "Leave every previewed circle before it turns solid; attack only after the completion flash",
     "reducedMotion": "Autoplay is disabled by reduced motion. Scrub across 0.55, 1.15, 2.08, 3.01, 3.94, and 4.35 seconds to inspect the complete survival contract.",
-    "diagramDescription": "A shielded stone boss stands inside two shrinking runic rings. Four floor circles preview and activate one after another while a sword-bearing player walks out of each marked area. When the timer reaches zero, the shield vanishes in a green flash and the player approaches for one sword strike."
+    "diagramDescription": "A stone chamber fills the view. A runic shield surrounds Kern while a wall gauge drains and four floor seals warn and pulse in sequence. Tavi moves clear of each; when the gauge empties, the shield breaks and a sword opening follows."
   },
   "steps": [
     {

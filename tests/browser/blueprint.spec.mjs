@@ -1716,16 +1716,23 @@ test('survival phase keeps damage irrelevant until all four timed pulses are cle
   await expect(page.locator('.wip-badge, .draft-profile')).toHaveCount(0);
   await expect(page.locator('.game-example')).toHaveCount(3);
   await expect(widget).toHaveAttribute('data-blueprint-playing', 'false');
+  await expect(widget).toHaveAttribute('data-blueprint-full-height', 'true');
+  expect(
+    await widget
+      .locator('[data-blueprint-primitives]')
+      .evaluate((element) => element.getBBox().height),
+  ).toBeGreaterThan(760);
+  await expect(widget.locator('[data-blueprint-primitives] [stroke-dasharray]')).toHaveCount(0);
 
   await seek(800);
   await expect(widget).toHaveAttribute('data-blueprint-survival-phase', 'read-next');
   await expect(widget).toHaveAttribute('data-blueprint-survival-shielded', 'true');
   await expect(widget).toHaveAttribute('data-blueprint-survival-complete', 'false');
-  await expect(widget.locator('[data-blueprint-primitive="0"] circle')).not.toHaveAttribute(
+  await expect(widget.locator('[data-blueprint-primitive="2"] circle')).not.toHaveAttribute(
     'opacity',
     '0',
   );
-  await expect(widget.locator('[data-blueprint-primitive="2"] circle')).not.toHaveAttribute(
+  await expect(widget.locator('[data-blueprint-primitive="5"] circle')).not.toHaveAttribute(
     'opacity',
     '0',
   );
@@ -1741,7 +1748,7 @@ test('survival phase keeps damage irrelevant until all four timed pulses are cle
     await expect(widget).toHaveAttribute('data-blueprint-survival-hazard', hazard);
     await expect(widget).toHaveAttribute('data-blueprint-outcome', 'safe');
     await expect(
-      widget.locator(`[data-blueprint-primitive="${2 + Number(hazard)}"] circle`),
+      widget.locator(`[data-blueprint-primitive="${5 + Number(hazard)}"] circle`),
     ).not.toHaveAttribute('opacity', '0');
   }
 
@@ -1750,7 +1757,7 @@ test('survival phase keeps damage irrelevant until all four timed pulses are cle
   await expect(widget).toHaveAttribute('data-blueprint-survival-shielded', 'false');
   await expect(widget).toHaveAttribute('data-blueprint-survival-complete', 'true');
   await expect(widget).toHaveAttribute('data-blueprint-survival-remaining', '0.000');
-  await expect(widget.locator('[data-blueprint-primitive="6"] circle')).not.toHaveAttribute(
+  await expect(widget.locator('[data-blueprint-primitive="9"] path')).not.toHaveAttribute(
     'opacity',
     '0',
   );
@@ -1758,7 +1765,7 @@ test('survival phase keeps damage irrelevant until all four timed pulses are cle
   await seek(5080);
   await expect(widget).toHaveAttribute('data-blueprint-survival-phase', 'opening');
   await expect(widget).toHaveAttribute('data-blueprint-punish-strike', 'true');
-  await expect(widget.locator('[data-blueprint-primitive="7"] line')).not.toHaveAttribute(
+  await expect(widget.locator('[data-blueprint-primitive="10"] line')).not.toHaveAttribute(
     'opacity',
     '0',
   );
