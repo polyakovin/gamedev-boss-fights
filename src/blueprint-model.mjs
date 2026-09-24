@@ -1617,7 +1617,7 @@ const SPECS = {
     mode: 'scanning',
     boss: [280, 250],
     player: [415, 670],
-    target: [175, 720],
+    target: [455, 355],
   },
   'rotating-beams': {
     mode: 'rotating',
@@ -9049,7 +9049,7 @@ function primitivesFor(spec, frame) {
     const end = polar(boss, 720, angle);
     const previewEnd = polar(boss, 720, 0.85);
     return [
-      line(boss.x, boss.y, previewEnd.x, previewEnd.y, preview, 'accent', 24, '12 10'),
+      line(boss.x, boss.y, previewEnd.x, previewEnd.y, preview, 'accent', 6),
       line(boss.x, boss.y, end.x, end.y, active, 'signal', 48),
     ];
   }

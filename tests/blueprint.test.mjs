@@ -434,6 +434,14 @@ test('rotating beams keep the full player inside the arena throughout the orbit'
   }
 });
 
+test('scanning beam leaves the player clear throughout its committed sweep', () => {
+  for (let step = 160; step <= 430; step += 1) {
+    const frame = blueprintFrame('scanning-beam', step / 100);
+    assert.equal(frame.playerSafe, true, `player intersects the scan at ${step / 100}s`);
+  }
+  assert.equal(blueprintFrame('scanning-beam', 3.4).primitives[0].dash, '');
+});
+
 test('target lock commits before the marked player leaves', () => {
   const start = blueprintFrame('target-lock', 0);
   const beforeCommit = blueprintFrame('target-lock', 1.59);
