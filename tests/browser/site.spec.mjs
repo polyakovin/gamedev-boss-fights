@@ -357,7 +357,7 @@ test('the loop autoplays, alternates sides, and keeps its timeline in the scene'
   expect(
     Math.abs(categoryBox.y + categoryBox.height - (titleBox.y + titleBox.height)),
   ).toBeLessThan(16);
-  expect(simulationBox.width).toBeLessThanOrEqual(400);
+  expect(simulationBox.width).toBeLessThanOrEqual(560);
   expect(diagramBox.height).toBeGreaterThan(diagramBox.width);
   expect(sceneTimelineBox.y).toBeGreaterThan(diagramBox.y + diagramBox.height * 0.75);
   expect(sceneTimelineBox.y + sceneTimelineBox.height).toBeLessThan(

@@ -39,7 +39,7 @@ export function initializeCharge(widget) {
   const strike = find('[data-charge-strike]');
   const hit = find('[data-charge-hit]');
   const lane = find('[data-charge-lane]');
-  const laneArrow = lane.querySelector('path');
+  const laneGouges = find('[data-charge-gouges]');
   const target = find('[data-charge-target]');
   const path = find('[data-charge-dodge]');
   const status = find('[data-charge-status]');
@@ -163,20 +163,17 @@ export function initializeCharge(widget) {
           frame.overlayOpacity,
       ),
     );
-    for (const rect of lane.querySelectorAll('rect')) {
-      rect.setAttribute('width', String(frame.plan.distance));
-    }
-    laneArrow.setAttribute(
+    lane.querySelector('rect').setAttribute('width', String(frame.plan.distance));
+    laneGouges.setAttribute(
       'd',
-      `M 65 0 H ${frame.plan.distance - 25} M ${frame.plan.distance - 44} -11 L ${frame.plan.distance - 25} 0 L ${frame.plan.distance - 44} 11`,
+      `M 52 -34 L ${frame.plan.distance - 38} -34 L ${frame.plan.distance - 24} -27 L ${frame.plan.distance - 38} -20 L 52 -20 Z M 52 20 L ${frame.plan.distance - 38} 20 L ${frame.plan.distance - 24} 27 L ${frame.plan.distance - 38} 34 L 52 34 Z`,
     );
     target.setAttribute('transform', `translate(${frame.target.x} ${frame.target.y})`);
     target.setAttribute('opacity', String((frame.phase === 2 ? 0.35 : 0.8) * frame.overlayOpacity));
     const dodgeDirection = Math.sign(frame.dodgeTarget.x - frame.plan.target.x) || 1;
-    const arrowBase = frame.dodgeTarget.x - dodgeDirection * 11;
     path.setAttribute(
-      'd',
-      `M ${frame.plan.target.x} ${frame.plan.target.y} H ${frame.dodgeTarget.x} M ${arrowBase} ${frame.dodgeTarget.y - 8} L ${frame.dodgeTarget.x} ${frame.dodgeTarget.y} L ${arrowBase} ${frame.dodgeTarget.y + 8}`,
+      'transform',
+      `translate(${frame.plan.target.x} ${frame.plan.target.y}) scale(${dodgeDirection} 1)`,
     );
     path.setAttribute(
       'opacity',

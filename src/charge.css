@@ -37,6 +37,7 @@
   isolation: isolate;
   flex: 1;
   min-height: 0;
+  overflow: hidden;
   padding: 0.35rem 0.35rem 0;
 }
 @media (min-width: 961px) {
@@ -59,6 +60,29 @@
 }
 .charge-demo__svg text {
   font-family: inherit;
+}
+@media (min-width: 961px) {
+  .lesson-overview-grid:has([data-charge-demo]) {
+    grid-template-columns: minmax(440px, 1fr) minmax(340px, 560px);
+  }
+  .simulation-section:has([data-charge-demo]) {
+    width: min(100%, calc(58.333svh - 74.667px));
+    max-width: 560px;
+    justify-self: center;
+  }
+}
+@media (max-width: 960px) {
+  .charge-demo__canvas {
+    height: 100svh;
+  }
+  .charge-demo__svg {
+    height: 100%;
+    width: max(100%, 58.333svh);
+    max-width: none;
+    position: relative;
+    left: 50%;
+    transform: translateX(-50%);
+  }
 }
 .charge-demo__entity-label {
   fill: var(--diagram-boss-label);

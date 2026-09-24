@@ -5,7 +5,7 @@ export const ATTACK_DURATION = PHASE_ENDS[2] + TRANSITION_DURATION;
 export const DURATION = ATTACK_DURATION * 2;
 export const PLAYER_RADIUS = 34;
 export const LANE_HALF_WIDTH = 49;
-export const BOSS_LABEL_OFFSET_Y = -104;
+export const BOSS_LABEL_OFFSET_Y = -88;
 const DODGE_DURATION = 0.42;
 const CHARGE_DURATION = 0.62;
 const RECOIL_DISTANCE = 14;
@@ -39,9 +39,9 @@ const motion = (pose = {}) => ({
 
 /** Snapshot the target when aiming ends. Later player movement cannot steer it. */
 export function createChargePlan({
-  origin = { x: 280, y: 155 },
+  origin = { x: 280, y: 205 },
   target = { x: 280, y: 480 },
-  distance = 610,
+  distance = 580,
 } = {}) {
   const dx = target.x - origin.x;
   const dy = target.y - origin.y;

@@ -16,7 +16,7 @@ const smooth = (value) => {
   const t = clamp(value, 0, 1);
   return t * t * (3 - 2 * t);
 };
-const originFor = (round) => ({ x: 280, y: round % 2 ? 805 : 155 });
+const originFor = (round) => ({ x: 280, y: round % 2 ? 805 : 205 });
 
 function planFor(origin, player) {
   const dx = player.x - origin.x;
