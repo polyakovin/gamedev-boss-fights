@@ -1,0 +1,134 @@
+{
+  "title": "视线判定",
+  "subtitle": "让角色朝向成为可见的战斗规则",
+  "variant": "视线来源 · 正面半圆 · 两次采样 · 一次失误",
+  "summary": "标记的来源在攻击结算时检查玩家角色的朝向。",
+  "overview": "视线判定比较角色朝向和指定来源的方向，而不是只看镜头或站位。在本例中，脉冲前背对来源可避免效果；过早转回会被命中。另一些战斗会在整个引导期间持续判定，或根据朝向切换危险来源；这些变体必须分别说明。",
+  "learning": "定义来源、目标朝向、角度边界与等号规则、判定时刻或持续时间、预警、效果与伤害、命中 ID 和重试重置。",
+  "category": "协作配合",
+  "readTime": "10 分钟",
+  "demo": {
+    "title": "让塔维背对凯恩的符文之眼",
+    "timeline": "视线判定时间轴",
+    "step": "同一位置会因塔维的朝向而安全或危险",
+    "phaseNames": ["看见眼睛并转身", "背对来源度过脉冲", "对比错误朝向"],
+    "phaseDescriptions": [
+      "0.70 秒时凯恩亮出眼睛。塔维起初面向来源，在 1.04 到 1.60 秒间转身。箭头和角色身体显示规则实际读取的同一朝向。",
+      "2.20 秒时第一次脉冲采样塔维的朝向。来源位于身后，因此即使站位不变也不会中招，生命保持 100。",
+      "第二次预警在 3.08 秒出现。塔维转回面向凯恩；4.30 秒的采样发现来源处于前方 90° 半角内。光束和叉号标出一次命中，生命降至 10；5.30 秒明确重置。"
+    ],
+    "boss": "首领",
+    "player": "玩家",
+    "danger": "只有脉冲结算时角色面向预警来源，同一站位才会危险",
+    "locked": "来源位置、角色朝向、含边界的 90° 半角、采样时刻及每个 ID 只命中一次均为固定规则",
+    "safe": "提前显示来源，留下无需镜头技巧或隐形位移即可转身的时间",
+    "reducedMotion": "减少动态效果时不会自动播放。拖动到 0.70、1.30、2.30、3.10、3.70、4.40 和 5.50 秒查看。",
+    "diagramDescription": "凯恩在塔维上方打开符文之眼。塔维背对第一次脉冲，生命仍为 100。第二次预警后塔维面向眼睛，脉冲将生命降至 10，随后场景重置。"
+  },
+  "steps": [
+    {
+      "title": "检查哪一种朝向？",
+      "body": "计算玩家面向向量与玩家指向来源的向量之间的角度。本例将差值小于或等于 90° 视为正在看来源；更大的角度安全。判定必须使用可见角色的朝向，而非镜头或过期的瞄准数据。"
+    },
+    {
+      "title": "视线何时生效？",
+      "body": "0.70 秒显示眼睛，2.20 秒采样一次；4.30 秒用新的命中 ID 重复。第一次转身成功则无伤，第二次面向来源则只扣除一次 90 生命。持续引导需要单独的连续判定和提示。"
+    },
+    {
+      "title": "能否及时转身？",
+      "body": "给移动、施法、控制器输入及其他威胁留出余量。测试恰好 90°、略大于 90°、来源与目标重合、无效朝向、重复回调与重试。眼睛和箭头不能只靠颜色辨认。"
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "检查镜头而不是角色",
+      "body": "在第三人称游戏里，玩家仍可从屏幕上看到首领，但角色已背对它。规则应与画面中角色的朝向一致。"
+    },
+    {
+      "title": "隐藏生效时间",
+      "body": "眼睛图标本身无法说明是单次采样、动画窗口还是整段引导。标明脉冲或持续时间，仅在生效时结算。"
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "区分朝向与距离",
+      "body": "两次检查中塔维都站在同一点，结果只由朝向决定。若距离或视线遮挡也重要，须另外显示这些条件。"
+    },
+    {
+      "title": "处理自动转身",
+      "body": "攻击、施法或锁定目标可能自动旋转角色。测试它们是否意外让玩家面向来源，并提供清晰的维持朝向方法。"
+    },
+    {
+      "title": "记录每次采样",
+      "body": "记录来源和目标 ID、来源方位、角色角度、角差、命中 ID、状态、生命变化和重置。检查角度边界及重复输入的确定性。"
+    }
+  ],
+  "story": {
+    "title": "一只眼睛，两种朝向",
+    "body": "凯恩的符文之眼张开。塔维背过身，第一次闪光落空。眼睛再次开启时，塔维正面看向它，于是被闪光击中。"
+  },
+  "adaptation": {
+    "title": "不用颜色也能看懂朝向",
+    "body": "使用首领的眼睛、随塔维身体转动的箭头、可见脉冲、对勾或叉号及生命数字。关闭自动播放后仍可沿时间轴检查每一步。"
+  },
+  "distinction": {
+    "title": "朝向判定不是遮挡判定",
+    "body": "视线遮挡问的是掩体是否挡住射线；这里问目标是否面向来源。Cuphead 用朝向切换危险的一侧；持续视线则可能在整段引导期间造成惩罚。"
+  },
+  "lensNotes": [
+    {
+      "id": "telegraphing",
+      "body": "眼睛和脉冲提前标明来源与结算时刻。"
+    },
+    {
+      "id": "threat-geometry",
+      "body": "危险区域是玩家朝向来源的前方半圆，而不是固定地面图形。"
+    },
+    {
+      "id": "counterplay",
+      "body": "玩家可原地转身，把移动留给另一项任务。"
+    },
+    {
+      "id": "difficulty-rhythm",
+      "body": "第一次安全脉冲先教会反应，再展示第二种结果。"
+    },
+    {
+      "id": "progress-clarity",
+      "body": "箭头、脉冲、对勾或叉号和生命数字解释结果差异。"
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "3D",
+      "game": "Final Fantasy XIV",
+      "boss": "Angra Mainyu",
+      "screenshot": "https://i.ytimg.com/vi/Xm2UF7mW2oA/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=Xm2UF7mW2oA",
+      "video": "https://www.youtube.com/watch?v=aBeE11Szc1Y&t=82s",
+      "videoDurationSeconds": 282,
+      "body": "Mortal Gaze 将首领标记为视线来源；面向它的角色可能获得 Doom，背过身则可避免。实际判定时机和清除状态的发光平台属于该战斗的特殊规则。"
+    },
+    {
+      "dimension": "3D",
+      "game": "World of Warcraft",
+      "boss": "Yogg-Saron",
+      "screenshot": "https://i.ytimg.com/vi/m_EuLr-m7IM/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=m_EuLr-m7IM",
+      "video": "https://www.youtube.com/watch?v=Y2__yntqv2c&t=900s",
+      "videoDurationSeconds": 1197,
+      "body": "第三阶段的 Lunatic Gaze 会在引导期间伤害面向尤格-萨隆的玩家并削减 Sanity。这是持续朝向判定，而不是本例的两次脉冲。"
+    },
+    {
+      "dimension": "2D",
+      "game": "Cuphead",
+      "boss": "Angel and Demon",
+      "screenshot": "https://i.ytimg.com/vi/-O2tsb2Um94/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=-O2tsb2Um94",
+      "video": "https://www.youtube.com/watch?v=-O2tsb2Um94&t=15s",
+      "videoDurationSeconds": 58,
+      "body": "玩家转身时，天使与恶魔会交换左右位置：恶魔总在前方，其攻击危险；天使的攻击无害。这是用朝向切换威胁，而不是躲开定时视线脉冲。"
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

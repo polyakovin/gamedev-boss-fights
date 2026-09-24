@@ -91,6 +91,8 @@ import {
   towerSoakResolve,
   entityTetherState,
   entityTetherResolve,
+  gazeCheckState,
+  gazeCheckResolve,
   counterStanceOutcome,
   counterStanceState,
   blueprintFrame,
@@ -118,8 +120,8 @@ import {
   renderBlueprintThumbnail,
 } from '../lib/blueprint-view.mjs';
 
-test('all 111 promoted lesson animations have distinct rule modes and complete moving frames', () => {
-  assert.equal(BLUEPRINT_MECHANIC_IDS.length, 111);
+test('all 112 promoted lesson animations have distinct rule modes and complete moving frames', () => {
+  assert.equal(BLUEPRINT_MECHANIC_IDS.length, 112);
   const modes = new Set();
   for (const id of BLUEPRINT_MECHANIC_IDS) {
     for (let time = 0; time <= BLUEPRINT_DURATION; time += 0.1) {
@@ -140,7 +142,7 @@ test('all 111 promoted lesson animations have distinct rule modes and complete m
           assert.ok(Number.isFinite(value), `${id} has an invalid ${primitive.type}`);
     }
   }
-  assert.equal(modes.size, 111);
+  assert.equal(modes.size, 112);
 });
 
 test('every blueprint exposes signal, committed action, and recovery without player teleports', () => {
@@ -200,7 +202,8 @@ test('every blueprint exposes signal, committed action, and recovery without pla
       id !== 'stack-damage' &&
       id !== 'personal-spread' &&
       id !== 'tower-soak' &&
-      id !== 'entity-tether'
+      id !== 'entity-tether' &&
+      id !== 'gaze-check'
     )
       assert.equal(blueprintFrame(id, 3).dangerActive, true, id);
     assert.equal(blueprintFrame(id, 3).playerSafe, true, id);
@@ -310,6 +313,7 @@ test('every damaging promoted animation derives safety from its own active geome
       id !== 'personal-spread' &&
       id !== 'tower-soak' &&
       id !== 'entity-tether' &&
+      id !== 'gaze-check' &&
       id !== 'part-break' &&
       id !== 'counter-stance' &&
       id !== 'absorption-power-up' &&
@@ -5242,5 +5246,62 @@ test('entity tether samples two distinct live endpoints against one maximum', ()
   assert.match(
     renderBlueprintThumbnail(id, 'test-entity-tether'),
     /data-blueprint-preview="entity-tether"/,
+  );
+});
+
+test('gaze check resolves the visible character facing at two distinct pulses', () => {
+  const id = 'gaze-check';
+  assert.deepEqual([0, 0.8, 1.3, 1.9, 2.3, 2.8, 3.2, 3.6, 4.1, 4.4, 4.8, 5.5].map(gazeCheckState), [
+    'idle',
+    'first-eye-warned',
+    'turning-away',
+    'facing-away',
+    'first-gaze-avoided',
+    'between-checks',
+    'second-eye-warned',
+    'turning-toward',
+    'facing-source',
+    'second-gaze-hit',
+    'status-applied',
+    'explicit-retry',
+  ]);
+  const safe = gazeCheckResolve();
+  assert.equal(safe.resolution, 'avoided');
+  assert.equal(safe.damage, 0);
+  assert.equal(safe.applicationCount, 0);
+  const hit = gazeCheckResolve({
+    target: { id: 'tavi', position: { x: 280, y: 700 }, facingDegrees: -90, alive: true },
+  });
+  assert.equal(hit.resolution, 'hit');
+  assert.equal(hit.damage, 90);
+  assert.equal(hit.applicationCount, 1);
+  const edge = gazeCheckResolve({
+    target: { id: 'tavi', position: { x: 280, y: 700 }, facingDegrees: 0, alive: true },
+  });
+  assert.equal(edge.looking, true);
+  const outside = gazeCheckResolve({
+    target: { id: 'tavi', position: { x: 280, y: 700 }, facingDegrees: 0.01, alive: true },
+  });
+  assert.equal(outside.looking, false);
+  const duplicate = gazeCheckResolve({
+    target: { id: 'tavi', position: { x: 280, y: 700 }, facingDegrees: -90, alive: true },
+    alreadyResolved: true,
+  });
+  assert.equal(duplicate.resolution, 'duplicate');
+  assert.equal(duplicate.damage, 0);
+  assert.equal(duplicate.applicationCount, 0);
+  assert.equal(gazeCheckResolve({ source: { x: 280, y: 700 } }).resolution, 'invalid');
+  assert.equal(gazeCheckResolve({ halfAngle: 0 }).resolution, 'invalid');
+  assert.equal(gazeCheckResolve({ target: null }).resolution, 'invalid');
+  assert.equal(blueprintFrame(id, 2.3).gazeLooking, false);
+  assert.equal(blueprintFrame(id, 2.3).gazeHealth, 100);
+  assert.equal(blueprintFrame(id, 4.4).gazeLooking, true);
+  assert.equal(blueprintFrame(id, 4.4).gazeHealth, 10);
+  assert.equal(blueprintPointSafe(id, 2.3, { x: 280, y: 700 }), true);
+  assert.equal(blueprintPointSafe(id, 4.4, { x: 280, y: 700 }), false);
+  assert.equal(blueprintFrame(id, 5.5).gazeHealth, 100);
+  assert.match(
+    renderBlueprintThumbnail(id, 'test-gaze-check'),
+    /data-blueprint-preview="gaze-check"/,
   );
 });

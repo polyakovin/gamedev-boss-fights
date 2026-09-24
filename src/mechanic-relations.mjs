@@ -630,7 +630,19 @@ const PROFILE_OVERRIDES = {
       'progress-clarity',
     ],
   },
-  'gaze-check': { geometry: ['arena'], dimensions: ['3d'], response: ['coordinate', 'manage'] },
+  'gaze-check': {
+    geometry: ['target', 'entity'],
+    signal: ['marker', 'pose'],
+    response: ['manage', 'reposition'],
+    dimensions: ['2d', '3d'],
+    lenses: [
+      'telegraphing',
+      'threat-geometry',
+      'counterplay',
+      'difficulty-rhythm',
+      'progress-clarity',
+    ],
+  },
   'proximity-damage': { geometry: ['radial'], response: ['coordinate', 'reposition'] },
   'party-split': { geometry: ['arena'], response: ['coordinate', 'reposition', 'manage'] },
 };

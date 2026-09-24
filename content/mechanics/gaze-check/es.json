@@ -1,0 +1,138 @@
+{
+  "title": "Prueba de mirada",
+  "subtitle": "La orientación del personaje como regla visible",
+  "variant": "Ojo de origen · hemisferio frontal · dos pruebas · un fallo",
+  "summary": "Una fuente marcada comprueba hacia dónde mira el personaje cuando se resuelve el ataque.",
+  "overview": "La prueba compara la orientación del personaje con una fuente concreta, no la cámara ni solo su posición. Girarse antes del pulso evita el efecto; volver a mirar demasiado pronto lo activa. Otros encuentros mantienen la prueba durante un canal o cambian la amenaza según la orientación: esos tiempos deben explicarse por separado.",
+  "learning": "Define fuente, orientación, límite angular e igualdad, instante o duración, señal, efecto, daño, ID de impacto y reinicio.",
+  "category": "Coordinación cooperativa",
+  "readTime": "10 min",
+  "demo": {
+    "title": "Aparta la mirada de Tavi del ojo rúnico de Kern",
+    "timeline": "Cronología de la prueba de mirada",
+    "step": "El mismo lugar es seguro o peligroso según la orientación de Tavi",
+    "phaseNames": [
+      "Ver el ojo y girarse",
+      "Mantenerse de espaldas al pulso",
+      "Comparar una mirada expuesta"
+    ],
+    "phaseDescriptions": [
+      "A los 0,70 s Kern revela el ojo. Tavi empieza mirándolo y se gira entre 1,04 y 1,60 s. La flecha y el cuerpo muestran la orientación que usa la regla.",
+      "A los 2,20 s el primer pulso mide la orientación. La fuente está detrás de Tavi: no hay efecto aunque no cambie de lugar. La salud sigue en 100.",
+      "El segundo ojo aparece a los 3,08 s. Tavi vuelve a mirar a Kern; a los 4,30 s la fuente cae en el hemisferio frontal de 90°. Un rayo y una cruz marcan un golpe, la salud baja a 10 y el reinicio ocurre a los 5,30 s."
+    ],
+    "boss": "Jefe",
+    "player": "Jugador",
+    "danger": "El mismo punto solo es peligroso si el personaje mira a la fuente señalada durante el pulso",
+    "locked": "Fuente, orientación, límite de 90° inclusive, instantes y un golpe por ID son reglas fijas",
+    "safe": "Señaliza la fuente con tiempo para girarse sin trucos de cámara ni desplazamientos ocultos",
+    "reducedMotion": "Con movimiento reducido no hay reproducción automática. Desliza hasta 0,70; 1,30; 2,30; 3,10; 3,70; 4,40 y 5,50 s.",
+    "diagramDescription": "Kern abre un ojo rúnico sobre Tavi. Tavi da la espalda al primer pulso y conserva 100 de salud. Tras otra señal mira al ojo y el segundo pulso reduce su salud a 10. La escena se reinicia."
+  },
+  "steps": [
+    {
+      "title": "¿Qué orientación se comprueba?",
+      "body": "Mide el ángulo entre la dirección visible del jugador y la dirección desde el jugador hasta la fuente. Una diferencia de hasta 90° inclusive cuenta como mirar; una mayor es segura. No uses la cámara ni un vector de apuntado anticuado."
+    },
+    {
+      "title": "¿Cuándo importa la mirada?",
+      "body": "Muestra el ojo a los 0,70 s y comprueba una vez a los 2,20 s. Repite a los 4,30 s con otro ID. Girarse evita el primer efecto; mirar a la fuente en el segundo causa 90 de daño una vez. Un canal continuo necesita otra regla y señal."
+    },
+    {
+      "title": "¿Es posible girarse a tiempo?",
+      "body": "Deja margen para movimiento, habilidades, mando y otras amenazas. Prueba exactamente 90°, un ángulo mayor, posiciones coincidentes, orientación inválida, callbacks duplicados y reinicio. Ojo y flecha deben entenderse sin color."
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "Comprobar la cámara y no al personaje",
+      "body": "En tercera persona se puede ver al jefe en pantalla mientras el avatar le da la espalda. Vincula la regla a la orientación visible del avatar."
+    },
+    {
+      "title": "Ocultar el instante activo",
+      "body": "Un icono de ojo no aclara si se comprueba una vez, durante una animación o durante todo un canal. Señala el pulso o intervalo y aplica el resultado solo entonces."
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "Separa orientación y distancia",
+      "body": "Tavi permanece en el mismo punto en ambas pruebas: cambia solo la dirección. Si también importan distancia o línea de visión, muestra esas condiciones."
+    },
+    {
+      "title": "Controla los giros automáticos",
+      "body": "Atacar, lanzar habilidades o fijar objetivo puede girar al avatar. Comprueba si esas acciones lo vuelven hacia la fuente y ofrece una forma clara de mantener la dirección."
+    },
+    {
+      "title": "Registra cada prueba",
+      "body": "Guarda IDs, rumbo a la fuente, orientación, diferencia angular, ID del golpe, efecto, salud y reinicio. Reproduce el límite angular y verifica resultados deterministas."
+    }
+  ],
+  "story": {
+    "title": "Un ojo, dos orientaciones",
+    "body": "Kern abre el ojo. Tavi se gira y el primer destello falla. Cuando el ojo vuelve a abrirse, Tavi lo mira y el destello alcanza su objetivo."
+  },
+  "adaptation": {
+    "title": "Muestra la dirección sin depender del color",
+    "body": "Usa el ojo, una flecha unida al cuerpo de Tavi, el pulso, una marca y el número de salud. La cronología debe permitir inspeccionar cada instante sin reproducción automática."
+  },
+  "distinction": {
+    "title": "Orientación, no línea de visión",
+    "body": "La línea de visión pregunta si un obstáculo bloquea un rayo; esta prueba pregunta si el objetivo mira a la fuente. En Cuphead la dirección cambia el lado peligroso; un canal sostenido puede castigar continuamente."
+  },
+  "lensNotes": [
+    {
+      "id": "telegraphing",
+      "body": "El ojo y el pulso anuncian fuente e instante."
+    },
+    {
+      "id": "threat-geometry",
+      "body": "La zona peligrosa es el hemisferio frontal del jugador respecto a la fuente, no una figura fija."
+    },
+    {
+      "id": "counterplay",
+      "body": "El jugador puede girarse sin abandonar su posición."
+    },
+    {
+      "id": "difficulty-rhythm",
+      "body": "El primer pulso seguro enseña la respuesta antes del segundo resultado."
+    },
+    {
+      "id": "progress-clarity",
+      "body": "Flecha, pulso, marca y salud explican el cambio de resultado."
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "3D",
+      "game": "Final Fantasy XIV",
+      "boss": "Angra Mainyu",
+      "screenshot": "https://i.ytimg.com/vi/Xm2UF7mW2oA/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=Xm2UF7mW2oA",
+      "video": "https://www.youtube.com/watch?v=aBeE11Szc1Y&t=82s",
+      "videoDurationSeconds": 282,
+      "body": "Mortal Gaze convierte al jefe en fuente: quienes lo miran arriesgan Doom y girarse evita el estado. El momento exacto y las plataformas para limpiarlo pertenecen a ese encuentro."
+    },
+    {
+      "dimension": "3D",
+      "game": "World of Warcraft",
+      "boss": "Yogg-Saron",
+      "screenshot": "https://i.ytimg.com/vi/m_EuLr-m7IM/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=m_EuLr-m7IM",
+      "video": "https://www.youtube.com/watch?v=Y2__yntqv2c&t=900s",
+      "videoDurationSeconds": 1197,
+      "body": "En la tercera fase, Lunatic Gaze daña y reduce Sanity a quienes miran a Yogg-Saron durante el canal. Es una prueba sostenida, no los dos pulsos de esta demo."
+    },
+    {
+      "dimension": "2D",
+      "game": "Cuphead",
+      "boss": "Angel and Demon",
+      "screenshot": "https://i.ytimg.com/vi/-O2tsb2Um94/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=-O2tsb2Um94",
+      "video": "https://www.youtube.com/watch?v=-O2tsb2Um94&t=15s",
+      "videoDurationSeconds": 58,
+      "body": "Ángel y Demonio intercambian lados cuando el jugador se gira. El Demonio permanece delante y sus ataques dañan; los del Ángel son inofensivos. La orientación cambia la amenaza, no evita un pulso puntual."
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

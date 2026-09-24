@@ -1941,6 +1941,27 @@ const SPECS = {
     secondHitId: 'tether-pulse-2',
     playerIds: ['tavi', 'ally'],
   },
+  'gaze-check': {
+    mode: 'gaze-check',
+    boss: [280, 315],
+    player: [280, 700],
+    target: [280, 700],
+    source: [280, 315],
+    initialFacing: -90,
+    safeFacing: 90,
+    firstWarnAt: 0.7,
+    turnAway: [1.04, 1.6],
+    firstCheck: [2.2, 2.48],
+    secondWarnAt: 3.08,
+    turnToward: [3.34, 3.9],
+    secondCheck: [4.3, 4.58],
+    resetAt: 5.3,
+    halfAngle: 90,
+    failureDamage: 90,
+    encounterId: 'kern-gaze-1',
+    firstHitId: 'gaze-pulse-1',
+    secondHitId: 'gaze-pulse-2',
+  },
   'wide-swing': { mode: 'arc', boss: [225, 340], player: [380, 500], target: [420, 780] },
   lunge: {
     mode: 'lunge',
@@ -4417,6 +4438,68 @@ export function entityTetherResolve({
     damagePerEndpoint: valid && !held && !alreadyResolved ? breakDamage : 0,
     resolution: !valid ? 'invalid' : alreadyResolved ? 'duplicate' : held ? 'held' : 'broken',
     applicationCount: valid && !alreadyResolved ? 1 : 0,
+  });
+}
+
+export function gazeCheckState(time) {
+  const spec = SPECS['gaze-check'];
+  const t = localTime(time);
+  if (t < spec.firstWarnAt) return 'idle';
+  if (t < spec.turnAway[0]) return 'first-eye-warned';
+  if (t < spec.turnAway[1]) return 'turning-away';
+  if (t < spec.firstCheck[0]) return 'facing-away';
+  if (t < spec.firstCheck[1]) return 'first-gaze-avoided';
+  if (t < spec.secondWarnAt) return 'between-checks';
+  if (t < spec.turnToward[0]) return 'second-eye-warned';
+  if (t < spec.turnToward[1]) return 'turning-toward';
+  if (t < spec.secondCheck[0]) return 'facing-source';
+  if (t < spec.secondCheck[1]) return 'second-gaze-hit';
+  if (t < spec.resetAt) return 'status-applied';
+  return 'explicit-retry';
+}
+
+export function gazeCheckResolve({
+  encounterId = 'kern-gaze-1',
+  hitId = 'gaze-pulse-1',
+  source = { x: 280, y: 315 },
+  target = { id: 'tavi', position: { x: 280, y: 700 }, facingDegrees: 90, alive: true },
+  halfAngle = 90,
+  failureDamage = 90,
+  alreadyResolved = false,
+} = {}) {
+  const valid =
+    target &&
+    target.id != null &&
+    target.alive === true &&
+    source &&
+    Number.isFinite(source.x) &&
+    Number.isFinite(source.y) &&
+    target.position &&
+    Number.isFinite(target.position.x) &&
+    Number.isFinite(target.position.y) &&
+    Number.isFinite(target.facingDegrees) &&
+    Number.isFinite(halfAngle) &&
+    halfAngle > 0 &&
+    halfAngle <= 180 &&
+    Number.isSafeInteger(failureDamage) &&
+    failureDamage >= 0 &&
+    Math.hypot(source.x - target.position.x, source.y - target.position.y) > 0;
+  const bearing = valid
+    ? (Math.atan2(source.y - target.position.y, source.x - target.position.x) * 180) / Math.PI
+    : 0;
+  const delta = valid ? ((((target.facingDegrees - bearing + 180) % 360) + 360) % 360) - 180 : 0;
+  const looking = Boolean(valid && Math.abs(delta) <= halfAngle);
+  return Object.freeze({
+    encounterId: String(encounterId),
+    hitId: String(hitId),
+    targetId: valid ? String(target.id) : null,
+    bearing,
+    facingDegrees: valid ? target.facingDegrees : 0,
+    halfAngle,
+    looking,
+    damage: valid && looking && !alreadyResolved ? failureDamage : 0,
+    resolution: !valid ? 'invalid' : alreadyResolved ? 'duplicate' : looking ? 'hit' : 'avoided',
+    applicationCount: valid && looking && !alreadyResolved ? 1 : 0,
   });
 }
 
@@ -9702,6 +9785,83 @@ function primitivesFor(spec, frame) {
       ),
     ];
   }
+  if (mode === 'gaze-check') {
+    const visible = frame.gazeVisible;
+    const pulse = frame.gazeHitActive;
+    const hit = frame.gazeFailure;
+    const safe = pulse && !frame.gazeLooking;
+    const tone = hit ? 'signal' : safe ? 'safe' : 'accent';
+    const angle = (frame.playerFacing * Math.PI) / 180;
+    const x = frame.player.x + Math.cos(angle) * 70;
+    const y = frame.player.y + Math.sin(angle) * 70;
+    return [
+      rect(55, 245, 450, 650, 0.58, 'muted', 0.025),
+      path('M 75 805 L 190 785 L 280 810 L 370 785 L 485 805', 0.5, 'muted', 4),
+      rect(200, 126, 160, 22, 0.8, 'muted', 0.08),
+      rect(200, 126, frame.gazeHealth * 1.6, 22, 0.95, hit ? 'signal' : 'safe', 0.55),
+      path(
+        'M 220 410 Q 280 355 340 410 Q 280 465 220 410 Z',
+        visible ? 0.95 : 0.14,
+        'accent',
+        6,
+        0.08,
+      ),
+      circle(280, 410, 21, visible ? 0.96 : 0.18, 'accent', 5, 0.22),
+      line(
+        280,
+        435,
+        frame.player.x,
+        frame.player.y - 45,
+        visible ? (pulse ? 0.95 : 0.38) : 0,
+        tone,
+        pulse ? 11 : 4,
+        pulse ? '' : '14 12',
+      ),
+      circle(
+        frame.player.x,
+        frame.player.y - 20,
+        56,
+        visible ? (pulse ? 0.87 : 0.28) : 0,
+        tone,
+        pulse ? 8 : 3,
+      ),
+      line(
+        frame.player.x,
+        frame.player.y,
+        x,
+        y,
+        visible ? 0.96 : 0.2,
+        frame.gazeLooking ? 'signal' : 'safe',
+        8,
+      ),
+      path(
+        `M ${x} ${y} L ${x - Math.cos(angle - 0.52) * 20} ${y - Math.sin(angle - 0.52) * 20} M ${x} ${y} L ${x - Math.cos(angle + 0.52) * 20} ${y - Math.sin(angle + 0.52) * 20}`,
+        visible ? 0.96 : 0.2,
+        frame.gazeLooking ? 'signal' : 'safe',
+        7,
+      ),
+      path(
+        `M ${frame.player.x - 20} ${frame.player.y - 120} L ${frame.player.x - 5} ${frame.player.y - 105} L ${frame.player.x + 25} ${frame.player.y - 143}`,
+        safe ? 0.95 : 0,
+        'safe',
+        8,
+      ),
+      path(
+        `M ${frame.player.x - 18} ${frame.player.y - 138} L ${frame.player.x + 18} ${frame.player.y - 102} M ${frame.player.x + 18} ${frame.player.y - 138} L ${frame.player.x - 18} ${frame.player.y - 102}`,
+        hit ? 0.95 : 0,
+        'signal',
+        8,
+      ),
+      circle(
+        spec.player[0],
+        spec.player[1],
+        78 * smooth((frame.time - spec.resetAt) / (BLUEPRINT_DURATION - spec.resetAt)),
+        frame.gazeRetry ? 0.75 : 0,
+        'accent',
+        7,
+      ),
+    ];
+  }
   if (mode === 'coordinated-duo-attack') {
     const t = frame.time;
     const leader = frame.decoy;
@@ -12193,6 +12353,17 @@ function pointClearsThreat(spec, frame, value, radius = BLUEPRINT_PLAYER_RADIUS)
       maxLength: spec.maxLength,
       breakDamage: spec.breakDamage,
     }).held;
+  }
+  if (mode === 'gaze-check') {
+    if (!frame.gazeHitActive) return true;
+    return !gazeCheckResolve({
+      encounterId: spec.encounterId,
+      hitId: frame.gazeHitId,
+      source: point(spec.source),
+      target: { id: 'tavi', position: value, facingDegrees: frame.playerFacing, alive: true },
+      halfAngle: spec.halfAngle,
+      failureDamage: spec.failureDamage,
+    }).looking;
   }
   if (mode === 'coordinated-duo-attack') {
     const target = frame.coordinatedDuoAttackTarget;
@@ -14763,115 +14934,130 @@ export function blueprintFrame(id, time) {
     playerFacing:
       spec.mode === 'directional-shield'
         ? mix(-90, -180, smooth((t - 2.7) / 0.68)) * (1 - returnProgress) - 90 * returnProgress
-        : spec.mode === 'player-controlled-boss' ||
-            spec.mode === 'projectile-rally' ||
-            spec.mode === 'baited-self-hit' ||
-            spec.mode === 'posture-stagger-gauge' ||
-            spec.mode === 'pacifist-resolution' ||
-            spec.mode === 'persistent-progress' ||
-            spec.mode === 'status-buildup' ||
-            spec.mode === 'instant-kill' ||
-            spec.mode === 'maximum-health-reduction' ||
-            spec.mode === 'ability-lock' ||
-            spec.mode === 'resource-steal' ||
-            spec.mode === 'on-hit-healing' ||
-            spec.mode === 'self-heal-cast' ||
-            spec.mode === 'external-healing-source' ||
-            spec.mode === 'damage-rate-cap' ||
-            spec.mode === 'loadout-mirror' ||
-            spec.mode === 'moveset-shapeshifting' ||
-            spec.mode === 'ally-theft' ||
-            spec.mode === 'false-death' ||
-            spec.mode === 'action-reactive-punish' ||
-            spec.mode === 'run-history-manifestation' ||
-            spec.mode === 'real-time-progression' ||
-            spec.mode === 'interface-interaction' ||
-            spec.mode === 'world-state-variant' ||
-            spec.mode === 'party-size-scaling' ||
-            spec.mode === 'partner-revival' ||
-            spec.mode === 'kill-order-inheritance' ||
-            spec.mode === 'shared-group-health' ||
-            spec.mode === 'coordinated-duo-attack' ||
-            spec.mode === 'stack-damage'
-          ? (Math.atan2(boss.y - player.y, boss.x - player.x) * 180) / Math.PI
-          : spec.mode === 'active-phase'
+        : spec.mode === 'gaze-check'
+          ? mix(
+              mix(
+                spec.initialFacing,
+                spec.safeFacing,
+                smooth((t - spec.turnAway[0]) / (spec.turnAway[1] - spec.turnAway[0])),
+              ),
+              spec.initialFacing,
+              smooth((t - spec.turnToward[0]) / (spec.turnToward[1] - spec.turnToward[0])),
+            )
+          : spec.mode === 'player-controlled-boss' ||
+              spec.mode === 'projectile-rally' ||
+              spec.mode === 'baited-self-hit' ||
+              spec.mode === 'posture-stagger-gauge' ||
+              spec.mode === 'pacifist-resolution' ||
+              spec.mode === 'persistent-progress' ||
+              spec.mode === 'status-buildup' ||
+              spec.mode === 'instant-kill' ||
+              spec.mode === 'maximum-health-reduction' ||
+              spec.mode === 'ability-lock' ||
+              spec.mode === 'resource-steal' ||
+              spec.mode === 'on-hit-healing' ||
+              spec.mode === 'self-heal-cast' ||
+              spec.mode === 'external-healing-source' ||
+              spec.mode === 'damage-rate-cap' ||
+              spec.mode === 'loadout-mirror' ||
+              spec.mode === 'moveset-shapeshifting' ||
+              spec.mode === 'ally-theft' ||
+              spec.mode === 'false-death' ||
+              spec.mode === 'action-reactive-punish' ||
+              spec.mode === 'run-history-manifestation' ||
+              spec.mode === 'real-time-progression' ||
+              spec.mode === 'interface-interaction' ||
+              spec.mode === 'world-state-variant' ||
+              spec.mode === 'party-size-scaling' ||
+              spec.mode === 'partner-revival' ||
+              spec.mode === 'kill-order-inheritance' ||
+              spec.mode === 'shared-group-health' ||
+              spec.mode === 'coordinated-duo-attack' ||
+              spec.mode === 'stack-damage'
             ? (Math.atan2(boss.y - player.y, boss.x - player.x) * 180) / Math.PI
-            : spec.mode === 'recovery'
+            : spec.mode === 'active-phase'
               ? (Math.atan2(boss.y - player.y, boss.x - player.x) * 180) / Math.PI
-              : spec.mode === 'survival-phase'
+              : spec.mode === 'recovery'
                 ? (Math.atan2(boss.y - player.y, boss.x - player.x) * 180) / Math.PI
-                : spec.mode === 'teleport'
+                : spec.mode === 'survival-phase'
                   ? (Math.atan2(boss.y - player.y, boss.x - player.x) * 180) / Math.PI
-                  : spec.mode === 'boundary-attack'
+                  : spec.mode === 'teleport'
                     ? (Math.atan2(boss.y - player.y, boss.x - player.x) * 180) / Math.PI
-                    : spec.mode === 'forced-scrolling'
+                    : spec.mode === 'boundary-attack'
                       ? (Math.atan2(boss.y - player.y, boss.x - player.x) * 180) / Math.PI
-                      : spec.mode === 'chase-herding'
+                      : spec.mode === 'forced-scrolling'
                         ? (Math.atan2(boss.y - player.y, boss.x - player.x) * 180) / Math.PI
-                        : spec.mode === 'escape-phase'
+                        : spec.mode === 'chase-herding'
                           ? (Math.atan2(boss.y - player.y, boss.x - player.x) * 180) / Math.PI
-                          : spec.mode === 'relocated-arena'
+                          : spec.mode === 'escape-phase'
                             ? (Math.atan2(boss.y - player.y, boss.x - player.x) * 180) / Math.PI
-                            : spec.mode === 'cover-line-of-sight'
+                            : spec.mode === 'relocated-arena'
                               ? (Math.atan2(boss.y - player.y, boss.x - player.x) * 180) / Math.PI
-                              : spec.mode === 'forced-inertia'
+                              : spec.mode === 'cover-line-of-sight'
                                 ? (Math.atan2(boss.y - player.y, boss.x - player.x) * 180) / Math.PI
-                                : spec.mode === 'wraparound-projectile'
+                                : spec.mode === 'forced-inertia'
                                   ? (Math.atan2(boss.y - player.y, boss.x - player.x) * 180) /
                                     Math.PI
-                                  : spec.mode === 'beat-synced-attack'
+                                  : spec.mode === 'wraparound-projectile'
                                     ? (Math.atan2(boss.y - player.y, boss.x - player.x) * 180) /
                                       Math.PI
-                                    : spec.mode === 'secondary-cues-invisibility'
+                                    : spec.mode === 'beat-synced-attack'
                                       ? (Math.atan2(boss.y - player.y, boss.x - player.x) * 180) /
                                         Math.PI
-                                      : spec.mode === 'sound-detection'
+                                      : spec.mode === 'secondary-cues-invisibility'
                                         ? (Math.atan2(boss.y - player.y, boss.x - player.x) * 180) /
                                           Math.PI
-                                        : spec.mode === 'objective-linked-invulnerability'
+                                        : spec.mode === 'sound-detection'
                                           ? (Math.atan2(boss.y - player.y, boss.x - player.x) *
                                               180) /
                                             Math.PI
-                                          : spec.mode === 'wave-clear-objective'
+                                          : spec.mode === 'objective-linked-invulnerability'
                                             ? (Math.atan2(boss.y - player.y, boss.x - player.x) *
                                                 180) /
                                               Math.PI
-                                            : spec.mode === 'environmental-weapon'
+                                            : spec.mode === 'wave-clear-objective'
                                               ? (Math.atan2(boss.y - player.y, boss.x - player.x) *
                                                   180) /
                                                 Math.PI
-                                              : spec.mode === 'encounter-specific-tool'
+                                              : spec.mode === 'environmental-weapon'
                                                 ? (Math.atan2(
                                                     boss.y - player.y,
                                                     boss.x - player.x,
                                                   ) *
                                                     180) /
                                                   Math.PI
-                                                : spec.mode === 'boss-as-terrain'
+                                                : spec.mode === 'encounter-specific-tool'
                                                   ? (Math.atan2(
                                                       boss.y - player.y,
                                                       boss.x - player.x,
                                                     ) *
                                                       180) /
                                                     Math.PI
-                                                  : spec.mode === 'control-mode-shift'
+                                                  : spec.mode === 'boss-as-terrain'
                                                     ? (Math.atan2(
                                                         boss.y - player.y,
                                                         boss.x - player.x,
                                                       ) *
                                                         180) /
                                                       Math.PI
-                                                    : spec.mode === 'damage-type-resistance' ||
-                                                        spec.mode === 'situational-immunity' ||
-                                                        spec.mode === 'part-break' ||
-                                                        spec.mode === 'attack-reflection' ||
-                                                        spec.mode === 'counter-stance' ||
-                                                        spec.mode === 'absorption-power-up' ||
-                                                        spec.mode === 'interruptible-wind-up' ||
-                                                        spec.mode === 'loadout-adaptation' ||
-                                                        spec.mode === 'wind-up'
-                                                      ? -180
-                                                      : -90,
+                                                    : spec.mode === 'control-mode-shift'
+                                                      ? (Math.atan2(
+                                                          boss.y - player.y,
+                                                          boss.x - player.x,
+                                                        ) *
+                                                          180) /
+                                                        Math.PI
+                                                      : spec.mode === 'damage-type-resistance' ||
+                                                          spec.mode === 'situational-immunity' ||
+                                                          spec.mode === 'part-break' ||
+                                                          spec.mode === 'attack-reflection' ||
+                                                          spec.mode === 'counter-stance' ||
+                                                          spec.mode === 'absorption-power-up' ||
+                                                          spec.mode === 'interruptible-wind-up' ||
+                                                          spec.mode === 'loadout-adaptation' ||
+                                                          spec.mode === 'wind-up'
+                                                        ? -180
+                                                        : -90,
     bossMotion: motion({
       gait:
         spec.mode === 'landing'
@@ -17012,6 +17198,37 @@ export function blueprintFrame(id, time) {
       impact: strikePulse(t, spec.secondCheck[0], 0.6),
     });
   }
+  if (spec.mode === 'gaze-check') {
+    const second = t >= spec.secondWarnAt && t < spec.resetAt;
+    const hitActive =
+      (t >= spec.firstCheck[0] && t < spec.firstCheck[1]) ||
+      (t >= spec.secondCheck[0] && t < spec.secondCheck[1]);
+    const result = gazeCheckResolve({
+      encounterId: spec.encounterId,
+      hitId: second ? spec.secondHitId : spec.firstHitId,
+      source: point(spec.source),
+      target: { id: 'tavi', position: player, facingDegrees: frame.playerFacing, alive: true },
+      halfAngle: spec.halfAngle,
+      failureDamage: spec.failureDamage,
+    });
+    frame.gazeState = gazeCheckState(t);
+    frame.gazeVisible = t >= spec.firstWarnAt && t < spec.resetAt;
+    frame.gazeHitActive = hitActive;
+    frame.gazeLooking = result.looking;
+    frame.gazeBearing = result.bearing;
+    frame.gazeHitId = result.hitId;
+    frame.gazeApplicationCount = hitActive ? result.applicationCount : 0;
+    frame.gazeFailure = t >= spec.secondCheck[0] && t < spec.resetAt && result.looking;
+    frame.gazeHealth = frame.gazeFailure ? 100 - result.damage : 100;
+    frame.gazeRetry = t >= spec.resetAt;
+    frame.gazeFallAngle = frame.gazeFailure ? 72 * smooth((t - spec.secondCheck[0]) / 0.12) : 0;
+    frame.dangerActive = hitActive;
+    frame.bossMotion.attack = Math.max(
+      strikePulse(t, spec.firstCheck[0], 0.56),
+      strikePulse(t, spec.secondCheck[0], 0.56),
+    );
+    frame.playerMotion.impact = strikePulse(t, spec.secondCheck[0], 0.6);
+  }
   if (spec.mode === 'real-time-progression') {
     frame.realTimeProgressionState = realTimeProgressionState(t);
     frame.realTimeProgressionCheckpointId = spec.checkpointId;
@@ -17404,7 +17621,8 @@ export function blueprintFrame(id, time) {
               spec.mode === 'stack-damage' ||
               spec.mode === 'personal-spread' ||
               spec.mode === 'tower-soak' ||
-              spec.mode === 'entity-tether'
+              spec.mode === 'entity-tether' ||
+              spec.mode === 'gaze-check'
             ? 92
             : -62),
   };

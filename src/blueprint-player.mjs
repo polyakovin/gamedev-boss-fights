@@ -62,6 +62,8 @@ export function initializeBlueprint(widget) {
   const towerHealthLabels = [...widget.querySelectorAll('[data-blueprint-tower-health]')];
   const tetherReadout = find('[data-blueprint-tether-readout]');
   const tetherHealthLabels = [...widget.querySelectorAll('[data-blueprint-tether-health]')];
+  const gazeHealthLabel = find('[data-blueprint-gaze-health]');
+  const gazeFacingLabel = find('[data-blueprint-gaze-facing]');
   const partnerLabel = find('[data-blueprint-partner-label]');
   const playerLabel = find('[data-blueprint-player-label]');
   const primitives = [...widget.querySelectorAll('[data-blueprint-primitive]')];
@@ -1240,6 +1242,21 @@ export function initializeBlueprint(widget) {
           frame.entityTetherHealth[Number(label.dataset.blueprintTetherHealth)],
         );
     }
+    if (mechanicId === 'gaze-check') {
+      widget.dataset.blueprintGaze = frame.gazeState;
+      widget.dataset.blueprintGazeHitId = frame.gazeHitId;
+      widget.dataset.blueprintGazeLooking = String(frame.gazeLooking);
+      widget.dataset.blueprintGazeFacing = String(Math.round(frame.playerFacing));
+      widget.dataset.blueprintGazeHealth = String(frame.gazeHealth);
+      widget.dataset.blueprintGazeApplicationCount = String(frame.gazeApplicationCount);
+      widget.dataset.blueprintGazeFailure = String(frame.gazeFailure);
+      widget.dataset.blueprintGazeRetry = String(frame.gazeRetry);
+      if (gazeHealthLabel) gazeHealthLabel.textContent = String(frame.gazeHealth);
+      if (gazeFacingLabel)
+        gazeFacingLabel.textContent = frame.gazeVisible
+          ? `${Math.round(frame.playerFacing)}° / ${Math.round(frame.gazeBearing)}°`
+          : '';
+    }
     boss.setAttribute(
       'transform',
       `translate(${frame.boss.x} ${frame.boss.y})${frame.bossRotation ? ` rotate(${frame.bossRotation})` : ''} scale(${frame.bossScale})`,
@@ -1258,7 +1275,7 @@ export function initializeBlueprint(widget) {
     }
     player.setAttribute(
       'transform',
-      `translate(${frame.player.x} ${frame.player.y})${frame.stackDamageFallAngle || frame.personalSpreadFallAngle || frame.towerSoakFallAngle || frame.entityTetherFallAngle ? ` rotate(${frame.stackDamageFallAngle || frame.personalSpreadFallAngle || frame.towerSoakFallAngle || frame.entityTetherFallAngle})` : ''}`,
+      `translate(${frame.player.x} ${frame.player.y})${frame.stackDamageFallAngle || frame.personalSpreadFallAngle || frame.towerSoakFallAngle || frame.entityTetherFallAngle || frame.gazeFallAngle ? ` rotate(${frame.stackDamageFallAngle || frame.personalSpreadFallAngle || frame.towerSoakFallAngle || frame.entityTetherFallAngle || frame.gazeFallAngle})` : ''}`,
     );
     for (const [index, ally] of allies.entries()) {
       const position = (frame.stackDamageAllies ??

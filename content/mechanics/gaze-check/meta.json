@@ -1,0 +1,35 @@
+{
+  "id": "gaze-check",
+  "number": 118,
+  "published": true,
+  "sourceLocale": "en",
+  "contentVersion": 1,
+  "animation": "gaze-check",
+  "lenses": [
+    "telegraphing",
+    "threat-geometry",
+    "counterplay",
+    "difficulty-rhythm",
+    "progress-clarity"
+  ],
+  "related": [
+    "target-lock",
+    "directional-shield",
+    "secondary-cues-invisibility",
+    "sound-detection"
+  ],
+  "sources": [
+    {
+      "title": "Gaze mechanic — Final Fantasy XIV Community Wiki",
+      "url": "https://ffxiv.consolegameswiki.com/wiki/Gaze"
+    },
+    {
+      "title": "Yogg-Saron encounter and Lunatic Gaze — Wowhead",
+      "url": "https://www.wowhead.com/wotlk/guide/raids/ulduar/yogg-saron-strategy"
+    },
+    {
+      "title": "One Hell Of A Dream — Cuphead Wiki",
+      "url": "https://cuphead.wiki.gg/wiki/One_Hell_Of_A_Dream"
+    }
+  ]
+}

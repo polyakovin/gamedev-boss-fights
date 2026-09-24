@@ -1,0 +1,138 @@
+{
+  "title": "Gaze check",
+  "subtitle": "Make character facing a visible encounter rule",
+  "variant": "Source eye · facing hemisphere · two timed samples · one missed response",
+  "summary": "A marked source checks which way the player character faces when its gaze resolves.",
+  "overview": "A gaze check tests character facing relative to a named source, not camera direction or position alone. Here, turning away before the eye pulse prevents the effect; turning back too soon causes a hit. Other encounters check throughout a channel or switch the active threat with facing, so teach their timing separately.",
+  "learning": "Specify source position, target orientation, angular boundary and equality rule, snapshot or channel duration, warning cue, status and damage, one-hit identity, and a clean retry.",
+  "category": "Cooperative coordination",
+  "readTime": "10 min",
+  "demo": {
+    "title": "Turn Tavi away from Kern's rune eye",
+    "timeline": "Gaze check timeline",
+    "step": "The same place is safe or dangerous depending on Tavi's facing",
+    "phaseNames": [
+      "Read the eye and turn",
+      "Hold facing through the pulse",
+      "Compare an exposed gaze"
+    ],
+    "phaseDescriptions": [
+      "At 0.70 seconds Kern reveals the eye. Tavi starts facing it, then turns away between 1.04 and 1.60 seconds. The arrow beside Tavi and the shared character rig show the same orientation used by the rule.",
+      "At 2.20 seconds the first pulse samples Tavi's facing. The source is behind Tavi, so the test is avoided without moving to a different position. Health stays at 100, and the eye fades before a second warning.",
+      "The second eye appears at 3.08 seconds. Tavi turns back toward Kern; the 4.30-second sample sees the source within the forward 90-degree half-plane. A beam and cross mark one hit, health falls to 10, and the explicit retry at 5.30 seconds restores the state."
+    ],
+    "boss": "Boss",
+    "player": "Player",
+    "danger": "The same point in the arena is dangerous only while the character faces the warned source at a pulse",
+    "locked": "Source position, target facing, 90-degree half-angle including its boundary, sample instants, and one hit per ID are fixed encounter rules",
+    "safe": "Signal the source early and leave enough time to turn without camera tricks or hidden movement",
+    "reducedMotion": "Reduced motion disables autoplay. Scrub through 0.70, 1.30, 2.30, 3.10, 3.70, 4.40, and 5.50 seconds.",
+    "diagramDescription": "Kern opens a rune eye above Tavi. Tavi turns their full body away for the first pulse and remains at 100 health. A second warning precedes a turn toward the eye; the next pulse strikes, reducing health to 10. The scene then explicitly resets."
+  },
+  "steps": [
+    {
+      "title": "What orientation is tested?",
+      "body": "Name the source and measure the angle between the player's facing vector and the direction from player to source. This demo treats an angular difference of 90 degrees or less as looking; a larger difference is safe. Use the character's rendered facing, not an unrelated camera angle or a stale aim vector."
+    },
+    {
+      "title": "When does looking matter?",
+      "body": "Reveal the eye at 0.70 seconds and sample once at 2.20 seconds. Repeat the same rule at 4.30 seconds with a new hit ID. A successful turn avoids the first pulse; facing the source at the second pulse applies 90 damage once. A continuous channel would need repeated or continuous checks and must be labeled as such."
+    },
+    {
+      "title": "Can the player turn clearly in time?",
+      "body": "Budget the turn around movement, casting, controller input, and other threats. Test exactly on the 90-degree boundary, just beyond it, coincident source and target, invalid facing, repeated callbacks, and reset. Keep the eye and facing arrow legible without color or camera motion."
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "Checking the camera instead of the character",
+      "body": "In third-person games, a player can look at the screen while the avatar faces away. Couple the collision rule to the avatar's facing and show that orientation in the rig."
+    },
+    {
+      "title": "Hiding the active instant",
+      "body": "An eye icon alone does not say whether the game samples once, for an animation window, or throughout a channel. Show the pulse or channel interval and delay the outcome until that rule is active."
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "Separate facing from distance",
+      "body": "Tavi stays at one point in both checks, making the result attributable to orientation. If distance or line of sight also matters, expose those additional tests rather than implying that the gaze is purely directional."
+    },
+    {
+      "title": "Control re-facing side effects",
+      "body": "Attacking, casting, or target lock may automatically rotate the character. Test whether these controls can accidentally turn the avatar toward the source during the check; offer a readable way to maintain the intended facing."
+    },
+    {
+      "title": "Instrument each sample",
+      "body": "Log source and target IDs, source bearing, facing angle, angular difference, hit ID, status application, health delta, and reset. Scrub across the boundary and replay the same input to confirm determinism."
+    }
+  ],
+  "story": {
+    "title": "One eye, two orientations",
+    "body": "Kern's rune eye opens. Tavi turns their back and its first flash passes. When the eye reopens, Tavi faces it: the flash finally finds a target."
+  },
+  "adaptation": {
+    "title": "Make orientation legible without color",
+    "body": "Show the boss eye, an arrow fixed to Tavi's body facing, a visible pulse, a check or cross, and a health number. Keep the timeline and scene seekable with autoplay disabled."
+  },
+  "distinction": {
+    "title": "A facing test, not a sight line",
+    "body": "A line-of-sight hazard asks whether cover blocks a ray; a gaze check asks whether the target faces the source. Cuphead's Angel and Demon instead uses facing to change which side is harmful, while a sustained gaze can punish throughout a channel rather than at one pulse."
+  },
+  "lensNotes": [
+    {
+      "id": "telegraphing",
+      "body": "The eye and pulse communicate the source and exact time before the facing check."
+    },
+    {
+      "id": "threat-geometry",
+      "body": "The dangerous region is the player's own forward hemisphere relative to the source, not a fixed floor shape."
+    },
+    {
+      "id": "counterplay",
+      "body": "The player can turn the avatar while staying in place, preserving movement for another problem."
+    },
+    {
+      "id": "difficulty-rhythm",
+      "body": "A safe first pulse teaches the response before the contrasting second outcome."
+    },
+    {
+      "id": "progress-clarity",
+      "body": "Arrow, pulse, check or cross, and health number expose why the same location produces different results."
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "3D",
+      "game": "Final Fantasy XIV",
+      "boss": "Angra Mainyu",
+      "screenshot": "https://i.ytimg.com/vi/Xm2UF7mW2oA/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=Xm2UF7mW2oA",
+      "video": "https://www.youtube.com/watch?v=aBeE11Szc1Y&t=82s",
+      "videoDurationSeconds": 282,
+      "body": "Mortal Gaze marks the boss as a gaze source; characters facing it risk Doom, while turning away avoids that status. Unlike this simplified demo, the game's resolution timing and its lit cleanse circles are encounter-specific."
+    },
+    {
+      "dimension": "3D",
+      "game": "World of Warcraft",
+      "boss": "Yogg-Saron",
+      "screenshot": "https://i.ytimg.com/vi/m_EuLr-m7IM/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=m_EuLr-m7IM",
+      "video": "https://www.youtube.com/watch?v=Y2__yntqv2c&t=900s",
+      "videoDurationSeconds": 1197,
+      "body": "In phase three, Lunatic Gaze punishes players facing Yogg-Saron during its channel with damage and lost Sanity. This is a sustained facing test, unlike the two discrete samples in the demo."
+    },
+    {
+      "dimension": "2D",
+      "game": "Cuphead",
+      "boss": "Angel and Demon",
+      "screenshot": "https://i.ytimg.com/vi/-O2tsb2Um94/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=-O2tsb2Um94",
+      "video": "https://www.youtube.com/watch?v=-O2tsb2Um94&t=15s",
+      "videoDurationSeconds": 58,
+      "body": "The Angel and Demon swap sides when the player turns; the Demon stays in front and its attacks are dangerous, while the Angel's are harmless. This is an orientation-controlled threat swap, not a timed look-away pulse."
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}
