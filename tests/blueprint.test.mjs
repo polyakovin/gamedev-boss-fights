@@ -1695,7 +1695,10 @@ test('teleport reveals one destination, removes transit collision, and fixes its
   assert.equal(destinationTell.teleportDestinationRevealed, true);
   assert.equal(destinationTell.teleportAbsent, false);
   assert.equal(destinationTell.dangerActive, false);
-  assert.ok(destinationTell.primitives[1].opacity > 0, 'the exact destination is visible early');
+  assert.ok(
+    destinationTell.primitives[4].opacity > 0,
+    'the exact destination rune is visible early',
+  );
 
   const absent = blueprintFrame(id, 1.2);
   assert.equal(absent.teleportAbsent, true);
@@ -1705,18 +1708,18 @@ test('teleport reveals one destination, removes transit collision, and fixes its
 
   const followUpTell = blueprintFrame(id, 1.9);
   assert.equal(followUpTell.teleportState, 'follow-up-tell');
-  assert.ok(followUpTell.primitives[4].opacity > 0, 'the stored follow-up lane previews');
-  assert.equal(followUpTell.primitives[5].opacity, 0, 'preview geometry does not deal damage');
+  assert.ok(followUpTell.primitives[5].opacity > 0, 'the stored follow-up lane previews');
+  assert.equal(followUpTell.primitives[6].opacity, 0, 'preview geometry does not deal damage');
 
   const active = blueprintFrame(id, 2.5);
   assert.equal(active.teleportFollowUpActive, true);
   assert.equal(active.playerSafe, true);
-  assert.ok(active.primitives[5].opacity > 0, 'the same fixed lane becomes solid');
+  assert.ok(active.primitives[6].opacity > 0, 'the same fixed lane becomes solid');
   assert.equal(blueprintPointSafe(id, 2.5, { x: 390, y: 610 }), false);
 
   const punish = blueprintFrame(id, 3.55);
   assert.equal(punish.punishStrike, true);
-  assert.ok(punish.primitives[7].opacity > 0, 'the sword response begins after danger ends');
+  assert.ok(punish.primitives[8].opacity > 0, 'the sword response begins after danger ends');
   assert.deepEqual(blueprintFrame(id, 0).player, blueprintFrame(id, 6).player);
   assert.deepEqual(blueprintFrame(id, 0).boss, blueprintFrame(id, 6).boss);
   assert.match(renderBlueprintThumbnail(id, 'test-teleport'), /data-blueprint-preview="teleport"/);

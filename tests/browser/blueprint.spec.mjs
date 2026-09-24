@@ -1822,11 +1822,18 @@ test('teleport exposes its destination before absence and activates only the fix
   await expect(page.locator('.wip-badge, .draft-profile')).toHaveCount(0);
   await expect(page.locator('.game-example')).toHaveCount(3);
   await expect(widget).toHaveAttribute('data-blueprint-playing', 'false');
+  await expect(widget).toHaveAttribute('data-blueprint-full-height', 'true');
+  expect(
+    await widget
+      .locator('[data-blueprint-primitives]')
+      .evaluate((element) => element.getBBox().height),
+  ).toBeGreaterThan(760);
+  await expect(widget.locator('[data-blueprint-primitives] [stroke-dasharray]')).toHaveCount(0);
 
   await seek(900);
   await expect(widget).toHaveAttribute('data-blueprint-teleport', 'departing');
   await expect(widget).toHaveAttribute('data-blueprint-teleport-destination', 'true');
-  await expect(widget.locator('[data-blueprint-primitive="1"] circle')).not.toHaveAttribute(
+  await expect(widget.locator('[data-blueprint-primitive="4"] path')).not.toHaveAttribute(
     'opacity',
     '0',
   );
@@ -1839,11 +1846,11 @@ test('teleport exposes its destination before absence and activates only the fix
 
   await seek(1900);
   await expect(widget).toHaveAttribute('data-blueprint-teleport', 'follow-up-tell');
-  await expect(widget.locator('[data-blueprint-primitive="4"] rect')).not.toHaveAttribute(
+  await expect(widget.locator('[data-blueprint-primitive="5"] path')).not.toHaveAttribute(
     'opacity',
     '0',
   );
-  await expect(widget.locator('[data-blueprint-primitive="5"] rect')).toHaveAttribute(
+  await expect(widget.locator('[data-blueprint-primitive="6"] path')).toHaveAttribute(
     'opacity',
     '0',
   );
@@ -1852,7 +1859,7 @@ test('teleport exposes its destination before absence and activates only the fix
   await expect(widget).toHaveAttribute('data-blueprint-teleport', 'follow-up-danger');
   await expect(widget).toHaveAttribute('data-blueprint-teleport-follow-up', 'true');
   await expect(widget).toHaveAttribute('data-blueprint-outcome', 'safe');
-  await expect(widget.locator('[data-blueprint-primitive="5"] rect')).not.toHaveAttribute(
+  await expect(widget.locator('[data-blueprint-primitive="6"] path')).not.toHaveAttribute(
     'opacity',
     '0',
   );
@@ -1860,7 +1867,7 @@ test('teleport exposes its destination before absence and activates only the fix
   await seek(3550);
   await expect(widget).toHaveAttribute('data-blueprint-teleport', 'opening');
   await expect(widget).toHaveAttribute('data-blueprint-punish-strike', 'true');
-  await expect(widget.locator('[data-blueprint-primitive="7"] line')).not.toHaveAttribute(
+  await expect(widget.locator('[data-blueprint-primitive="8"] line')).not.toHaveAttribute(
     'opacity',
     '0',
   );
