@@ -1418,11 +1418,12 @@ test('attack lock follows Tavi before capture and preserves two committed rays',
   await expect(page.locator('.wip-badge, .draft-profile')).toHaveCount(0);
   await expect(page.locator('.game-example')).toHaveCount(3);
   await expect(widget).toHaveAttribute('data-blueprint-playing', 'false');
+  await expect(widget).toHaveAttribute('data-blueprint-full-height', 'true');
 
   await seek(800);
   await expect(widget).toHaveAttribute('data-blueprint-attack-lock', 'tracking-first');
   await expect(widget).toHaveAttribute('data-blueprint-aim-locked', 'false');
-  await expect(widget.locator('[data-blueprint-primitive="0"] line')).not.toHaveAttribute(
+  await expect(widget.locator('[data-blueprint-primitive="3"] line')).not.toHaveAttribute(
     'opacity',
     '0',
   );
@@ -1432,7 +1433,7 @@ test('attack lock follows Tavi before capture and preserves two committed rays',
   await expect(widget).toHaveAttribute('data-blueprint-aim-locked', 'true');
   await expect(widget).toHaveAttribute('data-blueprint-aim-x', '390.0');
   await expect(widget).toHaveAttribute('data-blueprint-aim-y', '560.0');
-  await expect(widget.locator('[data-blueprint-primitive="1"] line')).not.toHaveAttribute(
+  await expect(widget.locator('[data-blueprint-primitive="4"] line')).not.toHaveAttribute(
     'opacity',
     '0',
   );
@@ -1440,7 +1441,7 @@ test('attack lock follows Tavi before capture and preserves two committed rays',
   await seek(1900);
   await expect(widget).toHaveAttribute('data-blueprint-attack-lock', 'released-danger');
   await expect(widget).toHaveAttribute('data-blueprint-outcome', 'safe');
-  await expect(widget.locator('[data-blueprint-primitive="2"] line')).not.toHaveAttribute(
+  await expect(widget.locator('[data-blueprint-primitive="5"] line')).not.toHaveAttribute(
     'opacity',
     '0',
   );
@@ -1483,8 +1484,8 @@ test('attack lock keeps tracking, captured rays, and actors inside dark RTL mobi
         '[data-blueprint-player]',
         '[data-blueprint-boss-label]',
         '[data-blueprint-player-label]',
-        '[data-blueprint-primitive="0"]',
         '[data-blueprint-primitive="3"]',
+        '[data-blueprint-primitive="6"]',
       ].map((selector) => {
         const rect = element.querySelector(selector).getBoundingClientRect();
         return (

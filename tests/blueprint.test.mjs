@@ -1510,12 +1510,12 @@ test('attack lock captures a moving aim point and preserves it through each rele
   const tracking = blueprintFrame(id, 0.8);
   assert.equal(tracking.attackLocked, false);
   assert.deepEqual(tracking.attackLockTarget, tracking.player);
-  assert.ok(tracking.primitives[0].opacity > 0, 'the guide follows Tavi before lock');
+  assert.ok(tracking.primitives[3].opacity > 0, 'the guide follows Tavi before lock');
 
   const firstLock = blueprintFrame(id, 1.3);
   assert.equal(firstLock.attackLocked, true);
   assert.deepEqual(firstLock.attackLockTarget, { x: 390, y: 560 });
-  assert.ok(firstLock.primitives[1].opacity > 0, 'the captured ray replaces the tracking guide');
+  assert.ok(firstLock.primitives[4].opacity > 0, 'the captured ray replaces the tracking guide');
   assert.deepEqual(firstLock.attackLockEnd, blueprintFrame(id, 1.6).attackLockEnd);
   assert.notDeepEqual(firstLock.player, blueprintFrame(id, 1.6).player);
 

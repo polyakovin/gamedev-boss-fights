@@ -3623,6 +3623,21 @@ function primitivesFor(spec, frame) {
       strikePulse(frame.time, spec.secondLock, 0.34),
     );
     return [
+      path('M 36 94 H 524 V 878 H 36 Z M 60 255 H 500 V 878 H 60 Z', 0.37, 'muted', 0, 0.56),
+      path(
+        'M 53 117 H 117 V 397 H 53 Z M 443 117 H 507 V 397 H 443 Z M 133 121 H 427 V 156 H 133 Z M 66 425 L 266 408 L 266 687 L 66 719 Z M 294 408 L 494 425 V 719 L 294 687 Z M 66 748 L 280 712 L 494 748 V 790 L 280 752 L 66 790 Z',
+        0.4,
+        'accent',
+        0,
+        0.56,
+      ),
+      path(
+        'M 180 527 L 205 560 L 180 593 L 155 560 Z M 390 527 L 415 560 L 390 593 L 365 560 Z M 72 828 L 280 796 L 488 828 V 842 L 280 812 L 72 842 Z',
+        0.32,
+        'safe',
+        0,
+        0.52,
+      ),
       line(
         boss.x,
         boss.y,
