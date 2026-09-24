@@ -1071,6 +1071,42 @@ export function initializeBlueprint(widget) {
       );
       widget.dataset.blueprintPartnerRevivalRetryStable = String(frame.partnerRevivalRetryStable);
     }
+    if (mechanicId === 'kill-order-inheritance') {
+      widget.dataset.blueprintKillOrderInheritance = frame.killOrderInheritanceState;
+      widget.dataset.blueprintKillOrderInheritanceEncounterId =
+        frame.killOrderInheritanceEncounterId;
+      widget.dataset.blueprintKillOrderInheritanceAttemptId = frame.killOrderInheritanceAttemptId;
+      widget.dataset.blueprintKillOrderInheritanceSourceBossId =
+        frame.killOrderInheritanceSourceBossId;
+      widget.dataset.blueprintKillOrderInheritanceSurvivorBossId =
+        frame.killOrderInheritanceSurvivorBossId;
+      widget.dataset.blueprintKillOrderInheritanceInheritedPackage =
+        frame.killOrderInheritanceInheritedPackage;
+      widget.dataset.blueprintKillOrderInheritanceGrantCount = String(
+        frame.killOrderInheritanceGrantCount,
+      );
+      widget.dataset.blueprintKillOrderInheritanceLeftDown = String(
+        frame.killOrderInheritanceLeftDown,
+      );
+      widget.dataset.blueprintKillOrderInheritanceRightDown = String(
+        frame.killOrderInheritanceRightDown,
+      );
+      widget.dataset.blueprintKillOrderInheritanceWaveActive = String(
+        frame.killOrderInheritanceWaveActive,
+      );
+      widget.dataset.blueprintKillOrderInheritanceLanceActive = String(
+        frame.killOrderInheritanceLanceActive,
+      );
+      widget.dataset.blueprintKillOrderInheritanceRetryTransition = String(
+        frame.killOrderInheritanceRetryTransition,
+      );
+      widget.dataset.blueprintKillOrderInheritanceCompletionCount = String(
+        frame.killOrderInheritanceCompletionCount,
+      );
+      widget.dataset.blueprintKillOrderInheritanceDuplicateGrantCount = String(
+        frame.killOrderInheritanceDuplicateGrantCount,
+      );
+    }
     boss.setAttribute(
       'transform',
       `translate(${frame.boss.x} ${frame.boss.y}) scale(${frame.bossScale})`,

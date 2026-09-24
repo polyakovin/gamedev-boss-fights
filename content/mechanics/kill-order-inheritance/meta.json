@@ -1,0 +1,34 @@
+{
+  "id": "kill-order-inheritance",
+  "number": 111,
+  "published": true,
+  "sourceLocale": "en",
+  "contentVersion": 1,
+  "animation": "kill-order-inheritance",
+  "lenses": [
+    "context-and-sequence",
+    "progress-clarity",
+    "risk-reward",
+    "difficulty-rhythm",
+    "counterplay"
+  ],
+  "related": ["partner-revival", "fight-phase", "enrage", "attack-combination"],
+  "sources": [
+    {
+      "title": "Ornstein & Smough — Dark Souls Wiki",
+      "url": "https://darksouls.wikidot.com/dragon-slayer-ornstein-executioner-smough"
+    },
+    {
+      "title": "The Demon Prince — Dark Souls III Wiki",
+      "url": "https://darksouls3.wikidot.com/bosses:the-demon-prince"
+    },
+    {
+      "title": "Chubs 'n' Nubs — Mewgenics Wiki",
+      "url": "https://mewgenics.wiki.gg/wiki/Chubs_%27n%27_Nubs"
+    },
+    {
+      "title": "Boss Up: Boss Battle Design",
+      "url": "https://media.gdcvault.com/gdc2018/presentations/Keren_Itay_BossUp.pdf"
+    }
+  ]
+}
