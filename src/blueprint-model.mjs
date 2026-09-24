@@ -3540,6 +3540,21 @@ function primitivesFor(spec, frame) {
     const gaugeProgress = firstOpen ? firstProgress : secondOpen ? secondProgress : 0;
     const interruptFlash = strikePulse(frame.time, spec.interruptAt, 0.34);
     return [
+      path('M 38 94 H 522 V 878 H 38 Z M 55 272 H 505 V 878 H 55 Z', 0.37, 'muted', 0, 0.56),
+      path(
+        'M 57 116 H 132 V 338 H 57 Z M 428 116 H 503 V 338 H 428 Z M 147 119 H 413 V 153 H 147 Z M 58 623 L 280 595 L 502 623 V 658 L 280 627 L 58 658 Z M 58 792 L 280 760 L 502 792 V 834 L 280 797 L 58 834 Z',
+        0.41,
+        'accent',
+        0,
+        0.56,
+      ),
+      path(
+        'M 280 337 L 378 372 L 414 430 L 378 488 L 280 523 L 182 488 L 146 430 L 182 372 Z M 280 359 L 355 386 L 385 430 L 355 474 L 280 501 L 205 474 L 175 430 L 205 386 Z',
+        0.3,
+        'muted',
+        0,
+        0.72,
+      ),
       circle(boss.x, boss.y, spec.threatRadius, preview ? 0.5 : 0, 'accent', 4, 0.07, '10 10'),
       circle(boss.x, boss.y, spec.threatRadius, live ? 0.9 : 0, 'signal', 10, 0.17),
       rect(boss.x - 58, boss.y - 118, 116, 16, preview ? 0.88 : 0, 'muted', 0.14),

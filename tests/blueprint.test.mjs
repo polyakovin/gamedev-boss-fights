@@ -1373,15 +1373,15 @@ test('interruptible wind-up accepts one qualified hit before the deadline and re
   assert.equal(open.windUpState, 'wind-up-open');
   assert.equal(open.interruptible, true);
   assert.ok(
-    open.primitives[0].opacity > 0,
+    open.primitives[3].opacity > 0,
     'the final radius is previewed while interruption is open',
   );
-  assert.ok(open.primitives[3].width > 0, 'the deadline gauge visibly advances');
+  assert.ok(open.primitives[6].width > 0, 'the deadline gauge visibly advances');
 
   const interrupted = blueprintFrame(id, 1.58);
   assert.equal(interrupted.interruptHit, true);
   assert.equal(interrupted.windUpState, 'interrupted-open');
-  assert.ok(interrupted.primitives[7].opacity > 0, 'the cancellation mark appears at contact');
+  assert.ok(interrupted.primitives[10].opacity > 0, 'the cancellation mark appears at contact');
   assert.equal(interrupted.dangerActive, false);
 
   const released = blueprintFrame(id, 4.3);

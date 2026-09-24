@@ -1090,32 +1090,33 @@ test('interruptible wind-up cancels on one qualified sword hit and releases afte
   await expect(page.locator('.wip-badge, .draft-profile')).toHaveCount(0);
   await expect(page.locator('.game-example')).toHaveCount(3);
   await expect(widget).toHaveAttribute('data-blueprint-playing', 'false');
+  await expect(widget).toHaveAttribute('data-blueprint-full-height', 'true');
 
   await seek(1200);
   await expect(widget).toHaveAttribute('data-blueprint-wind-up', 'wind-up-open');
-  await expect(widget.locator('[data-blueprint-primitive="0"] circle')).not.toHaveAttribute(
+  await expect(widget.locator('[data-blueprint-primitive="3"] circle')).not.toHaveAttribute(
     'opacity',
     '0',
   );
-  await expect(widget.locator('[data-blueprint-primitive="3"] rect')).not.toHaveAttribute(
+  await expect(widget.locator('[data-blueprint-primitive="6"] rect')).not.toHaveAttribute(
     'width',
     '0',
   );
 
   await seek(1580);
   await expect(widget).toHaveAttribute('data-blueprint-wind-up', 'interrupted-now');
-  await expect(widget.locator('[data-blueprint-primitive="7"] path')).not.toHaveAttribute(
+  await expect(widget.locator('[data-blueprint-primitive="10"] path')).not.toHaveAttribute(
     'opacity',
     '0',
   );
-  await expect(widget.locator('[data-blueprint-primitive="1"] circle')).toHaveAttribute(
+  await expect(widget.locator('[data-blueprint-primitive="4"] circle')).toHaveAttribute(
     'opacity',
     '0',
   );
 
   await seek(3500);
   await expect(widget).toHaveAttribute('data-blueprint-wind-up', 'wind-up-open');
-  await expect(widget.locator('[data-blueprint-primitive="0"] circle')).not.toHaveAttribute(
+  await expect(widget.locator('[data-blueprint-primitive="3"] circle')).not.toHaveAttribute(
     'opacity',
     '0',
   );
@@ -1123,7 +1124,7 @@ test('interruptible wind-up cancels on one qualified sword hit and releases afte
   await seek(4300);
   await expect(widget).toHaveAttribute('data-blueprint-wind-up', 'released-danger');
   await expect(widget).toHaveAttribute('data-blueprint-outcome', 'safe');
-  await expect(widget.locator('[data-blueprint-primitive="1"] circle')).not.toHaveAttribute(
+  await expect(widget.locator('[data-blueprint-primitive="4"] circle')).not.toHaveAttribute(
     'opacity',
     '0',
   );
@@ -1153,8 +1154,8 @@ test('interruptible wind-up keeps its actors, deadline gauge, and final ring ins
         '[data-blueprint-player]',
         '[data-blueprint-boss-label]',
         '[data-blueprint-player-label]',
-        '[data-blueprint-primitive="0"]',
-        '[data-blueprint-primitive="2"]',
+        '[data-blueprint-primitive="3"]',
+        '[data-blueprint-primitive="5"]',
       ].map((selector) => {
         const rect = element.querySelector(selector).getBoundingClientRect();
         return (
