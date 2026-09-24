@@ -1,0 +1,138 @@
+{
+  "title": "Castigo reactivo a la acción",
+  "subtitle": "Convierte un compromiso visible del jugador en una respuesta señalizada del jefe",
+  "variant": "Acción válida · evento observado · señal de respuesta · apertura protegida",
+  "summary": "El jefe elige una respuesta concreta cuando empieza visiblemente una acción válida del jugador, sin borrar las aperturas seguras diseñadas.",
+  "overview": "La mecánica escucha una acción comprometida —curarse, usar un objeto o lanzar un hechizo largo— y activa una respuesta identificable. Es justa cuando parte de un estado visible, tiene señal y fijación propias, y los compromisos normales del jefe siguen creando aperturas fiables.",
+  "learning": "Define acciones válidas, evento de observación, disponibilidad del jefe, alcance y visión, selección de respuesta, fijación, recarga, aperturas protegidas, control de duplicados, rollback y telemetría.",
+  "category": "Estados, recursos y escalado",
+  "readTime": "10 min",
+  "demo": {
+    "title": "Deja que Kern responda a una cura expuesta y respete después su apertura",
+    "timeline": "Cronología de acción y respuesta",
+    "step": "Observar, señalar, comprometer, proteger la apertura",
+    "phaseNames": [
+      "Observar la acción comprometida",
+      "Señalar y resolver la respuesta",
+      "Proteger la apertura diseñada"
+    ],
+    "phaseDescriptions": [
+      "Tavi empieza a curarse a los 0,45 segundos. A los 0,68, un único evento autoritativo de inicio llega a Kern; la línea causal y la runa muestran qué se observó antes de liberar peligro.",
+      "Kern señala un dardo rúnico, fija la posición de Tavi a los 1,28 segundos y dispara a ese punto guardado. Tavi puede terminar o cancelar la cura y moverse de lado tras la fijación; la respuesta presiona el compromiso sin seguir la esquiva.",
+      "Kern ejecuta un golpe normal entre 3,10 y 3,55 segundos. Su recuperación sigue protegida: Tavi se cura entre 3,72 y 4,65, la condición de jefe ocupado rechaza otra respuesta y el contador permanece en uno."
+    ],
+    "boss": "Jefe",
+    "player": "Jugador",
+    "danger": "Una respuesta instantánea o siempre disponible parece lectura de entradas, prohíbe toda la categoría de acción y destruye las aperturas creadas por el propio jefe",
+    "locked": "El evento de inicio, la tabla de elegibilidad, las condiciones, el id de respuesta, la posición fijada, la recarga, la prioridad y las aperturas pertenecen a la lógica del encuentro",
+    "safe": "Observa un compromiso visible, muestra una señal separada, fija el objetivo, permite una defensa normal y demuestra al menos una oportunidad segura",
+    "reducedMotion": "Con movimiento reducido no hay reproducción automática. Recorre 0,45; 0,68; 1,10; 1,28; 1,55; 1,90; 3,10; 3,55; 3,72; 4,20; 4,65 y 5,35 segundos.",
+    "diagramDescription": "Tavi inicia una cura arriesgada, Kern prepara visiblemente un dardo hacia la posición guardada, Tavi se aparta y una cura posterior queda segura mientras Kern se recupera."
+  },
+  "steps": [
+    {
+      "title": "¿Qué acciones pueden iniciar una respuesta?",
+      "body": "Usa una tabla explícita y pequeña: cura, objeto, hechizo, invocación, recarga u otro verbo comprometido. Escucha el evento autoritativo solo cuando animación y coste se aceptan; no deduzcas intención de una pulsación, un menú o una orden aún en cola."
+    },
+    {
+      "title": "¿Cuándo puede responder el jefe?",
+      "body": "Filtra por estado, distancia, visión, fase, recarga, prioridad y una respuesta por actionId. Guarda el objetivo en un momento legible y deja que movimiento, cancelación, interrupción, cobertura u otro verbo aprendido resuelvan la amenaza con las reglas normales."
+    },
+    {
+      "title": "¿Dónde está la oportunidad segura garantizada?",
+      "body": "Marca recuperaciones, aturdimientos, transiciones, coberturas o distancias donde no puede empezar la respuesta. Comprueba una ventana práctica para cada acción y evita que la contra cancele la animación del jefe que debía crearla."
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "El jefe responde antes de que la acción sea visible",
+      "body": "Reaccionar a la pulsación o a la cola revela una decisión que el mundo aún no muestra. Observa estado aceptado, añade una señal propia y conserva las mismas reglas de seguimiento que ataques comparables."
+    },
+    {
+      "title": "Todas las aperturas son secretamente inseguras",
+      "body": "Si la respuesta ignora recuperación, aturdimiento, recarga, alcance o visión, la acción de recurso deja de ser una decisión temporal. Protege las ventanas en la lógica y añade pruebas de regresión."
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "Haz inspeccionable la cadena causal",
+      "body": "Nombra actionId, tipo, momento observado, responseId, respuesta, condiciones, motivo de rechazo, objetivo fijado, inicio de recarga y resultado. Así el comportamiento puede razonarse y depurarse."
+    },
+    {
+      "title": "Ajusta presión, no daño garantizado",
+      "body": "La respuesta puede forzar cancelación, retrasar, ocupar espacio o exigir defensa sin ser inevitable. Prueba señal y viaje desde el último fotograma práctico de cancelación, no solo desde reposo."
+    },
+    {
+      "title": "Mide acciones rechazadas y protegidas",
+      "body": "Registra intentos válidos, respuestas aceptadas, rechazos, finalización, cancelación, posición, impacto o evasión, latencia, recarga, estado del jefe, éxito en ventana segura, duplicados, rollback, carga y abandono."
+    }
+  ],
+  "story": {
+    "title": "Kern lee el hechizo, no las manos de Tavi en el control",
+    "body": "Cuando Tavi alza la runa de cura en terreno abierto, la marca del pecho de Kern la refleja, fija un punto y lanza un dardo de piedra. Tras un golpe pesado, los brazos de Kern siguen hundidos: la runa vuelve, pero la marca de respuesta tachada permanece apagada hasta acabar la recuperación."
+  },
+  "adaptation": {
+    "title": "Expón activación, fijación y ventana segura",
+    "body": "Da sonido y forma distintos a observación, cola y fijación, sin depender de destellos o sacudidas. Ofrece más anticipación, recarga clara, subtítulos estables, cancelación generosa y una ventana segura de baja exigencia."
+  },
+  "distinction": {
+    "title": "Respuesta condicional, no predicción ni aura pasiva",
+    "body": "La puntería predictiva estima posición futura por movimiento. La postura de contra responde al contacto en defensa anunciada. Aquí comienza un ataque elegido porque una acción válida entró en estado comprometido; el contrato central decide cuándo observarla y responder."
+  },
+  "lensNotes": [
+    {
+      "id": "telegraphing",
+      "body": "Observación, preparación, fijación y liberación deben leerse como eventos separados antes del peligro."
+    },
+    {
+      "id": "commitment",
+      "body": "La mecánica presiona la parte no cancelable del jugador y respeta ataques y recuperaciones comprometidos del jefe."
+    },
+    {
+      "id": "counterplay",
+      "body": "Cancelar, moverse tras la fijación, cubrirse, alejarse, interrumpir y usar ventanas protegidas pueden ser respuestas válidas."
+    },
+    {
+      "id": "risk-reward",
+      "body": "Actuar en neutral cambia inmediatez por presión; esperar el compromiso del jefe cuesta tiempo pero vuelve fiable la acción."
+    },
+    {
+      "id": "rule-exception",
+      "body": "Colas, simultaneidad, duplicados, límites de recarga, fases, pausa, rollback, repetición y autoridad de red necesitan un único resultado determinista."
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "Hollow Knight",
+      "boss": "Troupe Master Grimm",
+      "screenshot": "https://i.ytimg.com/vi/C0RAdZRdaQs/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=C0RAdZRdaQs&t=1s",
+      "video": "https://www.youtube.com/watch?v=C0RAdZRdaQs&t=1s",
+      "videoDurationSeconds": 15,
+      "body": "Golpear a Grimm durante la reverencia inicial provoca un grito y la contra Pufferfish inmediata. La excepción está ligada a una acción y estado visibles, por lo que la causalidad se entiende aunque la respuesta sea severa."
+    },
+    {
+      "dimension": "3D",
+      "game": "Sekiro: Shadows Die Twice",
+      "boss": "Genichiro Ashina",
+      "screenshot": "https://i.ytimg.com/vi/EhUX_8nOEZM/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=EhUX_8nOEZM&t=1s",
+      "video": "https://www.youtube.com/watch?v=EhUX_8nOEZM&t=1s",
+      "videoDurationSeconds": 60,
+      "body": "Usar la Healing Gourd puede activar la rápida respuesta de Genichiro contra curas, incluido un salto con estocada en su forma posterior. Como sigue siendo un ataque normal, espacio, tiempo, defensa y Mikiri Counter convierten presión en interacción."
+    },
+    {
+      "dimension": "3D",
+      "game": "Elden Ring",
+      "boss": "Godskin Apostle",
+      "screenshot": "https://i.ytimg.com/vi/ECxw5yI9iSY/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=ECxw5yI9iSY&t=1s",
+      "video": "https://www.youtube.com/watch?v=ECxw5yI9iSY&t=1s",
+      "videoDurationSeconds": 107,
+      "body": "El Apóstol puede responder con Black Flame a una cura hecha mientras está libre. Curarse durante una animación comprometida es más seguro: la condición de disponibilidad añade presión sin borrar la recuperación."
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

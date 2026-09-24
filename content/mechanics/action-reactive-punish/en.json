@@ -1,0 +1,138 @@
+{
+  "title": "Action-reactive punish",
+  "subtitle": "Turn a visible player commitment into a signalled boss response",
+  "variant": "Eligible action · observation event · response tell · protected opening",
+  "summary": "The boss selects a specific response after an eligible player action visibly begins, without erasing authored safe windows.",
+  "overview": "An action-reactive punish listens for a committed player action such as healing, item use, or a long cast, then starts a named boss response. It is fair when the trigger is based on visible state, the counter has its own tell and lock point, and ordinary boss commitments still create reliable openings.",
+  "learning": "Define eligible actions, the observation event, boss availability, range and line-of-sight gates, response selection, target lock, cooldown, protected openings, duplicate-event guards, rollback behavior, and telemetry.",
+  "category": "States, resources, and scaling",
+  "readTime": "10 min",
+  "demo": {
+    "title": "Let Kern answer one exposed heal, then respect the opening he created",
+    "timeline": "Action-response timeline",
+    "step": "Observe, signal, commit, protect the opening",
+    "phaseNames": [
+      "Observe the committed action",
+      "Signal and resolve the response",
+      "Protect the authored opening"
+    ],
+    "phaseDescriptions": [
+      "Tavi begins a heal at 0.45 seconds. At 0.68 seconds, one authoritative action-started event reaches Kern; a causal line and response rune identify what was observed before any threat is released.",
+      "Kern signals a rune dart, locks Tavi’s current position at 1.28 seconds, and fires at that stored point. Tavi can stop or finish the heal and move sideways after the lock, so the response pressures commitment without tracking the dodge.",
+      "Kern commits to an ordinary swing from 3.10 to 3.55 seconds. Its recovery remains a protected opening: Tavi heals from 3.72 to 4.65 seconds, the boss-busy gate rejects a second response, and the first response count stays at one."
+    ],
+    "boss": "Boss",
+    "player": "Player",
+    "danger": "An instant or always-available counter reads like input cheating, denies the action category, and destroys the openings created by the boss’s own commitments",
+    "locked": "The action-started event, eligibility table, availability gates, response id, target snapshot, cooldown, priority, and protected windows belong to encounter logic",
+    "safe": "Observe visible commitment, show a separate tell, lock a target, allow an ordinary response, and prove at least one authored safe opportunity",
+    "reducedMotion": "Autoplay is disabled by reduced motion. Scrub across 0.45, 0.68, 1.10, 1.28, 1.55, 1.90, 3.10, 3.55, 3.72, 4.20, 4.65, and 5.35 seconds.",
+    "diagramDescription": "Tavi starts a risky heal, Kern visibly queues a rune dart at the stored position, Tavi sidesteps it, and a later heal remains safe while Kern recovers from an ordinary attack."
+  },
+  "steps": [
+    {
+      "title": "Which player actions may start a response?",
+      "body": "Use a small explicit eligibility table—heal, item, cast, summon, reload, or another committed verb—and listen to an authoritative action-started event after the animation and cost are accepted. Do not infer intent from raw input, a menu selection, or a queued command that has not entered gameplay state."
+    },
+    {
+      "title": "When is the boss allowed to answer?",
+      "body": "Gate the response by boss state, distance, line of sight, phase, cooldown, priority, and one response id per action id. Snapshot the target at a readable commit point, then let movement, cancellation, interruption, cover, or another taught verb resolve the threat under normal combat rules."
+    },
+    {
+      "title": "Where is the guaranteed safe opportunity?",
+      "body": "Mark recoveries, staggers, transitions, cover states, or limited-range positions where the response cannot begin. Test that every eligible action has at least one practical window and that the counter cannot pre-empt, cancel, or chain out of the boss animation that was meant to create it."
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "The boss responds before the action is visible",
+      "body": "Reacting on button press or command queue makes the boss appear to know a decision the world has not shown. Observe accepted gameplay state, add a distinct response tell, and keep target tracking rules consistent with comparable attacks."
+    },
+    {
+      "title": "Every opening is secretly unsafe",
+      "body": "If the response ignores recovery, stagger, cooldown, range, or line of sight, the intended resource action becomes a trap rather than a timing decision. Protect authored windows in encounter logic and add regression tests for them."
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "Make the causal chain inspectable",
+      "body": "Name actionId, actionType, observedAt, responseId, responseType, availability result, rejection reason, target snapshot, cooldown start, and resolution. This turns a suspicious-feeling behavior into a sequence designers and players can reason about."
+    },
+    {
+      "title": "Tune pressure, not guaranteed damage",
+      "body": "The response can force a cancel, delay completion, spend space, or demand a quick defense without being unavoidable. Its tell and travel time should be tested from the latest practical cancel frame, not only from idle movement."
+    },
+    {
+      "title": "Instrument denied and protected actions",
+      "body": "Record eligible action attempts, accepted responses, rejection reasons, action completion, cancel frame, player position, hit or avoidance result, response latency, cooldown, boss state, safe-window success, duplicate events, rollback, reload, and abandonment after repeated denials."
+    }
+  ],
+  "story": {
+    "title": "Kern reads the spell, not Tavi’s hands on the controls",
+    "body": "When Tavi raises the healing rune in open ground, Kern’s chest mark echoes it, fixes a point on the floor, and launches a stone dart. Later, Kern’s arms are still buried after a heavy swing; the same rune appears over Tavi, but Kern’s crossed response mark stays dark until recovery ends."
+  },
+  "adaptation": {
+    "title": "Expose trigger, lock, and safe window",
+    "body": "Use a distinct sound and shape for the observed action, response queue, and target lock; preserve them without flashes or camera shake. Offer longer response lead, a clearer cooldown cue, stable subtitles, generous cancellation, and at least one low-execution safe window."
+  },
+  "distinction": {
+    "title": "A conditional response, not prediction or a passive aura",
+    "body": "Predictive aim estimates future position from movement. Counter stance answers contact during an advertised defensive state. Action-reactive punish starts a selected attack because an eligible player action entered committed state, so its central contract is when that event may be observed and answered."
+  },
+  "lensNotes": [
+    {
+      "id": "telegraphing",
+      "body": "The observation cue, response tell, target-lock moment, and release must be readable as separate events before the counter becomes dangerous."
+    },
+    {
+      "id": "commitment",
+      "body": "The mechanic pressures the uncancelable portion of a player action while respecting the boss’s own committed attacks and recoveries."
+    },
+    {
+      "id": "counterplay",
+      "body": "Cancellation, lateral movement after lock, cover, distance, interruption, and protected timing windows can all be valid answers if explicitly supported."
+    },
+    {
+      "id": "risk-reward",
+      "body": "Acting in neutral trades immediacy for counter pressure; waiting for a boss commitment costs time but converts the same action into a dependable opportunity."
+    },
+    {
+      "id": "rule-exception",
+      "body": "Queued inputs, simultaneous actions, duplicate events, cooldown boundaries, phase changes, pauses, rollback, replays, and network authority need one deterministic result."
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "Hollow Knight",
+      "boss": "Troupe Master Grimm",
+      "screenshot": "https://i.ytimg.com/vi/C0RAdZRdaQs/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=C0RAdZRdaQs&t=1s",
+      "video": "https://www.youtube.com/watch?v=C0RAdZRdaQs&t=1s",
+      "videoDurationSeconds": 15,
+      "body": "Striking Grimm during his opening bow causes a screech and an immediate Pufferfish counter. The exception is tied to a specific visible action and presentation state, making the causal rule legible even though the response is unusually severe."
+    },
+    {
+      "dimension": "3D",
+      "game": "Sekiro: Shadows Die Twice",
+      "boss": "Genichiro Ashina",
+      "screenshot": "https://i.ytimg.com/vi/EhUX_8nOEZM/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=EhUX_8nOEZM&t=1s",
+      "video": "https://www.youtube.com/watch?v=EhUX_8nOEZM&t=1s",
+      "videoDurationSeconds": 60,
+      "body": "Using the Healing Gourd can trigger Genichiro’s fast anti-heal answer, including a jumping thrust in the later form. Because the response is still an ordinary attack, spacing, timing, defense, and Mikiri Counter can convert pressure into interaction."
+    },
+    {
+      "dimension": "3D",
+      "game": "Elden Ring",
+      "boss": "Godskin Apostle",
+      "screenshot": "https://i.ytimg.com/vi/ECxw5yI9iSY/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=ECxw5yI9iSY&t=1s",
+      "video": "https://www.youtube.com/watch?v=ECxw5yI9iSY&t=1s",
+      "videoDurationSeconds": 107,
+      "body": "The Apostle may answer a heal taken while he is idle with Black Flame. Healing during a committed boss animation is safer, illustrating the crucial availability gate: the reaction adds timing pressure without deleting the recovery window."
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

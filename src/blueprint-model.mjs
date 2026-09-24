@@ -1525,6 +1525,32 @@ const SPECS = {
     depletionId: 'phase-1-depletion-1',
     revivalId: 'false-death-revival-1',
   },
+  'action-reactive-punish': {
+    mode: 'action-reactive-punish',
+    boss: [300, 375],
+    player: [405, 660],
+    target: [165, 670],
+    arena: [55, 310, 450, 590],
+    lockedTarget: [405, 660],
+    dodgePosition: [165, 670],
+    action: [0.45, 1.15],
+    observedAt: 0.68,
+    responseSignal: [0.68, 1.28],
+    responseFlight: [1.28, 1.9],
+    responseRecoveryEndsAt: 2.45,
+    playerDodge: [1.32, 1.72],
+    playerReturn: [2.15, 2.7],
+    bossCommit: [2.75, 3.1],
+    bossAttack: [3.1, 3.55],
+    bossRecovery: [3.55, 4.65],
+    safeAction: [3.72, 4.65],
+    cooldownEndsAt: 5.2,
+    resetAt: 5.35,
+    projectileStart: [334, 414],
+    projectileRadius: 24,
+    actionId: 'heal-1',
+    responseId: 'action-response-1',
+  },
   'wide-swing': { mode: 'arc', boss: [280, 310], player: [410, 470], target: [470, 650] },
   lunge: { mode: 'lunge', boss: [170, 290], player: [390, 590], target: [470, 660] },
   grab: { mode: 'grab', boss: [280, 300], player: [390, 485], target: [470, 610] },
@@ -3015,6 +3041,79 @@ export function falseDeathResolve({
     rewardUnlocked: Boolean(rewardGranted || completed),
     exitUnlocked: Boolean(completed),
     eventCount: revived || completed ? 1 : 0,
+  });
+}
+
+export function actionReactivePunishState(time) {
+  const spec = SPECS['action-reactive-punish'];
+  const t = localTime(time);
+  if (t < spec.action[0]) return 'neutral';
+  if (t < spec.observedAt) return 'action-started';
+  if (t < spec.responseSignal[1]) return 'response-signaled';
+  if (t < spec.responseFlight[1]) return 'response-resolving';
+  if (t < spec.responseRecoveryEndsAt) return 'response-recovery';
+  if (t < spec.bossAttack[0]) return 'boss-committed';
+  if (t < spec.bossAttack[1]) return 'ordinary-attack';
+  if (t < spec.safeAction[0]) return 'boss-recovery';
+  if (t < spec.safeAction[1]) return 'protected-opening';
+  if (t < spec.cooldownEndsAt) return 'opening-resolved';
+  if (t < spec.resetAt) return 'cooldown';
+  return 'reset';
+}
+
+export function actionReactivePunishResolve({
+  actionId = 'heal-1',
+  actionType = 'heal',
+  eligibleActionTypes = ['heal', 'item', 'cast'],
+  actionStarted = true,
+  bossAvailable = true,
+  withinRange = true,
+  lineOfSight = true,
+  cooldownReady = true,
+  alreadyApplied = false,
+} = {}) {
+  const eligible = [
+    ...new Set(
+      Array.isArray(eligibleActionTypes) ? eligibleActionTypes.map(String).filter(Boolean) : [],
+    ),
+  ];
+  const type = String(actionType);
+  const observed = Boolean(actionStarted);
+  const accepted =
+    observed &&
+    eligible.includes(type) &&
+    bossAvailable &&
+    withinRange &&
+    lineOfSight &&
+    cooldownReady &&
+    !alreadyApplied;
+  const rejectionReason = accepted
+    ? 'none'
+    : alreadyApplied
+      ? 'duplicate-event'
+      : !observed
+        ? 'action-not-started'
+        : !eligible.includes(type)
+          ? 'ineligible-action'
+          : !bossAvailable
+            ? 'boss-busy'
+            : !withinRange
+              ? 'out-of-range'
+              : !lineOfSight
+                ? 'line-of-sight-blocked'
+                : !cooldownReady
+                  ? 'cooldown'
+                  : 'none';
+  return Object.freeze({
+    actionId: String(actionId),
+    actionType: type,
+    observed,
+    accepted,
+    responseId: accepted ? 'action-response-1' : 'none',
+    responseType: accepted ? 'rune-dart' : 'none',
+    rejectionReason,
+    eventCount: accepted ? 1 : 0,
+    eligibleActionTypes: Object.freeze(eligible),
   });
 }
 
@@ -7667,6 +7766,159 @@ function primitivesFor(spec, frame) {
       ),
     ];
   }
+  if (mode === 'action-reactive-punish') {
+    const actionProgress = clamp((frame.time - spec.action[0]) / (spec.action[1] - spec.action[0]));
+    const responseSignalProgress = clamp(
+      (frame.time - spec.responseSignal[0]) / (spec.responseSignal[1] - spec.responseSignal[0]),
+    );
+    const attackProgress = clamp(
+      (frame.time - spec.bossAttack[0]) / (spec.bossAttack[1] - spec.bossAttack[0]),
+    );
+    const safeActionProgress = clamp(
+      (frame.time - spec.safeAction[0]) / (spec.safeAction[1] - spec.safeAction[0]),
+    );
+    const projectile = frame.actionReactivePunishProjectile;
+    const firstActionVisible = frame.time >= spec.action[0] && frame.time < spec.playerReturn[0];
+    const lockedTargetVisible =
+      frame.time >= spec.observedAt && frame.time < spec.responseRecoveryEndsAt;
+    const recoveryVisible = frame.time >= spec.bossRecovery[0] && frame.time < spec.bossRecovery[1];
+    const safeActionVisible = frame.actionReactivePunishSafeActionActive;
+    return [
+      rect(...spec.arena, 0.52, 'muted', 0.025),
+      path(
+        'M 70 748 L 180 720 L 278 746 L 385 716 L 490 748 V 772 L 385 744 L 278 774 L 180 748 L 70 777 Z M 92 837 L 280 808 L 468 837 V 855 L 280 827 L 92 855 Z',
+        0.54,
+        'muted',
+        0,
+        0.48,
+      ),
+      circle(
+        frame.player.x,
+        frame.player.y - 48,
+        34 + actionProgress * 28,
+        firstActionVisible ? 0.88 - actionProgress * 0.22 : 0,
+        'safe',
+        7,
+        0.03,
+        '9 7',
+      ),
+      path(
+        `M ${frame.player.x - 13} ${frame.player.y - 53} H ${frame.player.x + 13} M ${frame.player.x} ${frame.player.y - 66} V ${frame.player.y - 40}`,
+        firstActionVisible ? 0.92 : 0,
+        'safe',
+        7,
+      ),
+      line(
+        frame.player.x,
+        frame.player.y - 78,
+        frame.boss.x,
+        frame.boss.y + 18,
+        frame.actionReactivePunishObserved ? 0.52 : 0,
+        'signal',
+        5,
+        '12 9',
+      ),
+      circle(
+        frame.boss.x,
+        frame.boss.y + 18,
+        42 + responseSignalProgress * 56,
+        frame.actionReactivePunishResponseQueued ? 0.9 - responseSignalProgress * 0.25 : 0,
+        'accent',
+        8,
+        0.025,
+        '11 8',
+      ),
+      path(
+        `M ${frame.boss.x} ${frame.boss.y - 18} L ${frame.boss.x + 30} ${frame.boss.y + 18} L ${frame.boss.x} ${frame.boss.y + 54} L ${frame.boss.x - 30} ${frame.boss.y + 18} Z`,
+        frame.actionReactivePunishResponseQueued
+          ? 0.32 + pulse(responseSignalProgress) * 0.64
+          : 0.12,
+        'accent',
+        7,
+        0.05,
+      ),
+      circle(
+        spec.lockedTarget[0],
+        spec.lockedTarget[1],
+        47,
+        lockedTargetVisible ? 0.88 : 0,
+        'accent',
+        7,
+        0.02,
+        '10 8',
+      ),
+      path(
+        `M ${spec.lockedTarget[0] - 20} ${spec.lockedTarget[1]} H ${spec.lockedTarget[0] + 20} M ${spec.lockedTarget[0]} ${spec.lockedTarget[1] - 20} V ${spec.lockedTarget[1] + 20}`,
+        lockedTargetVisible ? 0.86 : 0,
+        'accent',
+        6,
+      ),
+      line(
+        spec.projectileStart[0],
+        spec.projectileStart[1],
+        projectile.x,
+        projectile.y,
+        frame.actionReactivePunishProjectileActive ? 0.62 : 0,
+        'accent',
+        8,
+      ),
+      circle(
+        projectile.x,
+        projectile.y,
+        spec.projectileRadius,
+        frame.actionReactivePunishProjectileActive ? 0.98 : 0,
+        'accent',
+        7,
+        0.22,
+      ),
+      circle(
+        frame.boss.x,
+        frame.boss.y + 18,
+        112 + attackProgress * 44,
+        frame.actionReactivePunishBossAttackActive ? 0.9 - attackProgress * 0.28 : 0,
+        'signal',
+        12,
+        0.02,
+      ),
+      path(
+        `M ${frame.boss.x - 68} ${frame.boss.y + 112} Q ${frame.boss.x} ${frame.boss.y + 178} ${frame.boss.x + 74} ${frame.boss.y + 110}`,
+        frame.actionReactivePunishBossAttackActive ? 0.94 : 0,
+        'signal',
+        13,
+      ),
+      circle(
+        frame.boss.x,
+        frame.boss.y + 20,
+        76 + safeActionProgress * 32,
+        recoveryVisible ? 0.58 : 0,
+        'muted',
+        6,
+        0.025,
+        '8 12',
+      ),
+      path(
+        `M ${frame.boss.x - 26} ${frame.boss.y - 8} L ${frame.boss.x + 26} ${frame.boss.y + 44} M ${frame.boss.x + 26} ${frame.boss.y - 8} L ${frame.boss.x - 26} ${frame.boss.y + 44}`,
+        safeActionVisible ? 0.92 : 0,
+        'muted',
+        8,
+      ),
+      circle(
+        frame.player.x,
+        frame.player.y - 48,
+        38 + safeActionProgress * 44,
+        safeActionVisible ? 0.94 - safeActionProgress * 0.24 : 0,
+        'safe',
+        8,
+        0.035,
+      ),
+      path(
+        `M ${frame.player.x - 14} ${frame.player.y - 53} H ${frame.player.x + 14} M ${frame.player.x} ${frame.player.y - 67} V ${frame.player.y - 39}`,
+        safeActionVisible ? 0.98 : 0,
+        'safe',
+        8,
+      ),
+    ];
+  }
   if (mode === 'encounter-specific-tool') {
     const pedestal = point(spec.pedestal);
     const spearBase = { x: frame.player.x + 20, y: frame.player.y - 10 };
@@ -9309,6 +9561,15 @@ function pointClearsThreat(spec, frame, value, radius = BLUEPRINT_PLAYER_RADIUS)
       !frame.dangerActive ||
       Math.hypot(value.x - frame.boss.x, value.y - frame.boss.y) > spec.attackRadius + radius
     );
+  if (mode === 'action-reactive-punish')
+    return (
+      !frame.actionReactivePunishProjectileActive ||
+      Math.hypot(
+        value.x - frame.actionReactivePunishProjectile.x,
+        value.y - frame.actionReactivePunishProjectile.y,
+      ) >
+        spec.projectileRadius + radius
+    );
   if (mode === 'projectile-rally')
     return (
       !frame.dangerActive ||
@@ -9702,6 +9963,7 @@ export function blueprintFrame(id, time) {
   else if (spec.mode === 'moveset-shapeshifting') responseProgress = 0;
   else if (spec.mode === 'ally-theft') responseProgress = 0;
   else if (spec.mode === 'false-death') responseProgress = 0;
+  else if (spec.mode === 'action-reactive-punish') responseProgress = 0;
   else if (spec.mode === 'knockback')
     responseProgress = phase === 0 ? 0 : phase === 1 ? smooth(action) : 1;
   else if (spec.mode === 'target-lock')
@@ -11167,6 +11429,27 @@ export function blueprintFrame(id, time) {
     };
     stride = Math.max(pulse(approach), pulse(retreat), pulse(dodge), pulse(reset));
   }
+  if (spec.mode === 'action-reactive-punish') {
+    const dodge = smooth((t - spec.playerDodge[0]) / (spec.playerDodge[1] - spec.playerDodge[0]));
+    const returning = smooth(
+      (t - spec.playerReturn[0]) / (spec.playerReturn[1] - spec.playerReturn[0]),
+    );
+    const reset = smooth((t - spec.resetAt) / (BLUEPRINT_DURATION - spec.resetAt));
+    const dodgePosition = point(spec.dodgePosition);
+    const dodged = {
+      x: mix(startPlayer.x, dodgePosition.x, dodge),
+      y: mix(startPlayer.y, dodgePosition.y, dodge),
+    };
+    const returned = {
+      x: mix(dodged.x, startPlayer.x, returning),
+      y: mix(dodged.y, startPlayer.y, returning),
+    };
+    player = {
+      x: mix(returned.x, startPlayer.x, reset),
+      y: mix(returned.y, startPlayer.y, reset),
+    };
+    stride = Math.max(pulse(dodge), pulse(returning), pulse(reset));
+  }
   const bossVisible =
     spec.mode === 'secondary-cues-invisibility'
       ? t < spec.vanishAt
@@ -11443,7 +11726,8 @@ export function blueprintFrame(id, time) {
             spec.mode === 'loadout-mirror' ||
             spec.mode === 'moveset-shapeshifting' ||
             spec.mode === 'ally-theft' ||
-            spec.mode === 'false-death'
+            spec.mode === 'false-death' ||
+            spec.mode === 'action-reactive-punish'
           ? (Math.atan2(boss.y - player.y, boss.x - player.x) * 180) / Math.PI
           : spec.mode === 'active-phase'
             ? (Math.atan2(boss.y - player.y, boss.x - player.x) * 180) / Math.PI
@@ -12905,6 +13189,56 @@ export function blueprintFrame(id, time) {
     frame.bossMotion.impact = strikePulse(t, spec.strikeAt, 0.5);
     frame.bossMotion.attack = strikePulse(t, spec.secondActive[0], 0.62);
   }
+  if (spec.mode === 'action-reactive-punish') {
+    const projectileProgress = clamp(
+      (t - spec.responseFlight[0]) / (spec.responseFlight[1] - spec.responseFlight[0]),
+    );
+    frame.actionReactivePunishState = actionReactivePunishState(t);
+    frame.actionReactivePunishActionId =
+      t >= spec.action[0] && t < spec.resetAt ? spec.actionId : 'none';
+    frame.actionReactivePunishResponseId =
+      t >= spec.observedAt && t < spec.responseRecoveryEndsAt ? spec.responseId : 'none';
+    frame.actionReactivePunishObserved = t >= spec.observedAt && t < spec.resetAt;
+    frame.actionReactivePunishResponseQueued =
+      t >= spec.responseSignal[0] && t < spec.responseSignal[1];
+    frame.actionReactivePunishCommitted =
+      t >= spec.responseFlight[0] && t < spec.responseRecoveryEndsAt;
+    frame.actionReactivePunishProjectileActive =
+      t >= spec.responseFlight[0] && t < spec.responseFlight[1];
+    frame.actionReactivePunishProjectile = Object.freeze({
+      x: mix(spec.projectileStart[0], spec.lockedTarget[0], projectileProgress),
+      y: mix(spec.projectileStart[1], spec.lockedTarget[1], projectileProgress),
+    });
+    frame.actionReactivePunishTarget = Object.freeze(point(spec.lockedTarget));
+    frame.actionReactivePunishBossAvailable = t < spec.bossCommit[0] || t >= spec.bossRecovery[1];
+    frame.actionReactivePunishCooldownReady = t < spec.observedAt || t >= spec.cooldownEndsAt;
+    frame.actionReactivePunishBossAttackActive = t >= spec.bossAttack[0] && t < spec.bossAttack[1];
+    frame.actionReactivePunishSafeWindow = t >= spec.bossRecovery[0] && t < spec.bossRecovery[1];
+    frame.actionReactivePunishSafeActionActive = t >= spec.safeAction[0] && t < spec.safeAction[1];
+    frame.actionReactivePunishSafeActionCompleted = t >= spec.safeAction[1] && t < spec.resetAt;
+    frame.actionReactivePunishRejectionReason = frame.actionReactivePunishSafeActionActive
+      ? 'boss-busy'
+      : 'none';
+    frame.actionReactivePunishResponseCount = t >= spec.observedAt && t < spec.resetAt ? 1 : 0;
+    frame.actionReactivePunishEventCount = frame.actionReactivePunishResponseCount;
+    frame.dangerActive =
+      frame.actionReactivePunishProjectileActive || frame.actionReactivePunishBossAttackActive;
+    frame.playerMotion.crouch = Math.max(
+      t >= spec.action[0] && t < spec.action[1] ? pulse((t - spec.action[0]) / 0.7) * 0.32 : 0,
+      frame.actionReactivePunishSafeActionActive
+        ? pulse((t - spec.safeAction[0]) / 0.93) * 0.32
+        : 0,
+    );
+    frame.playerMotion.lift = frame.playerMotion.crouch * 0.45;
+    frame.playerMotion.dodge = strikePulse(t, spec.playerDodge[0] + 0.2, 0.4);
+    frame.playerMotion.attack = 0;
+    frame.playerMotion.impact = 0;
+    frame.bossMotion.attack = Math.max(
+      strikePulse(t, spec.responseFlight[0], 0.5),
+      strikePulse(t, (spec.bossAttack[0] + spec.bossAttack[1]) / 2, 0.48),
+    );
+    frame.bossMotion.crouch = frame.actionReactivePunishSafeWindow ? 0.24 : 0;
+  }
   if (spec.mode === 'ability-lock') {
     frame.abilityLockState = abilityLockState(t);
     frame.abilityLockFirstAvoided = t >= spec.firstResolveAt && t < spec.secondTelegraph[0];
@@ -13246,7 +13580,8 @@ export function blueprintFrame(id, time) {
             spec.mode === 'loadout-mirror' ||
             spec.mode === 'moveset-shapeshifting' ||
             spec.mode === 'ally-theft' ||
-            spec.mode === 'false-death'
+            spec.mode === 'false-death' ||
+            spec.mode === 'action-reactive-punish'
           ? 92
           : -62),
   };

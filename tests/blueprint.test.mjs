@@ -63,6 +63,8 @@ import {
   allyTheftTransfer,
   falseDeathState,
   falseDeathResolve,
+  actionReactivePunishState,
+  actionReactivePunishResolve,
   counterStanceOutcome,
   counterStanceState,
   blueprintFrame,
@@ -90,8 +92,8 @@ import {
   renderBlueprintThumbnail,
 } from '../lib/blueprint-view.mjs';
 
-test('all 97 promoted lesson animations have distinct rule modes and complete moving frames', () => {
-  assert.equal(BLUEPRINT_MECHANIC_IDS.length, 97);
+test('all 98 promoted lesson animations have distinct rule modes and complete moving frames', () => {
+  assert.equal(BLUEPRINT_MECHANIC_IDS.length, 98);
   const modes = new Set();
   for (const id of BLUEPRINT_MECHANIC_IDS) {
     for (let time = 0; time <= BLUEPRINT_DURATION; time += 0.1) {
@@ -112,7 +114,7 @@ test('all 97 promoted lesson animations have distinct rule modes and complete mo
           assert.ok(Number.isFinite(value), `${id} has an invalid ${primitive.type}`);
     }
   }
-  assert.equal(modes.size, 97);
+  assert.equal(modes.size, 98);
 });
 
 test('every blueprint exposes signal, committed action, and recovery without player teleports', () => {
@@ -158,7 +160,8 @@ test('every blueprint exposes signal, committed action, and recovery without pla
       id !== 'damage-rate-cap' &&
       id !== 'loadout-mirror' &&
       id !== 'moveset-shapeshifting' &&
-      id !== 'false-death'
+      id !== 'false-death' &&
+      id !== 'action-reactive-punish'
     )
       assert.equal(blueprintFrame(id, 3).dangerActive, true, id);
     assert.equal(blueprintFrame(id, 3).playerSafe, true, id);
@@ -254,6 +257,7 @@ test('every damaging promoted animation derives safety from its own active geome
       id !== 'loadout-mirror' &&
       id !== 'moveset-shapeshifting' &&
       id !== 'false-death' &&
+      id !== 'action-reactive-punish' &&
       id !== 'part-break' &&
       id !== 'counter-stance' &&
       id !== 'absorption-power-up' &&
@@ -3983,5 +3987,64 @@ test('false death keeps completion pending, revives once, and preserves final au
   assert.match(
     renderBlueprintThumbnail(id, 'test-false-death'),
     /data-blueprint-preview="false-death"/,
+  );
+});
+
+test('action-reactive punish observes committed state once and preserves a boss-created opening', () => {
+  const id = 'action-reactive-punish';
+  assert.deepEqual(
+    [0.2, 0.55, 0.9, 1.5, 2.1, 2.8, 3.3, 3.6, 4.2, 4.8, 5.25, 5.5].map(actionReactivePunishState),
+    [
+      'neutral',
+      'action-started',
+      'response-signaled',
+      'response-resolving',
+      'response-recovery',
+      'boss-committed',
+      'ordinary-attack',
+      'boss-recovery',
+      'protected-opening',
+      'opening-resolved',
+      'cooldown',
+      'reset',
+    ],
+  );
+  assert.deepEqual(actionReactivePunishResolve(), {
+    actionId: 'heal-1',
+    actionType: 'heal',
+    observed: true,
+    accepted: true,
+    responseId: 'action-response-1',
+    responseType: 'rune-dart',
+    rejectionReason: 'none',
+    eventCount: 1,
+    eligibleActionTypes: ['heal', 'item', 'cast'],
+  });
+  assert.equal(actionReactivePunishResolve({ alreadyApplied: true }).eventCount, 0);
+  assert.equal(
+    actionReactivePunishResolve({ alreadyApplied: true }).rejectionReason,
+    'duplicate-event',
+  );
+  assert.equal(actionReactivePunishResolve({ bossAvailable: false }).rejectionReason, 'boss-busy');
+
+  const observed = blueprintFrame(id, 0.9);
+  assert.equal(observed.actionReactivePunishObserved, true);
+  assert.equal(observed.actionReactivePunishResponseQueued, true);
+  assert.equal(observed.actionReactivePunishEventCount, 1);
+  const projectile = blueprintFrame(id, 1.55);
+  assert.equal(projectile.actionReactivePunishProjectileActive, true);
+  assert.equal(projectile.actionReactivePunishCommitted, true);
+  assert.equal(blueprintPointSafe(id, 1.55, projectile.player), true);
+  assert.equal(blueprintPointSafe(id, 1.55, projectile.actionReactivePunishProjectile), false);
+  const opening = blueprintFrame(id, 4.2);
+  assert.equal(opening.actionReactivePunishSafeWindow, true);
+  assert.equal(opening.actionReactivePunishSafeActionActive, true);
+  assert.equal(opening.actionReactivePunishBossAvailable, false);
+  assert.equal(opening.actionReactivePunishRejectionReason, 'boss-busy');
+  assert.equal(opening.actionReactivePunishResponseCount, 1);
+  assert.deepEqual(blueprintFrame(id, 0).player, blueprintFrame(id, 6).player);
+  assert.match(
+    renderBlueprintThumbnail(id, 'test-action-reactive-punish'),
+    /data-blueprint-preview="action-reactive-punish"/,
   );
 });

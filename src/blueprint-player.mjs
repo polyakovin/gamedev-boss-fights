@@ -703,6 +703,46 @@ export function initializeBlueprint(widget) {
       widget.dataset.blueprintFalseDeathSecondSignal = String(frame.falseDeathSecondSignalActive);
       widget.dataset.blueprintFalseDeathSecondAttack = String(frame.falseDeathSecondAttackActive);
     }
+    if (mechanicId === 'action-reactive-punish') {
+      widget.dataset.blueprintActionReactivePunish = frame.actionReactivePunishState;
+      widget.dataset.blueprintActionReactivePunishActionId = frame.actionReactivePunishActionId;
+      widget.dataset.blueprintActionReactivePunishResponseId = frame.actionReactivePunishResponseId;
+      widget.dataset.blueprintActionReactivePunishObserved = String(
+        frame.actionReactivePunishObserved,
+      );
+      widget.dataset.blueprintActionReactivePunishQueued = String(
+        frame.actionReactivePunishResponseQueued,
+      );
+      widget.dataset.blueprintActionReactivePunishCommitted = String(
+        frame.actionReactivePunishCommitted,
+      );
+      widget.dataset.blueprintActionReactivePunishProjectile = String(
+        frame.actionReactivePunishProjectileActive,
+      );
+      widget.dataset.blueprintActionReactivePunishBossAvailable = String(
+        frame.actionReactivePunishBossAvailable,
+      );
+      widget.dataset.blueprintActionReactivePunishCooldownReady = String(
+        frame.actionReactivePunishCooldownReady,
+      );
+      widget.dataset.blueprintActionReactivePunishSafeWindow = String(
+        frame.actionReactivePunishSafeWindow,
+      );
+      widget.dataset.blueprintActionReactivePunishSafeAction = String(
+        frame.actionReactivePunishSafeActionActive,
+      );
+      widget.dataset.blueprintActionReactivePunishSafeActionCompleted = String(
+        frame.actionReactivePunishSafeActionCompleted,
+      );
+      widget.dataset.blueprintActionReactivePunishRejection =
+        frame.actionReactivePunishRejectionReason;
+      widget.dataset.blueprintActionReactivePunishResponseCount = String(
+        frame.actionReactivePunishResponseCount,
+      );
+      widget.dataset.blueprintActionReactivePunishEventCount = String(
+        frame.actionReactivePunishEventCount,
+      );
+    }
     boss.setAttribute(
       'transform',
       `translate(${frame.boss.x} ${frame.boss.y}) scale(${frame.bossScale})`,
