@@ -1312,21 +1312,22 @@ test('wind-up separates readable buildup beats, a held pose, release, and recove
   await expect(page.locator('.wip-badge, .draft-profile')).toHaveCount(0);
   await expect(page.locator('.game-example')).toHaveCount(3);
   await expect(widget).toHaveAttribute('data-blueprint-playing', 'false');
+  await expect(widget).toHaveAttribute('data-blueprint-full-height', 'true');
 
   await seek(800);
   await expect(widget).toHaveAttribute('data-blueprint-wind-up', 'short-wind-up');
-  await expect(widget.locator('[data-blueprint-primitive="0"] line')).not.toHaveAttribute(
+  await expect(widget.locator('[data-blueprint-primitive="2"] line')).not.toHaveAttribute(
     'opacity',
     '0',
   );
-  await expect(widget.locator('[data-blueprint-primitive="2"] path')).not.toHaveAttribute(
+  await expect(widget.locator('[data-blueprint-primitive="4"] path')).not.toHaveAttribute(
     'opacity',
     '0',
   );
 
   await seek(1420);
   await expect(widget).toHaveAttribute('data-blueprint-wind-up-beat', '2');
-  await expect(widget.locator('[data-blueprint-primitive="4"] path')).not.toHaveAttribute(
+  await expect(widget.locator('[data-blueprint-primitive="6"] path')).not.toHaveAttribute(
     'opacity',
     '0',
   );
@@ -1334,7 +1335,7 @@ test('wind-up separates readable buildup beats, a held pose, release, and recove
   await seek(1750);
   await expect(widget).toHaveAttribute('data-blueprint-wind-up', 'released-danger');
   await expect(widget).toHaveAttribute('data-blueprint-outcome', 'safe');
-  await expect(widget.locator('[data-blueprint-primitive="1"] line')).not.toHaveAttribute(
+  await expect(widget.locator('[data-blueprint-primitive="3"] line')).not.toHaveAttribute(
     'opacity',
     '0',
   );
@@ -1345,11 +1346,11 @@ test('wind-up separates readable buildup beats, a held pose, release, and recove
   await seek(3800);
   await expect(widget).toHaveAttribute('data-blueprint-wind-up', 'held-ready');
   await expect(widget).toHaveAttribute('data-blueprint-wind-up-beat', '3');
-  await expect(widget.locator('[data-blueprint-primitive="5"] circle')).not.toHaveAttribute(
+  await expect(widget.locator('[data-blueprint-primitive="7"] path')).not.toHaveAttribute(
     'opacity',
     '0',
   );
-  await expect(widget.locator('[data-blueprint-primitive="1"] line')).toHaveAttribute(
+  await expect(widget.locator('[data-blueprint-primitive="3"] line')).toHaveAttribute(
     'opacity',
     '0',
   );
@@ -1381,8 +1382,8 @@ test('wind-up keeps both release reads and actors inside dark RTL mobile', async
         '[data-blueprint-player]',
         '[data-blueprint-boss-label]',
         '[data-blueprint-player-label]',
-        '[data-blueprint-primitive="0"]',
-        '[data-blueprint-primitive="5"]',
+        '[data-blueprint-primitive="2"]',
+        '[data-blueprint-primitive="7"]',
       ].map((selector) => {
         const rect = element.querySelector(selector).getBoundingClientRect();
         return (

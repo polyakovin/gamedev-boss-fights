@@ -1469,21 +1469,21 @@ test('wind-up exposes readable buildup beats before both fixed release windows',
   assert.equal(building.windUpState, 'short-wind-up');
   assert.equal(building.dangerActive, false);
   assert.ok(building.windUpBeat >= 2);
-  assert.ok(building.primitives[0].opacity > 0, 'the lane is promised during preparation');
-  assert.ok(building.primitives[4].opacity > 0, 'the third buildup rune appears before release');
+  assert.ok(building.primitives[2].opacity > 0, 'the lane is promised during preparation');
+  assert.ok(building.primitives[6].opacity > 0, 'the third buildup rune appears before release');
 
   const firstRelease = blueprintFrame(id, 1.75);
   assert.equal(firstRelease.windUpState, 'short-release');
   assert.equal(firstRelease.windUpRelease, true);
   assert.equal(firstRelease.playerSafe, true);
   assert.equal(blueprintPointSafe(id, 1.75, { x: 450, y: 430 }), false);
-  assert.ok(firstRelease.primitives[1].opacity > 0, 'the promised lane becomes active');
+  assert.ok(firstRelease.primitives[3].opacity > 0, 'the promised lane becomes active');
 
   const held = blueprintFrame(id, 3.9);
   assert.equal(held.windUpState, 'held-ready');
   assert.equal(held.windUpProgress, 1);
   assert.equal(held.dangerActive, false);
-  assert.ok(held.primitives[5].opacity > 0, 'the final pose remains visibly held');
+  assert.ok(held.primitives[7].opacity > 0, 'the final pose remains visibly held');
 
   const secondRelease = blueprintFrame(id, 4.45);
   assert.equal(secondRelease.windUpState, 'held-release');

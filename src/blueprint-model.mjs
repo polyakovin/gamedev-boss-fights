@@ -3572,6 +3572,14 @@ function primitivesFor(spec, frame) {
       );
     };
     return [
+      path('M 38 94 H 522 V 878 H 38 Z M 62 254 H 498 V 878 H 62 Z', 0.36, 'muted', 0, 0.56),
+      path(
+        'M 59 117 H 139 V 365 H 59 Z M 421 117 H 501 V 365 H 421 Z M 153 120 H 407 V 155 H 153 Z M 60 396 H 132 V 495 H 60 Z M 428 396 H 500 V 495 H 428 Z M 67 541 L 280 520 L 493 541 V 574 L 280 549 L 67 574 Z M 67 700 L 280 674 L 493 700 V 738 L 280 706 L 67 738 Z M 67 825 L 280 797 L 493 825 V 846 L 280 816 L 67 846 Z',
+        0.39,
+        'accent',
+        0,
+        0.58,
+      ),
       line(
         boss.x + 38,
         boss.y,
@@ -3594,7 +3602,13 @@ function primitivesFor(spec, frame) {
       rune(-34, 0.12),
       rune(0, 0.45),
       rune(34, 0.78),
-      circle(boss.x, boss.y - 79, 57, ready ? 0.78 : 0, 'safe', 5, 0.04, '8 9'),
+      path(
+        `M ${boss.x - 66} ${boss.y - 54} L ${boss.x - 91} ${boss.y - 97} L ${boss.x - 48} ${boss.y - 84} Z M ${boss.x + 66} ${boss.y - 54} L ${boss.x + 91} ${boss.y - 97} L ${boss.x + 48} ${boss.y - 84} Z`,
+        ready ? 0.82 : 0,
+        'safe',
+        0,
+        0.74,
+      ),
       circle(boss.x + 42, boss.y, 18 + releaseFlash * 24, releaseFlash, 'signal', 8),
       line(
         boss.x - 62,
