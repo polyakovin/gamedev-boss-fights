@@ -3899,6 +3899,8 @@ test('damage-rate cap compresses a burst and restores the next hit after decay',
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await page.goto('en/mechanics/damage-rate-cap/');
   const widget = page.locator('[data-blueprint-demo]');
+  await expect(widget).toHaveAttribute('data-blueprint-full-height', 'true');
+  await expect(widget).toHaveAttribute('data-blueprint-screen-height', 'true');
   const timeline = widget.locator('[data-blueprint-timeline]');
   const seek = (milliseconds) =>
     timeline.evaluate((element, value) => {

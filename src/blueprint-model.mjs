@@ -1420,10 +1420,10 @@ const SPECS = {
   },
   'damage-rate-cap': {
     mode: 'damage-rate-cap',
-    boss: [300, 375],
-    player: [300, 660],
-    target: [300, 660],
-    arena: [55, 310, 450, 590],
+    boss: [300, 300],
+    player: [300, 760],
+    target: [300, 760],
+    arena: [55, 145, 450, 735],
     isolatedSignal: [0.34, 0.82],
     isolatedHitAt: 0.92,
     firstWindowClearsAt: 1.72,
@@ -7700,46 +7700,44 @@ function primitivesFor(spec, frame) {
     );
     const impact = lastHitAt < 0 ? 0 : strikePulse(frame.time, lastHitAt, 0.34);
     const healthWidth = 236 * (frame.damageRateCapBossHealth / 100);
-    const meterWidth = 196 * clamp(frame.damageRateCapRecentDamage / (spec.threshold * 4));
-    const appliedWidth = 96 * (frame.damageRateCapAppliedDamage / spec.rawDamage);
     const attenuation = 1 - frame.damageRateCapMultiplier;
+    const nextHit = hitTimes.find((at) => frame.time >= at - 0.32 && frame.time < at);
+    const flight = nextHit === undefined ? 0 : clamp((frame.time - nextHit + 0.32) / 0.32);
+    const projectileY = mix(frame.player.y - 75, frame.boss.y + 26, flight);
     return [
-      rect(...spec.arena, 0.52, 'muted', 0.025),
-      rect(178, 318, 244, 24, 0.74, 'muted', 0.035),
-      rect(182, 322, healthWidth, 16, 0.96, 'signal', 0.18),
-      line(182 + healthWidth, 314, 182 + healthWidth, 346, 0.82, 'signal', 4),
-      rect(200, 472, 200, 18, 0.78, 'muted', 0.04),
-      rect(202, 474, meterWidth, 14, 0.96, attenuation > 0 ? 'signal' : 'safe', 0.2),
-      line(251, 466, 251, 496, 0.9, 'accent', 4),
-      ...Array.from({ length: 4 }, (_, index) =>
-        circle(
-          225 + index * 50,
-          530,
-          11,
-          frame.damageRateCapRecentDamage >= spec.threshold * (index + 1) ? 0.96 : 0.2,
-          frame.damageRateCapRecentDamage >= spec.threshold * (index + 1) ? 'signal' : 'muted',
-          4,
-          0.14,
-        ),
+      path(
+        'M 70 187 L 280 148 L 490 187 V 216 L 280 177 L 70 216 Z M 72 846 L 280 804 L 488 846 V 874 L 280 832 L 72 874 Z',
+        0.42,
+        'muted',
+        0,
+        0.6,
       ),
-      circle(
-        frame.boss.x,
-        frame.boss.y - 24,
-        58 + attenuation * 38,
-        attenuation > 0 ? 0.34 + attenuation * 0.5 : 0.08,
-        'signal',
-        8,
-        0.025,
-        '11 8',
+      path('M 145 102 H 415 V 130 H 145 Z', 0.76, 'muted', 0, 0.7),
+      rect(155, 107, healthWidth, 17, 0.98, 'signal', 0.82),
+      path(
+        `M ${frame.boss.x - 96} ${frame.boss.y + 30} L ${frame.boss.x} ${frame.boss.y + 9} L ${frame.boss.x + 96} ${frame.boss.y + 30} L ${frame.boss.x + 82} ${frame.boss.y + 105} L ${frame.boss.x} ${frame.boss.y + 126} L ${frame.boss.x - 82} ${frame.boss.y + 105} Z`,
+        0.18 + attenuation * 0.73,
+        'muted',
+        0,
+        0.74,
       ),
-      circle(
-        frame.boss.x,
-        frame.boss.y - 24,
-        43 + attenuation * 22,
-        attenuation > 0 ? 0.2 + attenuation * 0.42 : 0,
-        'accent',
-        6,
-        0.02,
+      ...Array.from({ length: 4 }, (_, index) => {
+        const x = frame.boss.x - 73 + index * 37;
+        const y = frame.boss.y + 50 + (index % 2) * 22;
+        return path(
+          `M ${x - 17} ${y - 22} L ${x + 13} ${y - 29} L ${x + 23} ${y + 12} L ${x - 9} ${y + 20} Z`,
+          frame.damageRateCapRecentDamage >= spec.threshold * (index + 1) ? 0.85 : 0.16,
+          'signal',
+          0,
+          0.74,
+        );
+      }),
+      path(
+        `M ${frame.player.x - 9} ${projectileY + 24} L ${frame.player.x} ${projectileY - 26} L ${frame.player.x + 9} ${projectileY + 24} L ${frame.player.x} ${projectileY + 9} Z`,
+        nextHit === undefined ? 0 : 0.96,
+        'safe',
+        0,
+        0.88,
       ),
       path(
         `M ${frame.player.x + 26} ${frame.player.y - 70} L ${frame.player.x + 92} ${frame.player.y - 136}`,
@@ -7756,20 +7754,11 @@ function primitivesFor(spec, frame) {
         'safe',
         7,
       ),
-      circle(frame.boss.x, frame.boss.y - 24, 54 + impact * 54, impact, 'accent', 9, 0.03),
-      rect(80, 760, 100, 18, frame.damageRateCapHitCount > 0 ? 0.7 : 0, 'muted', 0.04),
-      rect(82, 762, 96, 14, frame.damageRateCapHitCount > 0 ? 0.72 : 0, 'accent', 0.16),
-      rect(80, 794, 100, 18, frame.damageRateCapHitCount > 0 ? 0.7 : 0, 'muted', 0.04),
-      rect(82, 796, appliedWidth, 14, frame.damageRateCapHitCount > 0 ? 0.96 : 0, 'safe', 0.22),
-      line(
-        82 + appliedWidth,
-        788,
-        178,
-        788,
-        frame.damageRateCapPreventedDamage > 0 ? 0.9 : 0,
-        'signal',
-        5,
-        '6 5',
+      path(
+        `M ${frame.boss.x - 42} ${frame.boss.y + 53} L ${frame.boss.x - 13} ${frame.boss.y + 84} L ${frame.boss.x - 24} ${frame.boss.y + 110} M ${frame.boss.x + 36} ${frame.boss.y + 45} L ${frame.boss.x + 5} ${frame.boss.y + 77} L ${frame.boss.x + 17} ${frame.boss.y + 108}`,
+        impact,
+        'accent',
+        6,
       ),
     ];
   }
