@@ -1,0 +1,138 @@
+{
+  "title": "Interface interaction",
+  "subtitle": "Move one encounter rule beyond the ordinary character controls",
+  "variant": "Blocked channel · safe pause · capability check · confirmed fallback",
+  "summary": "The boss can only be opened, weakened, or answered by using an input channel or system interface outside the player character's ordinary verbs.",
+  "overview": "Interface interaction makes the game boundary part of the encounter: a controller route, microphone, second screen, file picker, camera, or platform panel becomes a deliberate response. The boss proves why the normal verb fails, pauses danger while attention leaves the arena, confirms the result, and provides an equivalent fallback.",
+  "learning": "Define the blocked in-world verb, external channel, capability check, consent boundary, safe interaction window, confirmation event, timeout, cancellation, fallback route, retry state, platform parity, privacy limits, accessibility, and telemetry.",
+  "category": "States, resources, and scaling",
+  "readTime": "10 min",
+  "demo": {
+    "title": "Route Tavi around Kern's input-reading ward",
+    "timeline": "External interface response timeline",
+    "step": "Prove, pause and switch, confirm and resume",
+    "phaseNames": [
+      "Prove the normal channel is read",
+      "Switch, confirm, and retest",
+      "Restore a retry-safe route"
+    ],
+    "phaseDescriptions": [
+      "At 0.62 seconds, Tavi attacks through channel A and Kern's ward blocks the sword. At 1.28 seconds, combat pauses before focus leaves the arena.",
+      "At 1.65 seconds, input moves to supported channel B; at 2.05 it is confirmed. The ward drops at 2.72, Tavi strikes, and Kern gives a normal signal before the 3.72-second counter.",
+      "At 4.18 seconds, combat is fully resumed. At 4.65 seconds, retry restores a known supported route without repeating the external confirmation."
+    ],
+    "boss": "Boss",
+    "player": "Player",
+    "danger": "Unannounced hardware assumptions, live damage while focus is elsewhere, destructive OS actions, or a missing fallback can make the encounter impossible or unsafe",
+    "locked": "Capability detection, consent, pause scope, selected route, confirmation, timeout, fallback parity, retry restoration, privacy, and platform adaptation belong to encounter logic",
+    "safe": "Prove the exception, freeze danger, offer only supported channels, confirm the result, resume with a fresh telegraph, and preserve an equivalent conventional path",
+    "reducedMotion": "Autoplay is disabled by reduced motion. Scrub across 0.40, 0.62, 0.88, 1.28, 1.65, 2.05, 2.38, 2.72, 3.05, 3.45, 3.78, 4.18, 4.65, 5.05, and 5.35 seconds.",
+    "diagramDescription": "Tavi's first sword route is read and blocked by Kern, combat pauses while the input moves from port A to supported port B, a confirmation mark removes the ward, and the resumed strike opens a safe response window."
+  },
+  "steps": [
+    {
+      "title": "Why does the ordinary verb fail?",
+      "body": "Show the boss reading, mirroring, jamming, or escaping the normal channel before asking for anything external. Keep the failed attempt safe and repeatable, and name the rule through animation, sound, text, and controller-independent status cues."
+    },
+    {
+      "title": "When may attention leave the arena?",
+      "body": "Enter an explicit interaction state: pause hostile simulation, release held inputs, keep audio intelligible, detect available capabilities, explain data access, and allow cancel or timeout. Never ask the player to unplug hardware, blow into a microphone, open files, or move to another screen while damage continues."
+    },
+    {
+      "title": "How is success returned to combat?",
+      "body": "Convert the external action into one deterministic confirmation event, restore focus and controls, show the changed boss state, and run a full combat telegraph. Save a known route for retry and provide a menu, remap, button, or simulated-input fallback with the same timing and reward."
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "Novelty becomes a hardware requirement",
+      "body": "A microphone may be broken, a controller port may not exist, file access may be sandboxed, and motion or camera input may be inaccessible. Detect support before the fight and treat the alternate interface as presentation, not as permission to strand players."
+    },
+    {
+      "title": "The game performs or threatens destructive external work",
+      "body": "Do not delete files, alter system settings, capture media, or contact a service without informed consent. Use generated safe data, narrow permissions, reversible previews, clear cancellation, and a fully local fallback."
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "Model a small interface state machine",
+      "body": "Use ordinary, exception-proved, interaction-paused, route-selected, confirmed, resumed, cancelled, timed-out, and fallback states. Make confirmation idempotent so focus changes, reconnects, and duplicate platform callbacks cannot open the boss twice."
+    },
+    {
+      "title": "Author every platform adaptation",
+      "body": "The same fiction can map controller port to virtual slot, microphone to hold input, file picker to a generated archive, or second screen to an in-game panel. Preserve information, timing, consequence, and dramatic reveal even when the hardware changes."
+    },
+    {
+      "title": "Measure friction without collecting private content",
+      "body": "Record capability class, prompt shown, fallback offered, selection, confirmation latency, cancellation, timeout, reconnect, retry, and completion. Never log filenames, audio, images, contacts, or device identifiers unless they are essential, consented, minimized, and protected."
+    }
+  ],
+  "story": {
+    "title": "Kern can read only the road he watches",
+    "body": "Kern catches Tavi's first sword command in a cyan ward linked to port A. The arena freezes, Tavi routes the command through a second rune socket, and a confirmation seal breaks the prediction. Only then does the duel resume."
+  },
+  "adaptation": {
+    "title": "Keep the surprise; remove the exclusion",
+    "body": "Announce required capabilities before commitment, support keyboard, controller, touch, assistive remaps, silent microphone simulation, no-camera mode, sandboxed sample files, and a conventional menu fallback. Pause timers and attacks while focus is outside combat, and never require force, breath duration, precise motion, private data, or system changes."
+  },
+  "distinction": {
+    "title": "An interface boundary, not a normal control-mode shift",
+    "body": "A control-mode shift changes how ordinary movement or attacks map during live play. An encounter-specific tool still exists inside the game world. Interface interaction deliberately crosses into another input or system surface, then returns one confirmed result to encounter logic."
+  },
+  "lensNotes": [
+    {
+      "id": "rule-exception",
+      "body": "The boss invalidates one familiar control route, but the exception is demonstrated before the player is asked to cross the interface boundary."
+    },
+    {
+      "id": "progress-clarity",
+      "body": "A visible capability check, selected route, confirmation mark, and changed ward connect the external action to the combat outcome."
+    },
+    {
+      "id": "player-expression",
+      "body": "Several equivalent channels can preserve the fantasy while letting the player choose hardware, menu, remap, or simulated input."
+    },
+    {
+      "id": "context-and-sequence",
+      "body": "Failed ordinary action, safe pause, external interaction, confirmation, refocus, and renewed telegraph form one authored sequence."
+    },
+    {
+      "id": "access-paths",
+      "body": "Capability-independent fallbacks and frozen danger prevent a sensory, motor, hardware, privacy, or platform constraint from blocking completion."
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "3D",
+      "game": "Metal Gear Solid",
+      "boss": "Psycho Mantis",
+      "screenshot": "https://i.ytimg.com/vi/UGRCf4WZWoE/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=UGRCf4WZWoE&t=1s",
+      "video": "https://www.youtube.com/watch?v=UGRCf4WZWoE&t=1s",
+      "videoDurationSeconds": 174,
+      "body": "On the original PlayStation, Psycho Mantis reads player-one inputs and evades attacks; moving the controller to port two removes that advantage. Later releases must virtualize or replace the physical port while preserving the revelation that the boss was reading an interface route."
+    },
+    {
+      "dimension": "2D",
+      "game": "Mario & Luigi: Bowser's Inside Story",
+      "boss": "Fawful Express",
+      "screenshot": "https://i.ytimg.com/vi/oIlxKFpcuCY/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=oIlxKFpcuCY&t=55s",
+      "video": "https://www.youtube.com/watch?v=oIlxKFpcuCY&t=55s",
+      "videoDurationSeconds": 341,
+      "body": "The original Nintendo DS giant battle routes Bowser's fire breath through the microphone, and the moving Fawful Express makes that channel central to the damage race. The 3DS remake replaces the microphone action, illustrating why platform-equivalent fallback belongs in the design from the start."
+    },
+    {
+      "dimension": "3D",
+      "game": "Inscryption",
+      "boss": "The Archivist",
+      "screenshot": "https://i.ytimg.com/vi/cZtZgHn_Szk/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=cZtZgHn_Szk&t=42s",
+      "video": "https://www.youtube.com/watch?v=cZtZgHn_Szk&t=42s",
+      "videoDurationSeconds": 473,
+      "body": "The Archivist opens a file-selection surface: file size becomes damage weight, and an old file becomes a powerful hostage card. The encounter uses real metadata for fiction, but its implementation avoids actually deleting the selected file, a crucial boundary for safe external-interface play."
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}
