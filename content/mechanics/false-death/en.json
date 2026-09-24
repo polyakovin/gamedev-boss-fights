@@ -1,0 +1,138 @@
+{
+  "title": "False death and return",
+  "subtitle": "Separate an empty health bar from the encounter’s confirmed end",
+  "variant": "Lethal blow · withheld reward · revival · new contract",
+  "summary": "The boss appears defeated, but encounter completion stays pending until a readable revival begins a new phase.",
+  "overview": "False death makes a lethal-looking depletion a phase transition rather than the encounter’s final result. The first collapse may borrow familiar victory language, but rewards, exits, saves, music, and input state remain under one explicit completion contract until the revival has resolved and the true ending is committed.",
+  "learning": "Define the depletion event, apparent-death presentation, confirmation window, revival source, next-phase state, completion authority, reward and exit gates, save timing, skip behavior, duplicate-event guards, and telemetry.",
+  "category": "States, resources, and scaling",
+  "readTime": "10 min",
+  "demo": {
+    "title": "Keep the encounter locked while Kern’s broken core returns",
+    "timeline": "False-death timeline",
+    "step": "Depletion, pending result, revival, confirmed phase",
+    "phaseNames": [
+      "Deplete the visible health bar",
+      "Hold completion and reveal the return",
+      "Commit the next phase contract"
+    ],
+    "phaseDescriptions": [
+      "Tavi lands the apparent finishing strike at 0.75 seconds. Kern collapses and the phase-one health bar reaches zero, but the arena seal and reward rune remain visibly locked.",
+      "From 1.35 to 3.15 seconds, a pending-result sigil replaces the normal victory confirmation. Kern’s fractured core pulses, the body reassembles, and a distinct second-phase rune appears before control becomes dangerous again.",
+      "At 3.15 seconds, one revival event restores a bounded second-phase health pool and a new attack package. The exit stays closed because encounterComplete remains false; only a later final-death event may unlock rewards and persistence."
+    ],
+    "boss": "Boss",
+    "player": "Player",
+    "danger": "A normal victory signal, reward, autosave, or unlocked exit during a reversible death teaches the wrong contract and can corrupt encounter state",
+    "locked": "Health depletion, phase transition, revival count, encounter completion, rewards, exits, saves, audio, skips, and rollback belong to one authoritative state machine",
+    "safe": "Show that the first bar is empty, keep completion pending, reveal the revival source, establish the new rules, and commit each event once",
+    "reducedMotion": "Autoplay is disabled by reduced motion. Scrub across 0.25, 0.75, 1.15, 1.55, 2.15, 2.65, 3.15, 3.75, 4.35, 4.95, and 5.35 seconds.",
+    "diagramDescription": "Tavi empties Kern’s first health bar, but the arena and reward remain locked while a core rune rebuilds the boss and announces a second phase."
+  },
+  "steps": [
+    {
+      "title": "What counts as death, and what counts as completion?",
+      "body": "Model phase health depletion and encounter completion as separate events. Name the phase id, depletion id, revival budget, final-phase flag, and authoritative completion owner so animation callbacks, damage listeners, network rollback, or a skipped cinematic cannot award victory twice."
+    },
+    {
+      "title": "Which victory cues may be borrowed safely?",
+      "body": "Choose the collapse, silence, camera hold, empty bar, dropped object, or short message that creates the false conclusion. Keep at least one invariant visibly unresolved—sealed exit, pending objective, locked reward, unstable corpse, or surviving core—and do not emit a real save or platform achievement early."
+    },
+    {
+      "title": "How does the return teach the new contract?",
+      "body": "Reveal the revival source before damage resumes, then establish the next health pool, phase label, collision state, opening position, attack package, and grace time atomically. Define what happens if the player stands on the body, attacks during recovery, pauses, skips, disconnects, or reloads in the transition."
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "The fake victory is indistinguishable from a real one",
+      "body": "A full reward fanfare, unlocked controls, loot pickup, save commit, and open exit make the later revival feel like the game revoked a valid result. Reserve irreversible feedback for encounterComplete and leave a readable unresolved signal during the false ending."
+    },
+    {
+      "title": "The boss revives through a presentation callback",
+      "body": "If health, animation, audio, and rewards each infer the transition independently, skipping or replaying a sequence can duplicate health bars, loot, or phase starts. Resolve one idempotent revival event in encounter logic and let presentation observe that state."
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "Use a confirmation window, not dead input",
+      "body": "The pause should be long enough to create doubt and read the unresolved clue, but short enough that the player does not open menus or leave the arena believing the encounter is over. Keep camera and input behavior intentional and provide a skip-safe path for repeated attempts."
+    },
+    {
+      "title": "Make the returned phase meaningfully legible",
+      "body": "Change a stable combination of health presentation, pose, core shape, sound, attack cadence, arena rule, or silhouette. The return needs a new contract, not only refilled health, and its first threat needs ordinary response time after control is restored."
+    },
+    {
+      "title": "Instrument the boundary between phase and result",
+      "body": "Record depletionId, phaseId, revival count, pending duration, skipped presentation, player position, damage during recovery, phase-start health, completionId, reward events, save events, duplicate attempts, disconnects, reload state, and abandonments after the apparent death."
+    }
+  ],
+  "story": {
+    "title": "Kern falls, but the heart rune is still counting",
+    "body": "Tavi’s sword scatters Kern’s outer stones and empties the visible bar. The gate rune stays crossed out; a small core continues its three-beat pulse, draws the fragments back into a taller frame, and lights a second-phase mark before Kern can move again."
+  },
+  "adaptation": {
+    "title": "Preserve surprise without hiding state",
+    "body": "Offer a persistent unresolved-objective cue, a longer revival tell, stronger phase text, reduced flashes and shake, stable subtitles, and a replay-skip that lands in the same safe start state. Repeated attempts may shorten drama, but not the rule signal or response window."
+  },
+  "distinction": {
+    "title": "A reversible defeat state, not healing or an ordinary phase change",
+    "body": "Self-healing raises health while the boss remains active. A normal phase transition openly communicates that the encounter continues. False death deliberately presents a plausible defeat before revealing that completion was still pending, so its key design problem is protecting the final-result contract."
+  },
+  "lensNotes": [
+    {
+      "id": "progress-clarity",
+      "body": "An empty phase bar may signal progress, but rewards, exits, objectives, and final confirmation must agree on whether the encounter is actually complete."
+    },
+    {
+      "id": "phase-structure",
+      "body": "The false death is a boundary with its own pending state, revival event, next-phase entry conditions, and final completion gate."
+    },
+    {
+      "id": "dramatic-framing",
+      "body": "Silence, collapse, camera hold, and delayed motion create the apparent ending; the unresolved core lets drama support rather than contradict the rule."
+    },
+    {
+      "id": "telegraphing",
+      "body": "The revival source, new phase identity, control-return moment, and first dangerous action need distinct cues before their state changes take effect."
+    },
+    {
+      "id": "rule-exception",
+      "body": "Skipping, pausing, attacking the corpse, standing in the rebuild area, reloading, rollback, and duplicate depletion events all need one defined outcome."
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "Hollow Knight",
+      "boss": "Soul Master",
+      "screenshot": "https://i.ytimg.com/vi/_4GT_ztkAUk/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=_4GT_ztkAUk&t=94s",
+      "video": "https://www.youtube.com/watch?v=_4GT_ztkAUk&t=94s",
+      "videoDurationSeconds": 172,
+      "body": "From 1:34, a long collapse and the dropped Desolate Dive spell resemble a completed fight. Soul Master then returns, breaks the floor, and moves the encounter into a compact second phase; the reward object itself becomes part of the false-ending frame."
+    },
+    {
+      "dimension": "3D",
+      "game": "Sekiro: Shadows Die Twice",
+      "boss": "Guardian Ape",
+      "screenshot": "https://i.ytimg.com/vi/26B8VI-QNok/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=26B8VI-QNok&t=255s",
+      "video": "https://www.youtube.com/watch?v=26B8VI-QNok&t=255s",
+      "videoDurationSeconds": 766,
+      "body": "At 4:15, a finishing execution, corpse, and pause present a strong end beat before the headless ape rises with a sword. The return changes silhouette, sound, and attack language, making the revived phase a new readable contract rather than a simple health refill."
+    },
+    {
+      "dimension": "3D",
+      "game": "Dark Souls III: Ashes of Ariandel",
+      "boss": "Sister Friede",
+      "screenshot": "https://i.ytimg.com/vi/V8VZgmMncwI/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=V8VZgmMncwI&t=450s",
+      "video": "https://www.youtube.com/watch?v=V8VZgmMncwI&t=450s",
+      "videoDurationSeconds": 727,
+      "body": "From 7:30, the shared second-phase health reaches zero and the scene grants end-like feedback before Friede rises as Blackflame Friede. The case shows why phase depletion, reward presentation, and final encounter completion must remain separate authoritative states."
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

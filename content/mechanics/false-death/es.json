@@ -1,0 +1,138 @@
+{
+  "title": "Muerte falsa y regreso",
+  "subtitle": "Separa una barra vacía del final confirmado del encuentro",
+  "variant": "Golpe letal · recompensa retenida · reanimación · nuevo contrato",
+  "summary": "El jefe parece derrotado, pero el encuentro queda pendiente hasta que un regreso legible inicia otra fase.",
+  "overview": "La muerte falsa convierte un agotamiento que parece letal en una transición de fase, no en el resultado final. La primera caída puede usar parte del lenguaje de victoria, pero recompensas, salidas, guardado, música y control obedecen a un único contrato de finalización hasta que el regreso se resuelve y el final real queda confirmado.",
+  "learning": "Define el evento de agotamiento, la puesta en escena, la ventana de confirmación, la fuente del regreso, el estado siguiente, la autoridad de cierre, los bloqueos de recompensa y salida, el guardado, el salto de escena, la idempotencia y la telemetría.",
+  "category": "Estados, recursos y escalado",
+  "readTime": "10 min",
+  "demo": {
+    "title": "Mantén el encuentro cerrado mientras vuelve el núcleo de Kern",
+    "timeline": "Línea temporal de muerte falsa",
+    "step": "Agotamiento, resultado pendiente, regreso, fase confirmada",
+    "phaseNames": [
+      "Vacía la salud visible",
+      "Retén el final y revela el regreso",
+      "Confirma el contrato de la nueva fase"
+    ],
+    "phaseDescriptions": [
+      "Tavi da el aparente golpe final a los 0,75 segundos. Kern cae y la salud de la primera fase llega a cero, pero el sello de la arena y la runa de recompensa siguen bloqueados.",
+      "Entre 1,35 y 3,15 segundos, un signo de resultado pendiente sustituye la confirmación de victoria. El núcleo fracturado pulsa, recompone el cuerpo y muestra la runa de segunda fase antes de recuperar el peligro.",
+      "A los 3,15 segundos, un solo evento de regreso crea una salud limitada y un paquete de ataques nuevo. La salida sigue cerrada porque encounterComplete es false; solo la muerte final desbloquea recompensas y persistencia."
+    ],
+    "boss": "Jefe",
+    "player": "Jugador",
+    "danger": "Una fanfarria, recompensa, autoguardado o salida abierta durante una muerte reversible enseña un contrato falso y puede corromper el estado",
+    "locked": "Agotamiento, transición, contador de regresos, finalización, recompensas, salidas, guardados, audio, saltos y rollback pertenecen a una sola máquina de estados autoritativa",
+    "safe": "Muestra la primera barra vacía, deja el resultado pendiente, revela la fuente del regreso, establece las nuevas reglas y confirma cada evento una vez",
+    "reducedMotion": "Con movimiento reducido, la reproducción automática se desactiva. Recorre 0,25; 0,75; 1,15; 1,55; 2,15; 2,65; 3,15; 3,75; 4,35; 4,95 y 5,35 segundos.",
+    "diagramDescription": "Tavi vacía la primera salud de Kern, pero arena y recompensa permanecen bloqueadas mientras una runa central recompone al jefe y anuncia la segunda fase."
+  },
+  "steps": [
+    {
+      "title": "¿Qué es muerte y qué es finalización?",
+      "body": "Modela el agotamiento de fase y el final del encuentro como eventos distintos. Nombra phaseId, depletionId, presupuesto de regresos, fase final y dueño del cierre para que animaciones, daño, rollback o una escena omitida no concedan la victoria dos veces."
+    },
+    {
+      "title": "¿Qué señales de victoria pueden prestarse?",
+      "body": "Elige caída, silencio, pausa de cámara, barra vacía, objeto o mensaje para crear el falso final. Mantén un invariante sin resolver —salida sellada, objetivo pendiente, recompensa bloqueada, cuerpo inestable o núcleo vivo— y no emitas aún un guardado ni un logro reales."
+    },
+    {
+      "title": "¿Cómo enseña el regreso el nuevo contrato?",
+      "body": "Revela su fuente antes de reactivar el daño y aplica de forma atómica salud, etiqueta, colisión, posición, ataques y margen seguro. Define qué ocurre al pisar el cuerpo, atacar durante la reconstrucción, pausar, saltar, desconectarse o cargar la transición."
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "La victoria falsa parece completamente real",
+      "body": "Fanfarria completa, control libre, botín, guardado y salida abierta convierten el regreso en la retirada de un resultado válido. Reserva la respuesta irreversible para encounterComplete y deja una señal pendiente visible."
+    },
+    {
+      "title": "La presentación reanima al jefe",
+      "body": "Si salud, animación, sonido y recompensas infieren la transición por separado, saltar o repetir puede duplicar barras, botín o fases. Resuelve un evento idempotente en la lógica y deja que la presentación solo lo observe."
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "Usa confirmación, no controles muertos",
+      "body": "La pausa debe permitir leer la pista sin dar tiempo a abandonar o abrir menús creyendo que todo acabó. Haz intencionales cámara y control y ofrece un salto seguro en intentos repetidos."
+    },
+    {
+      "title": "Haz legible la fase regresada",
+      "body": "Cambia una combinación estable de salud, postura, núcleo, sonido, ritmo, arena o silueta. Debe sentirse como un contrato nuevo, no solo salud rellenada, y conceder respuesta ordinaria antes de la primera amenaza."
+    },
+    {
+      "title": "Mide el límite entre fase y resultado",
+      "body": "Registra depletionId, phaseId, regresos, duración pendiente, escena omitida, posición, daño durante recuperación, salud inicial, completionId, recompensas, guardados, duplicados, desconexiones, recarga y abandono."
+    }
+  ],
+  "story": {
+    "title": "Kern cae, pero la runa del corazón sigue contando",
+    "body": "La espada de Tavi dispersa las piedras y vacía la barra. La puerta sigue tachada; el núcleo pulsa tres veces, atrae los fragmentos hacia una figura más alta y enciende la marca de segunda fase antes de que Kern se mueva."
+  },
+  "adaptation": {
+    "title": "Conserva la sorpresa sin ocultar el estado",
+    "body": "Ofrece un objetivo pendiente persistente, aviso más largo, texto de fase más fuerte, menos destellos, subtítulos estables y un salto que llegue al mismo estado seguro. En reintentos puede acortarse el drama, no la señal ni la respuesta."
+  },
+  "distinction": {
+    "title": "Derrota reversible, no curación ni fase ordinaria",
+    "body": "La autocuración aumenta salud mientras el jefe sigue activo. Una transición ordinaria anuncia que el encuentro continúa. La muerte falsa presenta una derrota plausible y luego revela que el cierre seguía pendiente; su problema central es proteger el contrato final."
+  },
+  "lensNotes": [
+    {
+      "id": "progress-clarity",
+      "body": "Una barra de fase vacía comunica progreso, pero recompensas, salidas, objetivos y confirmación deben coincidir sobre el final real."
+    },
+    {
+      "id": "phase-structure",
+      "body": "La muerte falsa es un límite con estado pendiente, evento de regreso, condiciones de entrada y bloqueo final propios."
+    },
+    {
+      "id": "dramatic-framing",
+      "body": "Silencio, caída, cámara y demora crean el falso final; el núcleo sin resolver permite que el drama sostenga la regla."
+    },
+    {
+      "id": "telegraphing",
+      "body": "Fuente del regreso, identidad de fase, devolución de control y primer ataque necesitan señales distintas antes de activarse."
+    },
+    {
+      "id": "rule-exception",
+      "body": "Saltar, pausar, atacar el cuerpo, ocupar la reconstrucción, recargar, hacer rollback o repetir el agotamiento requieren un resultado definido."
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "2D",
+      "game": "Hollow Knight",
+      "boss": "Soul Master",
+      "screenshot": "https://i.ytimg.com/vi/_4GT_ztkAUk/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=_4GT_ztkAUk&t=94s",
+      "video": "https://www.youtube.com/watch?v=_4GT_ztkAUk&t=94s",
+      "videoDurationSeconds": 172,
+      "body": "Desde 1:34, una caída larga y el hechizo Desolate Dive parecen cerrar la lucha. Soul Master vuelve, rompe el suelo e inicia una segunda fase breve; el supuesto premio forma parte del encuadre falso."
+    },
+    {
+      "dimension": "3D",
+      "game": "Sekiro: Shadows Die Twice",
+      "boss": "Guardian Ape",
+      "screenshot": "https://i.ytimg.com/vi/26B8VI-QNok/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=26B8VI-QNok&t=255s",
+      "video": "https://www.youtube.com/watch?v=26B8VI-QNok&t=255s",
+      "videoDurationSeconds": 766,
+      "body": "A 4:15, ejecución, cadáver y pausa construyen un final antes de que el simio decapitado se alce con una espada. Silueta, sonido y ataques cambian, así que el regreso comunica un contrato nuevo."
+    },
+    {
+      "dimension": "3D",
+      "game": "Dark Souls III: Ashes of Ariandel",
+      "boss": "Sister Friede",
+      "screenshot": "https://i.ytimg.com/vi/V8VZgmMncwI/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=V8VZgmMncwI&t=450s",
+      "video": "https://www.youtube.com/watch?v=V8VZgmMncwI&t=450s",
+      "videoDurationSeconds": 727,
+      "body": "Desde 7:30, la salud compartida llega a cero y aparece una respuesta de final antes de que Friede vuelva como Blackflame Friede. El caso exige separar agotamiento, recompensa y finalización autoritativa."
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

@@ -679,6 +679,30 @@ export function initializeBlueprint(widget) {
       widget.dataset.blueprintAllyTheftReleaseReason = frame.allyTheftReleaseReason;
       widget.dataset.blueprintAllyTheftRecaptureBlocked = String(frame.allyTheftRecaptureBlocked);
     }
+    if (mechanicId === 'false-death') {
+      widget.dataset.blueprintFalseDeath = frame.falseDeathState;
+      widget.dataset.blueprintFalseDeathDepletionId = frame.falseDeathDepletionId;
+      widget.dataset.blueprintFalseDeathRevivalId = frame.falseDeathRevivalId;
+      widget.dataset.blueprintFalseDeathPhase = String(frame.falseDeathCurrentPhase);
+      widget.dataset.blueprintFalseDeathBossHealth = String(Math.round(frame.falseDeathBossHealth));
+      widget.dataset.blueprintFalseDeathHealthDepleted = String(
+        frame.falseDeathPhaseHealthDepleted,
+      );
+      widget.dataset.blueprintFalseDeathCompletionPending = String(
+        frame.falseDeathCompletionPending,
+      );
+      widget.dataset.blueprintFalseDeathEncounterComplete = String(
+        frame.falseDeathEncounterComplete,
+      );
+      widget.dataset.blueprintFalseDeathRewardLocked = String(frame.falseDeathRewardLocked);
+      widget.dataset.blueprintFalseDeathExitLocked = String(frame.falseDeathExitLocked);
+      widget.dataset.blueprintFalseDeathRebuildActive = String(frame.falseDeathRebuildActive);
+      widget.dataset.blueprintFalseDeathRevived = String(frame.falseDeathRevived);
+      widget.dataset.blueprintFalseDeathRevivalCount = String(frame.falseDeathRevivalCount);
+      widget.dataset.blueprintFalseDeathEventCount = String(frame.falseDeathEventCount);
+      widget.dataset.blueprintFalseDeathSecondSignal = String(frame.falseDeathSecondSignalActive);
+      widget.dataset.blueprintFalseDeathSecondAttack = String(frame.falseDeathSecondAttackActive);
+    }
     boss.setAttribute(
       'transform',
       `translate(${frame.boss.x} ${frame.boss.y}) scale(${frame.bossScale})`,
