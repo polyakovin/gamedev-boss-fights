@@ -8532,7 +8532,7 @@ function primitivesFor(spec, frame) {
     const progress = clamp(elapsed / spec.flight);
     const visible = elapsed >= 0 && elapsed <= spec.flight;
     return [
-      line(spec.lanes[0], spec.emitterY, spec.lanes[2], spec.emitterY, 0.72, 'accent', 5),
+      line(spec.lanes[0] - 28, spec.emitterY, spec.lanes[2] + 28, spec.emitterY, 0.82, 'muted', 17),
       ...spec.lanes.map((x) =>
         line(
           x,
@@ -8541,12 +8541,11 @@ function primitivesFor(spec, frame) {
           spec.shotEndY,
           phase === 0 ? 0.3 + prepare * 0.36 : phase === 1 ? 0.12 : 0,
           'accent',
-          4,
-          '13 12',
+          3,
         ),
       ),
       ...spec.lanes.map((x) =>
-        circle(x, spec.emitterY, 14, phase === 0 ? 0.65 + prepare * 0.28 : 0.35, 'accent', 4),
+        circle(x, spec.emitterY, 14, phase === 0 ? 0.65 + prepare * 0.28 : 0.35, 'accent', 2, 0.74),
       ),
       ...spec.lanes.map((x) =>
         circle(
@@ -8555,18 +8554,9 @@ function primitivesFor(spec, frame) {
           spec.shotRadius,
           visible ? 0.98 : 0,
           'signal',
-          6,
-          0.4,
+          2,
+          0.88,
         ),
-      ),
-      line(
-        spec.lanes[0] - spec.shotRadius,
-        spec.emitterY - 32,
-        spec.lanes[2] + spec.shotRadius,
-        spec.emitterY - 32,
-        phase === 0 ? 0.4 + prepare * 0.48 : 0,
-        'signal',
-        5,
       ),
     ];
   }

@@ -385,6 +385,7 @@ test('volley releases three parallel bolts on one beat and clears its outside ro
   await expect(page.locator('.wip-badge, .draft-profile')).toHaveCount(0);
   await expect(page.locator('.game-example')).toHaveCount(3);
   await expect(widget).toHaveAttribute('data-blueprint-playing', 'false');
+  await expect(widget).toHaveAttribute('data-blueprint-full-height', 'true');
   await seek(1950);
   for (const shot of shots) await expect(shot).toHaveAttribute('opacity', '0');
   await seek(2050);
