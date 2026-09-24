@@ -9078,14 +9078,19 @@ function primitivesFor(spec, frame) {
       circle(
         380,
         620,
-        mix(82, 58, prepare),
-        phase === 0 ? 0.75 : active,
+        58,
+        phase === 0 ? 0.38 + prepare * 0.37 : active,
         'signal',
-        5,
-        phase === 1 ? 0.28 : 0.04,
+        phase === 1 ? 5 : 2,
+        phase === 1 ? 0.42 : 0.08,
       ),
-      line(330, 620, 430, 620, preview, 'accent', 3),
-      line(380, 570, 380, 670, preview, 'accent', 3),
+      path(
+        'M 380 600 L 396 620 L 380 640 L 364 620 Z',
+        phase === 0 ? preview : active,
+        'signal',
+        0,
+        0.8,
+      ),
     ];
   if (mode === 'shockwave') {
     const origin = { x: boss.x, y: boss.y + 30 };
