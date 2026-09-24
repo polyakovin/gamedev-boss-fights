@@ -1,0 +1,138 @@
+{
+  "title": "Progresión en tiempo real",
+  "subtitle": "Convierte el tiempo real transcurrido en un estado legible del encuentro",
+  "variant": "Punto identificado · reloj fiable · intervalo limitado · retorno idempotente",
+  "summary": "El encuentro cambia mientras el juego está cerrado porque un plazo guardado, una ventana de calendario o un horario del servidor continúa en tiempo real.",
+  "overview": "La progresión en tiempo real guarda un punto versionado, lo compara con una autoridad temporal explícita al volver y aplica una sola vez la diferencia limitada. El resultado puede cambiar disponibilidad, fase, peligros, apoyo o resolución, pero se explica antes de reanudar el combate.",
+  "learning": "Define la autoridad temporal, el límite de guardado, la marca, el plazo, el máximo sin conexión, el retroceso, calendario y zona horaria, el id de conciliación, la aplicación única, el resumen de retorno, la vida del reintento, la alternativa ante fallos, accesibilidad y telemetría.",
+  "category": "Estados, recursos y escalado",
+  "readTime": "10 min",
+  "demo": {
+    "title": "Haz que seis horas fiables despierten la cámara-reloj de Kern",
+    "timeline": "Línea de conciliación temporal",
+    "step": "Punto, suspensión, conciliación limitada, reintento estable",
+    "phaseNames": [
+      "Guarda un punto autoritativo",
+      "Concilia antes del peligro",
+      "Mantén estable el resultado"
+    ],
+    "phaseDescriptions": [
+      "A los 0,72 segundos se guarda un punto versionado al mediodía. El juego se cierra a 1,02; el reloj externo llega a las 19:00 sin simular el combate en segundo plano.",
+      "A 1,72 una conciliación compara el reloj fiable con el valor guardado. Siete horas se limitan a seis, aparecen dos sellos y el segundo nivel de Kern, y un resumen precede al ataque radial.",
+      "A 4,55 el reintento conserva el mismo id y las mismas seis horas. No vuelve a leer el reloj ni concede otro avance; solo un nuevo punto identificado permite otra conciliación."
+    ],
+    "boss": "Jefe",
+    "player": "Jugador",
+    "danger": "Leer un reloj no fiable cada fotograma, aceptar retrocesos, aplicar dos veces o volver dentro del daño vuelve el sistema explotable e injusto",
+    "locked": "Autoridad, punto, marca guardada, límite, calendario, id de conciliación, estado derivado, vida del reintento y alternativa pertenecen a la lógica del encuentro",
+    "safe": "Compara una vez, limita el intervalo, registra un evento, explica los cambios, anuncia el peligro y conserva reintentos deterministas",
+    "reducedMotion": "Con movimiento reducido se desactiva la reproducción automática. Recorre 0,40, 0,72, 1,02, 1,40, 1,72, 2,10, 2,35, 2,70, 2,90, 3,15, 3,50, 3,78, 4,20, 4,55, 4,95 y 5,35 segundos.",
+    "diagramDescription": "Un reloj guardado a las 12:00 y otro fiable a las 19:00 producen seis unidades limitadas, dos sellos, un pulso reforzado y un reintento sin cambios."
+  },
+  "steps": [
+    {
+      "title": "¿Qué reloj puede cambiar el encuentro?",
+      "body": "Elige tiempo monotónico local, tiempo firmado del servidor o un horario del servicio. Guarda procedencia, zona y versión de calendario. No mezcles reloj del dispositivo, tiempo jugado, simulación y plazos sin conversión y alternativa explícitas."
+    },
+    {
+      "title": "¿Cuánto tiempo se puede aplicar?",
+      "body": "Calcula una vez al volver, rechaza retrocesos, limita ausencias largas y vincula el resultado a un id único. Aplica fases, peligros o disponibilidad de forma transaccional para que un fallo o recarga no duplique el intervalo."
+    },
+    {
+      "title": "¿Cómo vuelve el jugador con seguridad?",
+      "body": "Pausa el combate, muestra tiempos, intervalo, límite y cambios, y después usa una señal normal. Conserva el estado tras muerte y reintento y define conducta para modo sin conexión, mantenimiento, cambio horario y eventos caducados."
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "El reloj del dispositivo se trata como verdad absoluta",
+      "body": "Puede modificarse, las plataformas difieren y los cambios horarios repiten o saltan minutos. Decide si la manipulación es inocua, detectable o prohibida y ofrece recuperación antes de castigar."
+    },
+    {
+      "title": "El jugador carga dentro de un ataque cambiado",
+      "body": "Concilia antes de reactivar la simulación, resume el cambio, restaura cámara y controles y completa toda la señal antes de habilitar colisión."
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "Prefiere estados finitos a escalado ilimitado",
+      "body": "Asigna el tiempo a pocos estados probados —disponible, dormido, preparado, reforzado, resuelto— en vez de multiplicar vida sin límite."
+    },
+    {
+      "title": "Separa calendario de tiempo acumulado",
+      "body": "Una ventana anual pregunta por la fecha, un jefe que envejece mide desde el guardado y un jefe mundial consulta el servicio. Comparten interfaz, no almacenamiento ni fallos."
+    },
+    {
+      "title": "Instrumenta conciliaciones, no el reloj continuo",
+      "body": "Registra punto, versión, autoridad, valores, intervalos bruto y aplicado, límite, retroceso, zona, id, estado, duplicados, resumen, muertes, reintentos, final y anomalías."
+    }
+  ],
+  "story": {
+    "title": "Kern sigue contando cuando Tavi se marcha",
+    "body": "Tavi sella la cámara al mediodía. Cuando la campana fiable marca 19:00, la puerta acepta seis horas: crecen dos sellos y la runa de Kern alcanza el segundo nivel antes del primer pulso."
+  },
+  "adaptation": {
+    "title": "Haz la ausencia comprensible y no punitiva",
+    "body": "Muestra fechas e intervalos según la región, nombra la fuente, expón límites y caducidad, ofrece recordatorios opcionales y una gracia o ruta equivalente. Nunca exijas cambiar el reloj del sistema."
+  },
+  "distinction": {
+    "title": "Conciliación de reloj, no temporizador ni historial",
+    "body": "Un temporizador avanza con la simulación; el historial convierte decisiones anteriores. Aquí un punto guardado se compara con reloj o horario externo, con riesgos de autoridad, retroceso, límites, ventanas perdidas y duplicación."
+  },
+  "lensNotes": [
+    {
+      "id": "context-and-sequence",
+      "body": "Guardar, cerrar, volver y reintentar forman una secuencia que cruza sesiones."
+    },
+    {
+      "id": "progress-clarity",
+      "body": "El resumen une tiempo guardado, tiempo fiable, límite aplicado y cambios del jefe."
+    },
+    {
+      "id": "difficulty-rhythm",
+      "body": "Los niveles temporales preparan o resuelven, pero los estados limitados controlan la curva."
+    },
+    {
+      "id": "risk-reward",
+      "body": "Esperar puede abrir, ayudar, reforzar, quitar recompensa o resolver; el intercambio debe anticiparse."
+    },
+    {
+      "id": "rule-exception",
+      "body": "Retroceso, zona, modo sin conexión, mantenimiento, caducidad, copias, suspensión y reintentos necesitan reglas explícitas."
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "3D",
+      "game": "Metal Gear Solid 3: Snake Eater",
+      "boss": "The End",
+      "screenshot": "https://i.ytimg.com/vi/wy2cwRK_yQU/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=wy2cwRK_yQU&t=1s",
+      "video": "https://www.youtube.com/watch?v=wy2cwRK_yQU&t=1s",
+      "videoDurationSeconds": 150,
+      "body": "Guardar durante la batalla y volver tras suficiente tiempo real puede sustituir el duelo por la muerte de The End por vejez. El encuentro guardado se concilia y alcanza otro estado terminal."
+    },
+    {
+      "dimension": "2D",
+      "game": "Undertale",
+      "boss": "So Sorry",
+      "screenshot": "https://i.ytimg.com/vi/Icv2VlyJUio/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=Icv2VlyJUio&t=1s",
+      "video": "https://www.youtube.com/watch?v=Icv2VlyJUio&t=1s",
+      "videoDurationSeconds": 86,
+      "body": "En versiones originales, la sala del club usa el calendario del dispositivo para abrir a So Sorry el 10 de octubre a la hora indicada. Es un predicado de calendario, modificado en plataformas posteriores."
+    },
+    {
+      "dimension": "3D",
+      "game": "Guild Wars 2",
+      "boss": "Tequatl the Sunless",
+      "screenshot": "https://i.ytimg.com/vi/DWBHmeAJhT0/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=DWBHmeAJhT0&t=12s",
+      "video": "https://www.youtube.com/watch?v=DWBHmeAJhT0&t=12s",
+      "videoDurationSeconds": 400,
+      "body": "Tequatl aparece en un horario mundial compartido. El reloj continúa aunque un cliente esté cerrado, así que la disponibilidad procede del estado del servidor y no de un temporizador local."
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

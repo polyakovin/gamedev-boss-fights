@@ -1,0 +1,34 @@
+{
+  "id": "real-time-progression",
+  "number": 106,
+  "published": true,
+  "sourceLocale": "en",
+  "contentVersion": 1,
+  "animation": "real-time-progression",
+  "lenses": [
+    "context-and-sequence",
+    "progress-clarity",
+    "difficulty-rhythm",
+    "risk-reward",
+    "rule-exception"
+  ],
+  "related": ["persistent-progress", "fight-phase", "relocated-arena", "run-history-manifestation"],
+  "sources": [
+    {
+      "title": "Metal Gear Solid Delta still lets you wait for The End to die of old age — PC Gamer",
+      "url": "https://www.pcgamer.com/games/action/metal-gear-solid-delta-still-lets-you-wait-two-weeks-for-a-boss-to-die-of-old-age-or-mess-with-your-system-clock-to-cheat-him-out-of-his-final-fight/"
+    },
+    {
+      "title": "Art Club room — The Undertale Wiki",
+      "url": "https://undertale.wiki/w/Art_Club_Room"
+    },
+    {
+      "title": "The Megaserver System: World Bosses and Events — GuildWars2.com",
+      "url": "https://www.guildwars2.com/en-gb/news/the-megaserver-system-world-bosses-and-events/"
+    },
+    {
+      "title": "Boss Up: Boss Battle Design",
+      "url": "https://media.gdcvault.com/gdc2018/presentations/Keren_Itay_BossUp.pdf"
+    }
+  ]
+}

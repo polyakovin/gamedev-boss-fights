@@ -790,6 +790,55 @@ export function initializeBlueprint(widget) {
         frame.runHistoryManifestationManifestUnchanged,
       );
     }
+    if (mechanicId === 'real-time-progression') {
+      widget.dataset.blueprintRealTimeProgression = frame.realTimeProgressionState;
+      widget.dataset.blueprintRealTimeProgressionCheckpointId =
+        frame.realTimeProgressionCheckpointId;
+      widget.dataset.blueprintRealTimeProgressionReconciliationId =
+        frame.realTimeProgressionReconciliationId;
+      widget.dataset.blueprintRealTimeProgressionAuthority = frame.realTimeProgressionAuthority;
+      widget.dataset.blueprintRealTimeProgressionSavedHour = String(
+        frame.realTimeProgressionSavedHour,
+      );
+      widget.dataset.blueprintRealTimeProgressionCurrentHour = String(
+        frame.realTimeProgressionCurrentHour,
+      );
+      widget.dataset.blueprintRealTimeProgressionElapsedHours = String(
+        frame.realTimeProgressionElapsedHours,
+      );
+      widget.dataset.blueprintRealTimeProgressionAppliedHours = String(
+        frame.realTimeProgressionAppliedHours,
+      );
+      widget.dataset.blueprintRealTimeProgressionCapped = String(frame.realTimeProgressionCapped);
+      widget.dataset.blueprintRealTimeProgressionClosed = String(frame.realTimeProgressionClosed);
+      widget.dataset.blueprintRealTimeProgressionReconciled = String(
+        frame.realTimeProgressionReconciled,
+      );
+      widget.dataset.blueprintRealTimeProgressionEventCount = String(
+        frame.realTimeProgressionEventCount,
+      );
+      widget.dataset.blueprintRealTimeProgressionLiveTicks = String(
+        frame.realTimeProgressionLiveTicks,
+      );
+      widget.dataset.blueprintRealTimeProgressionClockRollback = String(
+        frame.realTimeProgressionClockRollback,
+      );
+      widget.dataset.blueprintRealTimeProgressionBossTier = String(
+        frame.realTimeProgressionBossTier,
+      );
+      widget.dataset.blueprintRealTimeProgressionOfflineHazardCount = String(
+        frame.realTimeProgressionOfflineHazardCount,
+      );
+      widget.dataset.blueprintRealTimeProgressionAttackActive = String(
+        frame.realTimeProgressionAttackActive,
+      );
+      widget.dataset.blueprintRealTimeProgressionRetryStable = String(
+        frame.realTimeProgressionRetryStable,
+      );
+      widget.dataset.blueprintRealTimeProgressionProgressionUnchanged = String(
+        frame.realTimeProgressionProgressionUnchanged,
+      );
+    }
     boss.setAttribute(
       'transform',
       `translate(${frame.boss.x} ${frame.boss.y}) scale(${frame.bossScale})`,

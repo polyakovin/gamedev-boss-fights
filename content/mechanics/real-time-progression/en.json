@@ -1,0 +1,138 @@
+{
+  "title": "Real-time progression",
+  "subtitle": "Reconcile elapsed wall-clock time into one legible encounter state",
+  "variant": "Named checkpoint · trusted clock · bounded elapsed time · idempotent return",
+  "summary": "The encounter changes while the game is closed because a saved deadline, calendar window, or server schedule continues in real time.",
+  "overview": "Real-time progression stores a versioned checkpoint, compares it with an explicit time authority on return, and applies the bounded difference exactly once. The result may change boss availability, phase, hazards, support, or resolution, but the player sees the reconciliation before combat resumes.",
+  "learning": "Define the time authority, checkpoint boundary, saved timestamp, deadline, offline cap, rollback rule, calendar and timezone semantics, reconciliation id, one-shot application, return summary, retry lifetime, server outage fallback, accessibility, and telemetry.",
+  "category": "States, resources, and scaling",
+  "readTime": "10 min",
+  "demo": {
+    "title": "Let six trusted offline hours wake Kern’s clock vault",
+    "timeline": "Saved-time reconciliation timeline",
+    "step": "Checkpoint, suspension, bounded reconciliation, stable retry",
+    "phaseNames": [
+      "Save one authoritative checkpoint",
+      "Reconcile elapsed time before danger",
+      "Keep the applied result stable"
+    ],
+    "phaseDescriptions": [
+      "At 0.72 seconds, the encounter stores a versioned noon checkpoint. The game closes at 1.02 seconds; the illustrated external clock reaches 19:00 without advancing combat simulation in the background.",
+      "At 1.72 seconds, one reconciliation compares the trusted clock with the saved value. Seven elapsed hours are capped to six, two floor seals and Kern’s second tier appear, and a return summary precedes the radial attack.",
+      "At 4.55 seconds, a retry reuses the same reconciliation id and applied six-hour result. It neither reads the wall clock each frame nor grants another offline tick; only a new named checkpoint may reconcile again."
+    ],
+    "boss": "Boss",
+    "player": "Player",
+    "danger": "Reading an untrusted clock every frame, accepting rollback, applying elapsed time twice, or returning directly into damage makes the system exploitable and unfair",
+    "locked": "The time authority, checkpoint id, saved timestamp, cap, calendar rules, reconciliation id, derived encounter state, retry lifetime, and outage fallback belong to encounter logic",
+    "safe": "Compare clocks once, clamp the interval, record one applied event, explain every change on return, telegraph new danger, and keep retries deterministic",
+    "reducedMotion": "Autoplay is disabled by reduced motion. Scrub across 0.40, 0.72, 1.02, 1.40, 1.72, 2.10, 2.35, 2.70, 2.90, 3.15, 3.50, 3.78, 4.20, 4.55, 4.95, and 5.35 seconds.",
+    "diagramDescription": "A saved noon clock and a trusted 19:00 clock reconcile into six capped offline units, two new floor seals, an empowered boss pulse, and an unchanged retry."
+  },
+  "steps": [
+    {
+      "title": "Which clock is allowed to change the encounter?",
+      "body": "Choose local monotonic time, signed server time, or a scheduled service as the authority. Store its provenance, timezone and calendar version with the checkpoint. Do not mix device time, play time, simulation ticks, and server deadlines without an explicit conversion and fallback."
+    },
+    {
+      "title": "How much elapsed time may be applied?",
+      "body": "Compute the difference once on resume, reject backward movement, clamp long absences, quantize only where the design needs tiers, and attach the result to a unique reconciliation id. Apply derived boss phases, hazards, or availability transactionally so a crash or reload cannot award the same interval twice."
+    },
+    {
+      "title": "How does the player re-enter the fight safely?",
+      "body": "Pause combat, show the saved time, current authority, elapsed interval, cap, and resulting changes, then give new geometry a normal telegraph. Keep that applied state through death and retry. Offer predictable behavior for offline devices, maintenance, clock rollback, daylight-saving changes, and expired events."
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "The device clock is treated as unquestionable truth",
+      "body": "Players can change it, platforms can report it differently, and daylight-saving rules can repeat or skip local times. Decide whether manipulation is harmless, detectable, or disallowed, and never punish ambiguous clock changes as cheating without a recoverable path."
+    },
+    {
+      "title": "The player loads directly into an altered attack",
+      "body": "A boss that advanced while the game was closed can surprise without becoming unreadable. Reconcile before simulation resumes, summarize the change, restore camera and controls, and run the full signal window before collision activates."
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "Prefer discrete authored states over unbounded scaling",
+      "body": "Map elapsed time to a few tested states—available, dormant, prepared, empowered, resolved—rather than multiplying health forever. Caps protect returning players, testing scope, save migrations, and the dramatic identity of the boss."
+    },
+    {
+      "title": "Separate calendar gates from elapsed progression",
+      "body": "A yearly encounter window asks whether now lies inside a calendar rule; an aging boss asks how much time passed since a save; a world boss schedule asks what the authoritative service is doing now. They may share UI, but their storage and failure modes differ."
+    },
+    {
+      "title": "Instrument reconciliation, not continuous wall time",
+      "body": "Record checkpoint id and version, authority, saved and current values, raw and applied intervals, caps, rollback, timezone, reconciliation id, resulting state, duplicate rejection, return summary, deaths after return, retries, completion, outage fallback, and clock anomalies."
+    }
+  ],
+  "story": {
+    "title": "Kern keeps turning after Tavi leaves",
+    "body": "Tavi seals the clock vault at noon. When the trusted bell reports 19:00, the doorway opens on six accepted hours: two floor seals have grown and Kern’s chest rune has reached its second tier. The vault explains the change before its first pulse."
+  },
+  "adaptation": {
+    "title": "Make absence understandable and non-punitive",
+    "body": "Show exact dates and durations in the player’s locale, name the clock source, expose caps and event expiry, support timezone-safe reminders without requiring them, and provide a grace window or equivalent path for missed schedules. Never require changing the system clock."
+  },
+  "distinction": {
+    "title": "Wall-clock reconciliation, not a combat timer or route history",
+    "body": "A combat timer advances only while its simulation runs. Run-history manifestation maps prior decisions into composition. Real-time progression compares a saved checkpoint with an external clock or schedule after absence; its defining risks are authority, rollback, caps, missed windows, and duplicate application."
+  },
+  "lensNotes": [
+    {
+      "id": "context-and-sequence",
+      "body": "The encounter crosses a boundary between sessions, so saving, closing, returning, and retrying are authored parts of its sequence."
+    },
+    {
+      "id": "progress-clarity",
+      "body": "A return summary connects saved time, trusted current time, applied cap, and every resulting boss-state change."
+    },
+    {
+      "id": "difficulty-rhythm",
+      "body": "Elapsed-time tiers can prepare or resolve a fight, but bounded states keep absence from creating an uncontrolled difficulty curve."
+    },
+    {
+      "id": "risk-reward",
+      "body": "Waiting may open a boss, add support, strengthen it, remove rewards, or resolve it; the trade must be disclosed before the player commits."
+    },
+    {
+      "id": "rule-exception",
+      "body": "Clock rollback, timezone changes, offline devices, server maintenance, expired events, save copies, suspension, and retries need explicit fallbacks."
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "3D",
+      "game": "Metal Gear Solid 3: Snake Eater",
+      "boss": "The End",
+      "screenshot": "https://i.ytimg.com/vi/wy2cwRK_yQU/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=wy2cwRK_yQU&t=1s",
+      "video": "https://www.youtube.com/watch?v=wy2cwRK_yQU&t=1s",
+      "videoDurationSeconds": 150,
+      "body": "Saving during The End’s battle and returning after enough real-world time can replace the sniper duel with his death from old age. The saved encounter is reconciled against elapsed wall time and resolves to a different terminal state."
+    },
+    {
+      "dimension": "2D",
+      "game": "Undertale",
+      "boss": "So Sorry",
+      "screenshot": "https://i.ytimg.com/vi/Icv2VlyJUio/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=Icv2VlyJUio&t=1s",
+      "video": "https://www.youtube.com/watch?v=Icv2VlyJUio&t=1s",
+      "videoDurationSeconds": 86,
+      "body": "The Art Club room uses the device calendar to gate So Sorry’s hidden encounter to October 10 at the specified hour on the original versions. This is a calendar predicate, not accumulated play time, and later platform versions deliberately change the hour requirement."
+    },
+    {
+      "dimension": "3D",
+      "game": "Guild Wars 2",
+      "boss": "Tequatl the Sunless",
+      "screenshot": "https://i.ytimg.com/vi/DWBHmeAJhT0/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=DWBHmeAJhT0&t=12s",
+      "video": "https://www.youtube.com/watch?v=DWBHmeAJhT0&t=12s",
+      "videoDurationSeconds": 400,
+      "body": "Tequatl is a world-boss event on an authoritative shared schedule. The event clock continues whether a particular client is open or closed, so encounter availability is reconciled from server world state rather than a player-owned local timer."
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}
