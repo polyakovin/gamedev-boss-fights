@@ -1968,6 +1968,10 @@ const smooth = (value) => {
   return t * t * (3 - 2 * t);
 };
 const pulse = (value) => (value <= 0 || value >= 1 ? 0 : Math.sin(value * Math.PI));
+const speed = (value) => {
+  const t = clamp(value);
+  return 6 * t * (1 - t);
+};
 const PULSE_BEAM_WINDOWS = Object.freeze([
   [0.08, 0.24],
   [0.48, 0.64],
@@ -4898,27 +4902,12 @@ function primitivesFor(spec, frame) {
       strikePulse(frame.time, spec.secondLock, 0.34),
     );
     return [
-      path('M 36 94 H 524 V 878 H 36 Z M 60 255 H 500 V 878 H 60 Z', 0.37, 'muted', 0, 0.56),
-      path(
-        'M 53 117 H 117 V 397 H 53 Z M 443 117 H 507 V 397 H 443 Z M 133 121 H 427 V 156 H 133 Z M 66 425 L 266 408 L 266 687 L 66 719 Z M 294 408 L 494 425 V 719 L 294 687 Z M 66 748 L 280 712 L 494 748 V 790 L 280 752 L 66 790 Z',
-        0.4,
-        'accent',
-        0,
-        0.56,
-      ),
-      path(
-        'M 180 527 L 205 560 L 180 593 L 155 560 Z M 390 527 L 415 560 L 390 593 L 365 560 Z M 72 828 L 280 796 L 488 828 V 842 L 280 812 L 72 842 Z',
-        0.32,
-        'safe',
-        0,
-        0.52,
-      ),
       line(
         boss.x,
         boss.y,
         frame.attackLockEnd.x,
         frame.attackLockEnd.y,
-        tracking ? 0.5 : 0,
+        tracking ? 0.42 : 0,
         'accent',
         5,
         '8 10',
@@ -4928,10 +4917,9 @@ function primitivesFor(spec, frame) {
         boss.y,
         frame.attackLockEnd.x,
         frame.attackLockEnd.y,
-        locked && !frame.dangerActive ? 0.72 : 0,
-        'safe',
-        7,
-        '14 8',
+        locked && !frame.dangerActive ? 0.64 : 0,
+        'accent',
+        5,
       ),
       line(
         boss.x,
@@ -4945,18 +4933,17 @@ function primitivesFor(spec, frame) {
       circle(
         frame.attackLockTarget.x,
         frame.attackLockTarget.y,
-        28,
-        tracking ? 0.58 : locked ? 0.88 : 0,
-        locked ? 'safe' : 'accent',
-        5,
-        0.05,
-        tracking ? '7 8' : '',
+        22,
+        tracking ? 0.45 : locked ? 0.78 : 0,
+        locked ? 'accent' : 'muted',
+        4,
+        0.04,
       ),
       path(
         `M ${frame.attackLockTarget.x - 13} ${frame.attackLockTarget.y} L ${frame.attackLockTarget.x + 13} ${frame.attackLockTarget.y} M ${frame.attackLockTarget.x} ${frame.attackLockTarget.y - 13} L ${frame.attackLockTarget.x} ${frame.attackLockTarget.y + 13}`,
-        tracking || locked ? 0.86 : 0,
-        locked ? 'safe' : 'accent',
-        5,
+        tracking || locked ? 0.36 : 0,
+        'accent',
+        3,
       ),
       circle(
         frame.attackLockTarget.x,
@@ -4966,7 +4953,7 @@ function primitivesFor(spec, frame) {
         'signal',
         6,
       ),
-      circle(boss.x, boss.y, 22, tracking || locked ? 0.88 : 0, 'accent', 5, 0.12),
+      circle(boss.x, boss.y, 22, 0, 'accent', 5, 0.12),
     ];
   }
   if (mode === 'active-phase') {
@@ -5274,22 +5261,9 @@ function primitivesFor(spec, frame) {
     const activeWindow = frame.time >= spec.active[0] && frame.time < spec.active[1];
     const impact = strikePulse(frame.time, spec.impactAt, 0.34);
     const strike = strikePulse(frame.time, spec.punishAt, 0.38);
-    const resetVisible = frame.time >= spec.openingEnd;
     return [
-      path(
-        'M 40 94 L 520 94 L 520 878 L 40 878 Z M 72 364 L 488 364 L 490 849 L 70 849 Z',
-        0.37,
-        'muted',
-        0,
-        0.5,
-      ),
-      path(
-        'M 36 378 L 86 378 L 86 829 L 36 829 Z M 474 378 L 524 378 L 524 829 L 474 829 Z',
-        0.74,
-        'accent',
-        0,
-        0.64,
-      ),
+      line(58, 370, 58, 840, 0.26, 'muted', 3),
+      line(502, 370, 502, 840, 0.26, 'muted', 3),
       path(
         'M 63 569 L 498 569 L 498 651 L 63 651 Z',
         signalVisible ? 0.52 + signalProgress * 0.24 : 0,
@@ -5313,11 +5287,10 @@ function primitivesFor(spec, frame) {
         0.86,
       ),
       path(
-        'M 28 238 L 532 238 L 520 301 L 40 301 Z M 28 301 L 73 301 L 73 568 L 28 568 Z M 487 301 L 532 301 L 532 568 L 487 568 Z',
-        resetVisible ? 0.66 : 0.34,
-        'accent',
-        0,
-        0.62,
+        `M ${spec.rightBoundary} ${spec.laneEnd[1]} L 525 270 L 35 270 L ${spec.leftBoundary} ${spec.laneStart[1]}`,
+        frame.time >= spec.openingEnd ? 0.22 : 0,
+        'muted',
+        3,
       ),
       line(frame.player.x, frame.player.y, boss.x, boss.y, strike, 'safe', 9),
       path(
@@ -5931,17 +5904,17 @@ function primitivesFor(spec, frame) {
         ((spec.player[1] - source.y) * (spec.pillar[0] - source.x)) / (spec.player[0] - source.x),
     };
     return [
-      path('M 48 92 L 512 92 L 520 880 L 42 880 Z', 0.52, 'muted', 0, 0.28),
-      path('M 53 107 L 271 101 L 278 456 L 45 478 Z', 0.32, 'muted', 0, 0.42),
-      path('M 283 101 L 506 106 L 516 480 L 283 458 Z', 0.35, 'muted', 0, 0.5),
-      path('M 48 489 L 274 468 L 281 867 L 43 874 Z', 0.28, 'muted', 0, 0.45),
-      path('M 283 469 L 513 490 L 518 871 L 287 868 Z', 0.33, 'muted', 0, 0.54),
+      path('M 48 92 L 512 92 L 520 880 L 42 880 Z', 0, 'muted', 0, 0.28),
+      path('M 53 107 L 271 101 L 278 456 L 45 478 Z', 0, 'muted', 0, 0.42),
+      path('M 283 101 L 506 106 L 516 480 L 283 458 Z', 0, 'muted', 0, 0.5),
+      path('M 48 489 L 274 468 L 281 867 L 43 874 Z', 0, 'muted', 0, 0.45),
+      path('M 283 469 L 513 490 L 518 871 L 287 868 Z', 0, 'muted', 0, 0.54),
       path(
         'M 355 500 L 535 505 L 535 805 L 355 660 Z',
-        shadowVisible ? (beamActive ? 0.56 : 0.42) : 0,
+        shadowVisible ? (beamActive ? 0.5 : 0.42) : 0,
         'safe',
         0,
-        beamActive ? 0.3 : 0.22,
+        beamActive ? 0.2 : 0.14,
       ),
       line(
         source.x,
@@ -5955,7 +5928,7 @@ function primitivesFor(spec, frame) {
       path('M 272 653 L 366 653 L 380 675 L 260 675 Z', 0.72, 'muted', 0, 0.74),
       path('M 285 520 L 355 520 L 355 659 L 285 659 Z', 0.98, 'muted', 0, 0.92),
       path('M 278 502 L 343 490 L 361 514 L 355 531 L 285 531 Z', 0.92, 'muted', 0, 0.78),
-      path('M 310 535 L 327 556 L 313 586 L 338 609 L 321 643', 0.58, 'accent', 5),
+      path('M 310 535 L 327 556 L 313 586 L 338 609 L 321 643', 0.26, 'accent', 3),
       path(
         `M ${source.x - 11} ${source.y - 17} L ${source.x + 12} ${source.y} L ${source.x - 11} ${source.y + 17} Z`,
         frame.time >= spec.lockAt ? 0.92 : 0.28,
@@ -9864,30 +9837,23 @@ function primitivesFor(spec, frame) {
   }
   if (mode === 'landing') {
     const landing = point(spec.landing);
-    const contact = phase === 1 ? clamp(1 - Math.abs(action - 0.52) / 0.2) : 0;
+    const contact = phase === 1 ? clamp(1 - Math.abs(action - 0.51) / 0.11) : 0;
     return [
-      path(
-        `M ${landing.x - 67} ${landing.y - 35} L ${landing.x - 42} ${landing.y - 23} L ${landing.x - 30} ${landing.y - 43} L ${landing.x - 9} ${landing.y - 14} L ${landing.x + 16} ${landing.y - 37} L ${landing.x + 36} ${landing.y - 9} L ${landing.x + 63} ${landing.y - 25} M ${landing.x - 62} ${landing.y + 33} L ${landing.x - 35} ${landing.y + 13} L ${landing.x - 14} ${landing.y + 39} L ${landing.x + 10} ${landing.y + 13} L ${landing.x + 34} ${landing.y + 38} L ${landing.x + 61} ${landing.y + 20}`,
-        phase === 0 ? 0.4 + prepare * 0.4 : phase === 1 ? 0.65 * (1 - action) : 0,
-        'accent',
-        6,
-      ),
       circle(
         landing.x,
         landing.y,
-        88,
-        phase === 0 ? 0.42 + prepare * 0.38 : phase === 1 ? 0.45 : 0,
+        mix(48, 88, phase === 0 ? prepare : 1),
+        phase === 0 ? 0.42 + 0.32 * prepare : phase === 1 ? 0.38 * (1 - action) : 0,
         'accent',
-        0,
-        0.22,
+        4,
+        0.06,
       ),
-      circle(landing.x, landing.y, 88, contact, 'signal', 0, 0.42),
+      circle(landing.x, landing.y, 88, contact, 'signal', 10, 0.17),
       path(
-        `M ${landing.x - 70} ${landing.y - 10} L ${landing.x - 39} ${landing.y - 17} L ${landing.x - 26} ${landing.y - 56} L ${landing.x - 8} ${landing.y - 22} L ${landing.x + 19} ${landing.y - 58} L ${landing.x + 26} ${landing.y - 15} L ${landing.x + 73} ${landing.y - 6} L ${landing.x + 33} ${landing.y + 10} L ${landing.x + 49} ${landing.y + 53} L ${landing.x + 10} ${landing.y + 24} L ${landing.x - 16} ${landing.y + 59} L ${landing.x - 24} ${landing.y + 22} L ${landing.x - 64} ${landing.y + 40} L ${landing.x - 46} ${landing.y + 5} Z`,
-        contact,
+        `M ${landing.x - 24} ${landing.y - 9} l -31 -15 M ${landing.x + 23} ${landing.y - 9} l 32 -16 M ${landing.x - 18} ${landing.y + 16} l -26 23 M ${landing.x + 19} ${landing.y + 16} l 28 24`,
+        contact * 0.7,
         'signal',
-        0,
-        0.46,
+        4,
       ),
     ];
   }
@@ -10392,7 +10358,7 @@ function primitivesFor(spec, frame) {
         boss.x,
         boss.y,
         spec.contactRadius,
-        phase === 1 ? 0.48 : 0.14 * split,
+        phase === 1 ? 0.18 : 0.08 * split,
         'signal',
         3,
         0.12,
@@ -11664,9 +11630,11 @@ export function blueprintFrame(id, time) {
   let boss = startBoss;
   if (spec.mode === 'landing') {
     const landing = point(spec.landing);
-    const control = { x: 260, y: 105 };
-    const flight = phase === 0 ? 0 : phase === 1 ? smooth(action / 0.52) : 1 - returnProgress;
-    boss = quadraticPoint(startBoss, control, landing, flight);
+    const flight = smooth(action / 0.51);
+    boss = {
+      x: mix(mix(startBoss.x, landing.x, flight), startBoss.x, returnProgress),
+      y: mix(mix(startBoss.y, landing.y, flight), startBoss.y, returnProgress),
+    };
   } else if (spec.mode === 'speed-change') {
     const x =
       phase === 0
@@ -13776,7 +13744,7 @@ export function blueprintFrame(id, time) {
     spec.mode === 'spiral'
       ? spiralShots(boss, t).some((shot) => shot.active)
       : spec.mode === 'landing'
-        ? phase === 1 && action >= 0.32 && action <= 0.72
+        ? phase === 1 && action >= 0.49 && action <= 0.64
         : spec.mode === 'pulse-beam'
           ? phase === 1 && pulseBeamIndex(action) >= 0
           : spec.mode === 'chain-explosions'
@@ -14086,19 +14054,27 @@ export function blueprintFrame(id, time) {
                                                       : -90,
     bossMotion: motion({
       gait:
-        spec.mode === 'chase-herding' ||
-        spec.mode === 'escape-phase' ||
-        spec.mode === 'relocated-arena' ||
-        spec.mode === 'sound-detection'
-          ? t * 6
-          : 0,
+        spec.mode === 'landing'
+          ? (Math.hypot(spec.landing[0] - spec.boss[0], spec.landing[1] - spec.boss[1]) *
+              returnProgress) /
+            32
+          : spec.mode === 'chase-herding' ||
+              spec.mode === 'escape-phase' ||
+              spec.mode === 'relocated-arena' ||
+              spec.mode === 'sound-detection'
+            ? t * 6
+            : 0,
       stride:
-        (spec.mode === 'chase-herding' && t >= spec.active[0] && t < spec.active[1]) ||
-        (spec.mode === 'escape-phase' && t >= spec.escape[0] && t < spec.escape[1]) ||
-        (spec.mode === 'sound-detection' && t >= spec.investigate[0] && t < spec.investigate[1]) ||
-        (spec.mode === 'relocated-arena' && t >= spec.resetAt)
-          ? 0.72
-          : 0,
+        spec.mode === 'landing'
+          ? 0.65 * speed((t - 4.65) / 1.2)
+          : (spec.mode === 'chase-herding' && t >= spec.active[0] && t < spec.active[1]) ||
+              (spec.mode === 'escape-phase' && t >= spec.escape[0] && t < spec.escape[1]) ||
+              (spec.mode === 'sound-detection' &&
+                t >= spec.investigate[0] &&
+                t < spec.investigate[1]) ||
+              (spec.mode === 'relocated-arena' && t >= spec.resetAt)
+            ? 0.72
+            : 0,
       lean:
         spec.mode === 'player-controlled-boss'
           ? -0.22 * smooth((t - spec.actionQueuedAt) / (spec.active[0] - spec.actionQueuedAt)) +
@@ -14162,7 +14138,7 @@ export function blueprintFrame(id, time) {
         spec.mode === 'landing'
           ? phase === 0
             ? 0.42 * prepare
-            : 0
+            : 0.62 * strikePulse(t, 3, 0.32)
           : spec.mode === 'wind-up'
             ? 0.34 * windUpProgress(t)
             : spec.mode === 'recovery'
@@ -14195,10 +14171,11 @@ export function blueprintFrame(id, time) {
                               : 0.2 * prepare,
       lift:
         spec.mode === 'landing' && phase === 1
-          ? pulse(clamp(action / 0.52))
+          ? pulse(clamp(action / 0.51))
           : spec.mode === 'relocated-arena' && t >= spec.transfer[0] && t < spec.transfer[1]
             ? pulse(smooth((t - spec.transfer[0]) / (spec.transfer[1] - spec.transfer[0])))
             : 0,
+      altitude: spec.mode === 'landing' && phase === 1 ? 150 * pulse(clamp(action / 0.51)) : 0,
       attack:
         spec.mode === 'speed-change'
           ? dangerActive
@@ -14605,6 +14582,18 @@ export function blueprintFrame(id, time) {
                                                                         : 0,
     }),
   };
+  if (spec.mode === 'decoy') {
+    const split = smooth(t / BLUEPRINT_PHASE_ENDS[0]);
+    const walkBack = speed((t - 4.65) / 1.2);
+    const separation = Math.hypot(spec.real[0] - spec.boss[0], spec.real[1] - spec.boss[1]);
+    frame.bossMotion.gait = (separation * (split + returnProgress)) / 28;
+    frame.bossMotion.stride = Math.min(1, 0.62 * Math.max(speed(t / 1.6), walkBack));
+  }
+  if (spec.mode === 'boundary-attack') {
+    const crossing = smooth((t - spec.active[0]) / (spec.active[1] - spec.active[0]));
+    frame.bossMotion.gait = (Math.abs(spec.impactPosition[0] - spec.boss[0]) * crossing) / 38;
+    frame.bossMotion.stride = 0.6 * speed((t - spec.active[0]) / (spec.active[1] - spec.active[0]));
+  }
   if (spec.mode === 'directional-shield') {
     frame.frontStrike =
       strikePulse(t, spec.frontStrike) > 0.5 && directionalShieldOutcome(t, player) === 'blocked';
@@ -16230,7 +16219,7 @@ export function blueprintFrame(id, time) {
   frame.playerSafe = pointClearsThreat(spec, frame, player);
   frame.bossLabel = {
     x: boss.x,
-    y: boss.y + BLUEPRINT_BOSS_LABEL_OFFSET_Y * frame.bossScale,
+    y: boss.y + BLUEPRINT_BOSS_LABEL_OFFSET_Y * frame.bossScale - (frame.bossMotion.altitude ?? 0),
   };
   frame.playerLabel = {
     x: spec.mode === 'party-size-scaling' ? player.x - 85 : player.x,

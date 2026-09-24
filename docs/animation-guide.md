@@ -70,6 +70,7 @@ The current shared rig is created with `createCharacterAnimator(element, kind)` 
 | `stride`                                      | Locomotion intensity in [0, 1]; zero when planted.                                                                                    |
 | `lean`                                        | Signed pose weight in [-1, 1].                                                                                                        |
 | `crouch`, `lift`, `attack`, `impact`, `dodge` | Pose weights in [0, 1]. They describe presentation, not collision or invulnerability permissions.                                     |
+| `altitude`                                    | Optional height in scene units for an airborne body. The shared shadow stays on the ground and shrinks as height increases.           |
 
 Keep `data-rig-part` names unique inside each character instance. Animate repeated entities through separate instance roots. Use the same ground-contact mapping for feet, shadows, dust, and impacts; do not copy a current sprite's pixel offset into a differently scaled character without conversion.
 

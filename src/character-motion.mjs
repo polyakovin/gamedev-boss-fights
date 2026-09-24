@@ -23,6 +23,7 @@ export function createCharacterAnimator(element, kind = 'tavi') {
     const lean = clamp(finite(motion.lean), -1, 1);
     const crouch = clamp(finite(motion.crouch), 0, 1);
     const lift = clamp(finite(motion.lift), 0, 1);
+    const altitude = clamp(finite(motion.altitude), 0, 300);
     const attack = clamp(finite(motion.attack), 0, 1);
     const impact = clamp(finite(motion.impact), 0, 1);
     const dodge = clamp(finite(motion.dodge), 0, 1);
@@ -53,12 +54,12 @@ export function createCharacterAnimator(element, kind = 'tavi') {
       parts[name]?.setAttribute('opacity', String(number(rear)));
     }
     transform('facing', `scale(${number(orientation * width)} 1)`);
-    transform('elevation', translate(0, -elevation));
+    transform('elevation', translate(0, -elevation - altitude));
     transform(
       'shadow',
-      `translate(0 ${number(36 * lift * 0.12)}) scale(${number(1 - lift * 0.12)} ${number(1 - lift * 0.12)})`,
+      `translate(0 ${number(36 * lift * 0.12)}) scale(${number(1 - lift * 0.12 - altitude * 0.0015)} ${number(1 - lift * 0.12 - altitude * 0.0015)})`,
     );
-    parts.shadow?.setAttribute('opacity', String(number(1 - lift * 0.32)));
+    parts.shadow?.setAttribute('opacity', String(number(1 - lift * 0.32 - altitude * 0.002)));
     transform(
       'body',
       `${translate(lean * 3 + dodge * 3, compression - bob)} ${rotate(tilt, 0, 24)} scale(1 ${number(1 - crouch * 0.055 - impact * 0.04)})`,

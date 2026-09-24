@@ -76,18 +76,30 @@ export function initializePattern(widget) {
       [420, 610],
     ];
     minions.forEach((minion, index) => {
-      const progress = Math.max(0, Math.min(1, frame.summonProgress * 1.4 - index * 0.18));
+      const spawn = Math.max(0, Math.min(1, frame.summonProgress * 1.4 - index * 0.18));
+      const progress = spawn * (1 - frame.summonRecall);
       const x = starts[index][0] + (ends[index][0] - starts[index][0]) * progress;
       const y = starts[index][1] + (ends[index][1] - starts[index][1]) * progress;
-      minion.setAttribute('transform', `translate(${x} ${y}) scale(.38)`);
-      minion.setAttribute('opacity', Math.min(1, progress * 12));
+      minion.setAttribute(
+        'transform',
+        `translate(${x} ${y}) scale(${0.54 * (1 - frame.summonRecall * 0.35)})`,
+      );
+      minion.setAttribute('opacity', Math.min(1, spawn * 12) * (1 - frame.summonRecall));
       animateMinions[index](
         {
-          gait: progress * 32,
-          stride: Math.min(1, progress * 8, (1 - progress) * 10) * 0.85,
-          crouch: 1 - Math.min(1, progress * 5),
+          gait: spawn * 32 + frame.summonRecall * 24,
+          stride: Math.max(
+            Math.min(1, spawn * 8, (1 - spawn) * 10) * 0.85 * (1 - frame.summonRecall),
+            0.68 * Math.sin(Math.PI * frame.summonRecall),
+          ),
+          crouch: 1 - Math.min(1, spawn * 5),
         },
-        (Math.atan2(frame.player.y - y, frame.player.x - x) * 180) / Math.PI,
+        (Math.atan2(
+          frame.player.y * (1 - frame.summonRecall) + starts[index][1] * frame.summonRecall - y,
+          frame.player.x * (1 - frame.summonRecall) + starts[index][0] * frame.summonRecall - x,
+        ) *
+          180) /
+          Math.PI,
       );
     });
     volley.setAttribute('opacity', String(frame.volleyOpacity));

@@ -177,7 +177,7 @@ export function initializeCharge(widget) {
     );
     path.setAttribute(
       'opacity',
-      String((frame.phase === 1 ? 1 : frame.phase === 2 ? 0.45 : 0) * frame.overlayOpacity),
+      String((frame.phase === 1 ? 0.28 : frame.phase === 2 ? 0.12 : 0) * frame.overlayOpacity),
     );
     bossLabel.setAttribute('x', frame.bossLabel.x);
     bossLabel.setAttribute('y', frame.bossLabel.y);

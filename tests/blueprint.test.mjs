@@ -499,12 +499,17 @@ test('landing jump locks its destination before takeoff and resolves the marked 
   assert.equal(signal.primitives[1].x, impact.primitives[1].x);
   assert.equal(signal.primitives[1].y, impact.primitives[1].y);
   assert.ok(flight.bossMotion.lift > 0.5);
+  assert.ok(flight.bossMotion.altitude > 120, 'the body lifts clear of its ground shadow');
+  assert.equal(flight.dangerActive, false, 'the landing does not hit during travel');
   assert.notDeepEqual(flight.boss, signal.boss);
   assert.equal(impact.dangerActive, true);
+  assert.equal(impact.bossMotion.altitude, 0);
   assert.equal(blueprintPointSafe('landing-jump', 3, { x: 365, y: 600 }), false);
   assert.equal(impact.playerSafe, true);
   assert.equal(recovery.dangerActive, false);
   assert.ok(recovery.boss.x < impact.boss.x);
+  assert.ok(recovery.bossMotion.stride > 0, 'the boss walks back after planting');
+  assert.equal(blueprintFrame('landing-jump', 5.9).bossMotion.stride, 0);
 });
 
 test('lunge drives an armored body down a fixed stone lane with room for the full player', () => {
@@ -954,6 +959,7 @@ test('threat generator announces a fixed source, emits separate motes, and ends 
 test('decoy separates identity from contact, lets Tavi choose the real body, and fades cleanly', () => {
   const id = 'decoy';
   const signal = blueprintFrame(id, 1.59);
+  assert.ok(blueprintFrame(id, 0.8).bossMotion.stride > 0);
   const action = blueprintFrame(id, 3);
   const recovery = blueprintFrame(id, 5.9);
   assert.equal(signal.dangerActive, false);
@@ -1949,6 +1955,7 @@ test('boundary attack names one edge, crosses its fixed lane, and returns outsid
 
   const active = blueprintFrame(id, 1.95);
   assert.equal(active.boundaryCrossingActive, true);
+  assert.ok(active.bossMotion.stride > 0, 'the entering boss has distance-driven footwork');
   assert.equal(active.playerSafe, true);
   assert.ok(active.primitives[3].opacity > 0.9, 'the same fixed lane becomes solid');
   assert.equal(blueprintPointSafe(id, 1.95, { x: 300, y: 610 }), false);

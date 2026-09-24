@@ -73,7 +73,7 @@ test('the boss label stays above the boss throughout every pattern', () => {
   }
 });
 
-test('summon uses solid ground seals and shared minion art in its preview', () => {
+test('summon keeps only gameplay portals and shared minion art in its preview', () => {
   const page = renderPattern(
     {
       title: 'Summon',
@@ -89,7 +89,8 @@ test('summon uses solid ground seals and shared minion art in its preview', () =
     'summon',
   );
   const preview = renderPatternThumbnail('summon', 'summon-preview');
-  assert.match(page, /data-pattern-summon-scene/);
+  assert.doesNotMatch(page, /data-pattern-summon-scene/);
+  assert.match(page, /data-pattern-summon/);
   assert.doesNotMatch(page, /stroke-dasharray="7 7"/);
   assert.equal((preview.match(/data-character-art-preview="kern-summon"/g) ?? []).length, 3);
 });

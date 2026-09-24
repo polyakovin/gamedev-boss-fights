@@ -1482,7 +1482,7 @@ test('attack lock follows Tavi before capture and preserves two committed rays',
   await seek(800);
   await expect(widget).toHaveAttribute('data-blueprint-attack-lock', 'tracking-first');
   await expect(widget).toHaveAttribute('data-blueprint-aim-locked', 'false');
-  await expect(widget.locator('[data-blueprint-primitive="3"] line')).not.toHaveAttribute(
+  await expect(widget.locator('[data-blueprint-primitive="0"] line')).not.toHaveAttribute(
     'opacity',
     '0',
   );
@@ -1492,7 +1492,7 @@ test('attack lock follows Tavi before capture and preserves two committed rays',
   await expect(widget).toHaveAttribute('data-blueprint-aim-locked', 'true');
   await expect(widget).toHaveAttribute('data-blueprint-aim-x', '390.0');
   await expect(widget).toHaveAttribute('data-blueprint-aim-y', '560.0');
-  await expect(widget.locator('[data-blueprint-primitive="4"] line')).not.toHaveAttribute(
+  await expect(widget.locator('[data-blueprint-primitive="1"] line')).not.toHaveAttribute(
     'opacity',
     '0',
   );
@@ -1500,7 +1500,7 @@ test('attack lock follows Tavi before capture and preserves two committed rays',
   await seek(1900);
   await expect(widget).toHaveAttribute('data-blueprint-attack-lock', 'released-danger');
   await expect(widget).toHaveAttribute('data-blueprint-outcome', 'safe');
-  await expect(widget.locator('[data-blueprint-primitive="5"] line')).not.toHaveAttribute(
+  await expect(widget.locator('[data-blueprint-primitive="2"] line')).not.toHaveAttribute(
     'opacity',
     '0',
   );
@@ -1544,7 +1544,7 @@ test('attack lock keeps tracking, captured rays, and actors inside dark RTL mobi
         '[data-blueprint-boss-label]',
         '[data-blueprint-player-label]',
         '[data-blueprint-primitive="3"]',
-        '[data-blueprint-primitive="6"]',
+        '[data-blueprint-primitive="0"]',
       ].map((selector) => {
         const rect = element.querySelector(selector).getBoundingClientRect();
         return (
@@ -2004,7 +2004,12 @@ test('boundary attack signals one edge before its fixed crossing and visible out
     await widget
       .locator('[data-blueprint-primitives]')
       .evaluate((element) => element.getBBox().height),
-  ).toBeGreaterThan(760);
+  ).toBeGreaterThan(450);
+  expect(
+    await widget
+      .locator('[data-blueprint-primitives]')
+      .evaluate((element) => element.getBBox().height),
+  ).toBeLessThan(650);
   await expect(widget.locator('[data-blueprint-primitives] [stroke-dasharray]')).toHaveCount(0);
 
   await seek(900);
