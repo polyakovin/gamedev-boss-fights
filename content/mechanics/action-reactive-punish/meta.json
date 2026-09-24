@@ -1,0 +1,28 @@
+{
+  "id": "action-reactive-punish",
+  "number": 104,
+  "published": true,
+  "sourceLocale": "en",
+  "contentVersion": 1,
+  "animation": "action-reactive-punish",
+  "lenses": ["telegraphing", "commitment", "counterplay", "risk-reward", "rule-exception"],
+  "related": ["self-heal-cast", "recovery", "counter-stance", "attack-lock"],
+  "sources": [
+    {
+      "title": "Troupe Master Grimm — Hollow Knight Wiki",
+      "url": "https://hollowknight.wiki/w/Grimm"
+    },
+    {
+      "title": "Genichiro, Way of Tomoe boss guide — GameSpot",
+      "url": "https://www.gamespot.com/articles/sekiro-genichiro-way-of-tomoe-boss-battle-guide-ho/1100-6465884/"
+    },
+    {
+      "title": "How to Beat the Godskin Apostle — EIP Gaming",
+      "url": "https://eip.gg/elden-ring/guides/how-to-beat-the-godskin-apostle/"
+    },
+    {
+      "title": "Why Elden Ring enemies react when you heal — GamesRadar+",
+      "url": "https://www.gamesradar.com/heres-why-elden-ring-enemies-stab-you-every-time-you-try-to-heal/"
+    }
+  ]
+}
