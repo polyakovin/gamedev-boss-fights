@@ -3791,6 +3791,12 @@ test('on-hit healing separates a blocked contact from applied damage and ignores
   expect(
     (await widget.locator('.blueprint-demo__canvas').boundingBox()).height,
   ).toBeGreaterThanOrEqual(812);
+  await seek(1200);
+  const canvas = await widget.locator('.blueprint-demo__canvas').boundingBox();
+  const player = await widget.locator('[data-blueprint-player]').boundingBox();
+  const playerLabel = await widget.locator('[data-blueprint-player-label]').boundingBox();
+  expect(player.x + player.width).toBeLessThanOrEqual(canvas.x + canvas.width);
+  expect(playerLabel.x + playerLabel.width).toBeLessThanOrEqual(canvas.x + canvas.width);
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
 });
 
