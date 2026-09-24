@@ -1335,7 +1335,7 @@ test('absorption stores two eligible hits, spends the charge on one marked ring,
   const before = blueprintFrame(id, 3.3);
   assert.equal(before.absorptionState, 'charged');
   assert.equal(before.absorptionCharge, 2);
-  assert.ok(before.primitives[8].opacity > 0, 'the final radius is previewed');
+  assert.ok(before.primitives[11].opacity > 0, 'the final radius is previewed');
   for (let time = 3.55; time < 3.94; time += 0.025) {
     const frame = blueprintFrame(id, time);
     assert.equal(frame.dangerActive, true);

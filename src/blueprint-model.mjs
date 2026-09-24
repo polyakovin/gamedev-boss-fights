@@ -3469,14 +3469,27 @@ function primitivesFor(spec, frame) {
     const live = frame.dangerActive;
     const openHit = strikePulse(frame.time, spec.openStrike, 0.3);
     return [
-      circle(
-        core.x,
-        core.y,
-        30,
+      path('M 38 94 H 522 V 878 H 38 Z M 58 259 H 502 V 878 H 58 Z', 0.36, 'muted', 0, 0.56),
+      path(
+        'M 55 116 H 133 V 359 H 55 Z M 427 116 H 505 V 359 H 427 Z M 148 120 H 412 V 154 H 148 Z M 67 550 L 280 524 L 493 550 V 584 L 280 553 L 67 584 Z M 67 759 L 280 726 L 493 759 V 803 L 280 765 L 67 803 Z',
+        0.4,
+        'accent',
+        0,
+        0.58,
+      ),
+      path(
+        'M 70 661 L 181 635 L 193 650 L 70 682 Z M 490 661 L 379 635 L 367 650 L 490 682 Z M 200 853 L 280 831 L 360 853 V 865 L 280 844 L 200 865 Z',
+        0.36,
+        'muted',
+        0,
+        0.74,
+      ),
+      path(
+        `M ${core.x} ${core.y - 29} L ${core.x + 26} ${core.y - 14} L ${core.x + 26} ${core.y + 14} L ${core.x} ${core.y + 29} L ${core.x - 26} ${core.y + 14} L ${core.x - 26} ${core.y - 14} Z`,
         accepting || primed ? 0.94 : 0.34,
         accepting || primed ? 'accent' : 'muted',
-        6,
-        0.1,
+        0,
+        0.68,
       ),
       circle(core.x - 10, core.y - 4, 6, charge >= 1 ? 0.96 : 0.25, 'signal', 3, 0.52),
       circle(core.x + 10, core.y - 4, 6, charge >= 2 ? 0.96 : 0.25, 'signal', 3, 0.52),

@@ -1001,9 +1001,10 @@ test('absorption visibly counts two sword pulses, announces a wide release, and 
   await expect(page.locator('.wip-badge, .draft-profile')).toHaveCount(0);
   await expect(page.locator('.game-example')).toHaveCount(3);
   await expect(widget).toHaveAttribute('data-blueprint-playing', 'false');
+  await expect(widget).toHaveAttribute('data-blueprint-full-height', 'true');
   await seek(1400);
   await expect(widget).toHaveAttribute('data-blueprint-charge', '0');
-  await expect(widget.locator('[data-blueprint-primitive="4"] circle')).not.toHaveAttribute(
+  await expect(widget.locator('[data-blueprint-primitive="7"] circle')).not.toHaveAttribute(
     'opacity',
     '0',
   );
@@ -1015,7 +1016,7 @@ test('absorption visibly counts two sword pulses, announces a wide release, and 
   await expect(widget).toHaveAttribute('data-blueprint-charge', '2');
   await seek(3280);
   await expect(widget).toHaveAttribute('data-blueprint-absorption', 'charged');
-  await expect(widget.locator('[data-blueprint-primitive="8"] circle')).not.toHaveAttribute(
+  await expect(widget.locator('[data-blueprint-primitive="11"] circle')).not.toHaveAttribute(
     'opacity',
     '0',
   );
@@ -1023,7 +1024,7 @@ test('absorption visibly counts two sword pulses, announces a wide release, and 
   await expect(widget).toHaveAttribute('data-blueprint-absorption', 'empowered-release');
   await expect(widget).toHaveAttribute('data-blueprint-charge', '0');
   await expect(widget).toHaveAttribute('data-blueprint-outcome', 'safe');
-  await expect(widget.locator('[data-blueprint-primitive="9"] circle')).not.toHaveAttribute(
+  await expect(widget.locator('[data-blueprint-primitive="12"] circle')).not.toHaveAttribute(
     'opacity',
     '0',
   );
@@ -1054,7 +1055,7 @@ test('absorption keeps both actors, the core, and the wide preview inside dark R
         '[data-blueprint-player]',
         '[data-blueprint-boss-label]',
         '[data-blueprint-player-label]',
-        '[data-blueprint-primitive="0"]',
+        '[data-blueprint-primitive="3"]',
       ].map((selector) => {
         const rect = element.querySelector(selector).getBoundingClientRect();
         return (
