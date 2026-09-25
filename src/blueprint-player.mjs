@@ -66,6 +66,7 @@ export function initializeBlueprint(widget) {
   const gazeFacingLabel = find('[data-blueprint-gaze-facing]');
   const proximityHealthLabel = find('[data-blueprint-proximity-health]');
   const proximityReadout = find('[data-blueprint-proximity-readout]');
+  const tankHealthLabels = [...widget.querySelectorAll('[data-blueprint-tank-health]')];
   const partnerLabel = find('[data-blueprint-partner-label]');
   const playerLabel = find('[data-blueprint-player-label]');
   const primitives = [...widget.querySelectorAll('[data-blueprint-primitive]')];
@@ -1275,6 +1276,18 @@ export function initializeBlueprint(widget) {
           ? `${Math.round(frame.proximityCurrentDistance)} → ${frame.proximityCurrentDamage}`
           : '';
     }
+    if (mechanicId === 'tank-swap') {
+      widget.dataset.blueprintTankSwap = frame.tankSwapState;
+      widget.dataset.blueprintTankOwner = frame.tankSwapOwner;
+      widget.dataset.blueprintTankHitId = frame.tankSwapHitId;
+      widget.dataset.blueprintTankHealth = frame.tankSwapHealth.join(',');
+      widget.dataset.blueprintTankVulnerability = frame.tankSwapVulnerability.join(',');
+      widget.dataset.blueprintTankFailedDamage = String(frame.tankSwapFailedDamage);
+      widget.dataset.blueprintTankApplicationCount = String(frame.tankSwapApplicationCount);
+      widget.dataset.blueprintTankRetry = String(frame.tankSwapRetry);
+      for (const label of tankHealthLabels)
+        label.textContent = `${frame.tankSwapHealth[Number(label.dataset.blueprintTankHealth)]} / 100`;
+    }
     boss.setAttribute(
       'transform',
       `translate(${frame.boss.x} ${frame.boss.y})${frame.bossRotation ? ` rotate(${frame.bossRotation})` : ''} scale(${frame.bossScale})`,
@@ -1297,15 +1310,16 @@ export function initializeBlueprint(widget) {
     );
     for (const [index, ally] of allies.entries()) {
       const position = (frame.stackDamageAllies ??
-        frame.personalSpreadPositions?.slice(1) ?? [frame.towerSoakAlly ?? frame.entityTetherAlly])[
-        index
-      ];
+        frame.personalSpreadPositions?.slice(1) ?? [
+          frame.towerSoakAlly ?? frame.entityTetherAlly ?? frame.tankSwapAlly,
+        ])[index];
       ally.setAttribute('transform', `translate(${position.x} ${position.y}) scale(.78)`);
       animateAllies[index](
         frame.stackDamageAllyMotion ??
           frame.personalSpreadAllyMotion ??
           frame.towerSoakAllyMotion ??
-          frame.entityTetherAllyMotion,
+          frame.entityTetherAllyMotion ??
+          frame.tankSwapAllyMotion,
         frame.playerFacing,
       );
     }

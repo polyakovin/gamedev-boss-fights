@@ -1,0 +1,119 @@
+{
+  "title": "重击与目标交接",
+  "subtitle": "在当前防御者变得脆弱后转移首领的注意",
+  "variant": "目标标记 · 首次重击 · 易伤 · 可见交接 · 再次重击",
+  "summary": "强力攻击使当前目标变得脆弱，下一击需要由另一位防御者承接。",
+  "overview": "目标交接是指当前防御者承受重击或减益后，让另一人接管首领持续的攻击目标。必须清楚标记目标，并留出可执行的交接窗口；否则重复攻击会惩罚无法改变目标的玩家。演示同时呈现目标变化、两人的生命值以及未交接时的结果。",
+  "learning": "确定目标归属、接管时刻、易伤持续时间、命中标识、新旧目标的伤害、失败后的恢复方式和交接提示。",
+  "category": "协作配合",
+  "readTime": "10 分钟",
+  "demo": {
+    "title": "在两位防御者间转移克恩的注意",
+    "timeline": "目标交接时间线",
+    "step": "第二击追随新目标，而非旧标记",
+    "phaseNames": ["标记第一位防御者", "施加易伤并交接", "攻击新目标并重置"],
+    "phaseDescriptions": [
+      "0.70 秒时克恩标记防御者 1。2.20 秒的重击只结算一次，造成 35 点伤害，留下 65 点生命和一层易伤。",
+      "2.85 秒时出现交接信号。第一人退开，第二人接近；3.36 秒时目标归属改变。焦点线和头顶标记在下次预警前移向新目标。",
+      "4.55 秒的第二击对防御者 2 造成 35 点伤害，两人都剩 65 点生命。若仍锁定易伤的第一人，额外 95 点伤害足以使其倒下。5.30 秒明确重试，恢复位置、生命与层数。"
+    ],
+    "boss": "首领",
+    "player": "玩家",
+    "danger": "再次击中易伤的原目标会致命",
+    "locked": "两次重击有不同命中 ID；首击施加一层易伤，第二击记录当时的目标",
+    "safe": "第二位防御者及时接管，第一位有空间撤离",
+    "reducedMotion": "减少动态效果时关闭自动播放。可定位到 0.70、2.30、3.20、3.55、4.65 和 5.55 秒。",
+    "diagramDescription": "克恩标记两名防御者中的第一人。首击扣除 35 点生命并施加易伤。第二人靠近，在下一击前获得焦点标记。两人最终各剩 65 点生命；若未交接，第一人会再受 95 点伤害并倒下。明确重试会重置双方。"
+  },
+  "steps": [
+    {
+      "title": "究竟交接什么？",
+      "body": "以稳定的目标 ID 记录首领唯一的持续目标。先显示原目标，再显示接管动作和交接确认。明确攻击在预警、施法结束还是接触时锁定目标；此演示让每次命中分别记录当时的归属，而不是每帧重新选择。"
+    },
+    {
+      "title": "为什么重复命中危险？",
+      "body": "第一击造成 35 点伤害并施加一层易伤。新目标承受第二击时仅失去 35 点；原目标只剩 65 点，却会承受 95 点。每个命中 ID 只对一个目标结算一次，拒绝重复回调，并规定防护与净化的先后顺序。"
+    },
+    {
+      "title": "交接是否可执行、可辨认？",
+      "body": "在下次锁定前给第二人普通移动和接管的时间。测试迟到、人员缺席、同时接管、效果到期、断线与重置。目标、层数和双方生命值不能只靠颜色或语音来表达。"
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "暗中改变目标",
+      "body": "隐藏的仇恨变化会让第二击显得随机。交接时同步移动焦点标记与连线，并保持足够久以便确认。"
+    },
+    {
+      "title": "把护卫当成交接",
+      "body": "把单次攻击转给保护者，并不一定改变首领之后的目标。分别建模攻击拦截与持续仇恨，并说明关卡究竟要求哪一种。"
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "计算交接时间",
+      "body": "一起调整攻击间隔、接管延迟、步行距离与减益时长。第二人不应被迫使用未说明的冲刺才能到位。"
+    },
+    {
+      "title": "规定锁定与失败规则",
+      "body": "说明锁定之后的接管影响当前攻击还是下一次攻击。处理目标死亡或缺席，也避免连续抢目标掩盖危险。"
+    },
+    {
+      "title": "记录两次独立命中",
+      "body": "记录战斗和命中 ID、锁定时的归属、目标、易伤前后值、伤害、生命及接管时间。回放同一时刻应得到相同归属，且不得重复扣血。"
+    }
+  ],
+  "story": {
+    "title": "两位防御者，一个视线",
+    "body": "克恩蓄力攻击被标记的防御者。第一人身边留下易伤符文，第二人上前吸引克恩。下一击落在新目标身上，第一人则沿清晰的路径撤离。"
+  },
+  "adaptation": {
+    "title": "不依赖团队界面也能看清分工",
+    "body": "组合会移动的目标符号、各自的生命数字、易伤环、命中动作和清楚的接管路径。规则可采用嘲讽、位置仇恨或脚本交接，但必须明确展示所选方式。"
+  },
+  "distinction": {
+    "title": "持续目标与单次攻击转向",
+    "body": "目标交接改变首领之后持续攻击的人；护卫技能可能只拦截一次打向原目标的攻击。Darkest Dungeon 的 Swine Prince 就是对照：Wilbur 标记英雄，Guard 可以转移攻击，但不是持续仇恨交接。"
+  },
+  "lensNotes": [
+    { "id": "telegraphing", "body": "焦点符号在每次重击前说明目标。" },
+    { "id": "counterplay", "body": "可到达的接管窗口让另一位防御者承受重复攻击。" },
+    { "id": "difficulty-rhythm", "body": "第一击介绍易伤，之后的停顿提供交接时间。" },
+    { "id": "risk-reward", "body": "维持原目标可保持位置，但会使下一击致命。" },
+    { "id": "progress-clarity", "body": "双生命条和移动的标记清楚呈现交接与重置。" }
+  ],
+  "examples": [
+    {
+      "dimension": "3D",
+      "game": "Final Fantasy XIV",
+      "boss": "Kokytos",
+      "screenshot": "https://i.ytimg.com/vi/rnKHQtYCuAk/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=rnKHQtYCuAk",
+      "video": "https://www.youtube.com/watch?v=rnKHQtYCuAk&t=240s",
+      "videoDurationSeconds": 1096,
+      "body": "在 Anabaseios: The Ninth Circle (Savage) 中，Ascendant Fist 重击一名坦克并施加物理易伤。另一名坦克在施法期间接管首领的持续目标，避免后续普通攻击伤及易伤者。这里的核心是持续仇恨，而不只是演示中的两次独立脉冲。"
+    },
+    {
+      "dimension": "3D",
+      "game": "World of Warcraft",
+      "boss": "Festergut",
+      "screenshot": "https://i.ytimg.com/vi/Fquh1Dl98YE/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=Fquh1Dl98YE",
+      "video": "https://www.youtube.com/watch?v=Fquh1Dl98YE&t=49s",
+      "videoDurationSeconds": 79,
+      "body": "Gastric Bloat 在当前坦克身上叠加，第十层会引发致命爆炸。另一名坦克在达到阈值前接管仇恨，但原坦克的伤害加成又可能将其拉回。因此交接后的仇恨控制也是设计的一部分。"
+    },
+    {
+      "dimension": "2D",
+      "game": "Darkest Dungeon",
+      "boss": "Swine Prince",
+      "screenshot": "https://i.ytimg.com/vi/Zcm6H1-ZRzQ/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=Zcm6H1-ZRzQ",
+      "video": "https://www.youtube.com/watch?v=Zcm6H1-ZRzQ&t=83s",
+      "videoDurationSeconds": 208,
+      "body": "Wilbur 标记英雄，Swine Prince 攻击被标记者；战斗片段显示了这一点。另一个 Guard 动作可以把直接攻击转给其他英雄。这是一个 2D 对照：攻击承受者改变了，但首领的持续仇恨并未交接。"
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

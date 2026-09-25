@@ -1985,6 +1985,28 @@ const SPECS = {
     firstHitId: 'distance-pulse-1',
     secondHitId: 'distance-pulse-2',
   },
+  'tank-swap': {
+    mode: 'tank-swap',
+    boss: [280, 265],
+    player: [195, 610],
+    target: [195, 610],
+    ally: [375, 655],
+    playerExit: [150, 690],
+    allyClaim: [350, 585],
+    firstWarnAt: 0.7,
+    firstHit: [2.2, 2.48],
+    swapWarnAt: 2.85,
+    swapMove: [3.08, 3.5],
+    claimAt: 3.36,
+    secondWarnAt: 3.85,
+    secondHit: [4.55, 4.83],
+    resetAt: 5.3,
+    baseDamage: 35,
+    repeatedDamage: 95,
+    encounterId: 'kern-tank-swap-1',
+    firstHitId: 'buster-1',
+    secondHitId: 'buster-2',
+  },
   'wide-swing': { mode: 'arc', boss: [225, 340], player: [380, 500], target: [420, 780] },
   lunge: {
     mode: 'lunge',
@@ -4587,6 +4609,68 @@ export function proximityDamageResolve({
     damage: valid && !alreadyResolved ? potentialDamage : 0,
     resolution: !valid ? 'invalid' : alreadyResolved ? 'duplicate' : 'hit',
     applicationCount: valid && !alreadyResolved ? 1 : 0,
+  });
+}
+
+export function tankSwapState(time) {
+  const spec = SPECS['tank-swap'];
+  const t = localTime(time);
+  if (t < spec.firstWarnAt) return 'idle';
+  if (t < spec.firstHit[0]) return 'first-owner-marked';
+  if (t < spec.firstHit[1]) return 'first-buster';
+  if (t < spec.swapWarnAt) return 'vulnerability-applied';
+  if (t < spec.swapMove[0]) return 'handoff-signaled';
+  if (t < spec.claimAt) return 'claim-in-progress';
+  if (t < spec.secondWarnAt) return 'new-owner-confirmed';
+  if (t < spec.secondHit[0]) return 'second-owner-marked';
+  if (t < spec.secondHit[1]) return 'second-buster';
+  if (t < spec.resetAt) return 'both-recover';
+  return 'explicit-retry';
+}
+
+export function tankSwapResolve({
+  encounterId = 'kern-tank-swap-1',
+  hitId = 'buster-1',
+  target = { id: 'tavi', health: 100, vulnerability: 0, alive: true },
+  baseDamage = 35,
+  repeatedDamage = 95,
+  alreadyResolved = false,
+} = {}) {
+  const valid =
+    typeof encounterId === 'string' &&
+    encounterId.length > 0 &&
+    typeof hitId === 'string' &&
+    hitId.length > 0 &&
+    target &&
+    typeof target.id === 'string' &&
+    target.id.length > 0 &&
+    target.alive === true &&
+    Number.isSafeInteger(target.health) &&
+    target.health >= 0 &&
+    Number.isSafeInteger(target.vulnerability) &&
+    target.vulnerability >= 0 &&
+    Number.isSafeInteger(baseDamage) &&
+    baseDamage > 0 &&
+    Number.isSafeInteger(repeatedDamage) &&
+    repeatedDamage > baseDamage;
+  const potentialDamage = valid ? (target.vulnerability ? repeatedDamage : baseDamage) : 0;
+  const damage = valid && !alreadyResolved ? potentialDamage : 0;
+  return Object.freeze({
+    encounterId,
+    hitId,
+    targetId: valid ? target.id : null,
+    potentialDamage,
+    damage,
+    healthAfter: valid ? Math.max(0, target.health - damage) : null,
+    vulnerabilityAfter: valid ? target.vulnerability + Number(!alreadyResolved) : null,
+    resolution: !valid
+      ? 'invalid'
+      : alreadyResolved
+        ? 'duplicate'
+        : damage >= target.health
+          ? 'lethal'
+          : 'hit',
+    applicationCount: Number(valid && !alreadyResolved),
   });
 }
 
@@ -10002,6 +10086,70 @@ function primitivesFor(spec, frame) {
       ),
     ];
   }
+  if (mode === 'tank-swap') {
+    const owner = frame.tankSwapOwner === 'tavi' ? frame.player : frame.tankSwapAlly;
+    const target = frame.tankSwapHitId === spec.firstHitId ? frame.player : frame.tankSwapAlly;
+    const visible = frame.tankSwapVisible;
+    const hit = frame.tankSwapHitActive;
+    const firstFlash = strikePulse(frame.time, spec.firstHit[0], 0.46);
+    const secondFlash = strikePulse(frame.time, spec.secondHit[0], 0.46);
+    return [
+      rect(55, 245, 450, 650, 0.58, 'muted', 0.025),
+      path('M 75 805 L 190 785 L 280 810 L 370 785 L 485 805', 0.5, 'muted', 4),
+      rect(92, 126, 158, 20, 0.8, 'muted', 0.08),
+      rect(92, 126, frame.tankSwapHealth[0] * 1.58, 20, 0.94, 'safe', 0.55),
+      rect(310, 126, 158, 20, 0.8, 'muted', 0.08),
+      rect(310, 126, frame.tankSwapHealth[1] * 1.58, 20, 0.94, 'safe', 0.55),
+      line(
+        spec.boss[0],
+        spec.boss[1] + 70,
+        owner.x,
+        owner.y - 82,
+        visible ? 0.74 : 0,
+        'accent',
+        5,
+        '12 10',
+      ),
+      circle(owner.x, owner.y - 52, 56, visible ? 0.9 : 0.25, 'accent', 6, 0.035),
+      path(
+        `M ${owner.x} ${owner.y - 140} l 20 20 -20 20 -20 -20 Z`,
+        visible ? 0.96 : 0.25,
+        'accent',
+        5,
+        0.12,
+      ),
+      circle(
+        frame.player.x,
+        frame.player.y - 45,
+        70,
+        frame.tankSwapVulnerability[0] && !frame.tankSwapRetry ? 0.73 : 0,
+        'signal',
+        5,
+        0.025,
+        '8 8',
+      ),
+      circle(target.x, target.y - 40, 70, hit ? 0.92 : 0, 'signal', 9, 0.06),
+      line(spec.boss[0], spec.boss[1] + 55, target.x, target.y - 40, hit ? 0.86 : 0, 'signal', 9),
+      circle(target.x, target.y - 40, 70 + firstFlash * 23, firstFlash * 0.7, 'signal', 7),
+      circle(target.x, target.y - 40, 70 + secondFlash * 23, secondFlash * 0.7, 'signal', 7),
+      circle(
+        spec.player[0],
+        spec.player[1],
+        78 * smooth((frame.time - spec.resetAt) / (BLUEPRINT_DURATION - spec.resetAt)),
+        frame.tankSwapRetry ? 0.75 : 0,
+        'accent',
+        7,
+      ),
+      circle(
+        spec.ally[0],
+        spec.ally[1],
+        78 * smooth((frame.time - spec.resetAt) / (BLUEPRINT_DURATION - spec.resetAt)),
+        frame.tankSwapRetry ? 0.75 : 0,
+        'accent',
+        7,
+      ),
+    ];
+  }
   if (mode === 'coordinated-duo-attack') {
     const t = frame.time;
     const leader = frame.decoy;
@@ -12520,6 +12668,11 @@ function pointClearsThreat(spec, frame, value, radius = BLUEPRINT_PLAYER_RADIUS)
       }).damage === 0
     );
   }
+  if (mode === 'tank-swap') {
+    if (!frame.tankSwapHitActive) return true;
+    const target = frame.tankSwapHitId === spec.firstHitId ? frame.player : frame.tankSwapAlly;
+    return Math.hypot(value.x - target.x, value.y - target.y) > 70 + radius;
+  }
   if (mode === 'coordinated-duo-attack') {
     const target = frame.coordinatedDuoAttackTarget;
     return (
@@ -14754,6 +14907,15 @@ export function blueprintFrame(id, time) {
     const staged = mix(mix(spec.player[1], spec.farPoint[1], far), spec.nearPoint[1], near);
     player = { x: spec.player[0], y: mix(staged, spec.player[1], retry) };
     stride = Math.max(pulse(far), pulse(near), pulse(retry));
+  }
+  if (spec.mode === 'tank-swap') {
+    const exit = smooth((t - spec.swapMove[0]) / (spec.swapMove[1] - spec.swapMove[0]));
+    const retry = smooth((t - spec.resetAt) / (BLUEPRINT_DURATION - spec.resetAt));
+    player = {
+      x: mix(mix(spec.player[0], spec.playerExit[0], exit), spec.player[0], retry),
+      y: mix(mix(spec.player[1], spec.playerExit[1], exit), spec.player[1], retry),
+    };
+    stride = Math.max(pulse(exit), pulse(retry));
   }
   const bossVisible =
     spec.mode === 'secondary-cues-invisibility'
@@ -17451,6 +17613,70 @@ export function blueprintFrame(id, time) {
       strikePulse(t, spec.firstCheck[0], 0.5) * 0.35,
       strikePulse(t, spec.secondCheck[0], 0.6),
     );
+  }
+  if (spec.mode === 'tank-swap') {
+    const claim = smooth((t - spec.swapMove[0]) / (spec.swapMove[1] - spec.swapMove[0]));
+    const retry = smooth((t - spec.resetAt) / (BLUEPRINT_DURATION - spec.resetAt));
+    const ally = {
+      x: mix(mix(spec.ally[0], spec.allyClaim[0], claim), spec.ally[0], retry),
+      y: mix(mix(spec.ally[1], spec.allyClaim[1], claim), spec.ally[1], retry),
+    };
+    const firstApplied = t >= spec.firstHit[0] && t < spec.resetAt;
+    const secondApplied = t >= spec.secondHit[0] && t < spec.resetAt;
+    const first = tankSwapResolve({
+      encounterId: spec.encounterId,
+      hitId: spec.firstHitId,
+      target: { id: 'tavi', health: 100, vulnerability: 0, alive: true },
+      baseDamage: spec.baseDamage,
+      repeatedDamage: spec.repeatedDamage,
+    });
+    const second = tankSwapResolve({
+      encounterId: spec.encounterId,
+      hitId: spec.secondHitId,
+      target: { id: 'ally', health: 100, vulnerability: 0, alive: true },
+      baseDamage: spec.baseDamage,
+      repeatedDamage: spec.repeatedDamage,
+    });
+    const failedHandoff = tankSwapResolve({
+      encounterId: spec.encounterId,
+      hitId: spec.secondHitId,
+      target: {
+        id: 'tavi',
+        health: first.healthAfter,
+        vulnerability: first.vulnerabilityAfter,
+        alive: true,
+      },
+      baseDamage: spec.baseDamage,
+      repeatedDamage: spec.repeatedDamage,
+    });
+    frame.tankSwapState = tankSwapState(t);
+    frame.tankSwapOwner = t >= spec.claimAt && t < spec.resetAt ? 'ally' : 'tavi';
+    frame.tankSwapAlly = ally;
+    frame.tankSwapHealth = [
+      100 - Number(firstApplied) * first.damage,
+      100 - Number(secondApplied) * second.damage,
+    ];
+    frame.tankSwapVulnerability = [Number(firstApplied), Number(secondApplied)];
+    frame.tankSwapFailedDamage = failedHandoff.damage;
+    frame.tankSwapFailedHealth = failedHandoff.healthAfter;
+    frame.tankSwapHitId =
+      t >= spec.secondWarnAt && t < spec.resetAt ? spec.secondHitId : spec.firstHitId;
+    frame.tankSwapHitActive =
+      (t >= spec.firstHit[0] && t < spec.firstHit[1]) ||
+      (t >= spec.secondHit[0] && t < spec.secondHit[1]);
+    frame.tankSwapVisible = t >= spec.firstWarnAt && t < spec.resetAt;
+    frame.tankSwapApplicationCount = Number(firstApplied) + Number(secondApplied);
+    frame.tankSwapRetry = t >= spec.resetAt;
+    frame.dangerActive = frame.tankSwapHitActive;
+    frame.bossMotion.attack = Math.max(
+      strikePulse(t, spec.firstHit[0], 0.55),
+      strikePulse(t, spec.secondHit[0], 0.55),
+    );
+    frame.playerMotion.impact = strikePulse(t, spec.firstHit[0], 0.55);
+    frame.tankSwapAllyMotion = motion({
+      stride: Math.max(pulse(claim), pulse(retry)),
+      impact: strikePulse(t, spec.secondHit[0], 0.55),
+    });
   }
   if (spec.mode === 'real-time-progression') {
     frame.realTimeProgressionState = realTimeProgressionState(t);

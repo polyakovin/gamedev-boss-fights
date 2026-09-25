@@ -1,0 +1,138 @@
+{
+  "title": "Golpe al defensor y relevo de objetivo",
+  "subtitle": "Cede la atención del jefe antes de repetir el golpe sobre un defensor vulnerable",
+  "variant": "Objetivo marcado · primer golpe · vulnerabilidad · relevo visible · segundo golpe",
+  "summary": "Un golpe fuerte deja vulnerable al primer defensor, así que otro debe asumir el siguiente ataque.",
+  "overview": "Un relevo de objetivo cambia a quién ataca el jefe después de que el defensor actual recibe un golpe o perjuicio peligroso. El objetivo y el momento para asumirlo deben ser visibles y alcanzables; de otro modo, el segundo golpe castigaría a quien no pudo ceder la atención. La escena muestra el cambio, ambas reservas de salud y el fallo.",
+  "learning": "Define dueño del objetivo, momento del relevo, duración de la vulnerabilidad, identificadores de golpe, daño a objetivos nuevos y repetidos, recuperación tras el fallo y señales visibles.",
+  "category": "Coordinación cooperativa",
+  "readTime": "10 min",
+  "demo": {
+    "title": "Reparte la atención de Kern entre dos defensores",
+    "timeline": "Cronología del relevo",
+    "step": "El segundo golpe sigue al nuevo objetivo, no a la antigua marca",
+    "phaseNames": [
+      "Marcar al primer defensor",
+      "Aplicar vulnerabilidad y ceder",
+      "Golpear al nuevo objetivo y reiniciar"
+    ],
+    "phaseDescriptions": [
+      "A los 0,70 segundos Kern marca al defensor 1. El golpe de los 2,20 segundos inflige 35 puntos una sola vez: quedan 65 de salud y una acumulación de vulnerabilidad.",
+      "A los 2,85 segundos se anuncia el relevo. El primero se aparta y el segundo se acerca; a los 3,36 segundos cambia el dueño. La línea y el símbolo de atención pasan al nuevo objetivo antes del siguiente aviso.",
+      "A los 4,55 segundos el segundo defensor recibe 35 puntos; ambos quedan con 65 de salud. Si el primero conservara la atención, otros 95 puntos lo derrotarían. A los 5,30 segundos un reinicio explícito restaura posiciones, salud y acumulaciones."
+    ],
+    "boss": "Jefe",
+    "player": "Jugador",
+    "danger": "Repetir el golpe sobre el defensor vulnerable sería mortal",
+    "locked": "Cada golpe tiene su propio ID; el primero aplica vulnerabilidad y el segundo registra el dueño actual",
+    "safe": "El segundo defensor asume la atención antes de la repetición mientras el primero puede retirarse",
+    "reducedMotion": "Con movimiento reducido no hay reproducción automática. Desplaza el control a 0,70, 2,30, 3,20, 3,55, 4,65 y 5,55 segundos.",
+    "diagramDescription": "Kern marca al primero de dos defensores. El golpe resta 35 de salud y aplica vulnerabilidad. El segundo se acerca y recibe la marca antes del ataque repetido. Ambos terminan con 65 de salud; sin relevo el primero recibiría 95 más y caería. Un reinicio explícito restaura a ambos."
+  },
+  "steps": [
+    {
+      "title": "¿Qué se transfiere exactamente?",
+      "body": "Guarda un solo dueño de la atención del jefe con un ID estable. Anuncia el primero y luego muestra la acción y confirmación del relevo. Decide si el objetivo se fija al avisar, al terminar la preparación o al impactar; aquí cada golpe toma una instantánea del dueño, no una nueva selección cada fotograma."
+    },
+    {
+      "title": "¿Por qué es peligroso repetir?",
+      "body": "El primer golpe aplica una acumulación y 35 puntos de daño. Un defensor nuevo recibe 35 del segundo; el anterior recibiría 95 cuando solo le quedan 65 de salud. Resuelve cada ID una vez para un único objetivo, rechaza duplicados y especifica el efecto de escudos y limpiezas."
+    },
+    {
+      "title": "¿Es legible y ejecutable el relevo?",
+      "body": "Da al segundo defensor tiempo para desplazarse de forma normal y asumir el objetivo antes del siguiente bloqueo. Prueba relevos tardíos, ausencias, reclamaciones simultáneas, vencimiento del efecto, desconexiones y reinicio. Muestra dueño, acumulaciones y ambas barras sin depender solo del color o del chat de voz."
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "Cambiar de objetivo sin mostrarlo",
+      "body": "Una alteración oculta de la amenaza hace parecer arbitrario el segundo golpe. Mueve el símbolo y la línea de enfoque al cambiar el dueño y mantenlos visibles."
+    },
+    {
+      "title": "Confundir protección con relevo",
+      "body": "Desviar un ataque hacia un protector no necesariamente cambia el objetivo posterior del jefe. Modela por separado la intercepción de un golpe y la atención persistente."
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "Calcula el margen de intercambio",
+      "body": "Ajusta juntos intervalo entre golpes, demora de reclamación, distancia a pie y duración del perjuicio. No exijas en secreto una habilidad de movilidad."
+    },
+    {
+      "title": "Especifica bloqueos y fallos",
+      "body": "Explica si reclamar después del bloqueo cambia el ataque actual o el siguiente. Resuelve la muerte o ausencia del dueño y evita que relevos instantáneos oculten el peligro."
+    },
+    {
+      "title": "Registra dos golpes independientes",
+      "body": "Anota ID del encuentro y golpe, dueño al fijar, objetivo, vulnerabilidad anterior y posterior, daño, salud y momento del relevo. Rebobinar debe producir el mismo resultado sin daño duplicado."
+    }
+  ],
+  "story": {
+    "title": "Dos defensores, una mirada",
+    "body": "Kern prepara un golpe contra el defensor marcado. Una runa permanece alrededor del primero mientras el segundo avanza y atrae la atención. El golpe repetido alcanza al nuevo dueño y deja espacio para que el anterior se recupere."
+  },
+  "adaptation": {
+    "title": "Muestra las funciones sin exigir una interfaz de incursión",
+    "body": "Combina un símbolo de objetivo móvil, dos números de salud, un círculo de vulnerabilidad, el impacto y una ruta de relevo visible. Puede usarse provocación, amenaza por posición o transferencia programada si la regla elegida se comunica."
+  },
+  "distinction": {
+    "title": "Atención persistente frente a desvío de un golpe",
+    "body": "El relevo cambia a quién seguirá apuntando el jefe. Una guardia puede interceptar un golpe aunque el objetivo original siga marcado. En Darkest Dungeon, Wilbur marca a un héroe para Swine Prince y Guard puede desviar el ataque; eso no equivale a transferir la amenaza persistente."
+  },
+  "lensNotes": [
+    {
+      "id": "telegraphing",
+      "body": "El símbolo de atención anuncia el dueño antes de cada golpe fuerte."
+    },
+    {
+      "id": "counterplay",
+      "body": "Un plazo alcanzable permite al segundo defensor asumir el siguiente golpe."
+    },
+    {
+      "id": "difficulty-rhythm",
+      "body": "El primero enseña la vulnerabilidad; la pausa abre el relevo."
+    },
+    {
+      "id": "risk-reward",
+      "body": "Conservar la atención mantiene la posición, pero hace mortal la repetición."
+    },
+    {
+      "id": "progress-clarity",
+      "body": "Dos barras y una marca móvil revelan el intercambio y el reinicio."
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "3D",
+      "game": "Final Fantasy XIV",
+      "boss": "Kokytos",
+      "screenshot": "https://i.ytimg.com/vi/rnKHQtYCuAk/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=rnKHQtYCuAk",
+      "video": "https://www.youtube.com/watch?v=rnKHQtYCuAk&t=240s",
+      "videoDurationSeconds": 1096,
+      "body": "En Anabaseios: The Ninth Circle (Savage), Ascendant Fist golpea a un tanque y aplica Physical Vulnerability Up. El otro asume la atención durante la preparación para que los ataques normales posteriores no castiguen al vulnerable. Aquí importa la atención continua, no solo dos pulsos aislados."
+    },
+    {
+      "dimension": "3D",
+      "game": "World of Warcraft",
+      "boss": "Festergut",
+      "screenshot": "https://i.ytimg.com/vi/Fquh1Dl98YE/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=Fquh1Dl98YE",
+      "video": "https://www.youtube.com/watch?v=Fquh1Dl98YE&t=49s",
+      "videoDurationSeconds": 79,
+      "body": "Gastric Bloat se acumula sobre el tanque actual y la décima carga provoca una explosión mortal. El segundo toma la amenaza antes de llegar al límite, aunque la bonificación de daño del anterior puede recuperarla. También importa controlar la amenaza después del relevo."
+    },
+    {
+      "dimension": "2D",
+      "game": "Darkest Dungeon",
+      "boss": "Swine Prince",
+      "screenshot": "https://i.ytimg.com/vi/Zcm6H1-ZRzQ/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=Zcm6H1-ZRzQ",
+      "video": "https://www.youtube.com/watch?v=Zcm6H1-ZRzQ&t=83s",
+      "videoDurationSeconds": 208,
+      "body": "Wilbur marca a los héroes y Swine Prince ataca a los marcados, como muestra el vídeo. La acción Guard puede desviar un ataque directo hacia otro héroe. Es un contraste en 2D: cambia quien recibe el golpe, pero no se cede la atención persistente del jefe."
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

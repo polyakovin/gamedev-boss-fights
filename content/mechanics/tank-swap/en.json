@@ -1,0 +1,138 @@
+{
+  "title": "Tankbuster and target handoff",
+  "subtitle": "Move boss focus before a vulnerable defender takes the next hit",
+  "variant": "Marked owner · first buster · vulnerability · visible claim · second buster",
+  "summary": "A strong hit leaves its recipient vulnerable, so another defender must claim the boss before the repeat.",
+  "overview": "A tank swap changes who owns the boss's focused attack after a defender takes a costly hit or debuff. The boss must signal its target and allow a reachable handoff; otherwise the next hit punishes a player unable to transfer attention. This demo shows the ownership change, both health pools, and the failed-handoff outcome.",
+  "learning": "Specify target ownership, claim timing, vulnerability duration, hit identity, damage on fresh and repeated targets, failure recovery, and how the handoff is signaled.",
+  "category": "Cooperative coordination",
+  "readTime": "10 min",
+  "demo": {
+    "title": "Pass Kern's focus between two defenders",
+    "timeline": "Target handoff timeline",
+    "step": "The second hit follows the new owner, not the old mark",
+    "phaseNames": [
+      "Mark the first defender",
+      "Apply vulnerability and claim",
+      "Hit the new owner and reset"
+    ],
+    "phaseDescriptions": [
+      "At 0.70 seconds Kern marks defender 1. A committed buster at 2.20 seconds deals 35 damage once, leaving 65 health and one vulnerability stack on that defender.",
+      "At 2.85 seconds the handoff is signaled. The first defender steps aside while defender 2 approaches; ownership changes at 3.36 seconds. The boss's focus line and crown follow the new owner before the next warning.",
+      "The second buster at 4.55 seconds deals 35 to defender 2, leaving both at 65 health. If ownership had stayed with the vulnerable first defender, the 95-damage repeat would have been lethal. At 5.30 seconds an explicit retry restores positions, stacks, and health."
+    ],
+    "boss": "Boss",
+    "player": "Player",
+    "danger": "A second hit on the vulnerable owner would be lethal",
+    "locked": "Each buster has its own hit ID; the first applies one stack, and the second snapshots the current owner",
+    "safe": "A second defender claims focus before the repeat while the first has room to withdraw",
+    "reducedMotion": "Reduced motion disables autoplay. Scrub to 0.70, 2.30, 3.20, 3.55, 4.65, and 5.55 seconds.",
+    "diagramDescription": "Kern marks the first of two defenders. The first strike removes 35 health and adds vulnerability. The second defender approaches and takes the focus marker before the repeated strike. Both end at 65 health; without the transfer, the first would take 95 more and fall. An explicit retry resets both."
+  },
+  "steps": [
+    {
+      "title": "What exactly transfers?",
+      "body": "Treat boss focus as a single owner with a stable target ID. Announce the first owner, then make the claim action and ownership confirmation visible. Decide whether a buster locks its target at warning, cast completion, or contact; this demo snapshots the owner for each hit, not every animation frame."
+    },
+    {
+      "title": "Why is a repeat unsafe?",
+      "body": "The first hit applies one vulnerability stack and 35 damage. A fresh owner takes 35 from the second hit; the same owner would take 95 from 65 remaining health and fall. Resolve one target once per unique hit ID, reject duplicate callbacks, and specify whether protection or cleansing can change the result."
+    },
+    {
+      "title": "Can the handoff be executed and read?",
+      "body": "Give the second defender ordinary travel and a claim window before the next lock. Test late claims, missing defenders, simultaneous claims, expired stacks, disconnects, and reset. Show owner, stack, and both health pools without depending on color or voice chat."
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "Changing the target invisibly",
+      "body": "A hidden threat-table change makes the second buster look arbitrary. Move the focus marker and line when ownership changes, and hold them long enough to verify the new recipient."
+    },
+    {
+      "title": "Confusing a guard with a swap",
+      "body": "Redirecting one attack to a protector does not necessarily transfer boss ownership. Model attack interception and ongoing focus separately; state which one the encounter requires."
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "Budget the exchange",
+      "body": "Tune cast interval, claim delay, walking distance, and debuff duration together. The second defender needs time to reach and hold the correct place without an undisclosed mobility skill."
+    },
+    {
+      "title": "Specify lock and failure rules",
+      "body": "Document whether a claim after target lock affects the current or next attack. Decide how to recover from a dead or absent owner, and prevent rapid ping-pong claims from hiding the threat."
+    },
+    {
+      "title": "Log two independent hits",
+      "body": "Record encounter ID, hit ID, owner at lock, target ID, vulnerability before and after, damage, health, and claim timestamp. Rewind and replay to confirm deterministic ownership and no double application."
+    }
+  ],
+  "story": {
+    "title": "Two defenders, one gaze",
+    "body": "Kern plants for a heavy strike against the marked defender. A rune remains around that defender as the second steps forward and draws Kern's focus. The repeat lands on the new owner, while the first has a clear recovery lane."
+  },
+  "adaptation": {
+    "title": "Keep roles visible without assuming a raid UI",
+    "body": "Use a moving focus glyph, separate health numbers, a vulnerability ring, attack contact, and a readable claim path. The same rule can work with explicit taunt, positional threat, or a scripted handoff if the chosen rule is communicated."
+  },
+  "distinction": {
+    "title": "Persistent ownership versus one-hit redirection",
+    "body": "A tank swap changes who the boss continues to target. A guard can intercept one marked strike while the original target remains selected. Darkest Dungeon's Swine Prince illustrates the latter: Wilbur marks a hero and Guard can redirect an attack, but that is not an ongoing aggro swap."
+  },
+  "lensNotes": [
+    {
+      "id": "telegraphing",
+      "body": "The focus glyph announces the owner before each committed buster."
+    },
+    {
+      "id": "counterplay",
+      "body": "A reachable claim window lets another defender take responsibility before the repeat."
+    },
+    {
+      "id": "difficulty-rhythm",
+      "body": "The first hit teaches vulnerability; the pause invites a handoff before escalation."
+    },
+    {
+      "id": "risk-reward",
+      "body": "Holding focus preserves positioning but makes the repeated hit fatal."
+    },
+    {
+      "id": "progress-clarity",
+      "body": "Two health bars and the moving owner marker expose the exchange and reset."
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "3D",
+      "game": "Final Fantasy XIV",
+      "boss": "Kokytos",
+      "screenshot": "https://i.ytimg.com/vi/rnKHQtYCuAk/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=rnKHQtYCuAk",
+      "video": "https://www.youtube.com/watch?v=rnKHQtYCuAk&t=240s",
+      "videoDurationSeconds": 1096,
+      "body": "In Anabaseios: The Ninth Circle (Savage), Ascendant Fist marks and strikes one tank, applying Physical Vulnerability Up. The other tank must take boss focus during the cast so later auto-attacks do not punish the vulnerable recipient. The encounter uses continuing threat ownership rather than the demo's two isolated pulses."
+    },
+    {
+      "dimension": "3D",
+      "game": "World of Warcraft",
+      "boss": "Festergut",
+      "screenshot": "https://i.ytimg.com/vi/Fquh1Dl98YE/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=Fquh1Dl98YE",
+      "video": "https://www.youtube.com/watch?v=Fquh1Dl98YE&t=49s",
+      "videoDurationSeconds": 79,
+      "body": "Gastric Bloat stacks on the current tank; a tenth stack triggers a lethal explosion. The second tank takes aggro before that threshold, but the previous tank's damage bonus can pull it back. This makes post-swap threat control part of the mechanic, beyond simply moving a marker."
+    },
+    {
+      "dimension": "2D",
+      "game": "Darkest Dungeon",
+      "boss": "Swine Prince",
+      "screenshot": "https://i.ytimg.com/vi/Zcm6H1-ZRzQ/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=Zcm6H1-ZRzQ",
+      "video": "https://www.youtube.com/watch?v=Zcm6H1-ZRzQ&t=83s",
+      "videoDurationSeconds": 208,
+      "body": "Wilbur marks heroes and the Swine Prince attacks marked targets, as the fight clip shows. A separate Guard action can redirect a direct attack to another hero. This is a useful 2D contrast: attack interception changes the recipient, but does not hand over continuing boss aggro."
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

@@ -1,0 +1,28 @@
+{
+  "id": "tank-swap",
+  "number": 120,
+  "published": true,
+  "sourceLocale": "en",
+  "contentVersion": 1,
+  "animation": "tank-swap",
+  "lenses": ["telegraphing", "counterplay", "difficulty-rhythm", "risk-reward", "progress-clarity"],
+  "related": ["target-lock", "stack-damage", "entity-tether", "tower-soak"],
+  "sources": [
+    {
+      "title": "Kokytos and Ascendant Fist — Final Fantasy XIV Community Wiki",
+      "url": "https://ffxiv.consolegameswiki.com/wiki/Anabaseios%3A_The_Ninth_Circle_%28Savage%29"
+    },
+    {
+      "title": "Festergut and Gastric Bloat — Warcraft Wiki",
+      "url": "https://warcraft.wiki.gg/wiki/Festergut"
+    },
+    {
+      "title": "Swine Prince and Wilbur's marks — Official Darkest Dungeon Wiki",
+      "url": "https://darkestdungeon.wiki.gg/wiki/Swine_Prince"
+    },
+    {
+      "title": "Guard redirects direct attacks — Official Darkest Dungeon Wiki",
+      "url": "https://darkestdungeon.wiki.gg/wiki/Guard"
+    }
+  ]
+}

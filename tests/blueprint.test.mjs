@@ -95,6 +95,8 @@ import {
   gazeCheckResolve,
   proximityDamageState,
   proximityDamageResolve,
+  tankSwapState,
+  tankSwapResolve,
   counterStanceOutcome,
   counterStanceState,
   blueprintFrame,
@@ -122,8 +124,8 @@ import {
   renderBlueprintThumbnail,
 } from '../lib/blueprint-view.mjs';
 
-test('all 113 promoted lesson animations have distinct rule modes and complete moving frames', () => {
-  assert.equal(BLUEPRINT_MECHANIC_IDS.length, 113);
+test('all 114 promoted lesson animations have distinct rule modes and complete moving frames', () => {
+  assert.equal(BLUEPRINT_MECHANIC_IDS.length, 114);
   const modes = new Set();
   for (const id of BLUEPRINT_MECHANIC_IDS) {
     for (let time = 0; time <= BLUEPRINT_DURATION; time += 0.1) {
@@ -144,7 +146,7 @@ test('all 113 promoted lesson animations have distinct rule modes and complete m
           assert.ok(Number.isFinite(value), `${id} has an invalid ${primitive.type}`);
     }
   }
-  assert.equal(modes.size, 113);
+  assert.equal(modes.size, 114);
 });
 
 test('every blueprint exposes signal, committed action, and recovery without player teleports', () => {
@@ -206,7 +208,8 @@ test('every blueprint exposes signal, committed action, and recovery without pla
       id !== 'tower-soak' &&
       id !== 'entity-tether' &&
       id !== 'gaze-check' &&
-      id !== 'proximity-damage'
+      id !== 'proximity-damage' &&
+      id !== 'tank-swap'
     )
       assert.equal(blueprintFrame(id, 3).dangerActive, true, id);
     assert.equal(blueprintFrame(id, 3).playerSafe, true, id);
@@ -318,6 +321,7 @@ test('every damaging promoted animation derives safety from its own active geome
       id !== 'entity-tether' &&
       id !== 'gaze-check' &&
       id !== 'proximity-damage' &&
+      id !== 'tank-swap' &&
       id !== 'part-break' &&
       id !== 'counter-stance' &&
       id !== 'absorption-power-up' &&
@@ -5361,4 +5365,69 @@ test('proximity damage samples a fixed source and applies two graded, nonzero hi
     renderBlueprintThumbnail(id, 'test-proximity-damage'),
     /data-blueprint-preview="proximity-damage"/,
   );
+});
+
+test('tank swap transfers one focused owner before a vulnerable repeat', () => {
+  const id = 'tank-swap';
+  assert.deepEqual([0, 0.8, 2.3, 2.6, 3, 3.2, 3.55, 4, 4.65, 5, 5.55].map(tankSwapState), [
+    'idle',
+    'first-owner-marked',
+    'first-buster',
+    'vulnerability-applied',
+    'handoff-signaled',
+    'claim-in-progress',
+    'new-owner-confirmed',
+    'second-owner-marked',
+    'second-buster',
+    'both-recover',
+    'explicit-retry',
+  ]);
+  const first = tankSwapResolve();
+  assert.equal(first.damage, 35);
+  assert.equal(first.healthAfter, 65);
+  assert.equal(first.vulnerabilityAfter, 1);
+  const failed = tankSwapResolve({
+    hitId: 'buster-2',
+    target: { id: 'tavi', health: first.healthAfter, vulnerability: 1, alive: true },
+  });
+  assert.equal(failed.damage, 95);
+  assert.equal(failed.healthAfter, 0);
+  assert.equal(failed.resolution, 'lethal');
+  assert.equal(tankSwapResolve({ alreadyResolved: true }).damage, 0);
+  assert.equal(tankSwapResolve({ alreadyResolved: true }).applicationCount, 0);
+  assert.equal(tankSwapResolve({ target: null }).resolution, 'invalid');
+  assert.equal(
+    tankSwapResolve({ target: { id: 'a', health: -1, vulnerability: 0, alive: true } }).resolution,
+    'invalid',
+  );
+  assert.equal(tankSwapResolve({ repeatedDamage: 35 }).resolution, 'invalid');
+  const firstHit = blueprintFrame(id, 2.3);
+  const handoff = blueprintFrame(id, 3.55);
+  const secondHit = blueprintFrame(id, 4.65);
+  assert.equal(firstHit.tankSwapOwner, 'tavi');
+  assert.deepEqual(firstHit.tankSwapHealth, [65, 100]);
+  assert.deepEqual(firstHit.tankSwapVulnerability, [1, 0]);
+  assert.equal(firstHit.tankSwapApplicationCount, 1);
+  assert.equal(firstHit.playerSafe, false);
+  assert.equal(handoff.tankSwapOwner, 'ally');
+  assert.equal(handoff.tankSwapAlly.x, 350);
+  assert.equal(secondHit.tankSwapHitId, 'buster-2');
+  assert.deepEqual(secondHit.tankSwapHealth, [65, 65]);
+  assert.deepEqual(secondHit.tankSwapVulnerability, [1, 1]);
+  assert.equal(secondHit.tankSwapFailedDamage, 95);
+  assert.equal(secondHit.tankSwapFailedHealth, 0);
+  assert.equal(secondHit.tankSwapApplicationCount, 2);
+  assert.equal(secondHit.playerSafe, true);
+  assert.equal(blueprintPointSafe(id, 4.65, secondHit.tankSwapAlly), false);
+  assert.equal(blueprintPointSafe(id, 4.65, secondHit.player), true);
+  let previous = blueprintFrame(id, 0).tankSwapAlly;
+  for (let step = 1; step < 600; step += 2) {
+    const ally = blueprintFrame(id, step / 100).tankSwapAlly;
+    assert.ok(Math.hypot(ally.x - previous.x, ally.y - previous.y) < 18, 'ally teleports');
+    previous = ally;
+  }
+  assert.deepEqual(blueprintFrame(id, 5.55).tankSwapHealth, [100, 100]);
+  const preview = renderBlueprintThumbnail(id, 'test-tank-swap');
+  assert.match(preview, /data-blueprint-preview="tank-swap"/);
+  assert.match(preview, /data-character-art-preview="tavi-ally-0"/);
 });

@@ -650,6 +650,13 @@ const PROFILE_OVERRIDES = {
     dimensions: ['2d', '3d'],
     lenses: ['telegraphing', 'threat-geometry', 'counterplay', 'risk-reward', 'difficulty-rhythm'],
   },
+  'tank-swap': {
+    geometry: ['target'],
+    signal: ['marker', 'pose'],
+    response: ['coordinate', 'manage'],
+    dimensions: ['2d', '3d'],
+    lenses: ['telegraphing', 'counterplay', 'difficulty-rhythm', 'risk-reward', 'progress-clarity'],
+  },
   'party-split': { geometry: ['arena'], response: ['coordinate', 'reposition', 'manage'] },
 };
 

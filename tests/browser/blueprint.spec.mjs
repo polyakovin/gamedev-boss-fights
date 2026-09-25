@@ -447,9 +447,9 @@ test('volley releases three parallel bolts on one beat and clears its outside ro
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
 });
 
-test('catalog and builder reuse the 113 promoted rule-specific previews', async ({ page }) => {
+test('catalog and builder reuse the 114 promoted rule-specific previews', async ({ page }) => {
   await page.goto('en/');
-  await expect(page.locator('[data-blueprint-preview]')).toHaveCount(113);
+  await expect(page.locator('[data-blueprint-preview]')).toHaveCount(114);
   const catalogLayouts = await page.locator('[data-blueprint-preview]').evaluateAll((previews) =>
     previews.map((preview) => {
       const boss = preview.querySelector('[data-character-art-preview="kern"]');
@@ -473,7 +473,7 @@ test('catalog and builder reuse the 113 promoted rule-specific previews', async 
   expect(new Set(catalogLayouts.map(({ layout }) => layout)).size).toBeGreaterThanOrEqual(18);
 
   await page.goto('en/builder/');
-  await expect(page.locator('[data-blueprint-preview]')).toHaveCount(113);
+  await expect(page.locator('[data-blueprint-preview]')).toHaveCount(114);
   const builderLayouts = await page.locator('[data-blueprint-preview]').evaluateAll((previews) =>
     previews.map((preview) => {
       const boss = preview.querySelector('[data-character-art-preview="kern"]');
@@ -5117,6 +5117,47 @@ test('proximity damage keeps the rune fixed and makes distance change a nonzero 
   await seek(5500);
   await expect(widget).toHaveAttribute('data-blueprint-proximity-retry', 'true');
   await expect(widget).toHaveAttribute('data-blueprint-proximity-health', '100');
+  await page.setViewportSize({ width: 375, height: 812 });
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+});
+
+test('tank swap visibly hands boss focus to a second defender before the repeat', async ({
+  page,
+}) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.goto('en/mechanics/tank-swap/');
+  const widget = page.locator('[data-blueprint-demo]');
+  const timeline = widget.locator('[data-blueprint-timeline]');
+  const seek = (milliseconds) =>
+    timeline.evaluate((element, value) => {
+      element.value = String(value);
+      element.dispatchEvent(new Event('input', { bubbles: true }));
+    }, milliseconds);
+  await expect(page.locator('.lesson-title-line h1')).toHaveText('Tankbuster and target handoff');
+  await expect(page.locator('.wip-badge, .draft-profile')).toHaveCount(0);
+  await expect(page.locator('.game-example')).toHaveCount(3);
+  await expect(page.locator('.lens-chip')).toHaveCount(5);
+  await expect(widget).toHaveAttribute('data-blueprint-full-height', 'true');
+  await expect(widget).toHaveAttribute('data-blueprint-playing', 'false');
+  await expect(widget.locator('[data-blueprint-ally]')).toHaveCount(1);
+  await seek(2300);
+  await expect(widget).toHaveAttribute('data-blueprint-tank-owner', 'tavi');
+  await expect(widget).toHaveAttribute('data-blueprint-tank-hit-id', 'buster-1');
+  await expect(widget).toHaveAttribute('data-blueprint-tank-health', '65,100');
+  await expect(widget).toHaveAttribute('data-blueprint-tank-vulnerability', '1,0');
+  await expect(widget).toHaveAttribute('data-blueprint-tank-application-count', '1');
+  await seek(3550);
+  await expect(widget).toHaveAttribute('data-blueprint-tank-owner', 'ally');
+  await seek(4650);
+  await expect(widget).toHaveAttribute('data-blueprint-tank-hit-id', 'buster-2');
+  await expect(widget).toHaveAttribute('data-blueprint-tank-health', '65,65');
+  await expect(widget).toHaveAttribute('data-blueprint-tank-vulnerability', '1,1');
+  await expect(widget).toHaveAttribute('data-blueprint-tank-failed-damage', '95');
+  await expect(widget).toHaveAttribute('data-blueprint-tank-application-count', '2');
+  await expect(widget).toHaveAttribute('data-blueprint-outcome', 'safe');
+  await seek(5550);
+  await expect(widget).toHaveAttribute('data-blueprint-tank-retry', 'true');
+  await expect(widget).toHaveAttribute('data-blueprint-tank-health', '100,100');
   await page.setViewportSize({ width: 375, height: 812 });
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
 });
