@@ -1,0 +1,24 @@
+{
+  "id": "debuff-handoff",
+  "number": 121,
+  "published": true,
+  "sourceLocale": "en",
+  "contentVersion": 1,
+  "animation": "debuff-handoff",
+  "lenses": ["telegraphing", "counterplay", "difficulty-rhythm", "risk-reward", "progress-clarity"],
+  "related": ["tank-swap", "entity-tether", "stack-damage", "personal-spread"],
+  "sources": [
+    {
+      "title": "Allagan Rot in The Binding Coil of Bahamut - Turn 2 — Final Fantasy XIV Community Wiki",
+      "url": "https://ffxiv.consolegameswiki.com/wiki/The_Binding_Coil_of_Bahamut_-_Turn_2"
+    },
+    {
+      "title": "Unbound Plague and Plague Sickness — Warcraft Wiki",
+      "url": "https://warcraft.wiki.gg/wiki/Professor_Putricide"
+    },
+    {
+      "title": "Dégénérescence in Compost du grand Potofeu — MethodWakfu",
+      "url": "https://methodwakfu.com/pvm/donjons/compost-du-grand-potofeu/"
+    }
+  ]
+}

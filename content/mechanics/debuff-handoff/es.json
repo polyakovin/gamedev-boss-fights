@@ -1,0 +1,138 @@
+{
+  "title": "Transferencia de estado",
+  "subtitle": "Pasa un estado dañino antes de que termine su plazo",
+  "variant": "Un portador · temporizador · contacto · protección de retorno · repetición",
+  "summary": "Un jugador marcado transfiere un estado dañino mediante un contacto deliberado antes de que expire.",
+  "overview": "La transferencia de estado asigna un efecto dañino a un solo jugador y permite pasarlo a otro mediante una regla de contacto explícita. Mostrar al portador y la cuenta atrás hace legible el plazo; una transferencia alcanzable y una breve inmunidad de retorno evitan tanto el daño inevitable como el rebote accidental.",
+  "learning": "Define la aplicación, el portador exclusivo, el radio de transferencia, los plazos, el reinicio del temporizador, la inmunidad de retorno, el daño al expirar, los receptores no válidos y los identificadores únicos de evento.",
+  "category": "Coordinación cooperativa",
+  "readTime": "10 min",
+  "demo": {
+    "title": "Pasa la runa inestable del jefe entre dos jugadores",
+    "timeline": "Cronología de la transferencia",
+    "step": "La runa solo cambia de portador con un contacto válido",
+    "phaseNames": [
+      "Marcar al primer portador",
+      "Pasar al segundo portador",
+      "Devolver y reiniciar"
+    ],
+    "phaseDescriptions": [
+      "A los 0,70 segundos, el jefe aplica una runa inestable al jugador 1. Comienza una cuenta de tres segundos: sin transferencia, estallaría a los 3,70 segundos e infligiría 80 de daño.",
+      "Ambos jugadores caminan hasta quedar a menos de 76 unidades. A los 2,25 segundos, la runa pasa una sola vez al jugador 2 y el contador vuelve a tres segundos. El jugador 1 queda temporalmente inmune a recibirla, de modo que seguir en contacto no provoca un rebote inmediato.",
+      "Tras separarse, vuelven a encontrarse a los 4,48 segundos, cuando termina la inmunidad y antes del plazo del jugador 2 a los 5,25 segundos. Un segundo evento único devuelve la runa al jugador 1. A los 5,50 segundos, un reinicio explícito borra portador, contador e inmunidad."
+    ],
+    "boss": "Jefe",
+    "player": "Jugador",
+    "danger": "La runa no transferida estalla al expirar e inflige 80 de daño",
+    "locked": "Un portador, un ID por transferencia, radio de 76 unidades y un segundo de inmunidad de retorno",
+    "safe": "Los dos contactos ocurren antes de sus respectivos plazos",
+    "reducedMotion": "El movimiento reducido desactiva la reproducción automática. Sitúa la línea de tiempo en 0,70; 2,10; 2,32; 3,10; 4,55 y 5,60 segundos.",
+    "diagramDescription": "El jefe marca al jugador 1 con una runa y una cuenta atrás. Los dos jugadores se acercan y la runa pasa visiblemente al jugador 2 al tocarse. Se separan y se reúnen después de que termine la inmunidad para devolverla antes de la explosión. Cada pase válido reinicia el tiempo; un reinicio explícito limpia el estado."
+  },
+  "steps": [
+    {
+      "title": "¿Quién posee el efecto?",
+      "body": "Asigna al estado un solo portador con ID estable, una fecha de caducidad y un evento explícito de aplicación. Muestra al portador y el tiempo restante sin depender del color. Define si el jefe puede redirigir, copiar, limpiar o volver a aplicar el estado; nada de eso ocurre en esta escena."
+    },
+    {
+      "title": "¿Cuándo es válido el contacto?",
+      "body": "Aquí los centros de los jugadores deben quedar a menos de 76 unidades; ambos deben estar vivos, el receptor no debe ser inmune y el plazo no debe haber vencido. Cambia la propiedad de forma atómica una vez por ID de transferencia. El pase reinicia los tres segundos y protege durante uno al portador anterior."
+    },
+    {
+      "title": "¿Qué ocurre al vencer el plazo?",
+      "body": "Una transferencia fallida inflige 80 de daño una sola vez al portador actual, no a todos los cercanos. Prueba contacto temprano, nuevos choques durante la inmunidad, eventos duplicados, receptores muertos o ausentes, contactos simultáneos, pases tardíos y reinicio. Registra portador y plazo antes y después de cada evento."
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "Permitir un rebote instantáneo",
+      "body": "Una superposición prolongada puede producir muchas notificaciones de contacto. Aplica inmunidad de retorno y deduplica los ID para que un encuentro cambie el portador exactamente una vez."
+    },
+    {
+      "title": "Reiniciar el tiempo sin cambiar de portador",
+      "body": "Reiniciar el contador ante cualquier choque oculta transferencias fallidas. Confirma primero que el receptor sea válido y cambia de portador; en caso contrario conserva el plazo anterior."
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "Calcula el tiempo para caminar",
+      "body": "Ajusta juntos el contador, la distancia en la arena, la velocidad de marcha, el radio de contacto y la separación posterior. El recorrido debe funcionar sin exigir en secreto un impulso o invulnerabilidad."
+    },
+    {
+      "title": "Identifica al portador sin ambigüedad",
+      "body": "Usa un único símbolo de runa en el portador actual, una cuenta numérica y un breve rastro de transferencia. El anillo de inmunidad del portador anterior debe verse distinto del estado peligroso."
+    },
+    {
+      "title": "Verifica la autoridad del evento",
+      "body": "Registra ID del encuentro y del pase, origen, receptor, posiciones en el contacto, plazos antes y después, fin de inmunidad y resultado. Reproducir o retroceder no debe sumar pases ni daño."
+    }
+  ],
+  "story": {
+    "title": "Una runa que debe seguir moviéndose",
+    "body": "El jefe envía una runa inestable al primer jugador. Dos jugadores cruzan una pequeña separación para intercambiarla, se apartan mientras el anterior está protegido y vuelven a encontrarse deliberadamente antes del nuevo plazo."
+  },
+  "adaptation": {
+    "title": "Haz legibles el recorrido y las exclusiones",
+    "body": "La regla puede usar contacto, un hechizo dirigido o una casilla marcada, pero el alcance elegido y los receptores excluidos deben ser explícitos. En esta versión de contacto, caminar basta para las dos entregas y para separarse."
+  },
+  "distinction": {
+    "title": "Transferir un estado no es repartir daño",
+    "body": "Solo un jugador lleva la runa activa en cada momento: la proximidad cambia el portador, no reparte un golpe entre dos. Un cambio de tanque modifica los ataques futuros del jefe; aquí se mueve el propio estado temporal."
+  },
+  "lensNotes": [
+    {
+      "id": "telegraphing",
+      "body": "El símbolo de la runa y el contador numérico indican portador y plazo."
+    },
+    {
+      "id": "counterplay",
+      "body": "Una ventana de contacto alcanzable permite transferir el estado antes de que expire."
+    },
+    {
+      "id": "difficulty-rhythm",
+      "body": "El primer pase enseña la regla; separarse y regresar añade una comprobación de elegibilidad."
+    },
+    {
+      "id": "risk-reward",
+      "body": "Conservar la runa facilita la posición, pero esperar demasiado cuesta 80 de salud."
+    },
+    {
+      "id": "progress-clarity",
+      "body": "Una sola marca de portador, el número de pases y el reinicio explícito muestran cada cambio."
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "3D",
+      "game": "Final Fantasy XIV",
+      "boss": "ADS",
+      "screenshot": "https://i.ytimg.com/vi/FDoJe-SOh6s/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=FDoJe-SOh6s",
+      "video": "https://www.youtube.com/watch?v=FDoJe-SOh6s&t=524s",
+      "videoDurationSeconds": 780,
+      "body": "En Binding Coil Turn 2, Allagan Rot pasa a otro jugador por proximidad antes de que termine el contador. El portador anterior no puede recibirlo inmediatamente de vuelta. La asignación del portador y la elegibilidad de retorno son centrales; la escena acorta los plazos y solo muestra a dos jugadores."
+    },
+    {
+      "dimension": "3D",
+      "game": "World of Warcraft",
+      "boss": "Professor Putricide",
+      "screenshot": "https://i.ytimg.com/vi/oPtF_1LoqtQ/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=oPtF_1LoqtQ",
+      "video": "https://www.youtube.com/watch?v=oPtF_1LoqtQ&t=52s",
+      "videoDurationSeconds": 777,
+      "body": "En dificultad heroica, Unbound Plague salta a un jugador cercano y deja Plague Sickness y una breve protección contra el rebote en el portador anterior. A diferencia del contador que se reinicia en la escena, el daño creciente y la duración global convierten la cadena de pases en gestión de recursos."
+    },
+    {
+      "dimension": "2D",
+      "game": "Wakfu",
+      "boss": "Grand maître culinaire",
+      "screenshot": "https://i.ytimg.com/vi/8C4SZJclCOg/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=8C4SZJclCOg",
+      "video": "https://www.youtube.com/watch?v=8C4SZJclCOg&t=317s",
+      "videoDurationSeconds": 559,
+      "body": "En Compost du grand Potofeu, Dégénérescence puede pasar entre aliados y después entregarse al jefe para impedir su regeneración. Conservarla cuesta salud al portador. Este ejemplo 2D añade un destino y exclusiones de receptores a la transferencia básica."
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

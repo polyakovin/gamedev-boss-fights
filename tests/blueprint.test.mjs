@@ -97,6 +97,9 @@ import {
   proximityDamageResolve,
   tankSwapState,
   tankSwapResolve,
+  debuffHandoffState,
+  debuffHandoffResolve,
+  debuffHandoffExpire,
   counterStanceOutcome,
   counterStanceState,
   blueprintFrame,
@@ -124,8 +127,8 @@ import {
   renderBlueprintThumbnail,
 } from '../lib/blueprint-view.mjs';
 
-test('all 114 promoted lesson animations have distinct rule modes and complete moving frames', () => {
-  assert.equal(BLUEPRINT_MECHANIC_IDS.length, 114);
+test('all 115 promoted lesson animations have distinct rule modes and complete moving frames', () => {
+  assert.equal(BLUEPRINT_MECHANIC_IDS.length, 115);
   const modes = new Set();
   for (const id of BLUEPRINT_MECHANIC_IDS) {
     for (let time = 0; time <= BLUEPRINT_DURATION; time += 0.1) {
@@ -146,7 +149,7 @@ test('all 114 promoted lesson animations have distinct rule modes and complete m
           assert.ok(Number.isFinite(value), `${id} has an invalid ${primitive.type}`);
     }
   }
-  assert.equal(modes.size, 114);
+  assert.equal(modes.size, 115);
 });
 
 test('every blueprint exposes signal, committed action, and recovery without player teleports', () => {
@@ -209,7 +212,8 @@ test('every blueprint exposes signal, committed action, and recovery without pla
       id !== 'entity-tether' &&
       id !== 'gaze-check' &&
       id !== 'proximity-damage' &&
-      id !== 'tank-swap'
+      id !== 'tank-swap' &&
+      id !== 'debuff-handoff'
     )
       assert.equal(blueprintFrame(id, 3).dangerActive, true, id);
     assert.equal(blueprintFrame(id, 3).playerSafe, true, id);
@@ -322,6 +326,7 @@ test('every damaging promoted animation derives safety from its own active geome
       id !== 'gaze-check' &&
       id !== 'proximity-damage' &&
       id !== 'tank-swap' &&
+      id !== 'debuff-handoff' &&
       id !== 'part-break' &&
       id !== 'counter-stance' &&
       id !== 'absorption-power-up' &&
@@ -5429,5 +5434,75 @@ test('tank swap transfers one focused owner before a vulnerable repeat', () => {
   assert.deepEqual(blueprintFrame(id, 5.55).tankSwapHealth, [100, 100]);
   const preview = renderBlueprintThumbnail(id, 'test-tank-swap');
   assert.match(preview, /data-blueprint-preview="tank-swap"/);
+  assert.match(preview, /data-character-art-preview="tavi-ally-0"/);
+});
+
+test('debuff handoff moves one timed rune only on eligible contact', () => {
+  const id = 'debuff-handoff';
+  assert.deepEqual([0, 0.8, 2.1, 2.3, 4.1, 4.5, 5.3, 5.6].map(debuffHandoffState), [
+    'rune-cast',
+    'first-carrier-marked',
+    'first-approach',
+    'first-transfer',
+    'second-approach',
+    'second-transfer',
+    'stable-chain',
+    'explicit-retry',
+  ]);
+  const first = debuffHandoffResolve();
+  assert.equal(first.resolution, 'passed');
+  assert.equal(first.ownerId, 'player-2');
+  assert.equal(first.expiresAt, 5.25);
+  assert.equal(first.sourceImmuneUntil, 3.25);
+  assert.equal(first.applicationCount, 1);
+  assert.equal(debuffHandoffResolve({ alreadyResolved: true }).resolution, 'duplicate');
+  assert.equal(debuffHandoffResolve({ alreadyResolved: true }).applicationCount, 0);
+  assert.equal(
+    debuffHandoffResolve({
+      receiver: { id: 'player-2', alive: true, x: 400, y: 635, immuneUntil: 0 },
+    }).resolution,
+    'out-of-range',
+  );
+  assert.equal(
+    debuffHandoffResolve({
+      receiver: { id: 'player-2', alive: true, x: 310, y: 635, immuneUntil: 3 },
+    }).resolution,
+    'immune',
+  );
+  assert.equal(debuffHandoffResolve({ receiver: null }).resolution, 'invalid');
+  assert.equal(debuffHandoffResolve({ expiresAt: 2.25 }).resolution, 'expired');
+  assert.equal(debuffHandoffExpire({ time: 3.69 }).resolution, 'pending');
+  assert.equal(debuffHandoffExpire().damage, 80);
+  assert.equal(debuffHandoffExpire().healthAfter, 20);
+  assert.equal(debuffHandoffExpire({ alreadyResolved: true }).damage, 0);
+  const before = blueprintFrame(id, 2.24);
+  const passed = blueprintFrame(id, 2.3);
+  const immune = blueprintFrame(id, 3.1);
+  const returned = blueprintFrame(id, 4.5);
+  assert.equal(before.debuffHandoffOwner, 'player-1');
+  assert.equal(before.debuffHandoffTransferCount, 0);
+  assert.equal(passed.debuffHandoffOwner, 'player-2');
+  assert.equal(passed.debuffHandoffTransferCount, 1);
+  assert.deepEqual(immune.debuffHandoffImmunity, [true, false]);
+  assert.equal(returned.debuffHandoffOwner, 'player-1');
+  assert.equal(returned.debuffHandoffTransferCount, 2);
+  assert.ok(returned.debuffHandoffRemaining > immune.debuffHandoffRemaining);
+  assert.equal(returned.debuffHandoffFailedDamage, 80);
+  assert.equal(blueprintFrame(id, 5.6).debuffHandoffTransferCount, 0);
+  assert.equal(blueprintFrame(id, 5.6).debuffHandoffVisible, false);
+  for (let t = 0.02; t < BLUEPRINT_DURATION; t += 0.02) {
+    const a = blueprintFrame(id, t - 0.02);
+    const b = blueprintFrame(id, t);
+    assert.ok(Math.hypot(b.player.x - a.player.x, b.player.y - a.player.y) < 18);
+    assert.ok(
+      Math.hypot(
+        b.debuffHandoffAlly.x - a.debuffHandoffAlly.x,
+        b.debuffHandoffAlly.y - a.debuffHandoffAlly.y,
+      ) < 18,
+    );
+    assert.equal(b.playerSafe, true);
+  }
+  const preview = renderBlueprintThumbnail(id, 'test-debuff-handoff');
+  assert.match(preview, /data-blueprint-preview="debuff-handoff"/);
   assert.match(preview, /data-character-art-preview="tavi-ally-0"/);
 });

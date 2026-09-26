@@ -447,9 +447,9 @@ test('volley releases three parallel bolts on one beat and clears its outside ro
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
 });
 
-test('catalog and builder reuse the 114 promoted rule-specific previews', async ({ page }) => {
+test('catalog and builder reuse the 115 promoted rule-specific previews', async ({ page }) => {
   await page.goto('en/');
-  await expect(page.locator('[data-blueprint-preview]')).toHaveCount(114);
+  await expect(page.locator('[data-blueprint-preview]')).toHaveCount(115);
   const catalogLayouts = await page.locator('[data-blueprint-preview]').evaluateAll((previews) =>
     previews.map((preview) => {
       const boss = preview.querySelector('[data-character-art-preview="kern"]');
@@ -473,7 +473,7 @@ test('catalog and builder reuse the 114 promoted rule-specific previews', async 
   expect(new Set(catalogLayouts.map(({ layout }) => layout)).size).toBeGreaterThanOrEqual(18);
 
   await page.goto('en/builder/');
-  await expect(page.locator('[data-blueprint-preview]')).toHaveCount(114);
+  await expect(page.locator('[data-blueprint-preview]')).toHaveCount(115);
   const builderLayouts = await page.locator('[data-blueprint-preview]').evaluateAll((previews) =>
     previews.map((preview) => {
       const boss = preview.querySelector('[data-character-art-preview="kern"]');
@@ -5158,6 +5158,46 @@ test('tank swap visibly hands boss focus to a second defender before the repeat'
   await seek(5550);
   await expect(widget).toHaveAttribute('data-blueprint-tank-retry', 'true');
   await expect(widget).toHaveAttribute('data-blueprint-tank-health', '100,100');
+  await page.setViewportSize({ width: 375, height: 812 });
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+});
+
+test('debuff handoff shows one rune moving between eligible carriers before each deadline', async ({
+  page,
+}) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.goto('en/mechanics/debuff-handoff/');
+  const widget = page.locator('[data-blueprint-demo]');
+  const timeline = widget.locator('[data-blueprint-timeline]');
+  const seek = (milliseconds) =>
+    timeline.evaluate((element, value) => {
+      element.value = String(value);
+      element.dispatchEvent(new Event('input', { bubbles: true }));
+    }, milliseconds);
+  await expect(page.locator('.lesson-title-line h1')).toHaveText('Debuff handoff');
+  await expect(page.locator('.wip-badge, .draft-profile')).toHaveCount(0);
+  await expect(page.locator('.game-example')).toHaveCount(3);
+  await expect(page.locator('.lens-chip')).toHaveCount(5);
+  await expect(widget).toHaveAttribute('data-blueprint-full-height', 'true');
+  await expect(widget).toHaveAttribute('data-blueprint-playing', 'false');
+  await expect(widget.locator('[data-blueprint-ally]')).toHaveCount(1);
+  await seek(2100);
+  await expect(widget).toHaveAttribute('data-blueprint-handoff-owner', 'player-1');
+  await expect(widget).toHaveAttribute('data-blueprint-handoff-transfer-count', '0');
+  await seek(2300);
+  await expect(widget).toHaveAttribute('data-blueprint-handoff-owner', 'player-2');
+  await expect(widget).toHaveAttribute('data-blueprint-handoff-transfer-count', '1');
+  await expect(widget).toHaveAttribute('data-blueprint-handoff-immunity', 'true,false');
+  await expect(widget.locator('[data-blueprint-handoff-timer]')).toHaveText('3.0 s');
+  await seek(4500);
+  await expect(widget).toHaveAttribute('data-blueprint-handoff-owner', 'player-1');
+  await expect(widget).toHaveAttribute('data-blueprint-handoff-transfer-count', '2');
+  await expect(widget).toHaveAttribute('data-blueprint-handoff-failed-damage', '80');
+  await seek(5600);
+  await expect(widget).toHaveAttribute('data-blueprint-handoff-retry', 'true');
+  await expect(widget).toHaveAttribute('data-blueprint-handoff-transfer-count', '0');
+  await page.goto('ar/mechanics/debuff-handoff/');
+  await expect(page.locator('html')).toHaveAttribute('dir', 'rtl');
   await page.setViewportSize({ width: 375, height: 812 });
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
 });

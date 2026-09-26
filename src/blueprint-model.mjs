@@ -2007,6 +2007,27 @@ const SPECS = {
     firstHitId: 'buster-1',
     secondHitId: 'buster-2',
   },
+  'debuff-handoff': {
+    mode: 'debuff-handoff',
+    boss: [280, 265],
+    player: [165, 635],
+    target: [165, 635],
+    ally: [395, 635],
+    playerContact: [250, 635],
+    allyContact: [310, 635],
+    firstApproach: [1.65, 2.25],
+    firstPassAt: 2.25,
+    firstRetreat: [2.4, 3.05],
+    secondApproach: [3.9, 4.48],
+    secondPassAt: 4.48,
+    secondRetreat: [4.58, 5.2],
+    resetAt: 5.5,
+    contactRadius: 76,
+    debuffDuration: 3,
+    returnImmunity: 1,
+    burstDamage: 80,
+    encounterId: 'kern-debuff-handoff-1',
+  },
   'wide-swing': { mode: 'arc', boss: [225, 340], player: [380, 500], target: [420, 780] },
   lunge: {
     mode: 'lunge',
@@ -4671,6 +4692,131 @@ export function tankSwapResolve({
           ? 'lethal'
           : 'hit',
     applicationCount: Number(valid && !alreadyResolved),
+  });
+}
+
+export function debuffHandoffState(time) {
+  const spec = SPECS['debuff-handoff'];
+  const t = localTime(time);
+  if (t < 0.7) return 'rune-cast';
+  if (t < spec.firstApproach[0]) return 'first-carrier-marked';
+  if (t < spec.firstPassAt) return 'first-approach';
+  if (t < spec.firstRetreat[0]) return 'first-transfer';
+  if (t < spec.secondApproach[0]) return 'new-carrier-protected';
+  if (t < spec.secondPassAt) return 'second-approach';
+  if (t < spec.secondRetreat[0]) return 'second-transfer';
+  if (t < spec.resetAt) return 'stable-chain';
+  return 'explicit-retry';
+}
+
+export function debuffHandoffResolve({
+  encounterId = 'kern-debuff-handoff-1',
+  transferId = 'pass-1',
+  source = { id: 'player-1', alive: true, x: 250, y: 635 },
+  receiver = { id: 'player-2', alive: true, x: 310, y: 635, immuneUntil: 0 },
+  time = 2.25,
+  expiresAt = 3,
+  contactRadius = 76,
+  duration = 3,
+  returnImmunity = 1,
+  alreadyResolved = false,
+} = {}) {
+  const valid =
+    typeof encounterId === 'string' &&
+    encounterId.length > 0 &&
+    typeof transferId === 'string' &&
+    transferId.length > 0 &&
+    source?.alive === true &&
+    receiver?.alive === true &&
+    typeof source.id === 'string' &&
+    source.id.length > 0 &&
+    typeof receiver.id === 'string' &&
+    receiver.id.length > 0 &&
+    source.id !== receiver.id &&
+    [
+      source.x,
+      source.y,
+      receiver.x,
+      receiver.y,
+      receiver.immuneUntil,
+      time,
+      expiresAt,
+      contactRadius,
+      duration,
+      returnImmunity,
+    ].every(Number.isFinite) &&
+    time >= 0 &&
+    expiresAt > 0 &&
+    contactRadius > 0 &&
+    duration > 0 &&
+    returnImmunity >= 0;
+  const distance = valid ? Math.hypot(source.x - receiver.x, source.y - receiver.y) : null;
+  const inRange = valid && distance <= contactRadius;
+  const immune = valid && receiver.immuneUntil > time;
+  const resolution = !valid
+    ? 'invalid'
+    : alreadyResolved
+      ? 'duplicate'
+      : time >= expiresAt
+        ? 'expired'
+        : immune
+          ? 'immune'
+          : !inRange
+            ? 'out-of-range'
+            : 'passed';
+  return Object.freeze({
+    encounterId,
+    transferId,
+    sourceId: valid ? source.id : null,
+    receiverId: valid ? receiver.id : null,
+    distance,
+    ownerId: resolution === 'passed' ? receiver.id : valid ? source.id : null,
+    expiresAt: resolution === 'passed' ? time + duration : valid ? expiresAt : null,
+    sourceImmuneUntil: resolution === 'passed' ? time + returnImmunity : null,
+    applicationCount: Number(resolution === 'passed'),
+    resolution,
+  });
+}
+
+export function debuffHandoffExpire({
+  encounterId = 'kern-debuff-handoff-1',
+  burstId = 'rune-expiry-1',
+  owner = { id: 'player-1', alive: true, health: 100 },
+  time = 3.7,
+  expiresAt = 3.7,
+  burstDamage = 80,
+  alreadyResolved = false,
+} = {}) {
+  const valid =
+    typeof encounterId === 'string' &&
+    encounterId.length > 0 &&
+    typeof burstId === 'string' &&
+    burstId.length > 0 &&
+    typeof owner?.id === 'string' &&
+    owner.id.length > 0 &&
+    owner.alive === true &&
+    Number.isSafeInteger(owner.health) &&
+    owner.health >= 0 &&
+    Number.isFinite(time) &&
+    Number.isFinite(expiresAt) &&
+    Number.isSafeInteger(burstDamage) &&
+    burstDamage > 0;
+  const expired = valid && time >= expiresAt;
+  const damage = expired && !alreadyResolved ? burstDamage : 0;
+  return Object.freeze({
+    encounterId,
+    burstId,
+    ownerId: valid ? owner.id : null,
+    damage,
+    healthAfter: valid ? Math.max(0, owner.health - damage) : null,
+    applicationCount: Number(expired && !alreadyResolved),
+    resolution: !valid
+      ? 'invalid'
+      : alreadyResolved
+        ? 'duplicate'
+        : expired
+          ? 'expired'
+          : 'pending',
   });
 }
 
@@ -10150,6 +10296,91 @@ function primitivesFor(spec, frame) {
       ),
     ];
   }
+  if (mode === 'debuff-handoff') {
+    const owner = frame.debuffHandoffOwner === 'player-1' ? frame.player : frame.debuffHandoffAlly;
+    const transferPulse = Math.max(
+      strikePulse(frame.time, spec.firstPassAt, 0.34),
+      strikePulse(frame.time, spec.secondPassAt, 0.34),
+    );
+    const countdown = frame.debuffHandoffRemaining / spec.debuffDuration;
+    return [
+      rect(55, 245, 450, 650, 0.58, 'muted', 0.025),
+      path('M 75 805 L 190 785 L 280 810 L 370 785 L 485 805', 0.5, 'muted', 4),
+      line(
+        spec.boss[0],
+        spec.boss[1] + 58,
+        spec.player[0],
+        spec.player[1] - 92,
+        frame.time >= 0.58 && frame.time < 0.9 ? 0.8 : 0,
+        'signal',
+        6,
+      ),
+      circle(owner.x, owner.y - 82, 48, frame.debuffHandoffVisible ? 0.6 : 0, 'muted', 5),
+      circle(
+        owner.x,
+        owner.y - 82,
+        48,
+        frame.debuffHandoffVisible ? 0.96 : 0,
+        'signal',
+        7,
+        0,
+        `${Math.max(1, 302 * countdown)} 999`,
+      ),
+      path(
+        `M ${owner.x} ${owner.y - 104} l 18 22 -18 22 -18 -22 Z M ${owner.x - 18} ${owner.y - 82} h 36`,
+        frame.debuffHandoffVisible ? 0.96 : 0,
+        'signal',
+        5,
+        0.15,
+      ),
+      circle(owner.x, owner.y - 82, 56 + transferPulse * 18, transferPulse * 0.72, 'accent', 6),
+      line(
+        frame.player.x,
+        frame.player.y - 75,
+        frame.debuffHandoffAlly.x,
+        frame.debuffHandoffAlly.y - 75,
+        transferPulse * 0.9,
+        'accent',
+        7,
+      ),
+      circle(
+        frame.player.x,
+        frame.player.y - 80,
+        58,
+        frame.debuffHandoffImmunity[0] ? 0.42 : 0,
+        'safe',
+        4,
+        0,
+        '7 7',
+      ),
+      circle(
+        frame.debuffHandoffAlly.x,
+        frame.debuffHandoffAlly.y - 80,
+        58,
+        frame.debuffHandoffImmunity[1] ? 0.42 : 0,
+        'safe',
+        4,
+        0,
+        '7 7',
+      ),
+      circle(
+        spec.player[0],
+        spec.player[1],
+        78 * smooth((frame.time - spec.resetAt) / (BLUEPRINT_DURATION - spec.resetAt)),
+        frame.debuffHandoffRetry ? 0.75 : 0,
+        'accent',
+        7,
+      ),
+      circle(
+        spec.ally[0],
+        spec.ally[1],
+        78 * smooth((frame.time - spec.resetAt) / (BLUEPRINT_DURATION - spec.resetAt)),
+        frame.debuffHandoffRetry ? 0.75 : 0,
+        'accent',
+        7,
+      ),
+    ];
+  }
   if (mode === 'coordinated-duo-attack') {
     const t = frame.time;
     const leader = frame.decoy;
@@ -12673,6 +12904,7 @@ function pointClearsThreat(spec, frame, value, radius = BLUEPRINT_PLAYER_RADIUS)
     const target = frame.tankSwapHitId === spec.firstHitId ? frame.player : frame.tankSwapAlly;
     return Math.hypot(value.x - target.x, value.y - target.y) > 70 + radius;
   }
+  if (mode === 'debuff-handoff') return !frame.debuffHandoffBurstActive;
   if (mode === 'coordinated-duo-attack') {
     const target = frame.coordinatedDuoAttackTarget;
     return (
@@ -14916,6 +15148,34 @@ export function blueprintFrame(id, time) {
       y: mix(mix(spec.player[1], spec.playerExit[1], exit), spec.player[1], retry),
     };
     stride = Math.max(pulse(exit), pulse(retry));
+  }
+  if (spec.mode === 'debuff-handoff') {
+    const firstApproach = smooth(
+      (t - spec.firstApproach[0]) / (spec.firstApproach[1] - spec.firstApproach[0]),
+    );
+    const firstRetreat = smooth(
+      (t - spec.firstRetreat[0]) / (spec.firstRetreat[1] - spec.firstRetreat[0]),
+    );
+    const secondApproach = smooth(
+      (t - spec.secondApproach[0]) / (spec.secondApproach[1] - spec.secondApproach[0]),
+    );
+    const secondRetreat = smooth(
+      (t - spec.secondRetreat[0]) / (spec.secondRetreat[1] - spec.secondRetreat[0]),
+    );
+    const contact = Math.max(
+      firstApproach * (1 - firstRetreat),
+      secondApproach * (1 - secondRetreat),
+    );
+    player = {
+      x: mix(spec.player[0], spec.playerContact[0], contact),
+      y: mix(spec.player[1], spec.playerContact[1], contact),
+    };
+    stride = Math.max(
+      pulse(firstApproach),
+      pulse(firstRetreat),
+      pulse(secondApproach),
+      pulse(secondRetreat),
+    );
   }
   const bossVisible =
     spec.mode === 'secondary-cues-invisibility'
@@ -17678,6 +17938,95 @@ export function blueprintFrame(id, time) {
       impact: strikePulse(t, spec.secondHit[0], 0.55),
     });
   }
+  if (spec.mode === 'debuff-handoff') {
+    const firstApproach = smooth(
+      (t - spec.firstApproach[0]) / (spec.firstApproach[1] - spec.firstApproach[0]),
+    );
+    const firstRetreat = smooth(
+      (t - spec.firstRetreat[0]) / (spec.firstRetreat[1] - spec.firstRetreat[0]),
+    );
+    const secondApproach = smooth(
+      (t - spec.secondApproach[0]) / (spec.secondApproach[1] - spec.secondApproach[0]),
+    );
+    const secondRetreat = smooth(
+      (t - spec.secondRetreat[0]) / (spec.secondRetreat[1] - spec.secondRetreat[0]),
+    );
+    const contact = Math.max(
+      firstApproach * (1 - firstRetreat),
+      secondApproach * (1 - secondRetreat),
+    );
+    const ally = {
+      x: mix(spec.ally[0], spec.allyContact[0], contact),
+      y: mix(spec.ally[1], spec.allyContact[1], contact),
+    };
+    const first = debuffHandoffResolve({
+      encounterId: spec.encounterId,
+      transferId: 'pass-1',
+      source: { id: 'player-1', alive: true, x: spec.playerContact[0], y: spec.playerContact[1] },
+      receiver: {
+        id: 'player-2',
+        alive: true,
+        x: spec.allyContact[0],
+        y: spec.allyContact[1],
+        immuneUntil: 0,
+      },
+      time: spec.firstPassAt,
+      expiresAt: 0.7 + spec.debuffDuration,
+      contactRadius: spec.contactRadius,
+      duration: spec.debuffDuration,
+      returnImmunity: spec.returnImmunity,
+    });
+    const second = debuffHandoffResolve({
+      encounterId: spec.encounterId,
+      transferId: 'pass-2',
+      source: { id: 'player-2', alive: true, x: spec.allyContact[0], y: spec.allyContact[1] },
+      receiver: {
+        id: 'player-1',
+        alive: true,
+        x: spec.playerContact[0],
+        y: spec.playerContact[1],
+        immuneUntil: first.sourceImmuneUntil,
+      },
+      time: spec.secondPassAt,
+      expiresAt: first.expiresAt,
+      contactRadius: spec.contactRadius,
+      duration: spec.debuffDuration,
+      returnImmunity: spec.returnImmunity,
+    });
+    const firstDone = t >= spec.firstPassAt && t < spec.resetAt;
+    const secondDone = t >= spec.secondPassAt && t < spec.resetAt;
+    const visible = t >= 0.7 && t < spec.resetAt;
+    const expiresAt = secondDone
+      ? second.expiresAt
+      : firstDone
+        ? first.expiresAt
+        : 0.7 + spec.debuffDuration;
+    frame.debuffHandoffState = debuffHandoffState(t);
+    frame.debuffHandoffOwner = firstDone && !secondDone ? 'player-2' : 'player-1';
+    frame.debuffHandoffAlly = ally;
+    frame.debuffHandoffVisible = visible;
+    frame.debuffHandoffRemaining = visible ? Math.max(0, expiresAt - t) : spec.debuffDuration;
+    frame.debuffHandoffImmunity = [
+      firstDone && t < first.sourceImmuneUntil,
+      secondDone && t < second.sourceImmuneUntil,
+    ];
+    frame.debuffHandoffTransferCount = Number(firstDone) + Number(secondDone);
+    frame.debuffHandoffFailedDamage = debuffHandoffExpire({
+      encounterId: spec.encounterId,
+      time: 0.7 + spec.debuffDuration,
+      expiresAt: 0.7 + spec.debuffDuration,
+      burstDamage: spec.burstDamage,
+    }).damage;
+    frame.debuffHandoffBurstActive = visible && t >= expiresAt;
+    frame.debuffHandoffRetry = t >= spec.resetAt;
+    frame.dangerActive = false;
+    frame.bossMotion.attack = strikePulse(t, 0.7, 0.75);
+    frame.playerMotion.stride = stride;
+    frame.playerMotion.impact =
+      Math.max(strikePulse(t, spec.firstPassAt, 0.3), strikePulse(t, spec.secondPassAt, 0.3)) *
+      0.25;
+    frame.debuffHandoffAllyMotion = motion({ stride, impact: frame.playerMotion.impact });
+  }
   if (spec.mode === 'real-time-progression') {
     frame.realTimeProgressionState = realTimeProgressionState(t);
     frame.realTimeProgressionCheckpointId = spec.checkpointId;
@@ -18078,7 +18427,8 @@ export function blueprintFrame(id, time) {
                 spec.mode === 'personal-spread' ||
                 spec.mode === 'tower-soak' ||
                 spec.mode === 'entity-tether' ||
-                spec.mode === 'gaze-check'
+                spec.mode === 'gaze-check' ||
+                spec.mode === 'debuff-handoff'
               ? 92
               : -62),
   };

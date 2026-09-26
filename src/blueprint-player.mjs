@@ -67,6 +67,7 @@ export function initializeBlueprint(widget) {
   const proximityHealthLabel = find('[data-blueprint-proximity-health]');
   const proximityReadout = find('[data-blueprint-proximity-readout]');
   const tankHealthLabels = [...widget.querySelectorAll('[data-blueprint-tank-health]')];
+  const handoffTimer = find('[data-blueprint-handoff-timer]');
   const partnerLabel = find('[data-blueprint-partner-label]');
   const playerLabel = find('[data-blueprint-player-label]');
   const primitives = [...widget.querySelectorAll('[data-blueprint-primitive]')];
@@ -1288,6 +1289,19 @@ export function initializeBlueprint(widget) {
       for (const label of tankHealthLabels)
         label.textContent = `${frame.tankSwapHealth[Number(label.dataset.blueprintTankHealth)]} / 100`;
     }
+    if (mechanicId === 'debuff-handoff') {
+      widget.dataset.blueprintHandoff = frame.debuffHandoffState;
+      widget.dataset.blueprintHandoffOwner = frame.debuffHandoffOwner;
+      widget.dataset.blueprintHandoffRemaining = frame.debuffHandoffRemaining.toFixed(2);
+      widget.dataset.blueprintHandoffImmunity = frame.debuffHandoffImmunity.join(',');
+      widget.dataset.blueprintHandoffTransferCount = String(frame.debuffHandoffTransferCount);
+      widget.dataset.blueprintHandoffFailedDamage = String(frame.debuffHandoffFailedDamage);
+      widget.dataset.blueprintHandoffRetry = String(frame.debuffHandoffRetry);
+      if (handoffTimer)
+        handoffTimer.textContent = frame.debuffHandoffVisible
+          ? `${frame.debuffHandoffRemaining.toFixed(1)} s`
+          : '';
+    }
     boss.setAttribute(
       'transform',
       `translate(${frame.boss.x} ${frame.boss.y})${frame.bossRotation ? ` rotate(${frame.bossRotation})` : ''} scale(${frame.bossScale})`,
@@ -1311,7 +1325,10 @@ export function initializeBlueprint(widget) {
     for (const [index, ally] of allies.entries()) {
       const position = (frame.stackDamageAllies ??
         frame.personalSpreadPositions?.slice(1) ?? [
-          frame.towerSoakAlly ?? frame.entityTetherAlly ?? frame.tankSwapAlly,
+          frame.towerSoakAlly ??
+            frame.entityTetherAlly ??
+            frame.tankSwapAlly ??
+            frame.debuffHandoffAlly,
         ])[index];
       ally.setAttribute('transform', `translate(${position.x} ${position.y}) scale(.78)`);
       animateAllies[index](
@@ -1319,7 +1336,8 @@ export function initializeBlueprint(widget) {
           frame.personalSpreadAllyMotion ??
           frame.towerSoakAllyMotion ??
           frame.entityTetherAllyMotion ??
-          frame.tankSwapAllyMotion,
+          frame.tankSwapAllyMotion ??
+          frame.debuffHandoffAllyMotion,
         frame.playerFacing,
       );
     }

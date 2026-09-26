@@ -1,0 +1,134 @@
+{
+  "title": "负面状态传递",
+  "subtitle": "在倒计时结束前传出危险状态",
+  "variant": "单一持有者 · 可见计时 · 接触传递 · 防回传 · 重复",
+  "summary": "被标记的玩家必须在时限内通过有意接触，把危险状态传给另一名玩家。",
+  "overview": "负面状态传递让危险效果在同一时刻只属于一名玩家，并按明确的接触规则转移。可见的持有者标记与倒计时让期限清楚；可达成的传递路径和短暂的防回传时间，可避免无解伤害与意外来回弹跳。",
+  "learning": "明确状态的施加方式、唯一持有者、传递半径、期限、计时重置、防回传、到期伤害、无效接收者以及事件的唯一标识。",
+  "category": "协作配合",
+  "readTime": "10 分钟",
+  "demo": {
+    "title": "在两名玩家之间传递首领的不稳定符文",
+    "timeline": "状态传递时间线",
+    "step": "只有有效接触才会改变符文持有者",
+    "phaseNames": ["标记第一名持有者", "传给第二名持有者", "传回并重置"],
+    "phaseDescriptions": [
+      "第 0.70 秒，首领给玩家 1 施加一枚不稳定符文，三秒倒计时开始。若不传递，符文将在第 3.70 秒爆发，造成 80 点伤害。",
+      "两名玩家以普通步行进入 76 单位的接触半径。第 2.25 秒，符文只传给玩家 2 一次，计时重新开始三秒。玩家 1 暂时无法再次接收，持续接触也不会立刻让符文弹回。",
+      "分开后，两人在第 4.48 秒再次相遇；此时防回传已结束，且早于玩家 2 的第 5.25 秒期限。第二次独立传递把符文还给玩家 1。第 5.50 秒，明确的重试会清除持有者、计时和免疫状态。"
+    ],
+    "boss": "首领",
+    "player": "玩家",
+    "danger": "未传出的符文到期时爆发，造成 80 点伤害",
+    "locked": "唯一持有者、每次传递独立的事件 ID、76 单位接触距离以及一秒防回传",
+    "safe": "两次接触传递都早于各自的期限",
+    "reducedMotion": "减少动态效果时不会自动播放。将时间轴拖至第 0.70、2.10、2.32、3.10、4.55 和 5.60 秒查看。",
+    "diagramDescription": "首领在玩家 1 身上标记一枚倒计时符文。两名玩家走近，符文在接触时明显转到玩家 2 身上。两人分开，在短暂免疫结束后再次相遇，并在爆发前将符文传回。每次有效传递都会重启计时；明确的重试会清除状态。"
+  },
+  "steps": [
+    {
+      "title": "效果归谁所有？",
+      "body": "为状态设置一个稳定的持有者 ID、一个到期时刻和明确的施加事件。不依赖颜色显示持有者和剩余时间。规定首领是否能改换目标、复制、清除或重复施加状态；本演示都不会发生。"
+    },
+    {
+      "title": "什么接触算有效传递？",
+      "body": "这里两名玩家的中心相距不超过 76 单位，双方都必须存活，接收者不能处于免疫期，原持有者的期限也不能已过。每个传递 ID 只原子性地改变一次归属。传递将计时重设为三秒，并让原持有者在一秒内不能接回。"
+    },
+    {
+      "title": "到期会发生什么？",
+      "body": "传递失败时，仅当前持有者受到一次 80 点伤害，而非范围内所有人。测试过早接触、免疫期间再碰撞、重复回调、死亡或缺席的接收者、同时接触、迟到的传递和重置。记录每次事件前后的持有者与到期时刻。"
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "接触后立即弹回",
+      "body": "长时间重叠可能触发多次接触回调。加入防回传并按事件 ID 去重，让一次相遇恰好只改变一次持有者。"
+    },
+    {
+      "title": "未改变持有者却重置倒计时",
+      "body": "任何碰撞都刷新计时会掩盖失败的传递。先确认接收者有效并提交归属变化；否则保留原期限。"
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "给普通移动留足时间",
+      "body": "把倒计时、场地距离、步行速度、接触半径及传递后的分离距离一起调整。路径应无需隐藏的冲刺或无敌能力。"
+    },
+    {
+      "title": "清楚标识唯一持有者",
+      "body": "只在当前持有者身上放一枚符文、一个数字倒计时和短暂的传递轨迹。原持有者的免疫圆环应区别于危险状态。"
+    },
+    {
+      "title": "验证事件权威性",
+      "body": "记录遭遇 ID、传递 ID、来源和接收者、接触时位置、传递前后的期限、免疫结束时刻及结果。重播或回退时间轴不能额外产生传递或伤害。"
+    }
+  ],
+  "story": {
+    "title": "必须不断移动的符文",
+    "body": "首领把一枚不稳定符文送向第一名玩家。两名玩家跨过小段距离交换符文，趁原持有者受到保护时分开，再在新的期限前有意会合。"
+  },
+  "adaptation": {
+    "title": "让路径和排除规则易懂",
+    "body": "同一规则也可用触碰、定向法术或标记格实现，但选定的传递距离和不能接收的人必须明确。在这个接触版本中，普通步行足以完成两次交换和分离。"
+  },
+  "distinction": {
+    "title": "传递状态并非分摊伤害",
+    "body": "任一时刻只有一名玩家携带有效符文：靠近会改变持有者，而不是让两人分担一次攻击。换坦改变首领后续攻击的目标，这里移动的是限时状态本身。"
+  },
+  "lensNotes": [
+    {
+      "id": "telegraphing",
+      "body": "符文标记和数字计时表明当前持有者及期限。"
+    },
+    {
+      "id": "counterplay",
+      "body": "可到达的接触窗口让玩家能在到期前转移状态。"
+    },
+    {
+      "id": "difficulty-rhythm",
+      "body": "第一次传递教授规则；分开后再返回增加接收资格判断。"
+    },
+    {
+      "id": "risk-reward",
+      "body": "继续持有可简化站位，但超过期限将损失 80 点生命。"
+    },
+    {
+      "id": "progress-clarity",
+      "body": "单一持有者标记、传递次数和明确重置展示每次状态变化。"
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "3D",
+      "game": "Final Fantasy XIV",
+      "boss": "ADS",
+      "screenshot": "https://i.ytimg.com/vi/FDoJe-SOh6s/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=FDoJe-SOh6s",
+      "video": "https://www.youtube.com/watch?v=FDoJe-SOh6s&t=524s",
+      "videoDurationSeconds": 780,
+      "body": "在 Binding Coil Turn 2，Allagan Rot 必须在计时结束前通过靠近传给另一名玩家。原持有者不能马上重新接收。持有者分配与回传资格因此成为设计核心；演示缩短了时间，并只展示两名玩家。"
+    },
+    {
+      "dimension": "3D",
+      "game": "World of Warcraft",
+      "boss": "Professor Putricide",
+      "screenshot": "https://i.ytimg.com/vi/oPtF_1LoqtQ/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=oPtF_1LoqtQ",
+      "video": "https://www.youtube.com/watch?v=oPtF_1LoqtQ&t=52s",
+      "videoDurationSeconds": 777,
+      "body": "英雄难度下的 Unbound Plague 会跳到附近玩家身上，给原持有者留下 Plague Sickness 和短暂的防弹回保护。它的伤害不断增加且总持续时间固定，因此与演示中每次传递重置计时的规则不同，传递链更像资源管理。"
+    },
+    {
+      "dimension": "2D",
+      "game": "Wakfu",
+      "boss": "Grand maître culinaire",
+      "screenshot": "https://i.ytimg.com/vi/8C4SZJclCOg/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=8C4SZJclCOg",
+      "video": "https://www.youtube.com/watch?v=8C4SZJclCOg&t=317s",
+      "videoDurationSeconds": 559,
+      "body": "在 Compost du grand Potofeu 战斗中，Dégénérescence 能在队友之间传递，再交给首领以阻止其恢复生命。一直持有会损失生命。这个 2D 例子在玩家之间的基础传递之外，还加入了目的地和接收者限制。"
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}

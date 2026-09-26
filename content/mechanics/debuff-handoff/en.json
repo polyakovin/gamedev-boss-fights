@@ -1,0 +1,134 @@
+{
+  "title": "Debuff handoff",
+  "subtitle": "Pass a timed harmful state before its deadline",
+  "variant": "Single owner · visible timer · proximity pass · bounce protection · repeat",
+  "summary": "A marked player transfers a harmful timed state through deliberate contact before it expires.",
+  "overview": "A debuff handoff assigns one harmful state to one player and lets it move to another through an explicit contact rule. A visible owner and countdown make the deadline legible; a reachable pass and brief return immunity prevent both unavoidable damage and accidental ping-pong.",
+  "learning": "Specify acquisition, exclusive ownership, transfer radius, timing, duration reset, return immunity, expiry damage, invalid recipients, and authoritative event IDs.",
+  "category": "Cooperative coordination",
+  "readTime": "10 min",
+  "demo": {
+    "title": "Pass a volatile rune between two players",
+    "timeline": "Debuff handoff timeline",
+    "step": "The rune changes owner only at valid contact",
+    "phaseNames": ["Mark the first carrier", "Pass to the second carrier", "Pass back and reset"],
+    "phaseDescriptions": [
+      "At 0.70 seconds the boss applies one volatile rune to player 1. Its three-second countdown starts; without a pass it would burst at 3.70 seconds for 80 damage.",
+      "Both players walk into the 76-unit contact radius. At 2.25 seconds the rune transfers once to player 2 and its timer restarts at three seconds. Player 1 is temporarily immune to receiving it back, so touching does not bounce it immediately.",
+      "After separating, the players meet again at 4.48 seconds, after return immunity ends and before player 2's 5.25-second deadline. A second unique transfer returns the rune to player 1; at 5.50 seconds an explicit retry clears owner, timer, and immunity."
+    ],
+    "boss": "Boss",
+    "player": "Player",
+    "danger": "An unpassed rune bursts for 80 damage when its timer expires",
+    "locked": "One owner, one event ID per pass, a 76-unit contact limit, and one second of return immunity",
+    "safe": "Both contact transfers occur before their respective deadlines",
+    "reducedMotion": "Reduced motion disables autoplay. Scrub to 0.70, 2.10, 2.32, 3.10, 4.55, and 5.60 seconds.",
+    "diagramDescription": "The boss marks player 1 with one ticking rune. Two players walk together and the rune visibly moves to player 2 at contact. They separate, then meet again after temporary return immunity ends, passing the rune back before expiry. The countdown restarts on each valid pass and an explicit retry clears the state."
+  },
+  "steps": [
+    {
+      "title": "What owns the effect?",
+      "body": "Give the debuff one stable owner ID, one expiry timestamp, and an explicit acquisition event. Display the owner and remaining time in a way that can be read without color. Define whether the boss can retarget, copy, cleanse, or reapply the state; none of those happen in this demo."
+    },
+    {
+      "title": "When is contact a valid pass?",
+      "body": "Here the two player anchors must be within 76 scene units, both alive, the receiver not immune, and the source still before expiry. Resolve ownership atomically once per transfer ID. A pass restarts the three-second timer and protects the former carrier from receiving the rune for one second."
+    },
+    {
+      "title": "What happens at the deadline?",
+      "body": "A missed pass deals 80 damage to the current owner once, not to everyone in range. Test early contact, a second collision during immunity, duplicate callbacks, dead or absent recipients, simultaneous contacts, late passes, and reset. Log owner and expiry before and after each event."
+    }
+  ],
+  "mistakes": [
+    {
+      "title": "Letting touch immediately bounce the state back",
+      "body": "Continuous overlap may produce many contact callbacks. Apply return immunity and deduplicate event IDs so a single meeting creates exactly one ownership change."
+    },
+    {
+      "title": "Resetting the clock without changing owner",
+      "body": "A timer reset on any collision hides failed handoffs. Confirm a legal receiver and commit the owner change before restarting the countdown; otherwise preserve the old deadline."
+    }
+  ],
+  "designNotes": [
+    {
+      "title": "Budget normal movement",
+      "body": "Tune countdown, arena spacing, movement speed, collision radius, and post-pass separation together. The route should work without a hidden dash or invulnerability requirement."
+    },
+    {
+      "title": "Make ownership unambiguous",
+      "body": "Use one rune glyph attached to the current carrier, a numeric countdown, and a short transfer streak. The old carrier's immunity ring should look different from the live debuff."
+    },
+    {
+      "title": "Test event authority",
+      "body": "Record encounter ID, pass ID, source, receiver, positions at contact, expiry before and after, immunity until, and result. Replaying or seeking a frame must not add extra passes or damage."
+    }
+  ],
+  "story": {
+    "title": "A rune that must keep moving",
+    "body": "The boss sends a single volatile rune toward the first player. Two players cross a small gap to exchange it, step apart while the old carrier is protected, then meet for a deliberate return pass before the new deadline."
+  },
+  "adaptation": {
+    "title": "Keep the route and exclusions readable",
+    "body": "The same rule can use touch, a directed cast, or a marked tile, but the selected transfer range and excluded receivers must be explicit. In this contact variant, ordinary walking reaches both exchanges with time to separate."
+  },
+  "distinction": {
+    "title": "Passing a state is not splitting damage",
+    "body": "Only one player carries the live rune at a time; proximity changes ownership rather than making both players share one hit. A tank swap instead changes who the boss targets with future attacks, while a handoff moves a timed status itself."
+  },
+  "lensNotes": [
+    {
+      "id": "telegraphing",
+      "body": "The rune glyph and numeric timer identify the current carrier and deadline."
+    },
+    {
+      "id": "counterplay",
+      "body": "A reachable contact window makes transfer possible before expiry."
+    },
+    {
+      "id": "difficulty-rhythm",
+      "body": "The first pass teaches the rule; separating and returning adds an eligibility check."
+    },
+    {
+      "id": "risk-reward",
+      "body": "Holding the rune may simplify positioning, but waiting past expiry costs 80 health."
+    },
+    {
+      "id": "progress-clarity",
+      "body": "One owner marker, transfer count, and explicit reset expose every state change."
+    }
+  ],
+  "examples": [
+    {
+      "dimension": "3D",
+      "game": "Final Fantasy XIV",
+      "boss": "ADS",
+      "screenshot": "https://i.ytimg.com/vi/FDoJe-SOh6s/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=FDoJe-SOh6s",
+      "video": "https://www.youtube.com/watch?v=FDoJe-SOh6s&t=524s",
+      "videoDurationSeconds": 780,
+      "body": "In Binding Coil Turn 2, Allagan Rot passes to another player through proximity before its timer expires. The former carrier cannot immediately receive it back. This makes carrier assignment and return eligibility central to the pattern; the demo shortens the timing and shows only two players."
+    },
+    {
+      "dimension": "3D",
+      "game": "World of Warcraft",
+      "boss": "Professor Putricide",
+      "screenshot": "https://i.ytimg.com/vi/oPtF_1LoqtQ/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=oPtF_1LoqtQ",
+      "video": "https://www.youtube.com/watch?v=oPtF_1LoqtQ&t=52s",
+      "videoDurationSeconds": 777,
+      "body": "Heroic Unbound Plague jumps to a nearby player and leaves Plague Sickness plus short bounce protection on the former carrier. Unlike the demo's reset-on-pass timer, its escalating damage and group-wide duration make repeated handoffs a resource-management problem."
+    },
+    {
+      "dimension": "2D",
+      "game": "Wakfu",
+      "boss": "Grand maître culinaire",
+      "screenshot": "https://i.ytimg.com/vi/8C4SZJclCOg/hqdefault.jpg",
+      "screenshotSource": "https://www.youtube.com/watch?v=8C4SZJclCOg",
+      "video": "https://www.youtube.com/watch?v=8C4SZJclCOg&t=317s",
+      "videoDurationSeconds": 559,
+      "body": "In the Compost du grand Potofeu encounter, Dégénérescence can pass between allies, then be delivered to the boss to suppress regeneration. Keeping it costs the carrier health. This 2D example adds a destination and recipient exclusions to the basic player-to-player handoff."
+    }
+  ],
+  "reviewStatus": "needs-review",
+  "sourceVersion": 1
+}
