@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="robots" content="noindex">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Boss Fight Atlas has moved</title>
+  <script>
+    const oldPrefix = '/gamedev-boss-fights';
+    const path = location.pathname;
+    const target = path === oldPrefix || path === oldPrefix + '/'
+      ? 'https://polyakovin.github.io/boss-fight-atlas/en/'
+      : path.startsWith(oldPrefix + '/')
+        ? 'https://polyakovin.github.io/boss-fight-atlas/' + path.slice(oldPrefix.length + 1)
+        : 'https://polyakovin.github.io/boss-fight-atlas/';
+    location.replace(target + location.search + location.hash);
+  </script>
+</head>
+<body>
+  <p>Find Boss Fight Atlas at <a href="https://polyakovin.github.io/boss-fight-atlas/">its new address</a>.</p>
+</body>
+</html>
